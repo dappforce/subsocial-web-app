@@ -1,0 +1,255 @@
+.DfSidebarLogo {
+  font-size: 2rem;
+  color: #fff;
+  padding: 2rem;
+}
+
+.text.muted,
+.text.grey {
+  color: #999999;
+}
+
+.text.smaller {
+  font-size: 0.9rem;
+}
+
+.ui.button:disabled,
+.ui.buttons .disabled.button,
+.ui.disabled.active.button,
+.ui.disabled.button,
+.ui.disabled.button:hover {
+  opacity: 0.45 !important;
+}
+
+.ui--row {
+  .ui.message {
+    margin: 0;
+    padding: .7rem 1rem;
+  }
+  textarea,
+  .ui--InputFile {
+    margin: .25rem 0 !important;
+    height: 5rem;
+  }
+}
+
+.modal {
+  .ui--AddressMini {
+    width: 100%;
+  }
+  .AddressMini{
+    .button{
+      min-width: 8rem;
+    }
+  }
+}
+
+.ui.modal .scrolling.content {
+  text-align: left;
+}
+
+.ui--AddressMini {
+  .ui--IdentityIcon {
+    margin-left: 0;
+  }
+  .ui--AddressMini-info {
+    display: inline-flex;
+    .AddressMini.follow{
+      float: right;
+    }
+  }
+  .ui--AddressMini-details {
+    display: block;
+    text-align: left;
+    float: left;
+    color: #999999;
+    font-size: .8rem!important
+  }
+  .ui--AddressSummary-name,
+  .ui--AddressSummary-balance {
+    display: block;
+    margin-top: 0;
+    padding-top: 0;
+    font-size: .80rem !important;
+    margin-right: 1rem;
+    font-weight: 100;
+    opacity: .80;
+    overflow: hidden;
+    float: left;
+  }
+}
+
+.ui--Bubble.ui.label {
+  background-color: #f2f2f2;
+  margin: .25rem 0;
+  margin-right: .5rem;
+
+  &.pointing:before {
+    background-color: #e6e6e6;
+  }
+  &.warn {
+    color: #f2711c !important;
+    border: 1px solid;
+  }
+  &.ok {
+    color: #21ba45 !important;
+    border: 1px solid;
+  }
+}
+
+.SidebarItem {
+  display: inline-flex;
+  flex-direction: column;
+
+  .SidebarSubtitle {
+    display: block;
+    font-size: 0.85rem;
+    color: grey;
+  }
+}
+
+.DfSection {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+
+  .DfSection-title {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+    padding: .5rem 0;
+    display: flex;
+  }
+}
+
+.apps--SideBar-logo {
+  max-height: 26px !important;
+  margin: 1rem 1.5rem 1rem .75rem !important;
+}
+.collapsed .apps--SideBar-logo {
+  margin: 1rem .75rem 1rem .5rem !important
+}
+
+.DfForm .ui--Labelled {
+  align-items: end;
+  &>label {
+    padding-top: .75rem;
+  }
+}
+
+/* MD = markdown */
+.DfViewMD {
+  img {
+    max-width: 100%;
+  }
+  code {
+    background-color: #e0e0e0;
+    padding: 0 .25rem;
+    border-radius: 2px;
+  }
+}
+
+.DfMainStatus {
+  margin: 1rem auto !important;
+  max-width: 500px !important;
+  width: 100% !important;
+  text-align: center;
+
+  .button {
+    margin-right: 0;
+  }
+}
+
+.ui.top.left.flowing.popup.transition.visible{
+  .ui--AddressMini-address{
+    font-size: 1.2rem;
+  }
+  .DfPopup-username{
+    font-size: .8rem;
+  }
+  .ui--AddressMini-details {
+    margin-right: .3rem;
+  }
+}
+
+.DfAvatar{
+  margin-right: .5rem;
+  display: inline-block;
+  border-radius: 500rem;
+  vertical-align: middle;
+}
+
+.ui.top.left.flowing.popup.transition.visible{
+  .DfAvatar{
+    margin: 0 .5rem .5rem 0;
+  }
+}
+.ui.top.left.flowing.popup.transition.visible{
+  .item.ProfileDetails.MyProfile{
+    padding-left: 0!important;
+  }
+}
+
+.DfPopup-username{
+  font-size: 0.8rem;
+  color: #4e4e4e;
+}
+
+.DfMd{
+  margin-top: .5rem;
+  font-size: 1rem;
+}
+
+.DfPopup-about{
+  margin-top: .5rem;
+}
+
+.DfMdEditor {
+  .CodeMirror-scroll {
+    min-height: 5rem !important;
+  }
+
+  .CodeMirror.cm-s-easymde.CodeMirror-wrap.CodeMirror-fullscreen{
+    z-index: 1000;
+  }
+  .editor-toolbar.fullscreen {
+    z-index: 1000;
+  }
+}
+
+
+.DfMdEditor.error {
+  .editor-statusbar {
+      float: right;
+  }
+
+  .CodeMirror.cm-s-easymde.CodeMirror-wrap {
+      background-color: #fff6f6;
+      border-color: #e0b4b4;
+  }
+
+  .editor-toolbar {
+    border-color: #e0b4b4;
+  }
+
+}
+
+.ui.DfMenu.menu {
+  background-color: #3f3f3f;
+  color: #fff;
+  border-radius: 0;
+  label {
+    color: #fff;
+  }
+  .search.selection.dropdown {
+    background-color: #333;
+  }
+}
+.css-1py3auy.e1n4b2jv0 {
+  float: left;
+}
+
+.DfSearchList {
+  position: absolute;
+  background-color: #ffe;
+  width: 100%;
+  font-size: 1.2rem;
+}
