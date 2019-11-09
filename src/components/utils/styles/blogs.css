@@ -1,0 +1,336 @@
+.DfPostImage {
+  max-width: 100%;
+}
+.ProfilePreviews,
+.FullProfile {
+  .item {
+    .image {
+      padding: 0 !important;
+    }
+    .description {
+      font-size: 1rem;
+    }
+  }
+}
+.ProfilePreviews {
+  &.ui.list>.item:first-child {
+    padding-top: .75rem;
+  }
+  &.ui.list>.item:last-child {
+    padding-bottom: .75rem;
+  }
+  .MyProfile {
+    background-color: #FFF8E1;
+  }
+}
+.ProfileDetails {
+  display: flex !important;
+  padding-left: 1rem !important;
+  .content {
+    margin-left: .3rem;
+  }
+  .header { 
+    font-size: 1.7rem;
+    font-weight: bold;
+  }
+  .handle {
+    display: inline-block;
+    margin-right: .6rem;
+    .button {
+      padding: .5rem .75rem;
+    }
+  }
+}
+.ProfileDetailsTable {
+  font-size: 1rem !important;
+  tr td:first-child {
+    width: 1%;
+    white-space: nowrap;
+  }
+}
+
+.EditEntityBox {
+  width: 100%;
+  max-width: 600px;
+
+  .EditEntityForm {
+    width: 100%;
+  }
+}
+
+.DfCountsPreview {
+  margin-top: .5rem;
+  font-size: .85rem;
+  .MutedText {
+    margin-right: 1rem;
+  }
+}
+.ui.threaded.comments .comment .comments{
+  padding: 1rem 0 0 1.2rem;
+  margin: -1rem 0 0 1.25rem;
+}
+.DfCommentBox {
+  display: flex !important;
+  align-items: flex-start;
+  margin-top: 2rem;
+}
+
+.ui.button {
+  min-width: 8rem;
+  max-height: 2.8rem;
+}
+
+.ui.basic.button {
+  background-color: #fff !important;
+}
+
+.DfSpacedButtons {
+  .button {
+    margin-right: .5rem;
+  }
+};
+
+.DfVoter {
+  &.vertical {
+    margin-right: .5rem;
+  }
+  .ui.button {
+    background-color: transparent !important;
+    color: #2d2d2d;
+    min-width: initial;
+    max-height: initial;
+
+    &.red {
+      &:hover,
+      &.active {
+        color: red !important;
+      }
+    }
+    &.green {
+      &:hover,
+      &.active {
+        color: green !important;
+      }
+    }
+  }
+}
+
+.ui.img.avatar {
+  width: initial;
+  height: initial;
+}
+
+.DfCommentsByPost {
+  .ui.comments {
+    max-width: 100%;
+    .comment>.content {
+      margin-left: 43px;
+    }
+    .comment .text {
+      margin-top: .5rem;
+    }
+    .comment img.avatar{
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+}
+
+.ui.dropdown {
+  display: initial;
+  width: initial;
+}
+hr {
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.DfFollowButton {
+  margin-top: .6rem;
+}
+
+.disable, .disable:hover{
+  color: #999;
+  text-decoration: none;
+  cursor: default;
+}
+
+.DfActivityStreamItem {
+  .handle { 
+    font-weight: bold;
+  }
+
+  .name{
+    text-transform: uppercase;
+  }
+  
+  .activity{
+    margin-left: .25rem;
+    margin-right: .25rem;
+  }
+
+}
+
+.DfDate {
+  width: 100%;
+  font-size: .9rem;
+}
+
+.DfSocialLinks {
+  font-size: 1.2rem;
+  a {
+    margin-right: 1rem
+  }
+}
+
+div.asLink {
+  color: #2185d0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+div.asLink:hover {
+  color: #0d548a
+}
+
+.DfBlogStats {
+  font-size: .9rem;
+  display: flex;
+
+  .DfStatItem {
+    margin-right: 1rem;
+  }
+}
+
+.DfBlogBody {
+  display: flex;
+  width: 100%;
+}
+
+.DfCountsPreview{
+  a{
+    margin-right: .4rem;
+  }
+}
+
+.ui.attached:not(.message)+.ui.attached.segment:not(.top){
+  border: none;
+}
+
+.DfPostPreview, .DfPost {
+  .ui.button {
+    min-width: initial;
+    max-height: initial;
+  }  
+}
+
+.DfPostPreview {
+  h2 {
+    margin-top: 1rem; 
+  }
+  .DfSharedSummary {
+    margin-left: 3rem;
+    margin-top: .5rem;
+    font-size: 1.2rem;
+    width: 95%;
+  }
+  .ui.button {
+    min-width: initial;
+    max-height: initial;
+  }  
+}
+.ui.segment.DfPostPreview.p-b-0 {
+  padding: 1rem 1rem 0rem 1rem;
+}
+
+.DfCountsPreview {
+  margin-top: 0;
+  a, span {
+    color: rgba(34,36,38,.8) !important;
+    font-size: .9rem;
+  }
+}
+
+.DfCountsPreview {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: .5rem;
+  margin-bottom: .5rem;
+  a, span {
+    color: rgba(34,36,38,.8) !important;
+    font-size: .9rem;
+  }
+}
+
+.ui.segment.DfPostPreview {
+  .DfRow {
+    display: flex;
+    justify-content: space-between;
+    padding-right: .5rem;
+  }
+  .DfInfo {
+    margin-right: .5rem;
+    width: -webkit-fill-available;
+  }
+  .DfContent {
+    display: flex;
+    justify-content: space-between;
+  }
+  .DfActionsPanel {
+    display: flex;
+    border-top: 1px solid rgba(34,36,38,.15);
+  }
+  .DfAction {
+    width: 32%;
+    display: flex;
+    justify-content: center;
+  }
+  .DfCountsPreview {
+    justify-content: flex-end;
+  }
+  .ui.tiny.button.basic.DfAction {
+    font-weight: bold;
+    font-size: 1rem;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+  }
+  img.DfPostImagePreview {
+    border-radius: .2rem;
+    max-width: 16rem;
+    max-height: 12rem;
+  }
+}
+
+.DfShareModal {
+  .DfSection {
+    margin-top: .5rem;
+    margin-bottom: 0;
+  }
+  .EditEntityBox {
+    width: 100%;
+    max-width: none;
+  }
+  .DfTxButton {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .ui.input>input, .ui.selection.dropdown {
+    width: 100%;
+  }
+  .ui.segment.DfPostPreview {
+    text-align: left;
+  }
+}
+
+.DfGreyLink {
+  color: rgba(34,36,38,.8) !important;
+}
+.DfGreyLink:hover {
+  color: rgba(34,36,38,.8) !important;
+  text-decoration: underline;
+}
+
+.DfScore {
+  font-size: 1rem;
+}
+
