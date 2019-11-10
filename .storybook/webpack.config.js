@@ -37,7 +37,7 @@ config.module.rules.push({
   ]
 });
 
-// TypeScript loader (via Babel to match polkadot/apps)
+// TypeScript loader
 config.module.rules.push({
   test: /\.(ts|tsx)$/,
   exclude: /(node_modules)/,
