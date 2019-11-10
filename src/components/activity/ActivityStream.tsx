@@ -111,7 +111,7 @@ function ViewActivity (props: ActivityProps) {
   return <ViewPost id={postId} preview/>;
 }
 
-function Notification (props: ActivityProps) {
+export function Notification (props: ActivityProps) {
   const { activity } = props;
   const { account, event, date, post_id, comment_id, blog_id, agg_count } = activity;
   const formatDate = moment(date).format('lll');

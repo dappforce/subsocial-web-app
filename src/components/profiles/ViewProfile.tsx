@@ -201,7 +201,7 @@ function Component (props: Props) {
     {followersOpen && <AccountFollowersModal id={id} accountsCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')}/>}
     {followingOpen && <AccountFollowingModal id={id} accountsCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'}/>}
   </Section>
-  </>
+  </>;
 }
 
 export default withMulti(
