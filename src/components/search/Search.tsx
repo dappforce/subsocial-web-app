@@ -1,23 +1,23 @@
 import React from 'react';
 import { DataSearch } from '@appbaseio/reactivesearch';
-import ViewBlog from '../blogs/ViewBlog';
-import { ViewPost } from '../posts/ViewPost';
+// import ViewBlog from '../blogs/ViewBlog';
+// import { ViewPost } from '../posts/ViewPost';
 import Router from 'next/router';
-import ViewProfile from '../profiles/ViewProfile';
+// import ViewProfile from '../profiles/ViewProfile';
 
 const App = () => {
-  const getPreviewComponent = (index: string, id: string) => {
-    switch (index) {
-      case 'subsocial_blogs':
-        return <ViewBlog key={id} id={id} nameOnly />;
-      case 'subsocial_posts':
-        return <ViewPost key={id} id={id} nameOnly />;
-      case 'subsocial_profiles':
-        return <ViewProfile key={id} id={id} nameOnly />;
-      default:
-        return <ViewBlog key={id} id={id} nameOnly />;
-    }
-  };
+  // const getPreviewComponent = (index: string, id: string) => {
+  //   switch (index) {
+  //     case 'subsocial_blogs':
+  //       return <ViewBlog key={id} id={id} nameOnly />;
+  //     case 'subsocial_posts':
+  //       return <ViewPost key={id} id={id} nameOnly />;
+  //     case 'subsocial_profiles':
+  //       return <ViewProfile key={id} id={id} nameOnly />;
+  //     default:
+  //       return <ViewBlog key={id} id={id} nameOnly />;
+  //   }
+  // };
 
   return (
     // <>
@@ -43,16 +43,16 @@ const App = () => {
     //   />
     <DataSearch
       componentId='q'
-      dataField={['name', 'title', 'username']}
-      queryFormat='and'
+      dataField={['name', 'desc', 'title', 'body', 'username', 'fullname', 'about']}
+      fieldWeights={[2, 1, 2, 1, 2, 2, 1]}
       URLParams
-      parseSuggestion={(data) => ({
-        label: (
-          <div>{getPreviewComponent(data.source._index, data.source._id)}</div>
-        ),
-        value: data.source.name,
-        source: data.source
-      })}
+      // parseSuggestion={(data) => ({
+      //   label: (
+      //     <div>{getPreviewComponent(data.source._index, data.source._id)}</div>
+      //   ),
+      //   value: data.source.name,
+      //   source: data.source
+      // })}
       onValueSelected={(value) => Router.push(`/search?q=${value}`)}
 
       placeholder='Search for data'

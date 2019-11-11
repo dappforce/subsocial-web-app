@@ -37,7 +37,7 @@ function Component(props: Props) {
     preview = false,
     nameOnly = false,
     withLink = false,
-    size,
+    size = 48,
     socialAccount,
     profile = {} as Profile,
     profileData = {} as ProfileData
@@ -103,23 +103,30 @@ function Component(props: Props) {
     </Dropdown>);
   };
 
+  const getName = () => fullname || username || address;
+
+  const NameAsLink = () => (
+    <Link href={`/profile?address=${address}`}>
+      <a className='handle'>{getName()}</a>
+    </Link>
+  )
+
   const renderNameOnly = () => {
-    const name = fullname || username || address;
     return withLink
-      ? <Link href={`/profile?address=${address}`}><a className='handle'>{name}</a></Link>
-      : <>{name}</>;
+      ? <NameAsLink />
+      : <>{getName()}</>;
   };
 
   const renderPreview = () => {
     return <div>
       <div className={`item ProfileDetails MyProfile`}>
         {hasAvatar
-          ? <img className='DfAvatar' height={size || 48} width={size || 48} src={avatar} />
-          : <IdentityIcon className='image' value={address} size={size || 48} />
+          ? <img className='DfAvatar' height={size} width={size} src={avatar} />
+          : <IdentityIcon className='image' value={address} size={size} />
         }
         <div className='content'>
           <div className='header'>
-            {renderNameOnly()}
+            <NameAsLink />
             {renderDropDownMenu()}
           </div>
           {renderCreateProfileButton}

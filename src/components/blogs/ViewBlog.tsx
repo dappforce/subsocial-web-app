@@ -92,9 +92,11 @@ function Component(props: Props) {
     </Dropdown>);
   };
 
+  const NameAsLink = () => <Link href={`/blog?id=${id}`}><a className='handle'>{name}</a></Link>;
+
   const renderNameOnly = () => {
     return withLink
-      ? <Link href={`/blog?id=${id}`}><a className='handle'>{name}</a></Link>
+      ? <NameAsLink />
       : <>{name}</>;
   };
 
@@ -119,7 +121,7 @@ function Component(props: Props) {
         }
         <div className='content'>
           <div className='header'>
-            {renderNameOnly()}
+            <NameAsLink />
             {renderDropDownMenu()}
           </div>
           <div className='description'>

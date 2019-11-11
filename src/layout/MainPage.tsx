@@ -23,6 +23,7 @@ import Status from '../components/main/Status';
 import { Grid } from 'semantic-ui-react';
 import TopMenu from './TopMenu';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
+import { AllElasticIndexes, ElasticNodeURL } from '../components/search/ElasticConfig';
 
 const WrapperConnent = styled.div`
   background: #fafafa;
@@ -46,8 +47,8 @@ type Props = {
 
 const SideMenu = (props: Props) => (
   <ReactiveBase
-    url='http://localhost:9200'
-    app='subsocial_blogs,subsocial_posts,subsocial_comments,subsocial_profiles'
+    url={ElasticNodeURL}
+    app={AllElasticIndexes.join(',')}
   >
     <TopMenu />
     <Grid>
