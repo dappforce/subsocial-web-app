@@ -54,7 +54,7 @@ const SideMenu = (props: Props) => {
     url='http://localhost:9200'
     app='subsocial_blogs'
   >
-    <TopMenu toggleCollapsed={toggleCollapsed} collapsed={collapsed}/>
+    <TopMenu toggleCollapsed={toggleCollapsed} />
     <Grid>
       <Grid.Column width={collapsed ? 1 : 3}>
         <Menu collapsed={collapsed} />

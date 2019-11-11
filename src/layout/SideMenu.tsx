@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { Menu, Icon, Avatar } from 'antd';
+import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { withMulti } from '@polkadot/ui-api';
 import { useMyAccount } from '../components/utils/MyAccountContext';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 
 type MenuItem = {
   name: string,
@@ -62,10 +61,6 @@ const InnerMenu = (props: Props) => {
         theme='light'
         inlineCollapsed={collapsed}
       >
-      <Menu.Item key={'logo'} style={{ marginRight: '1.5em' }} disabled>
-        <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
-        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
-      </Menu.Item>
       {MenuItems.map((item) =>
       <Menu.Item key={item.page} onClick={() => Router.push(item.page)}>
         <Icon type={item.image} />
