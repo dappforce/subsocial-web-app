@@ -184,7 +184,7 @@ function Component (props: Props) {
   };
 
   return <div>
-    <SeoHeads title={name} name={name} desc={desc} image={image} />;
+    <SeoHeads title={name} name={name} desc={desc} image={image} />
     <Section>
     <div className='ui massive relaxed middle aligned list FullProfile'>
       {renderPreview()}

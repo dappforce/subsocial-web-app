@@ -253,3 +253,12 @@
   width: 100%;
   font-size: 1.2rem;
 }
+
+.DfTopBar--InputAddress {
+  label {
+    display: none;
+  }
+  .ui.input>input, .ui.selection.dropdown {
+    width: 1rem;
+  }
+}
