@@ -4,24 +4,27 @@ import InputAddress from '../components/utils/InputAddress';
 import Search from '../components/search/Search';
 
 type Props = {
-  collapsed: boolean,
   toggleCollapsed: () => void
 };
 
 const InnerMenu = (props: Props) => {
-  const { toggleCollapsed, collapsed } = props;
+  const { toggleCollapsed } = props;
   return (
     <Menu mode='horizontal' theme='light'>
       <Button type='link' onClick={toggleCollapsed}>
-      <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} style={{ fontSize: '28px', color: '#08c' }} theme='outlined' />
+        <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
       </Button>
-      <Menu.Item disabled style={{ position: 'relative', left: '12.2rem', width: '56.2rem', padding: '0' }}>
+      <Menu.Item key={'logo'} disabled>
+        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
+      </Menu.Item>
+      <Menu.Item disabled style={{ position: 'relative', left: '3.5rem', width: '53.8rem', padding: '0' }}>
         <Search />
       </Menu.Item>
-      <Menu.Item disabled style={{ position: 'relative', right: '-4rem' }}>
+      <Menu.Item disabled style={{ position: 'relative', right: '-13rem' }}>
         <InputAddress
           className='DfTopBar--InputAddress'
           type='account'
+          withLabel={false}
         />
       </Menu.Item>
     </Menu>

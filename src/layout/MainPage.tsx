@@ -55,7 +55,7 @@ const SideMenu = (props: Props) => {
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-    <TopMenu toggleCollapsed={toggleCollapsed} collapsed={collapsed}/>
+    <TopMenu toggleCollapsed={toggleCollapsed} />
     <Grid>
       <Grid.Column width={collapsed ? 1 : 3}>
         <Menu collapsed={collapsed} />
