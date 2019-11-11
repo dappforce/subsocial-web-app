@@ -32,9 +32,13 @@ const InnerShareModal = (props: Props) => {
       );
     }
 
-    const blogs = blogsIds.map(id => ({ key: id.toNumber(), text: <ViewBlog id={id} key={id} nameOnly/>, value: id.toNumber() }));
+    const blogs = blogsIds.map(id => ({
+      key: id.toNumber(),
+      text: <ViewBlog id={id} key={id} nameOnly />,
+      value: id.toNumber()
+    }));
 
-    const [ blogId, setBlogId ] = useState(blogsIds[0]);
+    const [blogId, setBlogId] = useState(blogsIds[0]);
     const saveBlog = (event: any, data: any) => {
       setBlogId(data);
     };
@@ -52,7 +56,7 @@ const InnerShareModal = (props: Props) => {
         blogId={blogId}
         extention={new PostExtension({ SharedPost: new SharedPost(postId) })}
         extButton={<Button content='Close' onClick={close} />}
-        preview={<ViewPost id={postId} preview withStats={false} withActions={false}/>}
+        preview={<ViewPost id={postId} preview withStats={false} withActions={false} />}
         closeModal={close}
       />
     </div>

@@ -243,13 +243,8 @@
     background-color: #333;
   }
 }
-.css-1py3auy.e1n4b2jv0 {
-  float: left;
-}
 
-.DfSearchList {
-  position: absolute;
-  background-color: #ffe;
-  width: 100%;
-  font-size: 1.2rem;
+.DfSearch {
+  color: rgba(0, 0, 0, 0.7);
+  margin: auto;
 }

@@ -25,6 +25,7 @@ import Router from 'next/router';
 type Props = MyAccountProps & {
   preview?: boolean,
   nameOnly?: boolean,
+  withLink?: boolean,
   miniPreview?: boolean,
   previewDetails?: boolean,
   withFollowButton?: boolean,
@@ -34,7 +35,7 @@ type Props = MyAccountProps & {
   followers?: AccountId[]
 };
 
-function Component (props: Props) {
+function Component(props: Props) {
   const { blogById } = props;
 
   if (blogById === undefined) return <em>Loading...</em>;
@@ -43,6 +44,7 @@ function Component (props: Props) {
   const {
     preview = false,
     nameOnly = false,
+    withLink = false,
     miniPreview = false,
     previewDetails = false,
     withFollowButton = false,
@@ -59,10 +61,10 @@ function Component (props: Props) {
     followers_count
   } = blog;
   const followers = followers_count.toNumber();
-  const [ content , setContent ] = useState({} as BlogData);
+  const [content, setContent] = useState({} as BlogData);
   const { desc, name, image } = content;
 
-  const [ followersOpen, setFollowersOpen ] = useState(false);
+  const [followersOpen, setFollowersOpen] = useState(false);
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -70,7 +72,7 @@ function Component (props: Props) {
       const content = json;
       setContent(content);
     }).catch(err => console.log(err));
-  }, [ id ]);
+  }, [id]);
 
   const isMyBlog = myAddress && account && myAddress === account.toString();
   const hasImage = image && nonEmptyStr(image);
@@ -85,20 +87,24 @@ function Component (props: Props) {
       <Dropdown.Menu>
         {isMyBlog && <Link href={`/edit-blog?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
         <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
-        {open && <BlogHistoryModal id={id} open={open} close={close}/>}
+        {open && <BlogHistoryModal id={id} open={open} close={close} />}
       </Dropdown.Menu>
     </Dropdown>);
   };
 
-  const renderNameOnly = () => (<>
-    <Link href={`/blog?id=${id}`}><a className='handle'>{name}</a></Link>
-  </>);
+  const NameAsLink = () => <Link href={`/blog?id=${id}`}><a className='handle'>{name}</a></Link>;
+
+  const renderNameOnly = () => {
+    return withLink
+      ? <NameAsLink />
+      : <>{name}</>;
+  };
 
   const renderMiniPreview = () => (
     <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyProfile'}`}>
       {hasImage
-      ? <img className='ui avatar image' src={image} height={28} width={28}/>
-      : <IdentityIcon className='image' value={account} size={28} />
+        ? <img className='ui avatar image' src={image} height={28} width={28} />
+        : <IdentityIcon className='image' value={account} size={28} />
       }
       <div className='content'>
         <div className='handle'>{name}</div>
@@ -115,7 +121,7 @@ function Component (props: Props) {
         }
         <div className='content'>
           <div className='header'>
-            {renderNameOnly()}
+            <NameAsLink />
             {renderDropDownMenu()}
           </div>
           <div className='description'>
@@ -150,7 +156,7 @@ function Component (props: Props) {
             accountsCount={blog.followers_count.toNumber()}
             open={followersOpen}
             close={() => setFollowersOpen(false)}
-        />}
+          />}
       </div>
     </>;
   };
@@ -186,22 +192,22 @@ function Component (props: Props) {
   return <div>
     <SeoHeads title={name} name={name} desc={desc} image={image} />;
     <Section>
-    <div className='ui massive relaxed middle aligned list FullProfile'>
-      {renderPreview()}
-    </div>
-    <CreatedBy created={blog.created} />
+      <div className='ui massive relaxed middle aligned list FullProfile'>
+        {renderPreview()}
+      </div>
+      <CreatedBy created={blog.created} />
 
-    <div className='DfSpacedButtons'>
-      <FollowBlogButton blogId={id} />
-      <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
-    </div>
+      <div className='DfSpacedButtons'>
+        <FollowBlogButton blogId={id} />
+        <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
+      </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
+      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
 
-    <Section id='posts' title={postsSectionTitle()}>
-      {renderPostPreviews()}
+      <Section id='posts' title={postsSectionTitle()}>
+        {renderPostPreviews()}
+      </Section>
     </Section>
-  </Section>
   </div>;
 }
 
