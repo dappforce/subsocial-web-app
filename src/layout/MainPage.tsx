@@ -47,7 +47,7 @@ type Props = {
 const SideMenu = (props: Props) => (
   <ReactiveBase
     url='http://localhost:9200'
-    app='subsocial_blogs'
+    app='subsocial_blogs,subsocial_posts,subsocial_comments,subsocial_profiles'
   >
     <TopMenu />
     <Grid>
