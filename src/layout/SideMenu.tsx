@@ -1,112 +1,80 @@
-import React, { useState } from 'react';
-import { Menu, Label } from 'semantic-ui-react';
-import Router from 'next/router';
-import { withMulti, withCalls } from '@polkadot/ui-api';
-import { queryBlogsToProp } from '../components/utils';
-import BN from 'bn.js';
-import { useMyAccount } from '../components/utils/MyAccountContext';
+import React from 'react';
 
-type Props = {
-  active?: string,
-  nextBlogId: BN
+import { Menu, Icon, Avatar } from 'antd';
+import Router, { useRouter } from 'next/router';
+import { withMulti } from '@polkadot/ui-api';
+import { useMyAccount } from '../components/utils/MyAccountContext';
+import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+
+type MenuItem = {
+  name: string,
+  page: string,
+  image: string
 };
 
-const InnerMenu = (props: Props) => {
-  const { active = '', nextBlogId } = props;
-  const [ activeItem, setActive ] = useState(active);
-  const { state: { address: myAddress } } = useMyAccount();
-  let blogCount = nextBlogId ? nextBlogId.sub(new BN(1)).toNumber() : 0;
+type Props = {
+  collapsed: boolean
+}
 
-  const handleItemClick = (e: any, data: any) => {
-    setActive(data.name);
-  };
+const InnerMenu = (props: Props) => {
+  const { collapsed } = props;
+  const { state: { address: myAddress } } = useMyAccount();
+  const router = useRouter();
+  const { pathname } = router;
+
+  const MenuItems: MenuItem[] = [
+    {
+      name: 'All blogs',
+      page: '/all',
+      image: 'global'
+    },
+    {
+      name: 'My blogs',
+      page: '/my-blogs',
+      image: 'book'
+    },
+    {
+      name: 'Following blogs',
+      page: '/following-blogs',
+      image: 'book'
+    },
+    {
+      name: 'Feed',
+      page: '/feed',
+      image: 'profile'
+    },
+    {
+      name: 'Notifications',
+      page: '/notifications',
+      image: 'notification'
+    },
+    {
+      name: 'My profile',
+      page: `/profile?address=${myAddress}`,
+      image: 'idcard'
+    }
+  ];
 
   return (
-      <Menu fluid vertical tabular>
-        <Menu.Item
-          name='all'
-          active={activeItem === 'all'}
-          onClick={(e, data) => {
-            handleItemClick(e, data);
-            Router.push(`/${data.name}`).catch(console.log);
-          }}
-        >
-          <Label>{blogCount}</Label>
-          All blogs
-        </Menu.Item>
-
-        <Menu.Item
-          name='my-blogs'
-          active={activeItem === 'my-blogs'}
-          onClick={(e, data) => {
-            handleItemClick(e, data);
-            Router.push(`/${data.name}`).catch(console.log);
-          }}
-        >
-          My blogs
-        </Menu.Item>
-
-        <Menu.Item
-          name='following-blogs'
-          active={activeItem === 'following-blogs'}
-          onClick={(e, data) => {
-            handleItemClick(e, data);
-            Router.push(`/${data.name}`).catch(console.log);
-          }}
-        >
-          Following blogs
-        </Menu.Item>
-
-        <Menu.Item
-          name='new-blog'
-          active={activeItem === 'new-blog'}
-          onClick={(e, data) => {
-            handleItemClick(e, data);
-            Router.push(`/${data.name}`).catch(console.log);
-          }}
-        >
-          New Blog
-        </Menu.Item>
-
-        <Menu.Item
-          name='feed'
-          active={activeItem === 'feed'}
-          onClick={(e, data) => {
-            handleItemClick(e, data);
-            Router.push(`/${data.name}`).catch(console.log);
-          }}
-        >
-          Feed
-        </Menu.Item>
-
-        <Menu.Item
-          name='notifications'
-          active={activeItem === 'notifications'}
-          onClick={(e, data) => {
-            handleItemClick(e, data);
-            Router.push(`/${data.name}`).catch(console.log);
-          }}
-        >
-          Notification
-        </Menu.Item>
-
-        <Menu.Item
-          name={`profile/${myAddress}`}
-          active={activeItem === `profile/${myAddress}`}
-          onClick={(e, data) => {
-            handleItemClick(e, data);
-            Router.push(`/profile?address=${myAddress}`).catch(console.log);
-          }}
-        >
-          My profile
-        </Menu.Item>
+      <Menu
+        defaultSelectedKeys={[pathname || '/all']}
+        mode='inline'
+        theme='light'
+        inlineCollapsed={collapsed}
+      >
+      <Menu.Item key={'logo'} style={{ marginRight: '1.5em' }} disabled>
+        <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
+        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
+      </Menu.Item>
+      {MenuItems.map((item) =>
+      <Menu.Item key={item.page} onClick={() => Router.push(item.page)}>
+        <Icon type={item.image} />
+        <span>{item.name}</span>
+      </Menu.Item>)}
       </Menu>
   );
 };
 
 export default withMulti(
-  InnerMenu,
-  withCalls<Props>(
-    queryBlogsToProp('nextBlogId')
-  )
+  InnerMenu
 );

@@ -262,7 +262,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderDetails = (content: PostContent) => {
     const { title, body, image } = content;
     return <>
-      <SeoHeads title={title} name={title} desc={body} image={image} />;
+      <SeoHeads title={title} name={title} desc={body} image={image} />
       <h1 style={{ display: 'flex' }}>
         <span style={{ marginRight: '.5rem' }}>{title}</span>
         {renderDropDownMenu()}

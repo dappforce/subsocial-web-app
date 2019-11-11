@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import settings from '../components/settings';
 import '@polkadot/ui-app/i18n';
@@ -45,23 +45,28 @@ type Props = {
   children: React.ReactNode
 };
 
-const SideMenu = (props: Props) => (
-  <ReactiveBase
+const SideMenu = (props: Props) => {
+  const [ collapsed, setCollapsed ] = useState(false);
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+  return <ReactiveBase
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-    <TopMenu />
+    <TopMenu toggleCollapsed={toggleCollapsed} collapsed={collapsed}/>
     <Grid>
-      <Grid.Column width={3}>
-        <Menu />
+      <Grid.Column width={collapsed ? 1 : 3}>
+        <Menu collapsed={collapsed} />
       </Grid.Column>
 
       <Grid.Column stretched width={9}>
         {props.children}
       </Grid.Column>
     </Grid>
-  </ReactiveBase>
-);
+  </ReactiveBase>;
+};
 
 const NextLayout: React.FunctionComponent<any> = ({ children }) => {
   const url = process.env.WS_URL || settings.apiUrl || undefined;
