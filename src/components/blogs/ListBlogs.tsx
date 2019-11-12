@@ -63,7 +63,7 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
   const { myblogsIds } = props;
   const totalCount = myblogsIds && myblogsIds.length;
   return (<>
-  <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />;
+  <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
   <Section title={`MyBlogs (${totalCount})`}>{
     myblogsIds && myblogsIds.length === 0
       ? <em>No blogs created yet.</em>

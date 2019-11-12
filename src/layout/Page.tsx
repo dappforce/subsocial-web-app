@@ -7,7 +7,7 @@ type Props = {
 
 const Layout: React.FunctionComponent<Props> = ({ children, title = 'This is the default title' }) => {
 
-  return <div>
+  return <div style={{ marginTop: '5rem' }}>
     <Head>
       <title>{title}</title>
       <meta charSet='utf-8' />

@@ -13,7 +13,7 @@ type MenuItem = {
 
 type Props = {
   collapsed: boolean
-}
+};
 
 const InnerMenu = (props: Props) => {
   const { collapsed } = props;

@@ -10,7 +10,7 @@ type Props = {
 const InnerMenu = (props: Props) => {
   const { toggleCollapsed } = props;
   return (
-    <Menu mode='horizontal' theme='light'>
+    <Menu mode='horizontal' theme='light' style={{ position: 'fixed', zIndex: 100, top: '0' }}>
       <Button type='link' onClick={toggleCollapsed}>
         <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
       </Button>
