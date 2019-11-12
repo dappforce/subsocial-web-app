@@ -248,3 +248,14 @@
   color: rgba(0, 0, 0, 0.7);
   margin: auto;
 }
+
+.DfTopBar--InputAddress {
+  .ui.input>input, .ui.selection.dropdown {
+    width: 1rem;
+  }
+}
+
+.DfBackground {
+  background-color: #fafafa;
+  padding: 1rem 0;
+}

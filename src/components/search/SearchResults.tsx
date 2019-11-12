@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
 import ViewBlog from '../blogs/ViewBlog';
 import { ViewPost } from '../posts/ViewPost';
-import Section from '../utils/Section';
-import { Tab, StrictTabProps } from 'semantic-ui-react';
+import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
 import { ElasticIndex } from './ElasticConfig';
+import Section from '../utils/Section';
 
 type DataResults = {
   _id: string;
@@ -16,12 +16,29 @@ const AllIndexes = '*';
 
 type Props = {
   results: DataResults[]
-}
+};
+
+const Previews = (props: Props) => {
+  const { results } = props;
+  return !results || !results.length
+  ? <em>No results found</em>
+  : <div className='DfBackground'>{results.map((res, i) => {
+    switch (res._index) {
+      case ElasticIndex.blogs:
+        return <Segment key={i}><ViewBlog id={res._id} previewDetails withFollowButton /></Segment>;
+      case ElasticIndex.posts:
+        return <ViewPost key={i} id={res._id} preview withLink={true} />;
+      case ElasticIndex.profiles:
+        return <ViewProfile key={i} id={res._id} preview />;
+      default:
+        return null;
+    }
+  })}</div>;
+};
 
 type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
 
-const TabsAndResults = (props: Props) => {
-  const { results } = props;
+const Tabs = () => {
   const [activeIndex, setActiveIndex] = useState(AllIndexes);
 
   const handleTabChange: OnTabChangeFn = (e, data) => {
@@ -29,52 +46,30 @@ const TabsAndResults = (props: Props) => {
 
     const activeTab = data.panes[data.activeIndex as number];
     const indexName = (activeTab as unknown as { key: string }).key;
-    setActiveIndex(indexName)
-  }
-
-  const Previews = () => !results || !results.length
-    ? <em>No results found</em>
-    : <div>{results.map((res, i) => {
-      switch (res._index) {
-        case ElasticIndex.blogs:
-          return <ViewBlog key={i} id={res._id} previewDetails withFollowButton />;
-        case ElasticIndex.posts:
-          return <ViewPost key={i} id={res._id} preview withLink={true} />;
-        case ElasticIndex.profiles:
-          return <ViewProfile key={i} id={res._id} preview />;
-        default:
-          return null;
-      }
-    })}</div>
-
-  const TabContent = () =>
-    <Tab.Pane><Previews /></Tab.Pane>
+    setActiveIndex(indexName);
+  };
 
   const panes = [
     {
       key: AllIndexes,
-      menuItem: 'All',
-      render: () => <TabContent />
+      menuItem: 'All'
     },
     {
       key: ElasticIndex.blogs,
-      menuItem: 'Blogs',
-      render: () => <TabContent />
+      menuItem: 'Blogs'
     },
     {
       key: ElasticIndex.posts,
-      menuItem: 'Posts',
-      render: () => <TabContent />
+      menuItem: 'Posts'
     },
     {
       key: ElasticIndex.profiles,
-      menuItem: 'Profiles',
-      render: () => <TabContent />
+      menuItem: 'Profiles'
     }
   ];
 
   return <>
-    <Tab panes={panes} onTabChange={handleTabChange} renderActiveOnly={false}/>
+    <Tab panes={panes} onTabChange={handleTabChange} defaultActiveIndex={activeIndex}/>
     <ReactiveComponent
       componentId='tab'
       customQuery={() => {
@@ -104,7 +99,10 @@ const App = () => {
         size={20}
         pages={100}
         pagination={true}
-        render={res => <TabsAndResults results={res.data} />}
+        render={res => <>
+          <Tabs />
+          <Previews results={res.data}/>
+          </>}
         renderNoResults={() => null}
       />
     </Section>

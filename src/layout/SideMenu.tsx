@@ -61,7 +61,7 @@ const InnerMenu = (props: Props) => {
         theme='light'
         inlineCollapsed={collapsed}
       >
-      {MenuItems.map((item) =>
+      {MenuItems.map(item =>
       <Menu.Item key={item.page} onClick={() => Router.push(item.page)}>
         <Icon type={item.image} />
         <span>{item.name}</span>
