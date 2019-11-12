@@ -246,7 +246,16 @@
 
 .DfSearch {
   color: rgba(0, 0, 0, 0.7);
-  margin: auto;
+  input {
+    border-radius: .5rem;
+  }
+  input:hover {
+    border-color: #1e99ff;
+  }
+  input:focus {
+    border-color: #1e99ff;
+    -moz-box-shadow:0 0 10px #1e99ff; -webkit-box-shadow:0 0 10px #1e99ff; box-shadow:0 0 10px #1e99ff;
+  }
 }
 
 .DfTopBar--InputAddress {

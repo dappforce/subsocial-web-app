@@ -17,7 +17,7 @@ const InnerMenu = (props: Props) => {
       <Menu.Item key={'logo'} disabled>
         <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
       </Menu.Item>
-      <Menu.Item disabled style={{ position: 'relative', left: '6rem', width: '52rem', padding: '0' }}>
+      <Menu.Item disabled style={{ position: 'relative', left: '7.7rem', width: '49.3rem', padding: '0' }}>
         <Search />
       </Menu.Item>
       <Menu.Item disabled style={{ position: 'relative', right: '-13rem' }}>
