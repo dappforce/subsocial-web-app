@@ -74,7 +74,7 @@ const TabsAndResults = (props: Props) => {
   ];
 
   return <>
-    <Tab panes={panes} onTabChange={handleTabChange} />
+    <Tab panes={panes} onTabChange={handleTabChange} renderActiveOnly={false}/>
     <ReactiveComponent
       componentId='tab'
       customQuery={() => {
