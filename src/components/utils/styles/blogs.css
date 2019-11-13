@@ -156,7 +156,7 @@ hr {
 }
 
 .DfActivityStreamItem {
-  .handle { 
+  .handle, a { 
     font-weight: bold;
   }
 
@@ -293,6 +293,7 @@ div.asLink:hover {
     font-size: 1rem;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
+    background-color: rgba(255,255,255,0) !important;
   }
   img.DfPostImagePreview {
     border-radius: .2rem;

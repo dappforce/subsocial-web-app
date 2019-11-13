@@ -36,6 +36,7 @@ const InnerAccountsListModal = (props: Props) => {
 
   return (
     <Modal
+      size='small'
       onClose={close}
       open={open}
       centered={true}

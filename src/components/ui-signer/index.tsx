@@ -26,6 +26,7 @@ export default class Signer extends React.PureComponent<Props> {
         <QueueConsumer>
           {({ txqueue, queueSetTxStatus }: QueueProps) => (
             <Modal
+              size='small'
               className={className}
               key='signer-modal'
               queue={txqueue}

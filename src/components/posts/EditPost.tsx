@@ -49,6 +49,7 @@ type OuterProps = ValidationProps & {
   struct?: Post
   json?: PostData,
   onlyTxButton?: boolean,
+  closeModal?: () => void,
   withButtons?: boolean
 };
 
@@ -75,7 +76,8 @@ const InnerForm = (props: FormProps) => {
     setSubmitting,
     resetForm,
     onlyTxButton = false,
-    withButtons = true
+    withButtons = true,
+    closeModal
   } = props;
 
   const isRegularPost = extention.value instanceof RegularPost;
@@ -98,7 +100,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: PostId) => {
-    Router.push('/post?id=' + id.toString(), '/blogs/post/' + id.toString()).catch(console.log);
+    Router.push('/post?id=' + id.toString()).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
@@ -122,6 +124,8 @@ const InnerForm = (props: FormProps) => {
 
   const onTxSuccess = (_txResult: SubmittableResult) => {
     setSubmitting(false);
+
+    closeModal && closeModal();
 
     const _id = id ? id : getNewIdFromEvent<PostId>(_txResult);
     _id && goToView(_id);

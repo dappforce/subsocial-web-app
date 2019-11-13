@@ -119,7 +119,7 @@ function AddressMini (props: Props) {
 
   const hasAvatar = avatar && nonEmptyStr(avatar);
   const isMyProfile: boolean = address === myAddress;
-  const renderCount = () => count && <>{count > 0 && `and `}<Pluralize count={count} singularText='other person' pluralText='other people' /></>;
+  const renderCount = () => count && count > 0 && <>and <Pluralize count={count} singularText='other person' pluralText='other people' /></>;
 
   const renderFollowButton = (!isMyProfile)
     ? <div className = 'AddressMini follow'><FollowAccountButton address={address}/></div>
@@ -182,7 +182,7 @@ function AddressMini (props: Props) {
     return <>
       <div className='DfActivityStreamItem'>
         <span className='activity'>
-          <span>&nbsp;{renderCount()}</span>
+          <span>{renderCount()}</span>
           <span className='event'> {event} </span>
         </span>
         {subject}

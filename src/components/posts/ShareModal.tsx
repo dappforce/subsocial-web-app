@@ -19,12 +19,13 @@ type Props = MyAccountProps & {
 
 const InnerShareModal = (props: Props) => {
   const { open, close, postId, blogsIds } = props;
-  const [blogId, setBlogId] = useState(blogsIds && blogsIds[0]);
+
+  if (!blogsIds) return <em>Loading...</em>;
+
+  const [blogId, setBlogId] = useState(blogsIds[0]);
   const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
-
-    if (!blogsIds) return <em>Loading...</em>;
 
     if (blogsIds.length === 0) {
       return (
@@ -65,6 +66,7 @@ const InnerShareModal = (props: Props) => {
     <Modal
       onClose={close}
       open={open}
+      size='small'
       style={{ marginTop: '3rem' }}
     >
       <Modal.Header>Share post</Modal.Header>

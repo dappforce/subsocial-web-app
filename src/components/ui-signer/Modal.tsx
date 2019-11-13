@@ -97,6 +97,7 @@ class Signer extends React.PureComponent<Props, State> {
 
     return (
       <Modal
+        size='small'
         className='ui--signer-Signer'
         dimmer='inverted'
         open
