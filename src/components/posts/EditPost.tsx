@@ -48,9 +48,8 @@ type OuterProps = ValidationProps & {
   extention?: PostExtension,
   struct?: Post
   json?: PostData,
-  preview?: React.ReactNode,
-  extButton?: React.ReactNode,
-  closeModal?: () => void
+  onlyTxButton?: boolean,
+  withButtons?: boolean
 };
 
 type FormValues = PostData;
@@ -67,9 +66,7 @@ const InnerForm = (props: FormProps) => {
     blogId,
     struct,
     extention = new PostExtension({ RegularPost: new RegularPost() }),
-    extButton,
     values,
-    preview,
     dirty,
     isValid,
     errors,
@@ -77,7 +74,8 @@ const InnerForm = (props: FormProps) => {
     isSubmitting,
     setSubmitting,
     resetForm,
-    closeModal
+    onlyTxButton = false,
+    withButtons = true
   } = props;
 
   const isRegularPost = extention.value instanceof RegularPost;
@@ -125,8 +123,6 @@ const InnerForm = (props: FormProps) => {
   const onTxSuccess = (_txResult: SubmittableResult) => {
     setSubmitting(false);
 
-    closeModal && closeModal();
-
     const _id = id ? id : getNewIdFromEvent<PostId>(_txResult);
     _id && goToView(_id);
   };
@@ -150,9 +146,7 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const renderButtons = () => (
-    <div className='DfTxButton'>
-      {extButton && extButton}
+  const renderTxButton = () => (
       <TxButton
         type='submit'
         size='large'
@@ -171,8 +165,6 @@ const InnerForm = (props: FormProps) => {
         txFailedCb={onTxFailed}
         txSuccessCb={onTxSuccess}
       />
-      {!extButton && renderResetButton()}
-    </div>
   );
 
   const form =
@@ -194,19 +186,19 @@ const InnerForm = (props: FormProps) => {
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
         </>
       }
-      {!isRegularPost && preview}
-      <LabelledField {...props}>
-        {renderButtons()}
-      </LabelledField>
+      {withButtons && <LabelledField {...props}>
+        {renderTxButton()}
+        {renderResetButton()}
+      </LabelledField>}
     </Form>;
 
   const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : '';
 
-  return <>
-    <Section className='EditEntityBox' title={sectionTitle}>
+  return onlyTxButton
+    ? renderTxButton()
+    : <Section className='EditEntityBox' title={sectionTitle}>
       {form}
-    </Section>
-  </>;
+    </Section>;
 };
 
 const EditForm = withFormik<OuterProps, FormValues>({

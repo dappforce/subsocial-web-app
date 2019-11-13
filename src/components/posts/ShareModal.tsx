@@ -18,11 +18,11 @@ type Props = MyAccountProps & {
 };
 
 const InnerShareModal = (props: Props) => {
-  const { open, close } = props;
+  const { open, close, postId, blogsIds } = props;
+  const [blogId, setBlogId] = useState(blogsIds && blogsIds[0]);
+  const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
-
-    const { postId, blogsIds } = props;
 
     if (!blogsIds) return <em>Loading...</em>;
 
@@ -38,7 +38,6 @@ const InnerShareModal = (props: Props) => {
       value: id.toNumber()
     }));
 
-    const [blogId, setBlogId] = useState(blogsIds[0]);
     const saveBlog = (event: any, data: any) => {
       setBlogId(data);
     };
@@ -54,11 +53,10 @@ const InnerShareModal = (props: Props) => {
       />
       <NewSharePost
         blogId={blogId}
-        extention={new PostExtension({ SharedPost: new SharedPost(postId) })}
-        extButton={<Button content='Close' onClick={close} />}
-        preview={<ViewPost id={postId} preview withStats={false} withActions={false} />}
-        closeModal={close}
+        extention={extension}
+        withButtons={false}
       />
+      <ViewPost id={postId} preview withStats={false} withActions={false} />
     </div>
     );
   };
@@ -73,6 +71,14 @@ const InnerShareModal = (props: Props) => {
       <Modal.Content scrolling className='noCenter'>
         {renderShareView()}
       </Modal.Content>
+      <Modal.Actions>
+        <Button size='large' onClick={close}>Close</Button>
+        <NewSharePost
+          blogId={blogId}
+          extention={extension}
+          onlyTxButton
+        />
+      </Modal.Actions>
     </Modal>
   );
 };

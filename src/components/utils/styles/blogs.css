@@ -310,10 +310,6 @@ div.asLink:hover {
     width: 100%;
     max-width: none;
   }
-  .DfTxButton {
-    display: flex;
-    justify-content: flex-end;
-  }
   .ui.input>input, .ui.selection.dropdown {
     width: 100%;
   }
