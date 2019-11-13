@@ -59,6 +59,7 @@ const InnerMenu = (props: Props) => {
         defaultSelectedKeys={[pathname || '/all']}
         mode='inline'
         theme='light'
+        style={{ height: '100%', borderRight: 0 }}
         inlineCollapsed={collapsed}
       >
       {MenuItems.map(item =>

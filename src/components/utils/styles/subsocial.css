@@ -245,6 +245,7 @@
 }
 
 .DfSearch {
+  width: 45%;
   color: rgba(0, 0, 0, 0.7);
   input {
     border-radius: .5rem;
@@ -266,5 +267,21 @@
 
 .DfBackground {
   background-color: #fafafa;
-  padding: 1rem 0;
+}
+
+.DfTab {
+  background-color: #fff;
+  .ui.attached.tabular.menu {
+    padding: 1rem 1rem 0rem 1rem ;
+  }
+}
+
+.DfHeader {
+  display: 'flex';
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.ant-layout {
+  background-color: #fafafa !important;
 }

@@ -191,22 +191,20 @@ function Component(props: Props) {
 
   return <div>
     <SeoHeads title={name} name={name} desc={desc} image={image} />
-    <Section>
-      <div className='ui massive relaxed middle aligned list FullProfile'>
-        {renderPreview()}
-      </div>
-      <CreatedBy created={blog.created} />
+    <div className='ui massive relaxed middle aligned list FullProfile'>
+      {renderPreview()}
+    </div>
+    <CreatedBy created={blog.created} />
 
-      <div className='DfSpacedButtons'>
-        <FollowBlogButton blogId={id} />
-        <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
-      </div>
+    <div className='DfSpacedButtons'>
+      <FollowBlogButton blogId={id} />
+      <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
+    </div>
 
-      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
+    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
 
-      <Section id='posts' title={postsSectionTitle()}>
-        {renderPostPreviews()}
-      </Section>
+    <Section id='posts' title={postsSectionTitle()}>
+      {renderPostPreviews()}
     </Section>
   </div>;
 }

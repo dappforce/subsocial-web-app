@@ -17,30 +17,17 @@ const Connecting = dynamic(() => import('../components/main/Connecting'), { ssr:
 import Menu from './SideMenu';
 import Signer from '../components/ui-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 import { QueueProps } from '@polkadot/ui-app/Status/types';
 import Status from '../components/main/Status';
-import { Grid } from 'semantic-ui-react';
-import TopMenu from './TopMenu';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../components/search/ElasticConfig';
+import { Layout, Icon, Button } from 'antd';
+import Search from '../components/search/Search';
+import InputAddress from '../components/utils/InputAddress';
 
-const WrapperConnent = styled.div`
-  background: #fafafa;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  height: 100%;
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: 100%;
-  padding: 0 2rem;
+const { Header, Sider, Content } = Layout;
 
-  @media(max-width: 768px) {
-    padding: 0 0.5rem;
-  }
-`;
 type Props = {
   children: React.ReactNode
 };
@@ -55,16 +42,32 @@ const SideMenu = (props: Props) => {
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-    <TopMenu toggleCollapsed={toggleCollapsed} />
-    <Grid>
-      <Grid.Column width={collapsed ? 1 : 3}>
+  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
+    <Header style={{ background: '#fff', padding: '0 1rem', borderBottom: '1px solid #ddd' }} className='DfHeader'>
+      <div>
+        <Button type='link' onClick={toggleCollapsed}>
+          <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
+        </Button>
+        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
+      </div>
+      <Search />
+      <div>
+        <InputAddress
+          className='DfTopBar--InputAddress'
+          type='account'
+          withLabel={false}
+        />
+      </div>
+    </Header>
+    <Layout>
+      <Sider width={200} style={{ background: '#fff', borderRight: '1px solid #ddd' }} trigger={null} collapsed={collapsed}>
         <Menu collapsed={collapsed} />
-      </Grid.Column>
-
-      <Grid.Column stretched width={9}>
-        {props.children}
-      </Grid.Column>
-    </Grid>
+      </Sider>
+      <Layout style={{ padding: '0 24px 24px' }}>
+      <Content>{props.children}</Content>
+      </Layout>
+    </Layout>
+  </Layout>,
   </ReactiveBase>;
 };
 
@@ -99,7 +102,6 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
                 <MyAccountProvider>
                   <Signer>
                     <SideMenu>
-                      <WrapperConnent>
                         <QueueConsumer>
                           {({ queueAction, stqueue, txqueue }: QueueProps) => (
                             <>
@@ -112,7 +114,6 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
                             </>
                           )}
                         </QueueConsumer>
-                      </WrapperConnent>
                     </SideMenu>
                   </Signer>
                 </MyAccountProvider>
@@ -122,7 +123,7 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
           }}
         </QueueConsumer>
       </Queue>
-    </Suspense>;
+    </Suspense>
   </div>;
 };
 

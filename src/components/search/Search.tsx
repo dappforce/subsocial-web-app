@@ -5,7 +5,7 @@ import { Icon } from 'antd';
 
 const App = () => {
   return (
-    <>
+    <div className='DfSearch'>
       <DataSearch
         componentId='q'
         dataField={['name', 'desc', 'title', 'body', 'username', 'fullname', 'about']}
@@ -16,12 +16,11 @@ const App = () => {
         iconPosition='right'
         icon={<Icon
           type='search'
-          style={{ fontSize: '14px', position: 'relative', top: '-1rem', left: '.5rem' }}
+          style={{ fontSize: '14px', position: 'relative', top: '-1.6rem' }}
         />}
-        className='DfSearch'
         innerClass={{ list: 'visible menu transition' }}
       />
-    </>
+    </div>
   );
 };
 
