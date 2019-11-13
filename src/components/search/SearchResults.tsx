@@ -6,11 +6,19 @@ import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
 import { ElasticIndex } from './ElasticConfig';
 import Section from '../utils/Section';
+import Router, { useRouter } from 'next/router';
 
 type DataResults = {
   _id: string;
   _index: string;
 };
+
+// enum TabNames {
+//   AllIndexes,
+//   Blogs,
+//   Posts,
+//   Profiles
+// };
 
 const AllIndexes = '*';
 
@@ -21,19 +29,19 @@ type Props = {
 const Previews = (props: Props) => {
   const { results } = props;
   return !results || !results.length
-  ? <em>No results found</em>
-  : <div className='DfBackground'>{results.map((res, i) => {
-    switch (res._index) {
-      case ElasticIndex.blogs:
-        return <Segment key={i}><ViewBlog id={res._id} previewDetails withFollowButton /></Segment>;
-      case ElasticIndex.posts:
-        return <ViewPost key={i} id={res._id} preview withLink={true} />;
-      case ElasticIndex.profiles:
-        return <ViewProfile key={i} id={res._id} preview />;
-      default:
-        return null;
-    }
-  })}</div>;
+    ? <em>No results found</em>
+    : <div className='DfBackground'>{results.map((res, i) => {
+      switch (res._index) {
+        case ElasticIndex.blogs:
+          return <Segment key={i}><ViewBlog id={res._id} previewDetails withFollowButton /></Segment>;
+        case ElasticIndex.posts:
+          return <ViewPost key={i} id={res._id} preview withLink={true} />;
+        case ElasticIndex.profiles:
+          return <ViewProfile key={i} id={res._id} preview />;
+        default:
+          return null;
+      }
+    })}</div>;
 };
 
 type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
@@ -41,11 +49,20 @@ type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabPr
 const Tabs = () => {
   const [activeIndex, setActiveIndex] = useState(AllIndexes);
 
+  const router = useRouter();
+
   const handleTabChange: OnTabChangeFn = (e, data) => {
     if (!data || !data.panes) return;
 
     const activeTab = data.panes[data.activeIndex as number];
     const indexName = (activeTab as unknown as { key: string }).key;
+
+    router.query.tab = activeTab.menuItem;
+    Router.push({
+      pathname: router.pathname,
+      query: router.query
+    });
+
     setActiveIndex(indexName);
   };
 
@@ -68,8 +85,14 @@ const Tabs = () => {
     }
   ];
 
+  const routerTabKey = (): string => {
+    const pane = panes.find(pane => pane.menuItem == useRouter().query.tab);
+    return pane !== undefined ? pane.key : AllIndexes;
+  };
+
   return <>
-    <Tab panes={panes} onTabChange={handleTabChange} defaultActiveIndex={activeIndex}/>
+    {console.log('TabKey', routerTabKey())}
+    <Tab panes={panes} onTabChange={handleTabChange} defaultActiveIndex={routerTabKey()} />
     <ReactiveComponent
       componentId='tab'
       customQuery={() => {
@@ -101,8 +124,8 @@ const App = () => {
         pagination={true}
         render={res => <>
           <Tabs />
-          <Previews results={res.data}/>
-          </>}
+          <Previews results={res.data} />
+        </>}
         renderNoResults={() => null}
       />
     </Section>

@@ -11,7 +11,7 @@ const App = () => {
         dataField={['name', 'desc', 'title', 'body', 'username', 'fullname', 'about']}
         fieldWeights={[2, 1, 2, 1, 2, 2, 1]}
         URLParams
-        onValueSelected={(value) => Router.push(`/search?q=${value}`)}
+        onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
         placeholder='Search Subsocial'
         iconPosition='right'
         icon={<Icon
