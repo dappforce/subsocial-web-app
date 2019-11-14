@@ -4,20 +4,41 @@ import ViewBlog from '../blogs/ViewBlog';
 import { ViewPost } from '../posts/ViewPost';
 import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
-import { ElasticIndex } from './ElasticConfig';
+import { ElasticIndex, ElasticIndexTypes } from './ElasticConfig';
+import Section from '../utils/Section';
+import Router, { useRouter } from 'next/router';
 
 type DataResults = {
   _id: string;
   _index: string;
 };
 
-const AllIndexes = '*';
+const AllTabKey = 'all';
+
+const panes = [
+  {
+    key: AllTabKey,
+    menuItem: 'All'
+  },
+  {
+    key: 'blogs',
+    menuItem: 'Blogs'
+  },
+  {
+    key: 'posts',
+    menuItem: 'Posts'
+  },
+  {
+    key: 'profiles',
+    menuItem: 'Profiles'
+  }
+];
 
 type Props = {
   results: DataResults[]
 };
 
-const searchResultToPreview = (res: DataResults, i: number) => {
+const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
     case ElasticIndex.blogs:
       return <Segment key={i}><ViewBlog id={res._id} previewDetails withFollowButton /></Segment>;
@@ -28,58 +49,56 @@ const searchResultToPreview = (res: DataResults, i: number) => {
     default:
       return null;
   }
-};
+}
 
 const Previews = (props: Props) => {
   const { results } = props;
   return !results || !results.length
-  ? <em>No results found</em>
-  : <div className='DfBackground'>{results.map(searchResultToPreview)}</div>;
+    ? <em>No results found</em>
+    : <div className='DfBackground'>{results.map(resultToPreview)}</div>;
 };
 
 type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
 
 const Tabs = () => {
-  const [activeIndex, setActiveIndex] = useState(AllIndexes);
+  const router = useRouter();
 
-  const handleTabChange: OnTabChangeFn = (e, data) => {
+  const getTabIndexFromUrl = (): number => {
+    const tabFromUrl = router.query.tab;
+    const tabIndex = panes.findIndex(pane => pane.key == tabFromUrl);
+    return tabIndex < 0 ? 0 : tabIndex;
+  };
+
+  const initialTabIndex = getTabIndexFromUrl();
+  const initialTabKey = panes[initialTabIndex].key;
+  const [activeTabKey, setActiveTabKey] = useState(initialTabKey);
+
+  const handleTabChange: OnTabChangeFn = (_event, data) => {
     if (!data || !data.panes) return;
 
     const activeTab = data.panes[data.activeIndex as number];
-    const indexName = (activeTab as unknown as { key: string }).key;
-    setActiveIndex(indexName);
+    const activeKey = (activeTab as unknown as { key: string }).key;
+
+    setActiveTabKey(activeKey);
+
+    router.query.tab = activeKey;
+    Router.push({
+      pathname: router.pathname,
+      query: router.query
+    });
   };
 
-  const panes = [
-    {
-      key: AllIndexes,
-      menuItem: 'All'
-    },
-    {
-      key: ElasticIndex.blogs,
-      menuItem: 'Blogs'
-    },
-    {
-      key: ElasticIndex.posts,
-      menuItem: 'Posts'
-    },
-    {
-      key: ElasticIndex.profiles,
-      menuItem: 'Profiles'
-    }
-  ];
-
   return <>
-    <Tab panes={panes} onTabChange={handleTabChange} defaultActiveIndex={activeIndex} className='DfTab' />
+    <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex} />
     <ReactiveComponent
       componentId='tab'
       customQuery={() => {
-        return activeIndex === AllIndexes
+        return activeTabKey === AllTabKey
           ? null
           : {
             query: {
               term: {
-                _index: activeIndex
+                _index: ElasticIndex[activeTabKey as ElasticIndexTypes]
               }
             }
           };
@@ -90,21 +109,23 @@ const Tabs = () => {
 
 const App = () => {
   return (
-    <ReactiveList
-      componentId='page'
-      dataField='id'
-      react={{ and: ['q', 'tab'] }}
-      showResultStats={false}
-      URLParams={true}
-      size={20}
-      pages={100}
-      pagination={true}
-      render={res => <>
-        <Tabs />
-        <Previews results={res.data}/>
+    <Section>
+      <ReactiveList
+        componentId='page'
+        dataField='id'
+        react={{ and: ['q', 'tab'] }}
+        showResultStats={false}
+        URLParams={true}
+        size={20}
+        pages={100}
+        pagination={true}
+        render={res => <>
+          <Tabs />
+          <Previews results={res.data} />
         </>}
-      renderNoResults={() => null}
-    />
+        renderNoResults={() => null}
+      />
+    </Section>
   );
 };
 
