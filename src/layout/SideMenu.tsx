@@ -28,6 +28,11 @@ const InnerMenu = (props: Props) => {
       image: 'global'
     },
     {
+      name: 'New blog',
+      page: '/new-blog',
+      image: 'plus'
+    },
+    {
       name: 'My blogs',
       page: '/my-blogs',
       image: 'book'

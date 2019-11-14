@@ -20,8 +20,7 @@ import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
 import { pluralizeText } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
-import Router from 'next/router';
-import { List } from 'antd';
+import Router from 'next/router';import ListData from '../utils/ListData';
 
 type Props = MyAccountProps & {
   preview?: boolean,
@@ -174,23 +173,10 @@ function Component(props: Props) {
     if (!postIds || postIds.length === 0) {
       return <em>This blog has no posts yet</em>;
     }
-    return <List
-      itemLayout='vertical'
-      size='large'
-      pagination={{
-        onChange: page => {
-          console.log(page);
-        },
-        pageSize: 3
-      }}
+    return <ListData
       dataSource={postIds}
-      renderItem={(item,index) => (
-        <List.Item
-          key={index}
-        >
-          <ViewPost key={index} id={id} preview />
-        </List.Item>
-      )}
+      renderItem={(id, index) =>
+        <ViewPost key={index} id={id} preview />}
     />;
   };
 
