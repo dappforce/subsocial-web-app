@@ -42,8 +42,8 @@ const SideMenu = (props: Props) => {
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important', position: 'fixed', zIndex: 1, width: '100%' }}>
-    <Header style={{ background: '#fff', padding: '0 1rem', borderBottom: '1px solid #ddd' }} className='DfHeader'>
+  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
+    <Header style={{ background: '#fff', padding: '0 1rem', borderBottom: '1px solid #ddd', position: 'fixed', zIndex: 1, width: '100%' }} className='DfHeader'>
       <div>
         <Button type='link' onClick={toggleCollapsed}>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
@@ -59,7 +59,7 @@ const SideMenu = (props: Props) => {
         />
       </div>
     </Header>
-    <Layout>
+    <Layout style={{ marginTop: '64px' }}>
       <Sider
         width={200}
         style={{
@@ -75,8 +75,8 @@ const SideMenu = (props: Props) => {
       >
         <Menu collapsed={collapsed} />
       </Sider>
-      <Layout style={{ padding: '0 24px 24px', marginLeft: '200px' }}>
-      <Content>{props.children}</Content>
+      <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '200px' }}>
+      <Content style = {{ width: '60%' }}>{props.children}</Content>
       </Layout>
     </Layout>
   </Layout>,
