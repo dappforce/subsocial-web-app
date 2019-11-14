@@ -8,6 +8,7 @@ import Section from '../utils/Section';
 import ViewBlog from './ViewBlog';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { pluralizeText } from '../utils/utils';
+import { List } from 'antd';
 
 type MyBlogProps = {
   id: AccountId,
@@ -23,9 +24,24 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
     followedBlogsIds && followedBlogsIds.length === 0
       ? <em>No blogs created yet.</em>
       : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-          {followedBlogsIds && followedBlogsIds.map((id, i) =>
-            <ViewBlog {...props} key={i} id={id} previewDetails withFollowButton/>
-          )}
+          <List
+            itemLayout='vertical'
+            size='large'
+            pagination={{
+              onChange: page => {
+                console.log(page);
+              },
+              pageSize: 3
+            }}
+            dataSource={followedBlogsIds}
+            renderItem={(item,index) => (
+              <List.Item
+                key={index}
+              >
+                <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />
+              </List.Item>
+            )}
+          />
         </div>
   }</Section>
   );

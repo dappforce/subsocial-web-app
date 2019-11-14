@@ -21,6 +21,7 @@ import TxButton from '../utils/TxButton';
 import { pluralizeText } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
 import Router from 'next/router';
+import { List } from 'antd';
 
 type Props = MyAccountProps & {
   preview?: boolean,
@@ -173,8 +174,24 @@ function Component(props: Props) {
     if (!postIds || postIds.length === 0) {
       return <em>This blog has no posts yet</em>;
     }
-
-    return postIds.map((id, i) => <ViewPost key={i} id={id} preview />);
+    return <List
+      itemLayout='vertical'
+      size='large'
+      pagination={{
+        onChange: page => {
+          console.log(page);
+        },
+        pageSize: 3
+      }}
+      dataSource={postIds}
+      renderItem={(item,index) => (
+        <List.Item
+          key={index}
+        >
+          <ViewPost key={index} id={id} preview />
+        </List.Item>
+      )}
+    />;
   };
 
   const postsSectionTitle = () => {

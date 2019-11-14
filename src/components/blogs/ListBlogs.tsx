@@ -13,6 +13,7 @@ import { BlogId } from '../types';
 import { AccountId } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import { List } from 'antd';
 
 type Props = ApiProps & I18nProps & {
   nextBlogId?: BN
@@ -39,9 +40,24 @@ class Component extends React.PureComponent<Props> {
         ids.length === 0
           ? <em>No blogs created yet.</em>
           : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-              {ids.map((id, i) =>
-                <ViewBlog {...this.props} key={i} id={id} previewDetails withFollowButton />
+            <List
+              itemLayout='vertical'
+              size='large'
+              pagination={{
+                onChange: page => {
+                  console.log(page);
+                },
+                pageSize: 3
+              }}
+              dataSource={ids}
+              renderItem={(item,index) => (
+                <List.Item
+                  key={index}
+                >
+                  <ViewBlog {...this.props} key={index} id={item} previewDetails withFollowButton />
+                </List.Item>
               )}
+            />
             </div>
       }</Section>
     );
@@ -68,9 +84,24 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
     myblogsIds && myblogsIds.length === 0
       ? <em>No blogs created yet.</em>
       : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-          {myblogsIds && myblogsIds.map((id, i) =>
-            <ViewBlog {...props} key={i} id={id} previewDetails withFollowButton />
+        <List
+          itemLayout='vertical'
+          size='large'
+          pagination={{
+            onChange: page => {
+              console.log(page);
+            },
+            pageSize: 3
+          }}
+          dataSource={myblogsIds}
+          renderItem={(item,index) => (
+            <List.Item
+              key={index}
+            >
+              <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />
+            </List.Item>
           )}
+        />
         </div>
   }</Section></>
   );
