@@ -11,12 +11,7 @@ type MenuItem = {
   image: string
 };
 
-type Props = {
-  collapsed: boolean
-};
-
-const InnerMenu = (props: Props) => {
-  const { collapsed } = props;
+const InnerMenu = () => {
   const { state: { address: myAddress } } = useMyAccount();
   const router = useRouter();
   const { pathname } = router;
@@ -65,7 +60,6 @@ const InnerMenu = (props: Props) => {
         mode='inline'
         theme='light'
         style={{ height: '100%', borderRight: 0 }}
-        inlineCollapsed={collapsed}
       >
       {MenuItems.map(item =>
       <Menu.Item key={item.page} onClick={() => Router.push(item.page)}>

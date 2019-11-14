@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { List, Select } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
+import Section from './Section';
 const { Option } = Select;
 
 type Props = {
   className?: string
   dataSource: any,
   renderItem: (item: any, index: number) => JSX.Element
+  title?: React.ReactNode
 };
 
 export default (props: Props) => {
-  const { dataSource,renderItem, className } = props;
+  const { dataSource,renderItem, className, title } = props;
 
   const DEFAULT_PAGE_SIZE = 1;
   const DEFAULT_CURENT_PAGE = 1;
@@ -44,6 +46,7 @@ export default (props: Props) => {
 
   const SelectPageSize = () => (
     <Select
+      style={{ width: '5rem' }}
       value={pageSize}
       onChange={(size: number) => {
         console.log(size);
@@ -55,14 +58,13 @@ export default (props: Props) => {
         }).catch(console.log);
       }}
     >
-      {itemsSelect.map(item => <Option value={item}>{item}</Option>)}
+      {itemsSelect.map((item, index) => <Option key={index} value={item}>{item}</Option>)}
     </Select>
   );
 
-  return <>
-    <SelectPageSize/>
+  return <Section title={<div className='DfTitle--List'>{title}<SelectPageSize/></div>}>
     <List
-      className={className}
+      className={'DfListData ' + className}
       itemLayout='vertical'
       size='large'
       pagination={{
@@ -87,5 +89,5 @@ export default (props: Props) => {
         </List.Item>
       )}
     />
-  </>;
+  </Section>
 };

@@ -285,3 +285,16 @@
 .ant-layout {
   background-color: #fafafa !important;
 }
+
+.DfListData { 
+  .ant-list-pagination {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.DfTitle--List {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}

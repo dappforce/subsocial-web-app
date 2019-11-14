@@ -171,9 +171,10 @@ function Component(props: Props) {
 
   const renderPostPreviews = () => {
     if (!postIds || postIds.length === 0) {
-      return <em>This blog has no posts yet</em>;
+      return <Section><em>This blog has no posts yet</em></Section>;
     }
     return <ListData
+      title={postsSectionTitle()}
       dataSource={postIds}
       renderItem={(id, index) =>
         <ViewPost key={index} id={id} preview />}
@@ -181,7 +182,7 @@ function Component(props: Props) {
   };
 
   const postsSectionTitle = () => {
-    return <>
+    return <div>
       <span style={{ marginRight: '.5rem' }}>{pluralizeText(postsCount, 'Post')}</span>
       <Link href={`/new-post?blogId=${id}`}>
         <a className='ui tiny button'>
@@ -189,7 +190,7 @@ function Component(props: Props) {
           Write post
         </a>
       </Link>
-    </>;
+    </div>;
   };
 
   return <div>
@@ -205,10 +206,7 @@ function Component(props: Props) {
     </div>
 
     {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
-
-    <Section id='posts' title={postsSectionTitle()}>
-      {renderPostPreviews()}
-    </Section>
+    {renderPostPreviews()}
   </div>;
 }
 

@@ -73,7 +73,7 @@ const SideMenu = (props: Props) => {
         trigger={null}
         collapsed={collapsed}
       >
-        <Menu collapsed={collapsed} />
+        <Menu/>
       </Sider>
       <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '200px' }}>
       <Content style = {{ width: '60%' }}>{props.children}</Content>

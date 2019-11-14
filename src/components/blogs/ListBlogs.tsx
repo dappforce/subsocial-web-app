@@ -36,17 +36,16 @@ class Component extends React.PureComponent<Props> {
     }
 
     return (
-      <Section title={`All Blogs (${totalCount})`}>{
-        ids.length === 0
-          ? <em>No blogs created yet.</em>
+      ids.length === 0
+          ? <Section><em>No blogs created yet.</em></Section>
           : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
             <ListData
+              title={`All blogs (${totalCount})`}
               dataSource={ids}
               renderItem={(item, index) =>
                 <ViewBlog {...this.props} key={index} id={item} previewDetails withFollowButton />}
             />
             </div>
-      }</Section>
     );
   }
 }
@@ -67,16 +66,16 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
   const totalCount = myblogsIds && myblogsIds.length;
   return (<>
   <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
-  <Section title={`MyBlogs (${totalCount})`}>{
-    myblogsIds && myblogsIds.length === 0
-      ? <em>No blogs created yet.</em>
+  {myblogsIds && myblogsIds.length === 0
+      ? <Section><em>No blogs created yet.</em></Section>
       : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
           <ListData
+            title={`MyBlogs (${totalCount})`}
             dataSource={myblogsIds}
             renderItem={(index, item) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
           />
         </div>
-  }</Section></>
+  }</>
   );
 };
 

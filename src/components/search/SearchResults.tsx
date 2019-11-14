@@ -7,6 +7,7 @@ import ViewProfile from '../profiles/ViewProfile';
 import { ElasticIndex, ElasticIndexTypes } from './ElasticConfig';
 import Section from '../utils/Section';
 import Router, { useRouter } from 'next/router';
+import ListData from '../utils/ListData';
 
 type DataResults = {
   _id: string;
@@ -47,7 +48,7 @@ const resultToPreview = (res: DataResults, i: number) => {
     case ElasticIndex.profiles:
       return <ViewProfile key={i} id={res._id} preview />;
     default:
-      return null;
+      return <></>;
   }
 }
 
@@ -55,7 +56,12 @@ const Previews = (props: Props) => {
   const { results } = props;
   return !results || !results.length
     ? <em>No results found</em>
-    : <div className='DfBackground'>{results.map(resultToPreview)}</div>;
+    : <div className='DfBackground'>
+      <ListData
+        dataSource={results}
+        renderItem={(res, i) => resultToPreview(res,i)}
+      />
+    </div>;
 };
 
 type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
@@ -116,9 +122,6 @@ const App = () => {
         react={{ and: ['q', 'tab'] }}
         showResultStats={false}
         URLParams={true}
-        size={20}
-        pages={100}
-        pagination={true}
         render={res => <>
           <Tabs />
           <Previews results={res.data} />
