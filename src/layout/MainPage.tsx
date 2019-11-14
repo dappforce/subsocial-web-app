@@ -42,7 +42,7 @@ const SideMenu = (props: Props) => {
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
+  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important', position: 'fixed', zIndex: 1, width: '100%' }}>
     <Header style={{ background: '#fff', padding: '0 1rem', borderBottom: '1px solid #ddd' }} className='DfHeader'>
       <div>
         <Button type='link' onClick={toggleCollapsed}>
@@ -60,10 +60,22 @@ const SideMenu = (props: Props) => {
       </div>
     </Header>
     <Layout>
-      <Sider width={200} style={{ background: '#fff', borderRight: '1px solid #ddd' }} trigger={null} collapsed={collapsed}>
+      <Sider
+        width={200}
+        style={{
+          background: '#fff',
+          borderRight: '1px solid #ddd',
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0
+        }}
+        trigger={null}
+        collapsed={collapsed}
+      >
         <Menu collapsed={collapsed} />
       </Sider>
-      <Layout style={{ padding: '0 24px 24px' }}>
+      <Layout style={{ padding: '0 24px 24px', marginLeft: '200px' }}>
       <Content>{props.children}</Content>
       </Layout>
     </Layout>
