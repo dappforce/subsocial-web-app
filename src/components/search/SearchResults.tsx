@@ -4,7 +4,7 @@ import ViewBlog from '../blogs/ViewBlog';
 import { ViewPost } from '../posts/ViewPost';
 import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
-import { ElasticIndex } from './ElasticConfig';
+import { ElasticIndex, ElasticIndexTypes } from './ElasticConfig';
 import Section from '../utils/Section';
 import Router, { useRouter } from 'next/router';
 
@@ -13,95 +13,92 @@ type DataResults = {
   _index: string;
 };
 
-// enum TabNames {
-//   AllIndexes,
-//   Blogs,
-//   Posts,
-//   Profiles
-// };
+const AllTabKey = 'all';
 
-const AllIndexes = '*';
+const panes = [
+  {
+    key: AllTabKey,
+    menuItem: 'All'
+  },
+  {
+    key: 'blogs',
+    menuItem: 'Blogs'
+  },
+  {
+    key: 'posts',
+    menuItem: 'Posts'
+  },
+  {
+    key: 'profiles',
+    menuItem: 'Profiles'
+  }
+];
 
 type Props = {
   results: DataResults[]
 };
 
+const resultToPreview = (res: DataResults, i: number) => {
+  switch (res._index) {
+    case ElasticIndex.blogs:
+      return <Segment key={i}><ViewBlog id={res._id} previewDetails withFollowButton /></Segment>;
+    case ElasticIndex.posts:
+      return <ViewPost key={i} id={res._id} preview withLink={true} />;
+    case ElasticIndex.profiles:
+      return <ViewProfile key={i} id={res._id} preview />;
+    default:
+      return null;
+  }
+}
+
 const Previews = (props: Props) => {
   const { results } = props;
   return !results || !results.length
     ? <em>No results found</em>
-    : <div className='DfBackground'>{results.map((res, i) => {
-      switch (res._index) {
-        case ElasticIndex.blogs:
-          return <Segment key={i}><ViewBlog id={res._id} previewDetails withFollowButton /></Segment>;
-        case ElasticIndex.posts:
-          return <ViewPost key={i} id={res._id} preview withLink={true} />;
-        case ElasticIndex.profiles:
-          return <ViewProfile key={i} id={res._id} preview />;
-        default:
-          return null;
-      }
-    })}</div>;
+    : <div className='DfBackground'>{results.map(resultToPreview)}</div>;
 };
 
 type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
 
 const Tabs = () => {
-  const [activeIndex, setActiveIndex] = useState(AllIndexes);
-
   const router = useRouter();
 
-  const handleTabChange: OnTabChangeFn = (e, data) => {
+  const getTabIndexFromUrl = (): number => {
+    const tabFromUrl = router.query.tab;
+    const tabIndex = panes.findIndex(pane => pane.key == tabFromUrl);
+    return tabIndex < 0 ? 0 : tabIndex;
+  };
+
+  const initialTabIndex = getTabIndexFromUrl();
+  const initialTabKey = panes[initialTabIndex].key;
+  const [activeTabKey, setActiveTabKey] = useState(initialTabKey);
+
+  const handleTabChange: OnTabChangeFn = (_event, data) => {
     if (!data || !data.panes) return;
 
     const activeTab = data.panes[data.activeIndex as number];
-    const indexName = (activeTab as unknown as { key: string }).key;
+    const activeKey = (activeTab as unknown as { key: string }).key;
 
-    router.query.tab = activeTab.menuItem;
+    setActiveTabKey(activeKey);
+
+    router.query.tab = activeKey;
     Router.push({
       pathname: router.pathname,
       query: router.query
     });
-
-    setActiveIndex(indexName);
-  };
-
-  const panes = [
-    {
-      key: AllIndexes,
-      menuItem: 'All'
-    },
-    {
-      key: ElasticIndex.blogs,
-      menuItem: 'Blogs'
-    },
-    {
-      key: ElasticIndex.posts,
-      menuItem: 'Posts'
-    },
-    {
-      key: ElasticIndex.profiles,
-      menuItem: 'Profiles'
-    }
-  ];
-
-  const routerTabKey = (): string => {
-    const pane = panes.find(pane => pane.menuItem == useRouter().query.tab);
-    return pane !== undefined ? pane.key : AllIndexes;
   };
 
   return <>
-    {console.log('TabKey', routerTabKey())}
-    <Tab panes={panes} onTabChange={handleTabChange} defaultActiveIndex={routerTabKey()} />
+    <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex} />
     <ReactiveComponent
       componentId='tab'
       customQuery={() => {
-        return activeIndex === AllIndexes
+        return activeTabKey === AllTabKey
           ? null
           : {
             query: {
               term: {
-                _index: activeIndex
+                _index: ElasticIndex[activeTabKey as ElasticIndexTypes]
               }
             }
           };
