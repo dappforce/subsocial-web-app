@@ -6,7 +6,7 @@ import Section from './Section';
 
 type Props = {
   className?: string,
-  dataSource: any,
+  dataSource: any[],
   renderItem: (item: any, index: number) => JSX.Element
   title?: React.ReactNode
 };
@@ -50,7 +50,7 @@ export default (props: Props) => {
     <List
       className={'DfListData ' + className}
       itemLayout='vertical'
-      size='large'1
+      size='large'
       pagination={{
         current: currentPage,
         defaultCurrent: DEFAULT_CURENT_PAGE,

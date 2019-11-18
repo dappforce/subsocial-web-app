@@ -301,9 +301,8 @@
     border-top: #ccc 1px solid;
     font-size: .9rem;
   }
-  .ant-menu-item {
-    padding-left: .5rem !important;
-    height: auto;
+  .content { 
+    margin-top: 1.5rem;
   }
   .handle {
     color: #666;
