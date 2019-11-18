@@ -1,3 +1,13 @@
+.DfPageContent {
+  width: 60%;
+}
+
+@media (max-width: 1200px) {
+  .DfPageContent {
+    width: 90%;
+  }
+}
+
 .DfPostImage {
   max-width: 100%;
 }

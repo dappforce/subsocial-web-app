@@ -4,6 +4,7 @@ import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { withMulti } from '@polkadot/ui-api';
 import { useMyAccount } from '../components/utils/MyAccountContext';
+import ListFollowingBlogs from '../components/blogs/ListFollowingBlogs';
 
 type MenuItem = {
   name: string,
@@ -11,12 +12,22 @@ type MenuItem = {
   image: string
 };
 
-const InnerMenu = () => {
+type Props = {
+  collapsed: boolean
+}
+
+const InnerMenu = (props: Props) => {
+  const { collapsed } = props;
   const { state: { address: myAddress } } = useMyAccount();
   const router = useRouter();
   const { pathname } = router;
 
   const MenuItems: MenuItem[] = [
+    {
+      name: 'Feed',
+      page: '/feed',
+      image: 'profile'
+    },
     {
       name: 'All blogs',
       page: '/all',
@@ -38,11 +49,6 @@ const InnerMenu = () => {
       image: 'book'
     },
     {
-      name: 'Feed',
-      page: '/feed',
-      image: 'profile'
-    },
-    {
       name: 'Notifications',
       page: '/notifications',
       image: 'notification'
@@ -55,18 +61,22 @@ const InnerMenu = () => {
   ];
 
   return (
-      <Menu
+    <Menu
         defaultSelectedKeys={[pathname || '/all']}
         mode='inline'
         theme='light'
         style={{ height: '100%', borderRight: 0 }}
-      >
+    >
       {MenuItems.map(item =>
       <Menu.Item key={item.page} onClick={() => Router.push(item.page)}>
         <Icon type={item.image} />
         <span>{item.name}</span>
       </Menu.Item>)}
-      </Menu>
+      {!collapsed &&
+        <Menu.ItemGroup className='DfFollowed' key='followed' title='FOLLOWED BLOGS'>
+          <Menu.Item key='1'><ListFollowingBlogs mini/></Menu.Item>
+        </Menu.ItemGroup>}
+    </Menu>
   );
 };
 

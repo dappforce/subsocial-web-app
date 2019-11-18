@@ -120,14 +120,6 @@
   }
 }
 
-.apps--SideBar-logo {
-  max-height: 26px !important;
-  margin: 1rem 1.5rem 1rem .75rem !important;
-}
-.collapsed .apps--SideBar-logo {
-  margin: 1rem .75rem 1rem .5rem !important
-}
-
 .DfForm .ui--Labelled {
   align-items: end;
   &>label {
@@ -200,6 +192,11 @@
 
 .DfPopup-about{
   margin-top: .5rem;
+}
+
+.DfPopup-links {
+  display: flex;
+  justify-content: space-around;
 }
 
 .DfMdEditor {
@@ -297,4 +294,25 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
+}
+
+.DfFollowed {
+  .ant-menu-item-group-title {
+    border-top: #ccc 1px solid;
+    font-size: .9rem;
+  }
+  .ant-menu-item {
+    padding-left: .5rem !important;
+    height: auto;
+  }
+  .handle {
+    color: #666;
+  }
+  .container.highlight {
+    margin-top: .5rem;
+    margin-right: .3rem;
+  }
+  img {
+    margin-top: .5rem;
+  }
 }

@@ -4,46 +4,33 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { BlogId } from '../types';
-import Section from '../utils/Section';
 import ViewBlog from './ViewBlog';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { pluralizeText } from '../utils/utils';
-import { List } from 'antd';
+import ListData from '../utils/ListData';
 
 type MyBlogProps = {
   id: AccountId,
+  mini?: boolean
   followedBlogsIds?: BlogId[]
 };
 
 const InnerListMyBlogs = (props: MyBlogProps) => {
-  const { followedBlogsIds } = props;
+  const { followedBlogsIds, mini = false } = props;
   const totalCount = followedBlogsIds !== undefined ? followedBlogsIds && followedBlogsIds.length : 0;
+  if (!followedBlogsIds) return <em>Loading</em>;
 
-  return (
-  <Section title={pluralizeText(totalCount, 'Following blog')}>{
-    followedBlogsIds && followedBlogsIds.length === 0
-      ? <em>No blogs created yet.</em>
-      : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-          <List
-            itemLayout='vertical'
-            size='large'
-            pagination={{
-              onChange: page => {
-                console.log(page);
-              },
-              pageSize: 3
-            }}
+  return (mini
+      ? <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+          <ListData
+            title={pluralizeText(totalCount, 'Following blog')}
             dataSource={followedBlogsIds}
             renderItem={(item,index) => (
-              <List.Item
-                key={index}
-              >
-                <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />
-              </List.Item>
+                <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
             )}
           />
-        </div>
-  }</Section>
+      </div>
+      : <>{followedBlogsIds.map((item, index) => <ViewBlog {...props} key={index} id={item} miniPreview/>)}</>
   );
 };
 
