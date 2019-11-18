@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { List, Select } from 'antd';
+import { List } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
 import Section from './Section';
-const { Option } = Select;
 
 type Props = {
-  className?: string
+  className?: string,
   dataSource: any,
   renderItem: (item: any, index: number) => JSX.Element
   title?: React.ReactNode
@@ -14,7 +13,7 @@ type Props = {
 
 export default (props: Props) => {
   const { dataSource,renderItem, className, title } = props;
-
+  const total = dataSource.length;
   const DEFAULT_PAGE_SIZE = 1;
   const DEFAULT_CURENT_PAGE = 1;
 
@@ -28,8 +27,10 @@ export default (props: Props) => {
     if (isEmpty(routerQuery)) {
       setPageSize(DEFAULT_PAGE_SIZE);
       setCurrentPage(DEFAULT_CURENT_PAGE);
+
       routerQuery.size = DEFAULT_PAGE_SIZE.toString();
       routerQuery.page = DEFAULT_CURENT_PAGE.toString();
+
       Router.push({
         pathname: router.pathname,
         query: routerQuery
@@ -37,32 +38,15 @@ export default (props: Props) => {
     } else {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);
+
       setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
       setPageSize(_pageSize > 0 && _pageSize < 100 ? _pageSize : DEFAULT_PAGE_SIZE);
     }
   }, [false]);
 
-  const itemsSelect = [1,5,10,20,30,40,50,75,100];
+  const itemsSelect = ['1','5','10','20','30','40','50','75','100'];
 
-  const SelectPageSize = () => (
-    <Select
-      style={{ width: '5rem' }}
-      value={pageSize}
-      onChange={(size: number) => {
-        console.log(size);
-        setPageSize(size);
-        routerQuery.size = size.toString();
-        Router.push({
-          pathname: router.pathname,
-          query: routerQuery
-        }).catch(console.log);
-      }}
-    >
-      {itemsSelect.map((item, index) => <Option key={index} value={item}>{item}</Option>)}
-    </Select>
-  );
-
-  return <Section title={<div className='DfTitle--List'>{title}<SelectPageSize/></div>}>
+  return <Section title={<div className='DfTitle--List'>{title}</div>}>
     <List
       className={'DfListData ' + className}
       itemLayout='vertical'
@@ -73,12 +57,24 @@ export default (props: Props) => {
         onChange: page => {
           setCurrentPage(page);
           routerQuery.page = page.toString();
+
           Router.push({
             pathname: router.pathname,
             query: routerQuery
           }).catch(console.log);
         },
-        pageSize: pageSize
+        pageSize: pageSize,
+        showSizeChanger: total > 0,
+        onShowSizeChange: size => {
+          setPageSize(size);
+          routerQuery.size = size.toString();
+
+          Router.push({
+            pathname: router.pathname,
+            query: routerQuery
+          }).catch(console.log);
+        },
+        pageSizeOptions: itemsSelect
       }}
       dataSource={dataSource}
       renderItem={(item,index) => (
@@ -89,5 +85,5 @@ export default (props: Props) => {
         </List.Item>
       )}
     />
-  </Section>
+  </Section>;
 };

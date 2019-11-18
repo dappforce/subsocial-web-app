@@ -109,7 +109,7 @@ function ViewPostInternal (props: ViewPostProps) {
 
       loadSharedPost().catch(err => new Error(err));
     }
-  }, [ false ]);
+  }, [ ipfs_hash ]);
 
   const RenderDropDownMenu = () => {
 

@@ -10,7 +10,6 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
 import { BlogId, Blog, PostId, BlogData } from '../types';
 import { MyAccountProps, withMyAccount } from '../utils/MyAccount';
-import Section from '../utils/Section';
 import { ViewPost } from '../posts/ViewPost';
 import { CreatedBy } from '../utils/CreatedBy';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
@@ -170,9 +169,6 @@ function Component(props: Props) {
   }
 
   const renderPostPreviews = () => {
-    if (!postIds || postIds.length === 0) {
-      return <Section><em>This blog has no posts yet</em></Section>;
-    }
     return <ListData
       title={postsSectionTitle()}
       dataSource={postIds}
@@ -180,16 +176,17 @@ function Component(props: Props) {
         <ViewPost key={index} id={id} preview />}
     />;
   };
+  const NewPostButton = () => <Link href={`/new-post?blogId=${id}`}>
+    <a className='ui tiny button'>
+      <i className='plus icon' />
+      Write post
+    </a>
+  </Link>;
 
   const postsSectionTitle = () => {
     return <div>
       <span style={{ marginRight: '.5rem' }}>{pluralizeText(postsCount, 'Post')}</span>
-      <Link href={`/new-post?blogId=${id}`}>
-        <a className='ui tiny button'>
-          <i className='plus icon' />
-          Write post
-        </a>
-      </Link>
+      {<NewPostButton />}
     </div>;
   };
 
