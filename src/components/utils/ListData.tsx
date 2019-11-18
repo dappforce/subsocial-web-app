@@ -50,7 +50,7 @@ export default (props: Props) => {
     <List
       className={'DfListData ' + className}
       itemLayout='vertical'
-      size='large'
+      size='large'1
       pagination={{
         current: currentPage,
         defaultCurrent: DEFAULT_CURENT_PAGE,
@@ -65,7 +65,7 @@ export default (props: Props) => {
         },
         pageSize: pageSize,
         showSizeChanger: total > 0,
-        onShowSizeChange: size => {
+        onShowSizeChange: (size: number) => {
           setPageSize(size);
           routerQuery.size = size.toString();
 
