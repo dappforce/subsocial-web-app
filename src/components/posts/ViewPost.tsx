@@ -243,7 +243,7 @@ function ViewPostInternal (props: ViewPostProps) {
             <div className='DfInfo'>
               <div className='DfRow'>
                 {renderPostCreator(originalPost.created)}
-                {<RenderDropDownMenu/>}
+                <RenderDropDownMenu/>
               </div>
               {renderContent(originalPost, originalContent)}
             </div>
