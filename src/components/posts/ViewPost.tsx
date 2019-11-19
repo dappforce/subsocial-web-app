@@ -216,7 +216,7 @@ function ViewPostInternal (props: ViewPostProps) {
         <div className='DfInfo'>
           <div className='DfRow'>
             {renderPostCreator(created)}
-            {<RenderDropDownMenu/>}
+            <RenderDropDownMenu/>
           </div>
           {renderContent(post, content)}
         </div>
@@ -234,7 +234,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
           <div className='DfRow'>
             {renderPostCreator(created)}
-            {<RenderDropDownMenu/>}
+            <RenderDropDownMenu/>
           </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
         {/* TODO add body*/}
@@ -243,7 +243,7 @@ function ViewPostInternal (props: ViewPostProps) {
             <div className='DfInfo'>
               <div className='DfRow'>
                 {renderPostCreator(originalPost.created)}
-                {<RenderDropDownMenu/>}
+                <RenderDropDownMenu/>
               </div>
               {renderContent(originalPost, originalContent)}
             </div>
@@ -265,7 +265,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <SeoHeads title={title} name={title} desc={body} image={image} />
       <h1 style={{ display: 'flex' }}>
         <span style={{ marginRight: '.5rem' }}>{title}</span>
-        {<RenderDropDownMenu/>}
+        <RenderDropDownMenu/>
       </h1>
       {renderStatsPanel(post)}
       {withCreatedBy && <CreatedBy created={post.created} />}
