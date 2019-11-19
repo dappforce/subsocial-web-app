@@ -186,7 +186,7 @@ function Component(props: Props) {
   const postsSectionTitle = () => {
     return <div>
       <span style={{ marginRight: '.5rem' }}>{pluralizeText(postsCount, 'Post')}</span>
-      {<NewPostButton />}
+      <NewPostButton />
     </div>;
   };
 
