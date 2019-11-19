@@ -234,7 +234,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
           <div className='DfRow'>
             {renderPostCreator(created)}
-            {<RenderDropDownMenu/>}
+            <RenderDropDownMenu/>
           </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
         {/* TODO add body*/}
