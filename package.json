@@ -82,7 +82,6 @@
     "react-infinite-scroll-component": "^4.5.3",
     "react-simplemde-editor": "^4.1.0",
     "react-tooltip": "^3.9.2",
-    "rucksack-css": "^1.0.2",
     "rxjs": "^6.4.0",
     "source-map-explorer": "^1.7.0",
     "storybook-react-router": "^1.0.8",
