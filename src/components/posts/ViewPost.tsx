@@ -265,7 +265,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <SeoHeads title={title} name={title} desc={body} image={image} />
       <h1 style={{ display: 'flex' }}>
         <span style={{ marginRight: '.5rem' }}>{title}</span>
-        {<RenderDropDownMenu/>}
+        <RenderDropDownMenu/>
       </h1>
       {renderStatsPanel(post)}
       {withCreatedBy && <CreatedBy created={post.created} />}
