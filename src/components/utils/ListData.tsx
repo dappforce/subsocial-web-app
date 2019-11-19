@@ -50,7 +50,7 @@ export default (props: Props) => {
     <List
       className={'DfListData ' + className}
       itemLayout='vertical'
-      size='large'1
+      size='large'
       pagination={{
         current: currentPage,
         defaultCurrent: DEFAULT_CURENT_PAGE,
