@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Section from '../utils/Section';
 import { hexToNumber } from '@polkadot/util';
 import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../types';
@@ -165,7 +164,7 @@ export function Notification (props: ActivityProps) {
               setMessage(Events.CommentCreated);
             }
           }
-          setSubject(<Link href={`/post?id=${postId.toString()}`}><ViewPost id={postId} withCreatedBy={false} nameOnly withLink={false} /></Link>);
+          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
           break;
         }
         case 'PostShared': {
@@ -194,14 +193,14 @@ export function Notification (props: ActivityProps) {
       }
     };
     loadActivity().catch(err => new Error(err));
-  }, [postId > new PostId(0)]);
+  }, [postId > new PostId(0), message ]);
 
   return <div style={{ borderBottom: '1px solid #ddd' }}>
     <AddressMiniDf
       value={account}
       isShort={true}
       isPadded={false}
-      size={48}
+      size={36}
       date={formatDate}
       event={message}
       subject={subject}
