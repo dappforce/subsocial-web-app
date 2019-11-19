@@ -43,7 +43,7 @@ const SideMenu = (props: Props) => {
     app={AllElasticIndexes.join(',')}
   >
   <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
-    <Header style={{ background: '#fff', padding: '0 1rem', borderBottom: '1px solid #ddd', position: 'fixed', zIndex: 1, width: '100%' }} className='DfHeader'>
+    <Header className='DfHeader'>
       <div>
         <Button type='link' onClick={toggleCollapsed}>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
