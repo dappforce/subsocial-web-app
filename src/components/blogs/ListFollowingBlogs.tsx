@@ -7,7 +7,7 @@ import { BlogId } from '../types';
 import ViewBlog from './ViewBlog';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { pluralizeText } from '../utils/utils';
-import ListData from '../utils/ListData';
+import ListData from '../utils/DataList';
 
 type MyBlogProps = {
   id: AccountId,

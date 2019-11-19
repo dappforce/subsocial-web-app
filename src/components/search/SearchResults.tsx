@@ -7,7 +7,7 @@ import ViewProfile from '../profiles/ViewProfile';
 import { ElasticIndex, ElasticIndexTypes } from './ElasticConfig';
 import Section from '../utils/Section';
 import Router, { useRouter } from 'next/router';
-import ListData from '../utils/ListData';
+import ListData from '../utils/DataList';
 
 type DataResults = {
   _id: string;
@@ -56,7 +56,7 @@ const Previews = (props: Props) => {
   const { results } = props;
   return !results || !results.length
     ? <em>No results found</em>
-    : <div className='DfBackground'>
+    : <div className='DfBgColor'>
       <ListData
         dataSource={results}
         renderItem={(res, i) => resultToPreview(res,i)}

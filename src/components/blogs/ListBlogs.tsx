@@ -12,7 +12,7 @@ import { BlogId } from '../types';
 import { AccountId } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import ListData from '../utils/ListData';
+import ListData from '../utils/DataList';
 
 type Props = ApiProps & I18nProps & {
   nextBlogId?: BN

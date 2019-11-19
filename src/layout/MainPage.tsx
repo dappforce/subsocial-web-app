@@ -17,14 +17,12 @@ const Connecting = dynamic(() => import('../components/main/Connecting'), { ssr:
 import Menu from './SideMenu';
 import Signer from '../components/ui-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
-// import styled from 'styled-components';
 import { QueueProps } from '@polkadot/ui-app/Status/types';
 import Status from '../components/main/Status';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../components/search/ElasticConfig';
-import { Layout, Icon, Button } from 'antd';
-import Search from '../components/search/Search';
-import InputAddress from '../components/utils/InputAddress';
+import { Layout } from 'antd';
+import TopMenu from './TopMenu';
 
 const { Header, Sider, Content } = Layout;
 
@@ -43,33 +41,13 @@ const SideMenu = (props: Props) => {
     app={AllElasticIndexes.join(',')}
   >
   <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
-    <Header style={{ background: '#fff', padding: '0 1rem', borderBottom: '1px solid #ddd', position: 'fixed', zIndex: 1, width: '100%' }} className='DfHeader'>
-      <div>
-        <Button type='link' onClick={toggleCollapsed}>
-          <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
-        </Button>
-        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
-      </div>
-      <Search />
-      <div>
-        <InputAddress
-          className='DfTopBar--InputAddress'
-          type='account'
-          withLabel={false}
-        />
-      </div>
+    <Header className='DfHeader'>
+      <TopMenu toggleCollapsed={toggleCollapsed}/>
     </Header>
     <Layout style={{ marginTop: '64px' }}>
       <Sider
         width={200}
-        style={{
-          background: '#fff',
-          borderRight: '1px solid #ddd',
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0
-        }}
+        className='DfSider'
         trigger={null}
         collapsed={collapsed}
       >

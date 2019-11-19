@@ -262,7 +262,7 @@
   }
 }
 
-.DfBackground {
+.DfBgColor {
   background-color: #fafafa;
 }
 
@@ -274,6 +274,12 @@
 }
 
 .DfHeader {
+  background: '#fff';
+  padding: '0 1rem';
+  border-bottom: '1px solid #ddd';
+  position: 'fixed';
+  z-index: 1;
+  width: '100%';
   display: 'flex';
   align-items: baseline;
   justify-content: space-between;
@@ -283,7 +289,7 @@
   background-color: #fafafa !important;
 }
 
-.DfListData { 
+.DfDataList { 
   .ant-list-pagination {
     display: flex;
     justify-content: center;
@@ -296,9 +302,10 @@
   width: 100%;
 }
 
-.DfFollowed {
+.DfSideMenu--FollowedBlogs {
   .ant-menu-item-group-title {
     border-top: #ccc 1px solid;
+    text-transform: uppercase;
     font-size: .9rem;
   }
   .content { 
@@ -314,4 +321,13 @@
   img {
     margin-top: .5rem;
   }
+}
+
+.DfSider {
+  background: '#fff';
+  border-right: '1px solid #ddd';
+  overflow: 'auto';
+  height: '100vh';
+  position: 'fixed';
+  left: 0;
 }

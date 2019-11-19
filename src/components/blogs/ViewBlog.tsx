@@ -19,7 +19,7 @@ import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
 import { pluralizeText } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
-import Router from 'next/router';import ListData from '../utils/ListData';
+import Router from 'next/router';import ListData from '../utils/DataList';
 
 type Props = MyAccountProps & {
   preview?: boolean,

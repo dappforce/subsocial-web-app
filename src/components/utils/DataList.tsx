@@ -3,6 +3,7 @@ import { List } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
 import Section from './Section';
+import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from 'src/config/listData.config';
 
 type Props = {
   className?: string,
@@ -14,8 +15,6 @@ type Props = {
 export default (props: Props) => {
   const { dataSource,renderItem, className, title } = props;
   const total = dataSource.length;
-  const DEFAULT_PAGE_SIZE = 1;
-  const DEFAULT_CURENT_PAGE = 1;
 
   const router = useRouter();
   const routerQuery = router.query;
@@ -40,15 +39,15 @@ export default (props: Props) => {
       const _pageSize = parseInt(routerQuery.size as string, 10);
 
       setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
-      setPageSize(_pageSize > 0 && _pageSize < 100 ? _pageSize : DEFAULT_PAGE_SIZE);
+      setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
     }
   }, [false]);
 
-  const itemsSelect = ['1','5','10','20','30','40','50','75','100'];
+  const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
 
   return <Section title={<div className='DfTitle--List'>{title}</div>}>
     <List
-      className={'DfListData ' + className}
+      className={'DfDataList ' + className}
       itemLayout='vertical'
       size='large'
       pagination={{
