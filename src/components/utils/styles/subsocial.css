@@ -296,7 +296,7 @@
   width: 100%;
 }
 
-.DfFollowed {
+.DfSideMenu--FollowedBlogs {
   .ant-menu-item-group-title {
     border-top: #ccc 1px solid;
     font-size: .9rem;
