@@ -3,7 +3,7 @@ import { List } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
 import Section from './Section';
-import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from 'src/config/listData.config';
+import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/listData.config';
 
 type Props = {
   className?: string,

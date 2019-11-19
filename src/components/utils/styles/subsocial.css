@@ -274,13 +274,13 @@
 }
 
 .DfHeader {
-  background: '#fff';
-  padding: '0 1rem';
-  border-bottom: '1px solid #ddd';
-  position: 'fixed';
+  background: #fff;
+  padding: 0 1rem;
+  border-bottom: 1px solid #ddd;
+  position: fixed;
   z-index: 1;
-  width: '100%';
-  display: 'flex';
+  width: 100%;
+  display: flex;
   align-items: baseline;
   justify-content: space-between;
 }
@@ -324,10 +324,10 @@
 }
 
 .DfSider {
-  background: '#fff';
-  border-right: '1px solid #ddd';
-  overflow: 'auto';
-  height: '100vh';
-  position: 'fixed';
+  background: #fff;
+  border-right: 1px solid #ddd;
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
   left: 0;
 }
