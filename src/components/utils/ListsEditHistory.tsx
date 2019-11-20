@@ -285,7 +285,7 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
 
   return (<div style={{ textAlign: 'left', margin: '1rem' }}>
       <div className='ui massive relaxed middle aligned list FullProfile'>
-        <div className={`item ProfileDetails MyProfile`}>
+        <div className={`item ProfileDetails MyBlog`}>
         {content.image
         ? <img className='ui avatar image' src={content.image} />
         : <IdentityIcon className='image' value={edited.account} size={40} />
@@ -386,7 +386,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
 
   return (<div style={{ textAlign: 'left', margin: '1rem' }}>
       <div className='ui massive relaxed middle aligned list FullProfile'>
-        <div className={`item ProfileDetails MyProfile`}>
+        <div className={`item ProfileDetails MyBlog`}>
         {content.avatar
         ? <img className='ui avatar image' src={content.avatar} />
         : <IdentityIcon className='image' value={edited.account} size={40} />

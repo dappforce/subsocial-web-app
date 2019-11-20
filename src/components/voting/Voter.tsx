@@ -128,7 +128,7 @@ export const Voter = (props: VoterProps) => {
     };
 
     return <>
-      <Button.Group vertical={isComment} className={`DfVoter`}>
+      <Button.Group className={`DfVoter`}>
         {renderTxButton(true)}
         <Button content={calcUpvotesPercentage()} variant='primary' className={`${colorCount} active`} onClick={() => setOpen(true)}/>
         {renderTxButton(false)}

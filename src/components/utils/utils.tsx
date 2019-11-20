@@ -80,21 +80,6 @@ type LoadProps = {
   id: AccountId;
 };
 
-export function withIdFromMyAddress (Component: React.ComponentType<LoadProps>) {
-  return function (props: UrlHasAddressProps) {
-    const {
-      match: {
-        params: { address }
-      }
-    } = props;
-    try {
-      return <Component id={new AccountId(address)} {...props} />;
-    } catch (err) {
-      return <em>Invalid address: {address}</em>;
-    }
-  };
-}
-
 export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
   return function (props: LoadProps) {
     const router = useRouter();
@@ -106,7 +91,6 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
     }
   };
 }
-
 
 type PropsWithSocialAccount = {
   profile?: Profile;

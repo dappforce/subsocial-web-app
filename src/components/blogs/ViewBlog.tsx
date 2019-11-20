@@ -14,12 +14,13 @@ import { ViewPost } from '../posts/ViewPost';
 import { CreatedBy } from '../utils/CreatedBy';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Segment } from 'semantic-ui-react';
 import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
 import { pluralizeText } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
 import Router from 'next/router';import ListData from '../utils/DataList';
+import { Avatar } from 'antd';
 
 type Props = MyAccountProps & {
   preview?: boolean,
@@ -31,7 +32,8 @@ type Props = MyAccountProps & {
   id: BlogId,
   blogById?: Option<Blog>,
   postIds?: PostId[],
-  followers?: AccountId[]
+  followers?: AccountId[],
+  imageSize?: number
 };
 
 function Component(props: Props) {
@@ -48,7 +50,8 @@ function Component(props: Props) {
     previewDetails = false,
     withFollowButton = false,
     myAddress,
-    postIds = []
+    postIds = [],
+    imageSize = 36
   } = props;
 
   const blog = blogById.unwrap();
@@ -100,10 +103,10 @@ function Component(props: Props) {
   };
 
   const renderMiniPreview = () => (
-    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyProfile'}`}>
+    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <img className='ui avatar image' src={image} height={28} width={28} />
-        : <IdentityIcon className='image' value={account} size={28} />
+        ? <Avatar size={imageSize} src={image} />
+        : <IdentityIcon className='image' value={account} size={imageSize} />
       }
       <div className='content'>
         <div className='handle'>{name}</div>
@@ -112,11 +115,11 @@ function Component(props: Props) {
   );
 
   const renderPreview = () => {
-    return <div className={`item ProfileDetails ${isMyBlog && 'MyProfile'}`}>
+    return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <img className='ui avatar image' src={image} />
-          : <IdentityIcon className='image' value={account} size={40} />
+          ? <Avatar size={imageSize} src={image} />
+          : <IdentityIcon className='image' value={account} size={imageSize} />
         }
         <div className='content'>
           <div className='header'>
@@ -135,16 +138,16 @@ function Component(props: Props) {
 
   const renderPreviewExtraDetails = () => {
     return <>
-      <div className={`DfBlogStats ${isMyBlog && 'MyProfile'}`}>
-        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem ' + (!followers && 'disable')}>
-          {pluralizeText(followers, 'Follower')}
-        </div>
-
+      <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
         <Link href={`/blog?id=${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
             {pluralizeText(postsCount, 'Post')}
           </a>
         </Link>
+
+        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem ' + (!followers && 'disable')}>
+          {pluralizeText(followers, 'Follower')}
+        </div>
 
         <MutedSpan className='DfStatItem'>Score: {score.toNumber()}</MutedSpan>
 
@@ -165,7 +168,7 @@ function Component(props: Props) {
   } else if (miniPreview) {
     return renderMiniPreview();
   } else if (preview || previewDetails) {
-    return renderPreview();
+    return <Segment>{renderPreview()}</Segment>;
   }
 
   const renderPostPreviews = () => {

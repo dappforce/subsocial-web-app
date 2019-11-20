@@ -8,6 +8,10 @@
   }
 }
 
+.DfBlogStats.MyBlog {
+  margin-top: 1rem;
+}
+
 .DfPostImage {
   max-width: 100%;
 }
@@ -28,9 +32,6 @@
   }
   &.ui.list>.item:last-child {
     padding-bottom: .75rem;
-  }
-  .MyProfile {
-    background-color: #FFF8E1;
   }
 }
 .ProfileDetails {
@@ -76,18 +77,28 @@
   }
 }
 .ui.threaded.comments .comment .comments{
-  padding: 1rem 0 0 1.2rem;
+  padding: 0 0 0 1.2rem;
   margin: -1rem 0 0 1.25rem;
 }
 .DfCommentBox {
   display: flex !important;
   align-items: flex-start;
+  margin-top: 1rem;
+  .content {
+    margin-left: 3rem;
+  }
+  .reply {
+    margin-left: .5rem;
+    font-weight: bold;
+  }
+}
+.DfCommentBox:first-child {
   margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .ui.button {
-  min-width: 8rem;
-  max-height: 2.8rem;
+  height: min-content;
 }
 
 .ui.basic.button {
@@ -104,11 +115,15 @@
   &.vertical {
     margin-right: .5rem;
   }
+  .ui.button:first-of-type {
+    padding-left: 0;
+  }
   .ui.button {
     background-color: transparent !important;
     color: #2d2d2d;
     min-width: initial;
     max-height: initial;
+    padding: .5rem;
 
     &.red {
       &:hover,

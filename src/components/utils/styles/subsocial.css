@@ -289,6 +289,10 @@
   background-color: #fafafa !important;
 }
 
+.ui.segment {
+  background-color: #fff;
+}
+
 .DfDataList { 
   .ant-list-pagination {
     display: flex;
@@ -308,9 +312,6 @@
     text-transform: uppercase;
     font-size: .9rem;
   }
-  .content { 
-    margin-top: 1.5rem;
-  }
   .handle {
     color: #666;
   }
@@ -318,8 +319,12 @@
     margin-top: .5rem;
     margin-right: .3rem;
   }
-  img {
-    margin-top: .5rem;
+  .content {
+    display: flex;
+    align-items: center;
+  }
+  .item {
+    margin-left: .5rem;
   }
 }
 
@@ -330,4 +335,8 @@
   height: 100vh;
   position: fixed;
   left: 0;
+}
+
+.ant-list-something-after-last-item .ant-spin-container > .ant-list-items > .ant-list-item:last-child {
+  border: none;
 }

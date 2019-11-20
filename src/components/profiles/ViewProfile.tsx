@@ -119,7 +119,7 @@ function Component(props: Props) {
 
   const renderPreview = () => {
     return <div>
-      <div className={`item ProfileDetails MyProfile`}>
+      <div className={`item ProfileDetails MyBlog`}>
         {hasAvatar
           ? <img className='DfAvatar' height={size} width={size} src={avatar} />
           : <IdentityIcon className='image' value={address} size={size} />

@@ -64,15 +64,15 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
 
   const totalCount = myblogsIds.length;
   return (<>
-  <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
-  <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-    <ListData
-      title={`MyBlogs (${totalCount})`}
-      dataSource={myblogsIds}
-      renderItem={(index, item) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
-    />
-  </div>
-  }</>
+    <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
+    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <ListData
+        title={`MyBlogs (${totalCount})`}
+        dataSource={myblogsIds}
+        renderItem={(item, index) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
+      />
+    </div>
+  </>
   );
 };
 

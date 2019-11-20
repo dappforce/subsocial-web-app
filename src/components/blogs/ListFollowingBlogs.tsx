@@ -30,7 +30,7 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
             )}
           />
       </div>
-      : <>{followedBlogsIds.map((item, index) => <ViewBlog {...props} key={index} id={item} miniPreview/>)}</>
+      : <>{followedBlogsIds.map((item, index) => <ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/>)}</>
   );
 };
 
