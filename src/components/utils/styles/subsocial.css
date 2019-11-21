@@ -244,6 +244,7 @@
 .DfSearch {
   width: 45%;
   color: rgba(0, 0, 0, 0.7);
+  z-index:2;
   input {
     border-radius: .5rem;
   }
