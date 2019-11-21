@@ -20,7 +20,7 @@ import TxButton from '../utils/TxButton';
 import { pluralizeText } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
 import Router from 'next/router';import ListData from '../utils/DataList';
-import { Avatar } from 'antd';
+import { Avatar, Tag } from 'antd';
 
 type Props = MyAccountProps & {
   preview?: boolean,
@@ -105,7 +105,7 @@ function Component(props: Props) {
   const renderMiniPreview = () => (
     <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <Avatar size={imageSize} src={image} />
+        ? <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
         : <IdentityIcon className='image' value={account} size={imageSize} />
       }
       <div className='content'>
@@ -124,6 +124,7 @@ function Component(props: Props) {
         <div className='content'>
           <div className='header'>
             <NameAsLink />
+            {isMyBlog && <Tag color='gold'>My blog</Tag>}
             {renderDropDownMenu()}
           </div>
           <div className='description'>

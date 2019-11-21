@@ -62,7 +62,6 @@ function ViewPostInternal (props: ViewPostProps) {
     created,
     ipfs_hash,
     extension,
-    score,
     isRegularPost,
     isSharedComment,
     isSharedPost
@@ -195,7 +194,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderStatsPanel = (post: Post) => {
     if (post.id === undefined) return null;
 
-    const { upvotes_count, downvotes_count, comments_count, shares_count } = post;
+    const { upvotes_count, downvotes_count, comments_count, shares_count, score } = post;
     const counts = downvotes_count.toNumber() + upvotes_count.toNumber();
     return (<>
     <div className='DfCountsPreview'>

@@ -128,7 +128,7 @@ const InnerForm = (props: FormProps) => {
     closeModal && closeModal();
 
     const _id = id ? id : getNewIdFromEvent<PostId>(_txResult);
-    _id && goToView(_id);
+    _id && isRegularPost && goToView(_id);
   };
 
   const buildTxParams = () => {

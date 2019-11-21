@@ -64,7 +64,7 @@ export default (props: Props) => {
         },
         pageSize: pageSize,
         showSizeChanger: total > 0,
-        onShowSizeChange: (size: number) => {
+        onShowSizeChange: (_,size: number) => {
           setPageSize(size);
           routerQuery.size = size.toString();
 

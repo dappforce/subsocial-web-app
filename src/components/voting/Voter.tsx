@@ -87,7 +87,7 @@ export const Voter = (props: VoterProps) => {
           return '0%';
         }
 
-        return (res).toString() + '%';
+        return Math.ceil(res).toString() + '%';
       };
 
       if (count === 0) {

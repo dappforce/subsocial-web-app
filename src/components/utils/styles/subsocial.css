@@ -108,6 +108,13 @@
   }
 }
 
+.DfCommentsByPost {
+  .DfSection-title {
+    font-size: 1.35rem;
+    font-weight: bold !important;
+  }
+}
+
 .DfSection {
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -165,8 +172,8 @@
 .DfAvatar{
   margin-right: .5rem;
   display: inline-block;
-  border-radius: 500rem;
   vertical-align: middle;
+  border: 1px solid #ddd;
 }
 
 .ui.top.left.flowing.popup.transition.visible{
@@ -279,7 +286,7 @@
   padding: 0 1rem;
   border-bottom: 1px solid #ddd;
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   display: flex;
   align-items: baseline;
@@ -325,7 +332,7 @@
     align-items: center;
   }
   .item {
-    margin-left: .5rem;
+    padding: .5rem;
   }
 }
 

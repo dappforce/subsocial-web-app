@@ -103,7 +103,7 @@ function Component(props: Props) {
     </Dropdown>);
   };
 
-  const getName = () => fullname || username || address;
+  const getName = () => (fullname || username || address) as string;
 
   const NameAsLink = () => (
     <Link href={`/profile?address=${address}`}>
@@ -131,7 +131,7 @@ function Component(props: Props) {
           </div>
           {renderCreateProfileButton}
           <div className='about'>
-            <MutedSpan className='DfScore'>Reputaton: {reputation}</MutedSpan>
+            <MutedSpan className='DfScore'>Reputation: {reputation}</MutedSpan>
             <div className='DfSocialLinks'>
               {hasEmail &&
                 <a
@@ -203,7 +203,7 @@ function Component(props: Props) {
   }
 
   return <>
-    <SeoHeads title={fullname || 'Profile'} name={name} desc={about} image={avatar} />
+    <SeoHeads title={getName()} name={name} desc={about} image={avatar} />
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}

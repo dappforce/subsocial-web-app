@@ -8,6 +8,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/ui-api/types';
 import { api } from '@polkadot/ui-api';
 import { Option } from '@polkadot/types';
+import moment from 'moment-timezone';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { partition } from 'lodash';
@@ -20,6 +21,7 @@ import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/router';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
+import { Pluralize } from '../utils/Plularize';
 
 type Props = ApiProps & {
   postId: PostId,
@@ -62,7 +64,7 @@ export function CommentsTree (props: Props) {
 
   const renderComments = () => {
     if (!commentsCount) {
-      return null;
+      return <></>;
     }
 
     if (!loaded) {
@@ -74,12 +76,12 @@ export function CommentsTree (props: Props) {
       const [comment, childrenComments] = partition(comments, (e) => e.id.eq(commentIdForPage));
       return <ViewComment comment={comment[0]} commentsWithParentId={childrenComments} isPage/>;
     } else {
-      return renderLevelOfComments(parentComments, childrenComments);
+      return <>{renderLevelOfComments(parentComments, childrenComments)}</>;
     }
   };
 
   const RenderCommentsOnPost = () => (
-    <Section title={`Comments (${commentsCount})`} className='DfCommentsByPost'>
+    <Section title={<Pluralize count={commentsCount} singularText='comment' pluralText='comments'/>} className='DfCommentsByPost'>
         <div id={`comments-on-post-${postId}`}>
           {<NewComment postId={postId}/>}
           {renderComments()}
@@ -179,7 +181,7 @@ export function ViewComment (props: ViewCommentProps) {
 
   const isMyStruct = myAddress === account.toString();
 
-  const renderDropDownMenu = () => {
+  const RenderDropDownMenu = () => {
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
 
@@ -211,16 +213,16 @@ export function ViewComment (props: ViewCommentProps) {
     <SuiComment.Group threaded>
     <SuiComment>
       <div className='DfCommentBox'>
-        <div>
+        <div className='DfCommentItem'>
           <SuiComment.Metadata>
             <AddressMini
               value={account}
               isShort={true}
               isPadded={false}
-              size={28}
-              extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${time}, comment score: ${score}`}</a></Link>}
+              size={32}
+              extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${moment(time).fromNow()} · comment score: ${score}`}</a></Link>}
             />
-            {renderDropDownMenu()}
+            <RenderDropDownMenu />
           </SuiComment.Metadata>
           <SuiComment.Content>
             {showEditForm
