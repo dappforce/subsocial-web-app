@@ -201,11 +201,11 @@ export function ViewComment (props: ViewCommentProps) {
     </span>
   );
 
-  const responseTitle = <>In response <Link href={`/post?id=${post_id.toString()}`}><a className='DfGreyLink'>{postContent.title}</a></Link></>;
+  const responseTitle = <>In response to <Link href={`/post?id=${post_id.toString()}`}><a className='DfGreyLink'>{postContent.title}</a></Link></>;
 
   return <div id={`comment-${id}`}>
     {isPage && <>
-      <SeoHeads name={`In response ${postContent.title}`} desc={content.body} title={`${account} commented on ${postContent.title}`} />
+      <SeoHeads name={`In response to ${postContent.title}`} desc={content.body} title={`${account} commented on ${postContent.title}`} />
     <MutedDiv style={{ marginTop: '1rem' }}>{responseTitle}</MutedDiv>
     </>}
     <SuiComment.Group threaded>

@@ -72,7 +72,7 @@ type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
 };
 
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
-  const { myAddress, address, size = 'small1' } = props;
+  const { myAddress, address, size = 'small' } = props;
 
   const accountId = new AccountId(address);
   const dataForQuery = new Tuple([AccountId, AccountId], [new AccountId(myAddress), accountId]);
