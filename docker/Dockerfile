@@ -17,4 +17,4 @@ COPY --from=builder node_modules/ ./node_modules
 
 EXPOSE 3000
 
-CMD bash -c "yarn start-build"
+CMD bash -c "yarn start-built"
