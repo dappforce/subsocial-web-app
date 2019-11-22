@@ -131,7 +131,22 @@ const InnerForm = (props: FormProps) => {
   const form = () => (
     <Form className='ui form DfForm EditEntityForm'>
       <LabelledField name='body' {...props}>
-        <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} style={{ minWidth: '40rem', marginTop: '1rem' }} autoFocus={autoFocus}/>
+        <Field
+          component={SimpleMDEReact}
+          name='body'
+          value={body}
+          onChange={(data: string) => setFieldValue('body', data)}
+          className={`DfMdEditor ${errors['body'] && 'error'}`}
+          style={{ marginTop: '1rem' }}
+          option={{
+            autofocus: autoFocus,
+            spellChecker: false,
+            toolbar: false,
+            tabSize: 1,
+            minHeight: '40px',
+            status: false
+          }}
+        />
       </LabelledField>
 
       <LabelledField {...props}>

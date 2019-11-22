@@ -1,5 +1,6 @@
 .DfPageContent {
   width: 70%;
+  color: #111;
 }
 
 @media (max-width: 1200px) {
@@ -65,7 +66,11 @@
   max-width: 600px;
 
   .EditEntityForm {
-    width: 100%;
+    width: 100%;p
+  }
+  
+  .editor-statusbar {
+    display: none;
   }
 }
 
@@ -86,9 +91,6 @@
   .metadata {
     margin-left: 0;
     font-size: 1rem;
-  }
-  .reply {
-    margin-left: .5rem;
   }
 }
 
@@ -119,7 +121,7 @@ form.ui.form.DfForm.EditEntityForm {
   }
   .ui.button {
     background-color: transparent !important;
-    color: #2d2d2d;
+    color: #C4C4C4;
     min-width: initial;
     max-height: initial;
     padding: .5rem .5rem .5rem .1rem;
@@ -148,21 +150,25 @@ form.ui.form.DfForm.EditEntityForm {
   h4 {
     font-size: 1.35rem;
     font-weight: bold;
-    color:#666;
+    color:#C4C4C4;
     border-top: #ddd 1px solid;
   }
   .ui.comments .comment .metadata {
     margin-left: 0;
+    color:#C4C4C4;
+  }
+  .ui.comments .comment .text {
+    margin: 0;
   }
   .ui.comments {
     max-width: 100%;
-    .comment .text {
-      margin-top: .5rem;
-    }
   }
 }
 .DfCommentContent {
   margin-bottom: 2rem;
+  .reply {
+    color: #C4C4C4;
+  }
 }
 
 .ChildComment {
@@ -185,7 +191,7 @@ hr {
 }
 
 .disable, .disable:hover{
-  color: #999;
+  color: #C4C4C4;
   text-decoration: none;
   cursor: default;
 }
@@ -356,10 +362,10 @@ div.asLink:hover {
 }
 
 .DfGreyLink {
-  color: rgba(34,36,38,.8) !important;
+  color: #C4C4C4 !important;
 }
 .DfGreyLink:hover {
-  color: rgba(34,36,38,.8) !important;
+  color: #C4C4C4 !important;
   text-decoration: underline;
 }
 

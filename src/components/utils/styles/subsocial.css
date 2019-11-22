@@ -62,8 +62,8 @@
     display: block;
     text-align: left;
     float: left;
-    color: #999999;
-    font-size: .8rem!important
+    color: #C4C4C4 !important;
+    font-size: .875rem!important
   }
   .ui--AddressSummary-name,
   .ui--AddressSummary-balance {
@@ -193,7 +193,7 @@
 }
 
 .DfMd{
-  margin-top: .5rem;
+  margin-top: .25rem;
   font-size: 1rem;
 }
 
