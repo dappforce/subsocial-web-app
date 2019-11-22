@@ -9,6 +9,10 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, CommentId, PostId, ReactionKind, Comment } from '../types';
 import { Icon } from 'antd';
+import BN from 'bn.js';
+
+const ONE_HUNDRED = new BN(100);
+const FIFTY = new BN(50);
 
 type VoterValue = {
   struct: Comment | Post;
@@ -75,31 +79,19 @@ export const Voter = (props: VoterProps) => {
 
   const VoterRender = () => {
 
-    let colorCount = '';
+    let countColor = '';
 
-    const calcUpvotesPercentage = () => {
-      const upvotes = state.upvotes_count.toNumber();
-      const downvotes = state.downvotes_count.toNumber();
-      const count = upvotes + downvotes;
+    const calcVotingPercentage = () => {
+      const { upvotes_count, downvotes_count } = state;
+      const totalCount = upvotes_count.add(downvotes_count);
+      const per = upvotes_count.div(totalCount).mul(ONE_HUNDRED);
 
-      const calcPercentage = () => {
-        const res = upvotes / count * 100;
-        if (res === 0) {
-          return '0%';
-        }
-
-        return Math.ceil(res).toString() + '%';
-      };
-
-      if (count === 0) {
-        colorCount = '';
-        return '0';
-      } else if (upvotes >= downvotes) {
-        colorCount = 'green';
-        return calcPercentage();
+      if (per.gte(FIFTY)) {
+        countColor = 'green';
+        return Math.ceil(per.toNumber());
       } else {
-        colorCount = 'red';
-        return calcPercentage();
+        countColor = 'red';
+        return -(100 - Math.ceil(per.toNumber()));
       }
     };
 
@@ -125,14 +117,14 @@ export const Voter = (props: VoterProps) => {
           ? `blogs.update${struct}Reaction`
           : `blogs.delete${struct}Reaction`}
       >
-        <Icon type={`${icon}like`} />
+        <Icon type={`${icon}like`} theme='filled' twoToneColor='#F14F4F'/>
       </TxButton>);
     };
 
     return <>
       <Button.Group className={`DfVoter`}>
         {renderTxButton(true)}
-        <Button content={calcUpvotesPercentage()} variant='primary' className={`${colorCount} active`} onClick={() => setOpen(true)}/>
+        <Button content={calcVotingPercentage().toString() + '%'} variant='primary' className={`${countColor} active`} onClick={() => setOpen(true)}/>
         {renderTxButton(false)}
       </Button.Group>
       {isComment
