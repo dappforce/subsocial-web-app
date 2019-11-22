@@ -82,17 +82,13 @@
   margin: -1rem 0 0 1.25rem;
 }
 
-.DfCommentBox {
-  display: flex !important;
-  align-items: flex-start;
-  .content {
-    margin-left: 3rem;
+.DfCommentContent {
+  .metadata {
+    margin-left: 0;
+    font-size: 1rem;
   }
   .reply {
     margin-left: .5rem;
-  }
-  .DfCommentItem {
-    margin-bottom: 2rem;
   }
 }
 
@@ -149,18 +145,29 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .DfCommentsByPost {
+  h4 {
+    font-size: 1.35rem;
+    font-weight: bold;
+    color:#666;
+    border-top: #ddd 1px solid;
+  }
+  .ui.comments .comment .metadata {
+    margin-left: 0;
+  }
   .ui.comments {
     max-width: 100%;
-    .comment>.content {
-      margin-left: 43px;
-    }
     .comment .text {
       margin-top: .5rem;
     }
-    .comment img.avatar{
-      width: 2.5rem;
-      height: 2.5rem;
-    }
+  }
+}
+.DfCommentContent {
+  margin-bottom: 2rem;
+}
+
+.ChildComment {
+  .DfComment {
+    padding-top: 1rem;
   }
 }
 

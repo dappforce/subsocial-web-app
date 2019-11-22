@@ -81,11 +81,12 @@ export function CommentsTree (props: Props) {
   };
 
   const RenderCommentsOnPost = () => (
-    <Section title={<Pluralize count={commentsCount} singularText='comment' pluralText='comments'/>} className='DfCommentsByPost'>
-        <div id={`comments-on-post-${postId}`}>
-          {<NewComment postId={postId}/>}
-          {renderComments()}
-        </div>
+    <Section className='DfCommentsByPost'>
+      <h4><Pluralize count={commentsCount} singularText='comment' pluralText='comments'/></h4>
+      <div id={`comments-on-post-${postId}`}>
+        {<NewComment postId={postId}/>}
+        {renderComments()}
+      </div>
     </Section>
   );
 
@@ -185,7 +186,7 @@ export function ViewComment (props: ViewCommentProps) {
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
 
-    return (<Dropdown icon='ellipsis horizontal'>
+    return (<Dropdown icon='ellipsis horizontal' style={{ marginLeft: '.5rem' }} >
       <Dropdown.Menu>
         {(isMyStruct || showEditForm) && <Dropdown.Item text='Edit' onClick={() => setShowEditForm(true)} />}
         <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
@@ -203,61 +204,64 @@ export function ViewComment (props: ViewCommentProps) {
     </span>
   );
 
-  const responseTitle = <>In response to <Link href={`/post?id=${post_id.toString()}`}><a className='DfGreyLink'>{postContent.title}</a></Link></>;
+  const responseTitle = <>In response to <Link href={`/post?id=${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
 
-  return <div id={`comment-${id}`}>
+  return <div id={`comment-${id}`} className='DfComment'>
     {isPage && <>
       <SeoHeads name={`In response to ${postContent.title}`} desc={content.body} title={`${account} commented on ${postContent.title}`} />
     <MutedDiv style={{ marginTop: '1rem' }}>{responseTitle}</MutedDiv>
     </>}
     <SuiComment.Group threaded>
     <SuiComment>
-      <div className='DfCommentBox'>
-        <div className='DfCommentItem'>
-          <SuiComment.Metadata>
-            <AddressMini
-              value={account}
-              isShort={true}
-              isPadded={false}
-              size={32}
-              extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${moment(time).fromNow()} · comment score: ${score}`}</a></Link>}
+      <div className='DfCommentContent'>
+        <SuiComment.Metadata>
+          <AddressMini
+            value={account}
+            isShort={true}
+            isPadded={false}
+            size={32}
+            extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${moment(time).fromNow()} · comment score: ${score}`}</a></Link>}
+          />
+        </SuiComment.Metadata>
+        <SuiComment.Content>
+          {showEditForm
+            ? <NewComment
+              struct={struct}
+              id={struct.id}
+              postId={struct.post_id}
+              json={content.body}
+              onSuccess={() => { setShowEditForm(false); setDoReloadComment(true); }}
             />
-            <RenderDropDownMenu />
-          </SuiComment.Metadata>
-          <SuiComment.Content>
-            {showEditForm
-              ? <NewComment
-                struct={struct}
-                id={struct.id}
-                postId={struct.post_id}
-                json={content.body}
-                onSuccess={() => { setShowEditForm(false); setDoReloadComment(true); }}
-              />
-              : <>
-                <SuiComment.Text>
-                  <ReactMarkdown className='DfMd' source={content.body} linkTarget='_blank' />
-                </SuiComment.Text>
-                <SuiComment.Actions>
-                  <SuiComment.Action>
-                    <Voter
-                      struct={struct}
-                    />
-                    {showReplyForm
-                      ? <NewComment
+            : <>
+              <SuiComment.Text>
+                <ReactMarkdown className='DfMd' source={content.body} linkTarget='_blank' />
+              </SuiComment.Text>
+              <SuiComment.Actions>
+                {showReplyForm
+                ? <SuiComment.Action>
+                    <NewComment
                           postId={struct.post_id}
                           parentId={struct.id}
                           onSuccess={() => setShowReplyForm(false)}
                           autoFocus={true}
-                      />
-                      : replyButton()
-                    }
+                    />
                   </SuiComment.Action>
-                </SuiComment.Actions>
-              </>}
-          </SuiComment.Content>
-        </div>
+                : <>
+                  <SuiComment.Action>
+                  <Voter struct={struct} />
+                  </SuiComment.Action>
+                  <SuiComment.Action>
+                    {replyButton()}
+                  </SuiComment.Action>
+                  <SuiComment.Action>
+                    <RenderDropDownMenu />
+                  </SuiComment.Action>
+                </>}
+              </SuiComment.Actions>
+            </>}
+        </SuiComment.Content>
       </div>
-      {renderLevelOfComments(parentComments, childrenComments)}
+      <div className={'ChildComment'}>{renderLevelOfComments(parentComments, childrenComments)}</div>
     </SuiComment>
   </SuiComment.Group>
 </div>;
