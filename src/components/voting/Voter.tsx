@@ -8,6 +8,7 @@ import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, CommentId, PostId, ReactionKind, Comment } from '../types';
+import { Icon } from 'antd';
 
 type VoterValue = {
   struct: Comment | Post;
@@ -110,13 +111,12 @@ export const Voter = (props: VoterProps) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
-      const icon = isUpvote ? 'up' : 'down';
+      const icon = isUpvote ? '' : 'dis';
       const struct = isComment ? 'Comment' : 'Post';
 
       return (<TxButton
         type='submit'
         compact
-        icon={`thumbs ${icon} outline`}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
         tx={reactionState === undefined
@@ -124,7 +124,9 @@ export const Voter = (props: VoterProps) => {
           : (reactionKind !== `${reactionName}`)
           ? `blogs.update${struct}Reaction`
           : `blogs.delete${struct}Reaction`}
-      />);
+      >
+        <Icon type={`${icon}like`} />
+      </TxButton>);
     };
 
     return <>
