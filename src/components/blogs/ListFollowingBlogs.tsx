@@ -6,8 +6,9 @@ import { queryBlogsToProp } from '../utils/index';
 import { BlogId } from '../types';
 import ViewBlog from './ViewBlog';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { pluralizeText } from '../utils/utils';
+import { pluralizeText, Loading } from '../utils/utils';
 import ListData from '../utils/DataList';
+import { Button } from 'antd';
 
 type MyBlogProps = {
   id: AccountId,
@@ -18,19 +19,28 @@ type MyBlogProps = {
 const InnerListMyBlogs = (props: MyBlogProps) => {
   const { followedBlogsIds, mini = false } = props;
   const totalCount = followedBlogsIds !== undefined ? followedBlogsIds && followedBlogsIds.length : 0;
-  if (!followedBlogsIds) return <em>Loading</em>;
+  if (!followedBlogsIds) return <Loading />;
+
+  const renderFollowedList = () => (
+    <>{totalCount > 0
+      ? followedBlogsIds.map((item, index) => <ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/>)
+      : <div className='DfNoFollowed'><Button type='primary' size='small' href='/all'>Show all</Button></div>}
+    </>
+  );
 
   return (mini
-      ? <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-          <ListData
-            title={pluralizeText(totalCount, 'Following blog')}
-            dataSource={followedBlogsIds}
-            renderItem={(item,index) => (
-                <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
-            )}
-          />
-      </div>
-      : <>{followedBlogsIds.map((item, index) => <ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/>)}</>
+    ? <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+        <ListData
+          title={pluralizeText(totalCount, 'Following blog')}
+          dataSource={followedBlogsIds}
+          renderItem={(item,index) => (
+              <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
+          )}
+          noDataDesc='You are not subscribed to any blog'
+          noDataExt={<Button href='/all'>Show all blogs</Button>}
+        />
+    </div>
+    : renderFollowedList()
   );
 };
 

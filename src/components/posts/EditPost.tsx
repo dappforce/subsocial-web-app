@@ -14,7 +14,7 @@ import { PostId, Post, PostData, PostUpdate, BlogId, PostExtension, RegularPost 
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
-import { getNewIdFromEvent } from '../utils/utils';
+import { getNewIdFromEvent, Loading } from '../utils/utils';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
@@ -297,7 +297,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     }, [ trigger ]);
 
     if (!myAddress || !structOpt || jsonIsNone) {
-      return <em>Loading post...</em>;
+      return <Loading />;
     }
 
     if (structOpt.isNone) {

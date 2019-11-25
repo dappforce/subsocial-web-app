@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { List } from 'antd';
+import { List, Empty } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
 import Section from './Section';
-import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/listData.config';
+import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
+import { MutedSpan } from './MutedText';
 
 type Props = {
   className?: string,
   dataSource: any[],
-  renderItem: (item: any, index: number) => JSX.Element
-  title?: React.ReactNode
+  renderItem: (item: any, index: number) => JSX.Element,
+  title?: React.ReactNode,
+  noDataDesc?: React.ReactNode | string,
+  noDataExt?: React.ReactNode
 };
 
 export default (props: Props) => {
-  const { dataSource,renderItem, className, title } = props;
+  const { dataSource,renderItem, className, title, noDataDesc = 'no data', noDataExt } = props;
   const total = dataSource.length;
 
   const router = useRouter();
@@ -44,13 +47,15 @@ export default (props: Props) => {
   }, [false]);
 
   const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
+  const isEmptyData = dataSource.length === 0;
+  const hidePaggination = isEmptyData || dataSource.length < pageSize;
 
-  return <Section title={<div className='DfTitle--List'>{title}</div>}>
+  const RenderList = () => (
     <List
       className={'DfDataList ' + className}
       itemLayout='vertical'
       size='large'
-      pagination={{
+      pagination={!hidePaggination && {
         current: currentPage,
         defaultCurrent: DEFAULT_CURENT_PAGE,
         onChange: page => {
@@ -84,5 +89,26 @@ export default (props: Props) => {
         </List.Item>
       )}
     />
+  );
+
+  return <Section title={<div className='DfTitle--List'>{title}</div>}>
+    {isEmptyData ? <DataEmpty description={noDataDesc}>{noDataExt}</DataEmpty> : <RenderList/>}
   </Section>;
 };
+
+type EmptyProps = {
+  description?: React.ReactNode | string,
+  children?: React.ReactNode
+}
+
+export const DataEmpty = (props: EmptyProps) => (
+  <Empty
+    description={
+      <MutedSpan>
+        {props.description}
+      </MutedSpan>
+    }
+  >
+    {props.children}
+  </Empty>
+);

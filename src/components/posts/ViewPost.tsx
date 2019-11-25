@@ -9,7 +9,7 @@ import { Option } from '@polkadot/types';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostData, Change } from '../types';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import { pluralizeText } from '../utils/utils';
+import { pluralizeText, Loading } from '../utils/utils';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { CommentsByPost } from './ViewComment';
 import { CreatedBy } from '../utils/CreatedBy';
@@ -21,6 +21,7 @@ import AddressMiniDf from '../utils/AddressMiniDf';
 import { api } from '@polkadot/ui-api';
 import { ShareModal } from './ShareModal';
 import { useRouter } from 'next/router';
+import { DataEmpty } from '../utils/DataList';
 
 const LIMIT_SUMMARY = 150;
 
@@ -43,8 +44,8 @@ type PostContent = PostData & {
 function ViewPostInternal (props: ViewPostProps) {
   const { postById } = props;
 
-  if (postById === undefined) return <em>Loading...</em>;
-  else if (postById.isNone) return <em>Post not found</em>;
+  if (postById === undefined) return <Loading />;
+  else if (postById.isNone) return <DataEmpty description={<span>Post not found</span>} />;
 
   const {
     myAddress,

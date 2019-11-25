@@ -13,7 +13,7 @@ import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/Offchai
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
 import { BlogId, Blog, BlogData, BlogUpdate, VecAccountId } from '../types';
-import { getNewIdFromEvent } from '../utils/utils';
+import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -278,7 +278,7 @@ function LoadStruct (props: LoadStructProps) {
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {
-    return <em>Loading blog...</em>;
+    return <Loading />;
   }
 
   if (structOpt.isNone) {

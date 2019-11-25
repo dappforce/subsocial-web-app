@@ -17,10 +17,10 @@ import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Dropdown, Segment } from 'semantic-ui-react';
 import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
-import { pluralizeText } from '../utils/utils';
+import { pluralizeText, Loading } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
-import Router from 'next/router';import ListData from '../utils/DataList';
-import { Avatar, Tag } from 'antd';
+import Router from 'next/router';import ListData, { DataEmpty } from '../utils/DataList';
+import { Avatar, Tag, Button } from 'antd';
 
 type Props = MyAccountProps & {
   preview?: boolean,
@@ -36,11 +36,11 @@ type Props = MyAccountProps & {
   imageSize?: number
 };
 
-function Component(props: Props) {
+function Component (props: Props) {
   const { blogById } = props;
 
-  if (blogById === undefined) return <em>Loading...</em>;
-  else if (blogById.isNone) return <em>Blog not found</em>;
+  if (blogById === undefined) return <Loading />;
+  else if (blogById.isNone) return <DataEmpty description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -178,6 +178,8 @@ function Component(props: Props) {
       dataSource={postIds}
       renderItem={(id, index) =>
         <ViewPost key={index} id={id} preview />}
+      noDataDesc='No posts yet'
+      noDataExt={<Button href='/new-post'>Create post</Button>}
     />;
   };
   const NewPostButton = () => <Link href={`/new-post?blogId=${id}`}>
@@ -190,7 +192,7 @@ function Component(props: Props) {
   const postsSectionTitle = () => {
     return <div>
       <span style={{ marginRight: '.5rem' }}>{pluralizeText(postsCount, 'Post')}</span>
-      <NewPostButton />
+      {postIds.length && <NewPostButton />}
     </div>;
   };
 

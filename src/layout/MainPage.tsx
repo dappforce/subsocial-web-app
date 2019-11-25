@@ -20,7 +20,7 @@ import { MyAccountProvider } from '../components/utils/MyAccountContext';
 import { QueueProps } from '@polkadot/ui-app/Status/types';
 import Status from '../components/main/Status';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
-import { AllElasticIndexes, ElasticNodeURL } from '../components/search/ElasticConfig';
+import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import TopMenu from './TopMenu';
 

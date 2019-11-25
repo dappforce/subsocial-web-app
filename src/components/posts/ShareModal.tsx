@@ -9,6 +9,7 @@ import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
 import ViewBlog from '../blogs/ViewBlog';
 import Link from 'next/link';
+import { Loading } from '../utils/utils';
 
 type Props = MyAccountProps & {
   postId: PostId,
@@ -20,7 +21,7 @@ type Props = MyAccountProps & {
 const InnerShareModal = (props: Props) => {
   const { open, close, postId, blogsIds } = props;
 
-  if (!blogsIds) return <em>Loading...</em>;
+  if (!blogsIds) return <Loading />;
 
   const [blogId, setBlogId] = useState(blogsIds[0]);
   const extension = new PostExtension({ SharedPost: new SharedPost(postId) });

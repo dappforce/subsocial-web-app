@@ -334,6 +334,10 @@
   .item {
     padding: .5rem;
   }
+  .DfNoFollowed {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .DfSider {

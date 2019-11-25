@@ -16,6 +16,8 @@ import { queryBlogsToProp } from '../utils/index';
 import { PostId, CommentId, Comment, CommentUpdate, CommentData } from '../types';
 
 import SimpleMDEReact from 'react-simplemde-editor';
+import { Loading } from '../utils/utils';
+import { DataEmpty } from '../utils/DataList';
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
@@ -242,11 +244,11 @@ function LoadStruct (props: LoadStructProps) {
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {
-    return <em>Loading comment...</em>;
+    return <Loading />;
   }
 
   if (structOpt.isNone) {
-    return <em>Comment not found</em>;
+    return <DataEmpty description={<span>Comment not found</span>} />;
   }
 
   return <EditForm {...props} struct={struct} json={json as CommentData} />;

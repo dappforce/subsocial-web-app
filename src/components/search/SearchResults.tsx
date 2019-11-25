@@ -4,7 +4,7 @@ import ViewBlog from '../blogs/ViewBlog';
 import { ViewPost } from '../posts/ViewPost';
 import { Tab, StrictTabProps } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
-import { ElasticIndex, ElasticIndexTypes } from './ElasticConfig';
+import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Section from '../utils/Section';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';

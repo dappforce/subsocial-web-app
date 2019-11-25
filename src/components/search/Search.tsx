@@ -2,7 +2,7 @@ import React from 'react';
 import { DataSearch } from '@appbaseio/reactivesearch';
 import Router from 'next/router';
 import { Icon } from 'antd';
-import { ElasticFields } from './ElasticConfig';
+import { ElasticFields } from '../../config/ElasticConfig';
 
 const App = () => {
   return (

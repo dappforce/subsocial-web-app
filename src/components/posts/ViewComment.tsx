@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize } from '../utils/Plularize';
+import { Loading } from '../utils/utils';
 
 type Props = ApiProps & {
   postId: PostId,
@@ -68,7 +69,7 @@ export function CommentsTree (props: Props) {
     }
 
     if (!loaded) {
-      return <div style={{ marginTop: '1rem' }}><em>Loading comments...</em></div>;
+      return <div style={{ marginTop: '1rem' }}><Loading /></div>;
     }
 
     const [parentComments, childrenComments] = partition(comments, e => e.parent_id.isNone);
@@ -145,6 +146,8 @@ export function ViewComment (props: ViewCommentProps) {
   const [showEditForm, setShowEditForm] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [doReloadComment, setDoReloadComment] = useState(true);
+
+  const toggleReloadComment = () => setDoReloadComment(!doReloadComment);
   // const reactionKind = reactionState ? reactionState.kind.toString() : 'None';
   if (!comment || comment.isEmpty) {
     return null;
@@ -155,15 +158,13 @@ export function ViewComment (props: ViewCommentProps) {
       setContent(json);
     }).catch(err => console.log(err));
 
-    if (!doReloadComment) return;
-
     const loadComment = async () => {
       const result = await api.query.blogs.commentById(id) as OptionComment;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
       setStruct(comment);
 
-      setDoReloadComment(false);
+      toggleReloadComment();
     };
     loadComment().catch(console.log);
 
@@ -174,7 +175,7 @@ export function ViewComment (props: ViewCommentProps) {
       const content = await getJsonFromIpfs<PostData>(post.ipfs_hash);
       setPostContent(content);
 
-      setDoReloadComment(false);
+      toggleReloadComment();
     };
     loadPostContent().catch(console.log);
 
