@@ -147,12 +147,13 @@ export function ViewComment (props: ViewCommentProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [doReloadComment, setDoReloadComment] = useState(true);
 
-  const toggleReloadComment = () => setDoReloadComment(!doReloadComment);
   // const reactionKind = reactionState ? reactionState.kind.toString() : 'None';
   if (!comment || comment.isEmpty) {
     return null;
   }
   useEffect(() => {
+
+    if (!doReloadComment) return;
 
     getJsonFromIpfs<CommentData>(struct.ipfs_hash).then(json => {
       setContent(json);
@@ -164,7 +165,7 @@ export function ViewComment (props: ViewCommentProps) {
       const comment = result.unwrap() as Comment;
       setStruct(comment);
 
-      toggleReloadComment();
+      setDoReloadComment(false);
     };
     loadComment().catch(console.log);
 
@@ -175,7 +176,7 @@ export function ViewComment (props: ViewCommentProps) {
       const content = await getJsonFromIpfs<PostData>(post.ipfs_hash);
       setPostContent(content);
 
-      toggleReloadComment();
+      setDoReloadComment(false);
     };
     loadPostContent().catch(console.log);
 

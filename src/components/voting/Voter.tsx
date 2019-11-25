@@ -11,8 +11,7 @@ import { Post, Reaction, CommentId, PostId, ReactionKind, Comment } from '../typ
 import { Icon } from 'antd';
 import BN from 'bn.js';
 
-const ONE_HUNDRED = new BN(100);
-const FIFTY = new BN(50);
+const ZERO = new BN(0);
 
 type VoterValue = {
   struct: Comment | Post;
@@ -84,14 +83,18 @@ export const Voter = (props: VoterProps) => {
     const calcVotingPercentage = () => {
       const { upvotes_count, downvotes_count } = state;
       const totalCount = upvotes_count.add(downvotes_count);
-      const per = upvotes_count.div(totalCount).mul(ONE_HUNDRED);
+      console.log([upvotes_count.toNumber(), downvotes_count.toNumber()]);
+      if (totalCount.eq(ZERO)) return 0;
 
-      if (per.gte(FIFTY)) {
+      const per = upvotes_count.toNumber() / totalCount.toNumber() * 100;
+      const ceilPer = Math.ceil(per);
+
+      if (per >= 50) {
         countColor = 'green';
-        return Math.ceil(per.toNumber());
+        return ceilPer;
       } else {
         countColor = 'red';
-        return -(100 - Math.ceil(per.toNumber()));
+        return 100 - ceilPer;
       }
     };
 
@@ -121,10 +124,13 @@ export const Voter = (props: VoterProps) => {
       </TxButton>);
     };
 
+    const count = calcVotingPercentage();
+    console.log(count);
+
     return <>
       <Button.Group className={`DfVoter`}>
         {renderTxButton(true)}
-        <Button content={calcVotingPercentage().toString() + '%'} variant='primary' className={`${countColor} active`} onClick={() => setOpen(true)}/>
+        <Button content={ count === 0 ? count.toString() : count + '%' } variant='primary' className={`${countColor} active`} onClick={() => setOpen(true)}/>
         {renderTxButton(false)}
       </Button.Group>
       {isComment

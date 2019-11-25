@@ -29,7 +29,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     };
     load().catch(err => console.log(err));
 
-  }, [ blogId ]);
+  }, [ triggerReload ]);
 
   const buildTxParams = () => {
     return [ blogId ];
@@ -87,7 +87,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     };
     load().catch(err => console.log(err));
 
-  }, [ accountId ]);
+  }, [ triggerReload ]);
 
   const buildTxParams = () => {
     return [ accountId ];

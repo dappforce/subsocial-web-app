@@ -48,7 +48,7 @@ export default (props: Props) => {
 
   const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
   const isEmptyData = dataSource.length === 0;
-  const hidePaggination = isEmptyData || dataSource.length < pageSize;
+  const hidePaggination = isEmptyData || dataSource.length <= pageSize;
 
   const RenderList = () => (
     <List
