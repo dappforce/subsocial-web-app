@@ -195,7 +195,7 @@ export function Notification (props: ActivityProps) {
     loadActivity().catch(err => new Error(err));
   }, [postId > new PostId(0), message ]);
 
-  return <div style={{ borderBottom: '1px solid #ddd' }}>
+  return <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem' }}>
     <AddressMiniDf
       value={account}
       isShort={true}

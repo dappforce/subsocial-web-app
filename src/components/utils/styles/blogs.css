@@ -45,6 +45,9 @@
     font-size: 1.7rem;
     font-weight: bold;
   }
+  .button {
+    height: min-content;
+  }
   .handle {
     display: inline-block;
     margin-right: .6rem;
@@ -350,7 +353,7 @@ div.asLink:hover {
 
 .DfShareModal {
   .DfSection {
-    margin-top: .5rem;
+    margin-top: 2rem;
     margin-bottom: 0;
   }
   .EditEntityBox {
@@ -377,3 +380,16 @@ div.asLink:hover {
   font-size: 1rem;
 }
 
+.editor-statusbar {
+  display: none;
+}
+
+.DfGreyButton {
+  background-color: #ddd;
+}
+
+.DfGreyButton:hover {
+  background-color: #bbb;
+  border-color: #ddd;
+  color: #333;
+}

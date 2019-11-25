@@ -115,15 +115,26 @@
   }
 }
 
+.DfSection--withButton {
+  display: flex;
+  align-items: center;
+}
+
 .DfSection {
   margin-top: 2rem;
   margin-bottom: 1rem;
 
   .DfSection-title {
     border-bottom: 1px solid #ddd;
-    margin-bottom: 1rem;
+    margin: 0rem;
+    margin-bottom: .5rem;
     padding: .5rem 0;
     display: flex;
+  }
+  li.ant-list-item.ant-list-item-no-flex {
+    border: none;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
   }
 }
 

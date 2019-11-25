@@ -19,12 +19,14 @@ import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
 import { pluralizeText, Loading } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
-import Router from 'next/router';import ListData, { DataEmpty } from '../utils/DataList';
+import Router from 'next/router';
+import ListData, { DataEmpty } from '../utils/DataList';
 import { Avatar, Tag, Button } from 'antd';
 
 type Props = MyAccountProps & {
   preview?: boolean,
   nameOnly?: boolean,
+  dropdownPreview?: boolean,
   withLink?: boolean,
   miniPreview?: boolean,
   previewDetails?: boolean,
@@ -49,6 +51,7 @@ function Component (props: Props) {
     miniPreview = false,
     previewDetails = false,
     withFollowButton = false,
+    dropdownPreview = false,
     myAddress,
     postIds = [],
     imageSize = 36
@@ -102,6 +105,13 @@ function Component (props: Props) {
       : <>{name}</>;
   };
 
+  const renderDropDownPreview = () => (
+    <>
+      <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd', marginRight: '.5rem' }}/>
+      {renderNameOnly()}
+    </>
+  );
+
   const renderMiniPreview = () => (
     <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyBlog'}`}>
       {hasImage
@@ -124,7 +134,7 @@ function Component (props: Props) {
         <div className='content'>
           <div className='header'>
             <NameAsLink />
-            {isMyBlog && <Tag color='gold'>My blog</Tag>}
+            {isMyBlog && <Tag color='green'>My blog</Tag>}
             {renderDropDownMenu()}
           </div>
           <div className='description'>
@@ -150,7 +160,7 @@ function Component (props: Props) {
           {pluralizeText(followers, 'Follower')}
         </div>
 
-        <MutedSpan className='DfStatItem'>Score: {score.toNumber()}</MutedSpan>
+        <MutedSpan className='DfStatItem'>{score.toNumber()} Points</MutedSpan>
 
         {followersOpen &&
           <BlogFollowersModal
@@ -166,6 +176,8 @@ function Component (props: Props) {
 
   if (nameOnly) {
     return renderNameOnly();
+  } else if (dropdownPreview) {
+    return renderDropDownPreview();
   } else if (miniPreview) {
     return renderMiniPreview();
   } else if (preview || previewDetails) {
@@ -182,16 +194,11 @@ function Component (props: Props) {
       noDataExt={<Button href='/new-post'>Create post</Button>}
     />;
   };
-  const NewPostButton = () => <Link href={`/new-post?blogId=${id}`}>
-    <a className='ui tiny button'>
-      <i className='plus icon' />
-      Write post
-    </a>
-  </Link>;
+  const NewPostButton = () => <Button href='/new-post' icon='plus' size='small' className='DfGreyButton'>New post</Button>;
 
   const postsSectionTitle = () => {
-    return <div>
-      <span style={{ marginRight: '.5rem' }}>{pluralizeText(postsCount, 'Post')}</span>
+    return <div className='DfSection--withButton'>
+      <span style={{ marginRight: '1rem' }}>{pluralizeText(postsCount, 'Post')}</span>
       {postIds.length && <NewPostButton />}
     </div>;
   };

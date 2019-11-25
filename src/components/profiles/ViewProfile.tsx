@@ -14,7 +14,7 @@ import { FollowAccountButton } from '../utils/FollowButton';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import TxButton from '../utils/TxButton';
-import { MutedSpan } from '../utils/MutedText';
+import { MutedDiv } from '../utils/MutedText';
 import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 
@@ -81,7 +81,7 @@ function Component(props: Props) {
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
     <Link href={`/new-profile`}>
-      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className='ui tiny button primary'>
+      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className='ui button primary'>
         <i className='plus icon' />
         Create profile
       </a>
@@ -109,7 +109,7 @@ function Component(props: Props) {
     <Link href={`/profile?address=${address}`}>
       <a className='handle'>{getName()}</a>
     </Link>
-  )
+  );
 
   const renderNameOnly = () => {
     return withLink
@@ -129,9 +129,9 @@ function Component(props: Props) {
             <NameAsLink />
             {renderDropDownMenu()}
           </div>
+          <MutedDiv className='DfScore'>Reputation: {reputation}</MutedDiv>
           {renderCreateProfileButton}
           <div className='about'>
-            <MutedSpan className='DfScore'>Reputation: {reputation}</MutedSpan>
             <div className='DfSocialLinks'>
               {hasEmail &&
                 <a
@@ -209,8 +209,8 @@ function Component(props: Props) {
         {renderPreview()}
       </div>
       <FollowAccountButton address={address} />
-      <TxButton isBasic={true} size='small' isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')} </TxButton>
-      <TxButton isBasic={true} size='small' isPrimary={false} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
+      <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')} </TxButton>
+      <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
     </Section>

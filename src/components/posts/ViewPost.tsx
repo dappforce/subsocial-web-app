@@ -203,7 +203,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
       {pluralizeText(comments_count.toNumber(), 'Comment')}</div></MutedSpan>
       <MutedSpan><div>{pluralizeText(shares_count.toNumber(), 'Share')}</div></MutedSpan>
-      <MutedSpan>Score: <b>{score.toNumber()}</b></MutedSpan>
+      <MutedSpan><b>{score.toNumber()}</b> Points</MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
     </>);

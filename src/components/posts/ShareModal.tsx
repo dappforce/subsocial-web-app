@@ -36,7 +36,7 @@ const InnerShareModal = (props: Props) => {
 
     const blogs = blogsIds.map(id => ({
       key: id.toNumber(),
-      text: <ViewBlog id={id} key={id} nameOnly />,
+      text: <ViewBlog id={id} key={id} dropdownPreview imageSize={26}/>,
       value: id.toNumber()
     }));
 
@@ -75,7 +75,7 @@ const InnerShareModal = (props: Props) => {
         {renderShareView()}
       </Modal.Content>
       <Modal.Actions>
-        <Button size='large' onClick={close}>Close</Button>
+        <Button size='large' onClick={close}>Cancel</Button>
         <NewSharePost
           blogId={blogId}
           extention={extension}
