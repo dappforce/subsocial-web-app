@@ -14,7 +14,7 @@ import { FollowAccountButton } from '../utils/FollowButton';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import TxButton from '../utils/TxButton';
-import { MutedSpan } from '../utils/MutedText';
+import { MutedDiv } from '../utils/MutedText';
 import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 
@@ -81,7 +81,7 @@ function Component(props: Props) {
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
     <Link href={`/new-profile`}>
-      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className='ui tiny button primary'>
+      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className='ui button primary'>
         <i className='plus icon' />
         Create profile
       </a>
@@ -103,13 +103,13 @@ function Component(props: Props) {
     </Dropdown>);
   };
 
-  const getName = () => fullname || username || address;
+  const getName = () => (fullname || username || address) as string;
 
   const NameAsLink = () => (
     <Link href={`/profile?address=${address}`}>
       <a className='handle'>{getName()}</a>
     </Link>
-  )
+  );
 
   const renderNameOnly = () => {
     return withLink
@@ -119,7 +119,7 @@ function Component(props: Props) {
 
   const renderPreview = () => {
     return <div>
-      <div className={`item ProfileDetails MyProfile`}>
+      <div className={`item ProfileDetails MyBlog`}>
         {hasAvatar
           ? <img className='DfAvatar' height={size} width={size} src={avatar} />
           : <IdentityIcon className='image' value={address} size={size} />
@@ -129,9 +129,9 @@ function Component(props: Props) {
             <NameAsLink />
             {renderDropDownMenu()}
           </div>
+          <MutedDiv className='DfScore'>Reputation: {reputation}</MutedDiv>
           {renderCreateProfileButton}
           <div className='about'>
-            <MutedSpan className='DfScore'>Reputaton: {reputation}</MutedSpan>
             <div className='DfSocialLinks'>
               {hasEmail &&
                 <a
@@ -203,7 +203,7 @@ function Component(props: Props) {
   }
 
   return <>
-    <SeoHeads title={fullname || 'Profile'} name={name} desc={about} image={avatar} />
+    <SeoHeads title={getName()} name={name} desc={about} image={avatar} />
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}

@@ -11,8 +11,8 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { getNewsFeed, getNotifications, LIMIT } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddressMiniDf from '../utils/AddressMiniDf';
-import { MutedDiv } from '../utils/MutedText';
 import { Loader } from 'semantic-ui-react';
+import { DataEmpty } from '../utils/DataList';
 
 type ActivityProps = {
   activity: Activity;
@@ -45,7 +45,7 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
   return (
     <Section title={`News Feed (${totalCount})`}>{
       totalCount === 0
-        ? <MutedDiv>Your feed is empty</MutedDiv>
+        ? <DataEmpty description='Your feed is empty'/>
         :
         <InfiniteScroll
           dataLength={totalCount}
@@ -195,7 +195,7 @@ export function Notification (props: ActivityProps) {
     loadActivity().catch(err => new Error(err));
   }, [postId > new PostId(0), message ]);
 
-  return <div style={{ borderBottom: '1px solid #ddd' }}>
+  return <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem' }}>
     <AddressMiniDf
       value={account}
       isShort={true}

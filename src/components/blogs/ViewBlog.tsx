@@ -14,16 +14,19 @@ import { ViewPost } from '../posts/ViewPost';
 import { CreatedBy } from '../utils/CreatedBy';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Segment } from 'semantic-ui-react';
 import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
-import { pluralizeText } from '../utils/utils';
+import { pluralizeText, Loading } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
-import Router from 'next/router';import ListData from '../utils/DataList';
+import Router from 'next/router';
+import ListData, { DataEmpty } from '../utils/DataList';
+import { Avatar, Tag, Button } from 'antd';
 
 type Props = MyAccountProps & {
   preview?: boolean,
   nameOnly?: boolean,
+  dropdownPreview?: boolean,
   withLink?: boolean,
   miniPreview?: boolean,
   previewDetails?: boolean,
@@ -31,14 +34,15 @@ type Props = MyAccountProps & {
   id: BlogId,
   blogById?: Option<Blog>,
   postIds?: PostId[],
-  followers?: AccountId[]
+  followers?: AccountId[],
+  imageSize?: number
 };
 
-function Component(props: Props) {
+function Component (props: Props) {
   const { blogById } = props;
 
-  if (blogById === undefined) return <em>Loading...</em>;
-  else if (blogById.isNone) return <em>Blog not found</em>;
+  if (blogById === undefined) return <Loading />;
+  else if (blogById.isNone) return <DataEmpty description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -47,8 +51,10 @@ function Component(props: Props) {
     miniPreview = false,
     previewDetails = false,
     withFollowButton = false,
+    dropdownPreview = false,
     myAddress,
-    postIds = []
+    postIds = [],
+    imageSize = 36
   } = props;
 
   const blog = blogById.unwrap();
@@ -99,11 +105,18 @@ function Component(props: Props) {
       : <>{name}</>;
   };
 
+  const renderDropDownPreview = () => (
+    <>
+      <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd', marginRight: '.5rem' }}/>
+      {renderNameOnly()}
+    </>
+  );
+
   const renderMiniPreview = () => (
-    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyProfile'}`}>
+    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <img className='ui avatar image' src={image} height={28} width={28} />
-        : <IdentityIcon className='image' value={account} size={28} />
+        ? <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
+        : <IdentityIcon className='image' value={account} size={imageSize} />
       }
       <div className='content'>
         <div className='handle'>{name}</div>
@@ -112,15 +125,16 @@ function Component(props: Props) {
   );
 
   const renderPreview = () => {
-    return <div className={`item ProfileDetails ${isMyBlog && 'MyProfile'}`}>
+    return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <img className='ui avatar image' src={image} />
-          : <IdentityIcon className='image' value={account} size={40} />
+          ? <Avatar size={imageSize} src={image} />
+          : <IdentityIcon className='image' value={account} size={imageSize} />
         }
         <div className='content'>
           <div className='header'>
             <NameAsLink />
+            {isMyBlog && <Tag color='green'>My blog</Tag>}
             {renderDropDownMenu()}
           </div>
           <div className='description'>
@@ -135,18 +149,18 @@ function Component(props: Props) {
 
   const renderPreviewExtraDetails = () => {
     return <>
-      <div className={`DfBlogStats ${isMyBlog && 'MyProfile'}`}>
-        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem ' + (!followers && 'disable')}>
-          {pluralizeText(followers, 'Follower')}
-        </div>
-
+      <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
         <Link href={`/blog?id=${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
             {pluralizeText(postsCount, 'Post')}
           </a>
         </Link>
 
-        <MutedSpan className='DfStatItem'>Score: {score.toNumber()}</MutedSpan>
+        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem ' + (!followers && 'disable')}>
+          {pluralizeText(followers, 'Follower')}
+        </div>
+
+        <MutedSpan className='DfStatItem'>{score.toNumber()} Points</MutedSpan>
 
         {followersOpen &&
           <BlogFollowersModal
@@ -162,10 +176,12 @@ function Component(props: Props) {
 
   if (nameOnly) {
     return renderNameOnly();
+  } else if (dropdownPreview) {
+    return renderDropDownPreview();
   } else if (miniPreview) {
     return renderMiniPreview();
   } else if (preview || previewDetails) {
-    return renderPreview();
+    return <Segment>{renderPreview()}</Segment>;
   }
 
   const renderPostPreviews = () => {
@@ -174,19 +190,16 @@ function Component(props: Props) {
       dataSource={postIds}
       renderItem={(id, index) =>
         <ViewPost key={index} id={id} preview />}
+      noDataDesc='No posts yet'
+      noDataExt={<Button href='/new-post'>Create post</Button>}
     />;
   };
-  const NewPostButton = () => <Link href={`/new-post?blogId=${id}`}>
-    <a className='ui tiny button'>
-      <i className='plus icon' />
-      Write post
-    </a>
-  </Link>;
+  const NewPostButton = () => <Button href='/new-post' icon='plus' size='small' className='DfGreyButton'>New post</Button>;
 
   const postsSectionTitle = () => {
-    return <div>
-      <span style={{ marginRight: '.5rem' }}>{pluralizeText(postsCount, 'Post')}</span>
-      <NewPostButton />
+    return <div className='DfSection--withButton'>
+      <span style={{ marginRight: '1rem' }}>{pluralizeText(postsCount, 'Post')}</span>
+      {postIds.length && <NewPostButton />}
     </div>;
   };
 
@@ -199,7 +212,7 @@ function Component(props: Props) {
 
     <div className='DfSpacedButtons'>
       <FollowBlogButton blogId={id} />
-      <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
+      <TxButton size='small' isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
     </div>
 
     {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}

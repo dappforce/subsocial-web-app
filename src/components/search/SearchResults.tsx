@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
 import ViewBlog from '../blogs/ViewBlog';
 import { ViewPost } from '../posts/ViewPost';
-import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
+import { Tab, StrictTabProps } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
-import { ElasticIndex, ElasticIndexTypes } from './ElasticConfig';
+import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Section from '../utils/Section';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
@@ -42,7 +42,7 @@ type Props = {
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
     case ElasticIndex.blogs:
-      return <Segment key={i}><ViewBlog id={res._id} previewDetails withFollowButton /></Segment>;
+      return <ViewBlog id={res._id} previewDetails withFollowButton />;
     case ElasticIndex.posts:
       return <ViewPost key={i} id={res._id} preview withLink={true} />;
     case ElasticIndex.profiles:

@@ -8,6 +8,10 @@ import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, CommentId, PostId, ReactionKind, Comment } from '../types';
+import { Icon } from 'antd';
+import BN from 'bn.js';
+
+const ZERO = new BN(0);
 
 type VoterValue = {
   struct: Comment | Post;
@@ -74,31 +78,23 @@ export const Voter = (props: VoterProps) => {
 
   const VoterRender = () => {
 
-    let colorCount = '';
+    let countColor = '';
 
-    const calcUpvotesPercentage = () => {
-      const upvotes = state.upvotes_count.toNumber();
-      const downvotes = state.downvotes_count.toNumber();
-      const count = upvotes + downvotes;
+    const calcVotingPercentage = () => {
+      const { upvotes_count, downvotes_count } = state;
+      const totalCount = upvotes_count.add(downvotes_count);
+      console.log([upvotes_count.toNumber(), downvotes_count.toNumber()]);
+      if (totalCount.eq(ZERO)) return 0;
 
-      const calcPercentage = () => {
-        const res = upvotes / count * 100;
-        if (res === 0) {
-          return '0%';
-        }
+      const per = upvotes_count.toNumber() / totalCount.toNumber() * 100;
+      const ceilPer = Math.ceil(per);
 
-        return (res).toString() + '%';
-      };
-
-      if (count === 0) {
-        colorCount = '';
-        return '0';
-      } else if (upvotes >= downvotes) {
-        colorCount = 'green';
-        return calcPercentage();
+      if (per >= 50) {
+        countColor = 'green';
+        return ceilPer;
       } else {
-        colorCount = 'red';
-        return calcPercentage();
+        countColor = 'red';
+        return 100 - ceilPer;
       }
     };
 
@@ -110,13 +106,12 @@ export const Voter = (props: VoterProps) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
-      const icon = isUpvote ? 'up' : 'down';
+      const icon = isUpvote ? '' : 'dis';
       const struct = isComment ? 'Comment' : 'Post';
 
       return (<TxButton
         type='submit'
         compact
-        icon={`thumbs ${icon} outline`}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
         tx={reactionState === undefined
@@ -124,13 +119,18 @@ export const Voter = (props: VoterProps) => {
           : (reactionKind !== `${reactionName}`)
           ? `blogs.update${struct}Reaction`
           : `blogs.delete${struct}Reaction`}
-      />);
+      >
+        <Icon type={`${icon}like`} theme='filled' twoToneColor='#F14F4F'/>
+      </TxButton>);
     };
 
+    const count = calcVotingPercentage();
+    console.log(count);
+
     return <>
-      <Button.Group vertical={isComment} className={`DfVoter`}>
+      <Button.Group className={`DfVoter`}>
         {renderTxButton(true)}
-        <Button content={calcUpvotesPercentage()} variant='primary' className={`${colorCount} active`} onClick={() => setOpen(true)}/>
+        <Button content={ count === 0 ? count.toString() : count + '%' } variant='primary' className={`${countColor} active`} onClick={() => setOpen(true)}/>
         {renderTxButton(false)}
       </Button.Group>
       {isComment

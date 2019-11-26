@@ -7,7 +7,9 @@ import { SubmittableResult } from '@polkadot/api';
 import { CommentId, PostId, BlogId, Profile, ProfileData, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import BN from 'bn.js';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { Icon } from 'antd';
+import { DataEmpty } from './DataList';
 
 type AuthorPreviewProps = {
   address: AccountId | AccountIndex | Address | string;
@@ -80,21 +82,6 @@ type LoadProps = {
   id: AccountId;
 };
 
-export function withIdFromMyAddress (Component: React.ComponentType<LoadProps>) {
-  return function (props: UrlHasAddressProps) {
-    const {
-      match: {
-        params: { address }
-      }
-    } = props;
-    try {
-      return <Component id={new AccountId(address)} {...props} />;
-    } catch (err) {
-      return <em>Invalid address: {address}</em>;
-    }
-  };
-}
-
 export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
   return function (props: LoadProps) {
     const router = useRouter();
@@ -106,7 +93,6 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
     }
   };
 }
-
 
 type PropsWithSocialAccount = {
   profile?: Profile;
@@ -123,14 +109,14 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
   return function (props: P) {
     const { socialAccountOpt, requireProfile = false } = props;
 
-    if (socialAccountOpt === undefined) return <em>Loading...</em>;
-    else if (socialAccountOpt.isNone && requireProfile) return <em>Social account not create yet.</em>;
+    if (socialAccountOpt === undefined) return <Loading />;
+    else if (socialAccountOpt.isNone && requireProfile) return <DataEmpty description={<span>You have not created profile yet</span>} />;
     else if (socialAccountOpt.isNone) return <Component {...props} />;
 
     const socialAccount = socialAccountOpt.unwrap();
     const profileOpt = socialAccount.profile;
 
-    if (profileOpt.isNone && requireProfile) return <em>Profile is not created yet.</em>;
+    if (profileOpt.isNone && requireProfile) return <DataEmpty description={<span>You have not created profile yet</span>} />
     else if (profileOpt.isNone) return <Component {...props} />;
 
     const profile = profileOpt.unwrap() as Profile;
@@ -147,7 +133,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
         .catch(err => console.log(err));
     }, [false]);
 
-    if (requireProfile && !profileData) return <em>Loading profile data...</em>;
+    if (requireProfile && !profileData) return <Loading />;
 
     return <Component {...props} socialAccount={socialAccount} profile={profile} profileData={profileData} />;
   };
@@ -169,3 +155,5 @@ export function pluralizeText (count: number | BN, singularText: string, pluralT
     </>
   );
 }
+
+export const Loading = () => <Icon type='loading' />;

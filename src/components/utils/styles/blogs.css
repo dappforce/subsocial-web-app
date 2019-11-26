@@ -1,11 +1,16 @@
 .DfPageContent {
   width: 70%;
+  color: #111;
 }
 
 @media (max-width: 1200px) {
   .DfPageContent {
     width: 90%;
   }
+}
+
+.DfBlogStats.MyBlog {
+  margin-top: 1rem;
 }
 
 .DfPostImage {
@@ -29,19 +34,19 @@
   &.ui.list>.item:last-child {
     padding-bottom: .75rem;
   }
-  .MyProfile {
-    background-color: #FFF8E1;
-  }
 }
 .ProfileDetails {
   display: flex !important;
   padding-left: 1rem !important;
   .content {
-    margin-left: .3rem;
+    margin-left: 1rem;
   }
   .header { 
     font-size: 1.7rem;
     font-weight: bold;
+  }
+  .button {
+    height: min-content;
   }
   .handle {
     display: inline-block;
@@ -66,6 +71,10 @@
   .EditEntityForm {
     width: 100%;
   }
+
+  .editor-statusbar {
+    display: none;
+  }
 }
 
 .DfCountsPreview {
@@ -75,23 +84,33 @@
     margin-right: 1rem;
   }
 }
-.ui.threaded.comments .comment .comments{
-  padding: 1rem 0 0 1.2rem;
-  margin: -1rem 0 0 1.25rem;
-}
-.DfCommentBox {
-  display: flex !important;
-  align-items: flex-start;
-  margin-top: 2rem;
+
+.ui--AddressMini-info div {
+  vertical-align: initial;
 }
 
-.ui.button {
-  min-width: 8rem;
-  max-height: 2.8rem;
+.ui.threaded.comments .comment .comments{
+  padding: 0 0 0 1.2rem;
+  margin: -1rem 0 0 1.25rem;
+}
+
+.DfCommentContent {
+  .metadata {
+    margin-left: 0;
+    font-size: 1rem;
+  }
+}
+
+form.ui.form.DfForm.EditEntityForm {
+  margin-bottom: 2rem;
 }
 
 .ui.basic.button {
   background-color: #fff !important;
+}
+
+.editor-statusbar {
+  float: right;
 }
 
 .DfSpacedButtons {
@@ -104,11 +123,15 @@
   &.vertical {
     margin-right: .5rem;
   }
+  .ui.button:first-of-type {
+    padding-left: 0;
+  }
   .ui.button {
     background-color: transparent !important;
-    color: #2d2d2d;
+    color: #8c8c8c;
     min-width: initial;
     max-height: initial;
+    padding: .5rem .5rem .5rem .1rem;
 
     &.red {
       &:hover,
@@ -131,18 +154,33 @@
 }
 
 .DfCommentsByPost {
+  h4 {
+    font-size: 1.35rem;
+    font-weight: bold;
+    color:#8c8c8c;
+    border-top: #ddd 1px solid;
+  }
+  .ui.comments .comment .metadata {
+    margin-left: 0;
+    color:#8c8c8c;
+  }
+  .ui.comments .comment .text {
+    margin: 0;
+  }
   .ui.comments {
     max-width: 100%;
-    .comment>.content {
-      margin-left: 43px;
-    }
-    .comment .text {
-      margin-top: .5rem;
-    }
-    .comment img.avatar{
-      width: 2.5rem;
-      height: 2.5rem;
-    }
+  }
+}
+.DfCommentContent {
+  margin-bottom: 2rem;
+  .reply {
+    color: #8c8c8c;
+  }
+}
+
+.ChildComment {
+  .DfComment {
+    padding-top: 1rem;
   }
 }
 
@@ -160,7 +198,7 @@ hr {
 }
 
 .disable, .disable:hover{
-  color: #999;
+  color: #8c8c8c;
   text-decoration: none;
   cursor: default;
 }
@@ -187,6 +225,7 @@ hr {
 }
 
 .DfSocialLinks {
+  margin-top: 1rem;
   font-size: 1.2rem;
   a {
     margin-right: 1rem
@@ -314,7 +353,7 @@ div.asLink:hover {
 
 .DfShareModal {
   .DfSection {
-    margin-top: .5rem;
+    margin-top: 2rem;
     margin-bottom: 0;
   }
   .EditEntityBox {
@@ -330,10 +369,10 @@ div.asLink:hover {
 }
 
 .DfGreyLink {
-  color: rgba(34,36,38,.8) !important;
+  color: #8c8c8c !important;
 }
 .DfGreyLink:hover {
-  color: rgba(34,36,38,.8) !important;
+  color: #8c8c8c !important;
   text-decoration: underline;
 }
 
@@ -341,3 +380,16 @@ div.asLink:hover {
   font-size: 1rem;
 }
 
+.editor-statusbar {
+  display: none;
+}
+
+.DfGreyButton {
+  background-color: #ddd;
+}
+
+.DfGreyButton:hover {
+  background-color: #bbb;
+  border-color: #ddd;
+  color: #333;
+}

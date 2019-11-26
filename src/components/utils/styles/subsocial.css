@@ -62,8 +62,8 @@
     display: block;
     text-align: left;
     float: left;
-    color: #999999;
-    font-size: .8rem!important
+    color: #8c8c8c !important;
+    font-size: .875rem!important
   }
   .ui--AddressSummary-name,
   .ui--AddressSummary-balance {
@@ -108,15 +108,33 @@
   }
 }
 
+.DfCommentsByPost {
+  .DfSection-title {
+    font-size: 1.35rem;
+    font-weight: bold !important;
+  }
+}
+
+.DfSection--withButton {
+  display: flex;
+  align-items: center;
+}
+
 .DfSection {
   margin-top: 2rem;
   margin-bottom: 1rem;
 
   .DfSection-title {
     border-bottom: 1px solid #ddd;
-    margin-bottom: 1rem;
+    margin: 0rem;
+    margin-bottom: .5rem;
     padding: .5rem 0;
     display: flex;
+  }
+  li.ant-list-item.ant-list-item-no-flex {
+    border: none;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
   }
 }
 
@@ -165,8 +183,8 @@
 .DfAvatar{
   margin-right: .5rem;
   display: inline-block;
-  border-radius: 500rem;
   vertical-align: middle;
+  border: 1px solid #ddd;
 }
 
 .ui.top.left.flowing.popup.transition.visible{
@@ -186,7 +204,7 @@
 }
 
 .DfMd{
-  margin-top: .5rem;
+  margin-top: .25rem;
   font-size: 1rem;
 }
 
@@ -244,6 +262,7 @@
 .DfSearch {
   width: 45%;
   color: rgba(0, 0, 0, 0.7);
+  z-index:2;
   input {
     border-radius: .5rem;
   }
@@ -278,7 +297,7 @@
   padding: 0 1rem;
   border-bottom: 1px solid #ddd;
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   display: flex;
   align-items: baseline;
@@ -287,6 +306,10 @@
 
 .ant-layout {
   background-color: #fafafa !important;
+}
+
+.ui.segment {
+  background-color: #fff;
 }
 
 .DfDataList { 
@@ -308,9 +331,6 @@
     text-transform: uppercase;
     font-size: .9rem;
   }
-  .content { 
-    margin-top: 1.5rem;
-  }
   .handle {
     color: #666;
   }
@@ -318,8 +338,16 @@
     margin-top: .5rem;
     margin-right: .3rem;
   }
-  img {
-    margin-top: .5rem;
+  .content {
+    display: flex;
+    align-items: center;
+  }
+  .item {
+    padding: .5rem;
+  }
+  .DfNoFollowed {
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -330,4 +358,8 @@
   height: 100vh;
   position: fixed;
   left: 0;
+}
+
+.ant-list-something-after-last-item .ant-spin-container > .ant-list-items > .ant-list-item:last-child {
+  border: none;
 }

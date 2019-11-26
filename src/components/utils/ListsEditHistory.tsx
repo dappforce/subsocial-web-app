@@ -10,7 +10,8 @@ import IdentityIcon from '@polkadot/ui-identicon/Identicon';
 import Link from 'next/link';
 import { CreatedBy } from './CreatedBy';
 import { getJsonFromIpfs } from './OffchainUtils';
-import { withRequireProfile, withSocialAccount } from './utils';
+import { withRequireProfile, withSocialAccount, Loading } from './utils';
+import { DataEmpty } from '../utils/DataList';
 
 type ModalController = {
   open: boolean,
@@ -130,8 +131,8 @@ const InnerCommentHistoryModal = (props: CommentHistoryProps) => {
 
   const { open, close, commentOpt } = props;
 
-  if (commentOpt === undefined) return <Modal>Loading...</Modal>;
-  else if (commentOpt.isNone) return <Modal>Post not found</Modal>;
+  if (commentOpt === undefined) return <Modal><Loading /></Modal>;
+  else if (commentOpt.isNone) return <Modal><DataEmpty description={<span>Comment not found</span>} /></Modal>;
 
   const comment = commentOpt.unwrap() as Comment;
 
@@ -212,8 +213,8 @@ const InnerPostHistoryModal = (props: PostHistoryProps) => {
 
   const { open, close, postOpt } = props;
 
-  if (postOpt === undefined) return <Modal>Loading...</Modal>;
-  else if (postOpt.isNone) return <Modal>Post not found</Modal>;
+  if (postOpt === undefined) return <Modal><Loading /></Modal>;
+  else if (postOpt.isNone) return <Modal><DataEmpty description={<span>Post not found</span>} /></Modal>;
 
   const post = postOpt.unwrap();
   const { edit_history } = post;
@@ -285,7 +286,7 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
 
   return (<div style={{ textAlign: 'left', margin: '1rem' }}>
       <div className='ui massive relaxed middle aligned list FullProfile'>
-        <div className={`item ProfileDetails MyProfile`}>
+        <div className={`item ProfileDetails MyBlog`}>
         {content.image
         ? <img className='ui avatar image' src={content.image} />
         : <IdentityIcon className='image' value={edited.account} size={40} />
@@ -310,8 +311,8 @@ const InnerBlogHistoryModal = (props: BlogHistoryProps) => {
 
   const { open, close, blogOpt } = props;
 
-  if (blogOpt === undefined) return <Modal>Loading...</Modal>;
-  else if (blogOpt.isNone) return <Modal>Blog not found</Modal>;
+  if (blogOpt === undefined) return <Modal><Loading /></Modal>;
+  else if (blogOpt.isNone) return <Modal><DataEmpty description={<span>Blog not found</span>} /></Modal>;
 
   const blog = blogOpt.unwrap();
   const { edit_history } = blog;
@@ -386,7 +387,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
 
   return (<div style={{ textAlign: 'left', margin: '1rem' }}>
       <div className='ui massive relaxed middle aligned list FullProfile'>
-        <div className={`item ProfileDetails MyProfile`}>
+        <div className={`item ProfileDetails MyBlog`}>
         {content.avatar
         ? <img className='ui avatar image' src={content.avatar} />
         : <IdentityIcon className='image' value={edited.account} size={40} />

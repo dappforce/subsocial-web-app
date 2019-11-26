@@ -9,7 +9,7 @@ import { Option } from '@polkadot/types';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostData, Change } from '../types';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import { pluralizeText } from '../utils/utils';
+import { pluralizeText, Loading } from '../utils/utils';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { CommentsByPost } from './ViewComment';
 import { CreatedBy } from '../utils/CreatedBy';
@@ -21,6 +21,7 @@ import AddressMiniDf from '../utils/AddressMiniDf';
 import { api } from '@polkadot/ui-api';
 import { ShareModal } from './ShareModal';
 import { useRouter } from 'next/router';
+import { DataEmpty } from '../utils/DataList';
 
 const LIMIT_SUMMARY = 150;
 
@@ -43,8 +44,8 @@ type PostContent = PostData & {
 function ViewPostInternal (props: ViewPostProps) {
   const { postById } = props;
 
-  if (postById === undefined) return <em>Loading...</em>;
-  else if (postById.isNone) return <em>Post not found</em>;
+  if (postById === undefined) return <Loading />;
+  else if (postById.isNone) return <DataEmpty description={<span>Post not found</span>} />;
 
   const {
     myAddress,
@@ -62,7 +63,6 @@ function ViewPostInternal (props: ViewPostProps) {
     created,
     ipfs_hash,
     extension,
-    score,
     isRegularPost,
     isSharedComment,
     isSharedPost
@@ -195,7 +195,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderStatsPanel = (post: Post) => {
     if (post.id === undefined) return null;
 
-    const { upvotes_count, downvotes_count, comments_count, shares_count } = post;
+    const { upvotes_count, downvotes_count, comments_count, shares_count, score } = post;
     const counts = downvotes_count.toNumber() + upvotes_count.toNumber();
     return (<>
     <div className='DfCountsPreview'>
@@ -203,7 +203,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
       {pluralizeText(comments_count.toNumber(), 'Comment')}</div></MutedSpan>
       <MutedSpan><div>{pluralizeText(shares_count.toNumber(), 'Share')}</div></MutedSpan>
-      <MutedSpan>Score: <b>{score.toNumber()}</b></MutedSpan>
+      <MutedSpan><b>{score.toNumber()}</b> Points</MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
     </>);

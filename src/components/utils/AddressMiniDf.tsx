@@ -22,6 +22,7 @@ import { AccountFollowersModal, AccountFollowingModal } from '../profiles/Accoun
 import Router from 'next/router';
 import { MutedDiv } from './MutedText';
 import { Pluralize } from './Plularize';
+import { Avatar } from 'antd';
 
 const LIMIT_SUMMARY = 40;
 
@@ -45,6 +46,7 @@ export type Props = MyAccountProps & BareProps & {
   withProfilePreview?: boolean,
   withoutCounters?: boolean,
   withFollowButton?: boolean,
+  onlyUserName?: boolean,
   optionalProfile: boolean,
   date: string,
   event?: string,
@@ -71,6 +73,7 @@ function AddressMini (props: Props) {
     withProfilePreview,
     withoutCounters,
     asActivity = false,
+    onlyUserName = false,
     date,
     event,
     count,
@@ -129,11 +132,10 @@ function AddressMini (props: Props) {
     <div
       className={classes('ui--AddressMini', isPadded ? 'padded' : '', className)}
       style={style}
-      onClick={() => Router.push(`/profile?address=${address}`)}
     >
       <div className='ui--AddressMini-info'>
         {hasAvatar
-          ? <img className='DfAvatar' height={size || 36} width={size || 36} src={avatar} />
+          ? <Avatar size={size || 36} src={avatar} className='DfAvatar'/>
           : <IdentityIcon
             isHighlight={!!isValidator}
             size={size || 36}
@@ -164,12 +166,13 @@ function AddressMini (props: Props) {
       </div>
     </div>
   );
-
-  if (withProfilePreview) {
+  if (onlyUserName) {
+    return renderAddress(address);
+  } else if (withProfilePreview) {
     return renderProfilePreview();
+  } else {
+    return renderAutorPreview();
   }
-
-  return renderAutorPreview();
 
   function renderPreviewForAddress () {
     return <div className='ui--AddressMini-details'>
@@ -195,8 +198,8 @@ function AddressMini (props: Props) {
     return <div>
       <div className={`item ProfileDetails MyProfile`}>
         {hasAvatar
-          ? <img className='DfAvatar' height={size || 48} width={size || 48} src={avatar} />
-          : <IdentityIcon className='image' value={address} size={40} />
+          ? <Avatar size={size || 40} src={avatar} className='DfAvatar' />
+          : <IdentityIcon className='image' value={address} size={size || 40} />
         }
         <div className='content' style={{ marginLeft: '.7rem', marginRight: '.5rem' }}>
           <div className='header'>
@@ -239,7 +242,12 @@ function AddressMini (props: Props) {
     }
 
     return (
-        <div className={'ui--AddressMini-address asLink ' + (asActivity && 'activity')}>{fullname || username || (isShort ? toShortAddress(address) : address)}</div>
+        <div
+          className={'ui--AddressMini-address asLink ' + (asActivity && 'activity')}
+          onClick={() => Router.push(`/profile?address=${address}`)}
+        >
+          {fullname || username || (isShort ? toShortAddress(address) : address)}
+        </div>
     );
   }
 

@@ -14,7 +14,7 @@ type FollowBlogButtonProps = {
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
-  const { blogId, size = 'medium' } = props;
+  const { blogId, size = 'small' } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
   const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), blogId]);
@@ -29,7 +29,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     };
     load().catch(err => console.log(err));
 
-  }, [ blogId ]);
+  }, [ triggerReload ]);
 
   const buildTxParams = () => {
     return [ blogId ];
@@ -72,7 +72,7 @@ type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
 };
 
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
-  const { myAddress, address, size = 'medium' } = props;
+  const { myAddress, address, size = 'small' } = props;
 
   const accountId = new AccountId(address);
   const dataForQuery = new Tuple([AccountId, AccountId], [new AccountId(myAddress), accountId]);
@@ -87,7 +87,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     };
     load().catch(err => console.log(err));
 
-  }, [ accountId ]);
+  }, [ triggerReload ]);
 
   const buildTxParams = () => {
     return [ accountId ];

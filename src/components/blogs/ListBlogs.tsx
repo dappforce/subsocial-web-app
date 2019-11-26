@@ -13,6 +13,8 @@ import { AccountId } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import ListData from '../utils/DataList';
+import { Button } from 'antd';
+import { Loading } from '../utils/utils';
 
 type Props = ApiProps & I18nProps & {
   nextBlogId?: BN
@@ -41,6 +43,8 @@ class Component extends React.PureComponent<Props> {
           dataSource={ids}
           renderItem={(item, index) =>
             <ViewBlog {...this.props} key={index} id={item} previewDetails withFollowButton />}
+          noDataDesc='Blogs not created yet'
+          noDataExt={<Button href='/new-blog'>Create blog</Button>}
         />
       </div>
     );
@@ -60,19 +64,21 @@ type MyBlogProps = {
 
 const InnerListMyBlogs = (props: MyBlogProps) => {
   const { myblogsIds } = props;
-  if (!myblogsIds) return <em>Loading...</em>;
+  if (!myblogsIds) return <Loading />;
 
   const totalCount = myblogsIds.length;
   return (<>
-  <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
-  <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-    <ListData
-      title={`MyBlogs (${totalCount})`}
-      dataSource={myblogsIds}
-      renderItem={(index, item) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
-    />
-  </div>
-  }</>
+    <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
+    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <ListData
+        title={`MyBlogs (${totalCount})`}
+        dataSource={myblogsIds}
+        renderItem={(item, index) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
+        noDataDesc='You do not have your own blogs yet'
+        noDataExt={<Button href='/new-blog'>Create first my blog</Button>}
+      />
+    </div>
+  </>
   );
 };
 

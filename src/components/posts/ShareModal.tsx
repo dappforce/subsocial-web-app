@@ -9,6 +9,7 @@ import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
 import ViewBlog from '../blogs/ViewBlog';
 import Link from 'next/link';
+import { Loading } from '../utils/utils';
 
 type Props = MyAccountProps & {
   postId: PostId,
@@ -20,7 +21,7 @@ type Props = MyAccountProps & {
 const InnerShareModal = (props: Props) => {
   const { open, close, postId, blogsIds } = props;
 
-  if (!blogsIds) return <em>Loading...</em>;
+  if (!blogsIds) return <Loading />;
 
   const [blogId, setBlogId] = useState(blogsIds[0]);
   const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
@@ -29,13 +30,13 @@ const InnerShareModal = (props: Props) => {
 
     if (blogsIds.length === 0) {
       return (
-        <Link href='/new' as='/blog/new'><a className='ui button primary'>Create your first blog</a></Link>
+        <Link href='/new-blog'><a className='ui button primary'>Create your first blog</a></Link>
       );
     }
 
     const blogs = blogsIds.map(id => ({
       key: id.toNumber(),
-      text: <ViewBlog id={id} key={id} nameOnly />,
+      text: <ViewBlog id={id} key={id} dropdownPreview imageSize={26}/>,
       value: id.toNumber()
     }));
 
@@ -74,7 +75,7 @@ const InnerShareModal = (props: Props) => {
         {renderShareView()}
       </Modal.Content>
       <Modal.Actions>
-        <Button size='large' onClick={close}>Close</Button>
+        <Button size='large' onClick={close}>Cancel</Button>
         <NewSharePost
           blogId={blogId}
           extention={extension}

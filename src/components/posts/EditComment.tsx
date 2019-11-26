@@ -16,6 +16,8 @@ import { queryBlogsToProp } from '../utils/index';
 import { PostId, CommentId, Comment, CommentUpdate, CommentData } from '../types';
 
 import SimpleMDEReact from 'react-simplemde-editor';
+import { Loading } from '../utils/utils';
+import { DataEmpty } from '../utils/DataList';
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
@@ -131,7 +133,22 @@ const InnerForm = (props: FormProps) => {
   const form = () => (
     <Form className='ui form DfForm EditEntityForm'>
       <LabelledField name='body' {...props}>
-        <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} style={{ minWidth: '40rem', marginTop: '1rem' }} autoFocus={autoFocus}/>
+        <Field
+          component={SimpleMDEReact}
+          name='body'
+          value={body}
+          onChange={(data: string) => setFieldValue('body', data)}
+          className={`DfMdEditor ${errors['body'] && 'error'}`}
+          style={{ marginTop: '1rem' }}
+          option={{
+            autofocus: autoFocus,
+            spellChecker: false,
+            toolbar: false,
+            tabSize: 1,
+            minHeight: '40px',
+            status: false
+          }}
+        />
       </LabelledField>
 
       <LabelledField {...props}>
@@ -227,11 +244,11 @@ function LoadStruct (props: LoadStructProps) {
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {
-    return <em>Loading comment...</em>;
+    return <Loading />;
   }
 
   if (structOpt.isNone) {
-    return <em>Comment not found</em>;
+    return <DataEmpty description={<span>Comment not found</span>} />;
   }
 
   return <EditForm {...props} struct={struct} json={json as CommentData} />;
