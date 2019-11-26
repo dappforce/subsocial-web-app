@@ -79,6 +79,7 @@ const InnerModalVoters = (props: VotersProps) => {
 
   return (
     <Modal
+      size='small'
       onClose={close}
       open={open}
       centered={true}

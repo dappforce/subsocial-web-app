@@ -18,17 +18,18 @@ type Props = MyAccountProps & {
 };
 
 const InnerShareModal = (props: Props) => {
-  const { open, close } = props;
+  const { open, close, postId, blogsIds } = props;
+
+  if (!blogsIds) return <em>Loading...</em>;
+
+  const [blogId, setBlogId] = useState(blogsIds[0]);
+  const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
 
-    const { postId, blogsIds } = props;
-
-    if (!blogsIds) return <em>Loading...</em>;
-
     if (blogsIds.length === 0) {
       return (
-        <Link href='/new' as='/blog/new'><a className='ui button primary'>Create your firs blog</a></Link>
+        <Link href='/new' as='/blog/new'><a className='ui button primary'>Create your first blog</a></Link>
       );
     }
 
@@ -38,7 +39,6 @@ const InnerShareModal = (props: Props) => {
       value: id.toNumber()
     }));
 
-    const [blogId, setBlogId] = useState(blogsIds[0]);
     const saveBlog = (event: any, data: any) => {
       setBlogId(data);
     };
@@ -54,11 +54,10 @@ const InnerShareModal = (props: Props) => {
       />
       <NewSharePost
         blogId={blogId}
-        extention={new PostExtension({ SharedPost: new SharedPost(postId) })}
-        extButton={<Button content='Close' onClick={close} />}
-        preview={<ViewPost id={postId} preview withStats={false} withActions={false} />}
-        closeModal={close}
+        extention={extension}
+        withButtons={false}
       />
+      <ViewPost id={postId} preview withStats={false} withActions={false} />
     </div>
     );
   };
@@ -67,12 +66,21 @@ const InnerShareModal = (props: Props) => {
     <Modal
       onClose={close}
       open={open}
+      size='small'
       style={{ marginTop: '3rem' }}
     >
       <Modal.Header>Share post</Modal.Header>
       <Modal.Content scrolling className='noCenter'>
         {renderShareView()}
       </Modal.Content>
+      <Modal.Actions>
+        <Button size='large' onClick={close}>Close</Button>
+        <NewSharePost
+          blogId={blogId}
+          extention={extension}
+          onlyTxButton
+        />
+      </Modal.Actions>
     </Modal>
   );
 };

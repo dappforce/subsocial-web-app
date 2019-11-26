@@ -1,26 +1,29 @@
 import React from 'react';
-import { Menu, Image } from 'semantic-ui-react';
+import { Button, Icon } from 'antd';
 import InputAddress from '../components/utils/InputAddress';
 import Search from '../components/search/Search';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 
-const InnerMenu = () => {
+type Props = {
+  toggleCollapsed: () => void
+};
 
-  return (
-      <Menu className='DfMenu' inverted fixed='top'>
-        <Menu.Item as='a' header style={{ marginRight: '1.5em' }}>
-          <Image size='mini' src={substrateLogo} style={{ marginRight: '1.5em', marginTop: '-.5rem', marginBottom: '-.5rem' }} />
-          <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
-        </Menu.Item>
-
-        <Search />
+const InnerMenu = (props: Props) => (
+    <>
+      <div>
+        <Button type='link' onClick={props.toggleCollapsed}>
+          <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
+        </Button>
+        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
+      </div>
+      <Search />
+      <div>
         <InputAddress
           className='DfTopBar--InputAddress'
-          label={'My account:'}
           type='account'
+          withLabel={false}
         />
-      </Menu>
-  );
-};
+    </div>
+  </>
+);
 
 export default InnerMenu;

@@ -1,0 +1,13 @@
+# docker-compose.yml
+version: "3"
+services:
+  subsocial-ui:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    image: dappforce/subsocial-ui:latest
+    container_name: subsocial_ui
+    network_mode: "host"
+    ports:
+      - "3000:3000"
+    restart: on-failure

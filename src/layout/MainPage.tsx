@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import settings from '../components/settings';
 import '@polkadot/ui-app/i18n';
@@ -17,51 +17,49 @@ const Connecting = dynamic(() => import('../components/main/Connecting'), { ssr:
 import Menu from './SideMenu';
 import Signer from '../components/ui-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
-import styled from 'styled-components';
 import { QueueProps } from '@polkadot/ui-app/Status/types';
 import Status from '../components/main/Status';
-import { Grid } from 'semantic-ui-react';
-import TopMenu from './TopMenu';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../components/search/ElasticConfig';
+import { Layout } from 'antd';
+import TopMenu from './TopMenu';
 
-const WrapperConnent = styled.div`
-  background: #fafafa;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  height: 100%;
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: 100%;
-  padding: 0 2rem;
+const { Header, Sider, Content } = Layout;
 
-  @media(max-width: 768px) {
-    padding: 0 0.5rem;
-  }
-`;
 type Props = {
   children: React.ReactNode
 };
 
-const SideMenu = (props: Props) => (
-  <ReactiveBase
+const SideMenu = (props: Props) => {
+  const [ collapsed, setCollapsed ] = useState(false);
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+  return <ReactiveBase
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-    <TopMenu />
-    <Grid>
-      <Grid.Column width={3}>
-        <Menu />
-      </Grid.Column>
-
-      <Grid.Column stretched width={9}>
-        {props.children}
-      </Grid.Column>
-    </Grid>
-  </ReactiveBase>
-);
+  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
+    <Header className='DfHeader'>
+      <TopMenu toggleCollapsed={toggleCollapsed}/>
+    </Header>
+    <Layout style={{ marginTop: '64px' }}>
+      <Sider
+        width={200}
+        className='DfSider'
+        trigger={null}
+        collapsed={collapsed}
+      >
+        <Menu collapsed={collapsed}/>
+      </Sider>
+      <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '200px' }}>
+      <Content className='DfPageContent'>{props.children}</Content>
+      </Layout>
+    </Layout>
+  </Layout>,
+  </ReactiveBase>;
+};
 
 const NextLayout: React.FunctionComponent<any> = ({ children }) => {
   const url = process.env.WS_URL || settings.apiUrl || undefined;
@@ -94,7 +92,6 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
                 <MyAccountProvider>
                   <Signer>
                     <SideMenu>
-                      <WrapperConnent>
                         <QueueConsumer>
                           {({ queueAction, stqueue, txqueue }: QueueProps) => (
                             <>
@@ -107,7 +104,6 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
                             </>
                           )}
                         </QueueConsumer>
-                      </WrapperConnent>
                     </SideMenu>
                   </Signer>
                 </MyAccountProvider>
@@ -117,7 +113,7 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
           }}
         </QueueConsumer>
       </Queue>
-    </Suspense>;
+    </Suspense>
   </div>;
 };
 

@@ -4,30 +4,33 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { BlogId } from '../types';
-import Section from '../utils/Section';
 import ViewBlog from './ViewBlog';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { pluralizeText } from '../utils/utils';
+import ListData from '../utils/DataList';
 
 type MyBlogProps = {
   id: AccountId,
+  mini?: boolean
   followedBlogsIds?: BlogId[]
 };
 
 const InnerListMyBlogs = (props: MyBlogProps) => {
-  const { followedBlogsIds } = props;
+  const { followedBlogsIds, mini = false } = props;
   const totalCount = followedBlogsIds !== undefined ? followedBlogsIds && followedBlogsIds.length : 0;
+  if (!followedBlogsIds) return <em>Loading</em>;
 
-  return (
-  <Section title={pluralizeText(totalCount, 'Following blog')}>{
-    followedBlogsIds && followedBlogsIds.length === 0
-      ? <em>No blogs created yet.</em>
-      : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-          {followedBlogsIds && followedBlogsIds.map((id, i) =>
-            <ViewBlog {...props} key={i} id={id} previewDetails withFollowButton/>
-          )}
-        </div>
-  }</Section>
+  return (mini
+      ? <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+          <ListData
+            title={pluralizeText(totalCount, 'Following blog')}
+            dataSource={followedBlogsIds}
+            renderItem={(item,index) => (
+                <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
+            )}
+          />
+      </div>
+      : <>{followedBlogsIds.map((item, index) => <ViewBlog {...props} key={index} id={item} miniPreview/>)}</>
   );
 };
 

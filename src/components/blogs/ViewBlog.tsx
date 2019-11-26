@@ -10,7 +10,6 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
 import { BlogId, Blog, PostId, BlogData } from '../types';
 import { MyAccountProps, withMyAccount } from '../utils/MyAccount';
-import Section from '../utils/Section';
 import { ViewPost } from '../posts/ViewPost';
 import { CreatedBy } from '../utils/CreatedBy';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
@@ -20,7 +19,7 @@ import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
 import { pluralizeText } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
-import Router from 'next/router';
+import Router from 'next/router';import ListData from '../utils/DataList';
 
 type Props = MyAccountProps & {
   preview?: boolean,
@@ -170,44 +169,41 @@ function Component(props: Props) {
   }
 
   const renderPostPreviews = () => {
-    if (!postIds || postIds.length === 0) {
-      return <em>This blog has no posts yet</em>;
-    }
-
-    return postIds.map((id, i) => <ViewPost key={i} id={id} preview />);
+    return <ListData
+      title={postsSectionTitle()}
+      dataSource={postIds}
+      renderItem={(id, index) =>
+        <ViewPost key={index} id={id} preview />}
+    />;
   };
+  const NewPostButton = () => <Link href={`/new-post?blogId=${id}`}>
+    <a className='ui tiny button'>
+      <i className='plus icon' />
+      Write post
+    </a>
+  </Link>;
 
   const postsSectionTitle = () => {
-    return <>
+    return <div>
       <span style={{ marginRight: '.5rem' }}>{pluralizeText(postsCount, 'Post')}</span>
-      <Link href={`/new-post?blogId=${id}`}>
-        <a className='ui tiny button'>
-          <i className='plus icon' />
-          Write post
-        </a>
-      </Link>
-    </>;
+      <NewPostButton />
+    </div>;
   };
 
   return <div>
-    <SeoHeads title={name} name={name} desc={desc} image={image} />;
-    <Section>
-      <div className='ui massive relaxed middle aligned list FullProfile'>
-        {renderPreview()}
-      </div>
-      <CreatedBy created={blog.created} />
+    <SeoHeads title={name} name={name} desc={desc} image={image} />
+    <div className='ui massive relaxed middle aligned list FullProfile'>
+      {renderPreview()}
+    </div>
+    <CreatedBy created={blog.created} />
 
-      <div className='DfSpacedButtons'>
-        <FollowBlogButton blogId={id} />
-        <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
-      </div>
+    <div className='DfSpacedButtons'>
+      <FollowBlogButton blogId={id} />
+      <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
+    </div>
 
-      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
-
-      <Section id='posts' title={postsSectionTitle()}>
-        {renderPostPreviews()}
-      </Section>
-    </Section>
+    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
+    {renderPostPreviews()}
   </div>;
 }
 

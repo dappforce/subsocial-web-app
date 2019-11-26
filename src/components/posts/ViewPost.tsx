@@ -109,9 +109,9 @@ function ViewPostInternal (props: ViewPostProps) {
 
       loadSharedPost().catch(err => new Error(err));
     }
-  }, [ false ]);
+  }, [ ipfs_hash ]);
 
-  const renderDropDownMenu = () => {
+  const RenderDropDownMenu = () => {
 
     const account = isRegularPost ? post && created.account.toString() : originalPost.id && originalPost.created.account.toString();
     const isMyStruct = myAddress === account;
@@ -168,7 +168,7 @@ function ViewPostInternal (props: ViewPostProps) {
     </div>;
   };
 
-  const renderActionsPanel = () => {
+  const RenderActionsPanel = () => {
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
     return (
@@ -216,14 +216,14 @@ function ViewPostInternal (props: ViewPostProps) {
         <div className='DfInfo'>
           <div className='DfRow'>
             {renderPostCreator(created)}
-            {renderDropDownMenu()}
+            <RenderDropDownMenu/>
           </div>
           {renderContent(post, content)}
         </div>
         {content.image && <img src={content.image} className='DfPostImagePreview' /* add onError handler */ />}
       </div>
       {withStats && renderStatsPanel(post)}
-      {withActions && renderActionsPanel()}
+      {withActions && <RenderActionsPanel/>}
       {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
     </>;
@@ -234,7 +234,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
           <div className='DfRow'>
             {renderPostCreator(created)}
-            {renderDropDownMenu()}
+            <RenderDropDownMenu/>
           </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
         {/* TODO add body*/}
@@ -243,7 +243,7 @@ function ViewPostInternal (props: ViewPostProps) {
             <div className='DfInfo'>
               <div className='DfRow'>
                 {renderPostCreator(originalPost.created)}
-                {renderDropDownMenu()}
+                <RenderDropDownMenu/>
               </div>
               {renderContent(originalPost, originalContent)}
             </div>
@@ -252,7 +252,7 @@ function ViewPostInternal (props: ViewPostProps) {
           {withStats && renderStatsPanel(originalPost) /* todo params originPost */}
         </Segment>
         {withStats && renderStatsPanel(post) /* todo voters %%%*/ }
-        {withActions && renderActionsPanel()}
+        {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
       </Segment>
@@ -262,10 +262,10 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderDetails = (content: PostContent) => {
     const { title, body, image } = content;
     return <>
-      <SeoHeads title={title} name={title} desc={body} image={image} />;
+      <SeoHeads title={title} name={title} desc={body} image={image} />
       <h1 style={{ display: 'flex' }}>
         <span style={{ marginRight: '.5rem' }}>{title}</span>
-        {renderDropDownMenu()}
+        <RenderDropDownMenu/>
       </h1>
       {renderStatsPanel(post)}
       {withCreatedBy && <CreatedBy created={post.created} />}

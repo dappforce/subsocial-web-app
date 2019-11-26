@@ -120,14 +120,6 @@
   }
 }
 
-.apps--SideBar-logo {
-  max-height: 26px !important;
-  margin: 1rem 1.5rem 1rem .75rem !important;
-}
-.collapsed .apps--SideBar-logo {
-  margin: 1rem .75rem 1rem .5rem !important
-}
-
 .DfForm .ui--Labelled {
   align-items: end;
   &>label {
@@ -202,6 +194,11 @@
   margin-top: .5rem;
 }
 
+.DfPopup-links {
+  display: flex;
+  justify-content: space-around;
+}
+
 .DfMdEditor {
   .CodeMirror-scroll {
     min-height: 5rem !important;
@@ -245,6 +242,92 @@
 }
 
 .DfSearch {
+  width: 45%;
   color: rgba(0, 0, 0, 0.7);
-  margin: auto;
+  input {
+    border-radius: .5rem;
+  }
+  input:hover {
+    border-color: #1e99ff;
+  }
+  input:focus {
+    border-color: #1e99ff;
+    -moz-box-shadow:0 0 10px #1e99ff; -webkit-box-shadow:0 0 10px #1e99ff; box-shadow:0 0 10px #1e99ff;
+  }
+}
+
+.DfTopBar--InputAddress {
+  .ui.input>input, .ui.selection.dropdown {
+    width: 1rem;
+  }
+}
+
+.DfBgColor {
+  background-color: #fafafa;
+}
+
+.DfTab {
+  background-color: #fff;
+  .ui.attached.tabular.menu {
+    padding: 1rem 1rem 0rem 1rem ;
+  }
+}
+
+.DfHeader {
+  background: #fff;
+  padding: 0 1rem;
+  border-bottom: 1px solid #ddd;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.ant-layout {
+  background-color: #fafafa !important;
+}
+
+.DfDataList { 
+  .ant-list-pagination {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.DfTitle--List {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.DfSideMenu--FollowedBlogs {
+  .ant-menu-item-group-title {
+    border-top: #ccc 1px solid;
+    text-transform: uppercase;
+    font-size: .9rem;
+  }
+  .content { 
+    margin-top: 1.5rem;
+  }
+  .handle {
+    color: #666;
+  }
+  .container.highlight {
+    margin-top: .5rem;
+    margin-right: .3rem;
+  }
+  img {
+    margin-top: .5rem;
+  }
+}
+
+.DfSider {
+  background: #fff;
+  border-right: 1px solid #ddd;
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
+  left: 0;
 }

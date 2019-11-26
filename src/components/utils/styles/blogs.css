@@ -1,3 +1,13 @@
+.DfPageContent {
+  width: 70%;
+}
+
+@media (max-width: 1200px) {
+  .DfPageContent {
+    width: 90%;
+  }
+}
+
 .DfPostImage {
   max-width: 100%;
 }
@@ -156,7 +166,7 @@ hr {
 }
 
 .DfActivityStreamItem {
-  .handle { 
+  .handle, a { 
     font-weight: bold;
   }
 
@@ -293,6 +303,7 @@ div.asLink:hover {
     font-size: 1rem;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
+    background-color: rgba(255,255,255,0) !important;
   }
   img.DfPostImagePreview {
     border-radius: .2rem;
@@ -309,10 +320,6 @@ div.asLink:hover {
   .EditEntityBox {
     width: 100%;
     max-width: none;
-  }
-  .DfTxButton {
-    display: flex;
-    justify-content: flex-end;
   }
   .ui.input>input, .ui.selection.dropdown {
     width: 100%;

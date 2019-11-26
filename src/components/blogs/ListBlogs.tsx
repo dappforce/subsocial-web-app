@@ -5,7 +5,6 @@ import { ApiProps } from '@polkadot/ui-api/types';
 import { I18nProps } from '@polkadot/ui-app/types';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
-import Section from '../utils/Section';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import translate from '../utils/translate';
 import ViewBlog from './ViewBlog';
@@ -13,6 +12,7 @@ import { BlogId } from '../types';
 import { AccountId } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import ListData from '../utils/DataList';
 
 type Props = ApiProps & I18nProps & {
   nextBlogId?: BN
@@ -35,15 +35,14 @@ class Component extends React.PureComponent<Props> {
     }
 
     return (
-      <Section title={`All Blogs (${totalCount})`}>{
-        ids.length === 0
-          ? <em>No blogs created yet.</em>
-          : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-              {ids.map((id, i) =>
-                <ViewBlog {...this.props} key={i} id={id} previewDetails withFollowButton />
-              )}
-            </div>
-      }</Section>
+      <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+        <ListData
+          title={`All blogs (${totalCount})`}
+          dataSource={ids}
+          renderItem={(item, index) =>
+            <ViewBlog {...this.props} key={index} id={item} previewDetails withFollowButton />}
+        />
+      </div>
     );
   }
 }
@@ -61,18 +60,19 @@ type MyBlogProps = {
 
 const InnerListMyBlogs = (props: MyBlogProps) => {
   const { myblogsIds } = props;
-  const totalCount = myblogsIds && myblogsIds.length;
+  if (!myblogsIds) return <em>Loading...</em>;
+
+  const totalCount = myblogsIds.length;
   return (<>
-  <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />;
-  <Section title={`MyBlogs (${totalCount})`}>{
-    myblogsIds && myblogsIds.length === 0
-      ? <em>No blogs created yet.</em>
-      : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-          {myblogsIds && myblogsIds.map((id, i) =>
-            <ViewBlog {...props} key={i} id={id} previewDetails withFollowButton />
-          )}
-        </div>
-  }</Section></>
+  <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
+  <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+    <ListData
+      title={`MyBlogs (${totalCount})`}
+      dataSource={myblogsIds}
+      renderItem={(index, item) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
+    />
+  </div>
+  }</>
   );
 };
 
