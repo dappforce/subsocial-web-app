@@ -1,0 +1,9 @@
+.info{
+  display: flex;
+  div{
+    margin-right: 1rem;
+  }
+  i{
+    margin-right: .6rem;
+  }
+}
