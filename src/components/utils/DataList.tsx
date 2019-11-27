@@ -91,9 +91,15 @@ export default (props: Props) => {
     />
   );
 
-  return <Section title={<div className='DfTitle--List'>{title}</div>}>
-    {isEmptyData ? <DataEmpty description={noDataDesc}>{noDataExt}</DataEmpty> : <RenderList/>}
-  </Section>;
+  const SectionOfList = (props: any): JSX.Element => (
+    title
+    ? <Section title={<div className='DfTitle--List'>{title}</div>}>{props.children}</Section>
+    : props.children
+  );
+
+  return <SectionOfList>
+    {isEmptyData ? <NoData description={noDataDesc}>{noDataExt}</NoData> : <RenderList/>}
+  </SectionOfList>;
 };
 
 type EmptyProps = {
@@ -101,8 +107,9 @@ type EmptyProps = {
   children?: React.ReactNode
 }
 
-export const DataEmpty = (props: EmptyProps) => (
+export const NoData = (props: EmptyProps) => (
   <Empty
+    className='DfEmpty'
     description={
       <MutedSpan>
         {props.description}

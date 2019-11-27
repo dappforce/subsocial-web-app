@@ -71,7 +71,7 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
     <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
-        title={`MyBlogs (${totalCount})`}
+        title={`My Blogs (${totalCount})`}
         dataSource={myblogsIds}
         renderItem={(item, index) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
         noDataDesc='You do not have your own blogs yet'

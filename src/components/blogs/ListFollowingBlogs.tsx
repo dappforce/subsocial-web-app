@@ -9,21 +9,28 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { pluralizeText, Loading } from '../utils/utils';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
+import BN from 'bn.js';
+import { useRouter } from 'next/router';
 
-type MyBlogProps = {
+type ListBlogProps = {
   id: AccountId,
   mini?: boolean
   followedBlogsIds?: BlogId[]
 };
 
-const InnerListMyBlogs = (props: MyBlogProps) => {
+const InnerListMyBlogs = (props: ListBlogProps) => {
   const { followedBlogsIds, mini = false } = props;
   const totalCount = followedBlogsIds !== undefined ? followedBlogsIds && followedBlogsIds.length : 0;
+  const router = useRouter();
+  const { pathname, query } = router;
+  const currentBlog = pathname.includes('blog') ? new BN(query.id as string) : undefined;
+  console.log([pathname.includes('blog'), currentBlog, pathname, query]);
+
   if (!followedBlogsIds) return <Loading />;
 
   const renderFollowedList = () => (
     <>{totalCount > 0
-      ? followedBlogsIds.map((item, index) => <ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/>)
+      ? followedBlogsIds.map((item, index) => <div className={currentBlog && currentBlog.eq(item) ? 'DfSelectedBlog' : ''} ><ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/></div>)
       : <div className='DfNoFollowed'><Button type='primary' size='small' href='/all'>Show all</Button></div>}
     </>
   );
@@ -44,7 +51,7 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
   );
 };
 
-function withIdFromUseMyAccount (Component: React.ComponentType<MyBlogProps>) {
+function withIdFromUseMyAccount (Component: React.ComponentType<ListBlogProps>) {
   return function () {
     const { state: { address: myAddress } } = useMyAccount();
     try {
@@ -58,7 +65,7 @@ function withIdFromUseMyAccount (Component: React.ComponentType<MyBlogProps>) {
 export const ListFollowingBlogs = withMulti(
   InnerListMyBlogs,
   withIdFromUseMyAccount,
-  withCalls<MyBlogProps>(
+  withCalls<ListBlogProps>(
     queryBlogsToProp(`blogsFollowedByAccount`, { paramName: 'id', propName: 'followedBlogsIds' })
   )
 );

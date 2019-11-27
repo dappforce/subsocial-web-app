@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { CreatedBy } from './CreatedBy';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { withRequireProfile, withSocialAccount, Loading } from './utils';
-import { DataEmpty } from '../utils/DataList';
+import { NoData } from '../utils/DataList';
 
 type ModalController = {
   open: boolean,
@@ -132,7 +132,7 @@ const InnerCommentHistoryModal = (props: CommentHistoryProps) => {
   const { open, close, commentOpt } = props;
 
   if (commentOpt === undefined) return <Modal><Loading /></Modal>;
-  else if (commentOpt.isNone) return <Modal><DataEmpty description={<span>Comment not found</span>} /></Modal>;
+  else if (commentOpt.isNone) return <Modal><NoData description={<span>Comment not found</span>} /></Modal>;
 
   const comment = commentOpt.unwrap() as Comment;
 
@@ -214,7 +214,7 @@ const InnerPostHistoryModal = (props: PostHistoryProps) => {
   const { open, close, postOpt } = props;
 
   if (postOpt === undefined) return <Modal><Loading /></Modal>;
-  else if (postOpt.isNone) return <Modal><DataEmpty description={<span>Post not found</span>} /></Modal>;
+  else if (postOpt.isNone) return <Modal><NoData description={<span>Post not found</span>} /></Modal>;
 
   const post = postOpt.unwrap();
   const { edit_history } = post;
@@ -312,7 +312,7 @@ const InnerBlogHistoryModal = (props: BlogHistoryProps) => {
   const { open, close, blogOpt } = props;
 
   if (blogOpt === undefined) return <Modal><Loading /></Modal>;
-  else if (blogOpt.isNone) return <Modal><DataEmpty description={<span>Blog not found</span>} /></Modal>;
+  else if (blogOpt.isNone) return <Modal><NoData description={<span>Blog not found</span>} /></Modal>;
 
   const blog = blogOpt.unwrap();
   const { edit_history } = blog;

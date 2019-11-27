@@ -21,7 +21,8 @@ import AddressMiniDf from '../utils/AddressMiniDf';
 import { api } from '@polkadot/ui-api';
 import { ShareModal } from './ShareModal';
 import { useRouter } from 'next/router';
-import { DataEmpty } from '../utils/DataList';
+import { NoData } from '../utils/DataList';
+import Section from '../utils/Section';
 
 const LIMIT_SUMMARY = 150;
 
@@ -45,7 +46,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const { postById } = props;
 
   if (postById === undefined) return <Loading />;
-  else if (postById.isNone) return <DataEmpty description={<span>Post not found</span>} />;
+  else if (postById.isNone) return <NoData description={<span>Post not found</span>} />;
 
   const {
     myAddress,
@@ -261,7 +262,7 @@ function ViewPostInternal (props: ViewPostProps) {
 
   const renderDetails = (content: PostContent) => {
     const { title, body, image } = content;
-    return <>
+    return <Section>
       <SeoHeads title={title} name={title} desc={body} image={image} />
       <h1 style={{ display: 'flex' }}>
         <span style={{ marginRight: '.5rem' }}>{title}</span>
@@ -277,7 +278,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <Voter struct={post} />
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
-    </>;
+    </Section>;
   };
 
   const renderSharedDetails = () => (renderSharedPreview());

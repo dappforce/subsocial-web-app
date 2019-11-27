@@ -9,7 +9,7 @@ import { getJsonFromIpfs } from './OffchainUtils';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
-import { DataEmpty } from './DataList';
+import { NoData } from './DataList';
 
 type AuthorPreviewProps = {
   address: AccountId | AccountIndex | Address | string;
@@ -110,13 +110,13 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
     const { socialAccountOpt, requireProfile = false } = props;
 
     if (socialAccountOpt === undefined) return <Loading />;
-    else if (socialAccountOpt.isNone && requireProfile) return <DataEmpty description={<span>You have not created profile yet</span>} />;
+    else if (socialAccountOpt.isNone && requireProfile) return <NoData description={<span>You have not created profile yet</span>} />;
     else if (socialAccountOpt.isNone) return <Component {...props} />;
 
     const socialAccount = socialAccountOpt.unwrap();
     const profileOpt = socialAccount.profile;
 
-    if (profileOpt.isNone && requireProfile) return <DataEmpty description={<span>You have not created profile yet</span>} />
+    if (profileOpt.isNone && requireProfile) return <NoData description={<span>You have not created profile yet</span>} />
     else if (profileOpt.isNone) return <Component {...props} />;
 
     const profile = profileOpt.unwrap() as Profile;
