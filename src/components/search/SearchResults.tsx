@@ -5,9 +5,9 @@ import { ViewPost } from '../posts/ViewPost';
 import { Tab, StrictTabProps } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
-import Section from '../utils/Section';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
+import Section from '../utils/Section';
 
 type DataResults = {
   _id: string;
@@ -54,12 +54,11 @@ const resultToPreview = (res: DataResults, i: number) => {
 
 const Previews = (props: Props) => {
   const { results } = props;
-  return !results || !results.length
-    ? <em>No results found</em>
-    : <div className='DfBgColor'>
+  return <div className='DfBgColor'>
       <ListData
         dataSource={results}
         renderItem={(res, i) => resultToPreview(res,i)}
+        noDataDesc='No results found'
       />
     </div>;
 };
@@ -95,7 +94,7 @@ const Tabs = () => {
   };
 
   return <>
-    <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex} />
+    <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex}/>
     <ReactiveComponent
       componentId='tab'
       customQuery={() => {
@@ -122,6 +121,7 @@ const App = () => {
         react={{ and: ['q', 'tab'] }}
         showResultStats={false}
         URLParams={true}
+        loader={' '}
         render={res => <>
           <Tabs />
           <Previews results={res.data} />

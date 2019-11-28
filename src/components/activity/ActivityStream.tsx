@@ -12,7 +12,7 @@ import { getNewsFeed, getNotifications, LIMIT } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddressMiniDf from '../utils/AddressMiniDf';
 import { Loader } from 'semantic-ui-react';
-import { DataEmpty } from '../utils/DataList';
+import { NoData } from '../utils/DataList';
 
 type ActivityProps = {
   activity: Activity;
@@ -45,7 +45,7 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
   return (
     <Section title={`News Feed (${totalCount})`}>{
       totalCount === 0
-        ? <DataEmpty description='Your feed is empty'/>
+        ? <NoData description='Your feed is empty'/>
         :
         <InfiniteScroll
           dataLength={totalCount}
@@ -87,7 +87,7 @@ const InnerViewNotifications = (props: MyAccountProps) => {
   return (
     <Section title={`Notifications (${totalCount})`}>
       {totalCount === 0
-        ? <em>News is not yet</em>
+        ? <NoData description='No notifications for you'/>
         :
         <InfiniteScroll
           dataLength={totalCount}

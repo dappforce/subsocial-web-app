@@ -120,7 +120,7 @@ export const Voter = (props: VoterProps) => {
           ? `blogs.update${struct}Reaction`
           : `blogs.delete${struct}Reaction`}
       >
-        <Icon type={`${icon}like`} theme='filled' twoToneColor='#F14F4F'/>
+        <Icon type={`${icon}like`} twoToneColor='#F14F4F'/>
       </TxButton>);
     };
 

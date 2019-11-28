@@ -28,7 +28,6 @@ const App = () => {
           type='search'
           style={{ fontSize: '14px', position: 'relative', top: '-1.6rem' }}
         />}
-        innerClass={{ list: 'visible menu transition' }}
       />
     </div>
   );

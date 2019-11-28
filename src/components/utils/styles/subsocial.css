@@ -183,6 +183,7 @@
 .DfAvatar{
   margin-right: .5rem;
   display: inline-block;
+  border-radius: 50rem;
   vertical-align: middle;
   border: 1px solid #ddd;
 }
@@ -259,6 +260,10 @@
   }
 }
 
+.ui.attached.tabular.menu {
+  padding: 0 2rem;
+}
+
 .DfSearch {
   width: 45%;
   color: rgba(0, 0, 0, 0.7);
@@ -272,6 +277,12 @@
   input:focus {
     border-color: #1e99ff;
     -moz-box-shadow:0 0 10px #1e99ff; -webkit-box-shadow:0 0 10px #1e99ff; box-shadow:0 0 10px #1e99ff;
+  }
+  ul {
+    top: 50px;
+  }
+  li {
+    line-height: initial;
   }
 }
 
@@ -313,10 +324,15 @@
 }
 
 .DfDataList { 
+  padding-top: .5rem;
   .ant-list-pagination {
     display: flex;
     justify-content: center;
   }
+}
+
+.DfEmpty {
+  padding-top: 2rem;
 }
 
 .DfTitle--List {
@@ -325,25 +341,34 @@
   width: 100%;
 }
 
+.DfSelestedBlog {
+  color: #1890fe;
+}
+
 .DfSideMenu--FollowedBlogs {
+  color: #666;
+  cursor: pointer;
   .ant-menu-item-group-title {
     border-top: #ccc 1px solid;
     text-transform: uppercase;
     font-size: .9rem;
   }
-  .handle {
-    color: #666;
-  }
+
   .container.highlight {
     margin-top: .5rem;
     margin-right: .3rem;
   }
   .content {
+    width: 80%;
     display: flex;
     align-items: center;
+    .handle {
+      padding: .6rem 0rem;
+    }
   }
   .item {
     padding: .5rem;
+    padding-left: 1rem;
   }
   .DfNoFollowed {
     display: flex;
@@ -362,4 +387,12 @@
 
 .ant-list-something-after-last-item .ant-spin-container > .ant-list-items > .ant-list-item:last-child {
   border: none;
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+
+  /* Required for text-overflow to do anything */
+  white-space: nowrap;
+  overflow: hidden;
 }

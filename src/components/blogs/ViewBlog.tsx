@@ -20,8 +20,12 @@ import TxButton from '../utils/TxButton';
 import { pluralizeText, Loading } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
 import Router from 'next/router';
-import ListData, { DataEmpty } from '../utils/DataList';
-import { Avatar, Tag, Button } from 'antd';
+import ListData, { NoData } from '../utils/DataList';
+import { Tag, Button } from 'antd';
+import { DfBgImg } from '../utils/DfBgImg';
+import { Pluralize } from '../utils/Plularize';
+
+const SUB_SIZE = 2;
 
 type Props = MyAccountProps & {
   preview?: boolean,
@@ -42,7 +46,7 @@ function Component (props: Props) {
   const { blogById } = props;
 
   if (blogById === undefined) return <Loading />;
-  else if (blogById.isNone) return <DataEmpty description={<span>Blog not found</span>} />;
+  else if (blogById.isNone) return <NoData description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -107,16 +111,16 @@ function Component (props: Props) {
 
   const renderDropDownPreview = () => (
     <>
-      <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd', marginRight: '.5rem' }}/>
+      <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd', marginRight: '.5rem' }}/>
       {renderNameOnly()}
     </>
   );
 
   const renderMiniPreview = () => (
-    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails asLink ${isMyBlog && 'MyBlog'}`}>
+    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
-        : <IdentityIcon className='image' value={account} size={imageSize} />
+        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
+        : <IdentityIcon className='image' value={account} size={imageSize-SUB_SIZE} />
       }
       <div className='content'>
         <div className='handle'>{name}</div>
@@ -128,8 +132,8 @@ function Component (props: Props) {
     return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <Avatar size={imageSize} src={image} />
-          : <IdentityIcon className='image' value={account} size={imageSize} />
+          ? <DfBgImg size={imageSize} src={image} />
+          : <IdentityIcon className='image' value={account} size={imageSize-SUB_SIZE} />
         }
         <div className='content'>
           <div className='header'>
@@ -160,7 +164,7 @@ function Component (props: Props) {
           {pluralizeText(followers, 'Follower')}
         </div>
 
-        <MutedSpan className='DfStatItem'>{score.toNumber()} Points</MutedSpan>
+        <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' pluralText='Points'/></MutedSpan>
 
         {followersOpen &&
           <BlogFollowersModal
@@ -191,15 +195,15 @@ function Component (props: Props) {
       renderItem={(id, index) =>
         <ViewPost key={index} id={id} preview />}
       noDataDesc='No posts yet'
-      noDataExt={<Button href='/new-post'>Create post</Button>}
+      noDataExt={<Button href={`/new-post?blogId=${id}`}>Create post</Button>}
     />;
   };
-  const NewPostButton = () => <Button href='/new-post' icon='plus' size='small' className='DfGreyButton'>New post</Button>;
+  const NewPostButton = () => <Button href={`/new-post?blogId=${id}`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;
 
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
       <span style={{ marginRight: '1rem' }}>{pluralizeText(postsCount, 'Post')}</span>
-      {postIds.length && <NewPostButton />}
+      {postIds.length ? <NewPostButton /> : null}
     </div>;
   };
 

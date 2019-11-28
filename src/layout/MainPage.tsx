@@ -46,14 +46,14 @@ const SideMenu = (props: Props) => {
     </Header>
     <Layout style={{ marginTop: '64px' }}>
       <Sider
-        width={200}
+        width={250}
         className='DfSider'
         trigger={null}
         collapsed={collapsed}
       >
         <Menu collapsed={collapsed}/>
       </Sider>
-      <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '200px' }}>
+      <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
       <Content className='DfPageContent'>{props.children}</Content>
       </Layout>
     </Layout>

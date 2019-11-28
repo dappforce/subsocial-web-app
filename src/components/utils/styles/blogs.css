@@ -37,11 +37,13 @@
 }
 .ProfileDetails {
   display: flex !important;
-  padding-left: 1rem !important;
   .content {
-    margin-left: 1rem;
+    padding-left: .5rem;
+    padding-right: .5rem;
   }
   .header { 
+    display: flex !important;
+    align-items: center;
     font-size: 1.7rem;
     font-weight: bold;
   }
@@ -49,6 +51,9 @@
     height: min-content;
   }
   .handle {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
     display: inline-block;
     margin-right: .6rem;
     .button {
@@ -198,6 +203,7 @@ hr {
 }
 
 .disable, .disable:hover{
+  margin-right: .5rem;
   color: #8c8c8c;
   text-decoration: none;
   cursor: default;
@@ -232,13 +238,13 @@ hr {
   }
 }
 
-div.asLink {
+.asLink {
   color: #2185d0;
   text-decoration: none;
   cursor: pointer;
 }
 
-div.asLink:hover {
+.asLink:hover {
   color: #0d548a
 }
 
@@ -254,6 +260,9 @@ div.asLink:hover {
 .DfBlogBody {
   display: flex;
   width: 100%;
+  .handle {
+    max-width: 30rem;
+  }
 }
 
 .DfCountsPreview{
@@ -386,10 +395,22 @@ div.asLink:hover {
 
 .DfGreyButton {
   background-color: #ddd;
+  padding: 1rem;
 }
 
 .DfGreyButton:hover {
-  background-color: #bbb;
+  background-color: #ccc;
   border-color: #ddd;
   color: #333;
+}
+
+.DfSelectedBlog {
+  background-color: #e6f7ff;
+  color: #1890fe !important;
+  border-right: 2px solid #1890f3;
+}
+
+.DfBgImg {
+  background-size: cover;
+  background-position: center;
 }

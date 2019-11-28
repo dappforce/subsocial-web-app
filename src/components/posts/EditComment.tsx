@@ -17,7 +17,7 @@ import { PostId, CommentId, Comment, CommentUpdate, CommentData } from '../types
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
-import { DataEmpty } from '../utils/DataList';
+import { NoData } from '../utils/DataList';
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
@@ -248,7 +248,7 @@ function LoadStruct (props: LoadStructProps) {
   }
 
   if (structOpt.isNone) {
-    return <DataEmpty description={<span>Comment not found</span>} />;
+    return <NoData description={<span>Comment not found</span>} />;
   }
 
   return <EditForm {...props} struct={struct} json={json as CommentData} />;
