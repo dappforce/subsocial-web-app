@@ -17,6 +17,7 @@ import TxButton from '../utils/TxButton';
 import { MutedDiv } from '../utils/MutedText';
 import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
+import { DfBgImg } from '../utils/DfBgImg';
 
 export type Props = {
   preview?: boolean,
@@ -121,7 +122,7 @@ function Component(props: Props) {
     return <div>
       <div className={`item ProfileDetails MyBlog`}>
         {hasAvatar
-          ? <img width={size} height={size} src={avatar} className='DfAvatar'/>
+          ? <DfBgImg size={size} src={avatar} className='DfAvatar'/>
           : <IdentityIcon className='image' value={address} size={size} />
         }
         <div className='content'>

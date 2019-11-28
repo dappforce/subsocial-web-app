@@ -21,7 +21,9 @@ import { pluralizeText, Loading } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
 import Router from 'next/router';
 import ListData, { NoData } from '../utils/DataList';
-import { Avatar, Tag, Button } from 'antd';
+import { Tag, Button } from 'antd';
+import { DfBgImg } from '../utils/DfBgImg';
+import { Pluralize } from '../utils/Plularize';
 
 const SUB_SIZE = 2;
 
@@ -109,7 +111,7 @@ function Component (props: Props) {
 
   const renderDropDownPreview = () => (
     <>
-      <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd', marginRight: '.5rem' }}/>
+      <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd', marginRight: '.5rem' }}/>
       {renderNameOnly()}
     </>
   );
@@ -117,7 +119,7 @@ function Component (props: Props) {
   const renderMiniPreview = () => (
     <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <Avatar size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
+        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
         : <IdentityIcon className='image' value={account} size={imageSize-SUB_SIZE} />
       }
       <div className='content'>
@@ -130,7 +132,7 @@ function Component (props: Props) {
     return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <Avatar size={imageSize} src={image} />
+          ? <DfBgImg size={imageSize} src={image} />
           : <IdentityIcon className='image' value={account} size={imageSize-SUB_SIZE} />
         }
         <div className='content'>
@@ -162,7 +164,7 @@ function Component (props: Props) {
           {pluralizeText(followers, 'Follower')}
         </div>
 
-        <MutedSpan className='DfStatItem'>{score.toNumber()} Points</MutedSpan>
+        <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' pluralText='Points'/></MutedSpan>
 
         {followersOpen &&
           <BlogFollowersModal

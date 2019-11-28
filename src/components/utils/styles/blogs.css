@@ -409,3 +409,8 @@ hr {
   color: #1890fe !important;
   border-right: 2px solid #1890f3;
 }
+
+.DfBgImg {
+  background-size: cover;
+  background-position: center;
+}

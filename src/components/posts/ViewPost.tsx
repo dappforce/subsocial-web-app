@@ -23,6 +23,7 @@ import { ShareModal } from './ShareModal';
 import { useRouter } from 'next/router';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
+import { Pluralize } from '../utils/Plularize';
 
 const LIMIT_SUMMARY = 150;
 
@@ -204,7 +205,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
       {pluralizeText(comments_count.toNumber(), 'Comment')}</div></MutedSpan>
       <MutedSpan><div>{pluralizeText(shares_count.toNumber(), 'Share')}</div></MutedSpan>
-      <MutedSpan><b>{score.toNumber()}</b> Points</MutedSpan>
+      <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' pluralText='Points'/></MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
     </>);
