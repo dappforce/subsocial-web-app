@@ -4,7 +4,7 @@ SubSocial is a set of Substrate runtime modules (SRML) with UI that would allow 
 
 You can think of this as decentralized versions of Reddit, Stack Exchange or Medium, where subreddits or communities of Stack Exchange or blogs on Medium run on their own chain. At the same time, users of these decentralized communities should be able to transfer or share their reputation, coins and other values from one community to another via Polkadot relay.
 
-[![Subsocial demo #4, 2019-11-28](http://i3.ytimg.com/vi/pFGvlKpJdss/maxresdefault.jpg)](https://www.youtube.com/watch?v=pFGvlKpJdss)
+[![Subsocial demo #4, 2019-11-28](http://i3.ytimg.com/vi/pFGvlKpJdss/hqdefault.jpg)](https://www.youtube.com/watch?v=pFGvlKpJdss)
 
 ## Building from Docker
 
