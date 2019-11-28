@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Icon } from 'antd';
+import { List, Icon, Tag } from 'antd';
 import faker from 'faker';
 import './style.css';
 
@@ -9,55 +9,77 @@ const data = [
     description: faker.internet.userName(),
     time: faker.date.recent(),
     comments: faker.random.number(),
-    score: faker.random.number()
+    score: faker.random.number(),
+    isPinned: true,
+    category: 'Project Ideas',
+    categoryColor: 'purple'
   },
   {
     title: faker.company.companyName(),
     description: faker.internet.userName(),
     time: faker.date.recent(),
     comments: faker.random.number(),
-    score: faker.random.number()
+    score: faker.random.number(),
+    isPinned: true,
+    category: 'Project Ideas',
+    categoryColor: 'purple'
   },
   {
     title: faker.company.companyName(),
     description: faker.internet.userName(),
     time: faker.date.recent(),
     comments: faker.random.number(),
-    score: faker.random.number()
+    score: faker.random.number(),
+    isPinned: true,
+    category: 'Code',
+    categoryColor: 'orange'
   },
   {
     title: faker.company.companyName(),
     description: faker.internet.userName(),
     time: faker.date.recent(),
     comments: faker.random.number(),
-    score: faker.random.number()
+    score: faker.random.number(),
+    isPinned: true,
+    category: 'Code',
+    categoryColor: 'orange'
   }
 ];
 
 function ListForumTopics () {
   return (
     <List
-        itemLayout="horizontal"
-        dataSource={data}
-        renderItem={item => (
-          <List.Item>
-            <List.Item.Meta
-              title={<a><b>{item.title}</b></a>}
-              description={<div>Posted by @{item.description} on {item.time.toDateString()}</div>}
-            />
-            <div className='info'>
-              <div>
-                <Icon type='message'></Icon>
-                {item.comments}
-              </div>
-              <div>
-                <Icon type='fund'></Icon>
-                {item.score}
-              </div>
-              <Icon type="ellipsis" />
+      itemLayout='horizontal'
+      dataSource={data}
+      renderItem={item => (
+        <List.Item style={{ backgroundColor: 'white', padding: '1rem' }}>
+          <List.Item.Meta
+            title={
+              <div className='title'>
+                {item.isPinned
+                  ? <Icon type='pushpin' theme='twoTone'/>
+                  : null}
+                {item.title}
+              </div>}
+            description={
+              <div className='desc'>
+                <Tag color={item.categoryColor}>{item.category}</Tag>
+                Posted by <b>@{item.description}</b> on {item.time.toDateString()}
+              </div>}
+          />
+          <div className='info'>
+            <div>
+              <Icon type='message'/>
+              {item.comments}
             </div>
-          </List.Item>
-        )}
+            <div>
+              <Icon type='fund'/>
+              {item.score}
+            </div>
+            <Icon type='ellipsis' />
+          </div>
+        </List.Item>
+      )}
     />
   );
 }
