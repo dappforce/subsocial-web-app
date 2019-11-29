@@ -3,9 +3,13 @@ import React, { useState } from 'react';
 
 import { withKnobs } from '@storybook/addon-knobs';
 import { Menu, Icon, Button, Avatar } from 'antd';
+import ListForumTopics from './ListForumTopics';
+import ViewForum from './ViewForum';
 
 const { SubMenu } = Menu;
 import faker from 'faker';
+
+import './style.css';
 
 const items = [{ avatar: faker.image.avatar(),name: faker.company.companyName() },
   { avatar: faker.image.avatar(),name: faker.company.companyName() },
@@ -64,10 +68,6 @@ class App extends React.Component {
     );
   }
 }
-
-export const AntButton = () => {
-  return <Button>Button</Button>;
-};
 
 export default {
   title: 'Examples | States',
@@ -147,3 +147,11 @@ export const Navigations = () => {
     </div>
   );
 };
+
+export const ListForum = () => {
+  return (<div><ListForumTopics></ListForumTopics></div>);
+};
+
+export const Forum = () => {
+  return (<ViewForum/>);
+}
