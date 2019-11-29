@@ -205,7 +205,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
       {pluralizeText(comments_count.toNumber(), 'Comment')}</div></MutedSpan>
       <MutedSpan><div>{pluralizeText(shares_count.toNumber(), 'Share')}</div></MutedSpan>
-      <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' pluralText='Points'/></MutedSpan>
+      <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
     </>);
@@ -273,7 +273,7 @@ function ViewPostInternal (props: ViewPostProps) {
       {withCreatedBy && <CreatedBy created={post.created} />}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        <ReactMarkdown className='DfMd' source={body} linkTarget='_blank' />
+        <ReactMarkdown className='DfMd details' source={body} linkTarget='_blank' />
         {/* TODO render tags */}
       </div>
       <Voter struct={post} />

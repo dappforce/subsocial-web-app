@@ -36,7 +36,7 @@ const InnerShareModal = (props: Props) => {
 
     const blogs = blogsIds.map(id => ({
       key: id.toNumber(),
-      text: <ViewBlog id={id} key={id} dropdownPreview imageSize={26}/>,
+      text: <div><ViewBlog id={id} key={id} dropdownPreview imageSize={26}/></div>,
       value: id.toNumber()
     }));
 

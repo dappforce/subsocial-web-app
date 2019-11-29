@@ -106,21 +106,26 @@ function Component (props: Props) {
   const renderNameOnly = () => {
     return withLink
       ? <NameAsLink />
-      : <>{name}</>;
+      : <span>{name}</span>;
   };
 
   const renderDropDownPreview = () => (
-    <>
-      <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd', marginRight: '.5rem' }}/>
-      {renderNameOnly()}
-    </>
+    <div className={`item ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
+      {hasImage
+        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
+        : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
+      }
+      <div className='content'>
+        <div className='handle'>{name}</div>
+      </div>
+    </div>
   );
 
   const renderMiniPreview = () => (
     <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
         ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
-        : <IdentityIcon className='image' value={account} size={imageSize-SUB_SIZE} />
+        : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
       }
       <div className='content'>
         <div className='handle'>{name}</div>
@@ -164,7 +169,7 @@ function Component (props: Props) {
           {pluralizeText(followers, 'Follower')}
         </div>
 
-        <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' pluralText='Points'/></MutedSpan>
+        <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
 
         {followersOpen &&
           <BlogFollowersModal

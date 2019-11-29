@@ -122,7 +122,7 @@ function AddressMini (props: Props) {
 
   const hasAvatar = avatar && nonEmptyStr(avatar);
   const isMyProfile: boolean = address === myAddress;
-  const renderCount = () => count && count > 0 && <>and <Pluralize count={count} singularText='other person' pluralText='other people' /></>;
+  const renderCount = () => count && count > 0 && <>{' and'} <Pluralize count={count} singularText='other person' pluralText='other people' /></>;
 
   const renderFollowButton = (!isMyProfile)
     ? <div className = 'AddressMini follow'><FollowAccountButton address={address}/></div>

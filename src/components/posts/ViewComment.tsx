@@ -83,7 +83,7 @@ export function CommentsTree (props: Props) {
 
   const RenderCommentsOnPost = () => (
     <Section className='DfCommentsByPost'>
-      <h4><Pluralize count={commentsCount} singularText='comment' pluralText='comments'/></h4>
+      <h4><Pluralize count={commentsCount} singularText='comment' /></h4>
       <div id={`comments-on-post-${postId}`}>
         {<NewComment postId={postId}/>}
         {renderComments()}

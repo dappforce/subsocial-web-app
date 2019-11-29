@@ -35,6 +35,13 @@
     padding-bottom: .75rem;
   }
 }
+
+.DfPreview {
+  .content {
+    display: flex;
+    align-items: center;
+  }
+}
 .ProfileDetails {
   display: flex !important;
   .content {
@@ -52,7 +59,7 @@
   }
   .handle {
     white-space: nowrap;
-    overflow-x: hidden;
+    /*overflow-x: hidden;*/
     text-overflow: ellipsis;
     display: inline-block;
     margin-right: .6rem;
