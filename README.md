@@ -6,10 +6,10 @@ You can think of this as decentralized versions of Reddit, Stack Exchange or Med
 
 [![Subsocial demo #4, 2019-11-28](http://i3.ytimg.com/vi/pFGvlKpJdss/maxresdefault.jpg)](https://www.youtube.com/watch?v=pFGvlKpJdss)
 
-## Building from Docker
+## Build with Docker
 
-### Easiest start
-To start Subsocial web UI separately (you should have docker-compose):
+### Easy start
+To start Subsocial web UI separately (you should have `docker-compose`):
 
 ```
 cd docker/
