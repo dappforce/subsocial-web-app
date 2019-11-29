@@ -1,95 +1,23 @@
 import React from 'react';
-import { Icon, Menu, Breadcrumb, Button, Cascader } from 'antd';
-import faker from 'faker';
+import { Icon, Button, Cascader } from 'antd';
 import './style.css';
-import ListForumTopics, { TopicData } from './ListForumTopics';
+import { Category, TopicData } from './types';
+import ListForumTopics from './ListForumTopics';
 
-const data: TopicData[] = [
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    commentsCount: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Project Ideas',
-    categoryColor: 'purple'
-  },
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    commentsCount: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Project Ideas',
-    categoryColor: 'purple'
-  },
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    commentsCount: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Code',
-    categoryColor: 'orange'
-  },
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    commentsCount: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Code',
-    categoryColor: 'orange'
-  }
-];
+type ForumProps = {
+  categoryList: Category[],
+  data: TopicData[]
+};
 
-const options = [
-  {
-    value: 'zhejiang',
-    label: 'Zhejiang',
-    children: [
-      {
-        value: 'hangzhou',
-        label: 'Hangzhou',
-        children: [
-          {
-            value: 'xihu',
-            label: 'West Lake',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: 'jiangsu',
-    label: 'Jiangsu',
-    children: [
-      {
-        value: 'nanjing',
-        label: 'Nanjing',
-        children: [
-          {
-            value: 'zhonghuamen',
-            label: 'Zhong Hua Men',
-          },
-        ],
-      },
-    ],
-  },
-];
+function ViewForum (props: ForumProps) {
 
-function ViewForum () {
+  const { categoryList, data } = props;
   return (
     <>
       <div className='ForumHeader'>
       <a href=''><Icon type='home' theme='twoTone'/> / </a>
         <Cascader
-          defaultValue={['zhejiang']}
-          options={options}
+          options={categoryList}
         />
         <div className='Sorting'>
           <div style={{ marginRight: '1.5rem' }}>Sort by:</div>

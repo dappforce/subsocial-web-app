@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 
 import { withKnobs } from '@storybook/addon-knobs';
 import { Menu, Icon, Button, Avatar } from 'antd';
-import ListForumTopics from './ListForumTopics';
 import ViewForum from './ViewForum';
 
 const { SubMenu } = Menu;
@@ -87,6 +86,7 @@ type MenuItem = {
 };
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import { Category, TopicData } from './types';
 
 const MenuItems: MenuItem[] = [
   {
@@ -148,10 +148,79 @@ export const Navigations = () => {
   );
 };
 
-export const ListForum = () => {
-  return (<div><ListForumTopics></ListForumTopics></div>);
+const options: Category[] = [
+  {
+    category: 'Project ideas',
+    color: 'orange',
+    children: [
+      {
+        category: 'Code',
+        color: 'purple',
+        children: []
+      }
+    ]
+  },
+  {
+    category: 'Startup',
+    color: 'green',
+    children: [
+      {
+        category: 'Time management',
+        color: 'blue',
+        children: []
+      },
+      {
+        category: 'Marketing',
+        color: 'yellow',
+        children: []
+      }
+    ]
+  }
+];
+
+const data: TopicData[] = [
+  {
+    title: faker.company.companyName(),
+    description: faker.internet.userName(),
+    time: faker.date.recent(),
+    commentsCount: faker.random.number(),
+    score: faker.random.number(),
+    isPinned: true,
+    category: { category: 'Project ideas', color: 'purple', children: new Array() }
+  },
+  {
+    title: faker.company.companyName(),
+    description: faker.internet.userName(),
+    time: faker.date.recent(),
+    commentsCount: faker.random.number(),
+    score: faker.random.number(),
+    isPinned: true,
+    category: { category: 'Project ideas', color: 'purple', children: new Array() }
+  },
+  {
+    title: faker.company.companyName(),
+    description: faker.internet.userName(),
+    time: faker.date.recent(),
+    commentsCount: faker.random.number(),
+    score: faker.random.number(),
+    isPinned: true,
+    category: { category: 'Code', color: 'orange', children: new Array() }
+  },
+  {
+    title: faker.company.companyName(),
+    description: faker.internet.userName(),
+    time: faker.date.recent(),
+    commentsCount: faker.random.number(),
+    score: faker.random.number(),
+    isPinned: true,
+    category: { category: 'Code', color: 'orange', children: new Array() }
+  }
+];
+
+export const ForumDefault = () => {
+  return (<ViewForum categoryList={[]} data={[]}/>);
 };
 
-export const Forum = () => {
-  return (<ViewForum/>);
-}
+export const ForumWithTopics = () => {
+  return (<ViewForum categoryList={options} data={data}/>);
+};

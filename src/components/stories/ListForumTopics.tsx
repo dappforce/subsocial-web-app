@@ -1,17 +1,7 @@
 import React from 'react';
 import { List, Icon, Tag } from 'antd';
 import './style.css';
-
-export type TopicData = {
-  title: string;
-  description: string;
-  time: Date;
-  commentsCount: number;
-  score: number;
-  isPinned: boolean;
-  category: string;
-  categoryColor: string;
-};
+import { TopicData } from './types';
 
 type Props = {
   data: TopicData[];
@@ -37,7 +27,7 @@ function ListForumTopics (props: Props) {
               </div>}
             description={
               <div className='desc'>
-                <Tag color={item.categoryColor}>{item.category}</Tag>
+                <Tag color={item.category.color}>{item.category.category}</Tag>
                 Posted by <b>@{item.description}</b> on {item.time.toDateString()}
               </div>}
           />
