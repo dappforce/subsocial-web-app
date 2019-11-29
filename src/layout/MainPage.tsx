@@ -62,7 +62,7 @@ const SideMenu = (props: Props) => {
 };
 
 const NextLayout: React.FunctionComponent<any> = ({ children }) => {
-  const url = process.env.WS_URL || settings.apiUrl || undefined;
+  const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
 
   console.log('Web socket url=', url);
 

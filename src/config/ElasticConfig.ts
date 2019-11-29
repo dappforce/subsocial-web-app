@@ -1,4 +1,4 @@
-export const ElasticNodeURL = 'http://localhost:9200';
+export const ElasticNodeURL = process.env.ELASTIC_URL || 'http://localhost:9200';
 
 export type ElasticIndexTypes = 'blogs' | 'posts' | 'profiles';
 

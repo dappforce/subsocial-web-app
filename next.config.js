@@ -2,6 +2,11 @@ const withCSS = require('@zeit/next-css');
 const withImages = require('next-images');
 const withPlugins = require('next-compose-plugins');
 
+require('dotenv').config();
+
+const path = require('path')
+const Dotenv = require('dotenv-webpack')
+
 // fix: prevents error when .css files are required by node
 if (typeof require !== 'undefined') {
   require.extensions['.css'] = (file) => {};
@@ -21,6 +26,19 @@ const nextConfig = {
 
 module.exports = withPlugins([withImages, withCSS({
   webpack (config) {
+
+    config.plugins = config.plugins || []
+    
+    config.plugins = [
+      ...config.plugins,
+
+      // Read the .env file
+      new Dotenv({
+        path: path.join(__dirname, '.env'),
+        systemvars: true,
+      }),
+    ]
+
     config.module.rules.push({
       test: /\.(png|svg|eot|otf|ttf|woff|woff2)$/,
       use: {
