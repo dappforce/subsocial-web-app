@@ -1,7 +1,7 @@
 import { IpfsData, Activity } from '../types';
 import axios from 'axios';
 
-export const host = 'http://localhost:3001/v1';
+export const host = process.env.OFFCHAIN_URL || 'http://localhost:3001/v1';
 
 export const LIMIT = 3;
 

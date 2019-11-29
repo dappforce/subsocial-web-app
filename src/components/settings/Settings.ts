@@ -16,7 +16,7 @@ export class Settings implements SettingsStruct {
   constructor () {
     const settings = store.get('settings') || {};
 
-    this._apiUrl = settings.apiUrl || process.env.WS_URL || ENDPOINT_DEFAULT;
+    this._apiUrl = settings.apiUrl || process.env.SUBSTRATE_URL || ENDPOINT_DEFAULT;
     this._i18nLang = settings.i18nLang || LANGUAGE_DEFAULT;
     this._uiMode = settings.uiMode || UIMODE_DEFAULT;
     this._uiTheme = settings.uiTheme || UITHEME_DEFAULT;
