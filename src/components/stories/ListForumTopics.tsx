@@ -1,52 +1,26 @@
 import React from 'react';
 import { List, Icon, Tag } from 'antd';
-import faker from 'faker';
 import './style.css';
 
-const data = [
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    comments: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Project Ideas',
-    categoryColor: 'purple'
-  },
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    comments: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Project Ideas',
-    categoryColor: 'purple'
-  },
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    comments: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Code',
-    categoryColor: 'orange'
-  },
-  {
-    title: faker.company.companyName(),
-    description: faker.internet.userName(),
-    time: faker.date.recent(),
-    comments: faker.random.number(),
-    score: faker.random.number(),
-    isPinned: true,
-    category: 'Code',
-    categoryColor: 'orange'
-  }
-];
+export type TopicData = {
+  title: string;
+  description: string;
+  time: Date;
+  commentsCount: number;
+  score: number;
+  isPinned: boolean;
+  category: string;
+  categoryColor: string;
+};
 
-function ListForumTopics () {
+type Props = {
+  data: TopicData[];
+};
+
+function ListForumTopics (props: Props) {
+
+  const { data } = props;
+
   return (
     <List
       itemLayout='horizontal'
@@ -70,7 +44,7 @@ function ListForumTopics () {
           <div className='info'>
             <div>
               <Icon type='message'/>
-              {item.comments}
+              {item.commentsCount}
             </div>
             <div>
               <Icon type='fund'/>
