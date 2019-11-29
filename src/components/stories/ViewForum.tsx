@@ -15,10 +15,12 @@ function ViewForum (props: ForumProps) {
   return (
     <>
       <div className='ForumHeader'>
-      <a href=''><Icon type='home' theme='twoTone'/> / </a>
-        <Cascader
-          options={categoryList}
-        />
+        <div className='Navigation'>
+          <a href=''><Icon type='home' theme='twoTone'/> / </a>
+          <Cascader
+            options={categoryList}
+          />
+        </div>
         <div className='Sorting'>
           <div style={{ marginRight: '1.5rem' }}>Sort by:</div>
           <div className='Latest Button'>

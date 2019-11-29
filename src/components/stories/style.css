@@ -32,10 +32,10 @@ a{
   display: flex;
   margin-bottom: 1.5rem;
   padding-left: 1rem;
+  justify-content: space-between;
 }
 
 .Sorting{
-  margin-left: 13rem;
   display: flex;
   div{
     margin-right: .8rem;
@@ -55,7 +55,7 @@ a{
 }
 
 .Settings{
-  margin-left: 24rem;
+  margin-right: 1.5rem;
   .ant-btn-primary{
     background-color: white;
   }
@@ -65,4 +65,8 @@ a{
   i{
     margin-left: 1rem;
   }
+}
+
+.Navigation{
+  display: flex;
 }
