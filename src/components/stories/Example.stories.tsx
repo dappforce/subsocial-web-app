@@ -149,7 +149,7 @@ export const Navigations = () => {
 };
 
 export const ListForum = () => {
-  return (<div><ListForumTopics></ListForumTopics></div>);
+  return <ListForumTopics data={[]} />
 };
 
 export const Forum = () => {
