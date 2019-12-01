@@ -17,13 +17,14 @@ const App = () => {
           ElasticFields.comment.body,
           ElasticFields.profile.username,
           ElasticFields.profile.fullname,
-          ElasticFields.profile.about,
+          ElasticFields.profile.about
         ]}
         fieldWeights={[2, 1, 2, 1, 2, 2, 1]}
         URLParams
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
         placeholder='Search Subsocial'
-        iconPosition='right'
+        iconPosition='left'
+        showClear
         icon={<Icon
           type='search'
           style={{ fontSize: '14px', position: 'relative', top: '-1.6rem' }}

@@ -37,7 +37,7 @@ type ViewPostProps = MyAccountProps & {
   withCreatedBy?: boolean,
   withStats?: boolean,
   withActions?: boolean,
-  withNameBlog?: boolean,
+  withBlogName?: boolean,
   id: PostId,
   postById?: Option<Post>,
   commentIds?: CommentId[]
@@ -57,7 +57,7 @@ function ViewPostInternal (props: ViewPostProps) {
     myAddress,
     preview = false,
     nameOnly = false,
-    withNameBlog = false,
+    withBlogName = false,
     withLink = true,
     withActions = true,
     withStats = true,
@@ -155,7 +155,7 @@ function ViewPostInternal (props: ViewPostProps) {
         isPadded={false}
         size={size}
         extraDetails={<div>
-          {withNameBlog && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
+          {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
           <Link href={`/post?id=${id.toString()}`} >
             <a className='DfGreyLink'>
               {time}

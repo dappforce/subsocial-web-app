@@ -5,6 +5,7 @@ import Router, { useRouter } from 'next/router';
 import { withMulti } from '@polkadot/ui-api';
 import { useMyAccount } from '../components/utils/MyAccountContext';
 import ListFollowingBlogs from '../components/blogs/ListFollowingBlogs';
+import { isMobile } from 'react-device-detect';
 
 type MenuItem = {
   name: string,
@@ -72,7 +73,7 @@ const InnerMenu = (props: Props) => {
         <Icon type={item.image} />
         <span>{item.name}</span>
       </Menu.Item>)}
-      {!collapsed &&
+      {(!collapsed || isMobile) &&
         <Menu.ItemGroup className='DfSideMenu--FollowedBlogs' key='followed' title='Followed blogs'>
           <ListFollowingBlogs mini={true} />
         </Menu.ItemGroup>}
