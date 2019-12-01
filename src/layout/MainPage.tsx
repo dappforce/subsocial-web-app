@@ -25,6 +25,13 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import TopMenu from './TopMenu';
+import {
+  BrowserView,
+  MobileView,
+  isBrowser,
+  isMobile
+} from "react-device-detect";
+import { Drawer } from 'antd-mobile';
 
 const { Header, Sider, Content } = Layout;
 
@@ -33,7 +40,7 @@ type Props = {
 };
 
 const SideMenu = (props: Props) => {
-  const [ collapsed, setCollapsed ] = useState(false);
+  const [ collapsed, setCollapsed ] = useState(isMobile);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -47,17 +54,32 @@ const SideMenu = (props: Props) => {
       <TopMenu toggleCollapsed={toggleCollapsed}/>
     </Header>
     <Layout style={{ marginTop: '64px' }}>
-      <Sider
-        width={250}
-        className='DfSider'
-        trigger={null}
-        collapsed={collapsed}
-      >
-        <Menu collapsed={collapsed}/>
-      </Sider>
-      <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
-      <Content className='DfPageContent'>{props.children}</Content>
-      </Layout>
+      <BrowserView>
+        <Sider
+          width={250}
+          className='DfSider'
+          trigger={null}
+          collapsed={collapsed}
+        >
+          <Menu collapsed={collapsed}/>
+        </Sider>
+        <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
+          <Content className='DfPageContent'>{props.children}</Content>
+        </Layout>
+      </BrowserView>
+      <MobileView>
+        <Drawer
+          className='my-drawer'
+          style={{ minHeight: document.documentElement.clientHeight }}
+          enableDragHandle
+          contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
+          sidebar={<Menu collapsed={collapsed}/>}
+          open={collapsed}
+          onOpenChange={setCollapsed}
+        >
+          <Content className='DfPageContent'>{props.children}</Content>
+        </Drawer>
+      </MobileView>
     </Layout>
   </Layout>,
   </ReactiveBase>;
