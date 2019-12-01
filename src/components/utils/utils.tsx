@@ -6,7 +6,6 @@ import AddressMini from './AddressMiniDf';
 import { SubmittableResult } from '@polkadot/api';
 import { CommentId, PostId, BlogId, Profile, ProfileData, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
-import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';

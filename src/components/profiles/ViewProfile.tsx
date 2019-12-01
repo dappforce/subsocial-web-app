@@ -123,7 +123,7 @@ function Component(props: Props) {
     return <div>
       <div className={`item ProfileDetails MyBlog`}>
         {hasAvatar
-          ? <DfBgImg size={size} src={avatar} className='DfAvatar'/>
+          ? <DfBgImg size={size} src={avatar} className='DfAvatar' rounded/>
           : <IdentityIcon className='image' value={address} size={size} />
         }
         <div className='content'>

@@ -25,6 +25,8 @@ import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { Pluralize } from '../utils/Plularize';
 import ViewBlog from '../blogs/ViewBlog';
+import { DfBgImg } from '../utils/DfBgImg';
+import { isEmpty } from 'lodash';
 
 const LIMIT_SUMMARY = 150;
 
@@ -144,7 +146,7 @@ function ViewPostInternal (props: ViewPostProps) {
   };
 
   const renderPostCreator = (post: Post, size?: number) => {
-    if (!post) return null;
+    if (isEmpty(post)) return null;
     const { blog_id , created: { account, time } } = post;
     return <>
       <AddressMiniDf
@@ -152,15 +154,14 @@ function ViewPostInternal (props: ViewPostProps) {
         isShort={true}
         isPadded={false}
         size={size}
-        extraDetails={<>
-          {withNameBlog && <div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>}
-          {' • '}
+        extraDetails={<div>
+          {withNameBlog && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
           <Link href={`/post?id=${id.toString()}`} >
             <a className='DfGreyLink'>
               {time}
             </a>
           </Link>
-        </>}
+        </div>}
       />
     </>;
   };
@@ -215,7 +216,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}><Pluralize count={counts} singularText='Reaction'/></div></MutedSpan>
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
       <Pluralize count={comments_count.toNumber()} singularText='Comment'/></div></MutedSpan>
-      <MutedSpan><div><Pluralize count={score.toNumber()} singularText='Share'/></div></MutedSpan>
+      <MutedSpan><div><Pluralize count={shares_count.toNumber()} singularText='Share'/></div></MutedSpan>
       <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
@@ -233,7 +234,7 @@ function ViewPostInternal (props: ViewPostProps) {
           </div>
           {renderContent(post, content)}
         </div>
-        {content.image && <img src={content.image} className='DfPostImagePreview' /* add onError handler */ />}
+        {content.image && <DfBgImg src={content.image} size={160} className='DfPostImagePreview' /* add onError handler */ />}
       </div>
       {withStats && renderStatsPanel(post)}
       {withActions && <RenderActionsPanel/>}
@@ -260,7 +261,7 @@ function ViewPostInternal (props: ViewPostProps) {
               </div>
               {renderContent(originalPost, originalContent)}
             </div>
-            {originalContent.image && <img src={originalContent.image} className='DfPostImagePreview' /* add onError handler */ />}
+            {originalContent.image && <DfBgImg size={140} src={originalContent.image} className='DfPostImagePreview' /* add onError handler */ />}
           </div>
           {withStats && renderStatsPanel(originalPost) /* todo params originPost */}
         </Segment>

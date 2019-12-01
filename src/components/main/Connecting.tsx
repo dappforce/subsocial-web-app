@@ -1,5 +1,4 @@
 
-
 import { I18nProps } from '@polkadot/ui-app/types';
 import { ApiProps } from '@polkadot/ui-api/types';
 

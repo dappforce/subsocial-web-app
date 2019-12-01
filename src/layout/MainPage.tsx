@@ -5,6 +5,7 @@ import '@polkadot/ui-app/i18n';
 import '../components/utils/styles';
 
 import dynamic from 'next/dynamic';
+// import Suspense from '../components/utils/Suspense';
 const Suspense = dynamic(() => import('../components/utils/Suspense'), { ssr: false });
 import store from 'store';
 import { getTypeRegistry } from '@polkadot/types';
@@ -13,7 +14,8 @@ import { Api } from '@polkadot/ui-api';
 import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 import Queue from '@polkadot/ui-app/Status/Queue';
 import { registerSubsocialTypes } from '../components/types';
-const Connecting = dynamic(() => import('../components/main/Connecting'), { ssr: false });
+import Connecting from '../components/main/Connecting';
+// const Connecting = dynamic(() => import('../components/main/Connecting'), { ssr: false });
 import Menu from './SideMenu';
 import Signer from '../components/ui-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';

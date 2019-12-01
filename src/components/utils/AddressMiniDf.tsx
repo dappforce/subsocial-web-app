@@ -14,7 +14,7 @@ import { findNameByAddress, nonEmptyStr, queryBlogsToProp } from './index';
 import { FollowAccountButton } from './FollowButton';
 import { Popup } from 'semantic-ui-react';
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { withSocialAccount, pluralizeText } from './utils';
+import { withSocialAccount } from './utils';
 import { SocialAccount, Profile, ProfileData } from '../types';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -135,7 +135,7 @@ function AddressMini (props: Props) {
     >
       <div className='ui--AddressMini-info'>
         {hasAvatar
-          ? <DfBgImg size={size || 36} src={avatar} className='DfAvatar'/>
+          ? <DfBgImg size={size || 36} src={avatar} className='DfAvatar' rounded/>
           : <IdentityIcon
             isHighlight={!!isValidator}
             size={size || 36}
@@ -196,7 +196,7 @@ function AddressMini (props: Props) {
     return <div>
       <div className={`item ProfileDetails MyProfile`}>
         {hasAvatar
-          ? <DfBgImg size={size || 40} src={avatar} className='DfAvatar' />
+          ? <DfBgImg size={size || 40} src={avatar} className='DfAvatar' rounded />
           : <IdentityIcon className='image' value={address} size={size || 40} />
         }
         <div className='content' style={{ marginLeft: '.7rem', marginRight: '.5rem' }}>

@@ -31,6 +31,7 @@
     "test": "echo \"skipping tests\"",
     "start": "next",
     "build": "next build",
+    "export": "next export",
     "start-built": "next start",
     "storybook": "start-storybook -p 3002"
   },

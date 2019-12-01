@@ -37,33 +37,33 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
   );
 
   return (mini
-    ? <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-        <ListData
-          title={<Pluralize count={totalCount} singularText='Following blog'/>}
-          dataSource={followedBlogsIds}
-          renderItem={(item,index) => (
-              <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
-          )}
-          noDataDesc='You are not subscribed to any blog'
-          noDataExt={<Button href='/all'>Show all blogs</Button>}
-        />
+    ? renderFollowedList()
+    : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <ListData
+        title={<Pluralize count={totalCount} singularText='Following blog'/>}
+        dataSource={followedBlogsIds}
+        renderItem={(item,index) => (
+            <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
+        )}
+        noDataDesc='You are not subscribed to any blog'
+        noDataExt={<Button href='/all'>Show all blogs</Button>}
+      />
     </div>
-    : renderFollowedList()
   );
 };
 
 function withIdFromUseMyAccount (Component: React.ComponentType<ListBlogProps>) {
-  return function () {
+  return function (props: ListBlogProps) {
     const { state: { address: myAddress } } = useMyAccount();
     try {
-      return <Component id={new AccountId(myAddress)} />;
+      return <Component id={new AccountId(myAddress)} {...props}/>;
     } catch (err) {
       return <em>Invalid Account id</em>;
     }
   };
 }
 
-export const ListFollowingBlogs = withMulti(
+export const ListFollowingBlogs = withMulti<ListBlogProps>(
   InnerListMyBlogs,
   withIdFromUseMyAccount,
   withCalls<ListBlogProps>(

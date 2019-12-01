@@ -74,7 +74,7 @@ const InnerMenu = (props: Props) => {
       </Menu.Item>)}
       {!collapsed &&
         <Menu.ItemGroup className='DfSideMenu--FollowedBlogs' key='followed' title='Followed blogs'>
-          <ListFollowingBlogs mini />
+          <ListFollowingBlogs mini={true} />
         </Menu.ItemGroup>}
     </Menu>
   );

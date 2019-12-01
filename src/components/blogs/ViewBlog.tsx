@@ -112,7 +112,7 @@ function Component (props: Props) {
   const renderDropDownPreview = () => (
     <div className={`item ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
+        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
       }
       <div className='content'>
@@ -124,7 +124,7 @@ function Component (props: Props) {
   const renderMiniPreview = () => (
     <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }}/>
+        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
       }
       <div className='content'>
@@ -137,8 +137,8 @@ function Component (props: Props) {
     return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <DfBgImg size={imageSize} src={image} />
-          : <IdentityIcon className='image' value={account} size={imageSize-SUB_SIZE} />
+          ? <DfBgImg size={imageSize} src={image} rounded/>
+          : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
         }
         <div className='content'>
           <div className='header'>

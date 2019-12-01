@@ -8,6 +8,18 @@ if (typeof require !== 'undefined') {
 }
 
 const nextConfig = {
+  exportPathMap: function() {
+    return {
+      '/': { page: '/' },
+      '/all': { page: '/all'},
+      '/feed': { page: '/feed' },
+      '/blog': { page: '/blog' },
+      '/post': { page: '/post' },
+      '/comment': { page: '/comment' },
+      '/profile': { page: '/profile' },
+      '/notifications': { page: '/notifications' },
+    };
+  },
   target: 'server',
   webpack: (config, { dev }) => {
     config.module.rules.push({
@@ -56,3 +68,4 @@ module.exports = withPlugins([withImages, withCSS({
     })
     return config
   }})], nextConfig);
+
