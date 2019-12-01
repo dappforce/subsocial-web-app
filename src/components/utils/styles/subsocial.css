@@ -209,6 +209,10 @@
   font-size: 1rem;
 }
 
+.DfMd.details {
+  margin-top: 2rem;
+}
+
 .DfPopup-about{
   margin-top: .5rem;
 }

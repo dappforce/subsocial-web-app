@@ -6,7 +6,6 @@ import AddressMini from './AddressMiniDf';
 import { SubmittableResult } from '@polkadot/api';
 import { CommentId, PostId, BlogId, Profile, ProfileData, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
-import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
@@ -143,17 +142,6 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
   return function (props: P) {
     return <Component {...props} requireProfile />;
   };
-}
-
-export function pluralizeText (count: number | BN, singularText: string, pluralText?: string) {
-  count = typeof count !== 'number' ? count.toNumber() : count;
-  const plural = () => (!pluralText ? singularText + 's' : pluralText);
-  const text = count === 1 ? singularText : plural();
-  return (
-    <>
-      <b>{count}</b> {text}
-    </>
-  );
 }
 
 export const Loading = () => <Icon type='loading' />;

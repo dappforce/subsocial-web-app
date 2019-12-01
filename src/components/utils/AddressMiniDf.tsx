@@ -14,7 +14,7 @@ import { findNameByAddress, nonEmptyStr, queryBlogsToProp } from './index';
 import { FollowAccountButton } from './FollowButton';
 import { Popup } from 'semantic-ui-react';
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { withSocialAccount, pluralizeText } from './utils';
+import { withSocialAccount } from './utils';
 import { SocialAccount, Profile, ProfileData } from '../types';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -122,7 +122,7 @@ function AddressMini (props: Props) {
 
   const hasAvatar = avatar && nonEmptyStr(avatar);
   const isMyProfile: boolean = address === myAddress;
-  const renderCount = () => count && count > 0 && <>and <Pluralize count={count} singularText='other person' pluralText='other people' /></>;
+  const renderCount = () => count && count > 0 && <>{' and'} <Pluralize count={count} singularText='other person' pluralText='other people' /></>;
 
   const renderFollowButton = (!isMyProfile)
     ? <div className = 'AddressMini follow'><FollowAccountButton address={address}/></div>
@@ -135,7 +135,7 @@ function AddressMini (props: Props) {
     >
       <div className='ui--AddressMini-info'>
         {hasAvatar
-          ? <DfBgImg size={size || 36} src={avatar} className='DfAvatar'/>
+          ? <DfBgImg size={size || 36} src={avatar} className='DfAvatar' rounded/>
           : <IdentityIcon
             isHighlight={!!isValidator}
             size={size || 36}
@@ -153,7 +153,7 @@ function AddressMini (props: Props) {
           >
           {renderProfilePreview()}
           </Popup>
-          {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')}/>}
+          {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>}/>}
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'}/>}
           {renderName(address)}
           {asActivity
@@ -183,13 +183,11 @@ function AddressMini (props: Props) {
 
   function renderPreviewForActivity () {
     return <>
-      <div className='DfActivityStreamItem content'>
-        <span className='activity'>
-          <span>{renderCount()}</span>
-          <span className='event'> {event} </span>
-          <span className='handle'>{subject}</span>
-        </span>
-      </div>
+      <span className='DfActivityStreamItem content'>
+        <span>{renderCount()}</span>
+        <span className='event'>{' ' + event + ' '}</span>
+        <span className='handle'>{subject}</span>
+      </span>
       <MutedDiv className='DfDate'>{date}</MutedDiv>
     </>;
   }
@@ -198,7 +196,7 @@ function AddressMini (props: Props) {
     return <div>
       <div className={`item ProfileDetails MyProfile`}>
         {hasAvatar
-          ? <DfBgImg size={size || 40} src={avatar} className='DfAvatar' />
+          ? <DfBgImg size={size || 40} src={avatar} className='DfAvatar' rounded />
           : <IdentityIcon className='image' value={address} size={size || 40} />
         }
         <div className='content' style={{ marginLeft: '.7rem', marginRight: '.5rem' }}>
@@ -212,8 +210,9 @@ function AddressMini (props: Props) {
         <ReactMarkdown source={summary} linkTarget='_blank' />
       </div>
       {!withoutCounters && <div className='DfPopup-links'>
-        <div onClick={openFollowersModal} className={followers ? '' : 'disable'}>{pluralizeText(followers, 'Follower')}</div>
-        <div onClick={openFollowingModal} className={following ? '' : 'disable'}><b>{following}</b> Following</div>
+        <div onClick={openFollowersModal} className={followers ? '' : 'disable'}>
+          <Pluralize count={followers} singularText='Follower'/></div>
+        <div onClick={openFollowingModal} className={following ? '' : 'disable'}><Pluralize count={following} singularText='Following'/></div>
       </div>
       }
     </div>;

@@ -7,9 +7,9 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { Option } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostData, Change } from '../types';
+import { PostId, Post, CommentId, PostData } from '../types';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import { pluralizeText, Loading } from '../utils/utils';
+import { Loading } from '../utils/utils';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { CommentsByPost } from './ViewComment';
 import { CreatedBy } from '../utils/CreatedBy';
@@ -24,6 +24,9 @@ import { useRouter } from 'next/router';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { Pluralize } from '../utils/Plularize';
+import ViewBlog from '../blogs/ViewBlog';
+import { DfBgImg } from '../utils/DfBgImg';
+import { isEmpty } from 'lodash';
 
 const LIMIT_SUMMARY = 150;
 
@@ -34,6 +37,7 @@ type ViewPostProps = MyAccountProps & {
   withCreatedBy?: boolean,
   withStats?: boolean,
   withActions?: boolean,
+  withNameBlog?: boolean,
   id: PostId,
   postById?: Option<Post>,
   commentIds?: CommentId[]
@@ -53,6 +57,7 @@ function ViewPostInternal (props: ViewPostProps) {
     myAddress,
     preview = false,
     nameOnly = false,
+    withNameBlog = false,
     withLink = true,
     withActions = true,
     withStats = true,
@@ -140,16 +145,23 @@ function ViewPostInternal (props: ViewPostProps) {
       : <>{title}</>;
   };
 
-  const renderPostCreator = (created: Change, size?: number) => {
-    if (!created) return null;
-    const { account, time, block } = created;
+  const renderPostCreator = (post: Post, size?: number) => {
+    if (isEmpty(post)) return null;
+    const { blog_id , created: { account, time } } = post;
     return <>
       <AddressMiniDf
         value={account}
         isShort={true}
         isPadded={false}
         size={size}
-        extraDetails={<Link href={`/post?id=${id.toString()}`} ><a className='DfGreyLink'>{time} at block #{block.toNumber()}</a></Link>}
+        extraDetails={<div>
+          {withNameBlog && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
+          <Link href={`/post?id=${id.toString()}`} >
+            <a className='DfGreyLink'>
+              {time}
+            </a>
+          </Link>
+        </div>}
       />
     </>;
   };
@@ -201,11 +213,11 @@ function ViewPostInternal (props: ViewPostProps) {
     const counts = downvotes_count.toNumber() + upvotes_count.toNumber();
     return (<>
     <div className='DfCountsPreview'>
-      <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}>{pluralizeText(counts, 'Reaction')}</div></MutedSpan>
+      <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}><Pluralize count={counts} singularText='Reaction'/></div></MutedSpan>
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
-      {pluralizeText(comments_count.toNumber(), 'Comment')}</div></MutedSpan>
-      <MutedSpan><div>{pluralizeText(shares_count.toNumber(), 'Share')}</div></MutedSpan>
-      <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' pluralText='Points'/></MutedSpan>
+      <Pluralize count={comments_count.toNumber()} singularText='Comment'/></div></MutedSpan>
+      <MutedSpan><div><Pluralize count={shares_count.toNumber()} singularText='Share'/></div></MutedSpan>
+      <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
     </>);
@@ -217,12 +229,12 @@ function ViewPostInternal (props: ViewPostProps) {
       <div className='DfContent'>
         <div className='DfInfo'>
           <div className='DfRow'>
-            {renderPostCreator(created)}
+            {renderPostCreator(post)}
             <RenderDropDownMenu/>
           </div>
           {renderContent(post, content)}
         </div>
-        {content.image && <img src={content.image} className='DfPostImagePreview' /* add onError handler */ />}
+        {content.image && <DfBgImg src={content.image} size={160} className='DfPostImagePreview' /* add onError handler */ />}
       </div>
       {withStats && renderStatsPanel(post)}
       {withActions && <RenderActionsPanel/>}
@@ -235,7 +247,7 @@ function ViewPostInternal (props: ViewPostProps) {
     return <>
       <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
           <div className='DfRow'>
-            {renderPostCreator(created)}
+            {renderPostCreator(post)}
             <RenderDropDownMenu/>
           </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
@@ -244,12 +256,12 @@ function ViewPostInternal (props: ViewPostProps) {
           <div className='DfContent'>
             <div className='DfInfo'>
               <div className='DfRow'>
-                {renderPostCreator(originalPost.created)}
+                {renderPostCreator(originalPost)}
                 <RenderDropDownMenu/>
               </div>
               {renderContent(originalPost, originalContent)}
             </div>
-            {originalContent.image && <img src={originalContent.image} className='DfPostImagePreview' /* add onError handler */ />}
+            {originalContent.image && <DfBgImg size={140} src={originalContent.image} className='DfPostImagePreview' /* add onError handler */ />}
           </div>
           {withStats && renderStatsPanel(originalPost) /* todo params originPost */}
         </Segment>
@@ -273,7 +285,7 @@ function ViewPostInternal (props: ViewPostProps) {
       {withCreatedBy && <CreatedBy created={post.created} />}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        <ReactMarkdown className='DfMd' source={body} linkTarget='_blank' />
+        <ReactMarkdown className='DfMd details' source={body} linkTarget='_blank' />
         {/* TODO render tags */}
       </div>
       <Voter struct={post} />

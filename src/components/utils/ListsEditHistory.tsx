@@ -12,6 +12,7 @@ import { CreatedBy } from './CreatedBy';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { withRequireProfile, withSocialAccount, Loading } from './utils';
 import { NoData } from '../utils/DataList';
+import { DfBgImg } from './DfBgImg';
 
 type ModalController = {
   open: boolean,
@@ -288,8 +289,8 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
       <div className='ui massive relaxed middle aligned list FullProfile'>
         <div className={`item ProfileDetails MyBlog`}>
         {content.image
-        ? <img className='ui avatar image' src={content.image} />
-        : <IdentityIcon className='image' value={edited.account} size={40} />
+        ? <DfBgImg className='ui avatar image' src={content.image} size={40} />
+        : <IdentityIcon className='image' value={edited.account} size={38} />
         }
           <div className='content'>
             <div className='header'>
@@ -389,8 +390,8 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
       <div className='ui massive relaxed middle aligned list FullProfile'>
         <div className={`item ProfileDetails MyBlog`}>
         {content.avatar
-        ? <img className='ui avatar image' src={content.avatar} />
-        : <IdentityIcon className='image' value={edited.account} size={40} />
+        ? <DfBgImg className='ui avatar image' src={content.avatar} size={40} />
+        : <IdentityIcon className='image' value={edited.account} size={38} />
         }
           <div className='content'>
             <div className='header'>
