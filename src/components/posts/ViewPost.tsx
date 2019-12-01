@@ -7,7 +7,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { Option } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostData, Change } from '../types';
+import { PostId, Post, CommentId, PostData } from '../types';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import { pluralizeText, Loading } from '../utils/utils';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
@@ -24,6 +24,7 @@ import { useRouter } from 'next/router';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { Pluralize } from '../utils/Plularize';
+import ViewBlog from '../blogs/ViewBlog';
 
 const LIMIT_SUMMARY = 150;
 
@@ -34,6 +35,7 @@ type ViewPostProps = MyAccountProps & {
   withCreatedBy?: boolean,
   withStats?: boolean,
   withActions?: boolean,
+  withNameBlog?: boolean,
   id: PostId,
   postById?: Option<Post>,
   commentIds?: CommentId[]
@@ -53,6 +55,7 @@ function ViewPostInternal (props: ViewPostProps) {
     myAddress,
     preview = false,
     nameOnly = false,
+    withNameBlog = false,
     withLink = true,
     withActions = true,
     withStats = true,
@@ -140,16 +143,24 @@ function ViewPostInternal (props: ViewPostProps) {
       : <>{title}</>;
   };
 
-  const renderPostCreator = (created: Change, size?: number) => {
-    if (!created) return null;
-    const { account, time, block } = created;
+  const renderPostCreator = (post: Post, size?: number) => {
+    if (!post) return null;
+    const { blog_id , created: { account, time } } = post;
     return <>
       <AddressMiniDf
         value={account}
         isShort={true}
         isPadded={false}
         size={size}
-        extraDetails={<Link href={`/post?id=${id.toString()}`} ><a className='DfGreyLink'>{time} at block #{block.toNumber()}</a></Link>}
+        extraDetails={<>
+          {withNameBlog && <div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>}
+          {' • '}
+          <Link href={`/post?id=${id.toString()}`} >
+            <a className='DfGreyLink'>
+              {time}
+            </a>
+          </Link>
+        </>}
       />
     </>;
   };
@@ -217,7 +228,7 @@ function ViewPostInternal (props: ViewPostProps) {
       <div className='DfContent'>
         <div className='DfInfo'>
           <div className='DfRow'>
-            {renderPostCreator(created)}
+            {renderPostCreator(post)}
             <RenderDropDownMenu/>
           </div>
           {renderContent(post, content)}
@@ -235,7 +246,7 @@ function ViewPostInternal (props: ViewPostProps) {
     return <>
       <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
           <div className='DfRow'>
-            {renderPostCreator(created)}
+            {renderPostCreator(post)}
             <RenderDropDownMenu/>
           </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
@@ -244,7 +255,7 @@ function ViewPostInternal (props: ViewPostProps) {
           <div className='DfContent'>
             <div className='DfInfo'>
               <div className='DfRow'>
-                {renderPostCreator(originalPost.created)}
+                {renderPostCreator(originalPost)}
                 <RenderDropDownMenu/>
               </div>
               {renderContent(originalPost, originalContent)}

@@ -386,10 +386,21 @@ hr {
 
 .DfGreyLink {
   color: #8c8c8c !important;
+  cursor: pointer;
+  a {
+    color: #8c8c8c !important;
+    cursor: pointer;
+  }
 }
 .DfGreyLink:hover {
+  a {
+    color: #8c8c8c !important;
+    text-decoration: underline;
+    cursor: pointer;
+  }
   color: #8c8c8c !important;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .DfScore {
