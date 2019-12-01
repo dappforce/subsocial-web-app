@@ -153,7 +153,7 @@ function AddressMini (props: Props) {
           >
           {renderProfilePreview()}
           </Popup>
-          {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')}/>}
+          {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>}/>}
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'}/>}
           {renderName(address)}
           {asActivity
@@ -210,8 +210,9 @@ function AddressMini (props: Props) {
         <ReactMarkdown source={summary} linkTarget='_blank' />
       </div>
       {!withoutCounters && <div className='DfPopup-links'>
-        <div onClick={openFollowersModal} className={followers ? '' : 'disable'}>{pluralizeText(followers, 'Follower')}</div>
-        <div onClick={openFollowingModal} className={following ? '' : 'disable'}><b>{following}</b> Following</div>
+        <div onClick={openFollowersModal} className={followers ? '' : 'disable'}>
+          <Pluralize count={followers} singularText='Follower'/></div>
+        <div onClick={openFollowingModal} className={following ? '' : 'disable'}><Pluralize count={following} singularText='Following'/></div>
       </div>
       }
     </div>;

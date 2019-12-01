@@ -9,7 +9,7 @@ import { Option } from '@polkadot/types';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostData } from '../types';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import { pluralizeText, Loading } from '../utils/utils';
+import { Loading } from '../utils/utils';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { CommentsByPost } from './ViewComment';
 import { CreatedBy } from '../utils/CreatedBy';
@@ -212,10 +212,10 @@ function ViewPostInternal (props: ViewPostProps) {
     const counts = downvotes_count.toNumber() + upvotes_count.toNumber();
     return (<>
     <div className='DfCountsPreview'>
-      <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}>{pluralizeText(counts, 'Reaction')}</div></MutedSpan>
+      <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}><Pluralize count={counts} singularText='Reaction'/></div></MutedSpan>
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
-      {pluralizeText(comments_count.toNumber(), 'Comment')}</div></MutedSpan>
-      <MutedSpan><div>{pluralizeText(shares_count.toNumber(), 'Share')}</div></MutedSpan>
+      <Pluralize count={comments_count.toNumber()} singularText='Comment'/></div></MutedSpan>
+      <MutedSpan><div><Pluralize count={score.toNumber()} singularText='Share'/></div></MutedSpan>
       <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}

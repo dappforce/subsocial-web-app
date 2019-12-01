@@ -145,15 +145,4 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
   };
 }
 
-export function pluralizeText (count: number | BN, singularText: string, pluralText?: string) {
-  count = typeof count !== 'number' ? count.toNumber() : count;
-  const plural = () => (!pluralText ? singularText + 's' : pluralText);
-  const text = count === 1 ? singularText : plural();
-  return (
-    <>
-      <b>{count}</b> {text}
-    </>
-  );
-}
-
 export const Loading = () => <Icon type='loading' />;

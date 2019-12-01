@@ -8,7 +8,7 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
 import { SocialAccount, ProfileData, Profile } from '../types';
-import { withSocialAccount, pluralizeText, withAddressFromUrl } from '../utils/utils';
+import { withSocialAccount, withAddressFromUrl } from '../utils/utils';
 import { Dropdown, Icon } from 'semantic-ui-react';
 import { FollowAccountButton } from '../utils/FollowButton';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
@@ -18,6 +18,7 @@ import { MutedDiv } from '../utils/MutedText';
 import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
+import { Pluralize } from '../utils/Plularize';
 
 export type Props = {
   preview?: boolean,
@@ -209,10 +210,10 @@ function Component(props: Props) {
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}
         <FollowAccountButton address={address} />
-        <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')} </TxButton>
+        <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
         <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
       </div>
-      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
+      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
     </Section>
   </>;

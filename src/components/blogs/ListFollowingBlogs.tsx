@@ -6,11 +6,12 @@ import { queryBlogsToProp } from '../utils/index';
 import { BlogId } from '../types';
 import ViewBlog from './ViewBlog';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { pluralizeText, Loading } from '../utils/utils';
+import { Loading } from '../utils/utils';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
+import { Pluralize } from '../utils/Plularize';
 
 type ListBlogProps = {
   id: AccountId,
@@ -38,7 +39,7 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
   return (mini
     ? <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
         <ListData
-          title={pluralizeText(totalCount, 'Following blog')}
+          title={<Pluralize count={totalCount} singularText='Following blog'/>}
           dataSource={followedBlogsIds}
           renderItem={(item,index) => (
               <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>

@@ -17,7 +17,7 @@ import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Dropdown, Segment } from 'semantic-ui-react';
 import { FollowBlogButton } from '../utils/FollowButton';
 import TxButton from '../utils/TxButton';
-import { pluralizeText, Loading } from '../utils/utils';
+import { Loading } from '../utils/utils';
 import { MutedSpan } from '../utils/MutedText';
 import Router from 'next/router';
 import ListData, { NoData } from '../utils/DataList';
@@ -161,12 +161,12 @@ function Component (props: Props) {
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
         <Link href={`/blog?id=${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
-            {pluralizeText(postsCount, 'Post')}
+          <Pluralize count={postsCount} singularText='Post'/>
           </a>
         </Link>
 
         <div onClick={() => setFollowersOpen(true)} className={'DfStatItem ' + (!followers && 'disable')}>
-          {pluralizeText(followers, 'Follower')}
+          <Pluralize count={followers} singularText='Follower'/>
         </div>
 
         <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
@@ -174,7 +174,7 @@ function Component (props: Props) {
         {followersOpen &&
           <BlogFollowersModal
             id={id}
-            title={pluralizeText(followers, 'Follower')}
+            title={<Pluralize count={followers} singularText='Follower'/>}
             accountsCount={blog.followers_count.toNumber()}
             open={followersOpen}
             close={() => setFollowersOpen(false)}
@@ -207,7 +207,7 @@ function Component (props: Props) {
 
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
-      <span style={{ marginRight: '1rem' }}>{pluralizeText(postsCount, 'Post')}</span>
+      <span style={{ marginRight: '1rem' }}>{<Pluralize count={postsCount} singularText='Post'/>}</span>
       {postIds.length ? <NewPostButton /> : null}
     </div>;
   };
@@ -221,10 +221,10 @@ function Component (props: Props) {
 
     <div className='DfSpacedButtons'>
       <FollowBlogButton blogId={id} />
-      <TxButton size='small' isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}>{pluralizeText(followers, 'Follower')}</TxButton>
+      <TxButton size='small' isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
     </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={pluralizeText(followers, 'Follower')} />}
+    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
     {renderPostPreviews()}
   </div>;
 }
