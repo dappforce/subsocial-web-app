@@ -33,6 +33,7 @@
     "build": "next build",
     "export": "next export",
     "start-built": "next start",
+    "start-prod": "next start -p 80",
     "storybook": "start-storybook -p 3002"
   },
   "devDependencies": {
