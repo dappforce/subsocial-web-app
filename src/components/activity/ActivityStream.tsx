@@ -107,7 +107,7 @@ function ViewActivity(props: ActivityProps) {
   const { post_id } = activity;
   const postId = new PostId(hexToNumber('0x' + post_id));// TODO create function
 
-  return <ViewPost id={postId} preview withNameBlog />;
+  return <ViewPost id={postId} preview withBlogName />;
 }
 
 export function Notification (props: ActivityProps) {

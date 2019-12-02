@@ -25,6 +25,8 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import TopMenu from './TopMenu';
+import { BrowserView, MobileView, isBrowser } from 'react-device-detect';
+import { Drawer } from 'antd-mobile';
 
 const { Header, Sider, Content } = Layout;
 
@@ -32,32 +34,53 @@ type Props = {
   children: React.ReactNode
 };
 
+console.log('The browser: ', isBrowser);
+
 const SideMenu = (props: Props) => {
-  const [ collapsed, setCollapsed ] = useState(false);
+  const { children } = props;
+  const [ collapsed, setCollapsed ] = useState(isBrowser);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
   return <ReactiveBase
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
+  <Layout style={{ backgroundColor: '#fafafa !important' }}>
     <Header className='DfHeader'>
       <TopMenu toggleCollapsed={toggleCollapsed}/>
     </Header>
-    <Layout style={{ marginTop: '64px' }}>
-      <Sider
-        width={250}
-        className='DfSider'
-        trigger={null}
-        collapsed={collapsed}
-      >
-        <Menu collapsed={collapsed}/>
-      </Sider>
-      <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
-      <Content className='DfPageContent'>{props.children}</Content>
-      </Layout>
+    <Layout style={{ marginTop: '60px' }}>
+      <BrowserView>
+        <Sider
+          width={250}
+          className='DfSider'
+          trigger={null}
+          collapsed={collapsed}
+        >
+          <Menu collapsed={collapsed}/>
+        </Sider>
+        <Layout className='DfPageContent' style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
+          <Content>{children}</Content>
+        </Layout>
+      </BrowserView>
+      <MobileView>
+        <Drawer
+          className='DfMobileSideBar'
+          style={{ minHeight: document.documentElement.clientHeight }}
+          enableDragHandle
+          contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
+          sidebar={<Menu collapsed={collapsed}/>}
+          open={collapsed}
+          onOpenChange={toggleCollapsed}
+        >
+        <Layout style ={{ padding: '0 2px 2px' }}>
+            <Content className='DfPageContent'>{children}</Content>
+        </Layout>
+        </Drawer>
+      </MobileView>
     </Layout>
   </Layout>,
   </ReactiveBase>;
