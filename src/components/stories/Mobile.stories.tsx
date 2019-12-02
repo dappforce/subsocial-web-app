@@ -10,7 +10,6 @@ export default {
 };
 
 import { Drawer, List, NavBar, Icon, SearchBar } from 'antd-mobile';
-import { Button } from 'antd';
 
 export const MobileSideBar = () => {
   const [ open, setOpen ] = useState(false);

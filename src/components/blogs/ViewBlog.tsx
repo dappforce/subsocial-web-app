@@ -11,7 +11,6 @@ import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
 import { BlogId, Blog, PostId, BlogData } from '../types';
 import { MyAccountProps, withMyAccount } from '../utils/MyAccount';
 import { ViewPost } from '../posts/ViewPost';
-import { CreatedBy } from '../utils/CreatedBy';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Dropdown, Segment } from 'semantic-ui-react';
@@ -24,6 +23,8 @@ import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
+import AddressMiniDf from '../utils/AddressMiniDf';
+import Section from '../utils/Section';
 
 const SUB_SIZE = 2;
 
@@ -65,7 +66,7 @@ function Component (props: Props) {
   const {
     id,
     score,
-    created: { account },
+    created: { account, time },
     ipfs_hash,
     followers_count
   } = blog;
@@ -101,7 +102,7 @@ function Component (props: Props) {
     </Dropdown>);
   };
 
-  const NameAsLink = () => <Link href={`/blog?id=${id}`}><a className='handle'>{name}</a></Link>;
+  const NameAsLink = () => <Link href={`/blog?id=${id}`}><a>{name}</a></Link>;
 
   const renderNameOnly = () => {
     return withLink
@@ -112,7 +113,7 @@ function Component (props: Props) {
   const renderDropDownPreview = () => (
     <div className={`item ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
       }
       <div className='content'>
@@ -124,7 +125,7 @@ function Component (props: Props) {
   const renderMiniPreview = () => (
     <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <DfBgImg size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
       }
       <div className='content'>
@@ -137,15 +138,15 @@ function Component (props: Props) {
     return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <DfBgImg size={imageSize} src={image} rounded/>
+          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} rounded/>
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
         }
         <div className='content'>
-          <div className='header'>
-            <NameAsLink />
-            {isMyBlog && <Tag color='green'>My blog</Tag>}
-            {renderDropDownMenu()}
-          </div>
+          <span className='header'>
+            <span><NameAsLink /></span>
+            <span>{isMyBlog && <Tag color='green' style={{ marginLeft: '.25rem' }}>My blog</Tag>}</span>
+            {!previewDetails && renderDropDownMenu()}
+          </span>
           <div className='description'>
             <ReactMarkdown className='DfMd' source={desc} linkTarget='_blank' />
           </div>
@@ -165,11 +166,13 @@ function Component (props: Props) {
           </a>
         </Link>
 
-        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem ' + (!followers && 'disable')}>
+        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink' + (!followers && 'disable')}>
           <Pluralize count={followers} singularText='Follower'/>
         </div>
 
         <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
+
+        <MutedSpan>{renderDropDownMenu()}</MutedSpan>
 
         {followersOpen &&
           <BlogFollowersModal
@@ -212,13 +215,26 @@ function Component (props: Props) {
     </div>;
   };
 
-  return <div>
+  const RenderBlogCreator = () => (
+    <AddressMiniDf
+      value={account}
+      isShort={true}
+      isPadded={false}
+      size={40}
+      extraDetails={<Link href={`/post?id=${id.toString()}`} >
+          <a className='DfGreyLink'>
+            {time}
+          </a>
+        </Link>}
+    />
+  );
+
+  return <Section className='DfContentPage'>
     <SeoHeads title={name} name={name} desc={desc} image={image} />
     <div className='ui massive relaxed middle aligned list FullProfile'>
       {renderPreview()}
     </div>
-    <CreatedBy created={blog.created} />
-
+    <RenderBlogCreator />
     <div className='DfSpacedButtons'>
       <FollowBlogButton blogId={id} />
       <TxButton size='small' isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
@@ -226,7 +242,7 @@ function Component (props: Props) {
 
     {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
     {renderPostPreviews()}
-  </div>;
+  </Section>;
 }
 
 export default withMulti(

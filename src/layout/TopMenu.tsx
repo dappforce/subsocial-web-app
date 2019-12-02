@@ -13,8 +13,8 @@ const InnerMenu = (props: Props) => {
 
   return isMobile && show
   ? <div className='DfTopBar DfTopBar--search'>
-    <Icon type='close-circle' className='MobileSearchIcon' onClick={() => setShow(false)} />
     <Search/>
+    <Icon type='close-circle' className='MobileSearchIcon' onClick={() => setShow(false)} />
   </div>
   : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>

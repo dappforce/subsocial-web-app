@@ -37,20 +37,22 @@ type Props = {
 console.log('The browser: ', isBrowser);
 
 const SideMenu = (props: Props) => {
+  const { children } = props;
   const [ collapsed, setCollapsed ] = useState(isBrowser);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
   return <ReactiveBase
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-  <Layout style={{ minHeight: '100vh', backgroundColor: '#fafafa !important' }}>
+  <Layout style={{ backgroundColor: '#fafafa !important' }}>
     <Header className='DfHeader'>
       <TopMenu toggleCollapsed={toggleCollapsed}/>
     </Header>
-    <Layout style={{ marginTop: '64px' }}>
+    <Layout style={{ marginTop: '60px' }}>
       <BrowserView>
         <Sider
           width={250}
@@ -60,8 +62,8 @@ const SideMenu = (props: Props) => {
         >
           <Menu collapsed={collapsed}/>
         </Sider>
-        <Layout style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
-          <Content className='DfPageContent'>{props.children}</Content>
+        <Layout className='DfPageContent' style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
+          <Content>{children}</Content>
         </Layout>
       </BrowserView>
       <MobileView>
@@ -72,10 +74,10 @@ const SideMenu = (props: Props) => {
           contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
           sidebar={<Menu collapsed={collapsed}/>}
           open={collapsed}
-          onOpenChange={() => setCollapsed(collapsed)}
+          onOpenChange={toggleCollapsed}
         >
-        <Layout>
-            <Content className='DfPageContent'>{props.children}</Content>
+        <Layout style ={{ padding: '0 2px 2px' }}>
+            <Content className='DfPageContent'>{children}</Content>
         </Layout>
         </Drawer>
       </MobileView>

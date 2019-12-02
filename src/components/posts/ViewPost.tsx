@@ -12,7 +12,6 @@ import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import { Loading } from '../utils/utils';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { CommentsByPost } from './ViewComment';
-import { CreatedBy } from '../utils/CreatedBy';
 import { MutedSpan } from '../utils/MutedText';
 import { Voter } from '../voting/Voter';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
@@ -27,8 +26,9 @@ import { Pluralize } from '../utils/Plularize';
 import ViewBlog from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
+import { isMobile } from 'react-device-detect';
 
-const LIMIT_SUMMARY = 150;
+const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
 type ViewPostProps = MyAccountProps & {
   preview?: boolean,
@@ -138,11 +138,11 @@ function ViewPostInternal (props: ViewPostProps) {
     if (!title || !id) return null;
     return withLink
       ? <Link href={`/post?id=${id.toString()}`} >
-        <a style={{ marginRight: '.5rem' }}>
+        <a className='header'>
           {title}
         </a>
       </Link>
-      : <>{title}</>;
+      : <div className='header'>{title}</div>;
   };
 
   const renderPostCreator = (post: Post, size?: number) => {
@@ -169,16 +169,15 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderContent = (post: Post, content: PostContent) => {
     if (!post || !content) return null;
 
-    const { title, summary } = content;
-    return <div>
+    const { title, summary, image } = content;
+    return <div className='DfContent'>
       <div className='DfPostText'>
-        <h2>
-          {renderNameOnly(title ? title : summary, post.id)}
-        </h2>
-        <div style={{ margin: '1rem 0' }}>
+        {renderNameOnly(title ? title : summary, post.id)}
+        <div className='DfSummary'>
           <ReactMarkdown className='DfMd' source={summary} linkTarget='_blank' />
         </div>
       </div>
+      {content.image && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
 
@@ -226,15 +225,12 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderRegularPreview = () => {
     return <>
       <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
-      <div className='DfContent'>
-        <div className='DfInfo'>
-          <div className='DfRow'>
-            {renderPostCreator(post)}
-            <RenderDropDownMenu/>
-          </div>
-          {renderContent(post, content)}
+      <div className='DfInfo'>
+        <div className='DfRow'>
+          {renderPostCreator(post)}
+          <RenderDropDownMenu/>
         </div>
-        {content.image && <DfBgImg src={content.image} size={160} className='DfPostImagePreview' /* add onError handler */ />}
+        {renderContent(post, content)}
       </div>
       {withStats && renderStatsPanel(post)}
       {withActions && <RenderActionsPanel/>}
@@ -253,15 +249,12 @@ function ViewPostInternal (props: ViewPostProps) {
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
         {/* TODO add body*/}
         <Segment className='DfPostPreview'>
-          <div className='DfContent'>
-            <div className='DfInfo'>
-              <div className='DfRow'>
-                {renderPostCreator(originalPost)}
-                <RenderDropDownMenu/>
-              </div>
-              {renderContent(originalPost, originalContent)}
+          <div className='DfInfo'>
+            <div className='DfRow'>
+              {renderPostCreator(originalPost)}
+              <RenderDropDownMenu/>
             </div>
-            {originalContent.image && <DfBgImg size={140} src={originalContent.image} className='DfPostImagePreview' /* add onError handler */ />}
+            {renderContent(originalPost, originalContent)}
           </div>
           {withStats && renderStatsPanel(originalPost) /* todo params originPost */}
         </Segment>
@@ -275,14 +268,14 @@ function ViewPostInternal (props: ViewPostProps) {
 
   const renderDetails = (content: PostContent) => {
     const { title, body, image } = content;
-    return <Section>
+    return <Section className='DfContentPage'>
       <SeoHeads title={title} name={title} desc={body} image={image} />
-      <h1 style={{ display: 'flex' }}>
-        <span style={{ marginRight: '.5rem' }}>{title}</span>
+      <div className='header' style={{ display: 'flex' }}>
+        <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu/>
-      </h1>
+      </div>
       {renderStatsPanel(post)}
-      {withCreatedBy && <CreatedBy created={post.created} />}
+      {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <ReactMarkdown className='DfMd details' source={body} linkTarget='_blank' />

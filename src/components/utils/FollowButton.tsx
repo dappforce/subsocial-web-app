@@ -7,6 +7,7 @@ import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { api } from '@polkadot/ui-api';
+import { isMobile } from 'react-device-detect';
 
 type FollowBlogButtonProps = {
   blogId: BlogId,
@@ -14,7 +15,7 @@ type FollowBlogButtonProps = {
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
-  const { blogId, size = 'small' } = props;
+  const { blogId, size = isMobile ? 'tiny' : 'small' } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
   const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), blogId]);
