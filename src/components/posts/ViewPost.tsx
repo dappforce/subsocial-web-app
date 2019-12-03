@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
-import { Segment, Dropdown, Icon } from 'semantic-ui-react';
+import { Segment, Dropdown } from 'semantic-ui-react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { Option } from '@polkadot/types';
@@ -27,6 +27,7 @@ import ViewBlog from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
+import { Icon } from 'antd';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
@@ -125,7 +126,7 @@ function ViewPostInternal (props: ViewPostProps) {
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
-    return (<Dropdown icon='ellipsis horizontal'>
+    return (<Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
         {isMyStruct && <Link href={`/edit-post?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
         <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
@@ -138,11 +139,11 @@ function ViewPostInternal (props: ViewPostProps) {
     if (!title || !id) return null;
     return withLink
       ? <Link href={`/post?id=${id.toString()}`} >
-        <a className='header'>
+        <a className='header DfPostTitle--preview'>
           {title}
         </a>
       </Link>
-      : <div className='header'>{title}</div>;
+      : <div className='header DfPostTitle--preview'>{title}</div>;
   };
 
   const renderPostCreator = (post: Post, size?: number) => {
@@ -191,14 +192,14 @@ function ViewPostInternal (props: ViewPostProps) {
         className='ui tiny button basic DfAction'
         onClick={() => setCommentsSection(!commentsSection)}
       >
-        <Icon name='comment'/>
+        <Icon type="message" />
         Comment
       </div>
       <div
         className='ui tiny button basic DfAction'
         onClick={() => setOpen(true)}
       >
-        <Icon name='share square'/>
+        <Icon type="share-alt" />
         Share
       </div>
       {open && <ShareModal postId={isRegularPost ? id : originalPost.id} open={open} close={close} />}
@@ -270,7 +271,7 @@ function ViewPostInternal (props: ViewPostProps) {
     const { title, body, image } = content;
     return <Section className='DfContentPage'>
       <SeoHeads title={title} name={title} desc={body} image={image} />
-      <div className='header' style={{ display: 'flex' }}>
+      <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu/>
       </div>

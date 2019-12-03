@@ -9,7 +9,7 @@ const Layout: React.FunctionComponent<Props> = ({ children, title = 'This is the
 
   return <div>
     <Head>
-      <title>{title}</title>
+      <title>{title.length <= 10 ? title : title.substr(0,10) + '...'}</title>
       <meta charSet='utf-8' />
       <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       <link rel='shortcut icon' href='/images/favicon.ico' />

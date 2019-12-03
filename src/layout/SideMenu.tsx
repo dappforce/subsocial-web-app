@@ -14,14 +14,20 @@ type MenuItem = {
 };
 
 type Props = {
-  collapsed: boolean
-}
+  collapsed: boolean,
+  closeSideBar: () => void
+};
 
 const InnerMenu = (props: Props) => {
-  const { collapsed } = props;
+  const { collapsed, closeSideBar } = props;
   const { state: { address: myAddress } } = useMyAccount();
   const router = useRouter();
   const { pathname } = router;
+
+  const onClick = (page: string) => {
+    isMobile && closeSideBar();
+    Router.push(page).catch(console.log);
+  };
 
   const MenuItems: MenuItem[] = [
     {
@@ -69,7 +75,7 @@ const InnerMenu = (props: Props) => {
         style={{ height: '100%', borderRight: 0 }}
     >
       {MenuItems.map(item =>
-      <Menu.Item key={item.page} onClick={() => Router.push(item.page)}>
+      <Menu.Item key={item.page} onClick={() => onClick(item.page)}>
         <Icon type={item.image} />
         <span>{item.name}</span>
       </Menu.Item>)}
