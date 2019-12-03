@@ -121,7 +121,7 @@ export function SeoHeads (props: SeoProps) {
   const { name = '', image = '', title = '', desc = '' } = props;
   return <div>
     <Head>
-      <title>{name}</title>
+      <title>{name.length <= 10 ? name : name.substr(0,10)}|Subsocial</title>
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={image} />
       <meta property='og:title' content={name} />

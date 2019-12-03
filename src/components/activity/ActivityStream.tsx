@@ -8,11 +8,12 @@ import { api, withMulti } from '@polkadot/ui-api';
 import ViewBlog from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { getNewsFeed, getNotifications, LIMIT } from '../utils/OffchainUtils';
+import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddressMiniDf from '../utils/AddressMiniDf';
 import { Loader } from 'semantic-ui-react';
 import { NoData } from '../utils/DataList';
+import { LIMIT_INFINITY_LIST } from '../../config/ListData.config';
 
 type ActivityProps = {
   activity: Activity;
@@ -27,10 +28,10 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
   const [hasMore, setHasMore] = useState(true);
 
   const getNewsArray = async () => {
-    const data = await getNewsFeed(myAddress, offset, LIMIT);
-    if (data.length < LIMIT) setHasMore(false);
+    const data = await getNewsFeed(myAddress, offset, LIMIT_INFINITY_LIST);
+    if (data.length < LIMIT_INFINITY_LIST) setHasMore(false);
     setItems(items.concat(data));
-    setOffset(offset + LIMIT);
+    setOffset(offset + LIMIT_INFINITY_LIST);
   };
 
   useEffect(() => {
@@ -69,10 +70,10 @@ const InnerViewNotifications = (props: MyAccountProps) => {
   const [offset, setOffset] = useState(0);
 
   const getNotificationsArray = async () => {
-    const data = await getNotifications(myAddress, offset, LIMIT);
-    if (data.length < LIMIT) setHasMore(false);
+    const data = await getNotifications(myAddress, offset, LIMIT_INFINITY_LIST);
+    if (data.length < LIMIT_INFINITY_LIST) setHasMore(false);
     setItems(items.concat(data));
-    setOffset(offset + LIMIT);
+    setOffset(offset + LIMIT_INFINITY_LIST);
   };
 
   useEffect(() => {
