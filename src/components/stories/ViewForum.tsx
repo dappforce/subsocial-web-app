@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Icon, Button, Cascader } from 'antd';
+import React from 'react';
+import { Icon, Button, Cascader, Radio } from 'antd';
 import './style.css';
 import { Category, TopicData } from './types';
 import ListForumTopics from './ListForumTopics';
-import RadioButton from 'antd/lib/radio/radioButton';
+import { CascaderOptionType } from 'antd/lib/cascader';
 
 type ForumProps = {
   categoryList: Category[],
@@ -26,14 +26,20 @@ function ViewForum (props: ForumProps) {
         </div>
         <div className='Sorting'>
           <div style={{ marginRight: '1.5rem', paddingTop: '.2rem' }}>Sort by:</div>
-          <Button className='Latest Button' type='link'>
-            <Icon type='clock-circle'/>
-            <div>Latest</div>
-          </Button>
-          <Button className='Score Button' type='link'>
-            <Icon type='rise'/>
-            <div>Score</div>
-          </Button>
+          <Radio.Group>
+            <Radio.Button value='large'>
+              <div>
+                <Icon type='clock-circle'/>
+                Latest
+              </div>
+            </Radio.Button>
+            <Radio.Button value='large'>
+              <div>
+                <Icon type='rise'/>
+                Score
+              </div>
+            </Radio.Button>
+          </Radio.Group>
         </div>
         <div className='Settings'>
           <Button type='primary' icon='plus'>New Topic</Button>

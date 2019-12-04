@@ -42,22 +42,13 @@ a{
   }
 }
 
-.Button{
-  display: flex;
-  height: 2rem;
-  font-weight: bold;
-  color: #666666;
-  i{
-    height: 22px;
-    width: 22px;
-    padding-top: .2rem;
-  }
-}
-
 .Settings{
   margin-right: 1.5rem;
   .ant-btn-primary{
     background-color: white;
+    path{
+      color: #1890ff;
+    }
   }
   span{
     color: #1890ff;
@@ -69,4 +60,28 @@ a{
 
 .Navigation{
   display: flex;
+  a{
+    padding-top: .45rem;
+  }
+}
+
+.ant-cascader-input{
+  border: none;
+  padding-left: 0;
+}
+
+.ant-cascader-picker-focused{
+  border:none;
+}
+
+.ant-cascader-picker{
+  background-color: #fafafa !important;
+  path{
+    color: #1890ff;
+  }
+}
+
+.ant-cascader-picker-label{
+  color: #1890ff;
+  padding-left: .35rem;
 }
