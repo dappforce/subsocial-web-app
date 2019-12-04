@@ -44,17 +44,18 @@ a{
 
 .Settings{
   margin-right: 1.5rem;
-  .ant-btn-primary{
-    background-color: white;
-    path{
-      color: #1890ff;
-    }
+  i{
+    margin-left: 1rem;
   }
+}
+
+.ant-btn-primary{
+  background-color: white;
   span{
     color: #1890ff;
   }
-  i{
-    margin-left: 1rem;
+  path{
+    color: #1890ff;
   }
 }
 

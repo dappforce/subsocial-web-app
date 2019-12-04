@@ -3,7 +3,6 @@ import { Icon, Button, Cascader, Radio } from 'antd';
 import './style.css';
 import { Category, TopicData } from './types';
 import ListForumTopics from './ListForumTopics';
-import { CascaderOptionType } from 'antd/lib/cascader';
 
 type ForumProps = {
   categoryList: Category[],
@@ -13,6 +12,8 @@ type ForumProps = {
 function ViewForum (props: ForumProps) {
 
   const { categoryList, data } = props;
+
+  const isDataEmpty = data.length === 0;
 
   return (
     <>
@@ -42,11 +43,11 @@ function ViewForum (props: ForumProps) {
           </Radio.Group>
         </div>
         <div className='Settings'>
-          <Button type='primary' icon='plus'>New Topic</Button>
+          {!isDataEmpty ? <Button type='primary' icon='plus'>New Topic</Button> : null }
           <Icon type='ellipsis' />
         </div>
       </div>
-      <ListForumTopics data={data}/>
+      <ListForumTopics data={data} isDataEmpty={isDataEmpty} noDataDesc noDataExt={<Button type='primary' icon='plus'>New Topic</Button>}/>
     </>
   );
 }
