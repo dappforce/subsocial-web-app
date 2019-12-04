@@ -75,7 +75,7 @@ const InnerShareModal = (props: Props) => {
         {renderShareView()}
       </Modal.Content>
       <Modal.Actions>
-        <Button size='large' onClick={close}>Cancel</Button>
+        <Button size='medium' onClick={close}>Cancel</Button>
         <NewSharePost
           blogId={blogId}
           extention={extension}

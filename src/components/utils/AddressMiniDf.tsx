@@ -184,9 +184,9 @@ function AddressMini (props: Props) {
   function renderPreviewForActivity () {
     return <>
       <span className='DfActivityStreamItem content'>
-        <span>{renderCount()}</span>
-        <span className='event'>{' ' + event + ' '}</span>
-        <span className='handle'>{subject}</span>
+        <span className='DfActivity--count'>{renderCount()}</span>
+        <span className='DfActivity--event'>{' ' + event + ' '}</span>
+        <span className='handle DfActivity--subject'>{subject}</span>
       </span>
       <MutedDiv className='DfDate'>{date}</MutedDiv>
     </>;

@@ -171,7 +171,7 @@ const InnerForm = (props: FormProps) => {
       <LabelledField {...props}>
         <TxButton
           type='submit'
-          size='large'
+          size='medium'
           label={struct
             ? 'Update blog'
             : 'Create new blog'
@@ -189,7 +189,7 @@ const InnerForm = (props: FormProps) => {
         />
         <Button
           type='button'
-          size='large'
+          size='medium'
           disabled={!dirty || isSubmitting}
           onClick={() => resetForm()}
           content='Reset form'

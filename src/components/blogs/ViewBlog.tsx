@@ -236,7 +236,7 @@ function Component (props: Props) {
 
   return <Section className='DfContentPage'>
     <SeoHeads title={name} name={name} desc={desc} image={image} />
-    <div className='ui massive relaxed middle aligned list FullProfile'>
+    <div className='FullProfile'>
       {renderPreview()}
     </div>
     <div className='DfSpacedButtons'>

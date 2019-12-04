@@ -840,7 +840,7 @@ hr {
 .DfSider {
   background: #fff;
   border-right: 1px solid #ddd;
-  overflow: auto;
+  overflow: hidden;
   height: 100vh;
   position: fixed;
   left: 0;
@@ -904,6 +904,10 @@ hr {
   margin-right: $small;
 }
 
+.DfSpacedButtons {
+  margin-left: 3rem;
+}
+
 /*----------MOBILE--------------*/
 
 .DfMobileSideBar {
@@ -942,6 +946,10 @@ hr {
   background-color: initial;
 }
 
+.infinite-scroll-component {
+  overflow: initial !important;
+}
+
 @media (max-width: 450px) {
   .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
     zoom: .8;
@@ -962,6 +970,13 @@ hr {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     margin-bottom: .5rem;
+  }
+  .DfAddressMini-popup {
+    line-height: 1rem;
+    font-size: 1rem !important;
+    .header {
+      font-size: 1rem !important;
+    }
   }
   .DfStatItem {
     font-size: $font_small;
