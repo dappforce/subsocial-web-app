@@ -12,7 +12,6 @@ import BalanceDisplay from '@polkadot/ui-app/Balance';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, queryBlogsToProp } from './index';
 import { FollowAccountButton } from './FollowButton';
-import { Popup } from 'semantic-ui-react';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { withSocialAccount } from './utils';
 import { SocialAccount, Profile, ProfileData } from '../types';
@@ -23,6 +22,7 @@ import Router from 'next/router';
 import { MutedDiv } from './MutedText';
 import { Pluralize } from './Plularize';
 import { DfBgImg } from './DfBgImg';
+import { Popover } from 'antd';
 
 const LIMIT_SUMMARY = 40;
 
@@ -102,7 +102,6 @@ function AddressMini (props: Props) {
 
   const summary = about !== undefined && about.length > LIMIT_SUMMARY ? about.substr(0,LIMIT_SUMMARY) + '...' : about;
 
-  const [ popupOpen, setPopupOpen ] = useState(false);
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
 
@@ -110,14 +109,12 @@ function AddressMini (props: Props) {
     if (!followers) return;
 
     setFollowersOpen(true);
-    setPopupOpen(false);
   };
 
   const openFollowingModal = () => {
     if (!following) return;
 
     setFollowingOpen(true);
-    setPopupOpen(false);
   };
 
   const hasAvatar = avatar && nonEmptyStr(avatar);
@@ -143,16 +140,12 @@ function AddressMini (props: Props) {
           />
         }
         <div className='DfAddressMini-popup'>
-          <Popup
-            trigger={renderAddress(address)}
-            onClose={() => setPopupOpen(false)}
-            onOpen={() => setPopupOpen(true)}
-            open={popupOpen}
-            flowing
-            hoverable
+          <Popover
+            placement='topLeft'
+            content={renderProfilePreview()}
           >
-          {renderProfilePreview()}
-          </Popup>
+          {renderAddress(address)}
+          </Popover>
           {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>}/>}
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'}/>}
           {renderName(address)}
@@ -199,7 +192,7 @@ function AddressMini (props: Props) {
           ? <DfBgImg size={size || 40} src={avatar} className='DfAvatar' rounded />
           : <IdentityIcon className='image' value={address} size={size || 40} />
         }
-        <div className='content' style={{ marginLeft: '.7rem', marginRight: '.5rem' }}>
+        <div className='content' style={{ paddingLeft: '0' }}>
           <div className='header DfAccountTitle'>
             {renderAddressForProfile(address)}
           </div>

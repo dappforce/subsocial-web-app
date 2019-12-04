@@ -13,7 +13,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import AddressMiniDf from '../utils/AddressMiniDf';
 import { Loader } from 'semantic-ui-react';
 import { NoData } from '../utils/DataList';
-import { LIMIT_INFINITY_LIST } from '../../config/ListData.config';
+import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
 
 type ActivityProps = {
   activity: Activity;
@@ -28,10 +28,10 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
   const [hasMore, setHasMore] = useState(true);
 
   const getNewsArray = async () => {
-    const data = await getNewsFeed(myAddress, offset, LIMIT_INFINITY_LIST);
-    if (data.length < LIMIT_INFINITY_LIST) setHasMore(false);
+    const data = await getNewsFeed(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
+    if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
     setItems(items.concat(data));
-    setOffset(offset + LIMIT_INFINITY_LIST);
+    setOffset(offset + SIZE_PAGE_INFINITY_LIST);
   };
 
   useEffect(() => {
@@ -63,17 +63,17 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
 
 const InnerViewNotifications = (props: MyAccountProps) => {
   const { myAddress } = props;
-  if (!myAddress) return <em>Opps...Incorect Account</em>;
+  if (!myAddress) return <NoData description='Opps...Incorect Account' />;
 
   const [items, setItems] = useState([] as Activity[]);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
 
   const getNotificationsArray = async () => {
-    const data = await getNotifications(myAddress, offset, LIMIT_INFINITY_LIST);
-    if (data.length < LIMIT_INFINITY_LIST) setHasMore(false);
+    const data = await getNotifications(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
+    if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
     setItems(items.concat(data));
-    setOffset(offset + LIMIT_INFINITY_LIST);
+    setOffset(offset + SIZE_PAGE_INFINITY_LIST);
   };
 
   useEffect(() => {

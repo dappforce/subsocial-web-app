@@ -7,6 +7,7 @@ import { Option } from '@polkadot/types';
 import AddressMini from '../utils/AddressMiniDf';
 import { ReactionId, Reaction, CommentId, PostId } from '../types';
 import { api } from '@polkadot/ui-api/Api';
+import { Pluralize } from '../utils/Plularize';
 
 type VotersProps = {
   id: CommentId | PostId,
@@ -25,7 +26,7 @@ export enum ActiveVoters {
 const InnerModalVoters = (props: VotersProps) => {
 
   const { reactions, open, close, active = ActiveVoters.All } = props;
-  const votersCount = reactions && reactions.length;
+  const votersCount = reactions ? reactions.length : 0;
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
   const [ trigger, setTrigger ] = useState(false);
 
@@ -51,7 +52,7 @@ const InnerModalVoters = (props: VotersProps) => {
   }, [ trigger ]);
 
   if (!reactionView) return null;
-  
+
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
       return <div key={reaction.id.toNumber()} style={{ textAlign: 'left', margin: '1rem' }}>
@@ -59,7 +60,7 @@ const InnerModalVoters = (props: VotersProps) => {
         value={reaction.created.account}
         isPadded={false}
         size={28}
-        extraDetails={`Kind: ${reaction.kind}`}
+        extraDetails={`${reaction.kind}ed`}
         withFollowButton
       />
     </div>;
@@ -85,7 +86,7 @@ const InnerModalVoters = (props: VotersProps) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>{votersCount} voters</h1></Modal.Header>
+      <Modal.Header><h1><Pluralize count={votersCount} singularText='Reaction'/></h1></Modal.Header>
       <Modal.Content scrolling>
       <Tab panes={panes} defaultActiveIndex={active}/>
       </Modal.Content>

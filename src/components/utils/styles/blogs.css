@@ -155,6 +155,7 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfSpacedButtons {
   margin-top: $normal;
+  margin-bottom: calc(2*$normal);
   .button {
     margin-right: $small;
   }
@@ -226,13 +227,16 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .ui.dropdown {
-  display: inherit;
+  margin: 0;
+  display: flex;
+  width: auto;
+  height: min-content;
   width: initial;
   i {
     color: $secondary;
   }
   .ui.selection.dropdown.menu {
-    padding: .5rem .75rem!important;
+    padding: .5rem .75rem !important;
 }
 }
 
@@ -453,7 +457,6 @@ hr {
 
 .DfGreyButton {
   background-color: #ddd;
-  padding: $normal;
 }
 
 .DfGreyButton:hover {
@@ -797,6 +800,7 @@ hr {
 }
 
 .DfTitle--List {
+  margin-bottom: $small;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -908,6 +912,16 @@ hr {
   margin-left: 3rem;
 }
 
+.DfBlogTitle {
+  .ui.dropdown {
+    margin-left: .5rem;
+  }
+}
+.DfModal {
+  text-align: left;
+  margin: 1rem;
+}
+
 /*----------MOBILE--------------*/
 
 .DfMobileSideBar {
@@ -971,6 +985,41 @@ hr {
     padding-bottom: 0 !important;
     margin-bottom: .5rem;
   }
+  .ui.modal.transition.visible.active {
+    .scrolling.content, .actions {
+      padding: $small !important;
+    }
+  }
+  .modal {
+    .AddressMini{
+      .button{
+        min-width: initial;
+      }
+    }
+    .ui--AddressMini-info {
+      min-width: 100%;
+    }
+    .ui.attached.tabular.menu {
+      padding: 0 .5rem !important;
+    }
+    h1:first-child {
+      font-size: $font_huge !important;
+    }
+    .DfAddressMini-popup {
+      width: 100%;
+    }
+  }
+  .DfModal {
+    margin: $tiny;
+    padding: $tiny !important;
+    .DfContent {
+      padding: 0;
+      margin-left: $small;
+    }
+    .DfDescription {
+      font-size: $normal;
+    }
+  }
   .DfAddressMini-popup {
     line-height: 1rem;
     font-size: 1rem !important;
@@ -998,6 +1047,7 @@ hr {
       border: none;
       font-size: $font_huge;
       margin: 0;
+      margin-bottom: $normal;
       padding: 0;
     }
   }
@@ -1016,12 +1066,10 @@ hr {
     line-height: normal;
     font-size: $font_big !important;
     font-weight: 500;
-
-    .DfPostTitle--preview {
-      margin: .5rem 0;
-    }
   }
-
+  .header.DfPostTitle--preview {
+    margin: $small 0;
+  }
   .DfPostPreview h2 {
     margin-top: 0;
     font-size: $big;
@@ -1066,6 +1114,9 @@ hr {
     margin-top: $tiny !important;
   }
   .DfCountsPreview .MutedText {
-    margin-right: $small;
+    margin-right: $normal;
+    .disable {
+      margin: 0;
+    }
   }
 }

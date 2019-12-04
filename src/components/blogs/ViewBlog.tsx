@@ -68,7 +68,8 @@ function Component (props: Props) {
     score,
     created: { account, time },
     ipfs_hash,
-    followers_count
+    followers_count,
+    edit_history
   } = blog;
   const followers = followers_count.toNumber();
   const [content, setContent] = useState({} as BlogData);
@@ -96,7 +97,7 @@ function Component (props: Props) {
     return (<Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
         {isMyBlog && <Link href={`/edit-blog?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
-        <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
+        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
         {open && <BlogHistoryModal id={id} open={open} close={close} />}
       </Dropdown.Menu>
     </Dropdown>);

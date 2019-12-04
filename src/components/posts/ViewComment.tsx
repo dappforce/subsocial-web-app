@@ -139,7 +139,7 @@ export function ViewComment (props: ViewCommentProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const [parentComments, childrenComments] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
-  const { id, score, created: { account, time }, post_id } = comment;
+  const { id, score, created: { account, time }, post_id, edit_history } = comment;
   const [ struct , setStruct ] = useState(comment);
   const [ postContent, setPostContent ] = useState({} as PostData);
   const [ content , setContent ] = useState({} as CommentData);
@@ -191,7 +191,7 @@ export function ViewComment (props: ViewCommentProps) {
     return (<Dropdown icon='ellipsis horizontal' direction='left' style={{ marginLeft: '.5rem', color: '#8c8c8c' }} >
       <Dropdown.Menu>
         {(isMyStruct || showEditForm) && <Dropdown.Item text='Edit' onClick={() => setShowEditForm(true)} />}
-        <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
+        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
         {open && <CommentHistoryModal id={id} open={open} close={close}/>}
       </Dropdown.Menu>
     </Dropdown>);

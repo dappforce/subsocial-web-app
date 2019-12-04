@@ -106,7 +106,7 @@ const CommentFromHistory = (props: PropsCommentFromHistory) => {
     loadData().catch(err => new Error(err));
   }, [ ipfs_hash ]);
 
-  return (<div style={{ textAlign: 'left', margin: '1rem' }}>
+  return (<div className='DfModal'>
     <SuiComment>
       <SuiComment.Metadata>
         <AddressMini
@@ -191,12 +191,12 @@ const PostFromHistory = (props: PropsPostFromHistory) => {
     loadData().catch(err => new Error(err));
   },[ipfsHash]);
 
-  return (<div style={{ textAlign: 'left', margin: '1rem' }}>
+  return (<div className='DfModal'>
     <h1 style={{ display: 'flex' }}>
       <span style={{ marginRight: '.5rem' }}>{content.title}</span>
     </h1>
     <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
-    <div style={{ margin: '1rem 0' }}>
+    <div className='DfModal'>
       {content.image && <img src={content.image} className='DfPostImage' /* add onError handler */ />}
       <ReactMarkdown className='DfMd' source={content.body} linkTarget='_blank' />
       {/* TODO render tags */}
@@ -285,19 +285,19 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
     loadData().catch(err => new Error(err));
   },[ipfsHash, _slug]);
 
-  return (<div style={{ textAlign: 'left', margin: '1rem' }}>
+  return (<div className='DfModal'>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         <div className={`item ProfileDetails MyBlog`}>
         {content.image
-        ? <DfBgImg className='ui avatar image' src={content.image} size={40} />
+        ? <DfBgImg className='ui avatar image' src={content.image} size={40} rounded/>
         : <IdentityIcon className='image' value={edited.account} size={38} />
         }
-          <div className='content'>
+          <div className='DfContent'>
             <div className='header DfHistoryTitle'>
               <Link href='#'><a className='handle'>{content.name}</a></Link>
             </div>
-            <div className='description' style={{ margin: '0.2rem' }}>{`slug: ${_slug}`}</div>
-            <div className='description' style={{ margin: '0.2rem' }}>
+            <div className='DfDescription'>{`slug: ${_slug}`}</div>
+            <div className='DfDescription'>
               <ReactMarkdown className='DfMd' source={content.desc} linkTarget='_blank' />
             </div>
           </div>
@@ -336,7 +336,7 @@ const InnerBlogHistoryModal = (props: BlogHistoryProps) => {
     >
       <Modal.Header><h1>Edit History</h1></Modal.Header>
       <Modal.Content scrolling>
-        {edit_history && renderBlogHistory()}
+        {edit_history.length > 0 && renderBlogHistory()}
       </Modal.Content>
       <Modal.Actions>
         <Button content='Close' onClick={close} />
@@ -386,11 +386,11 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
     loadData().catch(err => new Error(err));
   },[ipfsHash, _username]);
 
-  return (<div style={{ textAlign: 'left', margin: '1rem' }}>
+  return (<div className='DfModal'>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         <div className={`item ProfileDetails MyBlog`}>
         {content.avatar
-        ? <DfBgImg className='ui avatar image' src={content.avatar} size={40} />
+        ? <DfBgImg className='ui avatar image' src={content.avatar} size={40} rounded/>
         : <IdentityIcon className='image' value={edited.account} size={38} />
         }
           <div className='content'>
@@ -435,7 +435,7 @@ const InnerProfileHistoryModal = (props: ProfileHistoryProps) => {
     >
       <Modal.Header><h1>Edit History</h1></Modal.Header>
       <Modal.Content scrolling>
-        {edit_history && renderProfileHistory()}
+        {edit_history.length > 0 && renderProfileHistory()}
       </Modal.Content>
       <Modal.Actions>
         <Button content='Close' onClick={close} />

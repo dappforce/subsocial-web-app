@@ -73,7 +73,8 @@ function ViewPostInternal (props: ViewPostProps) {
     extension,
     isRegularPost,
     isSharedComment,
-    isSharedPost
+    isSharedPost,
+    edit_history
   } = post;
 
   const [ content , setContent ] = useState({} as PostContent);
@@ -129,7 +130,7 @@ function ViewPostInternal (props: ViewPostProps) {
     return (<Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
         {isMyStruct && <Link href={`/edit-post?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
-        <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
+        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
         {open && <PostHistoryModal id={id} open={open} close={close}/>}
       </Dropdown.Menu>
     </Dropdown>);
@@ -192,14 +193,14 @@ function ViewPostInternal (props: ViewPostProps) {
         className='ui tiny button basic DfAction'
         onClick={() => setCommentsSection(!commentsSection)}
       >
-        <Icon type="message" />
+        <Icon type='message' />
         Comment
       </div>
       <div
         className='ui tiny button basic DfAction'
         onClick={() => setOpen(true)}
       >
-        <Icon type="share-alt" />
+        <Icon type='share-alt' />
         Share
       </div>
       {open && <ShareModal postId={isRegularPost ? id : originalPost.id} open={open} close={close} />}

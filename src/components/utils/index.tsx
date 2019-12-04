@@ -117,11 +117,13 @@ type SeoProps = {
 
 import React from 'react';
 
+export const createTitle = (title: string) => `${title.length <= 10 ? title : title.substr(0, 10)} - Subsocial`;
+
 export function SeoHeads (props: SeoProps) {
   const { name = '', image = '', title = '', desc = '' } = props;
   return <div>
     <Head>
-      <title>{name.length <= 10 ? name : name.substr(0,10)}|Subsocial</title>
+      <title>{createTitle(name)}</title>
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={image} />
       <meta property='og:title' content={name} />
