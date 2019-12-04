@@ -6,9 +6,9 @@
 
 @media (min-width: 1200px) {
   .DfPageContent {
-    min-width: 60%;
-    width: 60%;
-    max-width: 70%;
+    min-width: 50%;
+    width: 50%;
+    max-width: 60%;
   }
 }
 
@@ -154,10 +154,11 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .DfSpacedButtons {
+  margin-top: $normal;
   .button {
     margin-right: $small;
   }
-};
+}
 
 .DfVoter {
   &.vertical {
@@ -225,9 +226,16 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .ui.dropdown {
-  display: initial;
+  display: inherit;
   width: initial;
+  i {
+    color: $secondary;
+  }
+  .ui.selection.dropdown.menu {
+    padding: .5rem .75rem!important;
 }
+}
+
 hr {
   border: 0;
   border-bottom: 1px solid #ddd;
@@ -377,6 +385,10 @@ hr {
     width: 32%;
     display: flex;
     justify-content: center;
+
+    i:not(.DfVoter) {
+      margin-right: .35rem;
+    }
   }
   .DfCountsPreview {
     justify-content: flex-end;
@@ -715,7 +727,7 @@ hr {
 }
 
 .DfSearch {
-  width: 85%;
+  width: 100%;
   color: rgba(0, 0, 0, 0.7);
   z-index:2;
   input {
@@ -761,7 +773,6 @@ hr {
   z-index: 2;
   width: 100%;
   display: flex;
-  align-items: baseline;
   justify-content: space-between;
 }
 
@@ -829,7 +840,7 @@ hr {
 .DfSider {
   background: #fff;
   border-right: 1px solid #ddd;
-  overflow: auto;
+  overflow: hidden;
   height: 100vh;
   position: fixed;
   left: 0;
@@ -850,9 +861,14 @@ hr {
 .DfTopBar {
   width: 100%;
   display: contents;
-  .MobileSearchIcon {
-    padding: $normal;
-    font-size: $font_big;
+  .DfSearchIcon {
+    padding: $small;
+    margin-top: 1.15rem;
+    font-size: 1.3rem;
+  }
+  .DfCloseSearchIcon {
+    font-size: 1.3rem;
+    padding-left: .5rem;
   }
 }
 
@@ -864,6 +880,32 @@ hr {
 .DfTopBar--rightContent {
   display: -webkit-inline-box;
   display: -moz-inline-box;
+}
+/*---fix-syntax-error-md----*/
+.CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
+  background: none !important;
+}
+
+.DfCreator {
+  font-size: $normal;
+  margin-top: $normal;
+  i {
+    margin-right: $tiny;
+  }
+  div:not(.DfCreator--data) {
+    display: inline;
+  }
+  color: $secondary !important;
+}
+
+.DfStatItem {
+  font-size: $normal;
+  display: inline;
+  margin-right: $small;
+}
+
+.DfSpacedButtons {
+  margin-left: 3rem;
 }
 
 /*----------MOBILE--------------*/
@@ -904,37 +946,103 @@ hr {
   background-color: initial;
 }
 
+.infinite-scroll-component {
+  overflow: initial !important;
+}
+
 @media (max-width: 450px) {
+  .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
+    zoom: .8;
+  }
+  .ui.search.selection.dropdown {
+    min-width: 11rem;
+  }
+  .editor-toolbar {
+    zoom: .7;
+  }
+  .ProfilePreviews {
+    button.ui.tiny {
+      padding: .6rem;
+      font-size: $font_tiny;
+    }
+  }
+  li.ant-list-item.ant-list-item-no-flex {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: .5rem;
+  }
+  .DfAddressMini-popup {
+    line-height: 1rem;
+    font-size: 1rem !important;
+    .header {
+      font-size: 1rem !important;
+    }
+  }
+  .DfStatItem {
+    font-size: $font_small;
+  }
   .DfPageContent {
     width: 100% !important;
+    padding: 0 1rem;
+  }
+  .DfBurgerIcon {
+    padding-left: 0;
+    padding-right: $small;
+  }
+  .DfCreator {
+    font-size: $font_small;
   }
   .DfSection {
     margin-top: $normal !important;
-    .DfTitle--List {
-      margin-left: $normal;
+    .DfSection-title {
+      border: none;
+      font-size: $font_huge;
+      margin: 0;
+      padding: 0;
     }
   }
+  .ProfileDetails .content {
+    padding-left: 0;
+    padding-right: .5rem;
+}
   .DfContent,.content {
     text-align: left !important;
   }
   .content {
     width: 80%;
+    line-height: $greate;
   }
   .header {
     line-height: normal;
-    font-size: 1.15rem !important;
+    font-size: $font_big !important;
+    font-weight: 500;
+
+    .DfPostTitle--preview {
+      margin: .5rem 0;
+    }
   }
 
   .DfPostPreview h2 {
     margin-top: 0;
     font-size: $big;
   }
+  .DfBlogStats {
+    font-size: $font_tiny;
+    .DfStatItem {
+      margin-right: $small;
+    }
+  }
   .ui.segment {
+    z-index: 1;
     border-radius: 0;
-    margin: 0;
-    padding: .5rem .25rem;
+    margin: 0 -1rem;
+    padding: .5rem !important;
     border-left: 0;
     border-right: 0;
+    box-shadow: none;
+    .ui.segment {
+      margin: 0;
+    }
   }
   .am-drawer-content {
     padding-top: 0 !important;
@@ -949,14 +1057,15 @@ hr {
     width: 87%;
   }
   .DfContentPage {
-    overflow: hidden;
     text-align: left !important;
-    padding: 0 .1rem;
     .FullProfile {
       margin-top: $tiny !important;
     }
   }
   .DfSummary {
     margin-top: $tiny !important;
+  }
+  .DfCountsPreview .MutedText {
+    margin-right: $small;
   }
 }

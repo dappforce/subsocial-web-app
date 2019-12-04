@@ -184,9 +184,9 @@ function AddressMini (props: Props) {
   function renderPreviewForActivity () {
     return <>
       <span className='DfActivityStreamItem content'>
-        <span>{renderCount()}</span>
-        <span className='event'>{' ' + event + ' '}</span>
-        <span className='handle'>{subject}</span>
+        <span className='DfActivity--count'>{renderCount()}</span>
+        <span className='DfActivity--event'>{' ' + event + ' '}</span>
+        <span className='handle DfActivity--subject'>{subject}</span>
       </span>
       <MutedDiv className='DfDate'>{date}</MutedDiv>
     </>;
@@ -200,7 +200,7 @@ function AddressMini (props: Props) {
           : <IdentityIcon className='image' value={address} size={size || 40} />
         }
         <div className='content' style={{ marginLeft: '.7rem', marginRight: '.5rem' }}>
-          <div className='header'>
+          <div className='header DfAccountTitle'>
             {renderAddressForProfile(address)}
           </div>
         </div>
@@ -242,7 +242,7 @@ function AddressMini (props: Props) {
 
     return (
         <div
-          className={'ui--AddressMini-address asLink ' + (asActivity && 'activity')}
+          className={`ui--AddressMini-address asLink ${className} ${asActivity && 'activity'}`}
           onClick={() => Router.push(`/profile?address=${address}`)}
         >
           {fullname || username || (isShort ? toShortAddress(address) : address)}

@@ -293,7 +293,7 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
         : <IdentityIcon className='image' value={edited.account} size={38} />
         }
           <div className='content'>
-            <div className='header'>
+            <div className='header DfHistoryTitle'>
               <Link href='#'><a className='handle'>{content.name}</a></Link>
             </div>
             <div className='description' style={{ margin: '0.2rem' }}>{`slug: ${_slug}`}</div>
@@ -394,7 +394,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
         : <IdentityIcon className='image' value={edited.account} size={38} />
         }
           <div className='content'>
-            <div className='header'>
+            <div className='header DfHistoryTitle'>
               <Link href='#'><a className='handle'>{content.fullname}</a></Link>
             </div>
             <div className='about' style={{ margin: '0.2rem' }}>{`username: ${_username}`}</div>

@@ -24,7 +24,6 @@ const App = () => {
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
         placeholder='Search Subsocial'
         iconPosition='left'
-        showClear
         icon={<Icon
           type='search'
           style={{ fontSize: '14px', position: 'relative', top: '-1.6rem' }}

@@ -85,7 +85,7 @@ const InnerForm = (props: FormProps) => {
   const renderResetButton = () => (
     <Button
       type='button'
-      size='large'
+      size='medium'
       disabled={isSubmitting || (isRegularPost && !dirty)}
       onClick={() => resetForm()}
       content='Reset form'
@@ -153,7 +153,7 @@ const InnerForm = (props: FormProps) => {
   const renderTxButton = () => (
       <TxButton
         type='submit'
-        size='large'
+        size='medium'
         label={!struct
           ? `Create a post`
           : `Update a post`

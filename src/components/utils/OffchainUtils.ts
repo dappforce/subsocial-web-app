@@ -3,8 +3,6 @@ import axios from 'axios';
 
 export const baseUrl = (process.env.OFFCHAIN_URL || 'http://localbaseUrl:3001') + '/v1';
 
-export const LIMIT = 3;
-
 export async function addJsonToIpfs (ipfsData: IpfsData): Promise<string> {
   const res = await axios.post(`${baseUrl}/ipfs/add`, ipfsData);
   const { data } = res;

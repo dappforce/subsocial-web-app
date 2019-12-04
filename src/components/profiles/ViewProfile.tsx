@@ -6,7 +6,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
-import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
+import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr } from '../utils/index';
 import { SocialAccount, ProfileData, Profile } from '../types';
 import { withSocialAccount, withAddressFromUrl } from '../utils/utils';
 import { Dropdown, Icon } from 'semantic-ui-react';
@@ -19,6 +19,9 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
+import { isMobile } from 'react-device-detect';
+
+const SIZE_BUTTON = isMobile ? 'tiny' : 'small';
 
 export type Props = {
   preview?: boolean,
@@ -83,7 +86,7 @@ function Component(props: Props) {
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
     <Link href={`/new-profile`}>
-      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className='ui button primary'>
+      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className={'ui button primary ' + SIZE_BUTTON}>
         <i className='plus icon' />
         Create profile
       </a>
@@ -96,7 +99,7 @@ function Component(props: Props) {
 
     const close = () => setOpen(false);
 
-    return (<Dropdown icon='ellipsis horizontal'>
+    return (<Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
         {<Link href={`/edit-profile`}><a className='item'>Edit</a></Link>}
         <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
@@ -105,7 +108,13 @@ function Component(props: Props) {
     </Dropdown>);
   };
 
-  const getName = () => (fullname || username || address) as string;
+  const getName = () => {
+    if (isEmptyStr(fullname) || isEmptyStr(username)) {
+      return address;
+    } else {
+      return fullname || username.toString();
+    }
+  };
 
   const NameAsLink = () => (
     <Link href={`/profile?address=${address}`}>
@@ -127,14 +136,14 @@ function Component(props: Props) {
           : <IdentityIcon className='image' value={address} size={size} />
         }
         <div className='content'>
-          <div className='header'>
+          <div className='header DfProfileTitle'>
             <NameAsLink />
             {renderDropDownMenu()}
           </div>
           <MutedDiv className='DfScore'>Reputation: {reputation}</MutedDiv>
           {renderCreateProfileButton}
           <div className='about'>
-            <div className='DfSocialLinks'>
+            <div className='DfSoc1ialLinks'>
               {hasEmail &&
                 <a
                   href={`mailto:${email}`}
@@ -209,9 +218,9 @@ function Component(props: Props) {
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}
-        <FollowAccountButton address={address} />
-        <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
-        <TxButton isBasic={true} isPrimary={false} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
+        <FollowAccountButton address={address} size={SIZE_BUTTON}/>
+        <TxButton isBasic={true} isPrimary={false} size={SIZE_BUTTON} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
+        <TxButton isBasic={true} isPrimary={false} size={SIZE_BUTTON} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}

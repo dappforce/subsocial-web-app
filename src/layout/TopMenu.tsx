@@ -14,11 +14,11 @@ const InnerMenu = (props: Props) => {
   return isMobile && show
   ? <div className='DfTopBar DfTopBar--search'>
     <Search/>
-    <Icon type='close-circle' className='MobileSearchIcon' onClick={() => setShow(false)} />
+    <Icon type='close-circle' className='DfCloseSearchIcon' onClick={() => setShow(false)} />
   </div>
   : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
-        <Button type='link' onClick={props.toggleCollapsed}>
+        <Button type='link' onClick={props.toggleCollapsed} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
           <span style={{ fontSize: '1.5rem' }}>{isBrowser ? 'Subsocial' : 'S.'}</span>
@@ -27,7 +27,7 @@ const InnerMenu = (props: Props) => {
       <div className='DfTopBar--rightContent'>
         <MobileView>
           {isMobile &&
-          <Icon type='search' className='MobileSearchIcon' onClick={() => setShow(true)} />}
+          <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
         <InputAddress
           className='DfTopBar--InputAddress'
