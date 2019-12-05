@@ -1,3 +1,7 @@
+#root {
+  background-color: #fafafa !important;
+}
+
 .DfPageContent {
   min-width: 60%;
   max-width: 100%;
@@ -155,6 +159,7 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfSpacedButtons {
   margin-top: $normal;
+  margin-bottom: calc(2*$normal);
   .button {
     margin-right: $small;
   }
@@ -226,13 +231,16 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .ui.dropdown {
-  display: inherit;
+  margin: 0;
+  display: flex;
+  width: auto;
+  height: min-content;
   width: initial;
   i {
     color: $secondary;
   }
   .ui.selection.dropdown.menu {
-    padding: .5rem .75rem!important;
+    padding: .5rem .75rem !important;
 }
 }
 
@@ -255,6 +263,10 @@ hr {
 .DfActivityStreamItem {
   .handle, a { 
     font-weight: bold;
+  }
+
+  .header {
+    font-size: 1.15rem;
   }
 
   .name{
@@ -453,7 +465,6 @@ hr {
 
 .DfGreyButton {
   background-color: #ddd;
-  padding: $normal;
 }
 
 .DfGreyButton:hover {
@@ -639,7 +650,7 @@ hr {
 }
 
 .DfAvatar{
-  margin-right: $small;
+  margin-right: $small !important;
   display: inline-block;
   border-radius: 50%;
   vertical-align: middle;
@@ -727,7 +738,7 @@ hr {
 }
 
 .DfSearch {
-  width: 100%;
+  width: 60%;
   color: rgba(0, 0, 0, 0.7);
   z-index:2;
   input {
@@ -797,6 +808,7 @@ hr {
 }
 
 .DfTitle--List {
+  margin-bottom: $small;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -908,6 +920,16 @@ hr {
   margin-left: 3rem;
 }
 
+.DfBlogTitle {
+  .ui.dropdown {
+    margin-left: .5rem;
+  }
+}
+.DfModal {
+  text-align: left;
+  margin: 1rem;
+}
+
 /*----------MOBILE--------------*/
 
 .DfMobileSideBar {
@@ -950,6 +972,22 @@ hr {
   overflow: initial !important;
 }
 
+.DfModal:first-child {
+  margin: $tiny;
+  padding: $tiny !important;
+}
+.DfModal {
+  margin: $greate $tiny;
+  padding: $normal $tiny $tiny $tiny;
+  border-top: 1px solid #ddd;
+  .DfContent {
+    padding: 0;
+  }
+  .DfDescription {
+    font-size: $normal;
+  }
+}
+
 @media (max-width: 450px) {
   .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
     zoom: .8;
@@ -970,6 +1008,45 @@ hr {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     margin-bottom: .5rem;
+  }
+  .ui.modal.transition.visible.active {
+    .scrolling.content, .actions {
+      padding: $small !important;
+    }
+  }
+  .modal {
+    .AddressMini{
+      .button{
+        min-width: initial;
+      }
+    }
+    .ui--AddressMini-info {
+      min-width: 100%;
+    }
+    .ui.attached.tabular.menu {
+      padding: 0 .5rem !important;
+    }
+    h1:first-child {
+      font-size: $font_huge !important;
+    }
+    .DfAddressMini-popup {
+      width: 100%;
+    }
+  }
+  .DfModal:first-child {
+    margin: $tiny;
+    padding:$tiny !important;
+  }
+  .DfModal {
+    margin: $small $tiny;
+    padding: $normal $tiny $tiny $tiny !important;
+    border-top: .5px solid #ddd;
+    .DfContent {
+      padding: 0;
+    }
+    .DfDescription {
+      font-size: $normal;
+    }
   }
   .DfAddressMini-popup {
     line-height: 1rem;
@@ -993,12 +1070,17 @@ hr {
     font-size: $font_small;
   }
   .DfSection {
-    margin-top: $normal !important;
+    margin-top: $greate !important;
     .DfSection-title {
       border: none;
       font-size: $font_huge;
       margin: 0;
+      margin-top: $normal;
       padding: 0;
+
+      .DfTitle--List {
+        margin-bottom: $tiny
+      }
     }
   }
   .ProfileDetails .content {
@@ -1016,12 +1098,10 @@ hr {
     line-height: normal;
     font-size: $font_big !important;
     font-weight: 500;
-
-    .DfPostTitle--preview {
-      margin: .5rem 0;
-    }
   }
-
+  .header.DfPostTitle--preview {
+    margin: $small 0;
+  }
   .DfPostPreview h2 {
     margin-top: 0;
     font-size: $big;
@@ -1066,6 +1146,25 @@ hr {
     margin-top: $tiny !important;
   }
   .DfCountsPreview .MutedText {
+    margin-right: $normal;
+    .disable {
+      margin: 0;
+    }
+  }
+  .ui--IdentityIcon.image {
     margin-right: $small;
+  }
+  .DfCommentContent {
+    margin-bottom: 1.75rem;
+  }
+  .DfDataList {
+    padding: 0;
+  }
+  .DfSearch {
+    width: 100%;
+  }
+  .DfSocialLinks {
+    margin-top: .25rem;
+    font-size: 1rem;
   }
 }

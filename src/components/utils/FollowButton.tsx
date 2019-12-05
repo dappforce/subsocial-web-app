@@ -8,7 +8,7 @@ import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { api } from '@polkadot/ui-api';
 import { isMobile } from 'react-device-detect';
-
+import { BUTTON_SIZE } from '../../config/Size.config';
 type FollowBlogButtonProps = {
   blogId: BlogId,
   size?: string
@@ -73,7 +73,7 @@ type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
 };
 
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
-  const { myAddress, address, size = 'small' } = props;
+  const { myAddress, address, size = BUTTON_SIZE } = props;
 
   const accountId = new AccountId(address);
   const dataForQuery = new Tuple([AccountId, AccountId], [new AccountId(myAddress), accountId]);

@@ -29,14 +29,6 @@ export default (props: Props) => {
     if (isEmpty(routerQuery)) {
       setPageSize(DEFAULT_PAGE_SIZE);
       setCurrentPage(DEFAULT_CURENT_PAGE);
-
-      routerQuery.size = DEFAULT_PAGE_SIZE.toString();
-      routerQuery.page = DEFAULT_CURENT_PAGE.toString();
-
-      Router.push({
-        pathname: router.pathname,
-        query: routerQuery
-      }).catch(console.log);
     } else {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);

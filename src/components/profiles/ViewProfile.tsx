@@ -19,10 +19,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
-import { isMobile } from 'react-device-detect';
-
-const SIZE_BUTTON = isMobile ? 'tiny' : 'small';
-
+import { BUTTON_SIZE } from '../../config/Size.config';
 export type Props = {
   preview?: boolean,
   nameOnly?: boolean,
@@ -50,6 +47,7 @@ function Component(props: Props) {
 
   const address = id.toString();
   const { state: { address: myAddress } } = useMyAccount();
+  const isMyAccount = address === myAddress;
   const profileIsNone = !socialAccount || socialAccount && socialAccount.profile.isNone;
   const followers = socialAccount ? socialAccount.followers_count.toNumber() : 0;
   const following = socialAccount ? socialAccount.following_accounts_count.toNumber() : 0;
@@ -59,7 +57,8 @@ function Component(props: Props) {
   const [followingOpen, setFollowingOpen] = useState(false);
 
   const {
-    username
+    username,
+    edit_history
   } = profile;
 
   const {
@@ -86,7 +85,7 @@ function Component(props: Props) {
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
     <Link href={`/new-profile`}>
-      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className={'ui button primary ' + SIZE_BUTTON}>
+      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className={'ui button primary ' + BUTTON_SIZE}>
         <i className='plus icon' />
         Create profile
       </a>
@@ -99,13 +98,15 @@ function Component(props: Props) {
 
     const close = () => setOpen(false);
 
-    return (<Dropdown icon='ellipsis horizontal' direction='left'>
+    const showDropdown = isMyAccount || edit_history;
+
+    return (showDropdown ? <Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
-        {<Link href={`/edit-profile`}><a className='item'>Edit</a></Link>}
-        <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />
+        {isMyAccount && <Link href={`/edit-profile`}><a className='item'>Edit</a></Link>}
+        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
         {open && <ProfileHistoryModal id={id} open={open} close={close} />}
       </Dropdown.Menu>
-    </Dropdown>);
+    </Dropdown> : <></>);
   };
 
   const getName = () => {
@@ -143,7 +144,7 @@ function Component(props: Props) {
           <MutedDiv className='DfScore'>Reputation: {reputation}</MutedDiv>
           {renderCreateProfileButton}
           <div className='about'>
-            <div className='DfSoc1ialLinks'>
+            <div className='DfSocialLinks'>
               {hasEmail &&
                 <a
                   href={`mailto:${email}`}
@@ -218,9 +219,9 @@ function Component(props: Props) {
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}
-        <FollowAccountButton address={address} size={SIZE_BUTTON}/>
-        <TxButton isBasic={true} isPrimary={false} size={SIZE_BUTTON} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
-        <TxButton isBasic={true} isPrimary={false} size={SIZE_BUTTON} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
+        <FollowAccountButton address={address} size={BUTTON_SIZE}/>
+        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
+        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}

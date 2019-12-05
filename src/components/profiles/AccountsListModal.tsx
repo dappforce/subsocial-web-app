@@ -5,7 +5,7 @@ import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import AddressMiniDf from '../utils/AddressMiniDf';
-
+import {BUTTON_SIZE} from '../../config/Size.config';
 type Props = {
   accounts?: AccountId[],
   accountsCount: Number,
@@ -20,15 +20,15 @@ const InnerAccountsListModal = (props: Props) => {
 
   const renderAccounts = () => {
     return accounts && accounts.map((account, index) =>
-      <div key={index} style={{ textAlign: 'left', margin: '1rem' }}>
+      <div key={index} className='DfModal'>
         <AddressMiniDf
           value={account}
           isShort={true}
           isPadded={false}
-          size={48}
+          size={30}
           withFollowButton
           withProfilePreview
-          withoutCounters
+          miniPreview
         />
       </div>
     );
@@ -47,7 +47,7 @@ const InnerAccountsListModal = (props: Props) => {
         {renderAccounts()}
       </Modal.Content>
       <Modal.Actions>
-        <Button content='Close' onClick={close} />
+        <Button content='Close' size={BUTTON_SIZE} onClick={close} />
       </Modal.Actions>
     </Modal>
   );

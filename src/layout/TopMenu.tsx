@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Button, Icon } from 'antd';
 import InputAddress from '../components/utils/InputAddress';
 import Search from '../components/search/Search';
-import { isBrowser, isMobile, BrowserView, MobileView } from 'react-device-detect';
+import { isBrowser, isMobile, MobileView } from 'react-device-detect';
+import Router from 'next/router';
 
 type Props = {
   toggleCollapsed: () => void
@@ -21,9 +22,9 @@ const InnerMenu = (props: Props) => {
         <Button type='link' onClick={props.toggleCollapsed} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
-          <span style={{ fontSize: '1.5rem' }}>{isBrowser ? 'Subsocial' : 'S.'}</span>
+          <span style={{ fontSize: '1.5rem' }} onClick={() => Router.push('/')}>{isBrowser ? 'Subsocial' : 'S.'}</span>
       </div>
-      <BrowserView><Search/></BrowserView>
+      {isBrowser && <Search/>}
       <div className='DfTopBar--rightContent'>
         <MobileView>
           {isMobile &&

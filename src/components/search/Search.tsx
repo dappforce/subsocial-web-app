@@ -21,6 +21,7 @@ const App = () => {
         ]}
         fieldWeights={[2, 1, 2, 1, 2, 2, 1]}
         URLParams
+        autoFocus
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
         placeholder='Search Subsocial'
         iconPosition='left'
