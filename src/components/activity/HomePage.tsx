@@ -25,7 +25,7 @@ const Component = (props: Props) => {
   const { nextBlogId = new BlogId(1), nextPostId = new PostId(1) } = props;
 
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
-    const initIds = nextId.lt(size) ? nextId.toNumber() - 1 : size.toNumber();
+    const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
     let latestIds = new Array<BN>(initIds).fill(ZERO);
 
     return latestIds.map((_,index) => nextId.sub(new BN(index + 1)));
