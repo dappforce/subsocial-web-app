@@ -26,28 +26,28 @@ const Component = (props: Props) => {
 
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lt(size) ? nextId.toNumber() - 1 : size.toNumber();
-    let latesIds = new Array<BN>(initIds).fill(ZERO);
+    let latestIds = new Array<BN>(initIds).fill(ZERO);
 
-    return latesIds.map((_,index) => nextId.sub(new BN(index + 1)));
+    return latestIds.map((_,index) => nextId.sub(new BN(index + 1)));
   };
 
-  const latesBlogIds = getLastNIds(nextBlogId,FIVE);
-  const latesPostIds = getLastNIds(nextPostId,FIVE);
+  const latestBlogIds = getLastNIds(nextBlogId, FIVE);
+  const latestPostIds = getLastNIds(nextPostId, FIVE);
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <SeoHeads title='Subsocial latest updates' name='Home' desc='Subsocial home page with latest updates' image={substrateLogo} />
+      <SeoHeads title='Subsocial latestt updates' name='Home' desc='Subsocial home page with latestt updates' image={substrateLogo} />
       <ListData
         title={`Latest blogs`}
-        dataSource={latesBlogIds}
+        dataSource={latestBlogIds}
         renderItem={(item, index) =>
           <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
-        noDataDesc='No latest updates yet'
+        noDataDesc='No latestt updates yet'
         noDataExt={<Button href='/new-blog'>Create blog</Button>}
       />
-      {latesPostIds.length > 0 && <ListData
+      {latestPostIds.length > 0 && <ListData
         title={`Latest posts`}
-        dataSource={latesPostIds}
+        dataSource={latestPostIds}
         renderItem={(item, index) =>
           <ViewPost key={index} id={item} preview />}
       />}
