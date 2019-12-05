@@ -24,14 +24,15 @@ const Component = (props: Props) => {
 
   const { nextBlogId = new BlogId(1), nextPostId = new PostId(1) } = props;
 
-  const initBlogIds = nextBlogId.gte(FIVE) ? nextBlogId.toNumber() - 1 : 5;
-  const initPostIds = nextPostId.gte(FIVE) ? nextPostId.toNumber() - 1 : 5;
+  const getLastNIds = (nextId: BN, size: BN): BN[] => {
+    const initIds = nextId.lt(size) ? nextId.toNumber() - 1 : size.toNumber();
+    let latesIds = new Array<BN>(initIds).fill(ZERO);
 
-  let latesBlogIds = new Array<BN>(initBlogIds).fill(ZERO);
-  let latesPostIds = new Array<BN>(initPostIds).fill(ZERO);
+    return latesIds.map((_,index) => nextId.sub(new BN(index + 1)));
+  };
 
-  latesBlogIds = latesBlogIds.map((_,index) => nextBlogId.sub(new BN(index + 1)));
-  latesPostIds = latesPostIds.map((_,index) => nextPostId.sub(new BN(index + 1)));
+  const latesBlogIds = getLastNIds(nextBlogId,FIVE);
+  const latesPostIds = getLastNIds(nextPostId,FIVE);
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
@@ -44,7 +45,7 @@ const Component = (props: Props) => {
         noDataDesc='No latest updates yet'
         noDataExt={<Button href='/new-blog'>Create blog</Button>}
       />
-      {initPostIds > 0 && <ListData
+      {latesPostIds.length > 0 && <ListData
         title={`Latest posts`}
         dataSource={latesPostIds}
         renderItem={(item, index) =>
