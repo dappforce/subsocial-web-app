@@ -1005,9 +1005,14 @@ hr {
     }
   }
   li.ant-list-item.ant-list-item-no-flex {
-    padding-top: .5rem !important;
+    padding-top: 0 !important;
     padding-bottom: 0 !important;
     margin-bottom: .5rem;
+  }
+  .infinite-scroll-component {
+    .ui.segment {
+      margin-top: .5rem;
+    }
   }
   .ui.modal.transition.visible.active {
     .scrolling.content, .actions {
