@@ -1,4 +1,4 @@
-#root {
+body, #root {
   background-color: #fafafa !important;
 }
 
@@ -1008,6 +1008,11 @@ hr {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     margin-bottom: .5rem;
+  }
+  .infinite-scroll-component {
+    .ui.segment {
+      margin-top: .5rem;
+    }
   }
   .ui.modal.transition.visible.active {
     .scrolling.content, .actions {
