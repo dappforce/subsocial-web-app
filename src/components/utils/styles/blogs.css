@@ -1005,7 +1005,7 @@ hr {
     }
   }
   li.ant-list-item.ant-list-item-no-flex {
-    padding-top: 0 !important;
+    padding-top: .5rem !important;
     padding-bottom: 0 !important;
     margin-bottom: .5rem;
   }
