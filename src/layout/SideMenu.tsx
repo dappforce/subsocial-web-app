@@ -6,6 +6,7 @@ import { withMulti } from '@polkadot/ui-api';
 import { useMyAccount } from '../components/utils/MyAccountContext';
 import ListFollowingBlogs from '../components/blogs/ListFollowingBlogs';
 import { isMobile } from 'react-device-detect';
+import { useSideBarCollapsed } from '../components/utils/SideBarCollapsedContext';
 
 type MenuItem = {
   name: string,
@@ -13,19 +14,14 @@ type MenuItem = {
   image: string
 };
 
-type Props = {
-  collapsed: boolean,
-  closeSideBar: () => void
-};
-
-const InnerMenu = (props: Props) => {
-  const { collapsed, closeSideBar } = props;
+const InnerMenu = () => {
+  const { state: { collapsed }, hideSideBar } = useSideBarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
   const router = useRouter();
   const { pathname } = router;
 
   const onClick = (page: string) => {
-    isMobile && closeSideBar();
+    isMobile && hideSideBar();
     Router.push(page).catch(console.log);
   };
 

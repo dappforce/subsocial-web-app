@@ -17,7 +17,6 @@ import { Segment } from 'semantic-ui-react';
 import { FollowBlogButton } from '../utils/FollowButton';
 import { Loading } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
-import Router from 'next/router';
 import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
@@ -40,7 +39,8 @@ type Props = MyAccountProps & {
   blogById?: Option<Blog>,
   postIds?: PostId[],
   followers?: AccountId[],
-  imageSize?: number
+  imageSize?: number,
+  onClick?: () => void
 };
 
 function Component (props: Props) {
@@ -59,7 +59,8 @@ function Component (props: Props) {
     dropdownPreview = false,
     myAddress,
     postIds = [],
-    imageSize = 36
+    imageSize = 36,
+    onClick
   } = props;
 
   const blog = blogById.unwrap();
@@ -135,7 +136,7 @@ function Component (props: Props) {
   );
 
   const renderMiniPreview = () => (
-    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+    <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
         ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />

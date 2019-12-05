@@ -10,8 +10,10 @@ import { Loading } from '../utils/utils';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
+import { useSideBarCollapsed } from '../utils/SideBarCollapsedContext';
+import { isMobile } from 'react-device-detect';
 
 type ListBlogProps = {
   id: AccountId,
@@ -29,15 +31,27 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
 
   if (!followedBlogsIds) return <Loading />;
 
-  const renderFollowedList = () => (
-    <>{totalCount > 0
+  const renderFollowedList = () => {
+    const { hideSideBar } = useSideBarCollapsed();
+
+    return <>{totalCount > 0
       ? followedBlogsIds.map((item, index) =>
-      <div key={index} className={currentBlog && currentBlog.eq(item) ? 'DfSelectedBlog' : ''} >
-        <ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/>
-      </div>)
+        <div key={index} className={currentBlog && currentBlog.eq(item) ? 'DfSelectedBlog' : ''} >
+          <ViewBlog
+            {...props}
+            key={index}
+            id={item}
+            onClick={() => {
+              isMobile && hideSideBar();
+              Router.push(`/blog?id=${item}`);
+            }}
+            miniPreview
+            imageSize={28}
+          />
+        </div>)
       : <div className='DfNoFollowed'><Button type='primary' size='small' href='/all'>Show all</Button></div>}
-    </>
-  );
+    </>;
+  };
 
   return (mini
     ? renderFollowedList()
