@@ -127,13 +127,15 @@ function ViewPostInternal (props: ViewPostProps) {
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
-    return (<Dropdown icon='ellipsis horizontal' direction='left'>
+    const showDropdown = isMyStruct || edit_history;
+
+    return (showDropdown ? <Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
         {isMyStruct && <Link href={`/edit-post?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
         {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
         {open && <PostHistoryModal id={id} open={open} close={close}/>}
       </Dropdown.Menu>
-    </Dropdown>);
+    </Dropdown> : <></>);
   };
 
   const renderNameOnly = (title: string, id: PostId) => {

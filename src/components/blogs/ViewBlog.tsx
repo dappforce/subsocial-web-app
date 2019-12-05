@@ -93,8 +93,9 @@ function Component (props: Props) {
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
+    const showDropdown = isMyBlog || edit_history;
 
-    return (<Dropdown icon='ellipsis horizontal' direction='left'>
+    return (showDropdown && <Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
         {isMyBlog && <Link href={`/edit-blog?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
         {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}

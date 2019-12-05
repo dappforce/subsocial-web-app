@@ -117,7 +117,9 @@ type SeoProps = {
 
 import React from 'react';
 
-export const createTitle = (title: string) => `${title.length <= 10 ? title : title.substr(0, 10)} - Subsocial`;
+// Google typically displays the first 50–60 characters of a title tag. If you keep your titles under 60 characters, our research suggests that you can expect about 90% of your titles to display properly.
+
+export const createTitle = (title: string) => `${title.length <= 50 ? title : title.substr(0, 50)} - Subsocial`;
 
 export function SeoHeads (props: SeoProps) {
   const { name = '', image = '', title = '', desc = '' } = props;

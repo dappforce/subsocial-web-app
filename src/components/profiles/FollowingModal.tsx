@@ -28,7 +28,7 @@ const InnerFollowingModal = (props: Props) => {
           withBalance
           withFollowButton
           withProfilePreview
-          withoutCounters
+          miniPreview
         />
       </div>
     );

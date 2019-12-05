@@ -1,6 +1,6 @@
-
 import React from 'react';
-import MainPage from './feed';
+import dynamic from 'next/dynamic';
+const Home = dynamic(() => import('../components/activity/HomePage'), { ssr: false });
 import Page from '../layout/Page';
 
-export default () => <Page title='Feed'><MainPage/></Page>;
+export default () => <Page title='Home'><Home/></Page>;

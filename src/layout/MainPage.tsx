@@ -25,7 +25,7 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import TopMenu from './TopMenu';
-import { isBrowser } from 'react-device-detect';
+import { isBrowser, isMobile } from 'react-device-detect';
 import { Drawer } from 'antd-mobile';
 
 const { Header, Sider, Content } = Layout;
@@ -38,7 +38,7 @@ console.log('The browser: ', isBrowser);
 
 const SideMenu = (props: Props) => {
   const { children } = props;
-  const [ collapsed, setCollapsed ] = useState(isBrowser);
+  const [ collapsed, setCollapsed ] = useState(isMobile);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -66,8 +66,8 @@ const SideMenu = (props: Props) => {
       style={{ minHeight: document.documentElement.clientHeight }}
       enableDragHandle
       contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
-      sidebar={<Menu collapsed={collapsed} closeSideBar={toggleCollapsed}/>}
-      open={collapsed}
+      sidebar={<Menu collapsed={!collapsed} closeSideBar={toggleCollapsed}/>}
+      open={!collapsed}
       onOpenChange={toggleCollapsed}
     >
       <Layout>

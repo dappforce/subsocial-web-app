@@ -119,7 +119,7 @@ const CommentFromHistory = (props: PropsCommentFromHistory) => {
       </SuiComment.Metadata>
       <SuiComment.Text>{content.body}</SuiComment.Text>
     </SuiComment>
-    <hr/>
+    
   </div>);
 };
 
@@ -201,7 +201,6 @@ const PostFromHistory = (props: PropsPostFromHistory) => {
       <ReactMarkdown className='DfMd' source={content.body} linkTarget='_blank' />
       {/* TODO render tags */}
     </div>
-    <hr/>
   </div>);
 };
 
@@ -289,7 +288,7 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
       <div className='ui massive relaxed middle aligned list FullProfile'>
         <div className={`item ProfileDetails MyBlog`}>
         {content.image
-        ? <DfBgImg className='ui avatar image' src={content.image} size={40} rounded/>
+        ? <DfBgImg className='ui avatar image DfAvatar' src={content.image} size={40} rounded/>
         : <IdentityIcon className='image' value={edited.account} size={38} />
         }
           <div className='DfContent'>
@@ -304,7 +303,6 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
         </div>
       </div>
       <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
-      <hr/>
   </div>);
 };
 
@@ -390,7 +388,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
       <div className='ui massive relaxed middle aligned list FullProfile'>
         <div className={`item ProfileDetails MyBlog`}>
         {content.avatar
-        ? <DfBgImg className='ui avatar image' src={content.avatar} size={40} rounded/>
+        ? <DfBgImg className='ui avatar image DfAvatar' src={content.avatar} size={40} rounded/>
         : <IdentityIcon className='image' value={edited.account} size={38} />
         }
           <div className='content'>
@@ -405,7 +403,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
         </div>
       </div>
       <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
-      <hr/>
+      
   </div>);
 };
 

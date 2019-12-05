@@ -28,7 +28,7 @@ const InnerAccountsListModal = (props: Props) => {
           size={30}
           withFollowButton
           withProfilePreview
-          withoutCounters
+          miniPreview
         />
       </div>
     );

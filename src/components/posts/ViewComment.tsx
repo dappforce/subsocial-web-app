@@ -187,14 +187,15 @@ export function ViewComment (props: ViewCommentProps) {
   const RenderDropDownMenu = () => {
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
+    const showDropdown = isMyStruct || edit_history;
 
-    return (<Dropdown icon='ellipsis horizontal' direction='left' style={{ marginLeft: '.5rem', color: '#8c8c8c' }} >
+    return (showDropdown ? <Dropdown icon='ellipsis horizontal' direction='left' style={{ marginLeft: '.5rem', color: '#8c8c8c' }} >
       <Dropdown.Menu>
         {(isMyStruct || showEditForm) && <Dropdown.Item text='Edit' onClick={() => setShowEditForm(true)} />}
         {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
         {open && <CommentHistoryModal id={id} open={open} close={close}/>}
       </Dropdown.Menu>
-    </Dropdown>);
+    </Dropdown> : <></>);
   };
 
   const replyButton = () => (

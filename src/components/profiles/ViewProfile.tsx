@@ -47,6 +47,7 @@ function Component(props: Props) {
 
   const address = id.toString();
   const { state: { address: myAddress } } = useMyAccount();
+  const isMyAccount = address === myAddress;
   const profileIsNone = !socialAccount || socialAccount && socialAccount.profile.isNone;
   const followers = socialAccount ? socialAccount.followers_count.toNumber() : 0;
   const following = socialAccount ? socialAccount.following_accounts_count.toNumber() : 0;
@@ -97,13 +98,15 @@ function Component(props: Props) {
 
     const close = () => setOpen(false);
 
-    return (<Dropdown icon='ellipsis horizontal' direction='left'>
+    const showDropdown = isMyAccount || edit_history;
+
+    return (showDropdown ? <Dropdown icon='ellipsis horizontal' direction='left'>
       <Dropdown.Menu>
-        {<Link href={`/edit-profile`}><a className='item'>Edit</a></Link>}
+        {isMyAccount && <Link href={`/edit-profile`}><a className='item'>Edit</a></Link>}
         {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
         {open && <ProfileHistoryModal id={id} open={open} close={close} />}
       </Dropdown.Menu>
-    </Dropdown>);
+    </Dropdown> : <></>);
   };
 
   const getName = () => {

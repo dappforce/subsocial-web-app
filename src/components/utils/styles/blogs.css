@@ -1,3 +1,7 @@
+#root {
+  background-color: #fafafa !important;
+}
+
 .DfPageContent {
   min-width: 60%;
   max-width: 100%;
@@ -259,6 +263,10 @@ hr {
 .DfActivityStreamItem {
   .handle, a { 
     font-weight: bold;
+  }
+
+  .header {
+    font-size: 1.15rem;
   }
 
   .name{
@@ -642,7 +650,7 @@ hr {
 }
 
 .DfAvatar{
-  margin-right: $small;
+  margin-right: $small !important;
   display: inline-block;
   border-radius: 50%;
   vertical-align: middle;
@@ -730,7 +738,7 @@ hr {
 }
 
 .DfSearch {
-  width: 100%;
+  width: 60%;
   color: rgba(0, 0, 0, 0.7);
   z-index:2;
   input {
@@ -964,6 +972,22 @@ hr {
   overflow: initial !important;
 }
 
+.DfModal:first-child {
+  margin: $tiny;
+  padding: $tiny !important;
+}
+.DfModal {
+  margin: $greate $tiny;
+  padding: $normal $tiny $tiny $tiny;
+  border-top: 1px solid #ddd;
+  .DfContent {
+    padding: 0;
+  }
+  .DfDescription {
+    font-size: $normal;
+  }
+}
+
 @media (max-width: 450px) {
   .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
     zoom: .8;
@@ -1009,12 +1033,16 @@ hr {
       width: 100%;
     }
   }
-  .DfModal {
+  .DfModal:first-child {
     margin: $tiny;
-    padding: $tiny !important;
+    padding:$tiny !important;
+  }
+  .DfModal {
+    margin: $small $tiny;
+    padding: $normal $tiny $tiny $tiny !important;
+    border-top: .5px solid #ddd;
     .DfContent {
       padding: 0;
-      margin-left: $small;
     }
     .DfDescription {
       font-size: $normal;
@@ -1042,13 +1070,17 @@ hr {
     font-size: $font_small;
   }
   .DfSection {
-    margin-top: $normal !important;
+    margin-top: $greate !important;
     .DfSection-title {
       border: none;
       font-size: $font_huge;
       margin: 0;
-      margin-bottom: $normal;
+      margin-top: $normal;
       padding: 0;
+
+      .DfTitle--List {
+        margin-bottom: $tiny
+      }
     }
   }
   .ProfileDetails .content {
@@ -1118,5 +1150,21 @@ hr {
     .disable {
       margin: 0;
     }
+  }
+  .ui--IdentityIcon.image {
+    margin-right: $small;
+  }
+  .DfCommentContent {
+    margin-bottom: 1.75rem;
+  }
+  .DfDataList {
+    padding: 0;
+  }
+  .DfSearch {
+    width: 100%;
+  }
+  .DfSocialLinks {
+    margin-top: .25rem;
+    font-size: 1rem;
   }
 }

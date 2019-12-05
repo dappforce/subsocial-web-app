@@ -44,7 +44,7 @@ export type Props = MyAccountProps & BareProps & {
   withBalance?: boolean,
   withName?: boolean,
   withProfilePreview?: boolean,
-  withoutCounters?: boolean,
+  miniPreview?: boolean,
   withFollowButton?: boolean,
   onlyUserName?: boolean,
   optionalProfile: boolean,
@@ -71,7 +71,7 @@ function AddressMini (props: Props) {
     profileData = {} as ProfileData,
     withFollowButton,
     withProfilePreview,
-    withoutCounters,
+    miniPreview,
     asActivity = false,
     onlyUserName = false,
     date,
@@ -199,15 +199,16 @@ function AddressMini (props: Props) {
         </div>
         {renderFollowButton}
       </div>
-      <div className='DfPopup-about'>
-        <ReactMarkdown source={summary} linkTarget='_blank' />
-      </div>
-      {!withoutCounters && <div className='DfPopup-links'>
-        <div onClick={openFollowersModal} className={followers ? '' : 'disable'}>
-          <Pluralize count={followers} singularText='Follower'/></div>
-        <div onClick={openFollowingModal} className={following ? '' : 'disable'}><Pluralize count={following} singularText='Following'/></div>
-      </div>
-      }
+      {!miniPreview && <>
+          <div className='DfPopup-about'>
+            <ReactMarkdown source={summary} linkTarget='_blank' />
+          </div>
+          <div className='DfPopup-links'>
+            <div onClick={openFollowersModal} className={followers ? '' : 'disable'}>
+              <Pluralize count={followers} singularText='Follower'/></div>
+            <div onClick={openFollowingModal} className={following ? '' : 'disable'}><Pluralize count={following} singularText='Following'/></div>
+          </div>
+        </>}
     </div>;
   }
 
