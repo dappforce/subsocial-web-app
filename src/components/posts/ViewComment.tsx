@@ -1,4 +1,4 @@
-import { Comment as SuiComment, Dropdown } from 'semantic-ui-react';
+import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
@@ -23,6 +23,7 @@ import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize } from '../utils/Plularize';
 import { Loading } from '../utils/utils';
+import { Icon, Menu, Dropdown } from 'antd';
 
 type Props = ApiProps & {
   postId: PostId,
@@ -187,15 +188,25 @@ export function ViewComment (props: ViewCommentProps) {
   const RenderDropDownMenu = () => {
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
-    const showDropdown = isMyStruct || edit_history;
+    const showDropdown = isMyStruct || edit_history.length > 0;
 
-    return (showDropdown ? <Dropdown icon='ellipsis horizontal' direction='left' style={{ marginLeft: '.5rem', color: '#8c8c8c' }} >
-      <Dropdown.Menu>
-        {(isMyStruct || showEditForm) && <Dropdown.Item text='Edit' onClick={() => setShowEditForm(true)} />}
-        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
-        {open && <CommentHistoryModal id={id} open={open} close={close}/>}
-      </Dropdown.Menu>
-    </Dropdown> : <></>);
+    const menu = (
+      <Menu>
+        {(isMyStruct || showEditForm) && <Menu.Item key='0'>
+        <div onClick={() => setShowEditForm(true)} >Edit</div>
+        </Menu.Item>}
+        {edit_history.length > 0 && <Menu.Item key='1'>
+          <div onClick={() => setOpen(true)} >View edit history</div>
+        </Menu.Item>}
+      </Menu>
+    );
+
+    return (<>{showDropdown &&
+    <Dropdown overlay={menu} placement='bottomRight'>
+      <Icon type='ellipsis' />
+    </Dropdown>}
+    {open && <CommentHistoryModal id={id} open={open} close={close} />}
+    </>);
   };
 
   const replyButton = () => (

@@ -13,13 +13,13 @@ import { MyAccountProps, withMyAccount } from '../utils/MyAccount';
 import { ViewPost } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
-import { Dropdown, Segment } from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
 import { FollowBlogButton } from '../utils/FollowButton';
 import { Loading } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import Router from 'next/router';
 import ListData, { NoData } from '../utils/DataList';
-import { Tag, Button, Icon } from 'antd';
+import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 import AddressMiniDf from '../utils/AddressMiniDf';
@@ -93,15 +93,25 @@ function Component (props: Props) {
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
-    const showDropdown = isMyBlog || edit_history;
+    const showDropdown = isMyBlog || edit_history.length > 0;
 
-    return (showDropdown && <Dropdown icon='ellipsis horizontal' direction='left'>
-      <Dropdown.Menu>
-        {isMyBlog && <Link href={`/edit-blog?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
-        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
-        {open && <BlogHistoryModal id={id} open={open} close={close} />}
-      </Dropdown.Menu>
-    </Dropdown>);
+    const menu = (
+      <Menu>
+        {isMyBlog && <Menu.Item key='0'>
+          <Link href={`/edit-blog?id=${id.toString()}`}><a className='item'>Edit</a></Link>
+        </Menu.Item>}
+        {edit_history.length > 0 && <Menu.Item key='1'>
+          <div onClick={() => setOpen(true)} >View edit history</div>
+        </Menu.Item>}
+      </Menu>
+    );
+
+    return (showDropdown && <>
+    <Dropdown overlay={menu} placement='bottomRight'>
+      <Icon type='ellipsis' />
+    </Dropdown>
+    {open && <BlogHistoryModal id={id} open={open} close={close} />}
+    </>);
   };
 
   const NameAsLink = () => <Link href={`/blog?id=${id}`}><a>{name}</a></Link>;

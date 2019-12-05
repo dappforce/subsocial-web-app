@@ -56,7 +56,16 @@ $secondary: #8c8c8c;
       font-size: $font_normal;
     }
   }
+  .ant-dropdown-trigger {
+    margin-left: $small;
+    height: min-content;
+  }
 }
+
+.ant-dropdown-trigger {
+  height: min-content;
+}
+
 .ProfilePreviews {
   &.ui.list>.item:first-child {
     padding-top: $little;
@@ -998,9 +1007,15 @@ hr {
   .editor-toolbar {
     zoom: .7;
   }
-  .ProfilePreviews {
+  .ProfilePreviews, .ui.modal {
     button.ui.tiny {
       padding: .6rem;
+      font-size: $font_tiny;
+    }
+  }
+  .ui.modal {
+    button.ui.tiny.primary, button.ui.tiny.basic {
+      padding: .6rem .6rem 1.2rem .6rem;
       font-size: $font_tiny;
     }
   }
@@ -1022,7 +1037,7 @@ hr {
   .modal {
     .AddressMini{
       .button{
-        min-width: initial;
+        min-width: inherit;;
       }
     }
     .ui--AddressMini-info {
