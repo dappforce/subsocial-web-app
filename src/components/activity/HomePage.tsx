@@ -13,7 +13,7 @@ import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { ViewPost } from '../posts/ViewPost';
 
-const FIVE = new BlogId(1);
+const FIVE = new BlogId(5);
 const ZERO = new BlogId(0);
 type Props = ApiProps & I18nProps & {
   nextBlogId?: BN,

@@ -9,7 +9,6 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr } from '../utils/index';
 import { SocialAccount, ProfileData, Profile } from '../types';
 import { withSocialAccount, withAddressFromUrl } from '../utils/utils';
-import { Dropdown, Icon } from 'semantic-ui-react';
 import { FollowAccountButton } from '../utils/FollowButton';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
@@ -20,6 +19,8 @@ import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 import { BUTTON_SIZE } from '../../config/Size.config';
+import { Menu, Dropdown, Icon } from 'antd';
+
 export type Props = {
   preview?: boolean,
   nameOnly?: boolean,
@@ -32,7 +33,7 @@ export type Props = {
   size?: number
 };
 
-function Component(props: Props) {
+function Component (props: Props) {
 
   const {
     id,
@@ -98,15 +99,25 @@ function Component(props: Props) {
 
     const close = () => setOpen(false);
 
-    const showDropdown = isMyAccount || edit_history;
+    const showDropdown = isMyAccount || edit_history.length > 0;
 
-    return (showDropdown ? <Dropdown icon='ellipsis horizontal' direction='left'>
-      <Dropdown.Menu>
-        {isMyAccount && <Link href={`/edit-profile`}><a className='item'>Edit</a></Link>}
-        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
-        {open && <ProfileHistoryModal id={id} open={open} close={close} />}
-      </Dropdown.Menu>
-    </Dropdown> : <></>);
+    const menu = (
+      <Menu>
+        {isMyAccount && <Menu.Item key='0'>
+        <Link href={`/edit-profile`}><a className='item'>Edit</a></Link>
+        </Menu.Item>}
+        {edit_history.length > 0 && <Menu.Item key='1'>
+          <div onClick={() => setOpen(true)} >View edit history</div>
+        </Menu.Item>}
+      </Menu>
+    );
+
+    return (showDropdown && <>
+    <Dropdown overlay={menu} placement='bottomRight'>
+      <Icon type='ellipsis' />
+    </Dropdown>
+    {open && <ProfileHistoryModal id={id} open={open} close={close} />}
+    </>);
   };
 
   const getName = () => {

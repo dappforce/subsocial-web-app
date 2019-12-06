@@ -139,5 +139,5 @@ export const Voter = (props: VoterProps) => {
     </>;
   };
 
-  return VoterRender();
+  return <VoterRender/>;
 };

@@ -31,7 +31,10 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
 
   const renderFollowedList = () => (
     <>{totalCount > 0
-      ? followedBlogsIds.map((item, index) => <div className={currentBlog && currentBlog.eq(item) ? 'DfSelectedBlog' : ''} ><ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/></div>)
+      ? followedBlogsIds.map((item, index) =>
+      <div key={index} className={currentBlog && currentBlog.eq(item) ? 'DfSelectedBlog' : ''} >
+        <ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/>
+      </div>)
       : <div className='DfNoFollowed'><Button type='primary' size='small' href='/all'>Show all</Button></div>}
     </>
   );

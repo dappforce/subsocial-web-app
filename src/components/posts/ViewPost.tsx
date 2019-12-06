@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
-import { Segment, Dropdown } from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { Option } from '@polkadot/types';
@@ -27,7 +27,7 @@ import ViewBlog from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { Icon } from 'antd';
+import { Icon, Menu, Dropdown } from 'antd';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
@@ -127,15 +127,26 @@ function ViewPostInternal (props: ViewPostProps) {
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
-    const showDropdown = isMyStruct || edit_history;
+    const showDropdown = isMyStruct || edit_history.length > 0;
 
-    return (showDropdown ? <Dropdown icon='ellipsis horizontal' direction='left'>
-      <Dropdown.Menu>
-        {isMyStruct && <Link href={`/edit-post?id=${id.toString()}`}><a className='item'>Edit</a></Link>}
-        {edit_history.length > 0 && <Dropdown.Item text='View edit history' onClick={() => setOpen(true)} />}
-        {open && <PostHistoryModal id={id} open={open} close={close}/>}
-      </Dropdown.Menu>
-    </Dropdown> : <></>);
+    const menu = (
+      <Menu>
+        {isMyStruct && <Menu.Item key='0'>
+        <Link href={`/edit-post?id=${id.toString()}`}><a className='item'>Edit</a></Link>
+        </Menu.Item>}
+        {edit_history.length > 0 && <Menu.Item key='1'>
+          <div onClick={() => setOpen(true)} >View edit history</div>
+        </Menu.Item>}
+      </Menu>
+    );
+
+    return (<>
+    {showDropdown &&
+      <Dropdown overlay={menu} placement='bottomRight'>
+      <Icon type='ellipsis' />
+    </Dropdown>}
+    {open && <PostHistoryModal id={id} open={open} close={close} />}
+    </>);
   };
 
   const renderNameOnly = (title: string, id: PostId) => {
