@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Icon, Button, Cascader, Radio } from 'antd';
 import './style.css';
 import { Category, TopicData } from './types';
 import ListForumTopics from './ListForumTopics';
 import { RadioChangeEvent } from 'antd/lib/radio';
-import sortObjectsArray from 'sort-objects-array';
 
 const HOME_CATEGORY = 'home';
 
@@ -13,16 +12,17 @@ type ForumProps = {
   data: TopicData[]
 };
 
+type SortingType = 'score' | 'latest';
+
 function ViewForum (props: ForumProps) {
 
   const { categoryList, data } = props;
   const [ chosenCategory, setChosenCategory ] = useState(HOME_CATEGORY);
   const [ sortedData, setSortedData ] = useState(data);
-  const [ chosenSorting, setChosenSorting ] = useState('');
 
   const isHome = chosenCategory === HOME_CATEGORY;
   const isDataEmpty = data.length === 0;
-  const filterData = isHome ? data : sortedData.filter(item => item.category.category === chosenCategory);
+  const filterData = isHome ? sortedData : sortedData.filter(item => item.category.category === chosenCategory);
 
   function sortByScore (a: TopicData, b: TopicData) {
     if (a.score < b.score) {
@@ -44,22 +44,25 @@ function ViewForum (props: ForumProps) {
     return 0;
   }
 
-  const onChangeSorting = (e: RadioChangeEvent) => {
-    setChosenSorting(e.target.value);
-  };
-
-  useEffect(() => {
+  function sortTopicData (chosenSorting: SortingType) {
     switch (chosenSorting) {
       case 'score':
-        setSortedData(sortObjectsArray(data, 'score'));
+        setSortedData([...sortedData.sort(sortByScore)]);
         console.log(sortedData);
         break;
       case 'latest':
-        setSortedData(data.sort(sortByDate));
+        setSortedData([...data.sort(sortByDate)]);
         console.log(sortedData);
         break;
     }
-  }, [chosenSorting]);
+  }
+  console.log('Reload', [ sortedData, filterData]);
+
+  const onChangeSorting = (e: RadioChangeEvent) => {
+    const sortValue = e.target.value as SortingType;
+    console.log(sortValue);
+    sortTopicData(sortValue);
+  };
 
   return (
     <>
@@ -100,7 +103,7 @@ function ViewForum (props: ForumProps) {
           <Icon type='ellipsis' />
         </div>
       </div>
-      <ListForumTopics data={sortedData} isDataEmpty={isDataEmpty} noDataDesc noDataExt={<Button type='primary' icon='plus'>New Topic</Button>}/>
+      <ListForumTopics data={filterData} isDataEmpty={isDataEmpty} noDataDesc noDataExt={<Button type='primary' icon='plus'>New Topic</Button>}/>
     </>
   );
 }
