@@ -7087,6 +7087,11 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
+console-hue@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/console-hue/-/console-hue-1.0.2.tgz#e001d0b2abf76695dcfa62a3c6eccbc311cf6768"
+  integrity sha512-zhdzJ3VoWaB6Z0I9uG0upJCFL+LimN6VW4X7tY/qGZ/n/bXKmoV8gBAwXAbq9M3+9qC1CaiFXCG7RIxWpPo4Kw==
+
 consolidate@^0.15.1:
   version "0.15.1"
   resolved "https://registry.yarnpkg.com/consolidate/-/consolidate-0.15.1.tgz#21ab043235c71a07d45d9aad98593b0dba56bab7"
@@ -12673,6 +12678,11 @@ lodash.escape@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/lodash.escape/-/lodash.escape-4.0.1.tgz#c9044690c21e04294beaa517712fded1fa88de98"
   integrity sha1-yQRGkMIeBClL6qUXcS/e0fqI3pg=
+
+lodash.filter@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.filter/-/lodash.filter-4.6.0.tgz#668b1d4981603ae1cc5a6fa760143e480b4c4ace"
+  integrity sha1-ZosdSYFgOuHMWm+nYBQ+SAtMSs4=
 
 lodash.flattendeep@^4.4.0:
   version "4.4.0"
@@ -18578,6 +18588,14 @@ sort-keys@^2.0.0:
   integrity sha1-ZYU1WEhh7JfXMNbPQYIuH1ZoQSg=
   dependencies:
     is-plain-obj "^1.0.0"
+
+sort-objects-array@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/sort-objects-array/-/sort-objects-array-1.7.0.tgz#c2ea18b748c00b7b8171ea14216e187abbe8dced"
+  integrity sha512-WIvo3YD8CQ2Gf0/mBf4WHbTnA9UolHTBiBhfebKhWhkNZnmG0/PnPNsbQIaqrUoadU9+mBJxEXFHmuanP2cNsQ==
+  dependencies:
+    console-hue "^1.0.2"
+    lodash.filter "^4.6.0"
 
 source-list-map@^2.0.0:
   version "2.0.1"

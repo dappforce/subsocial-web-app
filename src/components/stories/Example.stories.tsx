@@ -185,7 +185,7 @@ const data: TopicData[] = [
     time: faker.date.recent(),
     commentsCount: faker.random.number(),
     score: faker.random.number(),
-    isPinned: true,
+    isPinned: false,
     category: { category: 'Project ideas', color: 'purple', children: new Array() }
   },
   {
@@ -203,7 +203,7 @@ const data: TopicData[] = [
     time: faker.date.recent(),
     commentsCount: faker.random.number(),
     score: faker.random.number(),
-    isPinned: true,
+    isPinned: false,
     category: { category: 'Code', color: 'orange', children: new Array() }
   },
   {

@@ -3,6 +3,7 @@ import { List, Icon, Tag } from 'antd';
 import './style.css';
 import { TopicData } from './types';
 import { DataEmpty } from '../utils/DataList';
+import SortArray from 'sort-object-array';
 
 type Props = {
   data: TopicData[];

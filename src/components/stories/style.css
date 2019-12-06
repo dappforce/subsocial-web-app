@@ -86,3 +86,27 @@ a{
   color: #1890ff;
   padding-left: .35rem;
 }
+
+.ant-radio-button-wrapper:not(:first-child)::before{
+  display: none;
+}
+
+.ant-radio-button-wrapper:first-child{
+  border-left: none;
+  border-radius: 0;
+}
+
+.ant-radio-button-wrapper:last-child{
+  border-radius: 0;
+}
+
+.ant-radio-button-wrapper{
+  border: none;
+  background-color: transparent;
+}
+
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  background-color: #e8e8e8;
+}
