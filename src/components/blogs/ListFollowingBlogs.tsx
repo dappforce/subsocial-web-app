@@ -12,8 +12,7 @@ import { Button } from 'antd';
 import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
-import { useSideBarCollapsed } from '../utils/SideBarCollapsedContext';
-import { isMobile } from 'react-device-detect';
+import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 
 type ListBlogProps = {
   id: AccountId,
@@ -23,6 +22,7 @@ type ListBlogProps = {
 
 const InnerListMyBlogs = (props: ListBlogProps) => {
   const { followedBlogsIds, mini = false } = props;
+  const { toggle } = useSidebarCollapsed();
   const totalCount = followedBlogsIds !== undefined ? followedBlogsIds && followedBlogsIds.length : 0;
   const router = useRouter();
   const { pathname, query } = router;
@@ -32,7 +32,6 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
   if (!followedBlogsIds) return <Loading />;
 
   const renderFollowedList = () => {
-    const { hideSideBar } = useSideBarCollapsed();
 
     return <>{totalCount > 0
       ? followedBlogsIds.map((item, index) =>
@@ -42,7 +41,8 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
             key={index}
             id={item}
             onClick={() => {
-              isMobile && hideSideBar();
+              toggle();
+              console.log('Toggle');
               Router.push(`/blog?id=${item}`);
             }}
             miniPreview

@@ -1,25 +1,38 @@
-import React, { useReducer, createContext, useContext } from 'react';
+import React, { useReducer, createContext, useContext, useEffect } from 'react';
+import store from 'store';
+import { isMobile } from 'react-device-detect';
 
-type SideBarCollapsedState = {
-  collapsed: boolean
+export const SIDEBAR_COLLAPSED = 'df.colapsed';
+
+type SidebarCollapsedState = {
+  inited: boolean,
+  collapsed?: boolean
 };
 
-type SideBarCollapsedAction = {
-  type: 'hide' | 'show' | 'toggle'
+type SidebarCollapsedAction = {
+  type: 'reload' | 'set' | 'forget' | 'forgetExact',
+  collapsed?: boolean
 };
 
-function reducer (state: SideBarCollapsedState, action: SideBarCollapsedAction): SideBarCollapsedState {
+function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction): SidebarCollapsedState {
+
+  let collapsed: boolean | undefined;
 
   switch (action.type) {
 
-    case 'hide':
-      return { collapsed: false };
+    case 'reload':
+      collapsed = isMobile;
+      console.log('Reload collapsed:', collapsed);
+      return { ...state, collapsed, inited: true };
 
-    case 'show':
-      return { collapsed: true };
-
-    case 'toggle':
-      return { collapsed: !state.collapsed };
+    case 'set':
+      collapsed = action.collapsed;
+      if (collapsed !== state.collapsed) {
+        console.log('Set new collapsed:', collapsed);
+        store.set(SIDEBAR_COLLAPSED, collapsed);
+        return { ...state, collapsed, inited: true };
+      }
+      return state;
 
     default:
       throw new Error('No action type provided');
@@ -27,50 +40,60 @@ function reducer (state: SideBarCollapsedState, action: SideBarCollapsedAction):
 }
 
 function functionStub () {
-  throw new Error('Function needs to be hide in SideBarCollapsedProvider');
+  throw new Error('Function needs to be set in SidebarCollapsedProvider');
 }
 
 const initialState = {
-  collapsed: true
+  inited: false,
+  collapsed: undefined
 };
 
-export type SideBarCollapsedContextProps = {
-  state: SideBarCollapsedState,
-  dispatch: React.Dispatch<SideBarCollapsedAction>,
-  hideSideBar: () => void,
-  showSideBar: () => void,
-  toggleCollapsed: () => void
+export type SidebarCollapsedContextProps = {
+  state: SidebarCollapsedState,
+  dispatch: React.Dispatch<SidebarCollapsedAction>,
+  hide: () => void,
+  show: () => void,
+  toggle: () => void,
+  forget: () => void
 };
 
-const contextStub: SideBarCollapsedContextProps = {
+const contextStub: SidebarCollapsedContextProps = {
   state: initialState,
   dispatch: functionStub,
-  hideSideBar: functionStub,
-  showSideBar: functionStub,
-  toggleCollapsed: functionStub
+  hide: functionStub,
+  show: functionStub,
+  toggle: functionStub,
+  forget: functionStub
 };
 
-export const SideBarCollapsedContext = createContext<SideBarCollapsedContextProps>(contextStub);
+export const SidebarCollapsedContext = createContext<SidebarCollapsedContextProps>(contextStub);
 
-export function SideBarCollapsedProvider (props: React.PropsWithChildren<{}>) {
+export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (!state.inited) {
+      dispatch({ type: 'reload' });
+    }
+  }, [state.inited]); // Don't call this effect if `invited` is not changed
 
   const contextValue = {
     state,
     dispatch,
-    hideSideBar: () => dispatch({ type: 'hide' }),
-    showSideBar: () => dispatch({ type: 'show' }),
-    toggleCollapsed: () => dispatch({ type: 'toggle' })
+    hide: () => dispatch({ type: 'set', collapsed: false }),
+    show: () => dispatch({ type: 'set', collapsed: true }),
+    toggle: () => dispatch({ type: 'set', collapsed: !state.collapsed }),
+    forget: () => dispatch({ type: 'forget', collapsed: state.collapsed })
   };
   return (
-    <SideBarCollapsedContext.Provider value={contextValue}>
+    <SidebarCollapsedContext.Provider value={contextValue}>
       {props.children}
-    </SideBarCollapsedContext.Provider>
+    </SidebarCollapsedContext.Provider>
   );
 }
 
-export function useSideBarCollapsed () {
-  return useContext(SideBarCollapsedContext);
+export function useSidebarCollapsed () {
+  return useContext(SidebarCollapsedContext);
 }
 
-export default SideBarCollapsedProvider;
+export default SidebarCollapsedProvider;

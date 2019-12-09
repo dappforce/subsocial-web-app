@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import settings from '../components/settings';
 import '@polkadot/ui-app/i18n';
@@ -25,8 +25,9 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import TopMenu from './TopMenu';
-import { isBrowser, isMobile } from 'react-device-detect';
+import { isBrowser } from 'react-device-detect';
 import { Drawer } from 'antd-mobile';
+import SidebarCollapsedProvider, { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 
 const { Header, Sider, Content } = Layout;
 
@@ -38,11 +39,8 @@ console.log('The browser: ', isBrowser);
 
 const SideMenu = (props: Props) => {
   const { children } = props;
-  const [ collapsed, setCollapsed ] = useState(isMobile);
 
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
+  const { state: { collapsed }, toggle } = useSidebarCollapsed();
 
   const DesktopNav = () => (
     <>
@@ -52,7 +50,7 @@ const SideMenu = (props: Props) => {
         trigger={null}
         collapsed={collapsed}
       >
-        <Menu collapsed={collapsed} closeSideBar={toggleCollapsed}/>
+        <Menu />
       </Sider>
       <Layout className='DfPageContent' style={{ padding: '0 24px 24px', marginLeft: collapsed ? '80px' : '250px' }}>
         <Content>{children}</Content>
@@ -66,9 +64,9 @@ const SideMenu = (props: Props) => {
       style={{ minHeight: document.documentElement.clientHeight }}
       enableDragHandle
       contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
-      sidebar={<Menu collapsed={!collapsed} closeSideBar={toggleCollapsed}/>}
+      sidebar={<Menu />}
       open={!collapsed}
-      onOpenChange={toggleCollapsed}
+      onOpenChange={toggle}
     >
       <Layout>
         <Content className='DfPageContent'>{children}</Content>
@@ -82,7 +80,7 @@ const SideMenu = (props: Props) => {
   >
   <Layout style={{ backgroundColor: '#fafafa !important' }}>
     <Header className='DfHeader'>
-      <TopMenu toggleCollapsed={toggleCollapsed}/>
+      <TopMenu />
     </Header>
     <Layout style={{ marginTop: '60px' }}>
       {isBrowser
@@ -124,20 +122,22 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
               >
                 <MyAccountProvider>
                   <Signer>
-                    <SideMenu>
-                        <QueueConsumer>
-                          {({ queueAction, stqueue, txqueue }: QueueProps) => (
-                            <>
-                              {children}
-                              <Status
-                                queueAction={queueAction}
-                                stqueue={stqueue}
-                                txqueue={txqueue}
-                              />
-                            </>
-                          )}
-                        </QueueConsumer>
-                    </SideMenu>
+                    <SidebarCollapsedProvider>
+                      <SideMenu>
+                          <QueueConsumer>
+                            {({ queueAction, stqueue, txqueue }: QueueProps) => (
+                              <>
+                                {children}
+                                <Status
+                                  queueAction={queueAction}
+                                  stqueue={stqueue}
+                                  txqueue={txqueue}
+                                />
+                              </>
+                            )}
+                          </QueueConsumer>
+                      </SideMenu>
+                    </SidebarCollapsedProvider>
                   </Signer>
                 </MyAccountProvider>
                 <Connecting />

@@ -4,11 +4,11 @@ import InputAddress from '../components/utils/InputAddress';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import Router from 'next/router';
-import { useSideBarCollapsed } from '../components/utils/SideBarCollapsedContext';
+import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
-  const { toggleCollapsed } = useSideBarCollapsed();
+  const { toggle } = useSidebarCollapsed();
 
   return isMobile && show
   ? <div className='DfTopBar DfTopBar--search'>
@@ -17,7 +17,7 @@ const InnerMenu = () => {
   </div>
   : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
-        <Button type='link' onClick={toggleCollapsed} className='DfBurgerIcon'>
+        <Button type='link' onClick={toggle} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
           <span style={{ fontSize: '1.5rem' }} onClick={() => Router.push('/')}>{isBrowser ? 'Subsocial' : 'S.'}</span>
