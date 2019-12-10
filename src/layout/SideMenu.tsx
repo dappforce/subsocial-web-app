@@ -61,6 +61,7 @@ const InnerMenu = () => {
       page: `/profile?address=${myAddress}`,
       image: 'idcard'
     }
+
   ];
 
   return (
@@ -75,6 +76,14 @@ const InnerMenu = () => {
         <Icon type={item.image} />
         <span>{item.name}</span>
       </Menu.Item>)}
+      <Menu.Divider/>
+      <Menu.Item key={'advanced'} >
+        <a href='http://subsocial.network:3002'>
+        <Icon type='exception' />
+          <span>Advanced</span>
+        </a>
+      </Menu.Item>
+      <Menu.Divider/>
       {(!collapsed || isMobile) &&
         <Menu.ItemGroup className='DfSideMenu--FollowedBlogs' key='followed' title='Followed blogs'>
           <ListFollowingBlogs mini={true} />

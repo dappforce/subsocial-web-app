@@ -831,7 +831,6 @@ hr {
   color: #666;
   cursor: pointer;
   .ant-menu-item-group-title {
-    border-top: #ccc 1px solid;
     text-transform: uppercase;
     font-size: $font_small
   }
