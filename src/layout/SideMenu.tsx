@@ -15,7 +15,7 @@ type MenuItem = {
 };
 
 const InnerMenu = () => {
-  const { state: { collapsed }, toggle } = useSidebarCollapsed();
+  const { toggle } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
   const router = useRouter();
   const { pathname } = router;
@@ -84,10 +84,9 @@ const InnerMenu = () => {
         </a>
       </Menu.Item>
       <Menu.Divider/>
-      {(!collapsed || isMobile) &&
         <Menu.ItemGroup className='DfSideMenu--FollowedBlogs' key='followed' title='Followed blogs'>
           <ListFollowingBlogs mini={true} />
-        </Menu.ItemGroup>}
+        </Menu.ItemGroup>
     </Menu>
   );
 };

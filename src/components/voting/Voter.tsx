@@ -7,7 +7,7 @@ import { AccountId, Option } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
-import { Post, Reaction, CommentId, PostId, ReactionKind, Comment } from '../types';
+import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } from '../types';
 import { Icon } from 'antd';
 import BN from 'bn.js';
 
@@ -34,37 +34,39 @@ export const Voter = (props: VoterProps) => {
   const { id } = state;
   const isComment = struct.Type['id'] === CommentId.name;
   const Id = isComment ? CommentId : PostId;
+  const structQuery = isComment ? 'comment' : 'post';
 
   const dataForQuery = new Tuple([AccountId, Id], [new AccountId(address), id]);
 
   useEffect(() => {
+    let isSubscribe = true;
 
-    const structQuery = isComment ? 'comment' : 'post';
-
-    async function loadStruct<T extends Comment | Post> (struct: T) {
+    async function loadStruct<T extends Comment | Post> (_: T) {
       const result = await api.query.blogs[`${structQuery}ById`](id) as Option<T>;
-
       if (result.isNone) return;
 
       const _struct = result.unwrap();
-      setState(_struct);
+      if (isSubscribe) setState(_struct);
     }
     loadStruct(state).catch(err => console.log(err));
 
-    // TODO not use callback
-    api.query.blogs[`${structQuery}ReactionIdByAccount`](dataForQuery, reactionId => {
-      api.query.blogs.reactionById(reactionId, x => {
-        if (x.isNone) {
-          setReactionState(undefined);
-          return;
+    async function loadReaction () {
+      const reactionId = await api.query.blogs[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
+      const reactionOpt = await api.query.blogs.reactionById(reactionId) as Option<Reaction>;
+      if (reactionOpt.isNone) {
+        setReactionState(undefined);
+      } else {
+        const reaction = reactionOpt.unwrap() as Reaction;
+        if (isSubscribe) {
+          setReactionState(reaction);
+          setReactionKind(reaction.kind.toString());
         }
-        const reaction = x.unwrap() as Reaction;
-        setReactionState(reaction);
-        setReactionKind(reaction.kind.toString());
-      }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
+      }
+    }
+    loadReaction().catch(console.log);
 
-  }, [ reactionKind ]);
+    return () => { isSubscribe = false; };
+  }, [ false ]);
 
   const buildTxParams = (param: 'Downvote' | 'Upvote') => {
     if (reactionState === undefined) {

@@ -39,6 +39,8 @@ const InnerModalVoters = (props: VotersProps) => {
 
     if (!open) return toggleTrigger();
 
+    let isSubscribe = true;
+
     const loadVoters = async () => {
 
       if (!reactions) return toggleTrigger();
@@ -46,9 +48,11 @@ const InnerModalVoters = (props: VotersProps) => {
       const apiCalls: Promise<Option<Reaction>>[] = reactions.map(async reactionId =>
         await api.query.blogs.reactionById(reactionId) as Option<Reaction>);
       const loadedReaction = (await Promise.all<Option<Reaction>>(apiCalls)).map(x => x.unwrap() as Reaction);
-      setReactionView(loadedReaction);
+      isSubscribe && setReactionView(loadedReaction);
     };
     loadVoters().catch(err => console.log(err));
+
+    return () => { isSubscribe = false; };
   }, [ trigger ]);
 
   if (!reactionView) return null;

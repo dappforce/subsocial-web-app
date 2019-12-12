@@ -196,19 +196,19 @@ function AddressMini (props: Props) {
           <div className='header DfAccountTitle'>
             {renderAddressForProfile(address)}
           </div>
-        </div>
-        {renderFollowButton}
-      </div>
-      {!miniPreview && <>
+          {!miniPreview && <>
           <div className='DfPopup-about'>
             <ReactMarkdown source={summary} linkTarget='_blank' />
           </div>
           <div className='DfPopup-links'>
-            <div onClick={openFollowersModal} className={followers ? '' : 'disable'}>
+            <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
               <Pluralize count={followers} singularText='Follower'/></div>
-            <div onClick={openFollowingModal} className={following ? '' : 'disable'}><Pluralize count={following} singularText='Following'/></div>
+            <div onClick={openFollowingModal} className={`DfPopup-link ${following ? '' : 'disable'}`}><Pluralize count={following} singularText='Following'/></div>
           </div>
         </>}
+        </div>
+        {renderFollowButton}
+      </div>
     </div>;
   }
 

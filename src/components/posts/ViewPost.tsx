@@ -98,9 +98,9 @@ function ViewPostInternal (props: ViewPostProps) {
 
   useEffect(() => {
     if (!ipfs_hash) return;
-
+    let isSubsribe = true;
     getJsonFromIpfs<PostData>(ipfs_hash).then(json => {
-      setContent({ ...json, summary: makeSummary(json.body) });
+      isSubsribe && setContent({ ...json, summary: makeSummary(json.body) });
     }).catch(err => console.log(err));
 
     if (isSharedPost) {
@@ -110,15 +110,18 @@ function ViewPostInternal (props: ViewPostProps) {
 
         if (originalPostOpt.isSome) {
           const originalPost = originalPostOpt.unwrap();
-          setOriginalPost(originalPost);
           const originalContent = await getJsonFromIpfs<PostData>(originalPost.ipfs_hash);
-          setOriginalContent({ ...originalContent, summary: makeSummary(originalContent.body) });
+          if (isSubsribe) {
+            setOriginalPost(originalPost);
+            setOriginalContent({ ...originalContent, summary: makeSummary(originalContent.body) });
+          }
         }
       };
 
       loadSharedPost().catch(err => new Error(err));
     }
-  }, [ ipfs_hash ]);
+    return () => { isSubsribe = false; };
+  }, [ false ]);
 
   const RenderDropDownMenu = () => {
 

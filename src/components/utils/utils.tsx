@@ -115,7 +115,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
     const socialAccount = socialAccountOpt.unwrap();
     const profileOpt = socialAccount.profile;
 
-    if (profileOpt.isNone && requireProfile) return <NoData description={<span>You have not created profile yet</span>} />
+    if (profileOpt.isNone && requireProfile) return <NoData description={<span>You have not created profile yet</span>} />;
     else if (profileOpt.isNone) return <Component {...props} />;
 
     const profile = profileOpt.unwrap() as Profile;
@@ -125,11 +125,15 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
 
     useEffect(() => {
       if (!ipfsHash) return;
+
+      let isSubscribe = true;
       getJsonFromIpfs<ProfileData>(ipfsHash)
         .then(json => {
-          setProfileData(json);
+          isSubscribe && setProfileData(json);
         })
         .catch(err => console.log(err));
+
+      return () => { isSubscribe = false; };
     }, [false]);
 
     if (requireProfile && !profileData) return <Loading />;

@@ -80,10 +80,14 @@ function Component (props: Props) {
 
   useEffect(() => {
     if (!ipfs_hash) return;
+    let isSubscribe = true;
+
     getJsonFromIpfs<BlogData>(ipfs_hash).then(json => {
       const content = json;
-      setContent(content);
+      if (isSubscribe) setContent(content);
     }).catch(err => console.log(err));
+
+    return () => { isSubscribe = false; };
   }, [id]);
 
   const isMyBlog = myAddress && account && myAddress === account.toString();

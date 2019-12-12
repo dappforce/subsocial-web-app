@@ -24,12 +24,13 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
+    let isSubscribe = true;
     const load = async () => {
       const _isFollow = await (api.query.blogs[`blogFollowedByAccount`](dataForQuery)) as Bool;
-      setIsFollow(_isFollow.valueOf());
+      isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
-
+    return () => { isSubscribe = false; };
   }, [ triggerReload ]);
 
   const buildTxParams = () => {

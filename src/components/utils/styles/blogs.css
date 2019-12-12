@@ -95,9 +95,6 @@ $secondary: #8c8c8c;
     padding-left: $small;
     padding-right: $small;
   }
-  .button {
-    height: min-content;
-  }
   .handle {
     white-space: nowrap;
     overflow: hidden;
@@ -531,6 +528,12 @@ hr {
       min-width: 8rem;
     }
   }
+  .button {
+    max-height: initial;
+  }
+  .content {
+    min-width: 75%;
+  }
 }
 
 .ui.modal .scrolling.content {
@@ -692,12 +695,16 @@ hr {
 }
 
 .DfPopup-about{
-  margin-top: $small;
+  margin: $small 0;
 }
 
 .DfPopup-links {
+  color:$secondary; 
   display: flex;
-  justify-content: space-around;
+  justify-content: start;
+  .DfPopup-link {
+    margin-right: $normal;
+  }
 }
 
 .DfMdEditor {
@@ -936,6 +943,9 @@ hr {
 .DfModal {
   text-align: left;
   margin: 1rem;
+  content {
+    min-width: 75%;
+  }
 }
 
 /*----------MOBILE--------------*/

@@ -48,6 +48,8 @@ export function CommentsTree (props: Props) {
   const [comments, setComments] = useState(new Array<Comment>());
 
   useEffect(() => {
+    let isSubscribe = true;
+
     const loadComments = async () => {
       if (!commentsCount) return;
       const apiCalls: Promise<OptionComment>[] = commentIds.map(id =>
@@ -55,11 +57,15 @@ export function CommentsTree (props: Props) {
 
       const loadedComments = (await Promise.all<OptionComment>(apiCalls)).map(x => x.unwrap() as Comment);
 
-      setComments(loadedComments);
-      setLoaded(true);
+      if (isSubscribe) {
+        setComments(loadedComments);
+        setLoaded(true);
+      }
     };
 
     loadComments().catch(err => console.log(err));
+
+    return () => { isSubscribe = false; };
   }, [ commentsCount ]);// TODO change dependense on post.comments_counts or CommentCreated, CommentUpdated with current postId
 
   const isPage = commentIdForPage ? true : false;
@@ -156,17 +162,20 @@ export function ViewComment (props: ViewCommentProps) {
 
     if (!doReloadComment) return;
 
+    let isSubcribe = true;
+
     getJsonFromIpfs<CommentData>(struct.ipfs_hash).then(json => {
-      setContent(json);
+      isSubcribe && setContent(json);
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
       const result = await api.query.blogs.commentById(id) as OptionComment;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
-      setStruct(comment);
-
-      setDoReloadComment(false);
+      if (isSubcribe) {
+        setStruct(comment);
+        setDoReloadComment(false);
+      }
     };
     loadComment().catch(console.log);
 
@@ -175,12 +184,14 @@ export function ViewComment (props: ViewCommentProps) {
       if (result.isNone) return;
       const post = result.unwrap();
       const content = await getJsonFromIpfs<PostData>(post.ipfs_hash);
-      setPostContent(content);
-
-      setDoReloadComment(false);
+      if (isSubcribe) {
+        setPostContent(content);
+        setDoReloadComment(false);
+      }
     };
     loadPostContent().catch(console.log);
 
+    return () => { isSubcribe = false; };
   },[ doReloadComment ]);
 
   const isMyStruct = myAddress === account.toString();

@@ -340,6 +340,10 @@ header .ui--Button-Group {
   word-break: break-all;
 }
 
+.ui--Static.ui.dropdown.selection.disabled {
+  max-width: 100%;;
+}
+
 .ui--Status {
   display: inline-block;
   position: fixed;
@@ -347,6 +351,9 @@ header .ui--Button-Group {
   top: 0.25rem;
   width: 20rem;
   z-index: 1001;
+  .header {
+    font-size: 1.25rem;
+  }
 
   .ui--IdentityIcon {
     margin-left: 0 !important;
@@ -372,7 +379,7 @@ header .ui--Button-Group {
 
       .desc {
         flex: 1;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem;
 
         .status {
           font-weight: 700;
@@ -380,7 +387,7 @@ header .ui--Button-Group {
       }
 
       .short {
-        font-size: 2.5rem;
+        font-size: 1.5rem;
         padding: 0.5rem;
 
         i.icon {
