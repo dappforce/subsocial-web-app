@@ -30,6 +30,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
+
     return () => { isSubscribe = false; };
   }, [ triggerReload ]);
 

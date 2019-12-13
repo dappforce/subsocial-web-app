@@ -54,7 +54,7 @@ export const Voter = (props: VoterProps) => {
       const reactionId = await api.query.blogs[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
       const reactionOpt = await api.query.blogs.reactionById(reactionId) as Option<Reaction>;
       if (reactionOpt.isNone) {
-        setReactionState(undefined);
+        isSubscribe && setReactionState(undefined);
       } else {
         const reaction = reactionOpt.unwrap() as Reaction;
         if (isSubscribe) {
@@ -85,7 +85,6 @@ export const Voter = (props: VoterProps) => {
     const calcVotingPercentage = () => {
       const { upvotes_count, downvotes_count } = state;
       const totalCount = upvotes_count.add(downvotes_count);
-      console.log([upvotes_count.toNumber(), downvotes_count.toNumber()]);
       if (totalCount.eq(ZERO)) return 0;
 
       const per = upvotes_count.toNumber() / totalCount.toNumber() * 100;
@@ -127,7 +126,7 @@ export const Voter = (props: VoterProps) => {
     };
 
     const count = calcVotingPercentage();
-    console.log(count);
+    console.log('voter', id.toString());
 
     return <>
       <Button.Group className={`DfVoter`}>

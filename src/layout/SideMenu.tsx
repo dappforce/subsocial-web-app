@@ -15,7 +15,7 @@ type MenuItem = {
 };
 
 const InnerMenu = () => {
-  const { toggle } = useSidebarCollapsed();
+  const { toggle, state: { collapsed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
   const router = useRouter();
   const { pathname } = router;
@@ -84,7 +84,7 @@ const InnerMenu = () => {
         </a>
       </Menu.Item>
       <Menu.Divider/>
-        <Menu.ItemGroup className='DfSideMenu--FollowedBlogs' key='followed' title='Followed blogs'>
+        <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
           <ListFollowingBlogs mini={true} />
         </Menu.ItemGroup>
     </Menu>

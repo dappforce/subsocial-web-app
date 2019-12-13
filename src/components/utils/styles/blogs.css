@@ -95,6 +95,9 @@ $secondary: #8c8c8c;
     padding-left: $small;
     padding-right: $small;
   }
+  .button {
+    max-height: min-content;
+  }
   .handle {
     white-space: nowrap;
     overflow: hidden;
@@ -835,6 +838,15 @@ hr {
 }
 
 .DfSideMenu--FollowedBlogs {
+  && .collapsed {
+    .ant-menu-item-group-list {
+      .content {
+        display: none;
+      }
+      margin-left: $little;
+    }
+  }
+
   color: #666;
   cursor: pointer;
   .ant-menu-item-group-title {
@@ -861,6 +873,15 @@ hr {
   .DfNoFollowed {
     display: flex;
     justify-content: center;
+  }
+}
+
+.DfSideMenu--FollowedBlogs.collapsed {
+  .ant-menu-item-group-list {
+    .content {
+      display: none;
+    }
+    margin-left: $little;
   }
 }
 

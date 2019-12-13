@@ -121,22 +121,22 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
                 url={url}
               >
                 <MyAccountProvider>
-                      <Signer>
-                        <QueueConsumer>
-                          {({ queueAction, stqueue, txqueue }: QueueProps) => (
-                            <SidebarCollapsedProvider>
-                                <SideMenu>
-                                  {children}
-                                  <Status
-                                    queueAction={queueAction}
-                                    stqueue={stqueue}
-                                    txqueue={txqueue}
-                                  />
-                                </SideMenu>
-                              </SidebarCollapsedProvider>
-                          )}
-                        </QueueConsumer>
-                      </Signer>
+                  <QueueConsumer>
+                    {({ queueAction, stqueue, txqueue }: QueueProps) => (
+                      <SidebarCollapsedProvider>
+                          <SideMenu>
+                            <Signer>
+                              {children}
+                              <Status
+                                queueAction={queueAction}
+                                stqueue={stqueue}
+                                txqueue={txqueue}
+                              />
+                            </Signer>
+                          </SideMenu>
+                        </SidebarCollapsedProvider>
+                    )}
+                  </QueueConsumer>
                 </MyAccountProvider>
                 <Connecting />
               </Api>
