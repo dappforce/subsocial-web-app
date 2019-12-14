@@ -85,7 +85,7 @@ function Component (props: Props) {
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
-    <Link href={`/new-profile`}>
+    <Link href={`/profile/new`}>
       <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className={'ui button primary ' + BUTTON_SIZE}>
         <i className='plus icon' />
         Create profile
@@ -104,7 +104,7 @@ function Component (props: Props) {
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
-        <Link href={`/edit-profile`}><a className='item'>Edit</a></Link>
+        <Link href={`/profile/edit`} ><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -129,7 +129,7 @@ function Component (props: Props) {
   };
 
   const NameAsLink = () => (
-    <Link href={`/profile?address=${address}`}>
+    <Link href='/profile/[address]' as={`/profile/${address}`}>
       <a className='handle'>{getName()}</a>
     </Link>
   );

@@ -43,7 +43,7 @@ const Component = (props: Props) => {
         renderItem={(item, index) =>
           <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
         noDataDesc='No latestt updates yet'
-        noDataExt={<Button href='/new-blog'>Create blog</Button>}
+        noDataExt={<Button href='/blog/new'>Create blog</Button>}
       />
       {latestPostIds.length > 0 && <ListData
         title={`Latest posts`}

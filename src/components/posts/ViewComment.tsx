@@ -229,7 +229,7 @@ export function ViewComment (props: ViewCommentProps) {
     </span>
   );
 
-  const responseTitle = <>In response to <Link href={`/post?id=${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
+  const responseTitle = <>In response to <Link href='/blog/post/[id]' as={`/blog/post/${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
 
   return <div id={`comment-${id}`} className='DfComment'>
     {isPage && <>

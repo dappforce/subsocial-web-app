@@ -44,7 +44,7 @@ class Component extends React.PureComponent<Props> {
           renderItem={(item, index) =>
             <ViewBlog {...this.props} key={index} id={item} previewDetails withFollowButton />}
           noDataDesc='Blogs not created yet'
-          noDataExt={<Button href='/new-blog'>Create blog</Button>}
+          noDataExt={<Button href='/blog/new'>Create blog</Button>}
         />
       </div>
     );
@@ -75,7 +75,7 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
         dataSource={myblogsIds}
         renderItem={(item, index) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
         noDataDesc='You do not have your own blogs yet'
-        noDataExt={<Button href='/new-blog'>Create my first blog</Button>}
+        noDataExt={<Button href='/blog/new'>Create my first blog</Button>}
       />
     </div>
   </>

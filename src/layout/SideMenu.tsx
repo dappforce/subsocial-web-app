@@ -33,22 +33,22 @@ const InnerMenu = () => {
     },
     {
       name: 'All blogs',
-      page: '/all',
+      page: '/blogs/all',
       image: 'global'
     },
     {
       name: 'New blog',
-      page: '/new-blog',
+      page: '/blog/new',
       image: 'plus'
     },
     {
       name: 'My blogs',
-      page: '/my-blogs',
+      page: '/blogs/my',
       image: 'book'
     },
     {
       name: 'Following blogs',
-      page: '/following-blogs',
+      page: '/blogs/following',
       image: 'book'
     },
     {
@@ -58,7 +58,7 @@ const InnerMenu = () => {
     },
     {
       name: 'My profile',
-      page: `/profile?address=${myAddress}`,
+      page: `/profile/${myAddress}`,
       image: 'idcard'
     }
 

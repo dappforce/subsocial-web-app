@@ -30,7 +30,7 @@ const InnerShareModal = (props: Props) => {
 
     if (blogsIds.length === 0) {
       return (
-        <Link href='/new-blog'><a className='ui button primary'>Create your first blog</a></Link>
+        <Link href='/blog/new'><a className='ui button primary'>Create your first blog</a></Link>
       );
     }
 

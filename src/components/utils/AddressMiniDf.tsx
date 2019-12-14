@@ -219,7 +219,7 @@ function AddressMini (props: Props) {
     }
 
     return (
-      <Link href={`/profile?address=${address}`}>
+      <Link href='/profile/[address]' as={`/profile/${address}`}>
         <a className='ui--AddressMini-address'>
           <b>{fullname || toShortAddress(address)}</b>
           <div className='DfPopup-username'>{username}</div>

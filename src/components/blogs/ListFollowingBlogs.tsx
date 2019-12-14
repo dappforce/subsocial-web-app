@@ -49,7 +49,7 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
             imageSize={28}
           />
         </div>)
-      : <div className='DfNoFollowed'><Button type='primary' size='small' href='/all'>Show all</Button></div>}
+      : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blog/all'>Show all</Button></div>}
     </>;
   };
 
@@ -63,7 +63,7 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
             <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
         )}
         noDataDesc='You are not subscribed to any blog'
-        noDataExt={<Button href='/all'>Show all blogs</Button>}
+        noDataExt={<Button href='/blog/all'>Show all blogs</Button>}
       />
     </div>
   );

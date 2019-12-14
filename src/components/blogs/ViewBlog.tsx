@@ -103,7 +103,7 @@ function Component (props: Props) {
     const menu = (
       <Menu>
         {isMyBlog && <Menu.Item key='0'>
-          <Link href={`/edit-blog?id=${id.toString()}`}><a className='item'>Edit</a></Link>
+          <Link href={`/blog/edit/[id]`} as={`/blog/edit/${id.toString()}`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -119,7 +119,7 @@ function Component (props: Props) {
     </>);
   };
 
-  const NameAsLink = () => <Link href={`/blog?id=${id}`}><a>{name}</a></Link>;
+  const NameAsLink = () => <Link href='/blog/[id]' as={`/blog/${id}`}><a>{name}</a></Link>;
 
   const renderNameOnly = () => {
     return withLink
@@ -178,7 +178,7 @@ function Component (props: Props) {
   const renderPreviewExtraDetails = () => {
     return <>
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
-        <Link href={`/blog?id=${id}`}>
+        <Link href='/blog/[id]' as={`/blog/${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
           <Pluralize count={postsCount} singularText='Post'/>
           </a>
@@ -221,10 +221,10 @@ function Component (props: Props) {
       renderItem={(id, index) =>
         <ViewPost key={index} id={id} preview />}
       noDataDesc='No posts yet'
-      noDataExt={<Button href={`/new-post?blogId=${id}`}>Create post</Button>}
+      noDataExt={<Button href={`/blog/new?blogId=${id}`}>Create post</Button>}
     />;
   };
-  const NewPostButton = () => <Button href={`/new-post?blogId=${id}`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;
+  const NewPostButton = () => <Button href={`/blog/new?blogId=${id}`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;
 
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
