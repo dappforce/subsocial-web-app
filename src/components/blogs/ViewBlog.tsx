@@ -9,7 +9,7 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
 import { BlogId, Blog, PostId, BlogData } from '../types';
-import { MyAccountProps, withMyAccount } from '../utils/MyAccount';
+import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { ViewPost } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -24,6 +24,9 @@ import { Pluralize } from '../utils/Plularize';
 import AddressMiniDf from '../utils/AddressMiniDf';
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
+import { NextPage } from 'next';
+import { api } from '@polkadot/ui-api';
+import { useMyAccount } from '../utils/MyAccountContext';
 
 const SUB_SIZE = 2;
 
@@ -35,7 +38,7 @@ type Props = MyAccountProps & {
   miniPreview?: boolean,
   previewDetails?: boolean,
   withFollowButton?: boolean,
-  id: BlogId,
+  id?: BlogId,
   blogById?: Option<Blog>,
   postIds?: PostId[],
   followers?: AccountId[],
@@ -43,7 +46,7 @@ type Props = MyAccountProps & {
   onClick?: () => void
 };
 
-function Component (props: Props) {
+const Component: NextPage<Props> = (props: Props) => {
   const { blogById } = props;
 
   if (blogById === undefined) return <Loading />;
@@ -88,7 +91,7 @@ function Component (props: Props) {
     }).catch(err => console.log(err));
 
     return () => { isSubscribe = false; };
-  }, [id]);
+  }, [ false ]);
 
   const isMyBlog = myAddress && account && myAddress === account.toString();
   const hasImage = image && nonEmptyStr(image);
@@ -266,9 +269,23 @@ function Component (props: Props) {
     {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
     {renderPostPreviews()}
   </Section>;
-}
+};
 
-export default withMulti(
+Component.getInitialProps = async (props): Promise<Props> => {
+  const { query: { blogId } } = props;
+  const { state: { address } } = useMyAccount();
+  console.log(props.query);
+  const id = await api.query.blogs.blogById(blogId) as BlogId;
+  const postIds = await api.query.blogs.postIdsByBlogId(id) as unknown as PostId[];
+  return {
+    myAddress: address,
+    postIds: postIds
+  };
+};
+
+export default Component;
+
+export const ViewBlog = withMulti(
   Component,
   withMyAccount,
   withCalls<Props>(

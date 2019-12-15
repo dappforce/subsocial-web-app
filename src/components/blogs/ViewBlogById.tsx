@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ViewBlog from './ViewBlog';
+import { ViewBlog } from './ViewBlog';
 import { BlogId } from '../types';
 import { useRouter } from 'next/router';
 

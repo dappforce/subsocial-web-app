@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
-import ViewBlog from '../blogs/ViewBlog';
+import { ViewBlog } from '../blogs/ViewBlog';
 import { ViewPost } from '../posts/ViewPost';
 import { Tab, StrictTabProps } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
@@ -50,7 +50,7 @@ const resultToPreview = (res: DataResults, i: number) => {
     default:
       return <></>;
   }
-}
+};
 
 const Previews = (props: Props) => {
   const { results } = props;
@@ -70,7 +70,7 @@ const Tabs = () => {
 
   const getTabIndexFromUrl = (): number => {
     const tabFromUrl = router.query.tab;
-    const tabIndex = panes.findIndex(pane => pane.key == tabFromUrl);
+    const tabIndex = panes.findIndex(pane => pane.key === tabFromUrl);
     return tabIndex < 0 ? 0 : tabIndex;
   };
 

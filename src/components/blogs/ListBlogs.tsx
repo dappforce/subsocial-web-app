@@ -7,7 +7,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import translate from '../utils/translate';
-import ViewBlog from './ViewBlog';
+import { ViewBlog } from './ViewBlog';
 import { BlogId } from '../types';
 import { AccountId } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';

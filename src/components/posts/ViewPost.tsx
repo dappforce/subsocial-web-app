@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { Pluralize } from '../utils/Plularize';
-import ViewBlog from '../blogs/ViewBlog';
+import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
@@ -74,8 +74,7 @@ function ViewPostInternal (props: ViewPostProps) {
     isRegularPost,
     isSharedComment,
     isSharedPost,
-    edit_history,
-    blog_id
+    edit_history
   } = post;
 
   const [ content , setContent ] = useState({} as PostContent);
@@ -136,7 +135,7 @@ function ViewPostInternal (props: ViewPostProps) {
     const menu = (
       <Menu>
         {isMyStruct && <Menu.Item key='0'>
-        <Link href='/blog/[blogId]/post/edit/[id]' as={`/blog/${blog_id}/post/edit/${id.toString()}`}><a className='item'>Edit</a></Link>
+        <Link href='/post/edit/[id]' as={`/post/edit/${id.toString()}`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -156,7 +155,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderNameOnly = (title: string, id: PostId) => {
     if (!title || !id) return null;
     return withLink
-      ? <Link href='/[id]/post/[id]' as={`blog/${blog_id}/post/${id.toString()}`} >
+      ? <Link href='/post/[id]' as={`/post/${id.toString()}`} >
         <a className='header DfPostTitle--preview'>
           {title}
         </a>
@@ -175,7 +174,7 @@ function ViewPostInternal (props: ViewPostProps) {
         size={size}
         extraDetails={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
-          <Link href='/[id]/post/[id]' as={`blog/${blog_id}post/${id.toString()}`} >
+          <Link href='/post/[id]' as={`/post/${id.toString()}`} >
             <a className='DfGreyLink'>
               {time}
             </a>

@@ -4,7 +4,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { BlogId } from '../types';
-import ViewBlog from './ViewBlog';
+import { ViewBlog } from './ViewBlog';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { Loading } from '../utils/utils';
 import ListData from '../utils/DataList';

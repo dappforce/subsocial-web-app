@@ -5,6 +5,7 @@ import MainPage from '../layout/MainPage'
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props
+    console.log(pageProps);
     return (
       <MainPage>
         <Component {...pageProps}></Component>

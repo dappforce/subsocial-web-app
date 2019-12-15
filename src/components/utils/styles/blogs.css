@@ -704,7 +704,7 @@ hr {
 .DfPopup-links {
   color:$secondary; 
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   .DfPopup-link {
     margin-right: $normal;
   }

@@ -5,7 +5,7 @@ import { hexToNumber } from '@polkadot/util';
 import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../types';
 import { ViewPost } from '../posts/ViewPost';
 import { api, withMulti } from '@polkadot/ui-api';
-import ViewBlog from '../blogs/ViewBlog';
+import { ViewBlog } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
@@ -103,7 +103,7 @@ const InnerViewNotifications = (props: MyAccountProps) => {
   );
 };
 
-function ViewActivity(props: ActivityProps) {
+function ViewActivity (props: ActivityProps) {
   const { activity } = props;
   const { post_id } = activity;
   const postId = new PostId(hexToNumber('0x' + post_id));// TODO create function

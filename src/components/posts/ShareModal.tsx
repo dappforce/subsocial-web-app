@@ -7,7 +7,7 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { PostId, PostExtension, SharedPost, BlogId } from '../types';
 import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
-import ViewBlog from '../blogs/ViewBlog';
+import { ViewBlog } from '../blogs/ViewBlog';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
 
@@ -36,7 +36,7 @@ const InnerShareModal = (props: Props) => {
 
     const blogs = blogsIds.map(id => ({
       key: id.toNumber(),
-      text: <div><ViewBlog id={id} key={id} dropdownPreview imageSize={26}/></div>,
+      text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
       value: id.toNumber()
     }));
 

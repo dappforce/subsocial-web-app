@@ -7,7 +7,7 @@ import { withCalls } from '@polkadot/ui-api/with';
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import translate from '../utils/translate';
-import ViewBlog from '../blogs/ViewBlog';
+import { ViewBlog } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '../types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
