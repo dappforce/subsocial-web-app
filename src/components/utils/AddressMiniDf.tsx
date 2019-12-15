@@ -237,7 +237,7 @@ function AddressMini (props: Props) {
     return (
         <div
           className={`ui--AddressMini-address asLink ${className} ${asActivity && 'activity'}`}
-          onClick={() => Router.push(`/profile?address=${address}`)}
+          onClick={() => Router.push(`/profile/${address}`)}
         >
           {fullname || username || (isShort ? toShortAddress(address) : address)}
         </div>

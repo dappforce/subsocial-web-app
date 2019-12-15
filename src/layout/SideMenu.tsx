@@ -10,7 +10,7 @@ import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext
 
 type MenuItem = {
   name: string,
-  page: string,
+  page: string[],
   image: string
 };
 
@@ -20,45 +20,45 @@ const InnerMenu = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  const onClick = (page: string) => {
+  const onClick = (page: string[]) => {
     isMobile && toggle();
-    Router.push(page).catch(console.log);
+    Router.push(page[0], page[1]).catch(console.log);
   };
 
   const MenuItems: MenuItem[] = [
     {
       name: 'Feed',
-      page: '/feed',
+      page: ['/feed'],
       image: 'profile'
     },
     {
       name: 'All blogs',
-      page: '/blogs/all',
+      page: ['/blogs/all'],
       image: 'global'
     },
     {
       name: 'New blog',
-      page: '/blog/new',
+      page: ['/blog/new'],
       image: 'plus'
     },
     {
       name: 'My blogs',
-      page: '/blogs/my',
+      page: ['/blogs/my'],
       image: 'book'
     },
     {
       name: 'Following blogs',
-      page: '/blogs/following',
+      page: ['/blogs/following'],
       image: 'book'
     },
     {
       name: 'Notifications',
-      page: '/notifications',
+      page: ['/notifications'],
       image: 'notification'
     },
     {
       name: 'My profile',
-      page: `/profile/${myAddress}`,
+      page: ['/profile/[address]', `/profile/${myAddress}`],
       image: 'idcard'
     }
 
@@ -72,7 +72,7 @@ const InnerMenu = () => {
         style={{ height: '100%', borderRight: 0 }}
     >
       {MenuItems.map(item =>
-      <Menu.Item key={item.page} onClick={() => onClick(item.page)}>
+      <Menu.Item key={item.page[0]} onClick={() => onClick(item.page)}>
         <Icon type={item.image} />
         <span>{item.name}</span>
       </Menu.Item>)}

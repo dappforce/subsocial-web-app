@@ -136,7 +136,7 @@ function ViewPostInternal (props: ViewPostProps) {
     const menu = (
       <Menu>
         {isMyStruct && <Menu.Item key='0'>
-        <Link href='/blog/post/edit/[id]' as={`blog/post/edit/${id.toString()}`}><a className='item'>Edit</a></Link>
+        <Link href='/blog/[blogId]/post/edit/[id]' as={`/blog/${blog_id}/post/edit/${id.toString()}`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -156,7 +156,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderNameOnly = (title: string, id: PostId) => {
     if (!title || !id) return null;
     return withLink
-      ? <Link href='/blog/post/[id]' as={`blog/${blog_id}/post/${id.toString()}`} >
+      ? <Link href='/[id]/post/[id]' as={`blog/${blog_id}/post/${id.toString()}`} >
         <a className='header DfPostTitle--preview'>
           {title}
         </a>
@@ -175,7 +175,7 @@ function ViewPostInternal (props: ViewPostProps) {
         size={size}
         extraDetails={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
-          <Link href='/blog/post/[id]' as={`blog/post/${id.toString()}`} >
+          <Link href='/[id]/post/[id]' as={`blog/${blog_id}post/${id.toString()}`} >
             <a className='DfGreyLink'>
               {time}
             </a>

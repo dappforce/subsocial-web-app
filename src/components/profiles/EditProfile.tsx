@@ -124,7 +124,7 @@ const InnerForm = (props: FormProps) => {
 
   const goToView = () => {
     if (myAddress) {
-      Router.push(`/profile?address=${myAddress}`).catch(console.log);
+      Router.push(`/profile/${myAddress}`).catch(console.log);
     }
   };
 

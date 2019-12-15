@@ -13,6 +13,7 @@ import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
+import { isMobile } from 'react-device-detect';
 
 type ListBlogProps = {
   id: AccountId,
@@ -41,9 +42,9 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
             key={index}
             id={item}
             onClick={() => {
-              toggle();
+              isMobile && toggle();
               console.log('Toggle');
-              Router.push(`/blog?id=${item}`);
+              Router.push('/blog/[blogId]',`/blog/${item}`);
             }}
             miniPreview
             imageSize={28}
