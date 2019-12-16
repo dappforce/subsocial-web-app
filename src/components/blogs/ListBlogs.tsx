@@ -1,7 +1,6 @@
 import BN from 'bn.js';
 import React from 'react';
 
-import { ApiProps } from '@polkadot/ui-api/types';
 import { I18nProps } from '@polkadot/ui-app/types';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
@@ -15,46 +14,45 @@ import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { Loading } from '../utils/utils';
+import { NextPage } from 'next';
 
-type Props = ApiProps & I18nProps & {
+type Props = I18nProps & {
   nextBlogId?: BN
 };
 
-class Component extends React.PureComponent<Props> {
+export const ListBlogPage: NextPage<Props> = (props: Props) => {
 
-  render () {
-    const { nextBlogId = new BlogId(1) } = this.props;
+  const { nextBlogId = new BlogId(1) } = props;
 
-    const firstBlogId = new BlogId(1);
-    const totalCount = nextBlogId.sub(firstBlogId).toNumber();
-    const ids: BlogId[] = [];
-    if (totalCount > 0) {
-      const firstId = firstBlogId.toNumber();
-      const lastId = nextBlogId.toNumber();
-      for (let i = firstId; i < lastId; i++) {
-        ids.push(new BlogId(i));
-      }
+  const firstBlogId = new BlogId(1);
+  const totalCount = nextBlogId.sub(firstBlogId).toNumber();
+  const ids: BlogId[] = [];
+  if (totalCount > 0) {
+    const firstId = firstBlogId.toNumber();
+    const lastId = nextBlogId.toNumber();
+    for (let i = firstId; i < lastId; i++) {
+      ids.push(new BlogId(i));
     }
-
-    return (
-      <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-        <ListData
-          title={`All blogs (${totalCount})`}
-          dataSource={ids}
-          renderItem={(item, index) =>
-            <ViewBlog {...this.props} key={index} id={item} previewDetails withFollowButton />}
-          noDataDesc='Blogs not created yet'
-          noDataExt={<Button href='/blog/new'>Create blog</Button>}
-        />
-      </div>
-    );
   }
-}
+
+  return (
+    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <ListData
+        title={`All blogs (${totalCount})`}
+        dataSource={ids}
+        renderItem={(item, index) =>
+          <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
+        noDataDesc='Blogs not created yet'
+        noDataExt={<Button href='/blog/new'>Create blog</Button>}
+      />
+    </div>
+  );
+};
 
 export const ListBlogs = translate(
   withCalls<Props>(
     queryBlogsToProp('nextBlogId')
-  )(Component)
+  )(ListBlogPage)
 );
 
 type MyBlogProps = {
@@ -100,5 +98,3 @@ export const ListMyBlogs = withMulti(
     queryBlogsToProp(`blogIdsByOwner`, { paramName: 'id', propName: 'myblogsIds' })
   )
 );
-
-export default ListBlogs;

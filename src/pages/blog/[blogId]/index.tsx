@@ -25,6 +25,8 @@ import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
 import Api from '../../../components/utils/serverConnect';
 import { useMyAccount } from '../../../components/utils/MyAccountContext';
+import { api as webApi } from '@polkadot/ui-api';
+
 const SUB_SIZE = 2;
 
 type Props = {
@@ -37,6 +39,7 @@ type Props = {
   withFollowButton?: boolean,
   id?: BlogId,
   blogById?: Option<Blog>,
+  blog?: Blog,
   postIds?: PostId[],
   followers?: AccountId[],
   imageSize?: number,
@@ -44,11 +47,10 @@ type Props = {
 };
 
 const Component: NextPage<Props> = (props: Props) => {
-  const { blogById } = props;
+  const { blogById, blog } = props;
 
   if (blogById === undefined) return <Loading />;
-  else if (blogById.isNone) return <NoData description={<span>Blog not found</span>} />;
-  const blog = blogById.unwrap();
+  else if (blogById.isNone || !blog) return <NoData description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -60,7 +62,7 @@ const Component: NextPage<Props> = (props: Props) => {
     dropdownPreview = false,
     postIds = [],
     imageSize = 36,
-    onClick,
+    onClick
   } = props;
 
   const {
@@ -73,7 +75,6 @@ const Component: NextPage<Props> = (props: Props) => {
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const myAddress = address;
   const [content, setContent] = useState({} as BlogData);
   const { desc, name, image } = content;
 
@@ -91,7 +92,7 @@ const Component: NextPage<Props> = (props: Props) => {
     return () => { isSubscribe = false; };
   }, [ false ]);
 
-  const isMyBlog = myAddress && account && myAddress === account.toString();
+  const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
   const postsCount = postIds ? postIds.length : 0;
 
@@ -270,12 +271,14 @@ const Component: NextPage<Props> = (props: Props) => {
 };
 
 Component.getInitialProps = async (props): Promise<any> => {
-  const { query: { blogId } } = props;
+  const { query: { blogId }, req } = props;
   console.log('Initial', props.query);
-  const api = await Api.setup();
+  const api = req ? await Api.setup() : webApi;
   const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
+  const blog = blogIdOpt.isSome && blogIdOpt.unwrap();
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   return {
+    blog: blog,
     blogById: blogIdOpt,
     postIds: postIds
   };
