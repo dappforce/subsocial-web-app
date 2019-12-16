@@ -1,4 +1,3 @@
-import Page from '../../../layout/Page';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
@@ -9,7 +8,6 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { getJsonFromIpfs } from '../../../components/utils/OffchainUtils';
 import { nonEmptyStr, SeoHeads } from '../../../components/utils/index';
 import { BlogId, Blog, PostId, BlogData } from '../../../components/types';
-import { MyAccountProps } from '../../../components/utils/MyAccount';
 import { ViewPost } from '../../../components/posts/ViewPost';
 import { BlogFollowersModal } from '../../../components/profiles/AccountsListModal';
 import { BlogHistoryModal } from '../../../components/utils/ListsEditHistory';
@@ -25,12 +23,11 @@ import AddressMiniDf from '../../../components/utils/AddressMiniDf';
 import Section from '../../../components/utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
-import { api } from '@polkadot/ui-api';
+import Api from '../../../components/utils/serverConnect';
 import { useMyAccount } from '../../../components/utils/MyAccountContext';
-
 const SUB_SIZE = 2;
 
-type Props = MyAccountProps & {
+type Props = {
   preview?: boolean,
   nameOnly?: boolean,
   dropdownPreview?: boolean,
@@ -51,6 +48,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   if (blogById === undefined) return <Loading />;
   else if (blogById.isNone) return <NoData description={<span>Blog not found</span>} />;
+  const blog = blogById.unwrap();
 
   const {
     preview = false,
@@ -60,22 +58,22 @@ const Component: NextPage<Props> = (props: Props) => {
     previewDetails = false,
     withFollowButton = false,
     dropdownPreview = false,
-    myAddress,
     postIds = [],
     imageSize = 36,
-    onClick
+    onClick,
   } = props;
 
-  const blog = blogById.unwrap();
   const {
     id,
     score,
     created: { account, time },
     ipfs_hash,
-    followers_count,
+    followers_count: followers,
     edit_history
   } = blog;
-  const followers = followers_count.toNumber();
+
+  const { state: { address } } = useMyAccount();
+  const myAddress = address;
   const [content, setContent] = useState({} as BlogData);
   const { desc, name, image } = content;
 
@@ -271,17 +269,16 @@ const Component: NextPage<Props> = (props: Props) => {
   </Section>;
 };
 
-Component.getInitialProps = async (props): Promise<Props> => {
+Component.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId } } = props;
-  const { state: { address } } = useMyAccount();
   console.log('Initial', props.query);
+  const api = await Api.setup();
   const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   return {
     blogById: blogIdOpt,
-    myAddress: address,
     postIds: postIds
   };
 };
 
-export default () => <Page title='Post'><Component/></Page>;
+export default Component;

@@ -8,7 +8,7 @@ class MyApp extends App {
     console.log(pageProps);
     return (
       <MainPage>
-        <Component {...pageProps}></Component>
+        <Component {...pageProps}/>
       </MainPage>
     )
   }
