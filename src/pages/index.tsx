@@ -1,6 +1,5 @@
 import React from 'react';
-import dynamic from 'next/dynamic';
-const Home = dynamic(() => import('../components/activity/HomePage'), { ssr: false });
+import Home from '../components/activity/HomePage';
 import Page from '../layout/Page';
 
 export default () => <Page title='Home'><Home/></Page>;

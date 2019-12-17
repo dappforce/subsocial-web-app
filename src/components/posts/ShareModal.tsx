@@ -15,26 +15,26 @@ type Props = MyAccountProps & {
   postId: PostId,
   open: boolean,
   close: () => void,
-  blogsIds?: BlogId[]
+  blogIds?: BlogId[]
 };
 
 const InnerShareModal = (props: Props) => {
-  const { open, close, postId, blogsIds } = props;
+  const { open, close, postId, blogIds } = props;
 
-  if (!blogsIds) return <Loading />;
+  if (!blogIds) return <Loading />;
 
-  const [blogId, setBlogId] = useState(blogsIds[0]);
+  const [blogId, setBlogId] = useState(blogIds[0]);
   const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
 
-    if (blogsIds.length === 0) {
+    if (blogIds.length === 0) {
       return (
         <Link href='/blog/new'><a className='ui button primary'>Create your first blog</a></Link>
       );
     }
 
-    const blogs = blogsIds.map(id => ({
+    const blogs = blogIds.map(id => ({
       key: id.toNumber(),
       text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
       value: id.toNumber()
@@ -90,6 +90,6 @@ export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogsIds' })
+    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
   )
 );

@@ -43,12 +43,12 @@ const InnerMenu = () => {
     },
     {
       name: 'My blogs',
-      page: ['/blogs/my'],
+      page: ['/blogs/my/[address]', `/blogs/my/${myAddress}`],
       image: 'book'
     },
     {
       name: 'Following blogs',
-      page: ['/blogs/following'],
+      page: ['/blogs/following/[address]', `/blogs/following/${myAddress}`],
       image: 'book'
     },
     {

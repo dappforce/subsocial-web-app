@@ -1,40 +1,25 @@
-import BN from 'bn.js';
 import React from 'react';
 
 import { I18nProps } from '@polkadot/ui-app/types';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
-import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import translate from '../utils/translate';
 import { ViewBlog } from './ViewBlog';
 import { BlogId } from '../types';
-import { AccountId } from '@polkadot/types';
-import { useMyAccount } from '../utils/MyAccountContext';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
-import { Loading } from '../utils/utils';
 import { NextPage } from 'next';
+import Api from '../utils/SubstrateApi';
+import { api as webApi } from '@polkadot/ui-api';
+import { AccountId } from '@polkadot/types';
+import { Loading } from '../utils/utils';
+import { SeoHeads } from '../utils';
 
 type Props = I18nProps & {
-  nextBlogId?: BN
+  totalCount: number,
+  ids: BlogId[]
 };
 
-export const ListBlogPage: NextPage<Props> = (props: Props) => {
-
-  const { nextBlogId = new BlogId(1) } = props;
-
-  const firstBlogId = new BlogId(1);
-  const totalCount = nextBlogId.sub(firstBlogId).toNumber();
-  const ids: BlogId[] = [];
-  if (totalCount > 0) {
-    const firstId = firstBlogId.toNumber();
-    const lastId = nextBlogId.toNumber();
-    for (let i = firstId; i < lastId; i++) {
-      ids.push(new BlogId(i));
-    }
-  }
-
+export const ListBlog: NextPage<Props> = (props: Props) => {
+  const { totalCount, ids } = props;
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
@@ -49,28 +34,42 @@ export const ListBlogPage: NextPage<Props> = (props: Props) => {
   );
 };
 
-export const ListBlogs = translate(
-  withCalls<Props>(
-    queryBlogsToProp('nextBlogId')
-  )(ListBlogPage)
-);
+ListBlog.getInitialProps = async (props): Promise<any> => {
+  const api = props.req ? await Api.setup() : webApi;
+  const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
 
-type MyBlogProps = {
-  id: AccountId,
-  myblogsIds?: BlogId[]
+  const firstBlogId = new BlogId(1);
+  const totalCount = nextBlogId.sub(firstBlogId).toNumber();
+  const ids: BlogId[] = [];
+  if (totalCount > 0) {
+    const firstId = firstBlogId.toNumber();
+    const lastId = nextBlogId.toNumber();
+    for (let i = firstId; i < lastId; i++) {
+      ids.push(new BlogId(i));
+    }
+  }
+
+  return {
+    totalCount,
+    ids
+  };
 };
 
-const InnerListMyBlogs = (props: MyBlogProps) => {
-  const { myblogsIds } = props;
-  if (!myblogsIds) return <Loading />;
+type MyBlogProps = {
+  myBlogIds?: BlogId[]
+};
 
-  const totalCount = myblogsIds.length;
+export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
+  const { myBlogIds } = props;
+  if (!myBlogIds) return <Loading />;
+
+  const totalCount = myBlogIds.length;
   return (<>
-    <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
+    <SeoHeads title='My blogs' desc='Subsocial blogs' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`My Blogs (${totalCount})`}
-        dataSource={myblogsIds}
+        dataSource={myBlogIds}
         renderItem={(item, index) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
         noDataDesc='You do not have your own blogs yet'
         noDataExt={<Button href='/blog/new'>Create my first blog</Button>}
@@ -80,21 +79,13 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
   );
 };
 
-function withIdFromUseMyAccount (Component: React.ComponentType<MyBlogProps>) {
-  return function () {
-    const { state: { address: myAddress } } = useMyAccount();
-    try {
-      return <Component id={new AccountId(myAddress)} />;
-    } catch (err) {
-      return <em>Invalid Account id</em>;
-    }
+ListMyBlogs.getInitialProps = async (props): Promise<any> => {
+  const { query: { address }, req } = props;
+  console.log(props);
+  const api = req ? await Api.setup() : webApi;
+  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(address as string));
+  console.log(myBlogIds);
+  return {
+    myBlogIds
   };
-}
-
-export const ListMyBlogs = withMulti(
-  InnerListMyBlogs,
-  withIdFromUseMyAccount,
-  withCalls<MyBlogProps>(
-    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'id', propName: 'myblogsIds' })
-  )
-);
+};

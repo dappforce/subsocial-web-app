@@ -1,11 +1,8 @@
 import React from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
-import { queryBlogsToProp } from '../utils/index';
 import { BlogId } from '../types';
 import { ViewBlog } from './ViewBlog';
-import { useMyAccount } from '../utils/MyAccountContext';
 import { Loading } from '../utils/utils';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -14,28 +11,29 @@ import Router, { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
+import { Api } from '../utils/SubstrateApi';
+import { api as webApi } from '@polkadot/ui-api';
+import { NextPage } from 'next';
 
 type ListBlogProps = {
-  id: AccountId,
   mini?: boolean
-  followedBlogsIds?: BlogId[]
+  followedBlogIds?: BlogId[]
 };
 
-const InnerListMyBlogs = (props: ListBlogProps) => {
-  const { followedBlogsIds, mini = false } = props;
+const ListFollowingBlogs: NextPage<ListBlogProps> = (props: ListBlogProps) => {
+  const { followedBlogIds, mini = false } = props;
   const { toggle } = useSidebarCollapsed();
-  const totalCount = followedBlogsIds !== undefined ? followedBlogsIds && followedBlogsIds.length : 0;
+  const totalCount = followedBlogIds !== undefined ? followedBlogIds && followedBlogIds.length : 0;
   const router = useRouter();
   const { pathname, query } = router;
   const currentBlog = pathname.includes('blog') ? new BN(query.id as string) : undefined;
-  console.log([pathname.includes('blog'), currentBlog, pathname, query]);
 
-  if (!followedBlogsIds) return <Loading />;
+  if (!followedBlogIds) return <Loading />;
 
   const renderFollowedList = () => {
 
     return <>{totalCount > 0
-      ? followedBlogsIds.map((item, index) =>
+      ? followedBlogIds.map((item, index) =>
         <div key={index} className={currentBlog && currentBlog.eq(item) ? 'DfSelectedBlog' : ''} >
           <ViewBlog
             {...props}
@@ -44,7 +42,7 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
             onClick={() => {
               isMobile && toggle();
               console.log('Toggle');
-              Router.push('/blog/[blogId]',`/blog/${item}`);
+              Router.push('/blog/[blogId]', `/blog/${item}`).catch(console.log);
             }}
             miniPreview
             imageSize={28}
@@ -59,7 +57,7 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
     : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={<Pluralize count={totalCount} singularText='Following blog'/>}
-        dataSource={followedBlogsIds}
+        dataSource={followedBlogIds}
         renderItem={(item,index) => (
             <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
         )}
@@ -70,23 +68,15 @@ const InnerListMyBlogs = (props: ListBlogProps) => {
   );
 };
 
-function withIdFromUseMyAccount (Component: React.ComponentType<ListBlogProps>) {
-  return function (props: ListBlogProps) {
-    const { state: { address: myAddress } } = useMyAccount();
-    try {
-      return <Component id={new AccountId(myAddress)} {...props}/>;
-    } catch (err) {
-      return <em>Invalid Account id</em>;
-    }
+ListFollowingBlogs.getInitialProps = async (props): Promise<any> => {
+  const { query: { address }, req } = props;
+  console.log(props);
+  const api = req ? await Api.setup() : webApi;
+  const followedBlogIds = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string));
+  console.log(followedBlogIds);
+  return {
+    followedBlogIds: followedBlogIds
   };
-}
-
-export const ListFollowingBlogs = withMulti<ListBlogProps>(
-  InnerListMyBlogs,
-  withIdFromUseMyAccount,
-  withCalls<ListBlogProps>(
-    queryBlogsToProp(`blogsFollowedByAccount`, { paramName: 'id', propName: 'followedBlogsIds' })
-  )
-);
+};
 
 export default ListFollowingBlogs;

@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { registerSubsocialTypes } from '../types';
 
-export class Api {
+export class SubstrateApi {
 
   protected api!: ApiPromise;
 
@@ -14,7 +14,7 @@ export class Api {
     const { api } = this;
     if (api && api.isReady) {
       api.disconnect();
-      console.log(`Disconnect from Substrate API.`);
+      console.log(`Disconnected from Substrate API.`);
     }
   }
 
@@ -26,7 +26,7 @@ export class Api {
     registerSubsocialTypes();
 
     // Create the API and wait until ready:
-    console.log(`Connecting to Substrate API: ${rpcEndpoint}`)
+    console.log(`Connecting to Substrate API at ${rpcEndpoint}`);
     this.api = await ApiPromise.create(provider);
 
     // Retrieve the chain & node information information via rpc calls
@@ -39,4 +39,5 @@ export class Api {
   }
 }
 
-export default new Api();
+export const Api = new SubstrateApi();
+export default Api;

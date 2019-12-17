@@ -23,7 +23,7 @@ import AddressMiniDf from '../../../components/utils/AddressMiniDf';
 import Section from '../../../components/utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
-import Api from '../../../components/utils/serverConnect';
+import Api from '../../../components/utils/SubstrateApi';
 import { useMyAccount } from '../../../components/utils/MyAccountContext';
 import { api as webApi } from '@polkadot/ui-api';
 
@@ -44,6 +44,7 @@ type Props = {
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void
+  initContent?: BlogData
 };
 
 const Component: NextPage<Props> = (props: Props) => {
@@ -62,7 +63,8 @@ const Component: NextPage<Props> = (props: Props) => {
     dropdownPreview = false,
     postIds = [],
     imageSize = 36,
-    onClick
+    onClick,
+    initContent = {} as BlogData
   } = props;
 
   const {
@@ -75,7 +77,7 @@ const Component: NextPage<Props> = (props: Props) => {
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const [content, setContent] = useState({} as BlogData);
+  const [content, setContent] = useState(initContent);
   const { desc, name, image } = content;
 
   const [followersOpen, setFollowersOpen] = useState(false);
@@ -276,11 +278,14 @@ Component.getInitialProps = async (props): Promise<any> => {
   const api = req ? await Api.setup() : webApi;
   const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
   const blog = blogIdOpt.isSome && blogIdOpt.unwrap();
+  const content = blog && await getJsonFromIpfs<BlogData>(blog.ipfs_hash);
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
+
   return {
     blog: blog,
     blogById: blogIdOpt,
-    postIds: postIds
+    postIds: postIds,
+    initContent: content
   };
 };
 
