@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { AccountId, Bool } from '@polkadot/types';
+import { GenericAccountId, bool, Tuple } from '@polkadot/types';
 
 import { BlogId } from '../types';
-import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api } from '@polkadot/ui-api';
+import { api } from '@polkadot/react-api';
 import { isMobile } from 'react-device-detect';
 import { BUTTON_SIZE } from '../../config/Size.config';
 type FollowBlogButtonProps = {
@@ -18,14 +17,14 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   const { blogId, size = isMobile ? 'tiny' : 'small' } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), blogId]);
+  const dataForQuery = new Tuple([GenericAccountId, BlogId], [new GenericAccountId(myAddress), blogId]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`blogFollowedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.blogs[`blogFollowedByAccount`](dataForQuery)) as bool;
       setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -75,15 +74,15 @@ type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   const { myAddress, address, size = BUTTON_SIZE } = props;
 
-  const accountId = new AccountId(address);
-  const dataForQuery = new Tuple([AccountId, AccountId], [new AccountId(myAddress), accountId]);
+  const accountId = new GenericAccountId(address);
+  const dataForQuery = new Tuple([GenericAccountId, GenericAccountId], [new GenericAccountId(myAddress), accountId]);
 
   const [ isFollow, setIsFollow ] = useState(true);
   const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`accountFollowedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.blogs[`accountFollowedByAccount`](dataForQuery)) as bool;
       setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));

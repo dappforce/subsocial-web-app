@@ -4,7 +4,7 @@ import Section from '../utils/Section';
 import { hexToNumber } from '@polkadot/util';
 import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../types';
 import { ViewPost } from '../posts/ViewPost';
-import { api, withMulti } from '@polkadot/ui-api';
+import { api, withMulti } from '@polkadot/react-api';
 import ViewBlog from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';

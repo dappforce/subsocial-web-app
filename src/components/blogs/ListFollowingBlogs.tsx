@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { AccountId } from '@polkadot/types';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { AccountId } from '@polkadot/types/interfaces';
+import { GenericAccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { BlogId } from '../types';
 import ViewBlog from './ViewBlog';
@@ -59,7 +60,7 @@ function withIdFromUseMyAccount (Component: React.ComponentType<ListBlogProps>) 
   return function (props: ListBlogProps) {
     const { state: { address: myAddress } } = useMyAccount();
     try {
-      return <Component id={new AccountId(myAddress)} {...props}/>;
+      return <Component id={new GenericAccountId(myAddress)} {...props}/>;
     } catch (err) {
       return <em>Invalid Account id</em>;
     }

@@ -1,17 +1,18 @@
 import BN from 'bn.js';
 import React from 'react';
 
-import { ApiProps } from '@polkadot/ui-api/types';
-import { I18nProps } from '@polkadot/ui-app/types';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { ApiProps } from '@polkadot/react-api/types';
+import { I18nProps } from '@polkadot/react-components/types';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
 
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import translate from '../utils/translate';
 import ViewBlog from './ViewBlog';
 import { BlogId } from '../types';
-import { AccountId } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces';
+import { GenericAccountId } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import substrateLogo from '@polkadot/ui-assets/substrate-hexagon.svg';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { Loading } from '../utils/utils';
@@ -86,7 +87,7 @@ function withIdFromUseMyAccount (Component: React.ComponentType<MyBlogProps>) {
   return function () {
     const { state: { address: myAddress } } = useMyAccount();
     try {
-      return <Component id={new AccountId(myAddress)} />;
+      return <Component id={new GenericAccountId(myAddress)} />;
     } catch (err) {
       return <em>Invalid Account id</em>;
     }

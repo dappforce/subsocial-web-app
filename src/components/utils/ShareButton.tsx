@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-import { AccountId, Bool } from '@polkadot/types';
+import { GenericAccountId, bool } from '@polkadot/types';
 
 import { BlogId, PostId, CommentId } from '../types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api } from '@polkadot/ui-api';
+import { api } from '@polkadot/react-api';
 
 type PropsShareButtonPost = {
   postId: PostId
@@ -16,14 +16,14 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), postId]);
+  const dataForQuery = new Tuple([GenericAccountId, BlogId], [new GenericAccountId(myAddress), postId]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`postSharedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.blogs[`postSharedByAccount`](dataForQuery)) as bool;
       setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -58,14 +58,14 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
   const { commentId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), commentId]);
+  const dataForQuery = new Tuple([GenericAccountId, BlogId], [new GenericAccountId(myAddress), commentId]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`commentSharedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.blogs[`commentSharedByAccount`](dataForQuery)) as bool;
       setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));

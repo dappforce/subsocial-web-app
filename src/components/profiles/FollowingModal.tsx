@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { AccountId } from '@polkadot/types';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { AccountId } from '@polkadot/types/interfaces';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import AddressMiniDf from '../utils/AddressMiniDf';

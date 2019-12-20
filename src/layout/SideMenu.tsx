@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { withMulti } from '@polkadot/ui-api';
+import { withMulti } from '@polkadot/react-api';
 import { useMyAccount } from '../components/utils/MyAccountContext';
 import ListFollowingBlogs from '../components/blogs/ListFollowingBlogs';
 import { isMobile } from 'react-device-detect';

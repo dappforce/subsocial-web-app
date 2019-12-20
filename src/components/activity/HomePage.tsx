@@ -1,10 +1,10 @@
 import BN from 'bn.js';
 import React from 'react';
 
-import { ApiProps } from '@polkadot/ui-api/types';
-import { I18nProps } from '@polkadot/ui-app/types';
-import { withCalls } from '@polkadot/ui-api/with';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import { ApiProps } from '@polkadot/react-api/types';
+import { I18nProps } from '@polkadot/react-components/types';
+import { withCalls } from '@polkadot/react-api/with';
+import substrateLogo from '@polkadot/ui-assets/substrate-hexagon.svg';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import translate from '../utils/translate';
 import ViewBlog from '../blogs/ViewBlog';

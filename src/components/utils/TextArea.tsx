@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextArea } from 'semantic-ui-react';
-import { Labelled } from '@polkadot/ui-app';
+import { Labelled } from '@polkadot/react-components';
 
 type Props = {
   // TextArea

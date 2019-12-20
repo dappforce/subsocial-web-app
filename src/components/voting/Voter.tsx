@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
 import TxButton from '../utils/TxButton';
-import { api } from '@polkadot/ui-api';
-import { AccountId, Option } from '@polkadot/types';
+import { api } from '@polkadot/react-api';
+import { GenericAccountId, Option } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
@@ -35,7 +35,7 @@ export const Voter = (props: VoterProps) => {
   const isComment = struct.Type['id'] === CommentId.name;
   const Id = isComment ? CommentId : PostId;
 
-  const dataForQuery = new Tuple([AccountId, Id], [new AccountId(address), id]);
+  const dataForQuery = new Tuple([GenericAccountId, Id], [new GenericAccountId(address), id]);
 
   useEffect(() => {
 
@@ -53,7 +53,7 @@ export const Voter = (props: VoterProps) => {
 
     // TODO not use callback
     api.query.blogs[`${structQuery}ReactionIdByAccount`](dataForQuery, reactionId => {
-      api.query.blogs.reactionById(reactionId, x => {
+      api.query.blogs.reactionById(reactionId, (x : Option<Reaction>) => {
         if (x.isNone) {
           setReactionState(undefined);
           return;

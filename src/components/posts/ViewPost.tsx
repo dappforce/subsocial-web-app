@@ -3,7 +3,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { Segment } from 'semantic-ui-react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
 import { Option } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
@@ -17,7 +17,7 @@ import { Voter } from '../voting/Voter';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import AddressMiniDf from '../utils/AddressMiniDf';
-import { api } from '@polkadot/ui-api';
+import { api } from '@polkadot/react-api';
 import { ShareModal } from './ShareModal';
 import { useRouter } from 'next/router';
 import { NoData } from '../utils/DataList';

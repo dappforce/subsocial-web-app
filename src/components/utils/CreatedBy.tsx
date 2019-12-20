@@ -17,7 +17,7 @@ export const CreatedBy = (props: CreatedByProps) => (
     <Table.Body>
       <Table.Row>
         <Table.Cell>{props.dateLabel ? props.dateLabel : 'Created on'}</Table.Cell>
-        <Table.Cell>{new Date(props.created.time).toLocaleString()} at block #{formatNumber(props.created.block)}</Table.Cell>
+        <Table.Cell>{new Date(props.created.time.toNumber()).toLocaleString()} at block #{formatNumber(props.created.block)}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.Cell>{props.accountLabel ? props.accountLabel : 'Created by'}</Table.Cell>

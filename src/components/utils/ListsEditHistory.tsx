@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { withMulti, withCalls } from '@polkadot/ui-api/with';
+import { withMulti, withCalls } from '@polkadot/react-api/with';
 import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
 import AddressMini from './AddressMiniDf';
 import { Post, Blog, PostId, PostData, BlogData, BlogId, CommentId, CommentData, Comment, OptionComment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, VecBlogHistoryRecord, VecPostHistoryRecord, ProfileHistoryRecord, ProfileData, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '../types';
 import { queryBlogsToProp } from './index';
-import { Option, AccountId } from '@polkadot/types';
+import { Option } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces';
 import ReactMarkdown from 'react-markdown';
 import IdentityIcon from '@polkadot/ui-identicon/Identicon';
 import Link from 'next/link';

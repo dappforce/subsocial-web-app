@@ -86,7 +86,7 @@ type MenuItem = {
   image: string
 };
 
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import substrateLogo from '@polkadot/ui-assets/substrate-hexagon.svg';
 
 const MenuItems: MenuItem[] = [
   {

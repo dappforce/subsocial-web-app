@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { Option, AccountId } from '@polkadot/types';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { AccountId } from '@polkadot/types/interfaces';
+import { Option } from '@polkadot/types';
+import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';

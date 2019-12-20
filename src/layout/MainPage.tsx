@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import settings from '../components/settings';
-import '@polkadot/ui-app/i18n';
+import '@polkadot/react-components/i18n';
 import '../components/utils/styles';
 
 import dynamic from 'next/dynamic';
@@ -9,17 +9,17 @@ import dynamic from 'next/dynamic';
 const Suspense = dynamic(() => import('../components/utils/Suspense'), { ssr: false });
 import store from 'store';
 import { getTypeRegistry } from '@polkadot/types';
-import { Api } from '@polkadot/ui-api';
+import { Api } from '@polkadot/react-api';
 
-import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
-import Queue from '@polkadot/ui-app/Status/Queue';
+import { QueueConsumer } from '@polkadot/react-components/Status/Context';
+import Queue from '@polkadot/react-components/Status/Queue';
 import { registerSubsocialTypes } from '../components/types';
 import Connecting from '../components/main/Connecting';
 // const Connecting = dynamic(() => import('../components/main/Connecting'), { ssr: false });
 import Menu from './SideMenu';
-import Signer from '../components/ui-signer';
+import Signer from '@polkadot/react-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
-import { QueueProps } from '@polkadot/ui-app/Status/types';
+import { QueueProps } from '@polkadot/react-components/Status/types';
 import Status from '../components/main/Status';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
@@ -115,10 +115,10 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
     <Suspense fallback='...'>
       <Queue>
         <QueueConsumer>
-          {({ queueExtrinsic, queueSetTxStatus }) => {
+          {({ queuePayload, queueSetTxStatus }) => {
             return (
               <Api
-                queueExtrinsic={queueExtrinsic}
+                queuePayload={queuePayload}
                 queueSetTxStatus={queueSetTxStatus}
                 url={url}
               >

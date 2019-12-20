@@ -1,15 +1,16 @@
 
-import { BareProps } from '@polkadot/ui-app/types';
+import { BareProps } from '@polkadot/react-components/types';
 
 import BN from 'bn.js';
 import React, { useState } from 'react';
-import { AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
-import { withCall, withMulti, withCalls } from '@polkadot/ui-api';
+import { Option } from '@polkadot/types';
+import { AccountId, AccountIndex, Address, Balance } from '@polkadot/types/interfaces';
+import { withCall, withMulti, withCalls } from '@polkadot/react-api';
 
-import classes from '@polkadot/ui-app/util/classes';
-import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
-import BalanceDisplay from '@polkadot/ui-app/Balance';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
+import classes from '@polkadot/react-components/util/classes';
+import toShortAddress from '@polkadot/react-components/util/toShortAddress';
+import BalanceDisplay from '@polkadot/react-components/Balance';
+import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, queryBlogsToProp } from './index';
 import { FollowAccountButton } from './FollowButton';
 import { MyAccountProps, withMyAccount } from './MyAccount';

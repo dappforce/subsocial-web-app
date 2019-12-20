@@ -1,12 +1,12 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
 import Section from '../utils/Section';
 import AddressMini from '../utils/AddressMiniDf';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { ApiProps } from '@polkadot/ui-api/types';
-import { api } from '@polkadot/ui-api';
+import { ApiProps } from '@polkadot/react-api/types';
+import { api } from '@polkadot/react-api';
 import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
 
@@ -234,7 +234,7 @@ export function ViewComment (props: ViewCommentProps) {
             isShort={true}
             isPadded={false}
             size={32}
-            extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${moment(time).fromNow()} · comment score: ${score}`}</a></Link>}
+            extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${moment(time.toNumber()).fromNow()} · comment score: ${score}`}</a></Link>}
           />
         </SuiComment.Metadata>
         <SuiComment.Content>
