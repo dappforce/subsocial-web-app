@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Icon } from 'antd';
-import InputAddress from '../components/utils/InputAddress';
+// import InputAddress from '../components/utils/InputAddress';
+import { InputAddress } from '@polkadot/react-components/InputAddress';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import Router from 'next/router';
