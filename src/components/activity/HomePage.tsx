@@ -4,7 +4,6 @@ import React from 'react';
 import { ApiProps } from '@polkadot/react-api/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { withCalls } from '@polkadot/react-api/with';
-import substrateLogo from '@polkadot/ui-assets/substrate-hexagon.svg';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import translate from '../utils/translate';
 import ViewBlog from '../blogs/ViewBlog';
@@ -36,7 +35,7 @@ const Component = (props: Props) => {
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <SeoHeads title='Subsocial latestt updates' name='Home' desc='Subsocial home page with latestt updates' image={substrateLogo} />
+      <SeoHeads title='Subsocial latestt updates' name='Home' desc='Subsocial home page with latestt updates' />
       <ListData
         title={`Latest blogs`}
         dataSource={latestBlogIds}

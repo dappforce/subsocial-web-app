@@ -12,7 +12,6 @@ import { BlogId } from '../types';
 import { AccountId } from '@polkadot/types/interfaces';
 import { GenericAccountId } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';
-import substrateLogo from '@polkadot/ui-assets/substrate-hexagon.svg';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { Loading } from '../utils/utils';
@@ -69,7 +68,7 @@ const InnerListMyBlogs = (props: MyBlogProps) => {
 
   const totalCount = myblogsIds.length;
   return (<>
-    <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
+    <SeoHeads title='List blogs' desc='Subsocial list blogs' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`My Blogs (${totalCount})`}
