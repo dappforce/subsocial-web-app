@@ -153,20 +153,27 @@ const NextLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient }
   );
 
   const ServerLayout = () => (
-    <Api
-      queueExtrinsic={{} as any}
-      queueSetTxStatus={{} as any}
-      url={url}
-    >
-      <MyAccountProvider>
-        <SidebarCollapsedProvider>
-          <SideMenu>
-            {children}
-          </SideMenu>
-        </SidebarCollapsedProvider>
-      </MyAccountProvider>
-      <Connecting />
-    </Api>
+    <Queue>
+      <QueueConsumer>
+        {({ queueExtrinsic, queueSetTxStatus }) => {
+          return (
+            <Api
+              queueExtrinsic={queueExtrinsic}
+              queueSetTxStatus={queueSetTxStatus}
+              url={url}
+            >
+              <MyAccountProvider>
+                <SidebarCollapsedProvider>
+                  <SideMenu>
+                    {children}
+                  </SideMenu>
+                </SidebarCollapsedProvider>
+              </MyAccountProvider>
+            </Api>
+          );
+        }}
+      </QueueConsumer>
+    </Queue>
   );
 
   return <div id='root'>

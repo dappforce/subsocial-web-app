@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { AccountId } from '@polkadot/types';
+import { AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr } from '../utils/index';
@@ -20,6 +20,10 @@ import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 import { BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
+import { NextPage } from 'next';
+import Api from '../utils/SubstrateApi';
+import { api as webApi } from '@polkadot/ui-api';
+import { getJsonFromIpfs } from '../utils/OffchainUtils';
 
 export type Props = {
   preview?: boolean,
@@ -33,7 +37,7 @@ export type Props = {
   size?: number
 };
 
-function Component (props: Props) {
+const Component: NextPage<Props> = (props: Props) => {
 
   const {
     id,
@@ -124,7 +128,7 @@ function Component (props: Props) {
     if (isEmptyStr(fullname) || isEmptyStr(username)) {
       return address;
     } else {
-      return fullname || username.toString();
+      return fullname;
     }
   };
 
@@ -226,7 +230,7 @@ function Component (props: Props) {
   }
 
   return <>
-    <SeoHeads title={getName()} name={name} desc={about} image={avatar} />
+    <SeoHeads title={getName()} name={getName()} desc={about} image={avatar} />
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}
@@ -238,9 +242,29 @@ function Component (props: Props) {
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
     </Section>
   </>;
-}
+};
 
-export default withMulti(
+Component.getInitialProps = async (props): Promise<Props> => {
+  const { query: { address }, req } = props;
+  console.log('Initial', props.query);
+  const api = req ? await Api.setup() : webApi;
+  const socialAccountOpt = await api.query.blogs.socialAccountById(address) as Option<SocialAccount>;
+  const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
+  const profileOpt = socialAccount ? socialAccount.profile : undefined;
+  const profile = profileOpt && profileOpt.unwrap() as Profile;
+  const content = profile && await getJsonFromIpfs<ProfileData>(profile.ipfs_hash);
+  Api.destroy();
+  return {
+    id: new AccountId(address as string),
+    socialAccount: socialAccount,
+    profile: profile,
+    profileData: content
+  };
+};
+
+export default Component;
+
+export const ViewProfile = withMulti(
   Component,
   withAddressFromUrl,
   withCalls<Props>(

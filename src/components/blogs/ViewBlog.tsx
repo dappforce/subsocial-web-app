@@ -280,7 +280,7 @@ Component.getInitialProps = async (props): Promise<any> => {
   const blog = blogIdOpt.isSome && blogIdOpt.unwrap();
   const content = blog && await getJsonFromIpfs<BlogData>(blog.ipfs_hash);
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
-
+  Api.destroy();
   return {
     blog: blog,
     postIds: postIds,

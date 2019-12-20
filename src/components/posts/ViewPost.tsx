@@ -65,8 +65,9 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     withActions = true,
     withStats = true,
     id,
+    api,
     withCreatedBy = true,
-    api
+    initialContent
   } = props;
 
   const {
@@ -79,8 +80,16 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     edit_history
   } = post;
 
+  console.log(post);
+  const makeSummary = (body: string) => (
+    body.length > LIMIT_SUMMARY
+    ? body.substr(0, LIMIT_SUMMARY) + '...'
+    : body
+  );
+
+  const initContent = initialContent ? { ...initialContent, summary: makeSummary(initialContent.body) } : {} as PostContent;
   const { state: { address } } = useMyAccount();
-  const [ content , setContent ] = useState({} as PostContent);
+  const [ content , setContent ] = useState(initContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters, setActiveVoters ] = useState(0);
@@ -92,13 +101,6 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     setPostVotersOpen(true);
     setActiveVoters(type);
   };
-
-  const makeSummary = (body: string) => (
-    body.length > LIMIT_SUMMARY
-    ? body.substr(0, LIMIT_SUMMARY) + '...'
-    : body
-  );
-
   useEffect(() => {
     if (!ipfs_hash) return;
     let isSubsribe = true;
@@ -233,7 +235,7 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     const counts = downvotes_count.toNumber() + upvotes_count.toNumber();
     return (<>
     <div className='DfCountsPreview'>
-      <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}><Pluralize count={counts} singularText='Reaction'/></div></MutedSpan>
+      {!extension.value && <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}><Pluralize count={counts} singularText='Reaction'/></div></MutedSpan>}
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
       <Pluralize count={comments_count.toNumber()} singularText='Comment'/></div></MutedSpan>
       <MutedSpan><div><Pluralize count={shares_count.toNumber()} singularText='Share'/></div></MutedSpan>
@@ -312,7 +314,7 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
 
   if (nameOnly) {
     return renderNameOnly(content.title,id);
-  } else if (isRegularPost) {
+  } else if (isRegularPost || !extension.value) {
     if (preview) {
       return renderRegularPreview();
     } else {
@@ -331,14 +333,13 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { id }, req } = props;
-  const api = req ? await Api.setup() : webApi;
   console.log('Initial', props.query);
+  const api = req ? await Api.setup() : webApi;
   const postIdOpt = await api.query.blogs.postById(id) as Option<Post>;
   const post = postIdOpt.isSome && postIdOpt.unwrap();
   const content = post && await getJsonFromIpfs<PostData>(post.ipfs_hash);
-  console.log(content);
+  Api.destroy();
   return {
-    api: api,
     post: post,
     initialContent: content
   };
