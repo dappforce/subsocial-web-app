@@ -3,23 +3,21 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { Segment } from 'semantic-ui-react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti, withApi } from '@polkadot/ui-api/with';
 import { Option } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostData } from '../types';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import { Loading } from '../utils/utils';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { CommentsByPost } from './ViewComment';
 import { MutedSpan } from '../utils/MutedText';
 import { Voter } from '../voting/Voter';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import AddressMiniDf from '../utils/AddressMiniDf';
-import { api } from '@polkadot/ui-api';
+import { api as webApi } from '@polkadot/ui-api';
 import { ShareModal } from './ShareModal';
-import { useRouter } from 'next/router';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { Pluralize } from '../utils/Plularize';
@@ -28,10 +26,14 @@ import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
+import { useMyAccount } from '../utils/MyAccountContext';
+import Api from '../utils/SubstrateApi';
+import { NextPage } from 'next';
+import { ApiProps } from '@polkadot/ui-api/types';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
-type ViewPostProps = MyAccountProps & {
+type ViewPostProps = ApiProps & {
   preview?: boolean,
   nameOnly?: boolean,
   withLink?: boolean,
@@ -40,22 +42,22 @@ type ViewPostProps = MyAccountProps & {
   withActions?: boolean,
   withBlogName?: boolean,
   id: PostId,
+  post?: Post,
   postById?: Option<Post>,
-  commentIds?: CommentId[]
+  commentIds?: CommentId[],
+  initialContent?: PostData
 };
 
 type PostContent = PostData & {
   summary: string;
 };
 
-function ViewPostInternal (props: ViewPostProps) {
-  const { postById } = props;
+const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
+  const { post } = props;
 
-  if (postById === undefined) return <Loading />;
-  else if (postById.isNone) return <NoData description={<span>Post not found</span>} />;
+  if (!post) return <NoData description={<span>Post not found</span>} />;
 
   const {
-    myAddress,
     preview = false,
     nameOnly = false,
     withBlogName = false,
@@ -63,10 +65,10 @@ function ViewPostInternal (props: ViewPostProps) {
     withActions = true,
     withStats = true,
     id,
-    withCreatedBy = true
+    withCreatedBy = true,
+    api
   } = props;
 
-  const post = postById.unwrap();
   const {
     created,
     ipfs_hash,
@@ -77,6 +79,7 @@ function ViewPostInternal (props: ViewPostProps) {
     edit_history
   } = post;
 
+  const { state: { address } } = useMyAccount();
   const [ content , setContent ] = useState({} as PostContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
@@ -126,7 +129,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const RenderDropDownMenu = () => {
 
     const account = isRegularPost ? post && created.account.toString() : originalPost.id && originalPost.created.account.toString();
-    const isMyStruct = myAddress === account;
+    const isMyStruct = address === account;
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
@@ -135,7 +138,7 @@ function ViewPostInternal (props: ViewPostProps) {
     const menu = (
       <Menu>
         {isMyStruct && <Menu.Item key='0'>
-        <Link href='/post/edit/[id]' as={`/post/edit/${id.toString()}`}><a className='item'>Edit</a></Link>
+        <Link href='/post/edit/[id]' as={`/post/edit/${id}`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -155,7 +158,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderNameOnly = (title: string, id: PostId) => {
     if (!title || !id) return null;
     return withLink
-      ? <Link href='/post/[id]' as={`/post/${id.toString()}`} >
+      ? <Link href='/post/[id]' as={`/post/${id}`} >
         <a className='header DfPostTitle--preview'>
           {title}
         </a>
@@ -174,7 +177,7 @@ function ViewPostInternal (props: ViewPostProps) {
         size={size}
         extraDetails={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
-          <Link href='/post/[id]' as={`/post/${id.toString()}`} >
+          <Link href='/post/[id]' as={`/post/${id}`} >
             <a className='DfGreyLink'>
               {time}
             </a>
@@ -326,20 +329,39 @@ function ViewPostInternal (props: ViewPostProps) {
   }
 }
 
+ViewPostPage.getInitialProps = async (props): Promise<any> => {
+  const { query: { id }, req } = props;
+  const api = req ? await Api.setup() : webApi;
+  console.log('Initial', props.query);
+  const postIdOpt = await api.query.blogs.postById(id) as Option<Post>;
+  const post = postIdOpt.isSome && postIdOpt.unwrap();
+  const content = post && await getJsonFromIpfs<PostData>(post.ipfs_hash);
+  console.log(content);
+  return {
+    api: api,
+    post: post,
+    initialContent: content
+  };
+};
+
+export default ViewPostPage;
+
+const withUnwrap = (Component: React.ComponentType<ViewPostProps>) => {
+  return (props: ViewPostProps) => {
+    const { postById } = props;
+    if (!postById) return <Loading/>;
+
+    const post = postById.unwrap();
+
+    return <Component post={post} {...props}/>;
+  };
+};
+
 export const ViewPost = withMulti(
-  ViewPostInternal,
-  withMyAccount,
+  ViewPostPage,
   withCalls<ViewPostProps>(
     queryBlogsToProp('postById', 'id')
-  )
+  ),
+  withUnwrap,
+  withApi
 );
-
-export function ViewPostById () {
-  const router = useRouter();
-  const { id } = router.query;
-  try {
-    return <ViewPost id={new PostId(id as string)}/>;
-  } catch (err) {
-    return <em>Invalid Id: {id}</em>;
-  }
-}

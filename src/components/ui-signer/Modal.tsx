@@ -5,7 +5,7 @@
 import { SubmittableResult } from '@polkadot/api/SubmittableExtrinsic';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { ApiProps } from '@polkadot/ui-api/types';
-import { I18nProps, BareProps } from '@polkadot/ui-app/types';
+import { BareProps } from '@polkadot/ui-app/types';
 import { RpcMethod } from '@polkadot/jsonrpc/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
@@ -21,14 +21,13 @@ import { format } from '@polkadot/util/logger';
 
 import Transaction from './Transaction';
 import Unlock from './Unlock';
-import translate from './translate';
 
 type BaseProps = BareProps & {
   queue: Array<QueueTx>,
   queueSetTxStatus: QueueTx$MessageSetStatus
 };
 
-type Props = I18nProps & ApiProps & BaseProps & {
+type Props = ApiProps & BaseProps & {
   allAccounts?: SubjectInfo
 };
 
@@ -109,7 +108,6 @@ class Signer extends React.PureComponent<Props, State> {
   }
 
   private renderButtons () {
-    const { t } = this.props;
     const { currentItem, isSendable } = this.state;
 
     if (!currentItem) {
@@ -123,7 +121,7 @@ class Signer extends React.PureComponent<Props, State> {
             isNegative
             onClick={this.onCancel}
             tabIndex={3}
-            label={t('Cancel')}
+            label={'Cancel'}
           />
           <Button.Or />
           <Button
@@ -134,8 +132,8 @@ class Signer extends React.PureComponent<Props, State> {
             tabIndex={2}
             label={
               currentItem.isUnsigned
-                ? t('Submit (no signature)')
-                : t('Sign and Submit')
+                ? 'Submit (no signature)'
+                : 'Sign and Submit'
             }
           />
         </Button.Group>
@@ -386,7 +384,6 @@ export {
 
 export default withMulti(
   Signer,
-  translate,
   withApi,
   withObservable(accountObservable.subject, { propName: 'allAccounts' })
 );

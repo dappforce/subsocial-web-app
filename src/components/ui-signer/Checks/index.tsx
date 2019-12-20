@@ -1,8 +1,6 @@
 // Copyright 2017-2019 @polkadot/ui-signer authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { I18nProps } from '@polkadot/ui-app/types';
 import { DerivedFees, DerivedBalances } from '@polkadot/api-derive/types';
 import { IExtrinsic } from '@polkadot/types/types';
 import { ExtraFees } from './types';
@@ -14,7 +12,6 @@ import { withCalls } from '@polkadot/ui-api';
 import { Icon } from '@polkadot/ui-app';
 import { compactToU8a, formatBalance } from '@polkadot/util';
 
-import translate from '../translate';
 import Proposal from './Proposal';
 import Transfer from './Transfer';
 import { MAX_SIZE_BYTES, MAX_SIZE_MB, ZERO_BALANCE, ZERO_FEES } from './constants';
@@ -31,7 +28,7 @@ type State = ExtraFees & {
   overLimit: boolean
 };
 
-type Props = I18nProps & {
+type Props = {
   balances_fees?: DerivedFees,
   balances_votingBalance?: DerivedBalances,
   accountId?: string | null,
@@ -118,7 +115,7 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { accountId, className, isSendable, t } = this.props;
+    const { accountId, isSendable } = this.props;
     const { allFees, allTotal, allWarn, hasAvailable, isRemovable, isReserved, overLimit } = this.state;
 
     if (!accountId) {
@@ -136,47 +133,39 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
     // display all the errors, warning and information messages (in that order)
     return (
       <article
-        className={[className, feeClass, 'padded'].join(' ')}
+        className={[feeClass, 'padded'].join(' ')}
         key='txinfo'
       >
         {
           isSendable
             ? undefined
-            : <div><Icon name='ban' />{t('The selected account does not exist on your keyring')}</div>
+            : <div><Icon name='ban' />{'The selected account does not exist on your keyring'}</div>
         }
         {
           hasAvailable
             ? undefined
-            : <div><Icon name='ban' />{t('The selected account does not have the required balance available for this transaction')}</div>
+            : <div><Icon name='ban' />{'The selected account does not have the required balance available for this transaction'}</div>
         }
         {
           overLimit
-            ? <div><Icon name='ban' />{t(`This transaction will be rejected by the node as it is greater than the maximum size of ${MAX_SIZE_MB}MB`)}></div>
+            ? <div><Icon name='ban' />{`This transaction will be rejected by the node as it is greater than the maximum size of ${MAX_SIZE_MB}MB`}></div>
             : undefined
         }
         {
           isRemovable && hasAvailable
-            ? <div><Icon name='ban' />{t('Submitting this transaction will drop the account balance to below the existential amount, which can result in the account being removed from the chain state associated funds burned.')}</div>
+            ? <div><Icon name='ban' />{'Submitting this transaction will drop the account balance to below the existential amount, which can result in the account being removed from the chain state associated funds burned.'}</div>
             : undefined
         }
         {this.renderTransfer()}
         {this.renderProposal()}
         {
           isReserved
-            ? <div><Icon name='arrow right' />{t('This account does have a reserved/locked balance, not taken into account')}</div>
+            ? <div><Icon name='arrow right' />{'This account does have a reserved/locked balance, not taken into account'}</div>
             : undefined
         }
-        <div><Icon name='arrow right' />{t('Fees includes the transaction fee and the per-byte fee')}</div>
-        <div><Icon name='arrow right' />{t('Fees totalling {{fees}} will be applied to the submission', {
-          replace: {
-            fees: formatBalance(allFees)
-          }
-        })}</div>
-        <div><Icon name='arrow right' />{t('{{total}} total transaction amount (fees + value)', {
-          replace: {
-            total: formatBalance(allTotal)
-          }
-        })}</div>
+        <div><Icon name='arrow right' />{'Fees includes the transaction fee and the per-byte fee'}</div>
+        <div><Icon name='arrow right' />{`Fees totalling {${formatBalance(allFees)}} will be applied to the submission`}</div>
+        <div><Icon name='arrow right' />{`{${formatBalance(allTotal)}} total transaction amount (fees + value)`}</div>
       </article>
     );
   }
@@ -225,10 +214,8 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
   }
 }
 
-export default translate(
-  withCalls<Props>(
+export default withCalls<Props>(
     'derive.balances.fees',
     ['derive.balances.votingBalance', { paramName: 'accountId' }],
     ['query.system.accountNonce', { paramName: 'accountId' }]
-  )(FeeDisplay)
-);
+  )(FeeDisplay);

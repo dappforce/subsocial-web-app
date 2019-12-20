@@ -11,9 +11,7 @@ import React from 'react';
 import { Compact } from '@polkadot/types';
 import { withCall, withMulti } from '@polkadot/ui-api';
 import { Icon } from '@polkadot/ui-app';
-import { formatBalance } from '@polkadot/util';
 
-import translate from '../translate';
 import { ZERO_BALANCE } from './constants';
 
 type Props = I18nProps & {
@@ -65,23 +63,18 @@ export class Transfer extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { fees, t } = this.props;
     const { isCreation, isNoEffect } = this.state;
 
     return (
       <>
         {
           isNoEffect
-            ? <div><Icon name='warning sign' />{t('The final recipient balance is less than the existential amount and will not be reflected')}</div>
+            ? <div><Icon name='warning sign' />{'The final recipient balance is less than the existential amount and will not be reflected'}</div>
             : undefined
         }
         {
           isCreation
-            ? <div><Icon name='warning sign' />{t('A fee of {{creationFee}} will be deducted from the sender since the destination account does not exist', {
-              replace: {
-                creationFee: formatBalance(fees.creationFee)
-              }
-            })}</div>
+            ? <div><Icon name='warning sign' />{'A fee of {{creationFee}} will be deducted from the sender since the destination account does not exist'}</div>
             : undefined
         }
       </>
@@ -91,6 +84,5 @@ export class Transfer extends React.PureComponent<Props, State> {
 
 export default withMulti(
   Transfer,
-  translate,
   withCall('derive.balances.votingBalance', { paramName: 'recipientId' })
 );

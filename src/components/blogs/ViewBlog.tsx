@@ -9,7 +9,6 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
 import { BlogId, Blog, PostId, BlogData } from '../types';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { ViewPost } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -25,12 +24,13 @@ import AddressMiniDf from '../utils/AddressMiniDf';
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
-import { api } from '@polkadot/ui-api';
+import Api from '../utils/SubstrateApi';
 import { useMyAccount } from '../utils/MyAccountContext';
+import { api as webApi } from '@polkadot/ui-api';
 
 const SUB_SIZE = 2;
 
-type Props = MyAccountProps & {
+type Props = {
   preview?: boolean,
   nameOnly?: boolean,
   dropdownPreview?: boolean,
@@ -40,17 +40,18 @@ type Props = MyAccountProps & {
   withFollowButton?: boolean,
   id?: BlogId,
   blogById?: Option<Blog>,
+  blog?: Blog,
   postIds?: PostId[],
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void
+  initContent?: BlogData
 };
 
 const Component: NextPage<Props> = (props: Props) => {
-  const { blogById } = props;
+  const { blog } = props;
 
-  if (blogById === undefined) return <Loading />;
-  else if (blogById.isNone) return <NoData description={<span>Blog not found</span>} />;
+  if (!blog) return <NoData description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -60,23 +61,23 @@ const Component: NextPage<Props> = (props: Props) => {
     previewDetails = false,
     withFollowButton = false,
     dropdownPreview = false,
-    myAddress,
     postIds = [],
     imageSize = 36,
-    onClick
+    onClick,
+    initContent = {} as BlogData
   } = props;
 
-  const blog = blogById.unwrap();
   const {
     id,
     score,
     created: { account, time },
     ipfs_hash,
-    followers_count,
+    followers_count: followers,
     edit_history
   } = blog;
-  const followers = followers_count.toNumber();
-  const [content, setContent] = useState({} as BlogData);
+
+  const { state: { address } } = useMyAccount();
+  const [content, setContent] = useState(initContent);
   const { desc, name, image } = content;
 
   const [followersOpen, setFollowersOpen] = useState(false);
@@ -93,7 +94,7 @@ const Component: NextPage<Props> = (props: Props) => {
     return () => { isSubscribe = false; };
   }, [ false ]);
 
-  const isMyBlog = myAddress && account && myAddress === account.toString();
+  const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
   const postsCount = postIds ? postIds.length : 0;
 
@@ -271,25 +272,40 @@ const Component: NextPage<Props> = (props: Props) => {
   </Section>;
 };
 
-Component.getInitialProps = async (props): Promise<Props> => {
-  const { query: { blogId } } = props;
-  const { state: { address } } = useMyAccount();
-  console.log(props.query);
-  const id = await api.query.blogs.blogById(blogId) as BlogId;
-  const postIds = await api.query.blogs.postIdsByBlogId(id) as unknown as PostId[];
+Component.getInitialProps = async (props): Promise<any> => {
+  const { query: { blogId }, req } = props;
+  console.log('Initial', props.query);
+  const api = req ? await Api.setup() : webApi;
+  const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
+  const blog = blogIdOpt.isSome && blogIdOpt.unwrap();
+  const content = blog && await getJsonFromIpfs<BlogData>(blog.ipfs_hash);
+  const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
+
   return {
-    myAddress: address,
-    postIds: postIds
+    blog: blog,
+    postIds: postIds,
+    initContent: content
   };
 };
 
 export default Component;
 
+const withUnwrap = (Component: React.ComponentType<Props>) => {
+  return (props: Props) => {
+    const { blogById } = props;
+    if (!blogById) return <Loading/>;
+
+    const blog = blogById.unwrap();
+
+    return <Component blog={blog} {...props}/>;
+  };
+};
+
 export const ViewBlog = withMulti(
   Component,
-  withMyAccount,
   withCalls<Props>(
     queryBlogsToProp('blogById', 'id'),
     queryBlogsToProp('postIdsByBlogId', { paramName: 'id', propName: 'postIds' })
-  )
+  ),
+  withUnwrap
 );

@@ -6,7 +6,7 @@ import '../components/utils/styles';
 
 import dynamic from 'next/dynamic';
 // import Suspense from '../components/utils/Suspense';
-const Suspense = dynamic(() => import('../components/utils/Suspense'), { ssr: false });
+const Suspense = dynamic(() => import('../components/utils/Suspense'));
 import store from 'store';
 import { getTypeRegistry } from '@polkadot/types';
 import { Api } from '@polkadot/ui-api';
@@ -92,7 +92,11 @@ const SideMenu = (props: Props) => {
   </ReactiveBase>;
 };
 
-const NextLayout: React.FunctionComponent<any> = ({ children }) => {
+type LayoutProps = {
+  isClient: boolean
+};
+
+const NextLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient }) => {
   const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
 
   console.log('Web socket url=', url);
@@ -109,7 +113,8 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
   } catch (error) {
     console.error('Type registration failed', error);
   }
-  return <div id='root'>
+
+  const ClientLayout = () => (
     <Suspense fallback='...'>
       <Queue>
         <QueueConsumer>
@@ -145,6 +150,29 @@ const NextLayout: React.FunctionComponent<any> = ({ children }) => {
         </QueueConsumer>
       </Queue>
     </Suspense>
+  );
+
+  const ServerLayout = () => (
+    <Api
+      queueExtrinsic={{} as any}
+      queueSetTxStatus={{} as any}
+      url={url}
+    >
+      <MyAccountProvider>
+        <SidebarCollapsedProvider>
+          <SideMenu>
+            {children}
+          </SideMenu>
+        </SidebarCollapsedProvider>
+      </MyAccountProvider>
+      <Connecting />
+    </Api>
+  );
+
+  return <div id='root'>
+    {isClient
+      ? <ClientLayout/>
+      : <ServerLayout/>}
   </div>;
 };
 
