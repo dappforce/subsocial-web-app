@@ -186,7 +186,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: false,
-    category: { title: 'Project ideas', color: 'purple', children: new Array<Category>() }
+    categories: [{ title: 'Project ideas', color: 'purple', children: new Array<Category>() }]
   },
   {
     title: faker.company.companyName(),
@@ -195,7 +195,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: true,
-    category: { title: 'Project ideas', color: 'purple', children: new Array<Category>() }
+    categories: [{ title: 'Project ideas', color: 'purple', children: new Array<Category>() }]
   },
   {
     title: faker.company.companyName(),
@@ -204,7 +204,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: false,
-    category: { title: 'Code', color: 'orange', children: new Array<Category>() }
+    categories: [{ title: 'Code', color: 'orange', children: new Array<Category>() }]
   },
   {
     title: faker.company.companyName(),
@@ -213,7 +213,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: true,
-    category: { title: 'Code', color: 'orange', children: new Array<Category>() }
+    categories: [{ title: 'Code', color: 'orange', children: new Array<Category>() }]
   }
 ];
 

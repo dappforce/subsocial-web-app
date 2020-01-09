@@ -14,6 +14,7 @@ type Props = {
 function ListForumTopics (props: Props) {
 
   const { data, noDataDesc = 'No topics started yet', noDataExt, isDataEmpty } = props;
+
   console.log('In', data);
   return (
     <>
@@ -33,7 +34,7 @@ function ListForumTopics (props: Props) {
                 </div>}
               description={
                 <div className='desc'>
-                  <Tag color={item.category.color}>{item.category.title}</Tag>
+                  {item.categories.map((category) => <Tag color={category.color}>{category.title}</Tag>)}
                   Posted by <b>@{item.description}</b> on {item.time.toDateString()}
                 </div>}
             />

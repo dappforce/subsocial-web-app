@@ -47,17 +47,37 @@ function ViewForum (props: ForumProps) {
     return currentCategory;
   }
 
+  function findCategoryChildren (chosenCategory: Category) {
+
+    let childrenArray = [ chosenCategory ];
+
+    let getCategoryChildren = function (chosenCategory: Category): any {
+      if (chosenCategory.children.length !== 0) {
+        return childrenArray.concat(chosenCategory.children);
+      }
+      for (let i = 0; i < chosenCategory.children.length; i++) {
+        return getCategoryChildren(chosenCategory.children[i]);
+      }
+    };
+
+    let foundChildren = getCategoryChildren(chosenCategory);
+    return foundChildren;
+  }
+
   function filterByCategory (currentCategory: Category) {
-    let filterData = new Array();
+    let filterCategories: Category[] = [];
 
-    filterData = sortedData.filter(item => item.category.title === currentCategory.title);
-
-    if (currentCategory.children !== []) {
-      let children = flattenDeep(currentCategory.children);
-      console.log({children});
+    if (currentCategory.children.length !== 0) {
+      filterCategories = findCategoryChildren(currentCategory);
+    } else {
+      filterCategories.push(currentCategory);
     }
+    console.log('cat', filterCategories);
+
+    let filterData = sortedData.filter(item => item.categories.filter(category => filterCategories.some(filter => category.title === filter.title)));
 
     setFilteredData(filterData);
+    console.log('filter', filteredData);
   }
 
   function sortByScore (a: TopicData, b: TopicData) {

@@ -11,5 +11,5 @@ export type TopicData = {
   commentsCount: number;
   score: number;
   isPinned: boolean;
-  category: Category
+  categories: Category[]
 };
