@@ -5,8 +5,6 @@ import { Category, TopicData } from './types';
 import ListForumTopics from './ListForumTopics';
 import { RadioChangeEvent } from 'antd/lib/radio';
 
-const HOME_CATEGORY = 'home';
-
 type ForumProps = {
   categoryList: Category[],
   data: TopicData[]
@@ -17,12 +15,50 @@ type SortingType = 'score' | 'latest';
 function ViewForum (props: ForumProps) {
 
   const { categoryList, data } = props;
-  const [ chosenCategory, setChosenCategory ] = useState(HOME_CATEGORY);
   const [ sortedData, setSortedData ] = useState(data);
+  const [ filteredData, setFilteredData ] = useState(sortedData);
 
-  const isHome = chosenCategory === HOME_CATEGORY;
   const isDataEmpty = data.length === 0;
-  const filterData = isHome ? sortedData : sortedData.filter(item => item.category.category === chosenCategory);
+
+  const onChangeFilter = (value: string[]) => {
+    let chosenCategory: Category = findCategory(value);
+    console.log(chosenCategory);
+    filterByCategory(chosenCategory);
+  };
+
+  function findCategory (chosenCategory: string[]) {
+    let category = chosenCategory.pop();
+
+    let getCurrentCategory = function (categories: Category[]): any {
+      if (categories) {
+        for (let i = 0; i < categories.length; i++) {
+          if (categories[i].title === category) {
+            console.log(categories[i]);
+            return categories[i];
+          }
+          let found = getCurrentCategory(categories[i].children);
+          if (found) return found;
+        }
+      }
+    };
+
+    let currentCategory = getCurrentCategory(categoryList);
+    console.log(currentCategory);
+    return currentCategory;
+  }
+
+  function filterByCategory (currentCategory: Category) {
+    let filterData = new Array();
+
+    filterData = sortedData.filter(item => item.category.title === currentCategory.title);
+
+    if (currentCategory.children !== []) {
+      let children = flattenDeep(currentCategory.children);
+      console.log({children});
+    }
+
+    setFilteredData(filterData);
+  }
 
   function sortByScore (a: TopicData, b: TopicData) {
     if (a.score < b.score) {
@@ -56,7 +92,6 @@ function ViewForum (props: ForumProps) {
         break;
     }
   }
-  console.log('Reload', [ sortedData, filterData]);
 
   const onChangeSorting = (e: RadioChangeEvent) => {
     const sortValue = e.target.value as SortingType;
@@ -64,26 +99,24 @@ function ViewForum (props: ForumProps) {
     sortTopicData(sortValue);
   };
 
+  console.log('Here', filteredData);
+
   return (
     <>
       <div className='ForumHeader'>
         <div className='Navigation'>
           <a href=''><Icon type='home' theme='twoTone'/> / </a>
           <Cascader
-            fieldNames={{ label: 'category', value: 'category', children: 'children' }}
+            fieldNames={{ label: 'title', value: 'title', children: 'children' }}
             options={categoryList}
             placeholder='Select category'
-            onChange={(res) => {
-              const value = res.pop();
-              const category = value ? value : HOME_CATEGORY;
-              setChosenCategory(category);
-            }}
+            onChange={(value) => onChangeFilter(value)}
             changeOnSelect
           />
         </div>
         <div className='Sorting'>
           <div style={{ marginRight: '1.5rem', paddingTop: '.2rem' }}>Sort by:</div>
-          <Radio.Group onChange={onChangeSorting}>
+          <Radio.Group defaultValue='latest' onChange={onChangeSorting}>
             <Radio.Button value='latest'>
               <div>
                 <Icon type='clock-circle'/>
@@ -103,7 +136,7 @@ function ViewForum (props: ForumProps) {
           <Icon type='ellipsis' />
         </div>
       </div>
-      <ListForumTopics data={filterData} isDataEmpty={isDataEmpty} noDataDesc noDataExt={<Button type='primary' icon='plus'>New Topic</Button>}/>
+      <ListForumTopics data={filteredData} isDataEmpty={isDataEmpty} noDataDesc noDataExt={<Button type='primary' icon='plus'>New Topic</Button>}/>
     </>
   );
 }

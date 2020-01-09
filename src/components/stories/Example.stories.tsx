@@ -150,27 +150,27 @@ export const Navigations = () => {
 
 const options: Category[] = [
   {
-    category: 'Project ideas',
+    title: 'Project ideas',
     color: 'orange',
     children: [
       {
-        category: 'Code',
+        title: 'Code',
         color: 'purple',
         children: []
       }
     ]
   },
   {
-    category: 'Startup',
+    title: 'Startup',
     color: 'green',
     children: [
       {
-        category: 'Time management',
+        title: 'Time management',
         color: 'blue',
         children: []
       },
       {
-        category: 'Marketing',
+        title: 'Marketing',
         color: 'yellow',
         children: []
       }
@@ -186,7 +186,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: false,
-    category: { category: 'Project ideas', color: 'purple', children: new Array() }
+    category: { title: 'Project ideas', color: 'purple', children: new Array<Category>() }
   },
   {
     title: faker.company.companyName(),
@@ -195,7 +195,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: true,
-    category: { category: 'Project ideas', color: 'purple', children: new Array() }
+    category: { title: 'Project ideas', color: 'purple', children: new Array<Category>() }
   },
   {
     title: faker.company.companyName(),
@@ -204,7 +204,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: false,
-    category: { category: 'Code', color: 'orange', children: new Array() }
+    category: { title: 'Code', color: 'orange', children: new Array<Category>() }
   },
   {
     title: faker.company.companyName(),
@@ -213,7 +213,7 @@ const data: TopicData[] = [
     commentsCount: faker.random.number(),
     score: faker.random.number(),
     isPinned: true,
-    category: { category: 'Code', color: 'orange', children: new Array() }
+    category: { title: 'Code', color: 'orange', children: new Array<Category>() }
   }
 ];
 
