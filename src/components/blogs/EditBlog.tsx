@@ -12,7 +12,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api';
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
-import { BlogId, Blog, BlogData, BlogUpdate, VecAccountId } from '../types';
+import { BlogId, Blog, BlogContent, BlogUpdate, VecAccountId } from '../types';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 
@@ -66,10 +66,10 @@ type ValidationProps = {
 type OuterProps = ValidationProps & {
   id?: BlogId,
   struct?: Blog,
-  json?: BlogData
+  json?: BlogContent
 };
 
-type FormValues = BlogData & {
+type FormValues = BlogContent & {
   slug: string
 };
 
@@ -245,7 +245,7 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Blog>
 };
 
-type StructJson = BlogData | undefined;
+type StructJson = BlogContent | undefined;
 
 type Struct = Blog | undefined;
 
@@ -272,7 +272,7 @@ function LoadStruct (props: LoadStructProps) {
     if (struct === undefined) return toggleTrigger();
 
     console.log('Loading blog JSON from IPFS');
-    getJsonFromIpfs<BlogData>(struct.ipfs_hash).then(json => {
+    getJsonFromIpfs<BlogContent>(struct.ipfs_hash).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

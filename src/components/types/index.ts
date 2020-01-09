@@ -2,7 +2,7 @@ import { Option, Struct, Enum, EnumType } from '@polkadot/types/codec';
 import { getTypeRegistry, BlockNumber, Moment, AccountId, u16, u32, u64, Text, Vector, i32, Null } from '@polkadot/types';
 import moment from 'moment-timezone';
 
-export type IpfsData = CommentData | PostData | BlogData | ProfileData | SharedPostData;
+export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
 
 export type Activity = {
   id: number,
@@ -84,7 +84,7 @@ export class OptionBlogId extends Option.with(BlogId) {}
 export class OptionCommentId extends Option.with(CommentId) {}
 export class OptionVecAccountId extends Option.with(VecAccountId) {}
 
-export type BlogData = {
+export type BlogContent = {
   name: string;
   desc: string;
   image: string;
@@ -148,7 +148,7 @@ export class Blog extends Struct {
     return ipfsHash.toString();
   }
 
-  // get ipfs_hash (): BlogData {
+  // get ipfs_hash (): BlogContent {
   //   const IpfsHash = this.get('ipfs_hash') as Text;
   //   return JSON.parse(IpfsHash.toString());
   // }
@@ -208,11 +208,11 @@ export class BlogUpdate extends Struct {
   }
 }
 
-export type SharedPostData = {
+export type SharedPostContent = {
   body: string
 };
 
-export type PostData = SharedPostData & {
+export type PostContent = SharedPostContent & {
   title: string;
   image: string;
   tags: string[];
@@ -345,7 +345,7 @@ export class PostUpdate extends Struct {
   }
 }
 
-export type CommentData = {
+export type CommentContent = {
   body: string;
 };
 
@@ -547,7 +547,7 @@ export class SocialAccount extends Struct {
   }
 }
 
-export type ProfileData = {
+export type ProfileContent = {
   fullname: string;
   avatar: string;
   email: string;

@@ -10,7 +10,7 @@ import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostData, PostUpdate, BlogId, PostExtension, RegularPost } from '../types';
+import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
@@ -47,13 +47,13 @@ type OuterProps = ValidationProps & {
   id?: PostId,
   extention?: PostExtension,
   struct?: Post
-  json?: PostData,
+  json?: PostContent,
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean
 };
 
-type FormValues = PostData;
+type FormValues = PostContent;
 
 type FormProps = OuterProps & FormikProps<FormValues>;
 
@@ -264,7 +264,7 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Post>
 };
 
-type StructJson = PostData | undefined;
+type StructJson = PostContent | undefined;
 type Struct = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
@@ -291,7 +291,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       console.log('Loading post JSON from IPFS');
 
-      getJsonFromIpfs<PostData>(struct.ipfs_hash).then(json => {
+      getJsonFromIpfs<PostContent>(struct.ipfs_hash).then(json => {
         setJson(json);
       }).catch(err => console.log(err));
     }, [ trigger ]);

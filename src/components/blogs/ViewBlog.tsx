@@ -8,7 +8,7 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
-import { BlogId, Blog, PostId, BlogData } from '../types';
+import { BlogId, Blog, PostId, BlogContent } from '../types';
 import { ViewPost } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -27,8 +27,14 @@ import { NextPage } from 'next';
 import Api from '../utils/SubstrateApi';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { api as webApi } from '@polkadot/ui-api';
+import { ApiPromise } from '@polkadot/api';
 
 const SUB_SIZE = 2;
+
+export type BlogData = {
+  blog?: Blog,
+  initialContent?: BlogContent
+};
 
 type Props = {
   preview?: boolean,
@@ -40,16 +46,15 @@ type Props = {
   withFollowButton?: boolean,
   id?: BlogId,
   blogById?: Option<Blog>,
-  blog?: Blog,
   postIds?: PostId[],
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void
-  initContent?: BlogData
+  blogData: BlogData
 };
 
-const Component: NextPage<Props> = (props: Props) => {
-  const { blog } = props;
+export const ViewBlogPage: NextPage<Props> = (props: Props) => {
+  const { blog } = props.blogData;
 
   if (!blog) return <NoData description={<span>Blog not found</span>} />;
 
@@ -64,7 +69,7 @@ const Component: NextPage<Props> = (props: Props) => {
     postIds = [],
     imageSize = 36,
     onClick,
-    initContent = {} as BlogData
+    blogData: { initialContent = {} as BlogContent }
   } = props;
 
   const {
@@ -77,7 +82,7 @@ const Component: NextPage<Props> = (props: Props) => {
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const [content, setContent] = useState(initContent);
+  const [content, setContent] = useState(initialContent);
   const { desc, name, image } = content;
 
   const [followersOpen, setFollowersOpen] = useState(false);
@@ -86,7 +91,7 @@ const Component: NextPage<Props> = (props: Props) => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    getJsonFromIpfs<BlogData>(ipfs_hash).then(json => {
+    getJsonFromIpfs<BlogContent>(ipfs_hash).then(json => {
       const content = json;
       if (isSubscribe) setContent(content);
     }).catch(err => console.log(err));
@@ -192,7 +197,7 @@ const Component: NextPage<Props> = (props: Props) => {
           <Pluralize count={followers} singularText='Follower'/>
         </div>
 
-        <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
+        <MutedSpan className='DfStatItem'><Pluralize count={score} singularText='Point' /></MutedSpan>
 
         <MutedSpan>{renderDropDownMenu()}</MutedSpan>
 
@@ -272,23 +277,30 @@ const Component: NextPage<Props> = (props: Props) => {
   </Section>;
 };
 
-Component.getInitialProps = async (props): Promise<any> => {
-  const { query: { blogId }, req } = props;
-  console.log('Initial', props.query);
-  const api = req ? await Api.setup() : webApi;
+export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<BlogData> => {
   const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
-  const blog = blogIdOpt.isSome && blogIdOpt.unwrap();
-  const content = blog && await getJsonFromIpfs<BlogData>(blog.ipfs_hash);
-  const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
-  Api.destroy();
+  const blog = blogIdOpt.isSome ? blogIdOpt.unwrap() : undefined;
+  const content = blog && await getJsonFromIpfs<BlogContent>(blog.ipfs_hash);
   return {
     blog: blog,
-    postIds: postIds,
-    initContent: content
+    initialContent: content
   };
 };
 
-export default Component;
+ViewBlogPage.getInitialProps = async (props): Promise<any> => {
+  const { query: { blogId }, req } = props;
+  console.log('Initial', props.query);
+  const api = req ? await Api.setup() : webApi;
+  const blogData = await loadBlogData(api, new BlogId(blogId as string));
+  const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
+  Api.destroy();
+  return {
+    blogData: blogData,
+    postIds: postIds
+  };
+};
+
+export default ViewBlogPage;
 
 const withUnwrap = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
@@ -297,12 +309,12 @@ const withUnwrap = (Component: React.ComponentType<Props>) => {
 
     const blog = blogById.unwrap();
 
-    return <Component blog={blog} {...props}/>;
+    return <Component blogData={{ blog: blog }} {...props}/>;
   };
 };
 
 export const ViewBlog = withMulti(
-  Component,
+  ViewBlogPage,
   withCalls<Props>(
     queryBlogsToProp('blogById', 'id'),
     queryBlogsToProp('postIdsByBlogId', { paramName: 'id', propName: 'postIds' })

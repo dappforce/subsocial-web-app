@@ -11,7 +11,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api';
 
 import { addJsonToIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { ProfileData, Profile, ProfileUpdate, SocialAccount } from '../types';
+import { ProfileContent, Profile, ProfileUpdate, SocialAccount } from '../types';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { queryBlogsToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
@@ -79,12 +79,12 @@ type ValidationProps = {
 export type OuterProps = MyAccountProps & ValidationProps & {
   myAddress?: AccountId,
   profile?: Profile,
-  profileData?: ProfileData,
+  ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   requireProfile?: boolean
 };
 
-type FormValues = ProfileData & {
+type FormValues = ProfileContent & {
   username: string;
 };
 
@@ -288,12 +288,12 @@ const EditForm = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
-    const { profile, profileData } = props;
-    if (profile && profileData) {
+    const { profile, ProfileContent } = props;
+    if (profile && ProfileContent) {
       const username = profile.username.toString();
       return {
         username,
-        ...profileData
+        ...ProfileContent
       };
     } else {
       return {

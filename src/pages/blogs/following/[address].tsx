@@ -1,3 +1,3 @@
-import ListFollowingBlogs from '../../../components/blogs/ListFollowingBlogs';
+import { ListFollowingBlogsPage } from '../../../components/blogs/ListFollowingBlogs';
 
-export default ListFollowingBlogs;
+export default ListFollowingBlogsPage;

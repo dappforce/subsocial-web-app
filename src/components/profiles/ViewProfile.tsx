@@ -7,7 +7,7 @@ import { AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr } from '../utils/index';
-import { SocialAccount, ProfileData, Profile } from '../types';
+import { SocialAccount, ProfileContent, Profile } from '../types';
 import { withSocialAccount, withAddressFromUrl } from '../utils/utils';
 import { FollowAccountButton } from '../utils/FollowButton';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
@@ -31,7 +31,7 @@ export type Props = {
   withLink?: boolean,
   id: AccountId,
   profile?: Profile,
-  profileData?: ProfileData,
+  ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   followers?: AccountId[],
   size?: number
@@ -47,7 +47,7 @@ const Component: NextPage<Props> = (props: Props) => {
     size = 48,
     socialAccount,
     profile = {} as Profile,
-    profileData = {} as ProfileData
+    ProfileContent = {} as ProfileContent
   } = props;
 
   const address = id.toString();
@@ -77,7 +77,7 @@ const Component: NextPage<Props> = (props: Props) => {
     linkedIn,
     github,
     instagram
-  } = profileData;
+  } = ProfileContent;
 
   const hasEmail = email && nonEmptyStr(email);
   const hasPersonalSite = personal_site && nonEmptyStr(personal_site);
@@ -252,13 +252,13 @@ Component.getInitialProps = async (props): Promise<Props> => {
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt && profileOpt.unwrap() as Profile;
-  const content = profile && await getJsonFromIpfs<ProfileData>(profile.ipfs_hash);
+  const content = profile && await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
   Api.destroy();
   return {
     id: new AccountId(address as string),
     socialAccount: socialAccount,
     profile: profile,
-    profileData: content
+    ProfileContent: content
   };
 };
 

@@ -12,7 +12,7 @@ import moment from 'moment-timezone';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { partition } from 'lodash';
-import { PostId, CommentId, Comment, OptionComment, CommentData, PostData, Post } from '../types';
+import { PostId, CommentId, Comment, OptionComment, CommentContent, PostContent, Post } from '../types';
 import { NewComment } from './EditComment';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import { Voter } from '../voting/Voter';
@@ -148,8 +148,8 @@ export function ViewComment (props: ViewCommentProps) {
 
   const { id, score, created: { account, time }, post_id, edit_history } = comment;
   const [ struct , setStruct ] = useState(comment);
-  const [ postContent, setPostContent ] = useState({} as PostData);
-  const [ content , setContent ] = useState({} as CommentData);
+  const [ postContent, setPostContent ] = useState({} as PostContent);
+  const [ content , setContent ] = useState({} as CommentContent);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [doReloadComment, setDoReloadComment] = useState(true);
@@ -164,7 +164,7 @@ export function ViewComment (props: ViewCommentProps) {
 
     let isSubcribe = true;
 
-    getJsonFromIpfs<CommentData>(struct.ipfs_hash).then(json => {
+    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
       isSubcribe && setContent(json);
     }).catch(err => console.log(err));
 
@@ -183,7 +183,7 @@ export function ViewComment (props: ViewCommentProps) {
       const result = await api.query.blogs.postById(post_id) as Option<Post>;
       if (result.isNone) return;
       const post = result.unwrap();
-      const content = await getJsonFromIpfs<PostData>(post.ipfs_hash);
+      const content = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
       if (isSubcribe) {
         setPostContent(content);
         setDoReloadComment(false);

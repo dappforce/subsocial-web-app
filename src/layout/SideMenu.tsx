@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { withMulti } from '@polkadot/ui-api';
 import { useMyAccount } from '../components/utils/MyAccountContext';
-import ListFollowingBlogs from '../components/blogs/ListFollowingBlogs';
+import dynamic from 'next/dynamic';
+const ListFollowingBlogs = dynamic(() => import('../components/blogs/ListFollowingBlogs'), { ssr: false });
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 
@@ -85,12 +85,10 @@ const InnerMenu = () => {
       </Menu.Item>
       <Menu.Divider/>
         <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
-          <ListFollowingBlogs mini={true} />
+          <ListFollowingBlogs/>
         </Menu.ItemGroup>
     </Menu>
   );
 };
 
-export default withMulti(
-  InnerMenu
-);
+export default InnerMenu;

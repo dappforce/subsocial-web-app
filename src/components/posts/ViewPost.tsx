@@ -7,7 +7,7 @@ import { withCalls, withMulti, withApi } from '@polkadot/ui-api/with';
 import { Option } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostData } from '../types';
+import { PostId, Post, CommentId, PostContent } from '../types';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import { Loading } from '../utils/utils';
 import { CommentsByPost } from './ViewComment';
@@ -45,10 +45,10 @@ type ViewPostProps = ApiProps & {
   post?: Post,
   postById?: Option<Post>,
   commentIds?: CommentId[],
-  initialContent?: PostData
+  initialContent?: PostContent
 };
 
-type PostContent = PostData & {
+type PostExtContent = PostContent & {
   summary: string;
 };
 
@@ -87,14 +87,14 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     : body
   );
 
-  const initContent = initialContent ? { ...initialContent, summary: makeSummary(initialContent.body) } : {} as PostContent;
+  const initContent = initialContent ? { ...initialContent, summary: makeSummary(initialContent.body) } : {} as PostExtContent;
   const { state: { address } } = useMyAccount();
   const [ content , setContent ] = useState(initContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters, setActiveVoters ] = useState(0);
 
-  const [ originalContent, setOriginalContent ] = useState({} as PostContent);
+  const [ originalContent, setOriginalContent ] = useState({} as PostExtContent);
   const [ originalPost, setOriginalPost ] = useState({} as Post);
 
   const openVoters = (type: ActiveVoters) => {
@@ -104,7 +104,7 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
   useEffect(() => {
     if (!ipfs_hash) return;
     let isSubsribe = true;
-    getJsonFromIpfs<PostData>(ipfs_hash).then(json => {
+    getJsonFromIpfs<PostExtContent>(ipfs_hash).then(json => {
       isSubsribe && setContent({ ...json, summary: makeSummary(json.body) });
     }).catch(err => console.log(err));
 
@@ -115,7 +115,7 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
 
         if (originalPostOpt.isSome) {
           const originalPost = originalPostOpt.unwrap();
-          const originalContent = await getJsonFromIpfs<PostData>(originalPost.ipfs_hash);
+          const originalContent = await getJsonFromIpfs<PostExtContent>(originalPost.ipfs_hash);
           if (isSubsribe) {
             setOriginalPost(originalPost);
             setOriginalContent({ ...originalContent, summary: makeSummary(originalContent.body) });
@@ -189,7 +189,7 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     </>;
   };
 
-  const renderContent = (post: Post, content: PostContent) => {
+  const renderContent = (post: Post, content: PostExtContent) => {
     if (!post || !content) return null;
 
     const { title, summary, image } = content;
@@ -289,7 +289,7 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     </>;
   };
 
-  const renderDetails = (content: PostContent) => {
+  const renderDetails = (content: PostExtContent) => {
     const { title, body, image } = content;
     return <Section className='DfContentPage'>
       <SeoHeads title={title} name={title} desc={body} image={image} />
@@ -329,7 +329,7 @@ const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
   } else {
     return <div>You should not be here!!!</div>;
   }
-}
+};
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { id }, req } = props;
@@ -337,7 +337,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const api = req ? await Api.setup() : webApi;
   const postIdOpt = await api.query.blogs.postById(id) as Option<Post>;
   const post = postIdOpt.isSome && postIdOpt.unwrap();
-  const content = post && await getJsonFromIpfs<PostData>(post.ipfs_hash);
+  const content = post && await getJsonFromIpfs<PostExtContent>(post.ipfs_hash);
   Api.destroy();
   return {
     post: post,

@@ -4,7 +4,7 @@ import { Pagination as SuiPagination } from 'semantic-ui-react';
 import { AccountId, AccountIndex, Address, Option } from '@polkadot/types';
 import AddressMini from './AddressMiniDf';
 import { SubmittableResult } from '@polkadot/api';
-import { CommentId, PostId, BlogId, Profile, ProfileData, SocialAccount } from '../types';
+import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
@@ -95,7 +95,7 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
 
 type PropsWithSocialAccount = {
   profile?: Profile;
-  profileData?: ProfileData;
+  ProfileContent?: ProfileContent;
   socialAccount?: SocialAccount;
   requireProfile?: boolean;
 };
@@ -121,24 +121,24 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
     const profile = profileOpt.unwrap() as Profile;
 
     const ipfsHash = profile.ipfs_hash;
-    const [profileData, setProfileData] = useState(undefined as (ProfileData | undefined));
+    const [ProfileContent, setProfileContent] = useState(undefined as (ProfileContent | undefined));
 
     useEffect(() => {
       if (!ipfsHash) return;
 
       let isSubscribe = true;
-      getJsonFromIpfs<ProfileData>(ipfsHash)
+      getJsonFromIpfs<ProfileContent>(ipfsHash)
         .then(json => {
-          isSubscribe && setProfileData(json);
+          isSubscribe && setProfileContent(json);
         })
         .catch(err => console.log(err));
 
       return () => { isSubscribe = false; };
     }, [false]);
 
-    if (requireProfile && !profileData) return <Loading />;
+    if (requireProfile && !ProfileContent) return <Loading />;
 
-    return <Component {...props} socialAccount={socialAccount} profile={profile} profileData={profileData} />;
+    return <Component {...props} socialAccount={socialAccount} profile={profile} ProfileContent={ProfileContent} />;
   };
 }
 

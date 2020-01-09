@@ -14,7 +14,7 @@ import { findNameByAddress, nonEmptyStr, queryBlogsToProp } from './index';
 import { FollowAccountButton } from './FollowButton';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { withSocialAccount } from './utils';
-import { SocialAccount, Profile, ProfileData } from '../types';
+import { SocialAccount, Profile, ProfileContent } from '../types';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
@@ -29,7 +29,7 @@ const LIMIT_SUMMARY = 40;
 export type Props = MyAccountProps & BareProps & {
   socialAccountOpt?: Option<SocialAccount>,
   profile?: Profile,
-  profileData?: ProfileData,
+  ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   balance?: Balance | Array<Balance> | BN,
   children?: React.ReactNode,
@@ -68,7 +68,7 @@ function AddressMini (props: Props) {
     value,
     socialAccount,
     profile = {} as Profile,
-    profileData = {} as ProfileData,
+    ProfileContent = {} as ProfileContent,
     withFollowButton,
     withProfilePreview,
     miniPreview,
@@ -98,7 +98,7 @@ function AddressMini (props: Props) {
     fullname,
     avatar,
     about
-  } = profileData;
+  } = ProfileContent;
 
   const summary = about !== undefined && about.length > LIMIT_SUMMARY ? about.substr(0,LIMIT_SUMMARY) + '...' : about;
 

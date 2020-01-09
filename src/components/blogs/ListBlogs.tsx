@@ -2,7 +2,7 @@ import React from 'react';
 
 import { I18nProps } from '@polkadot/ui-app/types';
 
-import { ViewBlog } from './ViewBlog';
+import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
 import { BlogId } from '../types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -10,23 +10,22 @@ import { NextPage } from 'next';
 import Api from '../utils/SubstrateApi';
 import { api as webApi } from '@polkadot/ui-api';
 import { AccountId } from '@polkadot/types';
-import { Loading } from '../utils/utils';
 import { SeoHeads } from '../utils';
 
 type Props = I18nProps & {
   totalCount: number,
-  ids: BlogId[]
+  blogsData: BlogData[]
 };
 
 export const ListBlog: NextPage<Props> = (props: Props) => {
-  const { totalCount, ids } = props;
+  const { totalCount, blogsData } = props;
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`All blogs (${totalCount})`}
-        dataSource={ids}
+        dataSource={blogsData}
         renderItem={(item, index) =>
-          <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
+          <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
         noDataDesc='Blogs not created yet'
         noDataExt={<Button href='/blog/new'>Create blog</Button>}
       />
@@ -40,37 +39,37 @@ ListBlog.getInitialProps = async (props): Promise<any> => {
 
   const firstBlogId = new BlogId(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
-  const ids: BlogId[] = [];
+  let blogsData: BlogData[] = [];
   if (totalCount > 0) {
     const firstId = firstBlogId.toNumber();
     const lastId = nextBlogId.toNumber();
+    const loadBlogs: Promise<BlogData>[] = [];
     for (let i = firstId; i < lastId; i++) {
-      ids.push(new BlogId(i));
+      loadBlogs.push(loadBlogData(api, new BlogId(i)));
     }
+    blogsData = await Promise.all<BlogData>(loadBlogs);
   }
 
   return {
     totalCount,
-    ids
+    blogsData
   };
 };
 
 type MyBlogProps = {
-  myBlogIds?: BlogId[]
+  blogsData: BlogData[]
 };
 
 export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
-  const { myBlogIds } = props;
-  if (!myBlogIds) return <Loading />;
-
-  const totalCount = myBlogIds.length;
+  const { blogsData } = props;
+  const totalCount = blogsData.length;
   return (<>
     <SeoHeads title='My blogs' desc='Subsocial blogs' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`My Blogs (${totalCount})`}
-        dataSource={myBlogIds}
-        renderItem={(item, index) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
+        dataSource={blogsData}
+        renderItem={(item, index) => <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
         noDataDesc='You do not have your own blogs yet'
         noDataExt={<Button href='/blog/new'>Create my first blog</Button>}
       />
@@ -83,9 +82,11 @@ ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   const { query: { address }, req } = props;
   console.log(props);
   const api = req ? await Api.setup() : webApi;
-  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(address as string));
-  console.log(myBlogIds);
+  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(address as string)) as unknown as BlogId[];
+  const loadBlogs = myBlogIds.map(id => loadBlogData(api, id));
+  const blogsData = await Promise.all<BlogData>(loadBlogs);
+  console.log(blogsData);
   return {
-    myBlogIds
+    blogsData
   };
 };
