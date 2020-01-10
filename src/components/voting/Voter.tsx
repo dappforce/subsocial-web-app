@@ -13,15 +13,15 @@ import BN from 'bn.js';
 
 const ZERO = new BN(0);
 
-type VoterValue = {
-  struct: Comment | Post;
+type VoterProps = {
+  struct: Comment | Post,
+  type: 'Comment' | 'Post'
 };
-
-type VoterProps = VoterValue;
 
 export const Voter = (props: VoterProps) => {
   const {
-    struct
+    struct,
+    type
   } = props;
 
   const [ reactionState, setReactionState ] = useState(undefined as (Reaction | undefined));
@@ -32,9 +32,9 @@ export const Voter = (props: VoterProps) => {
   const [ reactionKind, setReactionKind ] = useState(kind);
   const [ state , setState ] = useState(struct);
   const { id } = state;
-  const isComment = struct.Type['id'] === CommentId.name;
+  const isComment = type === 'Comment';
   const Id = isComment ? CommentId : PostId;
-  const structQuery = isComment ? 'comment' : 'post';
+  const structQuery = type.toLowerCase();
 
   const dataForQuery = new Tuple([AccountId, Id], [new AccountId(address), id]);
 
@@ -83,8 +83,8 @@ export const Voter = (props: VoterProps) => {
     let countColor = '';
 
     const calcVotingPercentage = () => {
-      const { upvotes_count, downvotes_count } = state;
-      const totalCount = upvotes_count.add(downvotes_count);
+      const { reactions_count, upvotes_count } = state;
+      const totalCount = new BN(reactions_count);
       if (totalCount.eq(ZERO)) return 0;
 
       const per = upvotes_count.toNumber() / totalCount.toNumber() * 100;
@@ -108,7 +108,6 @@ export const Voter = (props: VoterProps) => {
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
       const icon = isUpvote ? '' : 'dis';
-      const struct = isComment ? 'Comment' : 'Post';
 
       return (<TxButton
         type='submit'
@@ -116,10 +115,10 @@ export const Voter = (props: VoterProps) => {
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
         tx={reactionState === undefined
-          ? `blogs.create${struct}Reaction`
+          ? `blogs.create${type}Reaction`
           : (reactionKind !== `${reactionName}`)
-          ? `blogs.update${struct}Reaction`
-          : `blogs.delete${struct}Reaction`}
+          ? `blogs.update${type}Reaction`
+          : `blogs.delete${type}Reaction`}
       >
         <Icon type={`${icon}like`}/>
       </TxButton>);
@@ -142,3 +141,5 @@ export const Voter = (props: VoterProps) => {
 
   return <VoterRender/>;
 };
+
+export default Voter;

@@ -110,7 +110,7 @@ export const ListFollowingBlogs = withMulti(
   InnerListFollowingBlogs,
   withIdFromUseMyAccount,
   withCalls<ListBlogProps>(
-    queryBlogsToProp(`blogsFollowedByAccount`, { paramName: 'id', propName: 'followedBlogsIds' })
+    queryBlogsToProp(`blogsFollowedByAccount`, { paramName: 'id', propName: 'followedBlogIds' })
   )
 );
 

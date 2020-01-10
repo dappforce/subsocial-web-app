@@ -9,7 +9,7 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
 import { BlogId, Blog, PostId, BlogContent } from '../types';
-import { ViewPost } from '../posts/ViewPost';
+import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
@@ -45,12 +45,12 @@ type Props = {
   previewDetails?: boolean,
   withFollowButton?: boolean,
   id?: BlogId,
+  blogData: BlogData,
   blogById?: Option<Blog>,
-  postIds?: PostId[],
+  posts?: PostDataListItem[],
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void
-  blogData: BlogData
 };
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
@@ -66,7 +66,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     previewDetails = false,
     withFollowButton = false,
     dropdownPreview = false,
-    postIds = [],
+    posts = [],
     imageSize = 36,
     onClick,
     blogData: { initialContent = {} as BlogContent }
@@ -101,7 +101,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
-  const postsCount = postIds ? postIds.length : 0;
+  const postsCount = posts ? posts.length : 0;
 
   const renderDropDownMenu = () => {
 
@@ -226,9 +226,9 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderPostPreviews = () => {
     return <ListData
       title={postsSectionTitle()}
-      dataSource={postIds}
-      renderItem={(id, index) =>
-        <ViewPost key={index} id={id} preview />}
+      dataSource={posts}
+      renderItem={(item, index) =>
+        <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData}/>}
       noDataDesc='No posts yet'
       noDataExt={<Button href={`/new?blogId=${id}`}>Create post</Button>}
     />;
@@ -238,7 +238,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
       <span style={{ marginRight: '1rem' }}>{<Pluralize count={postsCount} singularText='Post'/>}</span>
-      {postIds.length ? <NewPostButton /> : null}
+      {posts.length ? <NewPostButton /> : null}
     </div>;
   };
 
@@ -293,10 +293,11 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const api = req ? await Api.setup() : webApi;
   const blogData = await loadBlogData(api, new BlogId(blogId as string));
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
+  const posts = await loadPostDataList(api, postIds);
   Api.destroy();
   return {
-    blogData: blogData,
-    postIds: postIds
+    blogData,
+    posts
   };
 };
 

@@ -1,6 +1,7 @@
 import { Option, Struct, Enum, EnumType } from '@polkadot/types/codec';
 import { getTypeRegistry, BlockNumber, Moment, AccountId, u16, u32, u64, Text, Vector, i32, Null } from '@polkadot/types';
 import moment from 'moment-timezone';
+import BN from 'bn.js';
 
 export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
 
@@ -291,6 +292,12 @@ export class Post extends Struct {
     return this.get('downvotes_count') as u16;
   }
 
+  get reactions_count (): BN {
+    const downvotes = this.get('downvotes_count') as u16;
+    const upvotes = this.get('upvotes_count') as u16;
+    return downvotes.add(upvotes);
+  }
+
   get shares_count (): u16 {
     return this.get('shares_count') as u16;
   }
@@ -416,6 +423,12 @@ export class Comment extends Struct {
 
   get downvotes_count (): u16 {
     return this.get('downvotes_count') as u16;
+  }
+
+  get reactions_count (): BN {
+    const downvotes = this.get('downvotes_count') as u16;
+    const upvotes = this.get('upvotes_count') as u16;
+    return downvotes.add(upvotes);
   }
 
   get shares_count (): u16 {

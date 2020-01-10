@@ -273,7 +273,7 @@ export function ViewComment (props: ViewCommentProps) {
                   </SuiComment.Action>
                 : <>
                   <SuiComment.Action>
-                  <Voter struct={struct} />
+                  <Voter struct={struct} type={'Comment'} />
                   </SuiComment.Action>
                   <SuiComment.Action>
                     {replyButton()}

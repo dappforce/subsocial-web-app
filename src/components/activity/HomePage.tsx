@@ -8,7 +8,7 @@ import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '../types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
-import { ViewPost } from '../posts/ViewPost';
+import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { NextPage } from 'next';
 import Api from '../utils/SubstrateApi';
 import { api as webApi } from '@polkadot/ui-api';
@@ -17,12 +17,12 @@ const FIVE = new BlogId(5);
 const ZERO = new BlogId(0);
 type Props = ApiProps & {
   blogsData: BlogData[],
-  latestPostIds: BN[]
+  postsData: PostDataListItem[]
 };
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {
 
-  const { blogsData, latestPostIds } = props;
+  const { blogsData, postsData } = props;
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
@@ -35,11 +35,11 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
         noDataDesc='No latest updates yet'
         noDataExt={<Button href='/blog/new'>Create blog</Button>}
       />
-      {latestPostIds.length > 0 && <ListData
+      {postsData.length > 0 && <ListData
         title={`Latest posts`}
-        dataSource={latestPostIds}
+        dataSource={postsData}
         renderItem={(item, index) =>
-          <ViewPost key={index} id={item} preview />}
+          <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData} />}
       />}
     </div>
   );
@@ -60,10 +60,11 @@ LatestUpdate.getInitialProps = async (props): Promise<any> => {
   const loadBlogs = latestBlogIds.map(id => loadBlogData(api, id as BlogId));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
   const latestPostIds = getLastNIds(nextPostId, FIVE);
+  const postsData = await loadPostDataList(api, latestPostIds as PostId[]);
 
   return {
     blogsData,
-    latestPostIds
+    postsData
   };
 };
 
