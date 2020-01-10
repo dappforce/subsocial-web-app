@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 
@@ -13,7 +14,7 @@ import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewP
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { FollowBlogButton } from '../utils/FollowButton';
+const FollowBlogButton = dynamic(() => import('../utils/FollowButton'), { ssr: false });
 import { Loading } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import ListData, { NoData } from '../utils/DataList';
@@ -24,7 +25,6 @@ import AddressMiniDf from '../utils/AddressMiniDf';
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
-import Api from '../utils/SubstrateApi';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { api as webApi } from '@polkadot/ui-api';
 import { ApiPromise } from '@polkadot/api';
@@ -272,7 +272,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       </div>
     </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
+    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
     {renderPostPreviews()}
   </Section>;
 };
@@ -288,13 +288,12 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
 };
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { blogId }, req } = props;
+  const { query: { blogId } } = props;
   console.log('Initial', props.query);
-  const api = req ? await Api.setup() : webApi;
+  const api = webApi;
   const blogData = await loadBlogData(api, new BlogId(blogId as string));
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   const posts = await loadPostDataList(api, postIds);
-  Api.destroy();
   return {
     blogData,
     posts

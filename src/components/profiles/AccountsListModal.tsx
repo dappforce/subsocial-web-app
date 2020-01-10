@@ -5,7 +5,7 @@ import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import AddressMiniDf from '../utils/AddressMiniDf';
-import {BUTTON_SIZE} from '../../config/Size.config';
+import { BUTTON_SIZE } from '../../config/Size.config';
 type Props = {
   accounts?: AccountId[],
   accountsCount: Number,

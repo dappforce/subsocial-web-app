@@ -8,6 +8,7 @@ import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
 import Section from '../utils/Section';
+import { AccountId } from '@polkadot/types';
 
 type DataResults = {
   _id: string;
@@ -46,7 +47,7 @@ const resultToPreview = (res: DataResults, i: number) => {
     case ElasticIndex.posts:
       return <ViewPost key={i} id={res._id} preview withLink={true} />;
     case ElasticIndex.profiles:
-      return <ViewProfile key={i} id={res._id} preview />;
+      return <ViewProfile key={i} id={new AccountId(res._id)} preview />;
     default:
       return <></>;
   }

@@ -93,7 +93,8 @@ export const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     edit_history
   } = post;
 
-  console.log(post);
+  console.log(post, postExtData);
+  console.log(isRegularPost);
 
   const { state: { address } } = useMyAccount();
   const [ content , setContent ] = useState(initialContent);
@@ -348,12 +349,14 @@ const withUnwrap = (Component: React.ComponentType<ViewPostProps>) => {
   return (props: ApiProps & ViewPostProps) => {
     const { postById, api } = props;
     const [ postExtData, setExtData ] = useState();
-    if (!postById) return <Loading/>;
+    console.log('postById', postById);
+    if (!postById || !postExtData) return <Loading/>;
 
     const post = postById.unwrap();
     loadExtPost(api, post).then(data => setExtData(data)).catch(console.log);
+    console.log(post, postExtData);
 
-    return <Component postData={{ post }} postExtData={postExtData} type={getTypePost(post)} {...props}/>;
+    return <Component postData={post} postExtData={postExtData} type={getTypePost(post)} {...props}/>;
   };
 };
 

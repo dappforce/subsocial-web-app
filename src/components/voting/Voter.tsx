@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { api } from '@polkadot/ui-api';
 import { AccountId, Option } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';

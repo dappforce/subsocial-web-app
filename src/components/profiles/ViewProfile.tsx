@@ -6,13 +6,14 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
-import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr } from '../utils/index';
+import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr, ZERO } from '../utils/index';
 import { SocialAccount, ProfileContent, Profile } from '../types';
 import { withSocialAccount, withAddressFromUrl } from '../utils/utils';
 import { FollowAccountButton } from '../utils/FollowButton';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { MutedDiv } from '../utils/MutedText';
 import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
@@ -24,6 +25,7 @@ import { NextPage } from 'next';
 import Api from '../utils/SubstrateApi';
 import { api as webApi } from '@polkadot/ui-api';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
+import BN from 'bn.js';
 
 export type Props = {
   preview?: boolean,
@@ -50,16 +52,17 @@ const Component: NextPage<Props> = (props: Props) => {
     ProfileContent = {} as ProfileContent
   } = props;
 
+  const [followersOpen, setFollowersOpen] = useState(false);
+  const [followingOpen, setFollowingOpen] = useState(false);
+
   const address = id.toString();
   const { state: { address: myAddress } } = useMyAccount();
   const isMyAccount = address === myAddress;
-  const profileIsNone = !socialAccount || socialAccount && socialAccount.profile.isNone;
-  const followers = socialAccount ? socialAccount.followers_count.toNumber() : 0;
-  const following = socialAccount ? socialAccount.following_accounts_count.toNumber() : 0;
-  const reputation = socialAccount ? socialAccount.reputation.toNumber() : 0;
 
-  const [followersOpen, setFollowersOpen] = useState(false);
-  const [followingOpen, setFollowingOpen] = useState(false);
+  const profileIsNone = !socialAccount || socialAccount && socialAccount.profile.isNone;
+  const followers = socialAccount ? new BN(socialAccount.followers_count) : ZERO;
+  const following = socialAccount ? new BN(socialAccount.following_accounts_count) : ZERO;
+  const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
 
   const {
     username,
@@ -156,7 +159,7 @@ const Component: NextPage<Props> = (props: Props) => {
             <NameAsLink />
             {renderDropDownMenu()}
           </div>
-          <MutedDiv className='DfScore'>Reputation: {reputation}</MutedDiv>
+          <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>
           {renderCreateProfileButton}
           <div className='about'>
             <div className='DfSocialLinks'>
@@ -235,11 +238,11 @@ const Component: NextPage<Props> = (props: Props) => {
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}
         <FollowAccountButton address={address} size={BUTTON_SIZE}/>
-        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowersOpen(true)} isDisabled={followers === 0}><Pluralize count={followers} singularText='Follower'/></TxButton>
-        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowingOpen(true)} isDisabled={following === 0}>{following} Following </TxButton>
+        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowersOpen(true)} isDisabled={followers.eq(ZERO)}><Pluralize count={followers.toString()} singularText='Follower'/></TxButton>
+        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowingOpen(true)} isDisabled={following.eq(ZERO)}>{following.toString()} Following </TxButton>
       </div>
-      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
-      {followingOpen && <AccountFollowingModal id={id} accountsCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
+      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
+      {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
     </Section>
   </>;
 };

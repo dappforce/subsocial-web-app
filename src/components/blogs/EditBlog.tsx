@@ -5,7 +5,8 @@ import * as Yup from 'yup';
 
 import { Option, Text } from '@polkadot/types';
 import Section from '../utils/Section';
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api';
 

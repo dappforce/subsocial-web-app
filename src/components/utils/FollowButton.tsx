@@ -112,3 +112,5 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     txSuccessCb={() => setTriggerReload(!triggerReload) }
   />;
 }
+
+export default FollowBlogButton;

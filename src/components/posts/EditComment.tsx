@@ -3,7 +3,8 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import * as DfForms from '../utils/forms';
