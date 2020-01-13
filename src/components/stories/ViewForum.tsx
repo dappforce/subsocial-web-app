@@ -74,10 +74,10 @@ function ViewForum (props: ForumProps) {
     }
     console.log('cat', filterCategories);
 
-    let filterData = sortedData.filter(item => item.categories.filter(category => filterCategories.some(filter => category.title === filter.title)));
+    let filterData = sortedData.filter(item => item.categories.some(category => filterCategories.some(filter => category.title === filter.title)));
 
     setFilteredData(filterData);
-    console.log('filter', filteredData);
+    console.log('filter', filterData);
   }
 
   function sortByScore (a: TopicData, b: TopicData) {
