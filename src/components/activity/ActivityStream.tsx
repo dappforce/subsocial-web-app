@@ -3,32 +3,43 @@ import React, { useState, useEffect } from 'react';
 import Section from '../utils/Section';
 import { hexToNumber } from '@polkadot/util';
 import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../types';
-import { ViewPost } from '../posts/ViewPost';
-import { api, withMulti } from '@polkadot/ui-api';
-import { ViewBlog } from '../blogs/ViewBlog';
+import { ViewPostPage, loadPostDataList, loadPostData, PostDataListItem } from '../posts/ViewPost';
+import { api } from '@polkadot/ui-api';
+import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddressMiniDf from '../utils/AddressMiniDf';
 import { Loader } from 'semantic-ui-react';
 import { NoData } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
+import { useMyAccount, readMyAddress } from '../utils/MyAccountContext';
+import { NextPage } from 'next';
 
 type ActivityProps = {
   activity: Activity;
 };
 
-const InnerViewNewsFeed = (props: MyAccountProps) => {
-  const { myAddress } = props;
-  if (!myAddress) return <em>Oops...Incorect Account</em>;
+type FeedProps = {
+  initialData: PostDataListItem[]
+  offset: number;
+};
 
-  const [items, setItems] = useState([] as Activity[]);
-  const [offset, setOffset] = useState(0);
+type NotificationsProps = {
+  initialData: Activity[]
+  offset: number;
+};
+
+export const ViewNewsFeed: NextPage<FeedProps> = (props: FeedProps) => {
+  const { state: { address: myAddress } } = useMyAccount();
+  if (!myAddress) return <em>Oops...Incorect Account</em>;
+  console.log(props.initialData);
+  const [items, setItems] = useState(props.initialData);
+  const [offset, setOffset] = useState(props.offset);
   const [hasMore, setHasMore] = useState(true);
 
   const getNewsArray = async () => {
-    const data = await getNewsFeed(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
+    const data = await loadPostsForFeed(myAddress, offset);
     if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
     setItems(items.concat(data));
     setOffset(offset + SIZE_PAGE_INFINITY_LIST);
@@ -41,8 +52,10 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
 
   }, [false]);
   const totalCount = items && items.length;
+
   const NewsFeedArray = items.map((item, id) =>
-    <ViewActivity key={id} activity={item} />);
+  <ViewPostPage key={id} postData={item.postData} postExtData={item.postExtData} variant='preview' withBlogName />);
+
   return (
     <Section title={`News Feed (${totalCount})`}>{
       totalCount === 0
@@ -61,13 +74,32 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
   );
 };
 
-const InnerViewNotifications = (props: MyAccountProps) => {
-  const { myAddress } = props;
+const loadPostsForFeed = async (address?: string, offset: number = 0) => {
+  const activities = address ? await getNewsFeed(address, offset, SIZE_PAGE_INFINITY_LIST) : [] as Activity[];
+  const ids = activities.map(x => new PostId(hexToNumber('0x' + x.post_id)));
+  const initialData = await loadPostDataList(api, ids);
+  return initialData;
+};
+
+ViewNewsFeed.getInitialProps = async (): Promise<FeedProps> => {
+  const address = readMyAddress();
+  console.log('Address', address);
+  const initialData = await loadPostsForFeed(address);
+  const offset = initialData.length;
+  return {
+    initialData,
+    offset
+  };
+};
+
+export const ViewNotifications: NextPage<NotificationsProps> = (props: NotificationsProps) => {
+  const { initialData, offset: initialOffset } = props;
+  const { state: { address: myAddress } } = useMyAccount();
   if (!myAddress) return <NoData description='Opps...Incorect Account' />;
 
-  const [items, setItems] = useState([] as Activity[]);
+  const [items, setItems] = useState(initialData);
   const [hasMore, setHasMore] = useState(true);
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useState(initialOffset);
 
   const getNotificationsArray = async () => {
     const data = await getNotifications(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
@@ -103,13 +135,15 @@ const InnerViewNotifications = (props: MyAccountProps) => {
   );
 };
 
-function ViewActivity (props: ActivityProps) {
-  const { activity } = props;
-  const { post_id } = activity;
-  const postId = new PostId(hexToNumber('0x' + post_id));// TODO create function
-
-  return <ViewPost id={postId} variant='preview' withBlogName />;
-}
+ViewNotifications.getInitialProps = async (): Promise<NotificationsProps> => {
+  const address = readMyAddress();
+  const initialData = address ? await getNotifications(address, 0, SIZE_PAGE_INFINITY_LIST) : [] as Activity[];
+  const offset = initialData.length;
+  return {
+    initialData,
+    offset
+  };
+};
 
 export function Notification (props: ActivityProps) {
   const { activity } = props;
@@ -139,14 +173,16 @@ export function Notification (props: ActivityProps) {
         }
         case 'BlogFollowed': {
           const blogId = new BlogId(hexToNumber('0x' + blog_id));
+          const blogData = await loadBlogData(api, blogId);
           setMessage(Events.BlogFollowed);
-          setSubject(<ViewBlog id={blogId} nameOnly withLink />);
+          setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'BlogCreated': {
           const blogId = new BlogId(hexToNumber('0x' + blog_id));
           setMessage(Events.BlogCreated);
-          setSubject(<ViewBlog id={blogId} nameOnly withLink />);
+          const blogData = await loadBlogData(api, blogId);
+          setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'CommentCreated': {
@@ -165,19 +201,22 @@ export function Notification (props: ActivityProps) {
               setMessage(Events.CommentCreated);
             }
           }
-          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
+          const postData = (await loadPostDataList(api, [ postId ])).pop();
+          postData && setSubject(<ViewPostPage postData={postData.postData} postExtData={postData.postExtData} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'PostShared': {
           postId = new PostId(hexToNumber('0x' + post_id));
           setMessage(Events.PostShared);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
+          const postData = await loadPostData(api, postId);
+          setSubject(<ViewPostPage postData={postData} postExtData={{}} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'PostReactionCreated': {
           postId = new PostId(hexToNumber('0x' + post_id));
           setMessage(Events.PostReactionCreated);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
+          const postData = await loadPostData(api, postId);
+          setSubject(<ViewPostPage postData={postData} postExtData={{}} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'CommentReactionCreated': {
@@ -188,7 +227,8 @@ export function Notification (props: ActivityProps) {
           const comment = commentOpt.unwrap() as Comment;
           postId = new PostId(hexToNumber('0x' + comment.post_id));
           setMessage(Events.CommentReactionCreated);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
+          const postData = await loadPostData(api, postId);
+          setSubject(<ViewPostPage postData={postData} postExtData={{}} withCreatedBy={false} variant='name only' />);
           break;
         }
       }
@@ -210,13 +250,3 @@ export function Notification (props: ActivityProps) {
     />
   </div>;
 }
-
-export const ViewNewsFeed = withMulti(
-  InnerViewNewsFeed,
-  withMyAccount
-);
-
-export const ViewNotifications = withMulti(
-  InnerViewNotifications,
-  withMyAccount
-);
