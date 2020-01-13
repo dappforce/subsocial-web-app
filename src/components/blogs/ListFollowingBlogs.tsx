@@ -53,8 +53,7 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
 
 const ListFollowingBlogs = () => {
   const { state: { address: myAddress } } = useMyAccount();
-  const [ followedBlogsData, setFollowedBlogsData ] = useState({} as BlogData[]);
-  const [ loading, setLoading ] = useState(true);
+  const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
 
   useEffect(() => {
     let isSubscribe = true;
@@ -63,7 +62,6 @@ const ListFollowingBlogs = () => {
       const loadBlogs = ids.map(id => loadBlogData(api,id));
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);
-      isSubscribe && setLoading(false);
     };
 
     loadBlogsData().catch(console.log);
@@ -71,7 +69,7 @@ const ListFollowingBlogs = () => {
     return () => { isSubscribe = false; };
   }, [ false ]);
 
-  return loading ? <Loading /> : <RenderFollowedList followedBlogsData={followedBlogsData} />;
+  return followedBlogsData.length > 0 ? <RenderFollowedList followedBlogsData={followedBlogsData} /> : <Loading/>;
 };
 
 type Props = {

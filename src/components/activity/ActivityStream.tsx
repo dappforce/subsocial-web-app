@@ -13,7 +13,7 @@ import AddressMiniDf from '../utils/AddressMiniDf';
 import { Loader } from 'semantic-ui-react';
 import { NoData } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
-import { useMyAccount, readMyAddress } from '../utils/MyAccountContext';
+import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 
 type ActivityProps = {
@@ -33,13 +33,14 @@ type NotificationsProps = {
 export const ViewNewsFeed: NextPage<FeedProps> = (props: FeedProps) => {
   const { state: { address: myAddress } } = useMyAccount();
   if (!myAddress) return <em>Oops...Incorect Account</em>;
-  console.log(props.initialData);
-  const [items, setItems] = useState(props.initialData);
-  const [offset, setOffset] = useState(props.offset);
+  const { initialData = [] as PostDataListItem[], offset: initialOffset = 0 } = props;
+  const [items, setItems] = useState(initialData);
+  const [offset, setOffset] = useState(initialOffset);
   const [hasMore, setHasMore] = useState(true);
 
   const getNewsArray = async () => {
     const data = await loadPostsForFeed(myAddress, offset);
+    console.log('Data', data);
     if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
     setItems(items.concat(data));
     setOffset(offset + SIZE_PAGE_INFINITY_LIST);
@@ -51,6 +52,7 @@ export const ViewNewsFeed: NextPage<FeedProps> = (props: FeedProps) => {
     getNewsArray().catch(err => new Error(err));
 
   }, [false]);
+
   const totalCount = items && items.length;
 
   const NewsFeedArray = items.map((item, id) =>
@@ -81,19 +83,8 @@ const loadPostsForFeed = async (address?: string, offset: number = 0) => {
   return initialData;
 };
 
-ViewNewsFeed.getInitialProps = async (): Promise<FeedProps> => {
-  const address = readMyAddress();
-  console.log('Address', address);
-  const initialData = await loadPostsForFeed(address);
-  const offset = initialData.length;
-  return {
-    initialData,
-    offset
-  };
-};
-
 export const ViewNotifications: NextPage<NotificationsProps> = (props: NotificationsProps) => {
-  const { initialData, offset: initialOffset } = props;
+  const { initialData = [] as Activity[], offset: initialOffset = 0 } = props;
   const { state: { address: myAddress } } = useMyAccount();
   if (!myAddress) return <NoData description='Opps...Incorect Account' />;
 
@@ -133,16 +124,6 @@ export const ViewNotifications: NextPage<NotificationsProps> = (props: Notificat
         </InfiniteScroll>
       }</Section>
   );
-};
-
-ViewNotifications.getInitialProps = async (): Promise<NotificationsProps> => {
-  const address = readMyAddress();
-  const initialData = address ? await getNotifications(address, 0, SIZE_PAGE_INFINITY_LIST) : [] as Activity[];
-  const offset = initialData.length;
-  return {
-    initialData,
-    offset
-  };
 };
 
 export function Notification (props: ActivityProps) {
