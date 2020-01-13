@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { AccountId } from '@polkadot/types';
 import { BlogId, Blog } from '../types';
@@ -12,8 +12,9 @@ import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
 import { Api } from '../utils/SubstrateApi';
-import { api as webApi } from '@polkadot/ui-api';
+import { api as webApi, api } from '@polkadot/ui-api';
 import { NextPage } from 'next';
+import { useMyAccount } from '../utils/MyAccountContext';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -50,43 +51,58 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   };
 };
 
+const ListFollowingBlogs = () => {
+  const { state: { address: myAddress } } = useMyAccount();
+  const [ followedBlogsData, setFollowedBlogsData ] = useState({} as BlogData[]);
+  const [ loading, setLoading ] = useState(true);
+
+  useEffect(() => {
+    let isSubscribe = true;
+    const loadBlogsData = async () => {
+      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      const loadBlogs = ids.map(id => loadBlogData(api,id));
+      const blogsData = await Promise.all<BlogData>(loadBlogs);
+      isSubscribe && setFollowedBlogsData(blogsData);
+      isSubscribe && setLoading(false);
+    };
+
+    loadBlogsData().catch(console.log);
+
+    return () => { isSubscribe = false; };
+  }, [ false ]);
+
+  return loading ? <Loading /> : <RenderFollowedList followedBlogsData={followedBlogsData} />;
+};
+
 type Props = {
   followedBlogsData: BlogData[]
 };
 
-const ListFollowingBlogs = (props: Props) => {
+const RenderFollowedList = (props: Props) => {
   const { followedBlogsData } = props;
-  const { toggle } = useSidebarCollapsed();
   const totalCount = followedBlogsData !== undefined ? followedBlogsData && followedBlogsData.length : 0;
   const router = useRouter();
   const { pathname, query } = router;
   const currentBlog = pathname.includes('blog') ? new BN(query.id as string) : undefined;
+  const { toggle } = useSidebarCollapsed();
 
-  console.log(currentBlog);
-
-  if (!followedBlogsData) return <Loading />;
-
-  const renderFollowedList = () => {
-    return <>{totalCount > 0
-      ? followedBlogsData.map((item, index) =>
-        <div key={index} className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
-          <ViewBlogPage
-            key={index}
-            blogData={item}
-            onClick={() => {
-              isMobile && toggle();
-              console.log('Toggle');
-              Router.push('/blog/[blogId]', `/blog/${(item.blog as Blog).id}`).catch(console.log);
-            }}
-            miniPreview
-            imageSize={28}
-          />
-        </div>)
-      : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blog/all'>Show all</Button></div>}
-    </>;
-  };
-
-  return renderFollowedList();
+  return <>{totalCount > 0
+    ? followedBlogsData.map((item, index) =>
+      <div key={index} className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
+        <ViewBlogPage
+          key={index}
+          blogData={item}
+          onClick={() => {
+            isMobile && toggle();
+            console.log('Toggle');
+            Router.push('/blog/[blogId]', `/blog/${(item.blog as Blog).id}`).catch(console.log);
+          }}
+          miniPreview
+          imageSize={28}
+        />
+      </div>)
+    : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blog/all'>Show all</Button></div>}
+  </>;
 };
 
 export default ListFollowingBlogs;

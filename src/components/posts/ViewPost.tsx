@@ -3,13 +3,11 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { Segment } from 'semantic-ui-react';
-
-import { withCalls, withMulti, withApi } from '@polkadot/ui-api/with';
 import { Option, AccountId } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
-import { queryBlogsToProp, SeoHeads } from '../utils/index';
+import { SeoHeads } from '../utils/index';
 import { Loading } from '../utils/utils';
 import { CommentsByPost } from './ViewComment';
 import { MutedSpan } from '../utils/MutedText';
@@ -17,7 +15,7 @@ const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import AddressMiniDf from '../utils/AddressMiniDf';
-import { api as webApi } from '@polkadot/ui-api';
+import { api as webApi, api } from '@polkadot/ui-api';
 import { ShareModal } from './ShareModal';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
@@ -30,7 +28,6 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import Api from '../utils/SubstrateApi';
 import { NextPage } from 'next';
-import { ApiProps } from '@polkadot/ui-api/types';
 import { ApiPromise } from '@polkadot/api';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
@@ -55,27 +52,34 @@ export type PostDataListItem = {
 
 type ViewPostProps = {
   variant: PostVariant,
-  type?: PostType,
   withLink?: boolean,
   withCreatedBy?: boolean,
   withStats?: boolean,
   withActions?: boolean,
   withBlogName?: boolean,
   id?: PostId,
+  commentIds?: CommentId[]
+};
+
+type ViewPostPageProps = {
+  variant: PostVariant,
+  withLink?: boolean,
+  withCreatedBy?: boolean,
+  withStats?: boolean,
+  withActions?: boolean,
+  withBlogName?: boolean,
   postData: PostData,
-  postById?: Option<Post>,
   postExtData: PostData,
   commentIds?: CommentId[]
 };
 
-export const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
+export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   const { post, initialContent = {} as PostExtContent } = props.postData;
 
   if (!post) return <NoData description={<span>Post not found</span>} />;
 
   const {
     variant = 'full',
-    type = 'regular',
     withBlogName = false,
     withLink = true,
     withActions = true,
@@ -95,14 +99,16 @@ export const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
 
   console.log(post, postExtData);
   console.log(isRegularPost);
-
+  const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
+  console.log('Type', type);
   const { state: { address } } = useMyAccount();
   const [ content , setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters, setActiveVoters ] = useState(0);
 
-  const { post: originalPost, initialContent: originalContent } = postExtData;
+  const { post: originalPost } = postExtData;
+  const [ originalContent , setOriginalContent ] = useState(postExtData.initialContent);
 
   const openVoters = (type: ActiveVoters) => {
     setPostVotersOpen(true);
@@ -114,6 +120,7 @@ export const ViewPostPage: NextPage<ViewPostProps> = (props: ViewPostProps) => {
     let isSubscribe = true;
 
     loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(console.log);
+    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(console.log);
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -345,32 +352,38 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
 
 export default ViewPostPage;
 
-const withUnwrap = (Component: React.ComponentType<ViewPostProps>) => {
-  return (props: ApiProps & ViewPostProps) => {
-    const { postById, api } = props;
-    const [ postExtData, setExtData ] = useState();
-    console.log('postById', postById);
-    if (!postById || !postExtData) return <Loading/>;
+const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
+  return (props: ViewPostProps) => {
+    const { id } = props;
+    const [ postExtData, setExtData ] = useState({} as PostData);
+    const [ postData, setPostData ] = useState({} as PostData);
+    console.log('postById', id);
 
-    const post = postById.unwrap();
-    loadExtPost(api, post).then(data => setExtData(data)).catch(console.log);
-    console.log(post, postExtData);
+    useEffect(() => {
+      let isSubscribe = true;
+      const loadPost = async () => {
+        const postData = await loadPostData(api, id as PostId);
+        console.log(postData);
+        isSubscribe && setPostData(postData);
+        loadExtPost(api, postData.post as Post).then(data => isSubscribe && setExtData(data)).catch(console.log);
+      };
 
-    return <Component postData={post} postExtData={postExtData} type={getTypePost(post)} {...props}/>;
+      loadPost().catch(console.log);
+
+      return () => { isSubscribe = false; };
+    }, [ false ]);
+
+    if (isEmpty(postData)) return <Loading/>;
+
+    return <Component postData={postData} postExtData={postExtData} {...props}/>;
   };
 };
 
-export const ViewPost = withMulti(
-  ViewPostPage,
-  withCalls<ViewPostProps>(
-    queryBlogsToProp('postById', 'id')
-  ),
-  withApi,
-  withUnwrap
-);
+export const ViewPost = withLoadedData(ViewPostPage);
 
-const getTypePost = (post: Post): PostType => {
-  const { isSharedPost } = post;
+export const getTypePost = (post: Post): PostType => {
+  const { isSharedPost, extension } = post;
+  console.log('Shared', typeof extension.value);
   if (isSharedPost) {
     return 'share';
   } else {

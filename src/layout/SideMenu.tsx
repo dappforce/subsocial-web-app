@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
@@ -7,10 +7,9 @@ import dynamic from 'next/dynamic';
 const ListFollowingBlogs = dynamic(() => import('../components/blogs/ListFollowingBlogs'), { ssr: false });
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { api } from '@polkadot/ui-api';
-import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
+import { withApi } from '@polkadot/ui-api';
+import { ApiProps } from '@polkadot/ui-api/types';
 import { Loading } from '../components/utils/utils';
-import { BlogId } from '../components/types';
 
 type MenuItem = {
   name: string,
@@ -18,11 +17,10 @@ type MenuItem = {
   image: string
 };
 
-const InnerMenu = () => {
+const InnerMenu = (props: ApiProps) => {
+  const { isApiReady } = props;
   const { toggle, state: { collapsed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
-  const [ followedBlogsData, setFollowedBlogsData ] = useState({} as BlogData[]);
-  const [ loading, setLoading ] = useState(true);
   const router = useRouter();
   const { pathname } = router;
 
@@ -30,21 +28,6 @@ const InnerMenu = () => {
     isMobile && toggle();
     Router.push(page[0], page[1]).catch(console.log);
   };
-
-  useEffect(() => {
-    let isSubscribe = true;
-    const loadBlogsData = async () => {
-      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
-      const loadBlogs = ids.map(id => loadBlogData(api,id));
-      const blogsData = await Promise.all<BlogData>(loadBlogs);
-      isSubscribe && setFollowedBlogsData(blogsData);
-      isSubscribe && setLoading(false);
-    };
-
-    loadBlogsData().catch(console.log);
-
-    return () => { isSubscribe = false; };
-  }, [ false ]);
 
   const MenuItems: MenuItem[] = [
     {
@@ -106,10 +89,10 @@ const InnerMenu = () => {
       </Menu.Item>
       <Menu.Divider/>
         <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
-          {loading ? <Loading/> : <ListFollowingBlogs followedBlogsData={followedBlogsData} />}
+          {isApiReady ? <ListFollowingBlogs/> : <Loading/>}
         </Menu.ItemGroup>
     </Menu>
   );
 };
 
-export default InnerMenu;
+export default withApi(InnerMenu);

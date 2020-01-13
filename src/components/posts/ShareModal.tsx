@@ -58,7 +58,7 @@ const InnerShareModal = (props: Props) => {
         extention={extension}
         withButtons={false}
       />
-      <ViewPost id={postId} withStats={false} withActions={false} />
+      <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
     </div>
     );
   };

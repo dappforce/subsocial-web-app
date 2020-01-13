@@ -108,7 +108,7 @@ function ViewActivity (props: ActivityProps) {
   const { post_id } = activity;
   const postId = new PostId(hexToNumber('0x' + post_id));// TODO create function
 
-  return <ViewPost id={postId} preview withBlogName />;
+  return <ViewPost id={postId} variant='preview' withBlogName />;
 }
 
 export function Notification (props: ActivityProps) {
@@ -165,19 +165,19 @@ export function Notification (props: ActivityProps) {
               setMessage(Events.CommentCreated);
             }
           }
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'PostShared': {
           postId = new PostId(hexToNumber('0x' + post_id));
           setMessage(Events.PostShared);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'PostReactionCreated': {
           postId = new PostId(hexToNumber('0x' + post_id));
           setMessage(Events.PostReactionCreated);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'CommentReactionCreated': {
@@ -188,7 +188,7 @@ export function Notification (props: ActivityProps) {
           const comment = commentOpt.unwrap() as Comment;
           postId = new PostId(hexToNumber('0x' + comment.post_id));
           setMessage(Events.CommentReactionCreated);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          setSubject(<ViewPost id={postId} withCreatedBy={false} variant='name only' />);
           break;
         }
       }
