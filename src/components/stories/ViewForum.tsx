@@ -11,12 +11,14 @@ type ForumProps = {
 };
 
 type SortingType = 'score' | 'latest';
+type DataStateType = 'filtered' | 'sorted';
 
 function ViewForum (props: ForumProps) {
 
   const { categoryList, data } = props;
   const [ sortedData, setSortedData ] = useState(data);
-  const [ filteredData, setFilteredData ] = useState(sortedData);
+  const [ filteredData, setFilteredData ] = useState(data);
+  const [ isDataProcessed, setIsDataProcessed ] = useState<DataStateType>();
 
   const isDataEmpty = data.length === 0;
 
@@ -66,6 +68,7 @@ function ViewForum (props: ForumProps) {
 
   function filterByCategory (currentCategory: Category) {
     let filterCategories: Category[] = [];
+    let dataToFilter: TopicData[] = isDataProcessed === 'sorted' ? sortedData : data;
 
     if (currentCategory.children.length !== 0) {
       filterCategories = findCategoryChildren(currentCategory);
@@ -74,9 +77,10 @@ function ViewForum (props: ForumProps) {
     }
     console.log('cat', filterCategories);
 
-    let filterData = sortedData.filter(item => item.categories.some(category => filterCategories.some(filter => category.title === filter.title)));
+    let filterData = dataToFilter.filter(item => item.categories.some(category => filterCategories.some(filter => category.title === filter.title)));
 
     setFilteredData(filterData);
+    if (!isDataProcessed) setIsDataProcessed('filtered');
     console.log('filter', filterData);
   }
 
@@ -101,13 +105,18 @@ function ViewForum (props: ForumProps) {
   }
 
   function sortTopicData (chosenSorting: SortingType) {
+    let dataToSort = isDataProcessed === 'filtered' ? filteredData : data;
+    console.log(isDataProcessed);
+
     switch (chosenSorting) {
       case 'score':
-        setSortedData([...sortedData.sort(sortByScore)]);
+        setSortedData([...dataToSort.sort(sortByScore)]);
+        if (!isDataProcessed) setIsDataProcessed('sorted');
         console.log(sortedData);
         break;
       case 'latest':
-        setSortedData([...data.sort(sortByDate)]);
+        setSortedData([...dataToSort.sort(sortByDate)]);
+        if (!isDataProcessed) setIsDataProcessed('sorted');
         console.log(sortedData);
         break;
     }
@@ -119,7 +128,26 @@ function ViewForum (props: ForumProps) {
     sortTopicData(sortValue);
   };
 
-  console.log('Here', filteredData);
+  const pinTopics = (data: TopicData[]) => {
+    let pinned: TopicData[] = new Array();
+    let newData: TopicData[] = new Array();
+    console.log('data', data);
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].isPinned === true) {
+        pinned.push(data[i]);
+        console.log('pin', pinned);
+        console.log('spliced', data);
+      } else {
+        newData.unshift(data[i]);
+      }
+    }
+    console.log('data1', newData);
+    pinned.push(...newData.reverse());
+    console.log('data2', data);
+
+    return pinned;
+  };
 
   return (
     <>
@@ -156,7 +184,7 @@ function ViewForum (props: ForumProps) {
           <Icon type='ellipsis' />
         </div>
       </div>
-      <ListForumTopics data={filteredData} isDataEmpty={isDataEmpty} noDataDesc noDataExt={<Button type='primary' icon='plus'>New Topic</Button>}/>
+      <ListForumTopics data={pinTopics(filteredData)} isDataEmpty={isDataEmpty} noDataDesc noDataExt={<Button type='primary' icon='plus'>New Topic</Button>}/>
     </>
   );
 }

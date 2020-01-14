@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { List, Icon, Tag } from 'antd';
 import './style.css';
 import { TopicData } from './types';
@@ -15,7 +15,6 @@ function ListForumTopics (props: Props) {
 
   const { data, noDataDesc = 'No topics started yet', noDataExt, isDataEmpty } = props;
 
-  console.log('In', data);
   return (
     <>
     {isDataEmpty ? <DataEmpty description={noDataDesc}>{noDataExt}</DataEmpty>
