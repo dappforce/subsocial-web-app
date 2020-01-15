@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon, Button, Cascader, Radio } from 'antd';
 import './style.css';
 import { Category, TopicData } from './types';
@@ -16,6 +16,7 @@ type DataStateType = 'filtered' | 'sorted';
 function ViewForum (props: ForumProps) {
 
   const { categoryList, data } = props;
+  const [ chosenSorting, setChosenSorting ] = useState<SortingType>('latest');
   const [ sortedData, setSortedData ] = useState(data);
   const [ filteredData, setFilteredData ] = useState(data);
   const [ isDataProcessed, setIsDataProcessed ] = useState<DataStateType>();
@@ -29,7 +30,7 @@ function ViewForum (props: ForumProps) {
   };
 
   function findCategory (chosenCategory: string[]) {
-    let category = chosenCategory.pop();
+    let category = chosenCategory[chosenCategory.length - 1];
 
     let getCurrentCategory = function (categories: Category[]): any {
       if (categories) {
@@ -104,7 +105,7 @@ function ViewForum (props: ForumProps) {
     return 0;
   }
 
-  function sortTopicData (chosenSorting: SortingType) {
+  useEffect(() => {
     let dataToSort = isDataProcessed === 'filtered' ? filteredData : data;
     console.log(isDataProcessed);
 
@@ -120,31 +121,45 @@ function ViewForum (props: ForumProps) {
         console.log(sortedData);
         break;
     }
-  }
+  }, [chosenSorting]);
+
+  // function sortTopicData () {
+  //   let dataToSort = isDataProcessed === 'filtered' ? filteredData : data;
+  //   console.log(isDataProcessed);
+
+  //   switch (chosenSorting) {
+  //     case 'score':
+  //       setSortedData([...dataToSort.sort(sortByScore)]);
+  //       if (!isDataProcessed) setIsDataProcessed('sorted');
+  //       console.log(sortedData);
+  //       break;
+  //     case 'latest':
+  //       setSortedData([...dataToSort.sort(sortByDate)]);
+  //       if (!isDataProcessed) setIsDataProcessed('sorted');
+  //       console.log(sortedData);
+  //       break;
+  //   }
+  // }
 
   const onChangeSorting = (e: RadioChangeEvent) => {
     const sortValue = e.target.value as SortingType;
+    setChosenSorting(sortValue);
     console.log(sortValue);
-    sortTopicData(sortValue);
+    // sortTopicData();
   };
 
   const pinTopics = (data: TopicData[]) => {
     let pinned: TopicData[] = new Array();
     let newData: TopicData[] = new Array();
-    console.log('data', data);
 
     for (let i = 0; i < data.length; i++) {
       if (data[i].isPinned === true) {
         pinned.push(data[i]);
-        console.log('pin', pinned);
-        console.log('spliced', data);
       } else {
         newData.unshift(data[i]);
       }
     }
-    console.log('data1', newData);
     pinned.push(...newData.reverse());
-    console.log('data2', data);
 
     return pinned;
   };
@@ -158,8 +173,8 @@ function ViewForum (props: ForumProps) {
             fieldNames={{ label: 'title', value: 'title', children: 'children' }}
             options={categoryList}
             placeholder='Select category'
-            onChange={(value) => onChangeFilter(value)}
             changeOnSelect
+            onChange={(value) => onChangeFilter(value)}
           />
         </div>
         <div className='Sorting'>

@@ -87,6 +87,10 @@ a{
   padding-left: .35rem;
 }
 
+.anticon.anticon-close-circle.ant-cascader-picker-clear{
+  display: none;
+}
+
 .ant-radio-button-wrapper:not(:first-child)::before{
   display: none;
 }
