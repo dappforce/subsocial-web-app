@@ -6,7 +6,7 @@ import Section from '../utils/Section';
 import AddressMini from '../utils/AddressMiniDf';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/ui-api/types';
-import { api } from '@polkadot/ui-api';
+import { api, api as webApi } from '@polkadot/ui-api';
 import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
 
@@ -18,12 +18,14 @@ import { queryBlogsToProp, SeoHeads } from '../utils/index';
 import { Voter } from '../voting/Voter';
 import { CommentHistoryModal } from '../utils/ListsEditHistory';
 import ReactMarkdown from 'react-markdown';
-import { useRouter } from 'next/router';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize } from '../utils/Plularize';
 import { Loading } from '../utils/utils';
 import { Icon, Menu, Dropdown } from 'antd';
+import { NextPage } from 'next';
+import { Api } from '../utils/SubstrateApi';
+import { loadPostData, PostData } from './ViewPost';
 
 type Props = ApiProps & {
   postId: PostId,
@@ -114,42 +116,53 @@ export const CommentsByPost = withMulti(
   )
 );
 
-export function withIdsFromUrl (Component: React.ComponentType<Props>) {
-  return function (props: Props) {
-    const router = useRouter();
-    const { postId, commentId } = router.query;
-    try {
-      return <Component postId={new PostId(postId as string)} commentIdForPage={new CommentId(commentId as string)} {...props}/>;
-    } catch (err) {
-      return <em>Invalid url</em>;
-    }
-  };
-}
+// export function withIdsFromUrl (Component: React.ComponentType<Props>) {
+//   return function (props: Props) {
+//     const router = useRouter();
+//     const { postId, commentId } = router.query;
+//     try {
+//       return <Component postId={new PostId(postId as string)} commentIdForPage={new CommentId(commentId as string)} {...props}/>;
+//     } catch (err) {
+//       return <em>Invalid url</em>;
+//     }
+//   };
+// }
 
-export const CommentPage = withMulti(
-  CommentsTree,
-  withIdsFromUrl,
-  withCalls<Props>(
-    queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
-  )
-);
+// export const CommentPage = withMulti(
+//   CommentsTree,
+//   withIdsFromUrl,
+//   withCalls<Props>(
+//     queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
+//   )
+// );
 
 type ViewCommentProps = {
   comment: Comment,
   commentsWithParentId: Comment[],
-  isPage?: boolean
+  isPage?: boolean,
+  post?: Post,
+  postContent?: PostContent,
+  commentContent?: CommentContent
 };
 
-export function ViewComment (props: ViewCommentProps) {
+export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps) => {
 
-  const { comment, commentsWithParentId, isPage = false } = props;
+  const {
+    comment,
+    commentsWithParentId,
+    isPage = false,
+    post: initialPost = {} as Post,
+    postContent: initialPostContent = {} as PostContent,
+    commentContent = {} as CommentContent
+  } = props;
   const { state: { address: myAddress } } = useMyAccount();
   const [parentComments, childrenComments] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
   const { id, score, created: { account, time }, post_id, edit_history } = comment;
   const [ struct , setStruct ] = useState(comment);
-  const [ postContent, setPostContent ] = useState({} as PostContent);
-  const [ content , setContent ] = useState({} as CommentContent);
+  const [ post, setPost ] = useState(initialPost);
+  const [ postContent, setPostContent ] = useState(initialPostContent);
+  const [ content , setContent ] = useState(commentContent);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [doReloadComment, setDoReloadComment] = useState(true);
@@ -158,6 +171,19 @@ export function ViewComment (props: ViewCommentProps) {
   if (!comment || comment.isEmpty) {
     return null;
   }
+
+  useEffect(() => {
+
+    const loadPost = async () => {
+      const result = await api.query.blogs.postById(post_id) as Option<Post>;
+      if (result.isNone) return;
+      setPost(result.unwrap());
+    };
+
+    loadPost().catch(console.log);
+
+  }, [ false ]);
+
   useEffect(() => {
 
     if (!doReloadComment) return;
@@ -180,9 +206,6 @@ export function ViewComment (props: ViewCommentProps) {
     loadComment().catch(console.log);
 
     const loadPostContent = async () => {
-      const result = await api.query.blogs.postById(post_id) as Option<Post>;
-      if (result.isNone) return;
-      const post = result.unwrap();
       const content = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
       if (isSubcribe) {
         setPostContent(content);
@@ -290,4 +313,20 @@ export function ViewComment (props: ViewCommentProps) {
     </SuiComment>
   </SuiComment.Group>
 </div>;
-}
+};
+
+ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
+  const { query: { commentId }, req } = props;
+  const api = req ? await Api.setup() : webApi;
+  const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
+  const comment = commentOpt.unwrapOr({} as Comment);
+  const postData = comment && await loadPostData(api, comment.post_id) as PostData;
+  const commentContent = comment && await getJsonFromIpfs<CommentContent>(comment.ipfs_hash);
+  return {
+    comment: comment,
+    post: postData.post,
+    postContent: postData.initialContent,
+    commentsWithParentId: [] as Comment[],
+    commentContent
+  };
+};

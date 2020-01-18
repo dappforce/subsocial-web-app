@@ -3,8 +3,6 @@ import { Navigation } from './Navigation';
 import settings from '../components/settings';
 import { Api } from '@polkadot/ui-api';
 import { registerSubsocialTypes } from '../components/types';
-import { useRouter } from 'next/router';
-import { pageListForSsr } from '../config/ssrConfig';
 
 import '../components/utils/styles';
 
@@ -32,22 +30,22 @@ const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient
                 queueSetTxStatus={queueSetTxStatus}
                 url={url}
             >
-                <MyAccountProvider>
-                <QueueConsumer>
-                    {({ queueAction, stqueue, txqueue }: QueueProps) => (
-                        <Navigation>
-                            <Signer>
-                            <Status
-                                queueAction={queueAction}
-                                stqueue={stqueue}
-                                txqueue={txqueue}
-                            />
-                            </Signer>
-                            {children}
-                        </Navigation>
-                    )}
-                </QueueConsumer>
-                </MyAccountProvider>
+              <MyAccountProvider>
+                  <QueueConsumer>
+                      {({ queueAction, stqueue, txqueue }: QueueProps) => (
+                          <Navigation>
+                              <Signer>
+                              <Status
+                                  queueAction={queueAction}
+                                  stqueue={stqueue}
+                                  txqueue={txqueue}
+                              />
+                              </Signer>
+                              {children}
+                          </Navigation>
+                      )}
+                  </QueueConsumer>
+                </MyAccountProvider>;
             </Api>
           );
         }}
@@ -60,12 +58,6 @@ const NextLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient }
   console.log('Web socket url=', url);
 
   registerSubsocialTypes();
-
-  const page = useRouter().pathname.split('/')[1];
-
-  const withSsr = pageListForSsr.includes(page);
-
-  console.log(withSsr);
 
   return <div id='root'>
     <ClientLayout isClient={isClient}>{children}</ClientLayout>

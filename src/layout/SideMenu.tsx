@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useMyAccount } from '../components/utils/MyAccountContext';
-import dynamic from 'next/dynamic';
-const ListFollowingBlogs = dynamic(() => import('../components/blogs/ListFollowingBlogs'), { ssr: false });
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { withApi } from '@polkadot/ui-api';
-import { ApiProps } from '@polkadot/ui-api/types';
+import { api as webApi } from '@polkadot/ui-api';
 import { Loading } from '../components/utils/utils';
+import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
+import { BlogId } from '../components/types';
+import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
+import { Api } from '../components/utils/SubstrateApi';
 
 type MenuItem = {
   name: string,
@@ -17,12 +18,32 @@ type MenuItem = {
   image: string
 };
 
-const InnerMenu = (props: ApiProps) => {
-  const { isApiReady } = props;
+const InnerMenu = () => {
   const { toggle, state: { collapsed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
+  const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
+  const [ loaded, setLoaded ] = useState(false);
   const router = useRouter();
   const { pathname } = router;
+
+  useEffect(() => {
+    let isSubscribe = true;
+
+    const loadBlogsData = async () => {
+      isSubscribe && setLoaded(false);
+      const api = process ? await Api.setup() : webApi;
+      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      const loadBlogs = ids.map(id => loadBlogData(api,id));
+      const blogsData = await Promise.all<BlogData>(loadBlogs);
+      isSubscribe && setFollowedBlogsData(blogsData);
+      isSubscribe && setLoaded(true);
+      console.log('BlogData', blogsData);
+    };
+
+    loadBlogsData().catch(console.log);
+
+    return () => { isSubscribe = false; };
+  }, [ myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();
@@ -88,11 +109,11 @@ const InnerMenu = (props: ApiProps) => {
         </a>
       </Menu.Item>
       <Menu.Divider/>
-        <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
-          {isApiReady ? <ListFollowingBlogs/> : <Loading/>}
-        </Menu.ItemGroup>
+      <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
+        {loaded ? <RenderFollowedList followedBlogsData={followedBlogsData} /> : <Loading/>}
+      </Menu.ItemGroup>
     </Menu>
   );
 };
 
-export default withApi(InnerMenu);
+export default InnerMenu;

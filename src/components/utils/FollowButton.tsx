@@ -21,7 +21,6 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), blogId]);
 
   const [ isFollow, setIsFollow ] = useState(false);
-  const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
     let isSubscribe = true;
@@ -32,7 +31,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     load().catch(err => console.log(err));
 
     return () => { isSubscribe = false; };
-  }, [ triggerReload ]);
+  }, [ false ]);
 
   const buildTxParams = () => {
     return [ blogId ];
@@ -43,7 +42,6 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     compact
     size = {size}
     isBasic={isFollow}
-    isPrimary={!isFollow}
     label={isFollow
       ? 'Unfollow'
       : 'Follow'}
@@ -51,7 +49,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     tx={isFollow
       ? `blogs.unfollowBlog`
       : `blogs.followBlog`}
-    txSuccessCb={() => setTriggerReload(!triggerReload) }
+    txSuccessCb={() => setIsFollow(!isFollow) }
   />;
 }
 
@@ -102,7 +100,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     compact
     size={size}
     isBasic={isFollow}
-    isPrimary={!isFollow}
+
     label={isFollow
       ? 'Unfollow'
       : 'Follow'}

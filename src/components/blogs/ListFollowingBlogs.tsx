@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { AccountId } from '@polkadot/types';
 import { BlogId, Blog } from '../types';
 import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
-import { Loading } from '../utils/utils';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
@@ -11,10 +10,8 @@ import Router, { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
-import { Api } from '../utils/SubstrateApi';
-import { api as webApi, api } from '@polkadot/ui-api';
+import { api } from '@polkadot/ui-api';
 import { NextPage } from 'next';
-import { useMyAccount } from '../utils/MyAccountContext';
 import { SeoHeads } from '../utils';
 
 type ListBlogPageProps = {
@@ -41,9 +38,8 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
 };
 
 ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { address }, req } = props;
+  const { query: { address } } = props;
   console.log(props);
-  const api = req ? await Api.setup() : webApi;
   const followedBlogsData = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string)) as unknown as BlogId[];
   const loadBlogs = followedBlogsData.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
@@ -53,32 +49,32 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   };
 };
 
-const ListFollowingBlogs = () => {
-  const { state: { address: myAddress } } = useMyAccount();
-  const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
+// const ListFollowingBlogs = () => {
+//   const { state: { address: myAddress } } = useMyAccount();
+//   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
 
-  useEffect(() => {
-    let isSubscribe = true;
-    const loadBlogsData = async () => {
-      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
-      const loadBlogs = ids.map(id => loadBlogData(api,id));
-      const blogsData = await Promise.all<BlogData>(loadBlogs);
-      isSubscribe && setFollowedBlogsData(blogsData);
-    };
+//   useEffect(() => {
+//     let isSubscribe = true;
+//     const loadBlogsData = async () => {
+//       const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+//       const loadBlogs = ids.map(id => loadBlogData(api,id));
+//       const blogsData = await Promise.all<BlogData>(loadBlogs);
+//       isSubscribe && setFollowedBlogsData(blogsData);
+//     };
 
-    loadBlogsData().catch(console.log);
+//     loadBlogsData().catch(console.log);
 
-    return () => { isSubscribe = false; };
-  }, [ followedBlogsData.length > 0 ]);
+//     return () => { isSubscribe = false; };
+//   }, [ followedBlogsData.length > 0 ]);
 
-  return followedBlogsData.length > 0 ? <RenderFollowedList followedBlogsData={followedBlogsData} /> : <Loading/>;
-};
+//   return
+// };
 
 type Props = {
   followedBlogsData: BlogData[]
 };
 
-const RenderFollowedList = (props: Props) => {
+export const RenderFollowedList = (props: Props) => {
   const { followedBlogsData } = props;
   const totalCount = followedBlogsData !== undefined ? followedBlogsData && followedBlogsData.length : 0;
   const router = useRouter();
@@ -105,4 +101,4 @@ const RenderFollowedList = (props: Props) => {
   </>;
 };
 
-export default ListFollowingBlogs;
+export default RenderFollowedList;

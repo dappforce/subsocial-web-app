@@ -4,10 +4,9 @@ import Section from '../utils/Section';
 import { hexToNumber } from '@polkadot/util';
 import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../types';
 import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
-import { api, withMulti } from '@polkadot/ui-api';
+import { api as webApi } from '@polkadot/ui-api';
 import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddressMiniDf from '../utils/AddressMiniDf';
@@ -16,13 +15,15 @@ import { NoData } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
 import { Loading } from '../utils/utils';
 import { SeoHeads } from '../utils';
+import { Api } from '../utils/SubstrateApi';
+import { useMyAccount } from '../utils/MyAccountContext';
 
 type ActivityProps = {
   activity: Activity;
 };
 
-const InnerViewNewsFeed = (props: MyAccountProps) => {
-  const { myAddress } = props;
+export const ViewNewsFeed = () => {
+  const { state: { address: myAddress } } = useMyAccount();
   if (!myAddress) return <em>Oops...Incorect Account</em>;
 
   const [items, setItems] = useState([] as Activity[]);
@@ -65,8 +66,8 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
   );
 };
 
-const InnerViewNotifications = (props: MyAccountProps) => {
-  const { myAddress } = props;
+export const ViewNotifications = () => {
+  const { state: { address: myAddress } } = useMyAccount();
   if (!myAddress) return <NoData description='Opps...Incorect Account' />;
 
   const [items, setItems] = useState([] as Activity[]);
@@ -118,6 +119,7 @@ function ViewActivity (props: ActivityProps) {
 
   useEffect(() => {
     const loadData = async () => {
+      const api = webApi;
       const postData = await loadPostData(api, postId);
       const postExtData = postData.post ? await loadExtPost(api, postData.post) : {} as PostData;
       console.log(postData);
@@ -152,6 +154,7 @@ export function Notification (props: ActivityProps) {
 
   useEffect(() => {
     const loadActivity = async () => {
+      const api = webApi;
       switch (event) {
         case 'AccountFollowed': {
           setMessage(Events.AccountFollowed);
@@ -239,13 +242,3 @@ export function Notification (props: ActivityProps) {
     />
   </div>;
 }
-
-export const ViewNewsFeed = withMulti(
-  InnerViewNewsFeed,
-  withMyAccount
-);
-
-export const ViewNotifications = withMulti(
-  InnerViewNotifications,
-  withMyAccount
-);

@@ -26,7 +26,7 @@ type Props = BareProps & ApiProps & MyAccountProps & PartialQueueTx$Extrinsic & 
 
 class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   render () {
-    const { myAddress, accountId, isPrimary = true, isBasic, isDisabled, label, onClick } = this.props;
+    const { myAddress, accountId, isBasic, isPrimary = isBasic ? false : true, isDisabled, label, onClick } = this.props;
     const origin = accountId || myAddress;
 
     return (

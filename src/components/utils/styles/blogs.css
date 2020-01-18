@@ -894,9 +894,14 @@ hr {
   border-right: 1px solid #ddd;
   overflow: hidden;
   height: 100vh;
-  position: fixed;
   left: 0;
 }
+
+.ant-layout-sider-children {
+  width: inherit;
+  border-right: 1px #ddd solid;
+  position: fixed;
+} 
 
 .ant-list-something-after-last-item .ant-spin-container > .ant-list-items > .ant-list-item:last-child {
   border: none;
@@ -976,7 +981,8 @@ hr {
 /*----------MOBILE--------------*/
 
 .DfMobileSideBar {
-  position: relative;
+  position: absolute;
+  top: 60px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   .ant-menu-inline {
