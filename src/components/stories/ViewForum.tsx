@@ -123,29 +123,10 @@ function ViewForum (props: ForumProps) {
     }
   }, [chosenSorting]);
 
-  // function sortTopicData () {
-  //   let dataToSort = isDataProcessed === 'filtered' ? filteredData : data;
-  //   console.log(isDataProcessed);
-
-  //   switch (chosenSorting) {
-  //     case 'score':
-  //       setSortedData([...dataToSort.sort(sortByScore)]);
-  //       if (!isDataProcessed) setIsDataProcessed('sorted');
-  //       console.log(sortedData);
-  //       break;
-  //     case 'latest':
-  //       setSortedData([...dataToSort.sort(sortByDate)]);
-  //       if (!isDataProcessed) setIsDataProcessed('sorted');
-  //       console.log(sortedData);
-  //       break;
-  //   }
-  // }
-
   const onChangeSorting = (e: RadioChangeEvent) => {
     const sortValue = e.target.value as SortingType;
     setChosenSorting(sortValue);
     console.log(sortValue);
-    // sortTopicData();
   };
 
   const pinTopics = (data: TopicData[]) => {

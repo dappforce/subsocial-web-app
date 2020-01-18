@@ -1,3 +1,10 @@
+/*-------------Font-Size-----------*/
+$font_tiny: .75rem;
+$font_small: .875rem;
+$font_normal: 1rem;
+$font_big: 1.25rem;
+$font_huge: 1.5rem;
+
 *{
   color: #666666;
 }
@@ -5,8 +12,10 @@
 a{
   color: #1890ff !important;
 }
+
 .info{
   display: flex;
+  font-size: $font_normal;
   div{
     margin-right: 1.5rem;
   }
@@ -16,7 +25,7 @@ a{
 }
 
 .title{
-  font-size: 1.5rem;
+  font-size: $font_big;
   font-weight: bold;
   color: #666666;
   i{
@@ -25,7 +34,7 @@ a{
 }
 
 .desc{
-  font-size: .9rem;
+  font-size: $font_small;
 }
 
 .ForumHeader{
@@ -47,16 +56,30 @@ a{
   i{
     margin-left: 1rem;
   }
+  .ant-btn{
+    i{
+      margin-left: 0;
+    }
+    vertical-align: middle;
+  }
 }
 
 .ant-btn-primary{
   background-color: white;
+  vertical-align: middle;
+  padding:0 1rem 0 1rem;
   span{
     color: #1890ff;
+    font-size: $font_normal;
   }
   path{
     color: #1890ff;
   }
+}
+
+.ant-btn-primary:focus,.ant-btn-primary:hover,.ant-btn-primary.active, .ant-btn-primary:active{
+  background-color: white;
+  border-color: #1890ff;
 }
 
 .Navigation{
@@ -77,6 +100,7 @@ a{
 
 .ant-cascader-picker{
   background-color: #fafafa !important;
+  margin-left: 0.5rem;
   path{
     color: #1890ff;
   }
@@ -107,6 +131,10 @@ a{
 .ant-radio-button-wrapper{
   border: none;
   background-color: transparent;
+  font-size: $font_normal;
+  .anticon{
+    margin-right: 0.5rem;
+  }
 }
 
 .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
