@@ -21,6 +21,7 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
   const { totalCount, blogsData } = props;
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <SeoHeads title='All blogs' name='All blogs' desc='Subsocial blogs' />
       <ListData
         title={`All blogs (${totalCount})`}
         dataSource={blogsData}
@@ -64,7 +65,7 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
   const { blogsData } = props;
   const totalCount = blogsData.length;
   return (<>
-    <SeoHeads title='My blogs' desc='Subsocial blogs' />
+    <SeoHeads title='My blogs' name='My blogs' desc='Subsocial blogs' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`My Blogs (${totalCount})`}

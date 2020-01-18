@@ -2,7 +2,6 @@ import BN from 'bn.js';
 import React from 'react';
 
 import { ApiProps } from '@polkadot/ui-api/types';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import { SeoHeads } from '../utils/index';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '../types';
@@ -26,7 +25,7 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <SeoHeads title='Subsocial latest updates' name='Home' desc='Subsocial home page with latestt updates' image={substrateLogo} />
+      <SeoHeads title='Subsocial latest updates' name='Home' desc='Subsocial home page with latestt updates' />
       <ListData
         title={`Latest blogs`}
         dataSource={blogsData}

@@ -69,7 +69,7 @@ type ViewPostPageProps = {
   withActions?: boolean,
   withBlogName?: boolean,
   postData: PostData,
-  postExtData: PostData,
+  postExtData?: PostData,
   commentIds?: CommentId[]
 };
 
@@ -107,8 +107,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters, setActiveVoters ] = useState(0);
 
-  const { post: originalPost } = postExtData;
-  const [ originalContent , setOriginalContent ] = useState(postExtData.initialContent);
+  const originalPost = postExtData && postExtData.post;
+  const [ originalContent , setOriginalContent ] = useState(postExtData && postExtData.initialContent);
 
   const openVoters = (type: ActiveVoters) => {
     setPostVotersOpen(true);
@@ -437,7 +437,5 @@ export const loadPostDataList = async (api: ApiPromise, ids: PostId[]) => {
   const postsData = await Promise.all<PostData>(loadPostsData);
   const loadPostsExtData = postsData.map(item => loadExtPost(api, item.post as Post));
   const postsExtData = await Promise.all<PostData>(loadPostsExtData);
-  let posts: PostDataListItem[] = [];
-  postsData.forEach((item, index) => posts.push({ postData: item, postExtData: postsExtData[index] }));
-  return posts;
+  return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
 };

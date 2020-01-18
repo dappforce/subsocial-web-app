@@ -1,4 +1,5 @@
 import BN from 'bn.js';
+import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 
 export const SITE_NAME = 'Subsocial Network';
 
@@ -122,7 +123,7 @@ import React from 'react';
 export const createTitle = (title: string) => `${title.length <= 50 ? title : title.substr(0, 50)} - Subsocial`;
 
 export function SeoHeads (props: SeoProps) {
-  const { name = '', image = '', title = '', desc = '' } = props;
+  const { name = '', image = substrateLogo, title = '', desc = '' } = props;
   return <div>
     <Head>
       <title>{createTitle(name)}</title>

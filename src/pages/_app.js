@@ -1,6 +1,7 @@
 import React from 'react'
 import App from 'next/app';
 import MainPage from '../layout/MainPage'
+import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext';
 
 class MyApp extends App {
   state = {
@@ -17,9 +18,11 @@ class MyApp extends App {
     console.log('>>>>>>>>>>>>>> isClient: ', this.state.isClient);
     const { Component, pageProps } = this.props
     return (
-      <MainPage isClient={this.state.isClient}>
-        <Component {...pageProps}/>
-      </MainPage>
+      <SidebarCollapsedProvider>
+        <MainPage isClient={this.state.isClient}>
+          <Component {...pageProps}/>
+        </MainPage>
+      </SidebarCollapsedProvider>
     )
   }
 }

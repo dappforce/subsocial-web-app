@@ -1,3 +1,4 @@
-import { ViewNewsFeed } from '../components/activity/ActivityStream';
+import dynamic from 'next/dynamic';
+const Feeds = dynamic(() => import('../components/activity/ListFeeds'), { ssr: false });
 
-export default ViewNewsFeed;
+export default Feeds;

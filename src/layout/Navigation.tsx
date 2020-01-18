@@ -4,7 +4,7 @@ import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import dynamic from 'next/dynamic';
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
-const Menu = dynamic(() => import('./SideMenu'), { ssr: false });
+import Menu from './SideMenu';
 import { isBrowser } from 'react-device-detect';
 import { Drawer } from 'antd-mobile';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';

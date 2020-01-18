@@ -35,6 +35,10 @@ $huge: 2rem;
 /*-------------Colors----------*/
 $secondary: #8c8c8c;
 
+.DfBrand {
+  font-size: $font_huge;
+  cursor: pointer;
+}
 
 .DfSummary {
   margin-top: 1rem;
@@ -210,8 +214,8 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfCommentsByPost {
   h4 {
-    font-size: $font_huge;
-    font-weight: bold;
+    font-size: $font_big;
+    font-weight: 400;
     color:$secondary;
     border-top: #ddd 1px solid;
   }

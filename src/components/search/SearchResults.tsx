@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { ViewPost } from '../posts/ViewPost';
-import { Tab, StrictTabProps } from 'semantic-ui-react';
+import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
 import ViewProfile from '../profiles/ViewProfile';
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
 import Section from '../utils/Section';
 import { AccountId } from '@polkadot/types';
+import { PostId } from '../types';
 
 type DataResults = {
   _id: string;
@@ -45,9 +46,9 @@ const resultToPreview = (res: DataResults, i: number) => {
     case ElasticIndex.blogs:
       return <ViewBlog id={res._id} previewDetails withFollowButton />;
     case ElasticIndex.posts:
-      return <ViewPost key={i} id={res._id} preview withLink={true} />;
+      return <ViewPost key={i} id={new PostId(res._id)} variant='preview' withLink={true} />;
     case ElasticIndex.profiles:
-      return <ViewProfile key={i} id={new AccountId(res._id)} preview />;
+      return <Segment><ViewProfile key={i} id={new AccountId(res._id)} preview /></Segment>;
     default:
       return <></>;
   }

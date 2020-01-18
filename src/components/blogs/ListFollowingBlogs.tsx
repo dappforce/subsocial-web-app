@@ -15,6 +15,7 @@ import { Api } from '../utils/SubstrateApi';
 import { api as webApi, api } from '@polkadot/ui-api';
 import { NextPage } from 'next';
 import { useMyAccount } from '../utils/MyAccountContext';
+import { SeoHeads } from '../utils';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -25,6 +26,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   const totalCount = blogsData !== undefined ? blogsData && blogsData.length : 0;
 
   return (<div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <SeoHeads title='My followed' name='My blogs' desc='Subsocial blogs' />
       <ListData
         title={<Pluralize count={totalCount} singularText='Following blog'/>}
         dataSource={blogsData}
@@ -67,7 +69,7 @@ const ListFollowingBlogs = () => {
     loadBlogsData().catch(console.log);
 
     return () => { isSubscribe = false; };
-  }, [ false ]);
+  }, [ followedBlogsData.length > 0 ]);
 
   return followedBlogsData.length > 0 ? <RenderFollowedList followedBlogsData={followedBlogsData} /> : <Loading/>;
 };
@@ -81,7 +83,7 @@ const RenderFollowedList = (props: Props) => {
   const totalCount = followedBlogsData !== undefined ? followedBlogsData && followedBlogsData.length : 0;
   const router = useRouter();
   const { pathname, query } = router;
-  const currentBlog = pathname.includes('blog') ? new BN(query.id as string) : undefined;
+  const currentBlog = pathname.includes('blog') ? new BN(query.blogId as string) : undefined;
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
