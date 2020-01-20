@@ -13,7 +13,11 @@ import { QueueProps } from '@polkadot/ui-app/Status/types';
 import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
 
-const ClientLayout: React.FunctionComponent = ({ children }) => {
+export type LayoutProps = {
+  isClient: boolean
+};
+
+const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient }) => {
   const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
 
   return <Queue>
@@ -25,7 +29,7 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
                 queueSetTxStatus={queueSetTxStatus}
                 url={url}
             >
-                <MyAccountProvider>
+            <MyAccountProvider>
                 <QueueConsumer>
                     {({ queueAction, stqueue, txqueue }: QueueProps) => (
                         <Navigation>
@@ -40,7 +44,7 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
                         </Navigation>
                     )}
                 </QueueConsumer>
-                </MyAccountProvider>
+                </MyAccountProvider>;
             </Api>
           );
         }}

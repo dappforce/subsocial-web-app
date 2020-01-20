@@ -8,26 +8,26 @@ import { Option, AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
+import { nonEmptyStr, queryBlogsToProp, SeoHeads, ZERO } from '../utils/index';
 import { BlogId, Blog, PostId, BlogContent } from '../types';
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-const FollowBlogButton = dynamic(() => import('../utils/FollowButton'), { ssr: false });
-import { Loading } from '../utils/utils';
+const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
+import { Loading, getApi, formatUnixDate } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
-import AddressMiniDf from '../utils/AddressMiniDf';
+const AddressMiniDf = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { api as webApi } from '@polkadot/ui-api';
 import { ApiPromise } from '@polkadot/api';
+import BN from 'bn.js';
 
 const SUB_SIZE = 2;
 
@@ -77,6 +77,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     score,
     created: { account, time },
     ipfs_hash,
+    posts_count,
     followers_count: followers,
     edit_history
   } = blog;
@@ -101,7 +102,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
-  const postsCount = posts ? posts.length : 0;
+  const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
 
@@ -244,7 +245,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const RenderBlogCreator = () => (
     <MutedDiv className='DfCreator'>
-      <div className='DfCreator--data'><Icon type='calendar' />Created on {time}</div>
+      <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time)}</div>
       <div className='DfCreator-owner'>
         <Icon type='user' />
         {'Owned by '}
@@ -290,7 +291,7 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId } } = props;
   console.log('Initial', props.query);
-  const api = webApi;
+  const api = await getApi();
   const blogData = await loadBlogData(api, new BlogId(blogId as string));
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   const posts = await loadPostDataList(api, postIds);

@@ -10,9 +10,9 @@ import Router, { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
-import { api } from '@polkadot/ui-api';
 import { NextPage } from 'next';
 import { SeoHeads } from '../utils';
+import { getApi } from '../utils/utils';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -40,6 +40,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
 ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
   console.log(props);
+  const api = await getApi();
   const followedBlogsData = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string)) as unknown as BlogId[];
   const loadBlogs = followedBlogsData.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);

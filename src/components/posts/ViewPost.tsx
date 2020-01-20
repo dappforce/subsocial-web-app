@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+
 import ReactMarkdown from 'react-markdown';
 import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
-import { SeoHeads } from '../utils/index';
-import { Loading } from '../utils/utils';
-import { CommentsByPost } from './ViewComment';
+import { SeoHeads, nonEmptyStr } from '../utils/index';
+import { Loading, getApi, formatUnixDate } from '../utils/utils';
+const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 import { MutedSpan } from '../utils/MutedText';
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
-import AddressMiniDf from '../utils/AddressMiniDf';
-import { api as webApi, api } from '@polkadot/ui-api';
+const AddressMiniDf = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
 import { ShareModal } from './ShareModal';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
@@ -26,9 +26,10 @@ import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
-import Api from '../utils/SubstrateApi';
 import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
+import BN from 'bn.js';
+import { Codec } from '@polkadot/types/types';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
@@ -92,14 +93,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     id,
     created,
     ipfs_hash,
-    extension,
-    isRegularPost,
     edit_history
   } = post;
 
-  console.log(post, postExtData);
-  console.log(isRegularPost);
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
+  const isRegularPost = type === 'regular';
   console.log('Type', type);
   const { state: { address } } = useMyAccount();
   const [ content , setContent ] = useState(initialContent);
@@ -181,7 +179,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
           <Link href='/post/[id]' as={`/post/${id}`} >
             <a className='DfGreyLink'>
-              {time}
+              {formatUnixDate(time)}
             </a>
           </Link>
         </div>}
@@ -193,6 +191,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!post || !content) return null;
 
     const { title, summary, image } = content;
+    const hasImage = nonEmptyStr(image);
+
     return <div className='DfContent'>
       <div className='DfPostText'>
         {renderNameOnly(title ? title : summary, post.id)}
@@ -200,7 +200,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <ReactMarkdown className='DfMd' source={summary} linkTarget='_blank' />
         </div>
       </div>
-      {content.image && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
+      {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
 
@@ -231,11 +231,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderStatsPanel = (post: Post) => {
     if (post.id === undefined) return null;
 
-    const { reactions_count, comments_count, shares_count, score } = post;
+    const { upvotes_count, downvotes_count, comments_count, shares_count, score } = post;
+    const reactionsCount = new BN(upvotes_count).add(new BN(downvotes_count));
+    console.log('Reaction count:', reactionsCount);
 
     return (<>
     <div className='DfCountsPreview'>
-      {!extension.value && <MutedSpan><div onClick={() => reactions_count && openVoters(ActiveVoters.All)} className={reactions_count ? '' : 'disable'}><Pluralize count={reactions_count} singularText='Reaction'/></div></MutedSpan>}
+      {<MutedSpan><div onClick={() => reactionsCount && openVoters(ActiveVoters.All)} className={reactionsCount ? '' : 'disable'}><Pluralize count={reactionsCount} singularText='Reaction'/></div></MutedSpan>}
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
       <Pluralize count={comments_count} singularText='Comment'/></div></MutedSpan>
       <MutedSpan><div><Pluralize count={shares_count} singularText='Share'/></div></MutedSpan>
@@ -281,9 +283,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
             </div>
             {renderContent(originalPost, originalContent)}
           </div>
-          {withStats && renderStatsPanel(originalPost) /* todo params originPost */}
+          {withStats && renderStatsPanel(originalPost) /* TODO params originPost */}
         </Segment>
-        {withStats && renderStatsPanel(post) /* todo voters %%%*/ }
+        {withStats && renderStatsPanel(post) /* TODO voters %%%*/ }
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
@@ -338,12 +340,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { id }, req } = props;
+  const { query: { id } } = props;
   console.log('Initial', props.query);
-  const api = req ? await Api.setup() : webApi;
+  const api = await getApi();
   const postData = await loadPostData(api, new PostId(id as string)) as PostData;
   const postExtData = await loadExtPost(api, postData.post as Post);
-  Api.destroy();
   return {
     postData,
     postExtData
@@ -362,6 +363,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
+        const api = await getApi();
         const postData = await loadPostData(api, id as PostId);
         console.log(postData);
         isSubscribe && setPostData(postData);
@@ -412,8 +414,11 @@ export const loadPostData = async (api: ApiPromise, postId: PostId) => {
 
   if (postOpt.isSome) {
     const post = postOpt.unwrap();
+    post.set('score', new BN(post.score.toNumber()) as unknown as Codec);
     const content = await loadContentFromIpfs(post);
     postData = { post, initialContent: content };
+
+    // console.log('loadPostData:', postData);
   }
 
   return postData;

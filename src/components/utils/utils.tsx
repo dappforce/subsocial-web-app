@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
-import { AccountId, AccountIndex, Address, Option } from '@polkadot/types';
-import AddressMini from './AddressMiniDf';
+import { AccountId, Option } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
+import { api as webApi } from '@polkadot/ui-api';
 import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
-
-type AuthorPreviewProps = {
-  address: AccountId | AccountIndex | Address | string;
-};
-
-// TODO show member instead of address.
-export function AuthorPreview ({ address }: AuthorPreviewProps) {
-  return <AddressMini value={address} isShort={false} isPadded={false} withBalance={true} withName={true} size={36} />;
-}
+import moment from 'moment-timezone';
+import Api from './SubstrateApi';
 
 type PaginationProps = {
   currentPage?: number;
@@ -149,3 +142,11 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 }
 
 export const Loading = () => <Icon type='loading' />;
+
+export const getApi = async () => {
+  return webApi ? webApi.isReady : Api.setup();
+};
+
+export const formatUnixDate = (seconds: number, format: string = 'lll') => {
+  return moment(new Date(seconds * 1000)).format(format);
+};

@@ -4,8 +4,9 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
-import AddressMiniDf from '../utils/AddressMiniDf';
+const AddressMiniDf = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
 import { BUTTON_SIZE } from '../../config/Size.config';
+import dynamic from 'next/dynamic';
 type Props = {
   following?: AccountId[],
   followingCount: Number

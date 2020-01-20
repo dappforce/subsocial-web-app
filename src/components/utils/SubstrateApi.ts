@@ -1,12 +1,16 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { registerSubsocialTypes } from '../types';
 
+let api: (ApiPromise | undefined);
+
+export { api };
 export class SubstrateApi {
 
   protected api!: ApiPromise;
 
   public setup = async () => {
     await this.connectToApi();
+    api = this.api;
     return this.api;
   }
 

@@ -4,10 +4,11 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
-import AddressMini from '../utils/AddressMiniDf';
+const AddressMini = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
 import { ReactionId, Reaction, CommentId, PostId } from '../types';
 import { api } from '@polkadot/ui-api/Api';
 import { Pluralize } from '../utils/Plularize';
+import dynamic from 'next/dynamic';
 
 type VotersProps = {
   id: CommentId | PostId,

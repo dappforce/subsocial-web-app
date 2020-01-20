@@ -8,14 +8,6 @@ body, #root {
   color: #111;
 }
 
-@media (min-width: 1200px) {
-  .DfPageContent {
-    min-width: 50%;
-    width: 50%;
-    max-width: 60%;
-  }
-}
-
 /*-------------Font-Size-----------*/
 $font_tiny: .75rem;
 $font_small: .875rem;
@@ -34,6 +26,18 @@ $huge: 2rem;
 
 /*-------------Colors----------*/
 $secondary: #8c8c8c;
+
+
+@media (min-width: 1200px) {
+  .DfPageContent {
+    min-width: 50%;
+    width: 50%;
+    max-width: 60%;
+  }
+  .DfBrand {
+    font-size: $font_big;
+  }
+}
 
 .DfBrand {
   font-size: $font_huge;

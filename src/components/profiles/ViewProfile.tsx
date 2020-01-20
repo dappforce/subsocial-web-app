@@ -8,8 +8,8 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr, ZERO } from '../utils/index';
 import { SocialAccount, ProfileContent, Profile } from '../types';
-import { withSocialAccount, withAddressFromUrl } from '../utils/utils';
-import { FollowAccountButton } from '../utils/FollowButton';
+import { withSocialAccount, withAddressFromUrl, getApi } from '../utils/utils';
+const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -22,8 +22,6 @@ import { Pluralize } from '../utils/Plularize';
 import { BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
-import Api from '../utils/SubstrateApi';
-import { api as webApi } from '@polkadot/ui-api';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 
@@ -219,7 +217,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 </a>
               }
             </div>
-            <ReactMarkdown className='DfMd' source={about} linkTarget='_blank' />
+            <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>
           </div>
         </div>
       </div>
@@ -248,15 +246,14 @@ const Component: NextPage<Props> = (props: Props) => {
 };
 
 Component.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address }, req } = props;
+  const { query: { address } } = props;
   console.log('Initial', props.query);
-  const api = req ? await Api.setup() : webApi;
+  const api = await getApi();
   const socialAccountOpt = await api.query.blogs.socialAccountById(address) as Option<SocialAccount>;
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt && profileOpt.unwrap() as Profile;
   const content = profile && await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
-  Api.destroy();
   return {
     id: new AccountId(address as string),
     socialAccount: socialAccount,

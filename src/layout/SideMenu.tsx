@@ -5,12 +5,10 @@ import Router, { useRouter } from 'next/router';
 import { useMyAccount } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { api as webApi } from '@polkadot/ui-api';
-import { Loading } from '../components/utils/utils';
+import { Loading, getApi } from '../components/utils/utils';
 import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
 import { BlogId } from '../components/types';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
-import { Api } from '../components/utils/SubstrateApi';
 
 type MenuItem = {
   name: string,
@@ -27,16 +25,18 @@ const InnerMenu = () => {
   const { pathname } = router;
 
   useEffect(() => {
+    if (!myAddress) return;
+
     let isSubscribe = true;
 
     const loadBlogsData = async () => {
-      isSubscribe && setLoaded(false);
-      const api = process ? await Api.setup() : webApi;
+      setLoaded(false);
+      const api = await getApi();
       const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
       const loadBlogs = ids.map(id => loadBlogData(api,id));
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);
-      isSubscribe && setLoaded(true);
+      setLoaded(true);
       console.log('BlogData', blogsData);
     };
 

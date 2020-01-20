@@ -20,7 +20,7 @@ const InnerMenu = () => {
         <Button type='link' onClick={toggle} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
-          <span className='DfBrand' onClick={() => Router.push('/')}>{isBrowser ? 'Subsocial' : 'S.'}</span>
+          <span className='DfBrand' onClick={() => Router.push('/')}>{'Subsocial'}</span>
       </div>
       {isBrowser && <Search/>}
       <div className='DfTopBar--rightContent'>

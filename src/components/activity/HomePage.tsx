@@ -9,8 +9,7 @@ import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { NextPage } from 'next';
-import Api from '../utils/SubstrateApi';
-import { api as webApi } from '@polkadot/ui-api';
+import { getApi } from '../utils/utils';
 
 const FIVE = new BlogId(5);
 const ZERO = new BlogId(0);
@@ -45,7 +44,7 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 };
 
 LatestUpdate.getInitialProps = async (props): Promise<any> => {
-  const api = props.req ? await Api.setup() : webApi;
+  const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
   const nextPostId = await api.query.blogs.nextPostId() as PostId;
   const getLastNIds = (nextId: BN, size: BN): BN[] => {

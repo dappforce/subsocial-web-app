@@ -3,15 +3,15 @@ import React, { useState, useEffect } from 'react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import Section from '../utils/Section';
-import AddressMini from '../utils/AddressMiniDf';
+const AddressMini = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/ui-api/types';
-import { api, api as webApi } from '@polkadot/ui-api';
+import { api } from '@polkadot/ui-api';
 import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { partition } from 'lodash';
+import { partition, isEmpty } from 'lodash';
 import { PostId, CommentId, Comment, OptionComment, CommentContent, PostContent, Post } from '../types';
 import { NewComment } from './EditComment';
 import { queryBlogsToProp, SeoHeads } from '../utils/index';
@@ -20,12 +20,12 @@ import { CommentHistoryModal } from '../utils/ListsEditHistory';
 import ReactMarkdown from 'react-markdown';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
-import { Pluralize } from '../utils/Plularize';
-import { Loading } from '../utils/utils';
+import { Pluralize, pluralize } from '../utils/Plularize';
+import { Loading, getApi, formatUnixDate } from '../utils/utils';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
-import { Api } from '../utils/SubstrateApi';
 import { loadPostData, PostData } from './ViewPost';
+import dynamic from 'next/dynamic';
 
 type Props = ApiProps & {
   postId: PostId,
@@ -109,7 +109,7 @@ export function CommentsTree (props: Props) {
   return isPage ? <RenderCommentPage/> : <RenderCommentsOnPost/>;
 }
 
-export const CommentsByPost = withMulti(
+export default withMulti(
   CommentsTree,
   withCalls<Props>(
     queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
@@ -174,47 +174,37 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
   useEffect(() => {
 
-    const loadPost = async () => {
-      const result = await api.query.blogs.postById(post_id) as Option<Post>;
-      if (result.isNone) return;
-      setPost(result.unwrap());
-    };
-
-    loadPost().catch(console.log);
-
-  }, [ false ]);
-
-  useEffect(() => {
-
-    if (!doReloadComment) return;
-
-    let isSubcribe = true;
+    let isSubscribe = true;
 
     getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
-      isSubcribe && setContent(json);
+      console.log('Comment Content: ', json);
+      isSubscribe && setContent(json);
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
       const result = await api.query.blogs.commentById(id) as OptionComment;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
-      if (isSubcribe) {
+      if (isSubscribe) {
         setStruct(comment);
-        setDoReloadComment(false);
       }
     };
     loadComment().catch(console.log);
 
     const loadPostContent = async () => {
+      if (isEmpty(post)) {
+        const result = await api.query.blogs.postById(post_id) as Option<Post>;
+        if (result.isNone) return;
+        isSubscribe && setPost(result.unwrap());
+      }
       const content = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-      if (isSubcribe) {
+      if (isSubscribe) {
         setPostContent(content);
-        setDoReloadComment(false);
       }
     };
     loadPostContent().catch(console.log);
 
-    return () => { isSubcribe = false; };
+    return () => { isSubscribe = false; };
   },[ doReloadComment ]);
 
   const isMyStruct = myAddress === account.toString();
@@ -268,7 +258,12 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
             isShort={true}
             isPadded={false}
             size={32}
-            extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${moment(time).fromNow()} · comment score: ${score}`}</a></Link>}
+            extraDetails={
+              <Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}>
+                <a className='DfGreyLink'>
+                  {`${moment(formatUnixDate(time)).fromNow()} · ${pluralize(score, 'Point')}`}
+                </a>
+              </Link>}
           />
         </SuiComment.Metadata>
         <SuiComment.Content>
@@ -278,7 +273,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
               id={struct.id}
               postId={struct.post_id}
               json={content.body}
-              onSuccess={() => { setShowEditForm(false); setDoReloadComment(true); }}
+              onSuccess={() => { setShowEditForm(false); setDoReloadComment(!doReloadComment); }}
             />
             : <>
               <SuiComment.Text>
@@ -316,8 +311,8 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 };
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
-  const { query: { commentId }, req } = props;
-  const api = req ? await Api.setup() : webApi;
+  const { query: { commentId } } = props;
+  const api = await getApi();
   const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
   const comment = commentOpt.unwrapOr({} as Comment);
   const postData = comment && await loadPostData(api, comment.post_id) as PostData;
@@ -327,6 +322,7 @@ ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
     post: postData.post,
     postContent: postData.initialContent,
     commentsWithParentId: [] as Comment[],
-    commentContent
+    commentContent,
+    isPage: true
   };
 };

@@ -3,7 +3,6 @@ import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-import { api } from '@polkadot/ui-api';
 import { AccountId, Option } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
@@ -11,6 +10,7 @@ import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } from '../types';
 import { Icon } from 'antd';
 import BN from 'bn.js';
+import { getApi } from '../utils/utils';
 
 const ZERO = new BN(0);
 
@@ -43,6 +43,7 @@ export const Voter = (props: VoterProps) => {
     let isSubscribe = true;
 
     async function loadStruct<T extends Comment | Post> (_: T) {
+      const api = await getApi();
       const result = await api.query.blogs[`${structQuery}ById`](id) as Option<T>;
       if (result.isNone) return;
 
@@ -52,6 +53,7 @@ export const Voter = (props: VoterProps) => {
     loadStruct(state).catch(err => console.log(err));
 
     async function loadReaction () {
+      const api = await getApi();
       const reactionId = await api.query.blogs[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
       const reactionOpt = await api.query.blogs.reactionById(reactionId) as Option<Reaction>;
       if (reactionOpt.isNone) {

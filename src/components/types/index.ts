@@ -1,6 +1,5 @@
 import { Option, Struct, Enum, EnumType } from '@polkadot/types/codec';
 import { getTypeRegistry, BlockNumber, Moment, AccountId, u16, u32, u64, Text, Vector, i32, Null } from '@polkadot/types';
-import moment from 'moment-timezone';
 import BN from 'bn.js';
 
 export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
@@ -71,9 +70,9 @@ export class Change extends Struct {
     return this.get('block') as BlockNumber;
   }
 
-  get time (): string {
+  get time (): number {
     const time = this.get('time') as Moment;
-    return moment(time).format('lll');
+    return time.toNumber();
   }
 }
 
@@ -306,8 +305,8 @@ export class Post extends Struct {
     return this.get('edit_history') as VecPostHistoryRecord;
   }
 
-  get score (): i32 {
-    return this.get('score') as i32;
+  get score (): BN {
+    return new BN(this.get('score') as i32);
   }
 
   get isRegularPost (): boolean {

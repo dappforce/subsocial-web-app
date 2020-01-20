@@ -11,7 +11,7 @@ import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, queryBlogsToProp } from './index';
-import { FollowAccountButton } from './FollowButton';
+const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { withSocialAccount } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
@@ -23,6 +23,7 @@ import { MutedDiv } from './MutedText';
 import { Pluralize } from './Plularize';
 import { DfBgImg } from './DfBgImg';
 import { Popover } from 'antd';
+import dynamic from 'next/dynamic';
 
 const LIMIT_SUMMARY = 40;
 
