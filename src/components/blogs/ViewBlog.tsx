@@ -28,6 +28,7 @@ import { NextPage } from 'next';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
+import mdToText from 'markdown-to-txt';
 
 const SUB_SIZE = 2;
 
@@ -262,7 +263,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   return <Section className='DfContentPage'>
-    <SeoHeads title={name} name={name} desc={desc} image={image} />
+    <SeoHeads title={name} name={name} desc={mdToText(desc)} image={image} />
     <div className='FullProfile'>
       {renderPreview()}
     </div>

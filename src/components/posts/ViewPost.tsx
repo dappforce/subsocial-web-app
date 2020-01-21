@@ -9,7 +9,7 @@ import { Option, AccountId } from '@polkadot/types';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { SeoHeads, nonEmptyStr } from '../utils/index';
-import { Loading, getApi, formatUnixDate } from '../utils/utils';
+import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 import { MutedSpan } from '../utils/MutedText';
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
@@ -285,7 +285,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {withStats && renderStatsPanel(originalPost) /* TODO params originPost */}
         </Segment>
-        {withStats && renderStatsPanel(post) /* TODO voters %%%*/ }
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
@@ -393,15 +392,9 @@ export const getTypePost = (post: Post): PostType => {
   }
 };
 
-const makeSummary = (body: string) => (
-  body.length > LIMIT_SUMMARY
-  ? body.substr(0, LIMIT_SUMMARY) + '...'
-  : body
-);
-
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = makeSummary(ipfsContent.body);
+  const summary = makeSummary(ipfsContent.body, LIMIT_SUMMARY);
   return {
     ...ipfsContent,
     summary

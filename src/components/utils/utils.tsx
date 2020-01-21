@@ -150,3 +150,9 @@ export const getApi = async () => {
 export const formatUnixDate = (seconds: number, format: string = 'lll') => {
   return moment(new Date(seconds * 1000)).format(format);
 };
+
+export const makeSummary = (body: string, limit: number) => (
+  body.length > limit
+  ? body.substr(0, limit) + '...'
+  : body
+);

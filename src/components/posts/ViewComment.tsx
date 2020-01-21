@@ -9,6 +9,7 @@ import { ApiProps } from '@polkadot/ui-api/types';
 import { api } from '@polkadot/ui-api';
 import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
+import mdToText from 'markdown-to-txt';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { partition, isEmpty } from 'lodash';
@@ -21,7 +22,7 @@ import ReactMarkdown from 'react-markdown';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize, pluralize } from '../utils/Plularize';
-import { Loading, getApi, formatUnixDate } from '../utils/utils';
+import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import { loadPostData, PostData } from './ViewPost';
@@ -243,10 +244,11 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   );
 
   const responseTitle = <>In response to <Link href='/post/[id]' as={`/post/${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
+  const bodyAsText = mdToText(content.body);
 
   return <div id={`comment-${id}`} className='DfComment'>
     {isPage && <>
-      <SeoHeads name={`In response to ${postContent.title}`} desc={content.body} title={`${account} commented on ${postContent.title}`} />
+      <SeoHeads name={makeSummary(bodyAsText, 50)} desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
     <MutedDiv style={{ marginTop: '1rem' }}>{responseTitle}</MutedDiv>
     </>}
     <SuiComment.Group threaded>

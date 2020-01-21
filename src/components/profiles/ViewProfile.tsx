@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-
+import mdToText from 'markdown-to-txt';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr, ZERO } from '../utils/index';
 import { SocialAccount, ProfileContent, Profile } from '../types';
 import { withSocialAccount, withAddressFromUrl, getApi } from '../utils/utils';
@@ -231,7 +231,7 @@ const Component: NextPage<Props> = (props: Props) => {
   }
 
   return <>
-    <SeoHeads title={getName()} name={getName()} desc={about} image={avatar} />
+    <SeoHeads title={getName()} name={getName()} desc={mdToText(about)} image={avatar} />
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}

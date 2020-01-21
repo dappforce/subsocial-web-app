@@ -9,6 +9,7 @@ import { Loading, getApi } from '../components/utils/utils';
 import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
 import { BlogId } from '../components/types';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
+import Link from 'next/link';
 
 type MenuItem = {
   name: string,
@@ -98,8 +99,12 @@ const InnerMenu = () => {
     >
       {MenuItems.map(item =>
       <Menu.Item key={item.page[0]} onClick={() => onClick(item.page)}>
-        <Icon type={item.image} />
-        <span>{item.name}</span>
+        <Link href={item.page[0]} as={item.page[1]}>
+          <a>
+            <Icon type={item.image} />
+            <span>{item.name}</span>
+          </a>
+        </Link>
       </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
