@@ -236,15 +236,15 @@ const EditForm = withFormik<OuterProps, FormValues>({
 function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
   return function (props: OuterProps) {
     const router = useRouter();
-    const { id } = router.query;
-    const { id: postId } = props;
+    const { postId } = router.query;
+    const { id } = props;
 
-    if (postId) return <Component />;
+    if (id) return <Component />;
 
     try {
-      return <Component id={new PostId(id as string)} {...props}/>;
+      return <Component id={new PostId(postId as string)} {...props}/>;
     } catch (err) {
-      return <em>Invalid post ID: {id}</em>;
+      return <em>Invalid post ID: {postId}</em>;
     }
   };
 }

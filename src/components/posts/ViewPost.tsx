@@ -339,10 +339,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { id } } = props;
+  const { query: { postId } } = props;
   console.log('Initial', props.query);
   const api = await getApi();
-  const postData = await loadPostData(api, new PostId(id as string)) as PostData;
+  const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
   const postExtData = await loadExtPost(api, postData.post as Post);
   return {
     postData,
