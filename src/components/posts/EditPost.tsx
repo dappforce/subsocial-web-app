@@ -5,12 +5,11 @@ import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
 
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { Text } from '@polkadot/types';
-import { Option } from '@polkadot/types/codec';
+import { Text, Option } from '@polkadot/types';
 import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';

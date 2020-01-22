@@ -31,7 +31,7 @@ export class SubstrateApi {
 
     // Create the API and wait until ready:
     console.log(`Connecting to Substrate API at ${rpcEndpoint}`);
-    this.api = await ApiPromise.create(provider);
+    this.api = await ApiPromise.create({ provider });
 
     // Retrieve the chain & node information information via rpc calls
     const system = this.api.rpc.system;

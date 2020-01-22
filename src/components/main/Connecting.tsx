@@ -1,10 +1,10 @@
 
-import { I18nProps } from '@polkadot/ui-app/types';
-import { ApiProps } from '@polkadot/ui-api/types';
+import { I18nProps } from '@polkadot/react-components/types';
+import { ApiProps } from '@polkadot/react-api/types';
 
 import React from 'react';
 import styled from 'styled-components';
-import { withApi, withMulti } from '@polkadot/ui-api';
+import { withApi, withMulti } from '@polkadot/react-api';
 import settings from '../settings';
 type Props = I18nProps & ApiProps;
 

@@ -3,32 +3,32 @@ import React from 'react';
 import settings from '../components/settings';
 import '../components/utils/styles';
 
-import { Api } from '@polkadot/ui-api';
-
-import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
-import Queue from '@polkadot/ui-app/Status/Queue';
-import Signer from '../components/ui-signer';
+import Api from '../components/main/Api';
+// const Api = dynamic(() => import('@polkadot/react-api/Api'), { ssr: false });
+import { QueueConsumer } from '@polkadot/react-components/Status/Context';
+import Queue from '@polkadot/react-components/Status/Queue';
+const Signer = dynamic(() => import("@polkadot/react-signer"), { ssr: false });
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
-import { QueueProps } from '@polkadot/ui-app/Status/types';
+import { QueueProps } from '@polkadot/react-components/Status/types';
 import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
+import dynamic from 'next/dynamic';
 
 export type LayoutProps = {
   isClient: boolean
 };
 
-const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient }) => {
+const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
 
   return <Queue>
-        <QueueConsumer>
-        {({ queueExtrinsic, queueSetTxStatus }) => {
-          return (
-            <Api
-                queueExtrinsic={queueExtrinsic}
-                queueSetTxStatus={queueSetTxStatus}
-                url={url}
-            >
+    <QueueConsumer>
+      {({ queuePayload, queueSetTxStatus }) => (
+        <Api
+          queuePayload={queuePayload}
+          queueSetTxStatus={queueSetTxStatus}
+          url={url}
+        >
             <MyAccountProvider>
                 <QueueConsumer>
                     {({ queueAction, stqueue, txqueue }: QueueProps) => (
@@ -45,11 +45,11 @@ const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient
                     )}
                 </QueueConsumer>
                 </MyAccountProvider>;
-            </Api>
-          );
-        }}
-        </QueueConsumer>
-    </Queue>;
+          </Api>
+          )
+        }
+      </QueueConsumer>
+  </Queue>;
 };
 
 export default ClientLayout;

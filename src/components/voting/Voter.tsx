@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-import { AccountId, Option } from '@polkadot/types';
+import { GenericAccountId, Option } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
@@ -37,7 +37,7 @@ export const Voter = (props: VoterProps) => {
   const Id = isComment ? CommentId : PostId;
   const structQuery = type.toLowerCase();
 
-  const dataForQuery = new Tuple([AccountId, Id], [new AccountId(address), id]);
+  const dataForQuery = new Tuple([GenericAccountId, Id], [new GenericAccountId(address), id]);
 
   useEffect(() => {
     let isSubscribe = true;

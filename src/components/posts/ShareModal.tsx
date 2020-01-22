@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Dropdown, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';

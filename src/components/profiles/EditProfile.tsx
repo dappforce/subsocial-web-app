@@ -3,12 +3,13 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { Option, Text, AccountId } from '@polkadot/types';
+import { Option, Text } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/ui-api';
+import { withCalls, withMulti } from '@polkadot/react-api';
 
 import { addJsonToIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';

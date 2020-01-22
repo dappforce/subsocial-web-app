@@ -1,17 +1,15 @@
 import React from 'react';
 
-import { I18nProps } from '@polkadot/ui-app/types';
-
 import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
 import { BlogId } from '../types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
-import { AccountId } from '@polkadot/types';
 import { SeoHeads } from '../utils';
 import { getApi } from '../utils/utils';
 
-type Props = I18nProps & {
+type Props = {
   totalCount: number,
   blogsData: BlogData[]
 };

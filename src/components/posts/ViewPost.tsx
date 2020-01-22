@@ -4,7 +4,8 @@ import Link from 'next/link';
 
 import ReactMarkdown from 'react-markdown';
 import { Segment } from 'semantic-ui-react';
-import { Option, AccountId } from '@polkadot/types';
+import { Option } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces'
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
-import { AccountId, Option } from '@polkadot/types';
+import { Option, GenericAccountId } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces';
 import { SubmittableResult } from '@polkadot/api';
-import { api as webApi } from '@polkadot/ui-api';
+import { api as webApi } from '../main/Api';
 import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
@@ -79,7 +80,7 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
     const router = useRouter();
     const { address } = router.query;
     try {
-      return <Component id={new AccountId(address as string)} {...props}/>;
+      return <Component id={new GenericAccountId(address as string)} {...props}/>;
     } catch (err) {
       return <em>Invalid address: {address}</em>;
     }

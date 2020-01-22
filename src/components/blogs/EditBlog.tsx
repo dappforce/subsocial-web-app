@@ -8,7 +8,7 @@ import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/ui-api';
+import { withCalls, withMulti } from '@polkadot/react-api';
 
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';

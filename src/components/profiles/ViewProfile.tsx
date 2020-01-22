@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { AccountId, Option } from '@polkadot/types';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import mdToText from 'markdown-to-txt';
 import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr, ZERO } from '../utils/index';
 import { SocialAccount, ProfileContent, Profile } from '../types';
 import { withSocialAccount, withAddressFromUrl, getApi } from '../utils/utils';
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
+import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -23,6 +23,7 @@ import { BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
+import { Option } from '@polkadot/types';
 import BN from 'bn.js';
 
 export type Props = {

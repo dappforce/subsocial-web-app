@@ -1,11 +1,11 @@
-// Copyright 2017-2019 @polkadot/ui-app authors & contributors
+// Copyright 2017-2019 @polkadot/react-components authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SubmittableResult } from '@polkadot/api/SubmittableExtrinsic';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { RpcMethod } from '@polkadot/jsonrpc/types';
-import { AccountId, Address } from '@polkadot/types';
+import { AccountId, Address } from '@polkadot/types/interfaces';
 import { SignatureOptions } from '@polkadot/types/types';
 
 export type Actions = 'create' | 'edit' | 'restore' | 'forget' | 'backup' | 'changePassword' | 'transfer';

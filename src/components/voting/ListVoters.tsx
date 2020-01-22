@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
 const AddressMini = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
 import { ReactionId, Reaction, CommentId, PostId } from '../types';
-import { api } from '@polkadot/ui-api/Api';
+import { api } from '@polkadot/react-api/Api';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
 

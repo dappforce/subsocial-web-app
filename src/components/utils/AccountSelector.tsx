@@ -1,6 +1,6 @@
 import React from 'react';
-import { Bubble, InputAddress, Labelled } from '@polkadot/ui-app';
-import { AccountIndex, Balance, Nonce } from '@polkadot/ui-reactive';
+import { Bubble, InputAddress, Labelled } from '@polkadot/react-components';
+import { AccountIndex, Balance, Nonce } from '@polkadot/react-query';
 
 type Props = {
   label?: string,
@@ -27,13 +27,13 @@ export default class AccountSelector extends React.PureComponent<Props, State> {
       />
       <Labelled>
         <Bubble label='Balance'>
-          <Balance params={[accountId]} />
+          <Balance params={accountId} />
         </Bubble>
         <Bubble label='Transactions'>
-          <Nonce params={[accountId]} />
+          <Nonce params={accountId} />
         </Bubble>
         <Bubble icon='address card' label='Index'>
-          <AccountIndex value={accountId} />
+          <AccountIndex params={accountId} />
         </Bubble>
       </Labelled>
     </section>;

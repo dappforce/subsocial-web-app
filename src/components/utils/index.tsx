@@ -1,5 +1,4 @@
 import BN from 'bn.js';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 
 export const SITE_NAME = 'Subsocial Network';
 
@@ -54,21 +53,21 @@ export const nonEmptyArr = (x: any): boolean =>
 import keyring from '@polkadot/ui-keyring';
 
 export function findNameByAddress (address: string): string | undefined {
+  let keyring_address;
   try {
-    return keyring.getAccount(address).getMeta().name;
+    keyring_address = keyring.getAccount(address);
   } catch (error) {
     try {
-      return keyring.getAddress(address).getMeta().name;
+      keyring_address = keyring.getAddress(address);
     } catch (error) {
-      // ok, we don't have account or address
-      return undefined;
     }
   }
+  return keyring_address ? keyring_address.meta.name : undefined;
 }
 
 // Substrate/Polkadot API utils
 // --------------------------------------
-import { Options as QueryOptions } from '@polkadot/ui-api/with/types';
+import { Options as QueryOptions } from '@polkadot/react-api/with/types';
 
 /** Example of apiQuery: 'query.councilElection.round' */
 export function queryToProp (
@@ -123,7 +122,7 @@ import React from 'react';
 export const createTitle = (title: string) => `${title.length <= 50 ? title : title.substr(0, 50)} - Subsocial`;
 
 export function SeoHeads (props: SeoProps) {
-  const { name = '', image = substrateLogo, title = '', desc = '' } = props;
+  const { name = '', image = '', title = '', desc = '' } = props;
   return <div>
     <Head>
       <title>{createTitle(name)}</title>

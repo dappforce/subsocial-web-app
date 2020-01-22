@@ -6,10 +6,9 @@ import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
 import * as DfForms from '../utils/forms';
-import { Text } from '@polkadot/types';
-import { Option } from '@polkadot/types/codec';
+import { Text, Option } from '@polkadot/types';
 import { useMyAccount } from '../utils/MyAccountContext';
 
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';

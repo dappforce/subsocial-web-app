@@ -1,5 +1,7 @@
-import { Option, Struct, Enum, EnumType } from '@polkadot/types/codec';
-import { getTypeRegistry, BlockNumber, Moment, AccountId, u16, u32, u64, Text, Vector, i32, Null } from '@polkadot/types';
+import { Option, Struct, Enum } from '@polkadot/types';
+import { getTypeRegistry, u16, u32, u64, Text, Vec as Vector, i32, Null } from '@polkadot/types';
+import { GenericAccountId } from '@polkadot/types';
+import { BlockNumber, Moment, AccountId } from '@polkadot/types/interfaces';
 import BN from 'bn.js';
 
 export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
@@ -33,13 +35,8 @@ export type PostExtensionEnum =
   SharedPost |
   SharedComment;
 
-type PostExtensionEnumValue =
-  { RegularPost: RegularPost } |
-  { SharedPost: SharedPost } |
-  { SharedComment: SharedComment };
-
-export class PostExtension extends EnumType<PostExtensionEnumValue> {
-  constructor (value?: PostExtensionEnumValue, index?: number) {
+export class PostExtension extends Enum {
+  constructor (value?: any, index?: number) {
     super({
       RegularPost,
       SharedPost,
@@ -56,9 +53,9 @@ export type ChangeType = {
 export class Change extends Struct {
   constructor (value?: ChangeType) {
     super({
-      account: AccountId,
-      block: BlockNumber,
-      time: Moment
+      account: GenericAccountId,
+      block: u32,
+      time: u64
     }, value);
   }
 
@@ -71,12 +68,11 @@ export class Change extends Struct {
   }
 
   get time (): number {
-    const time = this.get('time') as Moment;
-    return time.toNumber();
+    return (this.get('time') as Moment).toNumber();
   }
 }
 
-export class VecAccountId extends Vector.with(AccountId) {}
+export class VecAccountId extends Vector.with(GenericAccountId) {}
 
 export class OptionText extends Option.with(Text) {}
 export class OptionChange extends Option.with(Change) {}

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { AccountId } from '@polkadot/types';
 import { BlogId, Blog } from '../types';
 import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
