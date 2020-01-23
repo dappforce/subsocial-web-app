@@ -28,7 +28,7 @@ class Connecting extends React.PureComponent<Props> {
   render () {
     const { isApiConnected } = this.props;
 
-    if (isApiConnected || process) {
+    if (isApiConnected) {
       return <Wrapper />;
     }
 
