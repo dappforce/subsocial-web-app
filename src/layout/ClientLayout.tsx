@@ -12,6 +12,7 @@ import { MyAccountProvider } from '../components/utils/MyAccountContext';
 import { QueueProps } from '@polkadot/ui-app/Status/types';
 import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
+import Connecting from '../components/main/Connecting';
 
 export type LayoutProps = {
   isClient: boolean
@@ -45,6 +46,7 @@ const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient
                     )}
                 </QueueConsumer>
                 </MyAccountProvider>;
+                <Connecting/>
             </Api>
           );
         }}
