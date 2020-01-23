@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { GenericAccountId as AccountId, bool } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
-import TxButton from './TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('./TxButton'), { ssr: false });
 import { BUTTON_SIZE } from '../../config/Size.config';
 import { getApi } from './utils';
 

@@ -7,7 +7,7 @@ import Api from '../components/main/Api';
 // const Api = dynamic(() => import('@polkadot/react-api/Api'), { ssr: false });
 import { QueueConsumer } from '@polkadot/react-components/Status/Context';
 import Queue from '@polkadot/react-components/Status/Queue';
-const Signer = dynamic(() => import("@polkadot/react-signer"), { ssr: false });
+const Signer = dynamic(() => import('@polkadot/react-signer'), { ssr: false });
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
 import { QueueProps } from '@polkadot/react-components/Status/types';
 import Status from '../components/main/Status';

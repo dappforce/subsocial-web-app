@@ -5,8 +5,9 @@ import { GenericAccountId, bool } from '@polkadot/types';
 import { BlogId, PostId, CommentId } from '../types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
-import TxButton from './TxButton';
+const TxButton = dynamic(() => import('./TxButton'), { ssr: false });
 import { getApi } from './utils';
+import dynamic from 'next/dynamic';
 
 type PropsShareButtonPost = {
   postId: PostId

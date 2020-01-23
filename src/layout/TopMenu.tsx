@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Icon } from 'antd';
 // import InputAddress from '../components/utils/InputAddress';
-import { InputAddress } from '@polkadot/react-components/InputAddress';
+// import { InputAddress } from '@polkadot/react-components/InputAddress'; // TODO return custom InputAdress and ssr: false
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import Router from 'next/router';
@@ -29,11 +29,11 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        <InputAddress
+        {/* <InputAddress
           className='DfTopBar--InputAddress'
           type='account'
           withLabel={false}
-        />
+        /> */}
       </div>
   </div>;
 };

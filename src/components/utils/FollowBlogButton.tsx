@@ -5,7 +5,8 @@ import { GenericAccountId as AccountId, bool } from '@polkadot/types';
 import { BlogId } from '../types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
-import TxButton from './TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('./TxButton'), { ssr: false });
 import { isMobile } from 'react-device-detect';
 import { getApi } from './utils';
 type FollowBlogButtonProps = {

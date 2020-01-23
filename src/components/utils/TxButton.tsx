@@ -2,7 +2,7 @@ import { BareProps, ApiProps } from '@polkadot/react-api/types';
 import { QueueTx$ExtrinsicAdd, PartialQueueTx$Extrinsic } from './types';
 
 import React from 'react';
-import { Button } from '@polkadot/react-components';
+import Button from './Button';
 import { QueueConsumer } from '@polkadot/react-components/Status/Context';
 import { withApi } from '@polkadot/react-api';
 import { assert } from '@polkadot/util';

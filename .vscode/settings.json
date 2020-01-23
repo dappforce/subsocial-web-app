@@ -6,7 +6,7 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "node_modules": true,
-        ".next": true
+        ".next": false
     },
     "explorerExclude.backup": null
 }

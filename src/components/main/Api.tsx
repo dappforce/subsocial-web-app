@@ -11,10 +11,10 @@ import { ApiProps } from '@polkadot/react-api/types';
 
 import React from 'react';
 import ApiPromise from '@polkadot/api/promise';
-import { isWeb3Injected, web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+// import { isWeb3Injected, web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import defaults from '@polkadot/rpc-provider/defaults';
 import { WsProvider } from '@polkadot/rpc-provider';
-import { InputNumber } from '@polkadot/react-components/InputNumber';
+// import { InputNumber } from '@polkadot/react-components/InputNumber';
 import keyring from '@polkadot/ui-keyring';
 import uiSettings from '@polkadot/ui-settings';
 import ApiSigner from '@polkadot/react-signer/ApiSigner';
@@ -22,6 +22,18 @@ import { Text, u32 as U32 } from '@polkadot/types';
 import { formatBalance, isTestChain } from '@polkadot/util';
 
 import ApiContext from '@polkadot/react-api/ApiContext';
+
+
+let isWeb3Injected: boolean = false;
+let web3Accounts: () => Promise<any>;
+let web3Enable: (originalName: string) => Promise<any> = () => new Promise(() => {});
+const isClient = typeof window !== 'undefined';
+
+if (isClient) {
+  isWeb3Injected = require('@polkadot/extension-dapp').isWeb3Injected;
+  web3Accounts = require('@polkadot/extension-dapp').web3Accounts;
+  web3Enable = require('@polkadot/extension-dapp').web3Enable;
+}
 
 let api: ApiPromise;
 
@@ -46,7 +58,7 @@ interface InjectedAccountExt {
 
 export { api };
 
-const injectedPromise = web3Enable('polkadot-js/apps');
+const injectedPromise = isClient && web3Enable('polkadot-js/apps');
 
 export default class Api extends React.PureComponent<Props, State> {
   public state: State = {} as unknown as State;
@@ -70,7 +82,7 @@ export default class Api extends React.PureComponent<Props, State> {
 
     api = new ApiPromise({ provider, signer });
 
-    const isWeb3Ext = window && isWeb3Injected;
+    const isWeb3Ext = isClient && isWeb3Injected;
 
     this.state = {
       api,
@@ -85,7 +97,7 @@ export default class Api extends React.PureComponent<Props, State> {
   public componentDidMount (): void {
     this.subscribeEvents();
 
-    injectedPromise
+    injectedPromise && injectedPromise
       .then((): void => this.setState({ isWaitingInjected: false }))
       .catch(console.error);
   }
@@ -114,14 +126,16 @@ export default class Api extends React.PureComponent<Props, State> {
     const [properties, value, injectedAccounts] = await Promise.all([
       api.rpc.system.properties<ChainProperties>(),
       api.rpc.system.chain<Text>(),
-      window && web3Accounts().then((accounts): InjectedAccountExt[] =>
-        accounts.map(({ address, meta }): InjectedAccountExt => ({
+      isClient ? [] : web3Accounts().then((accounts): InjectedAccountExt[] =>
+        accounts.map((props: any): InjectedAccountExt => {
+          const {address, meta } = props;
+          return {
           address,
           meta: {
             ...meta,
             name: `${meta.name} (${meta.source === 'polkadot-js' ? 'extension' : meta.source})`
           }
-        }))
+        }})
       )
     ]);
     const addressPrefix = (
@@ -143,7 +157,7 @@ export default class Api extends React.PureComponent<Props, State> {
       decimals: tokenDecimals,
       unit: tokenSymbol
     });
-    InputNumber.setUnit(tokenSymbol);
+    // InputNumber.setUnit(tokenSymbol);
 
     // finally load the keyring
     keyring.loadAll({
