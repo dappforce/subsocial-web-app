@@ -4,21 +4,21 @@ import { GenericAccountId } from '@polkadot/types';
 import { BlockNumber, Moment, AccountId } from '@polkadot/types/interfaces';
 import BN from 'bn.js';
 
-export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
+export type IpfsData = CommentContent | PostContent | SpaceContent | ProfileContent | SharedPostContent;
 
 export type Activity = {
   id: number,
   account: string,
   event: string,
   following_id: string,
-  blog_id: string,
+  space_id: string,
   post_id: string,
   comment_id: string,
   date: Date,
   agg_count: number
 };
 
-export class BlogId extends u64 {}
+export class SpaceId extends u64 {}
 export class PostId extends u64 {}
 export class CommentId extends u64 {}
 export class ReactionId extends u64 {}
@@ -76,19 +76,19 @@ export class VecAccountId extends Vector.with(GenericAccountId) {}
 
 export class OptionText extends Option.with(Text) {}
 export class OptionChange extends Option.with(Change) {}
-export class OptionBlogId extends Option.with(BlogId) {}
+export class OptionSpaceId extends Option.with(SpaceId) {}
 export class OptionCommentId extends Option.with(CommentId) {}
 export class OptionVecAccountId extends Option.with(VecAccountId) {}
 
-export type BlogContent = {
+export type SpaceContent = {
   name: string;
   desc: string;
   image: string;
   tags: string[];
 };
 
-export type BlogType = {
-  id: BlogId;
+export type SpaceType = {
+  id: SpaceId;
   created: ChangeType;
   updated: OptionChange;
   writers: AccountId[];
@@ -96,15 +96,15 @@ export type BlogType = {
   ipfs_hash: IpfsHash;
   posts_count: u16;
   followers_count: u32;
-  edit_history: VecBlogHistoryRecord;
+  edit_history: VecSpaceHistoryRecord;
   score: i32;
 };
 
-export class Blog extends Struct {
-  constructor (value?: BlogType) {
+export class Space extends Struct {
+  constructor (value?: SpaceType) {
     super(
       {
-        id: BlogId,
+        id: SpaceId,
         created: Change,
         updated: OptionChange,
         writers: VecAccountId,
@@ -112,15 +112,15 @@ export class Blog extends Struct {
         ipfs_hash: IpfsHash,
         posts_count: u16,
         followers_count: u32,
-        edit_history: VecBlogHistoryRecord,
+        edit_history: VecSpaceHistoryRecord,
         score: i32
       },
       value
     );
   }
 
-  get id (): BlogId {
-    return this.get('id') as BlogId;
+  get id (): SpaceId {
+    return this.get('id') as SpaceId;
   }
 
   get created (): Change {
@@ -144,7 +144,7 @@ export class Blog extends Struct {
     return ipfsHash.toString();
   }
 
-  // get ipfs_hash (): BlogContent {
+  // get ipfs_hash (): SpaceContent {
   //   const IpfsHash = this.get('ipfs_hash') as Text;
   //   return JSON.parse(IpfsHash.toString());
   // }
@@ -157,8 +157,8 @@ export class Blog extends Struct {
     return this.get('followers_count') as u32;
   }
 
-  get edit_history (): VecBlogHistoryRecord {
-    return this.get('edit_history') as VecBlogHistoryRecord;
+  get edit_history (): VecSpaceHistoryRecord {
+    return this.get('edit_history') as VecSpaceHistoryRecord;
   }
 
   get score (): i32 {
@@ -166,14 +166,14 @@ export class Blog extends Struct {
   }
 }
 
-export type BlogUpdateType = {
+export type SpaceUpdateType = {
   writers: OptionVecAccountId;
   slug: OptionText;
   ipfs_hash: OptionIpfsHash;
 };
 
-export class BlogUpdate extends Struct {
-  constructor (value?: BlogUpdateType) {
+export class SpaceUpdate extends Struct {
+  constructor (value?: SpaceUpdateType) {
     super(
       {
         writers: OptionVecAccountId,
@@ -216,7 +216,7 @@ export type PostContent = SharedPostContent & {
 
 export type PostType = {
   id: PostId;
-  blog_id: BlogId;
+  space_id: SpaceId;
   created: ChangeType;
   updated: OptionChange;
   extension: PostExtension;
@@ -234,7 +234,7 @@ export class Post extends Struct {
     super(
       {
         id: PostId,
-        blog_id: BlogId,
+        space_id: SpaceId,
         created: Change,
         updated: OptionChange,
         extension: PostExtension,
@@ -254,8 +254,8 @@ export class Post extends Struct {
     return this.get('id') as PostId;
   }
 
-  get blog_id (): BlogId {
-    return this.get('blog_id') as BlogId;
+  get space_id (): SpaceId {
+    return this.get('space_id') as SpaceId;
   }
 
   get created (): Change {
@@ -319,7 +319,7 @@ export class Post extends Struct {
 }
 
 export type PostUpdateType = {
-  blog_id: OptionBlogId;
+  space_id: OptionSpaceId;
   ipfs_hash: OptionIpfsHash;
 };
 
@@ -327,7 +327,7 @@ export class PostUpdate extends Struct {
   constructor (value?: PostUpdateType) {
     super(
       {
-        blog_id: OptionBlogId,
+        space_id: OptionSpaceId,
         ipfs_hash: OptionIpfsHash
       },
       value
@@ -515,7 +515,7 @@ export class Reaction extends Struct {
 export type SocialAccountType = {
   followers_count: u32;
   following_accounts_count: u16;
-  following_blogs_count: u16;
+  following_spaces_count: u16;
   reputation: u32;
   profile: OptionProfile;
 };
@@ -526,7 +526,7 @@ export class SocialAccount extends Struct {
       {
         followers_count: u32,
         following_accounts_count: u16,
-        following_blogs_count: u16,
+        following_spaces_count: u16,
         reputation: u32,
         profile: OptionProfile
       },
@@ -542,8 +542,8 @@ export class SocialAccount extends Struct {
     return this.get('following_accounts_count') as u16;
   }
 
-  get following_blogs_count (): u16 {
-    return this.get('following_blogs_count') as u16;
+  get following_spaces_count (): u16 {
+    return this.get('following_spaces_count') as u16;
   }
 
   get reputation (): u32 {
@@ -647,17 +647,17 @@ export class ProfileUpdate extends Struct {
   }
 }
 
-export type BlogHistoryRecordType = {
+export type SpaceHistoryRecordType = {
   edited: ChangeType;
-  old_data: BlogUpdateType;
+  old_data: SpaceUpdateType;
 };
 
-export class BlogHistoryRecord extends Struct {
-  constructor (value?: BlogHistoryRecordType) {
+export class SpaceHistoryRecord extends Struct {
+  constructor (value?: SpaceHistoryRecordType) {
     super(
       {
         edited: Change,
-        old_data: BlogUpdate
+        old_data: SpaceUpdate
       },
       value
     );
@@ -667,12 +667,12 @@ export class BlogHistoryRecord extends Struct {
     return this.get('edited') as Change;
   }
 
-  get old_data (): BlogUpdate {
-    return this.get('old_data') as BlogUpdate;
+  get old_data (): SpaceUpdate {
+    return this.get('old_data') as SpaceUpdate;
   }
 }
 
-export class VecBlogHistoryRecord extends Vector.with(BlogHistoryRecord) {}
+export class VecSpaceHistoryRecord extends Vector.with(SpaceHistoryRecord) {}
 
 export type PostHistoryRecordType = {
   edited: ChangeType;
@@ -762,7 +762,7 @@ export const ScoringActions: { [key: string]: string } = {
   UpvoteComment: 'UpvoteComment',
   DownvoteComment: 'DownvoteComment',
   ShareComment: 'ShareComment',
-  FollowBlog: 'FollowBlog',
+  FollowSpace: 'FollowSpace',
   FollowAccount: 'FollowAccount'
 };
 
@@ -776,7 +776,7 @@ export class ScoringAction extends Enum {
         'UpvoteComment',
         'DownvoteComment',
         'ShareComment',
-        'FollowBlog',
+        'FollowSpace',
         'FollowAccount'
       ],
       value
@@ -788,14 +788,14 @@ export function registerSubsocialTypes () {
   try {
     const typeRegistry = getTypeRegistry();
     typeRegistry.register({
-      BlogId,
+      SpaceId,
       PostId,
       CommentId,
       ReactionId,
       Change,
-      Blog,
-      BlogUpdate,
-      BlogHistoryRecord,
+      Space,
+      SpaceUpdate,
+      SpaceHistoryRecord,
       PostExtension,
       Post,
       PostUpdate,
@@ -812,6 +812,6 @@ export function registerSubsocialTypes () {
       ProfileHistoryRecord
     });
   } catch (err) {
-    console.error('Failed to register custom types of blogs module', err);
+    console.error('Failed to register custom types of social module', err);
   }
 }
