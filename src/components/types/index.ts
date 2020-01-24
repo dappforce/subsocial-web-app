@@ -93,7 +93,7 @@ export type SpaceType = {
   updated: OptionChange;
   owners: AccountId[];
   handle: Text;
-  ipfs_hash: IpfsHash;
+  ipfs_hash: OptionIpfsHash;
   posts_count: u16;
   followers_count: u32;
   edit_history: VecSpaceHistoryRecord;
@@ -109,7 +109,7 @@ export class Space extends Struct {
         updated: OptionChange,
         owners: VecAccountId,
         handle: Text,
-        ipfs_hash: IpfsHash,
+        ipfs_hash: OptionIpfsHash,
         posts_count: u16,
         followers_count: u32,
         edit_history: VecSpaceHistoryRecord,
