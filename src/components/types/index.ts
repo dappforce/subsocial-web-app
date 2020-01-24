@@ -92,7 +92,7 @@ export type SpaceType = {
   created: ChangeType;
   updated: OptionChange;
   owners: AccountId[];
-  slug: Text;
+  handle: Text;
   ipfs_hash: IpfsHash;
   posts_count: u16;
   followers_count: u32;
@@ -108,7 +108,7 @@ export class Space extends Struct {
         created: Change,
         updated: OptionChange,
         owners: VecAccountId,
-        slug: Text,
+        handle: Text,
         ipfs_hash: IpfsHash,
         posts_count: u16,
         followers_count: u32,
@@ -135,8 +135,8 @@ export class Space extends Struct {
     return this.get('owners') as VecAccountId;
   }
 
-  get slug (): Text {
-    return this.get('slug') as Text;
+  get handle (): Text {
+    return this.get('handle') as Text;
   }
 
   get ipfs_hash (): string {
@@ -168,7 +168,7 @@ export class Space extends Struct {
 
 export type SpaceUpdateType = {
   owners: OptionVecAccountId;
-  slug: OptionText;
+  handle: OptionText;
   ipfs_hash: OptionIpfsHash;
 };
 
@@ -177,7 +177,7 @@ export class SpaceUpdate extends Struct {
     super(
       {
         owners: OptionVecAccountId,
-        slug: OptionText,
+        handle: OptionText,
         ipfs_hash: OptionIpfsHash
       },
       value
@@ -187,8 +187,8 @@ export class SpaceUpdate extends Struct {
     return this.get('owners') as OptionVecAccountId;
   }
 
-  get slug (): OptionText {
-    return this.get('slug') as OptionIpfsHash;
+  get handle (): OptionText {
+    return this.get('handle') as OptionIpfsHash;
   }
 
   get ipfs_hash (): OptionIpfsHash {
@@ -199,8 +199,8 @@ export class SpaceUpdate extends Struct {
     this.set('ipfs_hash', value);
   }
 
-  set slug (value: OptionText) {
-    this.set('slug', value);
+  set handle (value: OptionText) {
+    this.set('handle', value);
   }
 }
 
@@ -342,8 +342,8 @@ export class PostUpdate extends Struct {
     this.set('ipfs_hash', value);
   }
 
-  set slug (value: OptionText) {
-    this.set('slug', value);
+  set handle (value: OptionText) {
+    this.set('handle', value);
   }
 }
 
