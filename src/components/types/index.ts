@@ -45,22 +45,43 @@ export class PostExtension extends Enum {
   }
 }
 
-export type ChangeType = {
+export type SpacedAccountType = {
   account: AccountId,
+  space: OptionSpaceId
+}
+export class SpacedAccount extends Struct {
+  constructor (value?: ChangeType) {
+    super({
+      account: GenericAccountId,
+      space: OptionSpaceId,
+    }, value);
+  }
+
+  get account (): AccountId {
+    return this.get('account') as AccountId;
+  }
+
+  get space (): OptionSpaceId {
+    return this.get('space') as OptionSpaceId;
+  }
+}
+
+export type ChangeType = {
+  on_behalf: SpacedAccountType,
   block: BlockNumber,
   time: Moment
 };
 export class Change extends Struct {
   constructor (value?: ChangeType) {
     super({
-      account: GenericAccountId,
+      on_behalf: SpacedAccount,
       block: u32,
       time: u64
     }, value);
   }
 
-  get account (): AccountId {
-    return this.get('account') as AccountId;
+  get on_behalf (): SpacedAccount {
+    return this.get('on_behalf') as SpacedAccount;
   }
 
   get block (): BlockNumber {
@@ -94,9 +115,10 @@ export type SpaceType = {
   // owners: AccountId[];
   handle: Text;
   ipfs_hash: OptionIpfsHash;
-  posts_count: u16;
-  followers_count: u32;
   edit_history: VecSpaceHistoryRecord;
+  followers_count: u32;
+  following_count: u16;
+  posts_count: u16;
   score: i32;
 };
 
@@ -110,9 +132,10 @@ export class Space extends Struct {
         // owners: VecAccountId,
         handle: Text,
         ipfs_hash: OptionIpfsHash,
-        posts_count: u16,
-        followers_count: u32,
         edit_history: VecSpaceHistoryRecord,
+        followers_count: u32,
+        following_count: u16,
+        posts_count: u16,
         score: i32
       },
       value
@@ -148,17 +171,21 @@ export class Space extends Struct {
   //   const IpfsHash = this.get('ipfs_hash') as Text;
   //   return JSON.parse(IpfsHash.toString());
   // }
-
-  get posts_count (): u16 {
-    return this.get('posts_count') as u16;
+  
+  get edit_history (): VecSpaceHistoryRecord {
+    return this.get('edit_history') as VecSpaceHistoryRecord;
   }
 
   get followers_count (): u32 {
     return this.get('followers_count') as u32;
   }
 
-  get edit_history (): VecSpaceHistoryRecord {
-    return this.get('edit_history') as VecSpaceHistoryRecord;
+  get following_count (): u16 {
+    return this.get('following_count') as u16;
+  }
+  
+  get posts_count (): u16 {
+    return this.get('posts_count') as u16;
   }
 
   get score (): i32 {
@@ -512,49 +539,6 @@ export class Reaction extends Struct {
   }
 }
 
-export type SocialAccountType = {
-  followers_count: u32;
-  following_accounts_count: u16;
-  following_spaces_count: u16;
-  reputation: u32;
-  profile: OptionProfile;
-};
-
-export class SocialAccount extends Struct {
-  constructor (value?: SocialAccountType) {
-    super(
-      {
-        followers_count: u32,
-        following_accounts_count: u16,
-        following_spaces_count: u16,
-        reputation: u32,
-        profile: OptionProfile
-      },
-      value
-    );
-  }
-
-  get followers_count (): u32 {
-    return this.get('followers_count') as u32;
-  }
-
-  get following_accounts_count (): u16 {
-    return this.get('following_accounts_count') as u16;
-  }
-
-  get following_spaces_count (): u16 {
-    return this.get('following_spaces_count') as u16;
-  }
-
-  get reputation (): u32 {
-    return this.get('reputation') as u32;
-  }
-
-  get profile (): OptionProfile {
-    return this.get('profile') as OptionProfile;
-  }
-}
-
 export type ProfileContent = {
   fullname: string;
   avatar: string;
@@ -567,85 +551,6 @@ export type ProfileContent = {
   github: string;
   instagram: string;
 };
-
-export type ProfileType = {
-  created: ChangeType;
-  updated: OptionChange;
-  username: Text;
-  ipfs_hash: IpfsHash;
-  edit_history: VecProfileHistoryRecord;
-};
-
-export class Profile extends Struct {
-  constructor (value?: ProfileType) {
-    super(
-      {
-        created: Change,
-        updated: OptionChange,
-        username: Text,
-        ipfs_hash: IpfsHash,
-        edit_history: VecProfileHistoryRecord
-      },
-      value
-    );
-  }
-
-  get created (): Change {
-    return this.get('created') as Change;
-  }
-
-  get updated (): OptionChange {
-    return this.get('updated') as OptionChange;
-  }
-
-  get username (): Text {
-    return this.get('username') as Text;
-  }
-
-  get ipfs_hash (): string {
-    const ipfsHash = this.get('ipfs_hash') as Text;
-    return ipfsHash.toString();
-  }
-
-  get edit_history (): VecProfileHistoryRecord {
-    return this.get('edit_history') as VecProfileHistoryRecord;
-  }
-}
-
-export class OptionProfile extends Option.with(Profile) {}
-
-export type ProfileUpdateType = {
-  username: OptionText;
-  ipfs_hash: OptionIpfsHash;
-};
-
-export class ProfileUpdate extends Struct {
-  constructor (value?: ProfileUpdateType) {
-    super(
-      {
-        username: OptionText,
-        ipfs_hash: OptionIpfsHash
-      },
-      value
-    );
-  }
-
-  get ipfs_hash (): OptionIpfsHash {
-    return this.get('ipfs_hash') as OptionIpfsHash;
-  }
-
-  get username (): OptionIpfsHash {
-    return this.get('username') as OptionIpfsHash;
-  }
-
-  set ipfs_hash (value: OptionIpfsHash) {
-    this.set('ipfs_hash', value);
-  }
-
-  set username (value: OptionText) {
-    this.set('username', value);
-  }
-}
 
 export type SpaceHistoryRecordType = {
   edited: ChangeType;
@@ -728,62 +633,6 @@ export class CommentHistoryRecord extends Struct {
 
 export class VecCommentHistoryRecord extends Vector.with(CommentHistoryRecord) {}
 
-export type ProfileHistoryRecordType = {
-  edited: ChangeType;
-  old_data: ProfileUpdateType;
-};
-
-export class ProfileHistoryRecord extends Struct {
-  constructor (value?: ProfileHistoryRecordType) {
-    super(
-      {
-        edited: Change,
-        old_data: ProfileUpdate
-      },
-      value
-    );
-  }
-
-  get edited (): Change {
-    return this.get('edited') as Change;
-  }
-
-  get old_data (): ProfileUpdate {
-    return this.get('old_data') as ProfileUpdate;
-  }
-}
-
-export class VecProfileHistoryRecord extends Vector.with(ProfileHistoryRecord) {}
-
-export const ScoringActions: { [key: string]: string } = {
-  UpvotePost: 'UpvotePost',
-  DownvotePost: 'DownvotePost',
-  SharePost: 'SharePost',
-  UpvoteComment: 'UpvoteComment',
-  DownvoteComment: 'DownvoteComment',
-  ShareComment: 'ShareComment',
-  FollowSpace: 'FollowSpace',
-  FollowAccount: 'FollowAccount'
-};
-
-export class ScoringAction extends Enum {
-  constructor (value?: any) {
-    super(
-      [
-        'UpvotePost',
-        'DownvotePost',
-        'SharePost',
-        'UpvoteComment',
-        'DownvoteComment',
-        'ShareComment',
-        'FollowSpace',
-        'FollowAccount'
-      ],
-      value
-    );
-  }
-}
-
 export function registerSubsocialTypes () {
   try {
     const typeRegistry = getTypeRegistry();
@@ -805,11 +654,6 @@ export function registerSubsocialTypes () {
       CommentHistoryRecord,
       ReactionKind,
       Reaction,
-      SocialAccount,
-      ScoringAction,
-      Profile,
-      ProfileUpdate,
-      ProfileHistoryRecord
     });
   } catch (err) {
     console.error('Failed to register custom types of social module', err);
