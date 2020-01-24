@@ -2,8 +2,7 @@ import * as React from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
-import dynamic from 'next/dynamic';
-const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
+import TopMenu from './TopMenu';
 import Menu from './SideMenu';
 import { isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
@@ -60,6 +59,6 @@ export const Navigation = (props: Props) => {
       }
       <Content className='DfPageContent' style={{ padding: isBrowser ? '0 24px 24px' : '0 1rem' }}>{children}</Content>
     </Layout>
-  </Layout>,
+  </Layout>
   </ReactiveBase>;
 };

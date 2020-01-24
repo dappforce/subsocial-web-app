@@ -114,7 +114,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyBlog && <Menu.Item key='0'>
-          <Link href={`/blog/edit/[id]`} as={`/blog/edit/${id.toString()}`}><a className='item'>Edit</a></Link>
+          <Link href={`/blogs/[id]/edit`} as={`/blogs/${id.toString()}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -130,7 +130,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </>);
   };
 
-  const NameAsLink = () => <Link href='/blog/[blogId]' as={`/blog/${id}`}><a>{name}</a></Link>;
+  const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${id}`}><a>{name}</a></Link>;
 
   const renderNameOnly = () => {
     return withLink
@@ -189,7 +189,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderPreviewExtraDetails = () => {
     return <>
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
-        <Link href='/blog/[blogId]' as={`/blog/${id}`}>
+        <Link href='/blogs/[blogId]' as={`/blogs/${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
           <Pluralize count={postsCount} singularText='Post'/>
           </a>
@@ -291,7 +291,6 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId } } = props;
-  console.log('Initial', props.query);
   const api = await getApi();
   const blogData = await loadBlogData(api, new BlogId(blogId as string));
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];

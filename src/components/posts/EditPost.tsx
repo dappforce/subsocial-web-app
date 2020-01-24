@@ -101,7 +101,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: PostId) => {
-    Router.push('/post/' + id.toString()).catch(console.log);
+    Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');

@@ -178,7 +178,6 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     let isSubscribe = true;
 
     getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
-      console.log('Comment Content: ', json);
       isSubscribe && setContent(json);
     }).catch(err => console.log(err));
 

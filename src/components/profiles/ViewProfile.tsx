@@ -247,7 +247,6 @@ const Component: NextPage<Props> = (props: Props) => {
 
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
-  console.log('Initial', props.query);
   const api = await getApi();
   const socialAccountOpt = await api.query.blogs.socialAccountById(address) as Option<SocialAccount>;
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;

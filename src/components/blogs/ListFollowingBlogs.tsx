@@ -6,13 +6,14 @@ import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
 import { NextPage } from 'next';
 import { SeoHeads } from '../utils';
 import { getApi } from '../utils/utils';
+import Link from 'next/link';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -39,12 +40,10 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
 
 ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
-  console.log(props);
   const api = await getApi();
   const followedBlogsData = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string)) as unknown as BlogId[];
   const loadBlogs = followedBlogsData.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
-  console.log(blogsData);
   return {
     blogsData
   };
@@ -80,24 +79,26 @@ export const RenderFollowedList = (props: Props) => {
   const totalCount = followedBlogsData !== undefined ? followedBlogsData && followedBlogsData.length : 0;
   const router = useRouter();
   const { pathname, query } = router;
-  const currentBlog = pathname.includes('blog') ? new BN(query.blogId as string) : undefined;
+  const currentBlog = pathname.includes('blogs') ? new BN(query.blogId as string) : undefined;
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
     ? followedBlogsData.map((item, index) =>
-      <div key={index} className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
-        <ViewBlogPage
-          key={index}
-          blogData={item}
-          onClick={() => {
-            isMobile && toggle();
-            console.log('Toggle');
-            Router.push('/blog/[blogId]', `/blog/${(item.blog as Blog).id}`).catch(console.log);
-          }}
-          miniPreview
-          imageSize={28}
-        />
-      </div>)
+      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
+        <a>
+          <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
+            <ViewBlogPage
+              key={index}
+              blogData={item}
+              onClick={() => {
+                isMobile && toggle();
+              }}
+              miniPreview
+              imageSize={28}
+            />
+          </div>
+        </a>
+      </Link>)
     : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blog/all'>Show all</Button></div>}
   </>;
 };

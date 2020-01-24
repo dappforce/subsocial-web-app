@@ -121,7 +121,6 @@ function ViewActivity (props: ActivityProps) {
       const api = await getApi();
       const postData = await loadPostData(api, postId);
       const postExtData = postData.post ? await loadExtPost(api, postData.post) : {} as PostData;
-      console.log(postData);
       setData([ postData, postExtData ]);
     };
 

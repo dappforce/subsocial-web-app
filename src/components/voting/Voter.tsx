@@ -128,7 +128,6 @@ export const Voter = (props: VoterProps) => {
     };
 
     const count = calcVotingPercentage();
-    console.log('voter', id.toString());
 
     return <>
       <Button.Group className={`DfVoter`}>

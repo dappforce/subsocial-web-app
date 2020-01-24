@@ -45,7 +45,7 @@ const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient
                         </Navigation>
                     )}
                 </QueueConsumer>
-                </MyAccountProvider>;
+                </MyAccountProvider>
                 <Connecting/>
             </Api>
           );

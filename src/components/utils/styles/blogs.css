@@ -104,7 +104,7 @@ $secondary: #8c8c8c;
     padding-right: $small;
   }
   .button {
-    max-height: min-content;
+    max-height: 3vh;
   }
   .handle {
     white-space: nowrap;

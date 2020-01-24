@@ -8,6 +8,7 @@ import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { isMobile } from 'react-device-detect';
 import { getApi } from './utils';
+import { useSidebarCollapsed } from './SideBarCollapsedContext';
 type FollowBlogButtonProps = {
   blogId: BlogId,
   size?: string
@@ -16,10 +17,16 @@ type FollowBlogButtonProps = {
 export function FollowBlogButton (props: FollowBlogButtonProps) {
   const { blogId, size = isMobile ? 'tiny' : 'small' } = props;
   const { state: { address: myAddress } } = useMyAccount();
+  const { reloadFollowed } = useSidebarCollapsed();
 
   const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), blogId]);
 
   const [ isFollow, setIsFollow ] = useState(false);
+
+  const TxSuccess = () => {
+    reloadFollowed();
+    setIsFollow(!isFollow);
+  };
 
   useEffect(() => {
     let isSubscribe = true;
@@ -49,7 +56,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     tx={isFollow
       ? `blogs.unfollowBlog`
       : `blogs.followBlog`}
-    txSuccessCb={() => setIsFollow(!isFollow) }
+    txSuccessCb={TxSuccess}
   />;
 }
 

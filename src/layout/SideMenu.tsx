@@ -18,7 +18,7 @@ type MenuItem = {
 };
 
 const InnerMenu = () => {
-  const { toggle, state: { collapsed } } = useSidebarCollapsed();
+  const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
   const [ loaded, setLoaded ] = useState(false);
@@ -38,13 +38,12 @@ const InnerMenu = () => {
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);
       setLoaded(true);
-      console.log('BlogData', blogsData);
     };
 
     loadBlogsData().catch(console.log);
 
     return () => { isSubscribe = false; };
-  }, [ myAddress ]);
+  }, [ trigerFollowed ,myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();
@@ -64,7 +63,7 @@ const InnerMenu = () => {
     },
     {
       name: 'New blog',
-      page: ['/blog/new'],
+      page: ['/blogs/new'],
       image: 'plus'
     },
     {

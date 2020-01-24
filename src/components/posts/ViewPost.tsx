@@ -91,6 +91,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const {
     id,
+    blog_id,
     created,
     ipfs_hash,
     edit_history
@@ -98,7 +99,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
-  console.log('Type', type);
   const { state: { address } } = useMyAccount();
   const [ content , setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
@@ -138,7 +138,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const menu = (
       <Menu>
         {isMyStruct && <Menu.Item key='0'>
-        <Link href='/post/edit/[id]' as={`/post/edit/${id}`}><a className='item'>Edit</a></Link>
+        <Link href='/blogs/[blogId]/posts/[id]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -158,7 +158,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderNameOnly = (title: string, id: PostId) => {
     if (!title || !id) return null;
     return withLink
-      ? <Link href='/post/[id]' as={`/post/${id}`} >
+      ? <Link href='blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
         <a className='header DfPostTitle--preview'>
           {title}
         </a>
@@ -177,7 +177,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         size={size}
         extraDetails={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
-          <Link href='/post/[id]' as={`/post/${id}`} >
+          <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
             <a className='DfGreyLink'>
               {formatUnixDate(time)}
             </a>
@@ -233,7 +233,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     const { upvotes_count, downvotes_count, comments_count, shares_count, score } = post;
     const reactionsCount = new BN(upvotes_count).add(new BN(downvotes_count));
-    console.log('Reaction count:', reactionsCount);
 
     return (<>
     <div className='DfCountsPreview'>
@@ -340,7 +339,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { postId } } = props;
-  console.log('Initial', props.query);
   const api = await getApi();
   const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
   const postExtData = await loadExtPost(api, postData.post as Post);
@@ -357,14 +355,12 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
     const { id } = props;
     const [ postExtData, setExtData ] = useState({} as PostData);
     const [ postData, setPostData ] = useState({} as PostData);
-    console.log('postById', id);
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
         const api = await getApi();
         const postData = await loadPostData(api, id as PostId);
-        console.log(postData);
         isSubscribe && setPostData(postData);
         loadExtPost(api, postData.post as Post).then(data => isSubscribe && setExtData(data)).catch(console.log);
       };
