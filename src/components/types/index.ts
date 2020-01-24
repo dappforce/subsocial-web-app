@@ -91,7 +91,7 @@ export type SpaceType = {
   id: SpaceId;
   created: ChangeType;
   updated: OptionChange;
-  owners: AccountId[];
+  // owners: AccountId[];
   handle: Text;
   ipfs_hash: OptionIpfsHash;
   posts_count: u16;
@@ -107,7 +107,7 @@ export class Space extends Struct {
         id: SpaceId,
         created: Change,
         updated: OptionChange,
-        owners: VecAccountId,
+        // owners: VecAccountId,
         handle: Text,
         ipfs_hash: OptionIpfsHash,
         posts_count: u16,
@@ -131,9 +131,9 @@ export class Space extends Struct {
     return this.get('updated') as OptionChange;
   }
 
-  get owners (): VecAccountId {
-    return this.get('owners') as VecAccountId;
-  }
+  // get owners (): VecAccountId {
+  //   return this.get('owners') as VecAccountId;
+  // }
 
   get handle (): Text {
     return this.get('handle') as Text;
@@ -167,7 +167,7 @@ export class Space extends Struct {
 }
 
 export type SpaceUpdateType = {
-  owners: OptionVecAccountId;
+  // owners: OptionVecAccountId;
   handle: OptionText;
   ipfs_hash: OptionIpfsHash;
 };
@@ -176,16 +176,16 @@ export class SpaceUpdate extends Struct {
   constructor (value?: SpaceUpdateType) {
     super(
       {
-        owners: OptionVecAccountId,
+        // owners: OptionVecAccountId,
         handle: OptionText,
         ipfs_hash: OptionIpfsHash
       },
       value
     );
   }
-  get owners (): OptionVecAccountId {
-    return this.get('owners') as OptionVecAccountId;
-  }
+  // get owners (): OptionVecAccountId {
+  //   return this.get('owners') as OptionVecAccountId;
+  // }
 
   get handle (): OptionText {
     return this.get('handle') as OptionIpfsHash;
