@@ -24,6 +24,8 @@ import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
+import { isEmpty } from 'lodash';
+import BalanceDisplay from '@polkadot/ui-app/Balance';
 
 export type Props = {
   preview?: boolean,
@@ -57,7 +59,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const { state: { address: myAddress } } = useMyAccount();
   const isMyAccount = address === myAddress;
 
-  const profileIsNone = !socialAccount || socialAccount && socialAccount.profile.isNone;
+  const profileIsNone = !socialAccount || isEmpty(profile);
   const followers = socialAccount ? new BN(socialAccount.followers_count) : ZERO;
   const following = socialAccount ? new BN(socialAccount.following_accounts_count) : ZERO;
   const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
@@ -157,6 +159,11 @@ const Component: NextPage<Props> = (props: Props) => {
             <NameAsLink />
             {renderDropDownMenu()}
           </div>
+          <BalanceDisplay
+            label='Balance: '
+            className='Df--profile-balance'
+            params={address}
+          />
           <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>
           {renderCreateProfileButton}
           <div className='about'>
@@ -251,7 +258,7 @@ Component.getInitialProps = async (props): Promise<Props> => {
   const socialAccountOpt = await api.query.blogs.socialAccountById(address) as Option<SocialAccount>;
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
-  const profile = profileOpt && profileOpt.unwrap() as Profile;
+  const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
   const content = profile && await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
   return {
     id: new AccountId(address as string),

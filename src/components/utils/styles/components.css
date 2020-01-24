@@ -80,13 +80,6 @@ header .ui--Button-Group {
   margin-right: 0.5rem;
 }
 
-.ui--AddressMini .ui--Balance,
-.ui--AddressMini .ui--Bonded {
-  font-size: 0.75rem;
-  margin-top: -0.5rem;
-  text-align: right;
-}
-
 .ui--AddressRow-base {
   display: flex;
 }
@@ -127,14 +120,6 @@ header .ui--Button-Group {
 
 .ui--AddressSummary-icon {
   display: block
-}
-
-.ui--Balance,
-.ui--AddressSummary-balance,
-.ui--AddressSummary-bonded,
-.ui--AddressSummary-nonce {
-  font-weight: 100;
-  opacity: 0.75;
 }
 
 .ui--Bonded {

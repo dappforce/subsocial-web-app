@@ -72,6 +72,7 @@ function AddressMini (props: Props) {
     ProfileContent = {} as ProfileContent,
     withFollowButton,
     withProfilePreview,
+    withBalance = true,
     miniPreview,
     asActivity = false,
     onlyUserName = false,
@@ -169,10 +170,13 @@ function AddressMini (props: Props) {
   }
 
   function renderPreviewForAddress () {
-    return <div className='ui--AddressMini-details'>
+    return <>
+      <div className='Df--AddressMini-details'>
+      {withBalance && renderBalance()}
+      {' · '}
       {extraDetails}
-      {renderBalance()}
-    </div>;
+      </div>
+    </>;
   }
 
   function renderPreviewForActivity () {
@@ -260,7 +264,7 @@ function AddressMini (props: Props) {
   }
 
   function renderBalance () {
-    const { balance, value, withBalance = false } = props;
+    const { value } = props;
     if (!withBalance || !value) {
       return null;
     }
@@ -268,7 +272,6 @@ function AddressMini (props: Props) {
     return (
       <BalanceDisplay
         label='Balance: '
-        balance={balance}
         className='ui--AddressSummary-balance'
         params={value}
       />

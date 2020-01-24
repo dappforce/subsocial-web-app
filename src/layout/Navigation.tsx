@@ -2,11 +2,12 @@ import * as React from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
-import TopMenu from './TopMenu';
+const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 import Menu from './SideMenu';
 import { isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Drawer } from 'antd-mobile';
+import dynamic from 'next/dynamic';
 
 const { Header, Sider, Content } = Layout;
 

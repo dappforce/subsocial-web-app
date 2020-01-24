@@ -561,7 +561,7 @@ hr {
       float: right;
     }
   }
-  .ui--AddressMini-details {
+  .Df--AddressMini-details {
     display: block;
     text-align: left;
     float: left;
@@ -570,16 +570,19 @@ hr {
   }
   .ui--AddressSummary-name,
   .ui--AddressSummary-balance {
-    display: block;
-    margin-top: 0;
+    display: inline-flex;
     padding-top: 0;
+    margin-right: 0 !important;
     font-size: $font_small !important;
     margin-right: $normal;
-    font-weight: 100;
-    opacity: .80;
-    overflow: hidden;
-    float: left;
+    color: $secondary;
   }
+}
+
+.Df--profile-balance {
+  font-size: $font_normal;
+  color: $secondary;
+  margin-right: .5rem;
 }
 
 .ui--Bubble.ui.label {
@@ -667,7 +670,7 @@ hr {
   .DfPopup-username{
     font-size: $font_small;
   }
-  .ui--AddressMini-details {
+  .Df--AddressMini-details {
     margin-right: $tiny;
   }
 }

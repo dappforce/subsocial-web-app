@@ -6,10 +6,13 @@ import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import Router from 'next/router';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
+import BalanceDisplay from '@polkadot/ui-app/Balance';
+import { useMyAccount } from '../components/utils/MyAccountContext';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
   const { toggle } = useSidebarCollapsed();
+  const { state: { address } } = useMyAccount();
 
   return isMobile && show
   ? <div className='DfTopBar DfTopBar--search'>
@@ -29,6 +32,11 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
+        <BalanceDisplay
+            label='B: '
+            className='Df--profile-balance'
+            params={address}
+        />
         <InputAddress
           className='DfTopBar--InputAddress'
           type='account'
