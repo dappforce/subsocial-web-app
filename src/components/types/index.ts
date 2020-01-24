@@ -91,7 +91,7 @@ export type SpaceType = {
   id: SpaceId;
   created: ChangeType;
   updated: OptionChange;
-  writers: AccountId[];
+  owners: AccountId[];
   slug: Text;
   ipfs_hash: IpfsHash;
   posts_count: u16;
@@ -107,7 +107,7 @@ export class Space extends Struct {
         id: SpaceId,
         created: Change,
         updated: OptionChange,
-        writers: VecAccountId,
+        owners: VecAccountId,
         slug: Text,
         ipfs_hash: IpfsHash,
         posts_count: u16,
@@ -131,8 +131,8 @@ export class Space extends Struct {
     return this.get('updated') as OptionChange;
   }
 
-  get writers (): VecAccountId {
-    return this.get('writers') as VecAccountId;
+  get owners (): VecAccountId {
+    return this.get('owners') as VecAccountId;
   }
 
   get slug (): Text {
@@ -167,7 +167,7 @@ export class Space extends Struct {
 }
 
 export type SpaceUpdateType = {
-  writers: OptionVecAccountId;
+  owners: OptionVecAccountId;
   slug: OptionText;
   ipfs_hash: OptionIpfsHash;
 };
@@ -176,15 +176,15 @@ export class SpaceUpdate extends Struct {
   constructor (value?: SpaceUpdateType) {
     super(
       {
-        writers: OptionVecAccountId,
+        owners: OptionVecAccountId,
         slug: OptionText,
         ipfs_hash: OptionIpfsHash
       },
       value
     );
   }
-  get writers (): OptionVecAccountId {
-    return this.get('writers') as OptionVecAccountId;
+  get owners (): OptionVecAccountId {
+    return this.get('owners') as OptionVecAccountId;
   }
 
   get slug (): OptionText {
