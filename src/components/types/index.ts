@@ -1,5 +1,5 @@
 import { Option, Struct, Enum } from '@polkadot/types';
-import { getTypeRegistry, u16, u32, u64, Text, Vec as Vector, i32, Null } from '@polkadot/types';
+import { getTypeRegistry, u16, u32, u64, Text, Vec as Vector, i32, Null, bool } from '@polkadot/types';
 import { GenericAccountId } from '@polkadot/types';
 import { BlockNumber, Moment, AccountId } from '@polkadot/types/interfaces';
 import BN from 'bn.js';
@@ -95,6 +95,7 @@ export class Change extends Struct {
 
 export class VecAccountId extends Vector.with(GenericAccountId) {}
 
+export class OptionBool extends Option.with(bool) {}
 export class OptionText extends Option.with(Text) {}
 export class OptionChange extends Option.with(Change) {}
 export class OptionSpaceId extends Option.with(SpaceId) {}
@@ -112,6 +113,7 @@ export type SpaceType = {
   id: SpaceId;
   created: ChangeType;
   updated: OptionChange;
+  hidden: bool;
   // owners: AccountId[];
   handle: Text;
   ipfs_hash: OptionIpfsHash;
@@ -129,6 +131,7 @@ export class Space extends Struct {
         id: SpaceId,
         created: Change,
         updated: OptionChange,
+        hidden: bool,
         // owners: VecAccountId,
         handle: Text,
         ipfs_hash: OptionIpfsHash,
@@ -152,6 +155,10 @@ export class Space extends Struct {
 
   get updated (): OptionChange {
     return this.get('updated') as OptionChange;
+  }
+
+  get hidden (): bool {
+    return this.get('hidden') as bool;
   }
 
   // get owners (): VecAccountId {
@@ -197,6 +204,7 @@ export type SpaceUpdateType = {
   // owners: OptionVecAccountId;
   handle: OptionText;
   ipfs_hash: OptionIpfsHash;
+  hidden: OptionBool;
 };
 
 export class SpaceUpdate extends Struct {
@@ -205,7 +213,8 @@ export class SpaceUpdate extends Struct {
       {
         // owners: OptionVecAccountId,
         handle: OptionText,
-        ipfs_hash: OptionIpfsHash
+        ipfs_hash: OptionIpfsHash,
+        hidden: OptionBool
       },
       value
     );
@@ -222,12 +231,20 @@ export class SpaceUpdate extends Struct {
     return this.get('ipfs_hash') as OptionIpfsHash;
   }
 
+  get hidden (): OptionBool {
+    return this.get('hidden') as OptionBool;
+  }
+
   set ipfs_hash (value: OptionIpfsHash) {
     this.set('ipfs_hash', value);
   }
 
   set handle (value: OptionText) {
     this.set('handle', value);
+  }
+
+  set hidden (value: OptionBool) {
+    this.set('hidden', value);
   }
 }
 
@@ -246,6 +263,7 @@ export type PostType = {
   space_id: SpaceId;
   created: ChangeType;
   updated: OptionChange;
+  hidden: bool;
   extension: PostExtension;
   ipfs_hash: IpfsHash;
   comments_count: u16;
@@ -264,6 +282,7 @@ export class Post extends Struct {
         space_id: SpaceId,
         created: Change,
         updated: OptionChange,
+        hidden: bool,
         extension: PostExtension,
         ipfs_hash: IpfsHash,
         comments_count: u16,
@@ -291,6 +310,10 @@ export class Post extends Struct {
 
   get updated (): OptionChange {
     return this.get('updated') as OptionChange;
+  }
+  
+  get hidden (): bool {
+    return this.get('hidden') as bool;
   }
 
   get extension (): PostExtension {
@@ -348,6 +371,7 @@ export class Post extends Struct {
 export type PostUpdateType = {
   space_id: OptionSpaceId;
   ipfs_hash: OptionIpfsHash;
+  hidden: OptionBool;
 };
 
 export class PostUpdate extends Struct {
@@ -355,7 +379,8 @@ export class PostUpdate extends Struct {
     super(
       {
         space_id: OptionSpaceId,
-        ipfs_hash: OptionIpfsHash
+        ipfs_hash: OptionIpfsHash,
+        hidden: OptionBool
       },
       value
     );
@@ -364,13 +389,17 @@ export class PostUpdate extends Struct {
   get ipfs_hash (): OptionIpfsHash {
     return this.get('ipfs_hash') as OptionIpfsHash;
   }
+  
+  get hidden (): OptionBool {
+    return this.get('hidden') as OptionBool;
+  }
 
   set ipfs_hash (value: OptionIpfsHash) {
     this.set('ipfs_hash', value);
   }
 
-  set handle (value: OptionText) {
-    this.set('handle', value);
+  set hidden (value: OptionBool) {
+    this.set('hidden', value);
   }
 }
 
@@ -384,6 +413,7 @@ export type CommentType = {
   post_id: PostId;
   created: Change;
   updated: OptionChange;
+  hidden: bool;
   ipfs_hash: IpfsHash;
   upvotes_count: u16;
   downvotes_count: u16;
@@ -402,6 +432,7 @@ export class Comment extends Struct {
         post_id: PostId,
         created: Change,
         updated: OptionChange,
+        hidden: bool,
         ipfs_hash: IpfsHash,
         upvotes_count: u16,
         downvotes_count: u16,
@@ -432,6 +463,10 @@ export class Comment extends Struct {
 
   get updated (): OptionChange {
     return this.get('updated') as OptionChange;
+  }
+  
+  get hidden (): bool {
+    return this.get('hidden') as bool;
   }
 
   get ipfs_hash (): string {
@@ -471,21 +506,35 @@ export class Comment extends Struct {
 }
 
 export type CommentUpdateType = {
-  ipfs_hash: IpfsHash;
+  ipfs_hash: OptionIpfsHash;
+  hidden: OptionBool;
 };
 
 export class CommentUpdate extends Struct {
   constructor (value?: CommentUpdateType) {
     super(
       {
-        ipfs_hash: IpfsHash
+        ipfs_hash: OptionIpfsHash,
+        hidden: OptionBool
       },
       value
     );
   }
 
-  get ipfs_hash (): IpfsHash {
-    return this.get('ipfs_hash') as IpfsHash;
+  get ipfs_hash (): OptionIpfsHash {
+    return this.get('ipfs_hash') as OptionIpfsHash;
+  }
+  
+  get hidden (): OptionBool {
+    return this.get('hidden') as OptionBool;
+  }
+ 
+  set ipfs_hash (value: OptionIpfsHash) {
+    this.set('ipfs_hash', value);
+  }
+
+  set hidden (value: OptionBool) {
+    this.set('hidden', value);
   }
 }
 
