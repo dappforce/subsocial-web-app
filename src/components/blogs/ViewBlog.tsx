@@ -235,7 +235,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       noDataExt={<Button href={`/post/new?blogId=${id}`}>Create post</Button>}
     />;
   };
-  const NewPostButton = () => <Button href={`/post/new?blogId=${id}`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;
+  const NewPostButton = () => <Button href={`/blogs/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;
 
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>

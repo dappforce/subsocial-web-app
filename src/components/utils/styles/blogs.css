@@ -3,6 +3,7 @@ body, #root {
 }
 
 .DfPageContent {
+  padding: 1.5rem 1.5rem;
   min-width: 60%;
   max-width: 100%;
   color: #111;
@@ -580,8 +581,6 @@ hr {
 }
 
 .Df--profile-balance {
-  font-size: $font_normal;
-  color: $secondary;
   margin-right: .5rem;
 }
 
@@ -1045,9 +1044,22 @@ hr {
 }
 
 @media (max-width: 450px) {
-  .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
-    zoom: .8;
+  .Account--module {
+    .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
+      zoom: .75;
+    }
+    
+    .Df--profile-balance {
+      text-align: center;
+      font-size: $font_normal;
+      color: $secondary;
+      margin-right: 0rem;
+      position: relative;
+      bottom: 39px;
+      font-size: 10px;
+    }
   }
+
   .ui.search.selection.dropdown {
     min-width: 11rem;
   }

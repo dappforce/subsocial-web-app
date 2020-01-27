@@ -32,16 +32,18 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        <BalanceDisplay
+        <div className='Account--module'>
+          <InputAddress
+              className='DfTopBar--InputAddress'
+              type='account'
+              withLabel={false}
+          />
+          <BalanceDisplay
             label='B: '
             className='Df--profile-balance'
             params={address}
-        />
-        <InputAddress
-          className='DfTopBar--InputAddress'
-          type='account'
-          withLabel={false}
-        />
+          />
+        </div>
       </div>
   </div>;
 };

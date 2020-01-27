@@ -39,7 +39,9 @@ const MobileNav = () => {
     sidebar={<Menu />}
     open={!collapsed}
     onOpenChange={toggle}
-  />;
+  >
+    <></>
+  </Drawer>;
 };
 
 export const Navigation = (props: Props) => {
@@ -58,7 +60,7 @@ export const Navigation = (props: Props) => {
         ? <DesktopNav />
         : <MobileNav />
       }
-      <Content className='DfPageContent' style={{ padding: isBrowser ? '0 24px 24px' : '0 1rem' }}>{children}</Content>
+      <Content className='DfPageContent'>{children}</Content>
     </Layout>
   </Layout>
   </ReactiveBase>;
