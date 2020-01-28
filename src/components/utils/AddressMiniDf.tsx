@@ -47,6 +47,7 @@ export type Props = MyAccountProps & BareProps & {
   withProfilePreview?: boolean,
   miniPreview?: boolean,
   withFollowButton?: boolean,
+  withAddressPopup?: boolean,
   onlyUserName?: boolean,
   optionalProfile: boolean,
   date: string,
@@ -73,6 +74,7 @@ function AddressMini (props: Props) {
     withFollowButton,
     withProfilePreview,
     withBalance = true,
+    withAddressPopup = false,
     miniPreview,
     asActivity = false,
     onlyUserName = false,
@@ -133,14 +135,7 @@ function AddressMini (props: Props) {
       style={style}
     >
       <div className='ui--AddressMini-info'>
-        {hasAvatar
-          ? <DfBgImg size={size || 36} src={avatar} className='DfAvatar' rounded/>
-          : <IdentityIcon
-            isHighlight={!!isValidator}
-            size={size || 36}
-            value={address}
-          />
-        }
+        {renderImage(36)}
         <div className='DfAddressMini-popup'>
           <Popover
             placement='topLeft'
@@ -161,10 +156,13 @@ function AddressMini (props: Props) {
       </div>
     </div>
   );
+
   if (onlyUserName) {
     return renderAddress(address);
   } else if (withProfilePreview) {
     return renderProfilePreview();
+  } else if (withAddressPopup) {
+    return renderAddressPopup();
   } else {
     return renderAutorPreview();
   }
@@ -177,6 +175,16 @@ function AddressMini (props: Props) {
       {extraDetails}
       </div>
     </>;
+  }
+
+  function renderAddressPopup () {
+    return <Popover
+      placement='topLeft'
+      content={renderProfilePreview()}
+    >
+      {renderImage(24)}
+      {renderAddress(address)}
+    </Popover>;
   }
 
   function renderPreviewForActivity () {
@@ -193,10 +201,7 @@ function AddressMini (props: Props) {
   function renderProfilePreview () {
     return <div>
       <div className={`item ProfileDetails MyProfile`}>
-        {hasAvatar
-          ? <DfBgImg size={size || 40} src={avatar} className='DfAvatar' rounded />
-          : <IdentityIcon className='image' value={address} size={size || 40} />
-        }
+        {renderImage(40)}
         <div className='content' style={{ paddingLeft: '0' }}>
           <div className='header DfAccountTitle'>
             {renderAddressForProfile(address)}
@@ -247,6 +252,16 @@ function AddressMini (props: Props) {
           {fullname || username || (isShort ? toShortAddress(address) : address)}
         </div>
     );
+  }
+
+  function renderImage (defaultSize: number) {
+    return hasAvatar
+      ? <DfBgImg size={size || defaultSize} src={avatar} className='DfAvatar' rounded/>
+      : <IdentityIcon
+        isHighlight={!!isValidator}
+        size={size || defaultSize}
+        value={address}
+      />;
   }
 
   function renderName (address: string) {
