@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Button, Icon } from 'antd';
-import dynamic from 'next/dynamic';
-const InputAddress = dynamic(() => import('../components/utils/InputAddress'), { ssr: false });
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import Router from 'next/router';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import BalanceDisplay from '@polkadot/ui-app/Balance';
 import { useMyAccount } from '../components/utils/MyAccountContext';
+import AddressComponents from '../components/utils/AddressComponents';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
@@ -32,18 +30,14 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        <div className='Account--module'>
-          <InputAddress
-              className='DfTopBar--InputAddress'
-              type='account'
-              withLabel={false}
-          />
-          <BalanceDisplay
-            label='B: '
-            className='Df--profile-balance'
-            params={address}
-          />
-        </div>
+        <AddressComponents
+          className='profileName'
+          value={address}
+          isShort={true}
+          isPadded={false}
+          size={30}
+          variant='address-popup'
+        />
       </div>
   </div>;
 };

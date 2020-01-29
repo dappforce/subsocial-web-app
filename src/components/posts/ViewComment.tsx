@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import Section from '../utils/Section';
-const AddressMini = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/ui-api/types';
 import { api } from '@polkadot/ui-api';
@@ -254,7 +254,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     <SuiComment>
       <div className='DfCommentContent'>
         <SuiComment.Metadata>
-          <AddressMini
+          <AddressComponents
             value={account}
             isShort={true}
             isPadded={false}

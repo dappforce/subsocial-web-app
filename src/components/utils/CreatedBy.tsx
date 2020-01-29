@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from 'semantic-ui-react';
 
-import AddressMiniDf from './AddressMiniDf';
+import AddressComponents from './AddressComponents';
 import { formatNumber } from '@polkadot/util';
 
 import { Change } from '../types';
@@ -22,7 +22,7 @@ export const CreatedBy = (props: CreatedByProps) => (
       </Table.Row>
       <Table.Row>
         <Table.Cell>{props.accountLabel ? props.accountLabel : 'Created by'}</Table.Cell>
-        <Table.Cell><AddressMiniDf value={props.created.account} isShort={false} isPadded={false} size={36} withName withBalance /></Table.Cell>
+        <Table.Cell><AddressComponents value={props.created.account} isShort={false} isPadded={false} size={36} withName withBalance /></Table.Cell>
       </Table.Row>
     </Table.Body>
   </Table>

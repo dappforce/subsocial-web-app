@@ -39,27 +39,27 @@ header .ui--Button-Group {
   margin: 0;
 }
 
-.ui--AddressMini {
+.ui--AddressComponents {
   display: inline-block;
   padding: 0 0.25rem 0 0;
 }
 
-.ui--AddressMini.padded {
+.ui--AddressComponents.padded {
   display: inline-block;
   padding: 0.25rem 0 0 0;
 }
 
-.ui--AddressMini.summary {
+.ui--AddressComponents.summary {
   position: relative;
   top: -0.2rem;
 }
 
-.ui--AddressMini-info div {
+.ui--AddressComponents-info div {
   display: inline-block;
   vertical-align: middle;
 }
 
-.ui--AddressMini-address {
+.ui--AddressComponents-address {
   width: 100%;
   text-align: left;
   &.activity {
@@ -75,7 +75,7 @@ header .ui--Button-Group {
   }
 }
 
-.ui--AddressMini .ui--IdentityIcon {
+.ui--AddressComponents .ui--IdentityIcon {
   margin-left: 1rem;
   margin-right: 0.5rem;
 }

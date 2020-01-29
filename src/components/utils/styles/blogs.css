@@ -147,7 +147,7 @@ $secondary: #8c8c8c;
   }
 }
 
-.ui--AddressMini-info div {
+.ui--AddressComponents-info div {
   vertical-align: initial;
 }
 
@@ -532,10 +532,10 @@ hr {
 }
 
 .modal {
-  .ui--AddressMini {
+  .ui--AddressComponents {
     width: 100%;
   }
-  .AddressMini{
+  .AddressComponents{
     .button{
       min-width: 8rem;
     }
@@ -552,17 +552,17 @@ hr {
   text-align: left;
 }
 
-.ui--AddressMini {
+.ui--AddressComponents {
   .ui--IdentityIcon {
     margin-left: 0;
   }
-  .ui--AddressMini-info {
+  .ui--AddressComponents-info {
     display: inline-flex;
-    .AddressMini.follow{
+    .AddressComponents.follow{
       float: right;
     }
   }
-  .Df--AddressMini-details {
+  .Df--AddressComponents-details {
     display: block;
     text-align: left;
     float: left;
@@ -582,6 +582,39 @@ hr {
 
 .Df--profile-balance {
   margin-right: .5rem;
+}
+
+.addressPopup {
+  line-height: 1.25rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  .addressIcon {
+    margin-right: $small;
+  }
+  .ui--Balance {
+    font-size: $font_small;
+  }
+}
+
+.addressPreview {
+  .profileInfo {
+    display: flex;
+    justify-content: flex-end;
+    .profileDesc {
+      margin-right: $small;
+      padding-top: $small;
+      .profileName {
+        text-align: right !important;
+      }
+      .ui--Balance {
+        font-size: $font_small;
+      }
+    }
+  }
+  .ui.search.dropdown {
+    max-width: 20rem;
+  }
 }
 
 .ui--Bubble.ui.label {
@@ -663,13 +696,13 @@ hr {
 }
 
 .ui.top.left.flowing.popup.transition.visible{
-  .ui--AddressMini-address{
+  .ui--AddressComponents-address{
     font-size: $font_big;
   }
   .DfPopup-username{
     font-size: $font_small;
   }
-  .Df--AddressMini-details {
+  .Df--AddressComponents-details {
     margin-right: $tiny;
   }
 }
@@ -1005,13 +1038,6 @@ hr {
   padding: 0;
 }
 
-.ui.search.selection.dropdown {
-  min-width: 14rem;
-  .address { 
-    visibility: hidden;
-    display: none;
-  }
-}
 .item.header.disabled {
   margin: 0;
   span {
@@ -1094,12 +1120,12 @@ hr {
     }
   }
   .modal {
-    .AddressMini{
+    .AddressComponents{
       .button{
         min-width: inherit;;
       }
     }
-    .ui--AddressMini-info {
+    .ui--AddressComponents-info {
       min-width: 100%;
     }
     .ui.attached.tabular.menu {

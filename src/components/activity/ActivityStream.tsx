@@ -8,7 +8,7 @@ import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
 import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
-const AddressMiniDf = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { Loader } from 'semantic-ui-react';
 import { NoData } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
@@ -227,7 +227,7 @@ export function Notification (props: ActivityProps) {
   return loading
     ? <Loading/>
     : <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem' }}>
-    <AddressMiniDf
+    <AddressComponents
       value={account}
       isShort={true}
       isPadded={false}

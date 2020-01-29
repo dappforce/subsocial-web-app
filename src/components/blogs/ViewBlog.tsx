@@ -21,7 +21,7 @@ import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
-const AddressMiniDf = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
@@ -250,13 +250,13 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       <div className='DfCreator-owner'>
         <Icon type='user' />
         {'Owned by '}
-        <AddressMiniDf
+        <AddressComponents
           className='DfGreyLink'
           value={account}
           isShort={true}
           isPadded={false}
           size={30}
-          onlyUserName
+          variant='username'
         />
       </div>
     </MutedDiv>

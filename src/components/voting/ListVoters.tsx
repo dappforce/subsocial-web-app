@@ -4,7 +4,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
-const AddressMini = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { ReactionId, Reaction, CommentId, PostId } from '../types';
 import { api } from '@polkadot/ui-api/Api';
 import { Pluralize } from '../utils/Plularize';
@@ -61,7 +61,7 @@ const InnerModalVoters = (props: VotersProps) => {
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
       return <div key={reaction.id.toNumber()} style={{ textAlign: 'left', margin: '1rem' }}>
-      <AddressMini
+      <AddressComponents
         value={reaction.created.account}
         isPadded={false}
         size={28}

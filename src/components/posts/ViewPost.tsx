@@ -15,7 +15,7 @@ import { MutedSpan } from '../utils/MutedText';
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
-const AddressMiniDf = dynamic(() => import('../utils/AddressMiniDf'), { ssr: false });
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { ShareModal } from './ShareModal';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
@@ -170,7 +170,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (isEmpty(post)) return null;
     const { blog_id , created: { account, time } } = post;
     return <>
-      <AddressMiniDf
+      <AddressComponents
         value={account}
         isShort={true}
         isPadded={false}

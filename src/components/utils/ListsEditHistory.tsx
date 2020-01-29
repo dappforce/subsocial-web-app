@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { withMulti, withCalls } from '@polkadot/ui-api/with';
 import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
-const AddressMini = dynamic(() => import('./AddressMiniDf'), { ssr: false });
+const AddressComponents = dynamic(() => import('./AddressComponents'), { ssr: false });
 import { Post, Blog, PostId, PostContent, BlogContent, BlogId, CommentId, CommentContent, Comment, OptionComment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, VecBlogHistoryRecord, VecPostHistoryRecord, ProfileHistoryRecord, ProfileContent, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '../types';
 import { queryBlogsToProp } from './index';
 import { Option, AccountId } from '@polkadot/types';
@@ -110,7 +110,7 @@ const CommentFromHistory = (props: PropsCommentFromHistory) => {
   return (<div className='DfModal'>
     <SuiComment>
       <SuiComment.Metadata>
-        <AddressMini
+        <AddressComponents
           value={edited.account}
           isShort={true}
           isPadded={false}
