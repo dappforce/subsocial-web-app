@@ -10,7 +10,7 @@ import classes from '@polkadot/ui-app/util/classes';
 import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-import { findNameByAddress, nonEmptyStr, queryBlogsToProp } from './index';
+import { findNameByAddress, nonEmptyStr, queryBlogsToProp, ZERO } from './index';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { withSocialAccount } from './utils';
@@ -73,6 +73,7 @@ function AddressComponents (props: Props) {
     withFollowButton,
     withBalance = true,
     asActivity = false,
+    withName = false,
     variant = 'preview',
     date,
     event,
@@ -96,7 +97,7 @@ function AddressComponents (props: Props) {
 
   const followers = socialAccount !== undefined ? socialAccount.followers_count.toNumber() : 0;
   const following = socialAccount !== undefined ? socialAccount.following_accounts_count.toNumber() : 0;
-  const reputations = socialAccount !== undefined ? socialAccount.reputation.toNumber() : 0;
+  const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
 
   const summary = about !== undefined && about.length > LIMIT_SUMMARY ? about.substr(0, LIMIT_SUMMARY) + '...' : about;
 
@@ -125,7 +126,7 @@ function AddressComponents (props: Props) {
           </Popover>
           {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
-          <RenderName address={address} name={name} />
+          {withName && <RenderName address={address} name={name} />}
           {asActivity
             ? <RenderPreviewForActivity />
             : <RenderPreviewForAddress />
@@ -209,13 +210,14 @@ function AddressComponents (props: Props) {
     return <div className='addressPreview'>
       <div className='profileInfo'>
         <div className='profileDesc'>
-          My reputations: {reputations}
-        </div>
-        <div className='addressIcon'>
-          <RenderAvatar size={48} address={address} avatar={avatar} />
+          My reputations: {reputation.toString()}
         </div>
       </div>
-      <InputAddress withLabel={false} />
+      <InputAddress
+        className='DfTopBar--InputAddress'
+        type='account'
+        withLabel={false}
+      />
     </div>;
   }
 

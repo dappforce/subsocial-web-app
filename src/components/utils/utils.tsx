@@ -109,7 +109,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
     const profileOpt = socialAccount.profile;
 
     if (profileOpt.isNone && requireProfile) return <NoData description={<span>You have not created profile yet</span>} />;
-    else if (profileOpt.isNone) return <Component {...props} />;
+    else if (profileOpt.isNone) return <Component {...props} socialAccount={socialAccount}/>;
 
     const profile = profileOpt.unwrap() as Profile;
 

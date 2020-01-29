@@ -105,7 +105,7 @@ $secondary: #8c8c8c;
     padding-right: $small;
   }
   .button {
-    max-height: 3vh;
+    max-height: 4vh;
   }
   .handle {
     white-space: nowrap;
@@ -582,6 +582,8 @@ hr {
 
 .Df--profile-balance {
   margin-right: .5rem;
+  font-size: $font_normal;
+  color: $secondary;
 }
 
 .addressPopup {
@@ -602,8 +604,7 @@ hr {
     display: flex;
     justify-content: flex-end;
     .profileDesc {
-      margin-right: $small;
-      padding-top: $small;
+      padding-bottom: $small;
       .profileName {
         text-align: right !important;
       }
