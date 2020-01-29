@@ -85,7 +85,7 @@ export const RenderFollowedList = (props: Props) => {
   return <>{totalCount > 0
     ? followedBlogsData.map((item, index) =>
       <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
-        <a>
+        <a className='DfGreyLink'>
           <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
               key={index}

@@ -164,68 +164,70 @@ const Component: NextPage<Props> = (props: Props) => {
             className='Df--profile-balance'
             params={address}
           />
-          <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>
-          {renderCreateProfileButton}
           <div className='about'>
-            <div className='DfSocialLinks'>
-              {hasEmail &&
-                <a
-                  href={`mailto:${email}`}
-                  target='_blank'
-                >
-                  <Icon className='mail' />Email
-                </a>
-              }
-              {hasPersonalSite &&
-                <a
-                  href={personal_site}
-                  target='_blank'
-                >
-                  <Icon className='address card outline' />Personal Site
-                </a>
-              }
-              {hasFacebookLink &&
-                <a
-                  href={facebook}
-                  target='_blank'
-                >
-                  <Icon className='facebook' />Facebook
-                </a>
-              }
-              {hasTwitterLink &&
-                <a
-                  href={twitter}
-                  target='_blank'
-                >
-                  <Icon className='twitter' />Twitter
-                </a>}
-              {hasLinkedInLink &&
-                <a
-                  href={linkedIn}
-                  target='_blank'
-                >
-                  <Icon className='linkedin' />LinkedIn
-                </a>
-              }
-              {hasGithubLink &&
-                <a
-                  href={github}
-                  target='_blank'
-                >
-                  <Icon className='github' />GitHub
-                </a>
-              }
-              {hasInstagramLink &&
-                <a
-                  href={instagram}
-                  target='_blank'
-                >
-                  <Icon className='instagram' />Instagram
-                </a>
-              }
+            <div>
+              <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>
+              <div className='DfSocialLinks'>
+                {hasEmail &&
+                  <a
+                    href={`mailto:${email}`}
+                    target='_blank'
+                  >
+                    <Icon type='mail' />
+                  </a>
+                }
+                {hasPersonalSite &&
+                  <a
+                    href={personal_site}
+                    target='_blank'
+                  >
+                    <Icon type='global' />
+                  </a>
+                }
+                {hasFacebookLink &&
+                  <a
+                    href={facebook}
+                    target='_blank'
+                  >
+                    <Icon type='facebook' />
+                  </a>
+                }
+                {hasTwitterLink &&
+                  <a
+                    href={twitter}
+                    target='_blank'
+                  >
+                    <Icon type='twitter' />
+                  </a>}
+                {hasLinkedInLink &&
+                  <a
+                    href={linkedIn}
+                    target='_blank'
+                  >
+                    <Icon type='linkedin' />
+                  </a>
+                }
+                {hasGithubLink &&
+                  <a
+                    href={github}
+                    target='_blank'
+                  >
+                    <Icon type='github' />
+                  </a>
+                }
+                {hasInstagramLink &&
+                  <a
+                    href={instagram}
+                    target='_blank'
+                  >
+                    <Icon type='instagram' />
+                  </a>
+                }
+              </div>
             </div>
             <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>
           </div>
+          {renderCreateProfileButton}
         </div>
       </div>
     </div>;
@@ -242,9 +244,11 @@ const Component: NextPage<Props> = (props: Props) => {
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}
-        <FollowAccountButton address={address} size={BUTTON_SIZE}/>
-        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowersOpen(true)} isDisabled={followers.eq(ZERO)}><Pluralize count={followers.toString()} singularText='Follower'/></TxButton>
-        <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowingOpen(true)} isDisabled={following.eq(ZERO)}>{following.toString()} Following </TxButton>
+        <div className='Profile--actions'>
+          <FollowAccountButton address={address} size={BUTTON_SIZE}/>
+          <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowersOpen(true)} isDisabled={followers.eq(ZERO)}><Pluralize count={followers.toString()} singularText='Follower'/></TxButton>
+          <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowingOpen(true)} isDisabled={following.eq(ZERO)}>{following.toString()} Following </TxButton>
+        </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}

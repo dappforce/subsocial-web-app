@@ -22,8 +22,9 @@ import Router from 'next/router';
 import { MutedDiv } from './MutedText';
 import { Pluralize } from './Plularize';
 import { DfBgImg } from './DfBgImg';
-import { Popover } from 'antd';
+import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
+import { isBrowser } from 'react-device-detect';
 
 const LIMIT_SUMMARY = 40;
 
@@ -95,6 +96,21 @@ function AddressComponents (props: Props) {
     about
   } = ProfileContent;
 
+  const [followersOpen, setFollowersOpen] = useState(false);
+  const [followingOpen, setFollowingOpen] = useState(false);
+
+  const openFollowersModal = () => {
+    if (!followers) return;
+
+    setFollowersOpen(true);
+  };
+
+  const openFollowingModal = () => {
+    if (!following) return;
+
+    setFollowingOpen(true);
+  };
+
   const followers = socialAccount !== undefined ? socialAccount.followers_count.toNumber() : 0;
   const following = socialAccount !== undefined ? socialAccount.following_accounts_count.toNumber() : 0;
   const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
@@ -108,9 +124,6 @@ function AddressComponents (props: Props) {
     : null;
 
   const AutorPreview = () => {
-    const [followersOpen, setFollowersOpen] = useState(false);
-    const [followingOpen, setFollowingOpen] = useState(false);
-
     return <div
       className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
       style={style}
@@ -122,7 +135,12 @@ function AddressComponents (props: Props) {
             placement='topLeft'
             content={<ProfilePreview />}
           >
-            <RenderAddress />
+            <div
+              className={`ui--AddressComponents-address ${'asLink'} ${className} ${asActivity && 'activity'}`}
+              onClick={() => Router.push(`/profile/${address}`)}
+            >
+              {fullname || username || toShortAddress(address)}
+            </div>
           </Popover>
           {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
@@ -162,6 +180,7 @@ function AddressComponents (props: Props) {
         <RenderAddress asLink={false} />
         <RenderBalance address={address} />
       </div>
+      <Icon type='caret-down' />
     </Popover>;
   }
 
@@ -185,8 +204,8 @@ function AddressComponents (props: Props) {
   const ProfilePreview: FunctionComponent<ProfilePreviewProps> = ({ mini = false }) => { // TODO fix CSS style
     return <div>
       <div className={`item ProfileDetails MyProfile`}>
-        <RenderAvatar size={40} address={address} avatar={avatar} />
-        <div className='content' style={{ paddingLeft: '0' }}>
+        <RenderAvatar size={40} address={address} avatar={avatar} style={{ marginTop: '.5rem' }}/>
+        <div className='content' style={{ paddingLeft: '1rem' }}>
           <div className='header DfAccountTitle'>
             <RenderAddressForProfile />
           </div>
@@ -195,10 +214,13 @@ function AddressComponents (props: Props) {
               <ReactMarkdown source={summary} linkTarget='_blank' />
             </div>
             <div className='DfPopup-links'>
-              <div className={`DfPopup-link ${followers ? '' : 'disable'}`}>
-                <Pluralize count={followers} singularText='Follower' /></div>
-              <div className={`DfPopup-link ${following ? '' : 'disable'}`}><Pluralize count={following} singularText='Following' /></div>
+            <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
+              <Pluralize count={followers} singularText='Follower'/>
             </div>
+            <div onClick={openFollowingModal} className={`DfPopup-link ${following ? '' : 'disable'}`}>
+              <Pluralize count={following} singularText='Following'/>
+            </div>
+          </div>
           </>}
         </div>
         <RenderFollowButton />
@@ -225,7 +247,7 @@ function AddressComponents (props: Props) {
     return (
       <Link href='/profile/[address]' as={`/profile/${address}`}>
         <a className='ui--AddressComponents-address'>
-          <b>{fullname || toShortAddress(address)}</b>
+          <b className='AddressComponents-fullname'>{fullname || toShortAddress(address)}</b>
           <div className='DfPopup-username'>{username}</div>
         </a>
       </Link>
@@ -269,14 +291,16 @@ function AddressComponents (props: Props) {
 
 type ImageProps = {
   size: number,
+  style?: any,
   address: string,
   avatar: string
 };
 
-const RenderAvatar: FunctionComponent<ImageProps> = ({ size, avatar, address }) => {
+const RenderAvatar: FunctionComponent<ImageProps> = ({ size, avatar, address, style }) => {
   return avatar && nonEmptyStr(avatar)
-    ? <DfBgImg size={size} src={avatar} className='DfAvatar' rounded />
+    ? <DfBgImg size={size} src={avatar} className='DfAvatar' style={style} rounded />
     : <IdentityIcon
+      style={style}
       size={size}
       value={address}
     />;
@@ -303,7 +327,7 @@ type BalanceProps = {
 const RenderBalance: FunctionComponent<BalanceProps> = ({ address }) => {
   return (
     <BalanceDisplay
-      label='Balance: '
+      label={isBrowser ? 'Balance: ' : ''}
       className='ui--AddressSummary-balance'
       params={address}
     />

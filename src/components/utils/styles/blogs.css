@@ -1,13 +1,3 @@
-body, #root {
-  background-color: #fafafa !important;
-}
-
-.DfPageContent {
-  padding: 1.5rem 1.5rem;
-  min-width: 60%;
-  max-width: 100%;
-  color: #111;
-}
 
 /*-------------Font-Size-----------*/
 $font_tiny: .75rem;
@@ -26,7 +16,20 @@ $greate: 1.5rem;
 $huge: 2rem;
 
 /*-------------Colors----------*/
+$background: #fafafa;
 $secondary: #8c8c8c;
+
+body,
+#root {
+  background-color: $background !important;
+}
+
+.DfPageContent {
+  padding: 1.5rem 1.5rem;
+  min-width: 60%;
+  max-width: 100%;
+  color: #111;
+}
 
 
 @media (min-width: 1200px) {
@@ -35,6 +38,7 @@ $secondary: #8c8c8c;
     width: 50%;
     max-width: 60%;
   }
+
   .DfBrand {
     font-size: $font_big;
   }
@@ -52,19 +56,23 @@ $secondary: #8c8c8c;
 .DfPostfName {
   margin-right: .5rem;
 }
+
 .DfPostImage {
   max-width: 100%;
 }
+
 .ProfilePreviews,
 .FullProfile {
   .item {
     .image {
       padding: 0 !important;
     }
+
     .description {
       font-size: $font_normal;
     }
   }
+
   .ant-dropdown-trigger {
     margin-left: $small;
     height: min-content;
@@ -79,6 +87,7 @@ $secondary: #8c8c8c;
   &.ui.list>.item:first-child {
     padding-top: $little;
   }
+
   &.ui.list>.item:last-child {
     padding-bottom: $little;
   }
@@ -91,7 +100,7 @@ $secondary: #8c8c8c;
   }
 }
 
-.header { 
+.header {
   display: flex !important;
   align-items: center;
   font-size: $font_huge;
@@ -100,26 +109,32 @@ $secondary: #8c8c8c;
 
 .ProfileDetails {
   display: flex !important;
+
   .content {
     padding-left: $small;
     padding-right: $small;
   }
+
   .button {
     max-height: 4vh;
   }
+
   .handle {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
     margin-right: $small;
+
     .button {
       padding: $small $little;
     }
   }
 }
+
 .ProfileDetailsTable {
   font-size: $font_normal !important;
+
   tr td:first-child {
     width: 1%;
     white-space: nowrap;
@@ -142,6 +157,7 @@ $secondary: #8c8c8c;
 .DfCountsPreview {
   margin-top: $small;
   font-size: $font_small;
+
   .MutedText {
     margin-right: $normal;
   }
@@ -151,7 +167,7 @@ $secondary: #8c8c8c;
   vertical-align: initial;
 }
 
-.ui.threaded.comments .comment .comments{
+.ui.threaded.comments .comment .comments {
   padding: 0 0 0 $big;
   margin: -1rem 0 0 $big;
 }
@@ -167,7 +183,7 @@ form.ui.form.DfForm.EditEntityForm {
   margin-bottom: $huge;
 }
 
-.ui.basic.button {
+.ui.basic.button:not(.disabled) {
   background-color: #fff !important;
 }
 
@@ -178,6 +194,7 @@ form.ui.form.DfForm.EditEntityForm {
 .DfSpacedButtons {
   margin-top: $normal;
   margin-bottom: calc(2*$normal);
+
   .button {
     margin-right: $small;
   }
@@ -187,9 +204,11 @@ form.ui.form.DfForm.EditEntityForm {
   &.vertical {
     margin-right: $small;
   }
+
   .ui.button:first-of-type {
     padding-left: 0;
   }
+
   .ui.button {
     background-color: transparent !important;
     color: $secondary;
@@ -198,12 +217,15 @@ form.ui.form.DfForm.EditEntityForm {
     padding: $small $small $small .1rem;
 
     &.red {
+
       &:hover,
       &.active {
         color: red !important;
       }
     }
+
     &.green {
+
       &:hover,
       &.active {
         color: green !important;
@@ -221,22 +243,27 @@ form.ui.form.DfForm.EditEntityForm {
   h4 {
     font-size: $font_big;
     font-weight: 400;
-    color:$secondary;
+    color: $secondary;
     border-top: #ddd 1px solid;
   }
+
   .ui.comments .comment .metadata {
     margin-left: 0;
-    color:$secondary;
+    color: $secondary;
   }
+
   .ui.comments .comment .text {
     margin: 0;
   }
+
   .ui.comments {
     max-width: 100%;
   }
 }
+
 .DfCommentContent {
   margin-bottom: $huge;
+
   .reply {
     color: $secondary;
   }
@@ -254,12 +281,14 @@ form.ui.form.DfForm.EditEntityForm {
   width: auto;
   height: min-content;
   width: initial;
+
   i {
     color: $secondary;
   }
+
   .ui.selection.dropdown.menu {
     padding: .5rem .75rem !important;
-}
+  }
 }
 
 hr {
@@ -271,7 +300,8 @@ hr {
   margin-top: $small;
 }
 
-.disable, .disable:hover{
+.disable,
+.disable:hover {
   margin-right: $small;
   color: $secondary;
   text-decoration: none;
@@ -279,7 +309,9 @@ hr {
 }
 
 .DfActivityStreamItem {
-  .handle, a { 
+
+  .handle,
+  a {
     font-weight: bold;
   }
 
@@ -287,10 +319,10 @@ hr {
     font-size: 1.15rem;
   }
 
-  .name{
+  .name {
     text-transform: uppercase;
   }
-  
+
   /*.activity{
     margin-left: .25rem;
     margin-right: .25rem;
@@ -304,10 +336,19 @@ hr {
 }
 
 .DfSocialLinks {
-  margin-top: $normal;
-  font-size: $font_big;
+  margin-top: $little;
+  font-size: $font_normal;
+
   a {
-    margin-right: $normal;
+    margin-right: $little;
+  }
+}
+
+.Profile--actions {
+  margin-left: 4rem;
+
+  button {
+    background-color: $background;
   }
 }
 
@@ -334,51 +375,58 @@ hr {
 .DfBlogBody {
   display: flex;
   width: 100%;
+
   .handle {
     max-width: 30rem;
   }
 }
 
-.DfCountsPreview{
-  a{
+.DfCountsPreview {
+  a {
     margin-right: $small;
   }
 }
 
-.ui.attached:not(.message)+.ui.attached.segment:not(.top){
+.ui.attached:not(.message)+.ui.attached.segment:not(.top) {
   border: none;
 }
 
-.DfPostPreview, .DfPost {
+.DfPostPreview,
+.DfPost {
   .ui.button {
     min-width: initial;
     max-height: initial;
-  }  
+  }
 }
 
 .DfPostPreview {
   h2 {
-    margin-top: $normal; 
+    margin-top: $normal;
   }
+
   .DfSharedSummary {
     margin-left: calc($huge + 1rem);
     margin-top: $small;
     font-size: $font_big;
     width: 95%;
   }
+
   .ui.button {
     min-width: initial;
     max-height: initial;
-  }  
+  }
 }
+
 .ui.segment.DfPostPreview.p-b-0 {
   padding: $normal $normal 0rem $normal;
 }
 
 .DfCountsPreview {
   margin-top: 0;
-  a, span {
-    color: rgba(34,36,38,.8) !important;
+
+  a,
+  span {
+    color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small
   }
 }
@@ -388,8 +436,10 @@ hr {
   justify-content: flex-start;
   margin-top: $small;
   margin-bottom: $small;
-  a, span {
-    color: rgba(34,36,38,.8) !important;
+
+  a,
+  span {
+    color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small;
   }
 }
@@ -400,17 +450,21 @@ hr {
     justify-content: space-between;
     padding-right: $small;
   }
+
   .DfInfo {
     width: -webkit-fill-available;
   }
+
   .DfContent {
     display: flex;
     justify-content: space-between;
   }
+
   .DfActionsPanel {
     display: flex;
-    border-top: 1px solid rgba(34,36,38,.15);
+    border-top: 1px solid rgba(34, 36, 38, .15);
   }
+
   .DfAction {
     width: 32%;
     display: flex;
@@ -420,16 +474,19 @@ hr {
       margin-right: .35rem;
     }
   }
+
   .DfCountsPreview {
     justify-content: flex-end;
   }
+
   .ui.tiny.button.basic.DfAction {
     font-weight: bold;
     font-size: $font_normal;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    background-color: rgba(255,255,255,0) !important;
+    background-color: rgba(255, 255, 255, 0) !important;
   }
+
   img.DfPostImagePreview {
     border-radius: .2rem;
     max-width: 16rem;
@@ -442,13 +499,17 @@ hr {
     margin-top: $huge;
     margin-bottom: 0;
   }
+
   .EditEntityBox {
     width: 100%;
     max-width: none;
   }
-  .ui.input>input, .ui.selection.dropdown {
+
+  .ui.input>input,
+  .ui.selection.dropdown {
     width: 100%;
   }
+
   .ui.segment.DfPostPreview {
     text-align: left;
   }
@@ -457,17 +518,20 @@ hr {
 .DfGreyLink {
   color: $secondary !important;
   cursor: pointer;
+
   a {
     color: $secondary !important;
     cursor: pointer;
   }
 }
+
 .DfGreyLink:hover {
   a {
     color: $secondary !important;
     text-decoration: underline;
     cursor: pointer;
   }
+
   color: $secondary !important;
   text-decoration: underline;
   cursor: pointer;
@@ -524,6 +588,7 @@ hr {
     margin: 0;
     padding: $little $normal;
   }
+
   textarea,
   .ui--InputFile {
     margin: $tiny 0 !important;
@@ -535,14 +600,17 @@ hr {
   .ui--AddressComponents {
     width: 100%;
   }
-  .AddressComponents{
-    .button{
+
+  .AddressComponents {
+    .button {
       min-width: 8rem;
     }
   }
+
   .button {
     max-height: initial;
   }
+
   .content {
     min-width: 75%;
   }
@@ -556,19 +624,23 @@ hr {
   .ui--IdentityIcon {
     margin-left: 0;
   }
+
   .ui--AddressComponents-info {
     display: inline-flex;
-    .AddressComponents.follow{
+
+    .AddressComponents.follow {
       float: right;
     }
   }
+
   .Df--AddressComponents-details {
     display: block;
     text-align: left;
     float: left;
     color: $secondary !important;
-    font-size: $font_small!important
+    font-size: $font_small !important
   }
+
   .ui--AddressSummary-name,
   .ui--AddressSummary-balance {
     display: inline-flex;
@@ -591,9 +663,11 @@ hr {
   display: flex;
   align-items: center;
   cursor: pointer;
-  .addressIcon {
-    margin-right: $small;
+
+  .addressInfo {
+    margin: 0 $small;
   }
+
   .ui--Balance {
     font-size: $font_small;
   }
@@ -601,20 +675,13 @@ hr {
 
 .addressPreview {
   .profileInfo {
-    display: flex;
-    justify-content: flex-end;
     .profileDesc {
       padding-bottom: $small;
-      .profileName {
-        text-align: right !important;
-      }
-      .ui--Balance {
-        font-size: $font_small;
-      }
     }
   }
+
   .ui.search.dropdown {
-    max-width: 20rem;
+    max-width: 25rem;
   }
 }
 
@@ -626,10 +693,12 @@ hr {
   &.pointing:before {
     background-color: #e6e6e6;
   }
+
   &.warn {
     color: #f2711c !important;
     border: 1px solid;
   }
+
   &.ok {
     color: #21ba45 !important;
     border: 1px solid;
@@ -659,6 +728,7 @@ hr {
     padding: $small 0;
     display: flex;
   }
+
   li.ant-list-item.ant-list-item-no-flex {
     border: none;
     padding-top: $small;
@@ -668,6 +738,7 @@ hr {
 
 .DfForm .ui--Labelled {
   align-items: end;
+
   &>label {
     padding-top: $little;
   }
@@ -678,6 +749,7 @@ hr {
   img {
     max-width: 100%;
   }
+
   code {
     background-color: #e0e0e0;
     padding: 0 $tiny;
@@ -696,19 +768,21 @@ hr {
   }
 }
 
-.ui.top.left.flowing.popup.transition.visible{
-  .ui--AddressComponents-address{
+.ui.top.left.flowing.popup.transition.visible {
+  .ui--AddressComponents-address {
     font-size: $font_big;
   }
-  .DfPopup-username{
+
+  .DfPopup-username {
     font-size: $font_small;
   }
+
   .Df--AddressComponents-details {
     margin-right: $tiny;
   }
 }
 
-.DfAvatar{
+.DfAvatar {
   margin-right: $small !important;
   display: inline-block;
   border-radius: 50%;
@@ -716,23 +790,28 @@ hr {
   border: 1px solid #ddd;
 }
 
-.ui.top.left.flowing.popup.transition.visible{
-  .DfAvatar{
+.ui.top.left.flowing.popup.transition.visible {
+  .DfAvatar {
     margin: 0 $small $small 0;
   }
 }
-.ui.top.left.flowing.popup.transition.visible{
-  .item.ProfileDetails.MyProfile{
-    padding-left: 0!important;
+
+.ui.top.left.flowing.popup.transition.visible {
+  .item.ProfileDetails.MyProfile {
+    padding-left: 0 !important;
   }
 }
 
-.DfPopup-username{
+.AddressComponents-fullname {
+  font-size: $font_big;
+}
+
+.DfPopup-username {
   font-size: $font_small;
   color: #4e4e4e;
 }
 
-.DfMd{
+.DfMd {
   margin-top: $tiny;
   font-size: $font_normal;
 }
@@ -741,14 +820,15 @@ hr {
   margin-top: $huge;
 }
 
-.DfPopup-about{
+.DfPopup-about {
   margin: $small 0;
 }
 
 .DfPopup-links {
-  color:$secondary; 
+  color: $secondary;
   display: flex;
   justify-content: flex-start;
+
   .DfPopup-link {
     margin-right: $normal;
   }
@@ -759,9 +839,10 @@ hr {
     min-height: 5rem !important;
   }
 
-  .CodeMirror.cm-s-easymde.CodeMirror-wrap.CodeMirror-fullscreen{
+  .CodeMirror.cm-s-easymde.CodeMirror-wrap.CodeMirror-fullscreen {
     z-index: 1000;
   }
+
   .editor-toolbar.fullscreen {
     z-index: 1000;
   }
@@ -770,12 +851,12 @@ hr {
 
 .DfMdEditor.error {
   .editor-statusbar {
-      float: right;
+    float: right;
   }
 
   .CodeMirror.cm-s-easymde.CodeMirror-wrap {
-      background-color: #fff6f6;
-      border-color: #e0b4b4;
+    background-color: #fff6f6;
+    border-color: #e0b4b4;
   }
 
   .editor-toolbar {
@@ -788,9 +869,11 @@ hr {
   background-color: #3f3f3f;
   color: #fff;
   border-radius: 0;
+
   label {
     color: #fff;
   }
+
   .search.selection.dropdown {
     background-color: #333;
   }
@@ -803,28 +886,29 @@ hr {
 .DfSearch {
   width: 60%;
   color: rgba(0, 0, 0, 0.7);
-  z-index:2;
+  z-index: 2;
+
   input {
     border-radius: .5rem;
   }
+
   input:hover {
     border-color: #1e99ff;
   }
+
   input:focus {
     border-color: #1e99ff;
-    -moz-box-shadow:0 0 10px #1e99ff; -webkit-box-shadow:0 0 10px #1e99ff; box-shadow:0 0 10px #1e99ff;
+    -moz-box-shadow: 0 0 10px #1e99ff;
+    -webkit-box-shadow: 0 0 10px #1e99ff;
+    box-shadow: 0 0 10px #1e99ff;
   }
+
   ul {
     top: 50px;
   }
+
   li {
     line-height: initial;
-  }
-}
-
-.DfTopBar--InputAddress {
-  .ui.input>input, .ui.selection.dropdown {
-    width: 1rem;
   }
 }
 
@@ -834,8 +918,9 @@ hr {
 
 .DfTab {
   background-color: #fff;
+
   .ui.attached.tabular.menu {
-    padding: $normal $normal 0rem $normal ;
+    padding: $normal $normal 0rem $normal;
   }
 }
 
@@ -858,8 +943,9 @@ hr {
   background-color: #fff;
 }
 
-.DfDataList { 
+.DfDataList {
   padding-top: $small;
+
   .ant-list-pagination {
     display: flex;
     justify-content: center;
@@ -887,12 +973,14 @@ hr {
       .content {
         display: none;
       }
+
       margin-left: $little;
     }
   }
 
   color: #666;
   cursor: pointer;
+
   .ant-menu-item-group-title {
     text-transform: uppercase;
     font-size: $font_small
@@ -902,18 +990,22 @@ hr {
     margin-top: $small;
     margin-right: $tiny;
   }
+
   .content {
     width: 80%;
     display: flex;
     align-items: center;
+
     .handle {
       padding: $small 0rem;
     }
   }
+
   .item {
     padding: $small;
     padding-left: $normal;
   }
+
   .DfNoFollowed {
     display: flex;
     justify-content: center;
@@ -925,6 +1017,7 @@ hr {
     .content {
       display: none;
     }
+
     margin-left: $little;
   }
 }
@@ -941,9 +1034,9 @@ hr {
   width: inherit;
   border-right: 1px #ddd solid;
   position: fixed;
-} 
+}
 
-.ant-list-something-after-last-item .ant-spin-container > .ant-list-items > .ant-list-item:last-child {
+.ant-list-something-after-last-item .ant-spin-container>.ant-list-items>.ant-list-item:last-child {
   border: none;
 }
 
@@ -958,11 +1051,13 @@ hr {
 .DfTopBar {
   width: 100%;
   display: contents;
+
   .DfSearchIcon {
     padding: $small;
     margin-top: 1.15rem;
     font-size: 1.3rem;
   }
+
   .DfCloseSearchIcon {
     font-size: 1.3rem;
     padding-left: .5rem;
@@ -978,6 +1073,7 @@ hr {
   display: -webkit-inline-box;
   display: -moz-inline-box;
 }
+
 /*---fix-syntax-error-md----*/
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
   background: none !important;
@@ -986,12 +1082,15 @@ hr {
 .DfCreator {
   font-size: $normal;
   margin-top: $normal;
+
   i {
     margin-right: $tiny;
   }
+
   div:not(.DfCreator--data) {
     display: inline;
   }
+
   color: $secondary !important;
 }
 
@@ -1010,9 +1109,11 @@ hr {
     margin-left: .5rem;
   }
 }
+
 .DfModal {
   text-align: left;
   margin: 1rem;
+
   content {
     min-width: 75%;
   }
@@ -1025,15 +1126,18 @@ hr {
   top: 60px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+
   .ant-menu-inline {
     width: 250px;
   }
 }
+
 .DfMobileSideBar .am-drawer-sidebar {
   background-color: #fff;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+
 .DfMobileSideBar .am-drawer-sidebar .am-list {
   width: 200px;
   padding: 0;
@@ -1041,11 +1145,13 @@ hr {
 
 .item.header.disabled {
   margin: 0;
+
   span {
     width: 3rem;
     overflow: hidden;
   }
 }
+
 .am-drawer-draghandle {
   background-color: initial;
 }
@@ -1058,125 +1164,147 @@ hr {
   margin: $tiny;
   padding: $tiny !important;
 }
+
 .DfModal {
   margin: $greate $tiny;
   padding: $normal $tiny $tiny $tiny;
   border-top: 1px solid #ddd;
+
   .DfContent {
     padding: 0;
   }
+
   .DfDescription {
     font-size: $normal;
   }
 }
 
 @media (max-width: 450px) {
-  .Account--module {
-    .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
-      zoom: .75;
-    }
-    
-    .Df--profile-balance {
-      text-align: center;
-      font-size: $font_normal;
-      color: $secondary;
-      margin-right: 0rem;
-      position: relative;
-      bottom: 39px;
-      font-size: 10px;
-    }
+
+
+  .item.header.disabled {
+    zoom: 0.8;
   }
 
   .ui.search.selection.dropdown {
-    min-width: 11rem;
+    min-width: 18rem;
   }
+
   .editor-toolbar {
     zoom: .7;
   }
-  .ProfilePreviews, .ui.modal {
+
+  .ProfilePreviews,
+  .ui.modal {
     button.ui.tiny {
       padding: .6rem;
       font-size: $font_tiny;
     }
   }
+
   .ui.modal {
-    button.ui.tiny.primary, button.ui.tiny.basic {
+
+    button.ui.tiny.primary,
+    button.ui.tiny.basic {
       padding: .6rem .6rem 1.2rem .6rem;
       font-size: $font_tiny;
     }
   }
+
   li.ant-list-item.ant-list-item-no-flex {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     margin-bottom: .5rem;
   }
+
   .infinite-scroll-component {
     .ui.segment {
       margin-top: .5rem;
     }
   }
+
   .ui.modal.transition.visible.active {
-    .scrolling.content, .actions {
+
+    .scrolling.content,
+    .actions {
       padding: $small !important;
     }
   }
+
   .modal {
-    .AddressComponents{
-      .button{
-        min-width: inherit;;
+    .AddressComponents {
+      .button {
+        min-width: inherit;
+        ;
       }
     }
+
     .ui--AddressComponents-info {
       min-width: 100%;
     }
+
     .ui.attached.tabular.menu {
       padding: 0 .5rem !important;
     }
+
     h1:first-child {
       font-size: $font_huge !important;
     }
+
     .DfAddressMini-popup {
       width: 100%;
     }
   }
+
   .DfModal:first-child {
     margin: $tiny;
-    padding:$tiny !important;
+    padding: $tiny !important;
   }
+
   .DfModal {
     margin: $small $tiny;
     padding: $normal $tiny $tiny $tiny !important;
     border-top: .5px solid #ddd;
+
     .DfContent {
       padding: 0;
     }
+
     .DfDescription {
       font-size: $normal;
     }
   }
+
   .DfAddressMini-popup {
     line-height: 1rem;
     font-size: 1rem !important;
+
     .header {
       font-size: 1rem !important;
     }
   }
+
   .DfStatItem {
     font-size: $font_small;
   }
+
   .DfPageContent {
     width: 100% !important;
     padding: 0 1rem;
   }
+
   .DfBurgerIcon {
     padding-left: 0;
     padding-right: $small;
   }
+
   .DfCreator {
     font-size: $font_small;
   }
+
   .DfSection {
     margin-top: $greate !important;
+
     .DfSection-title {
       border: none;
       font-size: $font_huge;
@@ -1189,35 +1317,45 @@ hr {
       }
     }
   }
+
   .ProfileDetails .content {
     padding-left: 0;
     padding-right: .5rem;
-}
-  .DfContent,.content {
+  }
+
+  .DfContent,
+  .content {
     text-align: left !important;
   }
+
   .content {
     width: 80%;
     line-height: $greate;
   }
+
   .header {
     line-height: normal;
     font-size: $font_big !important;
     font-weight: 500;
   }
+
   .header.DfPostTitle--preview {
     margin: $small 0;
   }
+
   .DfPostPreview h2 {
     margin-top: 0;
     font-size: $big;
   }
+
   .DfBlogStats {
     font-size: $font_tiny;
+
     .DfStatItem {
       margin-right: $small;
     }
   }
+
   .ui.segment {
     z-index: 1;
     border-radius: 0;
@@ -1226,49 +1364,63 @@ hr {
     border-left: 0;
     border-right: 0;
     box-shadow: none;
+
     .ui.segment {
       margin: 0;
     }
   }
+
   .am-drawer-content {
     padding-top: 0 !important;
     text-align: left !important;
   }
+
   .ui--Status {
     zoom: .7;
     max-width: 50%;
   }
+
   .DfPostName {
     margin-right: $small;
     width: 87%;
   }
+
   .DfContentPage {
     text-align: left !important;
+
     .FullProfile {
       margin-top: $tiny !important;
     }
   }
+
   .DfSummary {
     margin-top: $tiny !important;
   }
+
   .DfCountsPreview .MutedText {
     margin-right: $normal;
+
     .disable {
       margin: 0;
     }
   }
+
   .ui--IdentityIcon.image {
     margin-right: $small;
   }
+
   .DfCommentContent {
     margin-bottom: 1.75rem;
   }
+
   .DfDataList {
     padding: 0;
   }
+
   .DfSearch {
     width: 100%;
   }
+
   .DfSocialLinks {
     margin-top: .25rem;
     font-size: 1rem;
