@@ -2,7 +2,7 @@ import BN from 'bn.js';
 import React from 'react';
 
 import { ApiProps } from '@polkadot/ui-api/types';
-import { SeoHeads } from '../utils/index';
+import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '../types';
 import ListData from '../utils/DataList';
@@ -24,7 +24,7 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <SeoHeads title='Subsocial latest updates' name='Home' desc='Subsocial home page with latestt updates' />
+      <HeadMeta title='Subsocial latest updates' desc='Subsocial home page with latest updates' />
       <ListData
         title={`Latest blogs`}
         dataSource={blogsData}

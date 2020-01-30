@@ -6,7 +6,8 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import mdToText from 'markdown-to-txt';
-import { nonEmptyStr, queryBlogsToProp, SeoHeads, isEmptyStr, ZERO } from '../utils/index';
+import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
+import { HeadMeta } from '../utils/HeadMeta';
 import { SocialAccount, ProfileContent, Profile } from '../types';
 import { withSocialAccount, withAddressFromUrl, getApi } from '../utils/utils';
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
@@ -240,7 +241,7 @@ const Component: NextPage<Props> = (props: Props) => {
   }
 
   return <>
-    <SeoHeads title={getName()} name={getName()} desc={mdToText(about)} image={avatar} />
+    <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
     <Section>
       <div className='ui massive relaxed middle aligned list FullProfile'>
         {renderPreview()}

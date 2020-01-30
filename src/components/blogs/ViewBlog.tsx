@@ -8,7 +8,8 @@ import { Option, AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { nonEmptyStr, queryBlogsToProp, SeoHeads, ZERO } from '../utils/index';
+import { HeadMeta } from '../utils/HeadMeta';
+import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
 import { BlogId, Blog, PostId, BlogContent } from '../types';
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
@@ -263,7 +264,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   return <Section className='DfContentPage'>
-    <SeoHeads title={name} name={name} desc={mdToText(desc)} image={image} />
+    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
     <div className='FullProfile'>
       {renderPreview()}
     </div>

@@ -28,7 +28,7 @@ import { isBrowser } from 'react-device-detect';
 
 const LIMIT_SUMMARY = 40;
 
-type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'address-popup' | 'preview';
+type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
 
 export type Props = MyAccountProps & BareProps & {
   socialAccountOpt?: Option<SocialAccount>,
@@ -170,7 +170,8 @@ function AddressComponents (props: Props) {
     return <Popover
       placement='bottomRight'
       trigger='click'
-      className='addressPopup'
+      className='TopMenuAccount'
+      overlayClassName='TopMenuAccountPopover'
       content={<RenderAddressPreview />}
     >
       <div className='addressIcon'>
@@ -236,7 +237,7 @@ function AddressComponents (props: Props) {
         </div>
       </div>
       <InputAddress
-        className='DfTopBar--InputAddress'
+        className='DfTopBar--InputAddress' // FIXME dropdown in  popup
         type='account'
         withLabel={false}
       />

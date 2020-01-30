@@ -1,0 +1,20 @@
+
+/*-------------Font-Size-----------*/
+$font_tiny: .75rem;
+$font_small: .875rem;
+$font_normal: 1rem;
+$font_big: 1.25rem;
+$font_huge: 1.5rem;
+
+/*----------Size-------------*/
+$tiny: .25rem;
+$small: .5rem;
+$little: .75rem;
+$normal: 1rem;
+$big: 1.25rem;
+$greate: 1.5rem;
+$huge: 2rem;
+
+/*-------------Colors----------*/
+$background: #fafafa;
+$secondary: #8c8c8c;

@@ -13,7 +13,7 @@ import { Loader } from 'semantic-ui-react';
 import { NoData } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
 import { Loading, getApi } from '../utils/utils';
-import { SeoHeads } from '../utils';
+import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAccount } from '../utils/MyAccountContext';
 import dynamic from 'next/dynamic';
 
@@ -46,7 +46,7 @@ export const ViewNewsFeed = () => {
   const NewsFeedArray = items.map((item, id) =>
     <ViewActivity key={id} activity={item} />);
   return (<>
-      <SeoHeads title='Feed' name='Feed'/>
+      <HeadMeta title='Feed' />
       <Section title={`News Feed (${totalCount})`}>{
         totalCount === 0
           ? <NoData description='Your feed is empty'/>
@@ -90,7 +90,7 @@ export const ViewNotifications = () => {
   const NotificationsArray = items.map((item, id) =>
     <Notification key={id} activity={item} />);
   return (<>
-      <SeoHeads title='Notifications' name='Notifications'/>
+      <HeadMeta title='Notifications' />
       <Section title={`Notifications (${totalCount})`}>
         {totalCount === 0
           ? <NoData description='No notifications for you'/>

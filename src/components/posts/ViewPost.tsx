@@ -8,7 +8,8 @@ import { Option, AccountId } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
-import { SeoHeads, nonEmptyStr } from '../utils/index';
+import { nonEmptyStr } from '../utils/index';
+import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 import { MutedSpan } from '../utils/MutedText';
@@ -248,7 +249,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderRegularPreview = () => {
     return <>
-      <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
+      <Segment className={`DfPostPreview`}>
       <div className='DfInfo'>
         <div className='DfRow'>
           {renderPostCreator(post)}
@@ -267,7 +268,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!originalPost || !originalContent) return <></>;
     const account = originalPost.created.account;
     return <>
-      <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
+      <Segment className={`DfPostPreview`}>
           <div className='DfRow'>
             {renderPostCreator(post)}
             <RenderDropDownMenu account={created.account}/>
@@ -294,7 +295,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderDetails = (content: PostExtContent) => {
     const { title, body, image } = content;
     return <Section className='DfContentPage'>
-      <SeoHeads title={title} name={title} desc={body} image={image} />
+      <HeadMeta title={title} desc={body} image={image} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>

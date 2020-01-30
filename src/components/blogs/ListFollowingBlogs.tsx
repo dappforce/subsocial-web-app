@@ -11,7 +11,7 @@ import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
 import { NextPage } from 'next';
-import { SeoHeads } from '../utils';
+import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/utils';
 import Link from 'next/link';
 
@@ -24,7 +24,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   const totalCount = blogsData !== undefined ? blogsData && blogsData.length : 0;
 
   return (<div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <SeoHeads title='My followed' name='My blogs' desc='Subsocial blogs' />
+      <HeadMeta title='Blogs I follow' desc='Subsocial blogs' />
       <ListData
         title={<Pluralize count={totalCount} singularText='Following blog'/>}
         dataSource={blogsData}

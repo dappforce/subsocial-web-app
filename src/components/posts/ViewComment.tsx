@@ -15,14 +15,15 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { partition, isEmpty } from 'lodash';
 import { PostId, CommentId, Comment, OptionComment, CommentContent, PostContent, Post } from '../types';
 import { NewComment } from './EditComment';
-import { queryBlogsToProp, SeoHeads } from '../utils/index';
+import { queryBlogsToProp } from '../utils/index';
+import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
 import { CommentHistoryModal } from '../utils/ListsEditHistory';
 import ReactMarkdown from 'react-markdown';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize, pluralize } from '../utils/Plularize';
-import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
+import { Loading, getApi, formatUnixDate } from '../utils/utils';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import { loadPostData, PostData } from './ViewPost';
@@ -247,7 +248,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
   return <div id={`comment-${id}`} className='DfComment'>
     {isPage && <>
-      <SeoHeads name={makeSummary(bodyAsText, 50)} desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
+      <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
     <MutedDiv style={{ marginTop: '1rem' }}>{responseTitle}</MutedDiv>
     </>}
     <SuiComment.Group threaded>
