@@ -19,6 +19,7 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
+import HeadMeta from '../utils/HeadMeta';
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -201,9 +202,12 @@ const InnerForm = (props: FormProps) => {
 
   return onlyTxButton
     ? renderTxButton()
-    : <Section className='EditEntityBox' title={sectionTitle}>
-      {form}
-    </Section>;
+    : <>
+      <HeadMeta title={sectionTitle}/>
+      <Section className='EditEntityBox' title={sectionTitle}>
+        {form}
+      </Section>
+    </>;
 };
 
 const EditForm = withFormik<OuterProps, FormValues>({
