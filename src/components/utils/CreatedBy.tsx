@@ -1,10 +1,11 @@
 import React from 'react';
 import { Table } from 'semantic-ui-react';
 
-import AddressMiniDf from './AddressMiniDf';
+import AddressComponents from './AddressComponents';
 import { formatNumber } from '@polkadot/util';
 
 import { Change } from '../types';
+import { formatUnixDate } from './utils';
 
 type CreatedByProps = {
   created: Change,
@@ -17,11 +18,11 @@ export const CreatedBy = (props: CreatedByProps) => (
     <Table.Body>
       <Table.Row>
         <Table.Cell>{props.dateLabel ? props.dateLabel : 'Created on'}</Table.Cell>
-        <Table.Cell>{new Date(props.created.time).toLocaleString()} at block #{formatNumber(props.created.block)}</Table.Cell>
+        <Table.Cell>{formatUnixDate(props.created.time)} at block #{formatNumber(props.created.block)}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.Cell>{props.accountLabel ? props.accountLabel : 'Created by'}</Table.Cell>
-        <Table.Cell><AddressMiniDf value={props.created.account} isShort={false} isPadded={false} size={36} withName withBalance /></Table.Cell>
+        <Table.Cell><AddressComponents value={props.created.account} isShort={false} isPadded={false} size={36} withName withBalance /></Table.Cell>
       </Table.Row>
     </Table.Body>
   </Table>

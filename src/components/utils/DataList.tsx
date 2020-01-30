@@ -26,16 +26,20 @@ export default (props: Props) => {
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
-    if (isEmpty(routerQuery)) {
+    let isSubscribe = true;
+
+    if (isEmpty(routerQuery) && isSubscribe) {
       setPageSize(DEFAULT_PAGE_SIZE);
       setCurrentPage(DEFAULT_CURENT_PAGE);
     } else {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);
 
-      setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
-      setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
+      isSubscribe && setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
+      isSubscribe && setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
     }
+
+    return () => { isSubscribe = false; };
   }, [false]);
 
   const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
@@ -97,7 +101,7 @@ export default (props: Props) => {
 type EmptyProps = {
   description?: React.ReactNode | string,
   children?: React.ReactNode
-}
+};
 
 export const NoData = (props: EmptyProps) => (
   <Empty

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
@@ -10,7 +11,7 @@ import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostData, PostUpdate, BlogId, PostExtension, RegularPost } from '../types';
+import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
@@ -47,13 +48,13 @@ type OuterProps = ValidationProps & {
   id?: PostId,
   extention?: PostExtension,
   struct?: Post
-  json?: PostData,
+  json?: PostContent,
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean
 };
 
-type FormValues = PostData;
+type FormValues = PostContent;
 
 type FormProps = OuterProps & FormikProps<FormValues>;
 
@@ -100,7 +101,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: PostId) => {
-    Router.push('/post?id=' + id.toString()).catch(console.log);
+    Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
@@ -235,15 +236,15 @@ const EditForm = withFormik<OuterProps, FormValues>({
 function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
   return function (props: OuterProps) {
     const router = useRouter();
-    const { id } = router.query;
-    const { id: postId } = props;
+    const { postId } = router.query;
+    const { id } = props;
 
-    if (postId) return <Component />;
+    if (id) return <Component />;
 
     try {
-      return <Component id={new PostId(id as string)} {...props}/>;
+      return <Component id={new PostId(postId as string)} {...props}/>;
     } catch (err) {
-      return <em>Invalid post ID: {id}</em>;
+      return <em>Invalid post ID: {postId}</em>;
     }
   };
 }
@@ -264,7 +265,7 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Post>
 };
 
-type StructJson = PostData | undefined;
+type StructJson = PostContent | undefined;
 type Struct = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
@@ -291,7 +292,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       console.log('Loading post JSON from IPFS');
 
-      getJsonFromIpfs<PostData>(struct.ipfs_hash).then(json => {
+      getJsonFromIpfs<PostContent>(struct.ipfs_hash).then(json => {
         setJson(json);
       }).catch(err => console.log(err));
     }, [ trigger ]);

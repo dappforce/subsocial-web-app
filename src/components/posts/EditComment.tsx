@@ -3,7 +3,8 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import * as DfForms from '../utils/forms';
@@ -13,7 +14,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import { queryBlogsToProp } from '../utils/index';
-import { PostId, CommentId, Comment, CommentUpdate, CommentData } from '../types';
+import { PostId, CommentId, Comment, CommentUpdate, CommentContent } from '../types';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
@@ -39,10 +40,10 @@ type OuterProps = ValidationProps & {
   struct?: Comment,
   onSuccess: () => void,
   autoFocus: boolean,
-  json: CommentData
+  json: CommentContent
 };
 
-type FormValues = CommentData;
+type FormValues = CommentContent;
 
 type FormProps = OuterProps & FormikProps<FormValues>;
 
@@ -210,7 +211,7 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Comment>
 };
 
-type StructJson = CommentData | undefined;
+type StructJson = CommentContent | undefined;
 
 type Struct = Comment | undefined;
 
@@ -237,7 +238,7 @@ function LoadStruct (props: LoadStructProps) {
 
     console.log('Loading comment JSON from IPFS');
 
-    getJsonFromIpfs<CommentData>(struct.ipfs_hash).then(json => {
+    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
       const content = json;
       setJson(content);
     }).catch(err => console.log(err));
@@ -251,7 +252,7 @@ function LoadStruct (props: LoadStructProps) {
     return <NoData description={<span>Comment not found</span>} />;
   }
 
-  return <EditForm {...props} struct={struct} json={json as CommentData} />;
+  return <EditForm {...props} struct={struct} json={json as CommentContent} />;
 
 }
 

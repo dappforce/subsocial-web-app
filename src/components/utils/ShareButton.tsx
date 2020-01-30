@@ -22,12 +22,15 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
+    let isSubscribe = true;
+
     const load = async () => {
       const _isFollow = await (api.query.blogs[`postSharedByAccount`](dataForQuery)) as Bool;
-      setIsFollow(_isFollow.valueOf());
+      isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
 
+    return () => { isSubscribe = false; };
   }, [ postId ]);
 
   const buildTxParams = () => {

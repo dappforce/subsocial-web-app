@@ -5,14 +5,15 @@ import * as Yup from 'yup';
 
 import { Option, Text } from '@polkadot/types';
 import Section from '../utils/Section';
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api';
 
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
-import { BlogId, Blog, BlogData, BlogUpdate, VecAccountId } from '../types';
+import { BlogId, Blog, BlogContent, BlogUpdate, VecAccountId } from '../types';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 
@@ -66,10 +67,10 @@ type ValidationProps = {
 type OuterProps = ValidationProps & {
   id?: BlogId,
   struct?: Blog,
-  json?: BlogData
+  json?: BlogContent
 };
 
-type FormValues = BlogData & {
+type FormValues = BlogContent & {
   slug: string
 };
 
@@ -102,7 +103,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: BlogId) => {
-    Router.push('/blog?id=' + id.toString()).catch(console.log);
+    Router.push('/blogs/' + id.toString()).catch(console.log);
   };
 
   const [ ipfsCid, setIpfsCid ] = useState('');
@@ -245,7 +246,7 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Blog>
 };
 
-type StructJson = BlogData | undefined;
+type StructJson = BlogContent | undefined;
 
 type Struct = Blog | undefined;
 
@@ -272,7 +273,7 @@ function LoadStruct (props: LoadStructProps) {
     if (struct === undefined) return toggleTrigger();
 
     console.log('Loading blog JSON from IPFS');
-    getJsonFromIpfs<BlogData>(struct.ipfs_hash).then(json => {
+    getJsonFromIpfs<BlogContent>(struct.ipfs_hash).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

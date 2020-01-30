@@ -1,7 +1,5 @@
 import BN from 'bn.js';
 
-export const SITE_NAME = 'Subsocial Network';
-
 export const ZERO = new BN(0);
 
 export function bnToStr (bn?: BN, dflt: string = ''): string {
@@ -101,39 +99,8 @@ export const queryBlogsToProp = (storageItem: string, paramNameOrOpts?: string |
 // --------------------------------------
 
 import queryString from 'query-string';
-import Head from 'next/head';
 
 export function getUrlParam (location: Location, paramName: string, deflt: string | undefined = undefined): string | undefined {
   const params = queryString.parse(location.search);
   return params[paramName] ? params[paramName] as string : deflt;
-}
-
-type SeoProps = {
-  name?: string,
-  image?: string,
-  title?: string,
-  desc?: string
-};
-
-import React from 'react';
-
-// Google typically displays the first 50–60 characters of a title tag. If you keep your titles under 60 characters, our research suggests that you can expect about 90% of your titles to display properly.
-
-export const createTitle = (title: string) => `${title.length <= 50 ? title : title.substr(0, 50)} - Subsocial`;
-
-export function SeoHeads (props: SeoProps) {
-  const { name = '', image = '', title = '', desc = '' } = props;
-  return <div>
-    <Head>
-      <title>{createTitle(name)}</title>
-      <meta property='og:site_name' content={SITE_NAME} />
-      <meta property='og:image' content={image} />
-      <meta property='og:title' content={name} />
-      <meta property='og:description' content={desc} />
-      <meta name='twitter:site' content={SITE_NAME} />
-      <meta name='twitter:image' content={image} />
-      <meta name='twitter:title' content={title} />
-      <meta name='twitter:description' content={desc} />
-    </Head>
-  </div>;
 }

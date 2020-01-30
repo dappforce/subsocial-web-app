@@ -2,28 +2,51 @@ import BN from 'bn.js';
 import React from 'react';
 
 import { ApiProps } from '@polkadot/ui-api/types';
-import { I18nProps } from '@polkadot/ui-app/types';
-import { withCalls } from '@polkadot/ui-api/with';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import translate from '../utils/translate';
-import ViewBlog from '../blogs/ViewBlog';
+import { HeadMeta } from '../utils/HeadMeta';
+import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '../types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
-import { ViewPost } from '../posts/ViewPost';
+import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
+import { NextPage } from 'next';
+import { getApi } from '../utils/utils';
 
 const FIVE = new BlogId(5);
 const ZERO = new BlogId(0);
-type Props = ApiProps & I18nProps & {
-  nextBlogId?: BN,
-  nextPostId?: BN
+type Props = ApiProps & {
+  blogsData: BlogData[],
+  postsData: PostDataListItem[]
 };
 
-const Component = (props: Props) => {
+const LatestUpdate: NextPage<Props> = (props: Props) => {
 
-  const { nextBlogId = new BlogId(1), nextPostId = new PostId(1) } = props;
+  const { blogsData, postsData } = props;
 
+  return (
+    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <HeadMeta title='Subsocial latest updates' desc='Subsocial home page with latest updates' />
+      <ListData
+        title={`Latest blogs`}
+        dataSource={blogsData}
+        renderItem={(item, index) =>
+          <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
+        noDataDesc='No latest updates yet'
+        noDataExt={<Button href='/blog/new'>Create blog</Button>}
+      />
+      {postsData.length > 0 && <ListData
+        title={`Latest posts`}
+        dataSource={postsData}
+        renderItem={(item, index) =>
+          <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData} />}
+      />}
+    </div>
+  );
+};
+
+LatestUpdate.getInitialProps = async (props): Promise<any> => {
+  const api = await getApi();
+  const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
+  const nextPostId = await api.query.blogs.nextPostId() as PostId;
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
     let latestIds = new Array<BN>(initIds).fill(ZERO);
@@ -32,34 +55,15 @@ const Component = (props: Props) => {
   };
 
   const latestBlogIds = getLastNIds(nextBlogId, FIVE);
+  const loadBlogs = latestBlogIds.map(id => loadBlogData(api, id as BlogId));
+  const blogsData = await Promise.all<BlogData>(loadBlogs);
   const latestPostIds = getLastNIds(nextPostId, FIVE);
+  const postsData = await loadPostDataList(api, latestPostIds as PostId[]);
 
-  return (
-    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <SeoHeads title='Subsocial latestt updates' name='Home' desc='Subsocial home page with latestt updates' image={substrateLogo} />
-      <ListData
-        title={`Latest blogs`}
-        dataSource={latestBlogIds}
-        renderItem={(item, index) =>
-          <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
-        noDataDesc='No latestt updates yet'
-        noDataExt={<Button href='/new-blog'>Create blog</Button>}
-      />
-      {latestPostIds.length > 0 && <ListData
-        title={`Latest posts`}
-        dataSource={latestPostIds}
-        renderItem={(item, index) =>
-          <ViewPost key={index} id={item} preview />}
-      />}
-    </div>
-  );
+  return {
+    blogsData,
+    postsData
+  };
 };
-
-export const LatestUpdate = translate(
-  withCalls<Props>(
-    queryBlogsToProp('nextBlogId'),
-    queryBlogsToProp('nextPostId')
-  )(Component)
-);
 
 export default LatestUpdate;

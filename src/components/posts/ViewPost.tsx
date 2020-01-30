@@ -1,129 +1,136 @@
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
+
 import ReactMarkdown from 'react-markdown';
 import { Segment } from 'semantic-ui-react';
-
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { Option } from '@polkadot/types';
+import { Option, AccountId } from '@polkadot/types';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostData } from '../types';
-import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import { Loading } from '../utils/utils';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { CommentsByPost } from './ViewComment';
+import { PostId, Post, CommentId, PostContent } from '../types';
+import { nonEmptyStr } from '../utils/index';
+import { HeadMeta } from '../utils/HeadMeta';
+import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
+const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 import { MutedSpan } from '../utils/MutedText';
-import { Voter } from '../voting/Voter';
+const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
-import AddressMiniDf from '../utils/AddressMiniDf';
-import { api } from '@polkadot/ui-api';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { ShareModal } from './ShareModal';
-import { useRouter } from 'next/router';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { Pluralize } from '../utils/Plularize';
-import ViewBlog from '../blogs/ViewBlog';
+import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
+import { useMyAccount } from '../utils/MyAccountContext';
+import { NextPage } from 'next';
+import { ApiPromise } from '@polkadot/api';
+import BN from 'bn.js';
+import { Codec } from '@polkadot/types/types';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
-type ViewPostProps = MyAccountProps & {
-  preview?: boolean,
-  nameOnly?: boolean,
+type PostVariant = 'full' | 'preview' | 'name only';
+
+type PostType = 'regular' | 'share';
+
+type PostExtContent = PostContent & {
+  summary: string;
+};
+
+export type PostData = {
+  post?: Post,
+  initialContent?: PostExtContent
+};
+
+export type PostDataListItem = {
+  postData: PostData,
+  postExtData: PostData
+};
+
+type ViewPostProps = {
+  variant: PostVariant,
   withLink?: boolean,
   withCreatedBy?: boolean,
   withStats?: boolean,
   withActions?: boolean,
   withBlogName?: boolean,
-  id: PostId,
-  postById?: Option<Post>,
+  id?: PostId,
   commentIds?: CommentId[]
 };
 
-type PostContent = PostData & {
-  summary: string;
+type ViewPostPageProps = {
+  variant: PostVariant,
+  withLink?: boolean,
+  withCreatedBy?: boolean,
+  withStats?: boolean,
+  withActions?: boolean,
+  withBlogName?: boolean,
+  postData: PostData,
+  postExtData?: PostData,
+  commentIds?: CommentId[]
 };
 
-function ViewPostInternal (props: ViewPostProps) {
-  const { postById } = props;
+export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
+  const { post, initialContent = {} as PostExtContent } = props.postData;
 
-  if (postById === undefined) return <Loading />;
-  else if (postById.isNone) return <NoData description={<span>Post not found</span>} />;
+  if (!post) return <NoData description={<span>Post not found</span>} />;
 
   const {
-    myAddress,
-    preview = false,
-    nameOnly = false,
+    variant = 'full',
     withBlogName = false,
     withLink = true,
     withActions = true,
     withStats = true,
-    id,
-    withCreatedBy = true
+    withCreatedBy = true,
+    postExtData
   } = props;
 
-  const post = postById.unwrap();
   const {
+    id,
+    blog_id,
     created,
     ipfs_hash,
-    extension,
-    isRegularPost,
-    isSharedComment,
-    isSharedPost,
     edit_history
   } = post;
 
-  const [ content , setContent ] = useState({} as PostContent);
+  const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
+  const isRegularPost = type === 'regular';
+  const { state: { address } } = useMyAccount();
+  const [ content , setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters, setActiveVoters ] = useState(0);
 
-  const [ originalContent, setOriginalContent ] = useState({} as PostContent);
-  const [ originalPost, setOriginalPost ] = useState({} as Post);
+  const originalPost = postExtData && postExtData.post;
+  const [ originalContent , setOriginalContent ] = useState(postExtData && postExtData.initialContent);
 
   const openVoters = (type: ActiveVoters) => {
     setPostVotersOpen(true);
     setActiveVoters(type);
   };
 
-  const makeSummary = (body: string) => (
-    body.length > LIMIT_SUMMARY
-    ? body.substr(0, LIMIT_SUMMARY) + '...'
-    : body
-  );
-
   useEffect(() => {
     if (!ipfs_hash) return;
+    let isSubscribe = true;
 
-    getJsonFromIpfs<PostData>(ipfs_hash).then(json => {
-      setContent({ ...json, summary: makeSummary(json.body) });
-    }).catch(err => console.log(err));
+    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(console.log);
+    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(console.log);
 
-    if (isSharedPost) {
-      const loadSharedPost = async () => {
-        const originalPostId = extension.value as PostId;
-        const originalPostOpt = await api.query.blogs.postById(originalPostId) as Option<Post>;
+    return () => { isSubscribe = false; };
+  }, [ false ]);
 
-        if (originalPostOpt.isSome) {
-          const originalPost = originalPostOpt.unwrap();
-          setOriginalPost(originalPost);
-          const originalContent = await getJsonFromIpfs<PostData>(originalPost.ipfs_hash);
-          setOriginalContent({ ...originalContent, summary: makeSummary(originalContent.body) });
-        }
-      };
+  type DropdownProps = {
+    account: string | AccountId
+  };
 
-      loadSharedPost().catch(err => new Error(err));
-    }
-  }, [ ipfs_hash ]);
+  const RenderDropDownMenu = (props: DropdownProps) => {
 
-  const RenderDropDownMenu = () => {
-
-    const account = isRegularPost ? post && created.account.toString() : originalPost.id && originalPost.created.account.toString();
-    const isMyStruct = myAddress === account;
+    const isMyStruct = address === props.account;
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
@@ -132,7 +139,7 @@ function ViewPostInternal (props: ViewPostProps) {
     const menu = (
       <Menu>
         {isMyStruct && <Menu.Item key='0'>
-        <Link href={`/edit-post?id=${id.toString()}`}><a className='item'>Edit</a></Link>
+        <Link href='/blogs/[blogId]/posts/[id]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -152,7 +159,7 @@ function ViewPostInternal (props: ViewPostProps) {
   const renderNameOnly = (title: string, id: PostId) => {
     if (!title || !id) return null;
     return withLink
-      ? <Link href={`/post?id=${id.toString()}`} >
+      ? <Link href='blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
         <a className='header DfPostTitle--preview'>
           {title}
         </a>
@@ -164,16 +171,16 @@ function ViewPostInternal (props: ViewPostProps) {
     if (isEmpty(post)) return null;
     const { blog_id , created: { account, time } } = post;
     return <>
-      <AddressMiniDf
+      <AddressComponents
         value={account}
         isShort={true}
         isPadded={false}
         size={size}
         extraDetails={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
-          <Link href={`/post?id=${id.toString()}`} >
+          <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
             <a className='DfGreyLink'>
-              {time}
+              {formatUnixDate(time)}
             </a>
           </Link>
         </div>}
@@ -181,10 +188,12 @@ function ViewPostInternal (props: ViewPostProps) {
     </>;
   };
 
-  const renderContent = (post: Post, content: PostContent) => {
+  const renderContent = (post: Post, content: PostExtContent) => {
     if (!post || !content) return null;
 
     const { title, summary, image } = content;
+    const hasImage = nonEmptyStr(image);
+
     return <div className='DfContent'>
       <div className='DfPostText'>
         {renderNameOnly(title ? title : summary, post.id)}
@@ -192,7 +201,7 @@ function ViewPostInternal (props: ViewPostProps) {
           <ReactMarkdown className='DfMd' source={summary} linkTarget='_blank' />
         </div>
       </div>
-      {content.image && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
+      {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
 
@@ -201,7 +210,7 @@ function ViewPostInternal (props: ViewPostProps) {
     const close = () => setOpen(false);
     return (
     <div className='DfActionsPanel'>
-      <div className='DfAction'><Voter struct={post} /></div>
+      <div className='DfAction'><Voter struct={post} type={'Post'} /></div>
       <div
         className='ui tiny button basic DfAction'
         onClick={() => setCommentsSection(!commentsSection)}
@@ -216,7 +225,7 @@ function ViewPostInternal (props: ViewPostProps) {
         <Icon type='share-alt' />
         Share
       </div>
-      {open && <ShareModal postId={isRegularPost ? id : originalPost.id} open={open} close={close} />}
+      {open && <ShareModal postId={isRegularPost ? id : originalPost && originalPost.id} open={open} close={close} />}
     </div>);
   };
 
@@ -224,14 +233,15 @@ function ViewPostInternal (props: ViewPostProps) {
     if (post.id === undefined) return null;
 
     const { upvotes_count, downvotes_count, comments_count, shares_count, score } = post;
-    const counts = downvotes_count.toNumber() + upvotes_count.toNumber();
+    const reactionsCount = new BN(upvotes_count).add(new BN(downvotes_count));
+
     return (<>
     <div className='DfCountsPreview'>
-      <MutedSpan><div onClick={() => counts && openVoters(ActiveVoters.All)} className={counts ? '' : 'disable'}><Pluralize count={counts} singularText='Reaction'/></div></MutedSpan>
+      {<MutedSpan><div onClick={() => reactionsCount && openVoters(ActiveVoters.All)} className={reactionsCount ? '' : 'disable'}><Pluralize count={reactionsCount} singularText='Reaction'/></div></MutedSpan>}
       <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
-      <Pluralize count={comments_count.toNumber()} singularText='Comment'/></div></MutedSpan>
-      <MutedSpan><div><Pluralize count={shares_count.toNumber()} singularText='Share'/></div></MutedSpan>
-      <MutedSpan><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
+      <Pluralize count={comments_count} singularText='Comment'/></div></MutedSpan>
+      <MutedSpan><div><Pluralize count={shares_count} singularText='Share'/></div></MutedSpan>
+      <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
     </>);
@@ -239,11 +249,11 @@ function ViewPostInternal (props: ViewPostProps) {
 
   const renderRegularPreview = () => {
     return <>
-      <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
+      <Segment className={`DfPostPreview`}>
       <div className='DfInfo'>
         <div className='DfRow'>
           {renderPostCreator(post)}
-          <RenderDropDownMenu/>
+          <RenderDropDownMenu account={created.account}/>
         </div>
         {renderContent(post, content)}
       </div>
@@ -255,11 +265,13 @@ function ViewPostInternal (props: ViewPostProps) {
   };
 
   const renderSharedPreview = () => {
+    if (!originalPost || !originalContent) return <></>;
+    const account = originalPost.created.account;
     return <>
-      <Segment className={`DfPostPreview ${withActions && 'p-b-0'}`}>
+      <Segment className={`DfPostPreview`}>
           <div className='DfRow'>
             {renderPostCreator(post)}
-            <RenderDropDownMenu/>
+            <RenderDropDownMenu account={created.account}/>
           </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
         {/* TODO add body*/}
@@ -267,13 +279,12 @@ function ViewPostInternal (props: ViewPostProps) {
           <div className='DfInfo'>
             <div className='DfRow'>
               {renderPostCreator(originalPost)}
-              <RenderDropDownMenu/>
+              <RenderDropDownMenu account={account}/>
             </div>
             {renderContent(originalPost, originalContent)}
           </div>
-          {withStats && renderStatsPanel(originalPost) /* todo params originPost */}
+          {withStats && renderStatsPanel(originalPost) /* TODO params originPost */}
         </Segment>
-        {withStats && renderStatsPanel(post) /* todo voters %%%*/ }
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
@@ -281,13 +292,13 @@ function ViewPostInternal (props: ViewPostProps) {
     </>;
   };
 
-  const renderDetails = (content: PostContent) => {
+  const renderDetails = (content: PostExtContent) => {
     const { title, body, image } = content;
     return <Section className='DfContentPage'>
-      <SeoHeads title={title} name={title} desc={body} image={image} />
+      <HeadMeta title={title} desc={body} image={image} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
-        <RenderDropDownMenu/>
+        <RenderDropDownMenu account={created.account}/>
       </div>
       {renderStatsPanel(post)}
       {withCreatedBy && renderPostCreator(post)}
@@ -296,47 +307,130 @@ function ViewPostInternal (props: ViewPostProps) {
         <ReactMarkdown className='DfMd details' source={body} linkTarget='_blank' />
         {/* TODO render tags */}
       </div>
-      <Voter struct={post} />
+      <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
   };
 
-  const renderSharedDetails = () => (renderSharedPreview());
-
-  if (nameOnly) {
-    return renderNameOnly(content.title,id);
-  } else if (isRegularPost) {
-    if (preview) {
-      return renderRegularPreview();
-    } else {
+  switch (variant) {
+    case 'name only': {
+      return renderNameOnly(content.title, id);
+    }
+    case 'preview': {
+      switch (type) {
+        case 'regular': {
+          return renderRegularPreview();
+        }
+        case 'share': {
+          return renderSharedPreview();
+        }
+      }
+      break;
+    }
+    case 'full': {
       return renderDetails(content);
     }
-  } else if (isSharedPost) {
-    return preview
-      ? renderSharedPreview()
-      : renderSharedDetails();
-  } else if (isSharedComment) {
-    return <div>Shared Comment is not implemented</div>;
+    default: {
+      return <div>You should not be here!!!</div>;
+    }
+  }
+  return <div>You should not be here!!!</div>;
+};
+
+ViewPostPage.getInitialProps = async (props): Promise<any> => {
+  const { query: { postId } } = props;
+  const api = await getApi();
+  const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
+  const postExtData = await loadExtPost(api, postData.post as Post);
+  return {
+    postData,
+    postExtData
+  };
+};
+
+export default ViewPostPage;
+
+const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
+  return (props: ViewPostProps) => {
+    const { id } = props;
+    const [ postExtData, setExtData ] = useState({} as PostData);
+    const [ postData, setPostData ] = useState({} as PostData);
+
+    useEffect(() => {
+      let isSubscribe = true;
+      const loadPost = async () => {
+        const api = await getApi();
+        const postData = await loadPostData(api, id as PostId);
+        isSubscribe && setPostData(postData);
+        loadExtPost(api, postData.post as Post).then(data => isSubscribe && setExtData(data)).catch(console.log);
+      };
+
+      loadPost().catch(console.log);
+
+      return () => { isSubscribe = false; };
+    }, [ false ]);
+
+    if (isEmpty(postData)) return <Loading/>;
+
+    return <Component postData={postData} postExtData={postExtData} {...props}/>;
+  };
+};
+
+export const ViewPost = withLoadedData(ViewPostPage);
+
+export const getTypePost = (post: Post): PostType => {
+  const { isSharedPost, extension } = post;
+  console.log('Shared', typeof extension.value);
+  if (isSharedPost) {
+    return 'share';
   } else {
-    return <div>You should not be here!!!</div>;
+    return 'regular';
   }
-}
+};
 
-export const ViewPost = withMulti(
-  ViewPostInternal,
-  withMyAccount,
-  withCalls<ViewPostProps>(
-    queryBlogsToProp('postById', 'id')
-  )
-);
+const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
+  const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
+  const summary = makeSummary(ipfsContent.body, LIMIT_SUMMARY);
+  return {
+    ...ipfsContent,
+    summary
+  };
+};
 
-export function ViewPostById () {
-  const router = useRouter();
-  const { id } = router.query;
-  try {
-    return <ViewPost id={new PostId(id as string)}/>;
-  } catch (err) {
-    return <em>Invalid Id: {id}</em>;
+export const loadPostData = async (api: ApiPromise, postId: PostId) => {
+  const postOpt = await api.query.blogs.postById(postId) as Option<Post>;
+  let postData: PostData = {};
+
+  if (postOpt.isSome) {
+    const post = postOpt.unwrap();
+    post.set('score', new BN(post.score.toNumber()) as unknown as Codec);
+    const content = await loadContentFromIpfs(post);
+    postData = { post, initialContent: content };
+
+    // console.log('loadPostData:', postData);
   }
-}
+
+  return postData;
+};
+
+export const loadExtPost = async (api: ApiPromise, post: Post) => {
+  const { isSharedPost, extension } = post;
+  let postData: PostData = {};
+
+  if (isSharedPost) {
+    const postId = extension.value as PostId;
+    const postData = await loadPostData(api, postId);
+    return postData;
+  }
+
+  return postData;
+};
+
+export const loadPostDataList = async (api: ApiPromise, ids: PostId[]) => {
+  const loadPostsData = ids.map(id => loadPostData(api, id));
+  const postsData = await Promise.all<PostData>(loadPostsData);
+  const loadPostsExtData = postsData.map(item => loadExtPost(api, item.post as Post));
+  const postsExtData = await Promise.all<PostData>(loadPostsExtData);
+  return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
+};

@@ -12,8 +12,6 @@ import { withCall, withMulti, withObservable } from '@polkadot/ui-api';
 import { stringToU8a } from '@polkadot/util';
 import { xxhashAsHex } from '@polkadot/util-crypto';
 
-import translate from './translate';
-
 type Props = I18nProps & {
   optionsAll?: KeyringOptions,
   queueAction: QueueAction$Add,
@@ -25,7 +23,7 @@ type Props = I18nProps & {
 let prevEventHash: string;
 
 class Status extends React.PureComponent<Props> {
-  componentDidUpdate ({ optionsAll = { account: [] as any } as KeyringOptions, queueAction, system_events, t }: Props) {
+  componentDidUpdate ({ optionsAll = { account: [] as any } as KeyringOptions, queueAction, system_events }: Props) {
     const eventHash = xxhashAsHex(stringToU8a(JSON.stringify(system_events || [])));
 
     if (eventHash === prevEventHash) {
@@ -45,7 +43,7 @@ class Status extends React.PureComponent<Props> {
             account,
             action: `${section}.${method}`,
             status: 'event',
-            message: t('transfer received')
+            message: 'transfer received'
           });
         }
       } else if (section === 'democracy') {
@@ -54,11 +52,7 @@ class Status extends React.PureComponent<Props> {
         queueAction({
           action: `${section}.${method}`,
           status: 'event',
-          message: t('update on #{{index}}', {
-            replace: {
-              index
-            }
-          })
+          message: `update on #{${index}}`
         });
       }
     });
@@ -78,7 +72,6 @@ class Status extends React.PureComponent<Props> {
 
 export default withMulti(
   Status,
-  translate,
   withCall('query.system.events'),
   withObservable(keyringOption.optionsSubject, { propName: 'optionsAll' })
 );

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { withMulti, withCalls } from '@polkadot/ui-api/with';
 import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
-import AddressMini from './AddressMiniDf';
-import { Post, Blog, PostId, PostData, BlogData, BlogId, CommentId, CommentData, Comment, OptionComment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, VecBlogHistoryRecord, VecPostHistoryRecord, ProfileHistoryRecord, ProfileData, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '../types';
+const AddressComponents = dynamic(() => import('./AddressComponents'), { ssr: false });
+import { Post, Blog, PostId, PostContent, BlogContent, BlogId, CommentId, CommentContent, Comment, OptionComment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, VecBlogHistoryRecord, VecPostHistoryRecord, ProfileHistoryRecord, ProfileContent, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '../types';
 import { queryBlogsToProp } from './index';
 import { Option, AccountId } from '@polkadot/types';
 import ReactMarkdown from 'react-markdown';
@@ -13,6 +13,7 @@ import { getJsonFromIpfs } from './OffchainUtils';
 import { withRequireProfile, withSocialAccount, Loading } from './utils';
 import { NoData } from '../utils/DataList';
 import { DfBgImg } from './DfBgImg';
+import dynamic from 'next/dynamic';
 
 type ModalController = {
   open: boolean,
@@ -96,11 +97,11 @@ const CommentFromHistory = (props: PropsCommentFromHistory) => {
 
   const { history: { old_data, edited } } = props;
   const { ipfs_hash } = old_data;
-  const [ content, setContent ] = useState({} as CommentData);
+  const [ content, setContent ] = useState({} as CommentContent);
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await getJsonFromIpfs<CommentData>(ipfs_hash.toString());
+      const data = await getJsonFromIpfs<CommentContent>(ipfs_hash.toString());
       setContent(data);
     };
     loadData().catch(err => new Error(err));
@@ -109,7 +110,7 @@ const CommentFromHistory = (props: PropsCommentFromHistory) => {
   return (<div className='DfModal'>
     <SuiComment>
       <SuiComment.Metadata>
-        <AddressMini
+        <AddressComponents
           value={edited.account}
           isShort={true}
           isPadded={false}
@@ -119,7 +120,6 @@ const CommentFromHistory = (props: PropsCommentFromHistory) => {
       </SuiComment.Metadata>
       <SuiComment.Text>{content.body}</SuiComment.Text>
     </SuiComment>
-    
   </div>);
 };
 
@@ -179,13 +179,13 @@ const PostFromHistory = (props: PropsPostFromHistory) => {
 
   const { history: { old_data, edited }, current_data } = props;
   const { ipfs_hash } = old_data;
-  const [ content, setContent ] = useState({} as PostData);
+  const [ content, setContent ] = useState({} as PostContent);
   const [ ipfsHash, setIpfsHash ] = useState('');
 
   useEffect(() => {
     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
     const loadData = async () => {
-      const data = await getJsonFromIpfs<PostData>(ipfsHash);
+      const data = await getJsonFromIpfs<PostContent>(ipfsHash);
       setContent(data);
     };
     loadData().catch(err => new Error(err));
@@ -270,7 +270,7 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
 
   const { history: { old_data, edited }, current_data } = props;
   const { ipfs_hash, slug } = old_data;
-  const [ content, setContent ] = useState({} as BlogData);
+  const [ content, setContent ] = useState({} as BlogContent);
   const [ ipfsHash, setIpfsHash ] = useState('');
   const [ _slug, setSlug ] = useState('');
 
@@ -278,7 +278,7 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
     slug.isNone ? setSlug(current_data.slug) : setSlug(slug.unwrap().toString());
     const loadData = async () => {
-      const data = await getJsonFromIpfs<BlogData>(ipfsHash);
+      const data = await getJsonFromIpfs<BlogContent>(ipfsHash);
       setContent(data);
     };
     loadData().catch(err => new Error(err));
@@ -355,7 +355,7 @@ type ProfileHistoryProps = ModalController & {
   socialAccountOpt?: Option<SocialAccount>,
   socailAccount?: SocialAccount,
   profile?: Profile
-  profileData: ProfileData
+  ProfileContent: ProfileContent
 };
 
 type PropsProfileFromHistory = {
@@ -370,7 +370,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
 
   const { history: { old_data, edited }, current_data } = props;
   const { ipfs_hash, username } = old_data;
-  const [ content, setContent ] = useState({} as ProfileData);
+  const [ content, setContent ] = useState({} as ProfileContent);
   const [ ipfsHash, setIpfsHash ] = useState('');
   const [ _username, setUsername ] = useState(''); // TODO inconsistent naming
 
@@ -378,7 +378,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
     username.isNone ? setUsername(current_data.username) : setUsername(username.unwrap().toString());
     const loadData = async () => {
-      const data = await getJsonFromIpfs<ProfileData>(ipfsHash);
+      const data = await getJsonFromIpfs<ProfileContent>(ipfsHash);
       setContent(data);
     };
     loadData().catch(err => new Error(err));
@@ -403,7 +403,6 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
         </div>
       </div>
       <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
-      
   </div>);
 };
 

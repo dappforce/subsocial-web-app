@@ -6,7 +6,7 @@ type Props = {
   title?: string
 };
 
-const Layout: React.FunctionComponent<Props> = ({ children, title = 'This is the default title' }) => {
+const Layout: React.FunctionComponent<Props> = ({ children, title = 'Subsocial' }) => {
 
   return <div>
     <Head>

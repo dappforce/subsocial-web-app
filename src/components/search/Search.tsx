@@ -27,7 +27,7 @@ const App = () => {
         iconPosition='left'
         icon={<Icon
           type='search'
-          style={{ fontSize: '14px', position: 'relative', top: '-1.6rem' }}
+          style={{ fontSize: '14px', position: 'relative', top: '-0.9rem' }}
         />}
       />
     </div>

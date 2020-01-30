@@ -1,70 +1,92 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { withMulti } from '@polkadot/ui-api';
 import { useMyAccount } from '../components/utils/MyAccountContext';
-import ListFollowingBlogs from '../components/blogs/ListFollowingBlogs';
 import { isMobile } from 'react-device-detect';
+import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
+import { Loading, getApi } from '../components/utils/utils';
+import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
+import { BlogId } from '../components/types';
+import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
+import Link from 'next/link';
 
 type MenuItem = {
   name: string,
-  page: string,
+  page: string[],
   image: string
 };
 
-type Props = {
-  collapsed: boolean,
-  closeSideBar: () => void
-};
-
-const InnerMenu = (props: Props) => {
-  const { collapsed, closeSideBar } = props;
+const InnerMenu = () => {
+  const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
+  const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
+  const [ loaded, setLoaded ] = useState(false);
   const router = useRouter();
   const { pathname } = router;
 
-  const onClick = (page: string) => {
-    isMobile && closeSideBar();
-    Router.push(page).catch(console.log);
+  useEffect(() => {
+    if (!myAddress) return;
+
+    let isSubscribe = true;
+
+    const loadBlogsData = async () => {
+      setLoaded(false);
+      const api = await getApi();
+      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      const loadBlogs = ids.map(id => loadBlogData(api,id));
+      const blogsData = await Promise.all<BlogData>(loadBlogs);
+      isSubscribe && setFollowedBlogsData(blogsData);
+      setLoaded(true);
+    };
+
+    loadBlogsData().catch(console.log);
+
+    return () => { isSubscribe = false; };
+  }, [ trigerFollowed ,myAddress ]);
+
+  const onClick = (page: string[]) => {
+    isMobile && toggle();
+    Router.push(page[0], page[1]).catch(console.log);
   };
 
   const MenuItems: MenuItem[] = [
     {
       name: 'Feed',
-      page: '/feed',
+      page: ['/feed'],
       image: 'profile'
     },
     {
       name: 'All blogs',
-      page: '/all',
+      page: ['/blogs/all'],
       image: 'global'
     },
     {
       name: 'New blog',
-      page: '/new-blog',
+      page: ['/blogs/new'],
       image: 'plus'
     },
     {
       name: 'My blogs',
-      page: '/my-blogs',
+      page: ['/blogs/my/[address]', `/blogs/my/${myAddress}`],
       image: 'book'
     },
     {
       name: 'Following blogs',
-      page: '/following-blogs',
+      page: ['/blogs/following/[address]', `/blogs/following/${myAddress}`],
       image: 'book'
     },
     {
       name: 'Notifications',
-      page: '/notifications',
+      page: ['/notifications'],
       image: 'notification'
     },
     {
       name: 'My profile',
-      page: `/profile?address=${myAddress}`,
+      page: ['/profile/[address]', `/profile/${myAddress}`],
       image: 'idcard'
     }
+
   ];
 
   return (
@@ -75,18 +97,27 @@ const InnerMenu = (props: Props) => {
         style={{ height: '100%', borderRight: 0 }}
     >
       {MenuItems.map(item =>
-      <Menu.Item key={item.page} onClick={() => onClick(item.page)}>
-        <Icon type={item.image} />
-        <span>{item.name}</span>
+      <Menu.Item key={item.page[0]} onClick={() => onClick(item.page)}>
+        <Link href={item.page[0]} as={item.page[1]}>
+          <a>
+            <Icon type={item.image} />
+            <span>{item.name}</span>
+          </a>
+        </Link>
       </Menu.Item>)}
-      {(!collapsed || isMobile) &&
-        <Menu.ItemGroup className='DfSideMenu--FollowedBlogs' key='followed' title='Followed blogs'>
-          <ListFollowingBlogs mini={true} />
-        </Menu.ItemGroup>}
+      <Menu.Divider/>
+      <Menu.Item key={'advanced'} >
+        <a href='http://subsocial.network:3002'>
+        <Icon type='exception' />
+          <span>Advanced</span>
+        </a>
+      </Menu.Item>
+      <Menu.Divider/>
+      <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
+        {loaded ? <RenderFollowedList followedBlogsData={followedBlogsData} /> : <Loading/>}
+      </Menu.ItemGroup>
     </Menu>
   );
 };
 
-export default withMulti(
-  InnerMenu
-);
+export default InnerMenu;

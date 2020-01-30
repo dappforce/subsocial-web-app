@@ -1,77 +1,106 @@
 import React from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
-import { queryBlogsToProp } from '../utils/index';
-import { BlogId } from '../types';
-import ViewBlog from './ViewBlog';
-import { useMyAccount } from '../utils/MyAccountContext';
-import { Loading } from '../utils/utils';
+import { BlogId, Blog } from '../types';
+import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { Pluralize } from '../utils/Plularize';
+import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
+import { isMobile } from 'react-device-detect';
+import { NextPage } from 'next';
+import { HeadMeta } from '../utils/HeadMeta';
+import { getApi } from '../utils/utils';
+import Link from 'next/link';
 
-type ListBlogProps = {
-  id: AccountId,
-  mini?: boolean
-  followedBlogsIds?: BlogId[]
+type ListBlogPageProps = {
+  blogsData: BlogData[]
 };
 
-const InnerListMyBlogs = (props: ListBlogProps) => {
-  const { followedBlogsIds, mini = false } = props;
-  const totalCount = followedBlogsIds !== undefined ? followedBlogsIds && followedBlogsIds.length : 0;
-  const router = useRouter();
-  const { pathname, query } = router;
-  const currentBlog = pathname.includes('blog') ? new BN(query.id as string) : undefined;
-  console.log([pathname.includes('blog'), currentBlog, pathname, query]);
+export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListBlogPageProps) => {
+  const { blogsData } = props;
+  const totalCount = blogsData !== undefined ? blogsData && blogsData.length : 0;
 
-  if (!followedBlogsIds) return <Loading />;
-
-  const renderFollowedList = () => (
-    <>{totalCount > 0
-      ? followedBlogsIds.map((item, index) =>
-      <div key={index} className={currentBlog && currentBlog.eq(item) ? 'DfSelectedBlog' : ''} >
-        <ViewBlog {...props} key={index} id={item} miniPreview imageSize={28}/>
-      </div>)
-      : <div className='DfNoFollowed'><Button type='primary' size='small' href='/all'>Show all</Button></div>}
-    </>
-  );
-
-  return (mini
-    ? renderFollowedList()
-    : <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+  return (<div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <HeadMeta title='Blogs I follow' desc='Subsocial blogs' />
       <ListData
         title={<Pluralize count={totalCount} singularText='Following blog'/>}
-        dataSource={followedBlogsIds}
+        dataSource={blogsData}
         renderItem={(item,index) => (
-            <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton/>
+            <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton/>
         )}
         noDataDesc='You are not subscribed to any blog'
-        noDataExt={<Button href='/all'>Show all blogs</Button>}
+        noDataExt={<Button href='/blog/all'>Show all blogs</Button>}
       />
     </div>
   );
 };
 
-function withIdFromUseMyAccount (Component: React.ComponentType<ListBlogProps>) {
-  return function (props: ListBlogProps) {
-    const { state: { address: myAddress } } = useMyAccount();
-    try {
-      return <Component id={new AccountId(myAddress)} {...props}/>;
-    } catch (err) {
-      return <em>Invalid Account id</em>;
-    }
+ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
+  const { query: { address } } = props;
+  const api = await getApi();
+  const followedBlogsData = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string)) as unknown as BlogId[];
+  const loadBlogs = followedBlogsData.map(id => loadBlogData(api, id));
+  const blogsData = await Promise.all<BlogData>(loadBlogs);
+  return {
+    blogsData
   };
-}
+};
 
-export const ListFollowingBlogs = withMulti<ListBlogProps>(
-  InnerListMyBlogs,
-  withIdFromUseMyAccount,
-  withCalls<ListBlogProps>(
-    queryBlogsToProp(`blogsFollowedByAccount`, { paramName: 'id', propName: 'followedBlogsIds' })
-  )
-);
+// const ListFollowingBlogs = () => {
+//   const { state: { address: myAddress } } = useMyAccount();
+//   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
 
-export default ListFollowingBlogs;
+//   useEffect(() => {
+//     let isSubscribe = true;
+//     const loadBlogsData = async () => {
+//       const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+//       const loadBlogs = ids.map(id => loadBlogData(api,id));
+//       const blogsData = await Promise.all<BlogData>(loadBlogs);
+//       isSubscribe && setFollowedBlogsData(blogsData);
+//     };
+
+//     loadBlogsData().catch(console.log);
+
+//     return () => { isSubscribe = false; };
+//   }, [ followedBlogsData.length > 0 ]);
+
+//   return
+// };
+
+type Props = {
+  followedBlogsData: BlogData[]
+};
+
+export const RenderFollowedList = (props: Props) => {
+  const { followedBlogsData } = props;
+  const totalCount = followedBlogsData !== undefined ? followedBlogsData && followedBlogsData.length : 0;
+  const router = useRouter();
+  const { pathname, query } = router;
+  const currentBlog = pathname.includes('blogs') ? new BN(query.blogId as string) : undefined;
+  const { toggle } = useSidebarCollapsed();
+
+  return <>{totalCount > 0
+    ? followedBlogsData.map((item, index) =>
+      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
+        <a className='DfGreyLink'>
+          <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
+            <ViewBlogPage
+              key={index}
+              blogData={item}
+              onClick={() => {
+                isMobile && toggle();
+              }}
+              miniPreview
+              imageSize={28}
+            />
+          </div>
+        </a>
+      </Link>)
+    : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blog/all'>Show all</Button></div>}
+  </>;
+};
+
+export default RenderFollowedList;

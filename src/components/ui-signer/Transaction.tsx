@@ -1,8 +1,6 @@
 // Copyright 2017-2019 @polkadot/ui-signer authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { I18nProps } from '@polkadot/ui-app/types';
 import { QueueTx } from '@polkadot/ui-app/Status/types';
 
 import React from 'react';
@@ -10,9 +8,8 @@ import { Method } from '@polkadot/types';
 import { Call, InputAddress, Modal } from '@polkadot/ui-app';
 
 import Checks from './Checks';
-import translate from './translate';
 
-type Props = I18nProps & {
+type Props = {
   children?: React.ReactNode,
   isSendable: boolean,
   value: QueueTx
@@ -49,7 +46,7 @@ class Transaction extends React.PureComponent<Props> {
   }
 
   private renderAccount () {
-    const { t, value: { accountId, isUnsigned } } = this.props;
+    const { value: { accountId, isUnsigned } } = this.props;
 
     if (isUnsigned || !accountId) {
       return null;
@@ -61,7 +58,7 @@ class Transaction extends React.PureComponent<Props> {
         defaultValue={accountId}
         isDisabled
         isInput
-        label={t('sending from my account')}
+        label={'sending from my account'}
         withLabel
       />
     );
@@ -84,4 +81,4 @@ class Transaction extends React.PureComponent<Props> {
   }
 }
 
-export default translate(Transaction);
+export default Transaction;

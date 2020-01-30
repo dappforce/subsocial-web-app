@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Button, Icon } from 'antd';
-import InputAddress from '../components/utils/InputAddress';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import Router from 'next/router';
+import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
+import { useMyAccount } from '../components/utils/MyAccountContext';
+import AddressComponents from '../components/utils/AddressComponents';
 
-type Props = {
-  toggleCollapsed: () => void
-};
-
-const InnerMenu = (props: Props) => {
+const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
+  const { toggle } = useSidebarCollapsed();
+  const { state: { address } } = useMyAccount();
 
   return isMobile && show
   ? <div className='DfTopBar DfTopBar--search'>
@@ -19,10 +19,10 @@ const InnerMenu = (props: Props) => {
   </div>
   : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
-        <Button type='link' onClick={props.toggleCollapsed} className='DfBurgerIcon'>
+        <Button type='link' onClick={toggle} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
-          <span style={{ fontSize: '1.5rem' }} onClick={() => Router.push('/')}>{isBrowser ? 'Subsocial' : 'S.'}</span>
+          <span className='DfBrand' onClick={() => Router.push('/')}>{'Subsocial'}</span>
       </div>
       {isBrowser && <Search/>}
       <div className='DfTopBar--rightContent'>
@@ -30,10 +30,13 @@ const InnerMenu = (props: Props) => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        <InputAddress
-          className='DfTopBar--InputAddress'
-          type='account'
-          withLabel={false}
+        <AddressComponents
+          className='profileName'
+          value={address}
+          isShort={true}
+          isPadded={false}
+          size={30}
+          variant='address-popup'
         />
       </div>
   </div>;

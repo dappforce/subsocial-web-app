@@ -7,7 +7,7 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { PostId, PostExtension, SharedPost, BlogId } from '../types';
 import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
-import ViewBlog from '../blogs/ViewBlog';
+import { ViewBlog } from '../blogs/ViewBlog';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
 
@@ -15,28 +15,28 @@ type Props = MyAccountProps & {
   postId: PostId,
   open: boolean,
   close: () => void,
-  blogsIds?: BlogId[]
+  blogIds?: BlogId[]
 };
 
 const InnerShareModal = (props: Props) => {
-  const { open, close, postId, blogsIds } = props;
+  const { open, close, postId, blogIds } = props;
 
-  if (!blogsIds) return <Loading />;
+  if (!blogIds) return <Loading />;
 
-  const [blogId, setBlogId] = useState(blogsIds[0]);
+  const [blogId, setBlogId] = useState(blogIds[0]);
   const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
 
-    if (blogsIds.length === 0) {
+    if (blogIds.length === 0) {
       return (
-        <Link href='/new-blog'><a className='ui button primary'>Create your first blog</a></Link>
+        <Link href='/blogs/new'><a className='ui button primary'>Create your first blog</a></Link>
       );
     }
 
-    const blogs = blogsIds.map(id => ({
+    const blogs = blogIds.map(id => ({
       key: id.toNumber(),
-      text: <div><ViewBlog id={id} key={id} dropdownPreview imageSize={26}/></div>,
+      text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
       value: id.toNumber()
     }));
 
@@ -58,7 +58,7 @@ const InnerShareModal = (props: Props) => {
         extention={extension}
         withButtons={false}
       />
-      <ViewPost id={postId} preview withStats={false} withActions={false} />
+      <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
     </div>
     );
   };
@@ -90,6 +90,6 @@ export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogsIds' })
+    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
   )
 );

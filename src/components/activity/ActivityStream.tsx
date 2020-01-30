@@ -3,24 +3,26 @@ import React, { useState, useEffect } from 'react';
 import Section from '../utils/Section';
 import { hexToNumber } from '@polkadot/util';
 import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../types';
-import { ViewPost } from '../posts/ViewPost';
-import { api, withMulti } from '@polkadot/ui-api';
-import ViewBlog from '../blogs/ViewBlog';
+import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
+import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import AddressMiniDf from '../utils/AddressMiniDf';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { Loader } from 'semantic-ui-react';
 import { NoData } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
+import { Loading, getApi } from '../utils/utils';
+import { HeadMeta } from '../utils/HeadMeta';
+import { useMyAccount } from '../utils/MyAccountContext';
+import dynamic from 'next/dynamic';
 
 type ActivityProps = {
   activity: Activity;
 };
 
-const InnerViewNewsFeed = (props: MyAccountProps) => {
-  const { myAddress } = props;
+export const ViewNewsFeed = () => {
+  const { state: { address: myAddress } } = useMyAccount();
   if (!myAddress) return <em>Oops...Incorect Account</em>;
 
   const [items, setItems] = useState([] as Activity[]);
@@ -43,26 +45,28 @@ const InnerViewNewsFeed = (props: MyAccountProps) => {
   const totalCount = items && items.length;
   const NewsFeedArray = items.map((item, id) =>
     <ViewActivity key={id} activity={item} />);
-  return (
-    <Section title={`News Feed (${totalCount})`}>{
-      totalCount === 0
-        ? <NoData description='Your feed is empty'/>
-        :
-        <InfiniteScroll
-          dataLength={totalCount}
-          next={getNewsArray}
-          hasMore={hasMore}
-          // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
-          loader={<Loader active inline='centered' />}
-        >
-          {NewsFeedArray}
-        </InfiniteScroll>
-    }</Section>
+  return (<>
+      <HeadMeta title='Feed' />
+      <Section title={`News Feed (${totalCount})`}>{
+        totalCount === 0
+          ? <NoData description='Your feed is empty'/>
+          :
+          <InfiniteScroll
+            dataLength={totalCount}
+            next={getNewsArray}
+            hasMore={hasMore}
+            // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
+            loader={<Loader active inline='centered' />}
+          >
+            {NewsFeedArray}
+          </InfiniteScroll>
+      }</Section>
+    </>
   );
 };
 
-const InnerViewNotifications = (props: MyAccountProps) => {
-  const { myAddress } = props;
+export const ViewNotifications = () => {
+  const { state: { address: myAddress } } = useMyAccount();
   if (!myAddress) return <NoData description='Opps...Incorect Account' />;
 
   const [items, setItems] = useState([] as Activity[]);
@@ -85,30 +89,45 @@ const InnerViewNotifications = (props: MyAccountProps) => {
   const totalCount = items && items.length;
   const NotificationsArray = items.map((item, id) =>
     <Notification key={id} activity={item} />);
-  return (
-    <Section title={`Notifications (${totalCount})`}>
-      {totalCount === 0
-        ? <NoData description='No notifications for you'/>
-        :
-        <InfiniteScroll
-          dataLength={totalCount}
-          next={getNotificationsArray}
-          hasMore={hasMore}
-          // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
-          loader={<Loader active inline='centered' />}
-        >
-          {NotificationsArray}
-        </InfiniteScroll>
-      }</Section>
+  return (<>
+      <HeadMeta title='Notifications' />
+      <Section title={`Notifications (${totalCount})`}>
+        {totalCount === 0
+          ? <NoData description='No notifications for you'/>
+          :
+          <InfiniteScroll
+            dataLength={totalCount}
+            next={getNotificationsArray}
+            hasMore={hasMore}
+            // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
+            loader={<Loader active inline='centered' />}
+          >
+            {NotificationsArray}
+          </InfiniteScroll>
+        }
+      </Section>
+    </>
   );
 };
 
-function ViewActivity(props: ActivityProps) {
+function ViewActivity (props: ActivityProps) {
   const { activity } = props;
   const { post_id } = activity;
+  const [ data, setData ] = useState([] as PostData[]);
   const postId = new PostId(hexToNumber('0x' + post_id));// TODO create function
 
-  return <ViewPost id={postId} preview withBlogName />;
+  useEffect(() => {
+    const loadData = async () => {
+      const api = await getApi();
+      const postData = await loadPostData(api, postId);
+      const postExtData = postData.post ? await loadExtPost(api, postData.post) : {} as PostData;
+      setData([ postData, postExtData ]);
+    };
+
+    loadData().catch(console.log);
+  }, [ false ]);
+
+  return data.length > 0 ? <ViewPostPage postData={data[0]} postExtData={data[1]} variant='preview' withBlogName /> : <Loading/>;
 }
 
 export function Notification (props: ActivityProps) {
@@ -116,7 +135,8 @@ export function Notification (props: ActivityProps) {
   const { account, event, date, post_id, comment_id, blog_id, agg_count } = activity;
   const formatDate = moment(date).format('lll');
   const [message, setMessage] = useState('string');
-  const [subject, setSubject] = useState(<></>);
+  const [subject, setSubject] = useState<React.ReactNode>(<></>);
+  const [ loading, setLoading ] = useState(true);
   let postId = new PostId(0);
 
   enum Events {
@@ -132,6 +152,7 @@ export function Notification (props: ActivityProps) {
 
   useEffect(() => {
     const loadActivity = async () => {
+      const api = await getApi();
       switch (event) {
         case 'AccountFollowed': {
           setMessage(Events.AccountFollowed);
@@ -139,14 +160,16 @@ export function Notification (props: ActivityProps) {
         }
         case 'BlogFollowed': {
           const blogId = new BlogId(hexToNumber('0x' + blog_id));
+          const blogData = await loadBlogData(api, blogId);
           setMessage(Events.BlogFollowed);
-          setSubject(<ViewBlog id={blogId} nameOnly withLink />);
+          setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'BlogCreated': {
           const blogId = new BlogId(hexToNumber('0x' + blog_id));
+          const blogData = await loadBlogData(api, blogId);
           setMessage(Events.BlogCreated);
-          setSubject(<ViewBlog id={blogId} nameOnly withLink />);
+          setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'CommentCreated': {
@@ -165,19 +188,22 @@ export function Notification (props: ActivityProps) {
               setMessage(Events.CommentCreated);
             }
           }
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          const postData = await loadPostData(api, postId);
+          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'PostShared': {
           postId = new PostId(hexToNumber('0x' + post_id));
+          const postData = await loadPostData(api, postId);
           setMessage(Events.PostShared);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'PostReactionCreated': {
           postId = new PostId(hexToNumber('0x' + post_id));
+          const postData = await loadPostData(api, postId);
           setMessage(Events.PostReactionCreated);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
           break;
         }
         case 'CommentReactionCreated': {
@@ -187,17 +213,21 @@ export function Notification (props: ActivityProps) {
 
           const comment = commentOpt.unwrap() as Comment;
           postId = new PostId(hexToNumber('0x' + comment.post_id));
+          const postData = await loadPostData(api, postId);
           setMessage(Events.CommentReactionCreated);
-          setSubject(<ViewPost id={postId} withCreatedBy={false} nameOnly />);
+          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
           break;
         }
       }
+      setLoading(false);
     };
     loadActivity().catch(err => new Error(err));
-  }, [postId > new PostId(0), message ]);
+  }, [ postId > new PostId(0), message ]);
 
-  return <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem' }}>
-    <AddressMiniDf
+  return loading
+    ? <Loading/>
+    : <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem' }}>
+    <AddressComponents
       value={account}
       isShort={true}
       isPadded={false}
@@ -210,13 +240,3 @@ export function Notification (props: ActivityProps) {
     />
   </div>;
 }
-
-export const ViewNewsFeed = withMulti(
-  InnerViewNewsFeed,
-  withMyAccount
-);
-
-export const ViewNotifications = withMulti(
-  InnerViewNotifications,
-  withMyAccount
-);
