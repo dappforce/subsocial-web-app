@@ -19,6 +19,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
+import HeadMeta from '../utils/HeadMeta';
 
 // TODO get next settings from Substrate:
 const SLUG_REGEX = /^[A-Za-z0-9_-]+$/;
@@ -153,7 +154,8 @@ const InnerForm = (props: FormProps) => {
 
   const title = struct ? `Edit blog` : `New blog`;
 
-  return (
+  return (<>
+    <HeadMeta title={title}/>
     <Section className='EditEntityBox' title={title}>
     <Form className='ui form DfForm EditEntityForm'>
 
@@ -198,6 +200,7 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>
     </Form>
     </Section>
+  </>
   );
 };
 

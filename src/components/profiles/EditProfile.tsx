@@ -19,6 +19,7 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
+import HeadMeta from '../utils/HeadMeta';
 
 // TODO get next settings from Substrate:
 const USERNAME_REGEX = /^[A-Za-z0-9_-]+$/;
@@ -174,7 +175,8 @@ const InnerForm = (props: FormProps) => {
   const title = profile ? `Edit profile` : `New profile`;
   const shouldBeValidUrlText = `Should be a valid URL.`;
 
-  return (
+  return (<>
+    <HeadMeta title={title}/>
     <Section className='EditEntityBox' title={title}>
     <Form className='ui form DfForm EditEntityForm'>
 
@@ -282,6 +284,7 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>
     </Form>
     </Section>
+  </>
   );
 };
 
