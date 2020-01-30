@@ -8,6 +8,4 @@ RUN yarn && yarn cache clean --force
 RUN ./before-build-hack.sh
 RUN NODE_ENV=production yarn build
 
-EXPOSE 3000
-
-CMD bash -c "yarn build && yarn start-built"
+CMD bash -c "yarn build && yarn start"
