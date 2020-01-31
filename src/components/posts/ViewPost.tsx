@@ -159,7 +159,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderNameOnly = (title: string, id: PostId) => {
     if (!title || !id) return null;
     return withLink
-      ? <Link href='blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
+      ? <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
         <a className='header DfPostTitle--preview'>
           {title}
         </a>

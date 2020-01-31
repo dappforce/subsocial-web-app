@@ -233,7 +233,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       renderItem={(item, index) =>
         <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData}/>}
       noDataDesc='No posts yet'
-      noDataExt={<Button href={`/post/new?blogId=${id}`}>Create post</Button>}
+      noDataExt={<Button href={`/blogs/${id}/posts/new`}>Create post</Button>}
     />;
   };
   const NewPostButton = () => <Button href={`/blogs/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;

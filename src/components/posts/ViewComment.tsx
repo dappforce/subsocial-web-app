@@ -243,7 +243,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     </span>
   );
 
-  const responseTitle = <>In response to <Link href='/post/[id]' as={`/post/${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
+  const responseTitle = <>In response to <Link href='/blogs/[blogId]/posts/[id]' as={`/blogs/${post.blog_id}/posts/${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
   const bodyAsText = mdToText(content.body);
 
   return <div id={`comment-${id}`} className='DfComment'>

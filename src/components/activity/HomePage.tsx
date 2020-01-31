@@ -31,7 +31,7 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
         renderItem={(item, index) =>
           <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
         noDataDesc='No latest updates yet'
-        noDataExt={<Button href='/blog/new'>Create blog</Button>}
+        noDataExt={<Button href='/blogs/new'>Create blog</Button>}
       />
       {postsData.length > 0 && <ListData
         title={`Latest posts`}
