@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Menu, Icon } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { useMyAccount } from '../components/utils/MyAccountContext';
+import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading, getApi } from '../components/utils/utils';
@@ -20,6 +20,7 @@ type MenuItem = {
 const InnerMenu = () => {
   const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
+  const isLoggedIn = checkIfLoggedIn();
   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
   const [ loaded, setLoaded ] = useState(false);
   const router = useRouter();
@@ -50,17 +51,21 @@ const InnerMenu = () => {
     Router.push(page[0], page[1]).catch(console.log);
   };
 
-  const MenuItems: MenuItem[] = [
+  const DefaultMenu: MenuItem[] = [
+    {
+      name: 'All blogs',
+      page: ['/blogs/all'],
+      image: 'global'
+    }
+  ];
+
+  const AutorizationsMenu: MenuItem[] = [
     {
       name: 'Feed',
       page: ['/feed'],
       image: 'profile'
     },
-    {
-      name: 'All blogs',
-      page: ['/blogs/all'],
-      image: 'global'
-    },
+    ...DefaultMenu,
     {
       name: 'New blog',
       page: ['/blogs/new'],
@@ -86,8 +91,9 @@ const InnerMenu = () => {
       page: ['/profile/[address]', `/profile/${myAddress}`],
       image: 'idcard'
     }
-
   ];
+
+  const MenuItems = isLoggedIn ? AutorizationsMenu : DefaultMenu;
 
   return (
     <Menu
@@ -113,9 +119,9 @@ const InnerMenu = () => {
         </a>
       </Menu.Item>
       <Menu.Divider/>
-      <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
+      {isLoggedIn && <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
         {loaded ? <RenderFollowedList followedBlogsData={followedBlogsData} /> : <Loading/>}
-      </Menu.ItemGroup>
+      </Menu.ItemGroup>}
     </Menu>
   );
 };

@@ -5,6 +5,11 @@ body,
   background-color: $background !important;
 }
 
+/*Used as hack to fixed React base font-size */
+.fontSizeNormal {
+  font-size: $font_normal !important;
+}
+
 .DfPageContent {
   padding: 1.5rem 1.5rem;
   overflow-wrap: break-word;
@@ -329,7 +334,7 @@ hr {
 }
 
 .asLink {
-  color: #2185d0;
+  color: $link_color;
   text-decoration: none;
   cursor: pointer;
 }

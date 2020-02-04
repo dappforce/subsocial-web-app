@@ -4,13 +4,15 @@ import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import Router from 'next/router';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { useMyAccount } from '../components/utils/MyAccountContext';
+import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import AddressComponents from '../components/utils/AddressComponents';
+import LogInButton from '../components/utils/LogIn';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
   const { toggle } = useSidebarCollapsed();
   const { state: { address } } = useMyAccount();
+  const isLoggedIn = checkIfLoggedIn();
 
   return isMobile && show
   ? <div className='DfTopBar DfTopBar--search'>
@@ -30,6 +32,7 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
+        {isLoggedIn ?
         <AddressComponents
           className='profileName'
           value={address}
@@ -37,7 +40,7 @@ const InnerMenu = () => {
           isPadded={false}
           size={30}
           variant='address-popup'
-        />
+        /> : <LogInButton/>}
       </div>
   </div>;
 };

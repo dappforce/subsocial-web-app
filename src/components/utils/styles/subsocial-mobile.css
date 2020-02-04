@@ -182,7 +182,11 @@
   }
 
   .DfSection {
-    margin-top: $greate !important;
+    &:first-of-type {
+      margin-top: 0 !important;
+    }
+    
+    margin-top: $greate;
 
     .DfSection-title {
       border: none;

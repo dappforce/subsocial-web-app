@@ -128,8 +128,10 @@ const Component: NextPage<Props> = (props: Props) => {
     </>);
   };
 
+  const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(username);
+
   const getName = () => {
-    if (isEmptyStr(fullname) || isEmptyStr(username)) {
+    if (isOnlyAddress) {
       return address;
     } else {
       return fullname;
@@ -160,6 +162,7 @@ const Component: NextPage<Props> = (props: Props) => {
             <NameAsLink />
             {renderDropDownMenu()}
           </div>
+          {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
           <BalanceDisplay
             label='Balance: '
             className='Df--profile-balance'
@@ -243,7 +246,7 @@ const Component: NextPage<Props> = (props: Props) => {
   return <>
     <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
     <Section>
-      <div className='ui massive relaxed middle aligned list FullProfile'>
+      <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>
           <FollowAccountButton address={address} size={BUTTON_SIZE}/>
