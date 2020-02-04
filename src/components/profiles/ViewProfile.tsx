@@ -231,7 +231,6 @@ const Component: NextPage<Props> = (props: Props) => {
             </div>
             <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>
           </div>
-          {renderCreateProfileButton}
         </div>
       </div>
     </div>;
@@ -256,6 +255,7 @@ const Component: NextPage<Props> = (props: Props) => {
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
+      {renderCreateProfileButton}
     </Section>
   </>;
 };

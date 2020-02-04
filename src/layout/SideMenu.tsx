@@ -97,7 +97,7 @@ const InnerMenu = () => {
 
   return (
     <Menu
-        defaultSelectedKeys={[pathname || '/all']}
+        selectedKeys={[pathname]}
         mode='inline'
         theme='light'
         style={{ height: '100%', borderRight: 0 }}
