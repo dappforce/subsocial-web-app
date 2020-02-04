@@ -26,21 +26,21 @@ $primary-color: #2e86ab;
 $primary-color-hl: #579ebb;
 /*$primary-color: #d75ea1;
 $primary-color-hl: #d24a95;*/
-$color_muted-color: #2e86ab;
-$color_muted-color-hl: #579ebb;
+$secondary-color: #2e86ab;
+$secondary-color-hl: #579ebb;
 
 /*
 $anchor-color: #d75ea1;
 $anchor-color-hover: #d24a95;
 */
-$anchor-color: $color_muted-color;
-$anchor-color-hover: $color_muted-color-hl;
+$anchor-color: $secondary-color;
+$anchor-color-hover: $secondary-color-hl;
 
 $button-primary-color: $primary-color;
 $button-primary-color-hover: $primary-color-hl;
 
-$button-color: $color_muted-color;
-$button-color-hover: $color_muted-color-hl;
+$button-color: $secondary-color;
+$button-color-hover: $secondary-color-hl;
 
 $button-positive-color: $moonstone-blue;
 $button-positive-color-hover: $verdigris;

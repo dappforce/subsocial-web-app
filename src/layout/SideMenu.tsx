@@ -59,7 +59,7 @@ const InnerMenu = () => {
     }
   ];
 
-  const AutorizationsMenu: MenuItem[] = [
+  const AuthorizedMenu: MenuItem[] = [
     {
       name: 'Feed',
       page: ['/feed'],
@@ -93,7 +93,7 @@ const InnerMenu = () => {
     }
   ];
 
-  const MenuItems = isLoggedIn ? AutorizationsMenu : DefaultMenu;
+  const MenuItems = isLoggedIn ? AuthorizedMenu : DefaultMenu;
 
   return (
     <Menu
