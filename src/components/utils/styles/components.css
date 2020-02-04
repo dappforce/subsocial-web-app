@@ -28,7 +28,7 @@
 }
 
 .ui--Button-Group .button {
-  border-radius: $small-corner !important;
+  border-radius: $space_tiny-corner !important;
 }
 
 header .ui--Button-Group {
@@ -244,7 +244,7 @@ header .ui--Button-Group {
   align-items: center;
   background: #fff;
   border: 1px dashed rgba(34, 36, 38, 0.15);
-  border-radius: $small-corner;
+  border-radius: $space_tiny-corner;
   display: flex;
   font-size: 1rem;
   height: 3.5rem;
@@ -351,7 +351,7 @@ header .ui--Button-Group {
     > .wrapper > .container {
       align-items: center;
       background: #00688b;
-      border-radius: $small-corner;
+      border-radius: $space_tiny-corner;
       color: white;
       cursor: pointer;
       display: flex;

@@ -40,13 +40,13 @@
 }
 
 .DfModal:first-child {
-  margin: $tiny;
-  padding: $tiny !important;
+  margin: $space_mini;
+  padding: $space_mini !important;
 }
 
 .DfModal {
-  margin: $greate $tiny;
-  padding: $normal $tiny $tiny $tiny;
+  margin: $space_big $space_mini;
+  padding: $space_normal $space_mini $space_mini $space_mini;
   border-top: 1px solid #ddd;
 
   .DfContent {
@@ -54,7 +54,7 @@
   }
 
   .DfDescription {
-    font-size: $normal;
+    font-size: $space_normal;
   }
 }
 
@@ -106,7 +106,7 @@
 
     .scrolling.content,
     .actions {
-      padding: $small !important;
+      padding: $space_tiny !important;
     }
   }
 
@@ -127,7 +127,7 @@
     }
 
     h1:first-child {
-      font-size: $font_huge !important;
+      font-size: $font_big !important;
     }
 
     .DfAddressMini-popup {
@@ -136,13 +136,13 @@
   }
 
   .DfModal:first-child {
-    margin: $tiny;
-    padding: $tiny !important;
+    margin: $space_mini;
+    padding: $space_mini !important;
   }
 
   .DfModal {
-    margin: $small $tiny;
-    padding: $normal $tiny $tiny $tiny !important;
+    margin: $space_tiny $space_mini;
+    padding: $space_normal $space_mini $space_mini $space_mini !important;
     border-top: .5px solid #ddd;
 
     .DfContent {
@@ -150,7 +150,7 @@
     }
 
     .DfDescription {
-      font-size: $normal;
+      font-size: $space_normal;
     }
   }
 
@@ -174,7 +174,7 @@
 
   .DfBurgerIcon {
     padding-left: 0;
-    padding-right: $small;
+    padding-right: $space_tiny;
   }
 
   .DfCreator {
@@ -182,21 +182,17 @@
   }
 
   .DfSection {
-    &:first-of-type {
-      margin-top: 0 !important;
-    }
-    
-    margin-top: $greate;
+    margin-top: $space_big !important;
 
     .DfSection-title {
       border: none;
-      font-size: $font_huge;
+      font-size: $font_big;
       margin: 0;
-      margin-top: $normal;
+      margin-top: $space_normal;
       padding: 0;
 
       .DfTitle--List {
-        margin-bottom: $tiny
+        margin-bottom: $space_mini
       }
     }
   }
@@ -213,23 +209,23 @@
 
   .content {
     width: 80%;
-    line-height: $greate;
+    line-height: $space_big;
   }
 
   .header {
     line-height: normal;
-    font-size: $font_big !important;
+    font-size: $font_large !important;
     font-weight: 500;
   }
 
   .header.DfPostTitle--preview {
-    margin: $small 0;
+    margin: $space_tiny 0;
   }
 
   .DfPostPreview {
     &h2 {
       margin-top: 0;
-      font-size: $big;
+      font-size: $space_large;
     }
     &.ui.segment {
       padding-bottom: 0 !important;
@@ -240,7 +236,7 @@
     font-size: $font_tiny;
 
     .DfStatItem {
-      margin-right: $small;
+      margin-right: $space_tiny;
     }
   }
 
@@ -269,7 +265,7 @@
   }
 
   .DfPostName {
-    margin-right: $small;
+    margin-right: $space_tiny;
     width: 87%;
   }
 
@@ -277,16 +273,16 @@
     text-align: left !important;
 
     .FullProfile {
-      margin-top: $tiny !important;
+      margin-top: $space_mini !important;
     }
   }
 
   .DfSummary {
-    margin-top: $tiny !important;
+    margin-top: $space_mini !important;
   }
 
   .DfCountsPreview .MutedText {
-    margin-right: $normal;
+    margin-right: $space_normal;
 
     .disable {
       margin: 0;
@@ -294,7 +290,7 @@
   }
 
   .ui--IdentityIcon.image {
-    margin-right: $small;
+    margin-right: $space_tiny;
   }
 
   .DfCommentContent {

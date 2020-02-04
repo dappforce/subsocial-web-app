@@ -2,7 +2,7 @@
 
 body,
 #root {
-  background-color: $background !important;
+  background-color: $color_page_bg !important;
 }
 
 /*Used as hack to fixed React base font-size */
@@ -21,12 +21,12 @@ body,
 
 @media (min-width: 1200px) {
   .DfBrand {
-    font-size: $font_big;
+    font-size: $font_large;
   }
 }
 
 .DfBrand {
-  font-size: $font_huge;
+  font-size: $font_big;
   cursor: pointer;
 }
 
@@ -55,7 +55,7 @@ body,
   }
 
   .ant-dropdown-trigger {
-    margin-left: $small;
+    margin-left: $space_tiny;
     height: min-content;
   }
 }
@@ -66,11 +66,11 @@ body,
 
 .ProfilePreviews {
   &.ui.list>.item:first-child {
-    padding-top: $little;
+    padding-top: $space_small;
   }
 
   &.ui.list>.item:last-child {
-    padding-bottom: $little;
+    padding-bottom: $space_small;
   }
 }
 
@@ -84,7 +84,7 @@ body,
 .header {
   display: flex !important;
   align-items: center;
-  font-size: $font_huge;
+  font-size: $font_big;
   font-weight: bold;
 }
 
@@ -92,8 +92,8 @@ body,
   display: flex !important;
 
   .content {
-    padding-left: $small;
-    padding-right: $small;
+    padding-left: $space_tiny;
+    padding-right: $space_tiny;
   }
 
   .button {
@@ -105,10 +105,10 @@ body,
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
-    margin-right: $small;
+    margin-right: $space_tiny;
 
     .button {
-      padding: $small $little;
+      padding: $space_tiny $space_small;
     }
   }
 }
@@ -136,11 +136,11 @@ body,
 }
 
 .DfCountsPreview {
-  margin-top: $small;
+  margin-top: $space_tiny;
   font-size: $font_small;
 
   .MutedText {
-    margin-right: $normal;
+    margin-right: $space_normal;
   }
 }
 
@@ -149,8 +149,8 @@ body,
 }
 
 .ui.threaded.comments .comment .comments {
-  padding: 0 0 0 $big;
-  margin: -1rem 0 0 $big;
+  padding: 0 0 0 $space_large;
+  margin: -1rem 0 0 $space_large;
 }
 
 .DfCommentContent {
@@ -161,7 +161,7 @@ body,
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $huge;
+  margin-bottom: $space_huge;
 }
 
 .ui.basic.button:not(.disabled) {
@@ -173,17 +173,17 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .DfSpacedButtons {
-  margin-top: $normal;
-  margin-bottom: calc(2*$normal);
+  margin-top: $space_normal;
+  margin-bottom: calc(2*$space_normal);
 
   .button {
-    margin-right: $small;
+    margin-right: $space_tiny;
   }
 }
 
 .DfVoter {
   &.vertical {
-    margin-right: $small;
+    margin-right: $space_tiny;
   }
 
   .ui.button:first-of-type {
@@ -192,10 +192,10 @@ form.ui.form.DfForm.EditEntityForm {
 
   .ui.button {
     background-color: transparent !important;
-    color: $secondary;
+    color: $color_muted;
     min-width: initial;
     max-height: initial;
-    padding: $small $small $small .1rem;
+    padding: $space_tiny $space_tiny $space_tiny .1rem;
 
     &.red {
 
@@ -222,15 +222,15 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfCommentsByPost {
   h4 {
-    font-size: $font_big;
+    font-size: $font_large;
     font-weight: 400;
-    color: $secondary;
+    color: $color_muted;
     border-top: #ddd 1px solid;
   }
 
   .ui.comments .comment .metadata {
     margin-left: 0;
-    color: $secondary;
+    color: $color_muted;
   }
 
   .ui.comments .comment .text {
@@ -243,16 +243,16 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .DfCommentContent {
-  margin-bottom: $huge;
+  margin-bottom: $space_huge;
 
   .reply {
-    color: $secondary;
+    color: $color_muted;
   }
 }
 
 .ChildComment {
   .DfComment {
-    padding-top: $normal;
+    padding-top: $space_normal;
   }
 }
 
@@ -264,7 +264,7 @@ form.ui.form.DfForm.EditEntityForm {
   width: initial;
 
   i {
-    color: $secondary;
+    color: $color_muted;
   }
 
   .ui.selection.dropdown.menu {
@@ -278,13 +278,13 @@ hr {
 }
 
 .DfFollowButton {
-  margin-top: $small;
+  margin-top: $space_tiny;
 }
 
 .disable,
 .disable:hover {
-  margin-right: $small;
-  color: $secondary;
+  margin-right: $space_tiny;
+  color: $color_muted;
   text-decoration: none;
   cursor: default;
 }
@@ -317,11 +317,11 @@ hr {
 }
 
 .DfSocialLinks {
-  margin-top: $little;
+  margin-top: $space_small;
   font-size: $font_normal;
 
   a {
-    margin-right: $little;
+    margin-right: $space_small;
   }
 }
 
@@ -329,12 +329,12 @@ hr {
   margin-left: 4rem;
 
   button {
-    background-color: $background;
+    background-color: $color_page_bg;
   }
 }
 
 .asLink {
-  color: $link_color;
+  color: $color_link;
   text-decoration: none;
   cursor: pointer;
 }
@@ -344,12 +344,12 @@ hr {
 }
 
 .DfBlogStats {
-  margin-top: $small;
+  margin-top: $space_tiny;
   font-size: $font_small;
   display: flex;
 
   .DfStatItem {
-    margin-right: $normal;
+    margin-right: $space_normal;
   }
 }
 
@@ -364,7 +364,7 @@ hr {
 
 .DfCountsPreview {
   a {
-    margin-right: $small;
+    margin-right: $space_tiny;
   }
 }
 
@@ -382,13 +382,13 @@ hr {
 
 .DfPostPreview {
   h2 {
-    margin-top: $normal;
+    margin-top: $space_normal;
   }
 
   .DfSharedSummary {
-    margin-left: calc($huge + 1rem);
-    margin-top: $small;
-    font-size: $font_big;
+    margin-left: calc($space_huge + 1rem);
+    margin-top: $space_tiny;
+    font-size: $font_large;
     width: 95%;
   }
 
@@ -412,8 +412,8 @@ hr {
 .DfCountsPreview {
   display: flex;
   justify-content: flex-start;
-  margin-top: $small;
-  margin-bottom: $small;
+  margin-top: $space_tiny;
+  margin-bottom: $space_tiny;
 
   a,
   span {
@@ -426,7 +426,7 @@ hr {
   .DfRow {
     display: flex;
     justify-content: space-between;
-    padding-right: $small;
+    padding-right: $space_tiny;
   }
 
   .DfInfo {
@@ -474,7 +474,7 @@ hr {
 
 .DfShareModal {
   .DfSection {
-    margin-top: $huge;
+    margin-top: $space_huge;
     margin-bottom: 0;
   }
 
@@ -494,23 +494,23 @@ hr {
 }
 
 .DfGreyLink {
-  color: $secondary !important;
+  color: $color_muted !important;
   cursor: pointer;
 
   a {
-    color: $secondary !important;
+    color: $color_muted !important;
     cursor: pointer;
   }
 }
 
 .DfGreyLink:hover {
   a {
-    color: $secondary !important;
+    color: $color_muted !important;
     text-decoration: underline;
     cursor: pointer;
   }
 
-  color: $secondary !important;
+  color: $color_muted !important;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -564,12 +564,12 @@ hr {
 .ui--row {
   .ui.message {
     margin: 0;
-    padding: $little $normal;
+    padding: $space_small $space_normal;
   }
 
   textarea,
   .ui--InputFile {
-    margin: $tiny 0 !important;
+    margin: $space_mini 0 !important;
     height: 5rem;
   }
 }
@@ -615,7 +615,7 @@ hr {
     display: block;
     text-align: left;
     float: left;
-    color: $secondary !important;
+    color: $color_muted !important;
     font-size: $font_small !important
   }
 
@@ -625,15 +625,15 @@ hr {
     padding-top: 0;
     margin-right: 0 !important;
     font-size: $font_small !important;
-    margin-right: $normal;
-    color: $secondary;
+    margin-right: $space_normal;
+    color: $color_muted;
   }
 }
 
 .Df--profile-balance {
   margin-right: .5rem;
   font-size: $font_normal;
-  color: $secondary;
+  color: $color_muted;
 }
 
 .TopMenuAccount {
@@ -643,19 +643,19 @@ hr {
   cursor: pointer;
 
   .addressInfo {
-    margin: 0 $small;
+    margin: 0 $space_tiny;
   }
 
   .ui--Balance {
     font-size: $font_small;
-    color: $secondary;
+    color: $color_muted;
   }
 }
 
 .addressPreview {
   .profileInfo {
     .profileDesc {
-      padding-bottom: $small;
+      padding-bottom: $space_tiny;
     }
   }
 
@@ -666,8 +666,8 @@ hr {
 
 .ui--Bubble.ui.label {
   background-color: #f2f2f2;
-  margin: $tiny 0;
-  margin-right: $small;
+  margin: $space_mini 0;
+  margin-right: $space_tiny;
 
   &.pointing:before {
     background-color: #e6e6e6;
@@ -686,7 +686,7 @@ hr {
 
 .DfCommentsByPost {
   .DfSection-title {
-    font-size: $font_big;
+    font-size: $font_large;
     font-weight: bold !important;
   }
 }
@@ -697,21 +697,21 @@ hr {
 }
 
 .DfSection {
-  margin-top: $huge;
-  margin-bottom: $normal;
+  margin-top: $space_huge;
+  margin-bottom: $space_normal;
 
   .DfSection-title {
     border-bottom: 1px solid #ddd;
     margin: 0rem;
-    margin-bottom: $small;
-    padding: $small 0;
+    margin-bottom: $space_tiny;
+    padding: $space_tiny 0;
     display: flex;
   }
 
   li.ant-list-item.ant-list-item-no-flex {
     border: none;
-    padding-top: $small;
-    padding-bottom: $small;
+    padding-top: $space_tiny;
+    padding-bottom: $space_tiny;
   }
 }
 
@@ -719,7 +719,7 @@ hr {
   align-items: end;
 
   &>label {
-    padding-top: $little;
+    padding-top: $space_small;
   }
 }
 
@@ -731,7 +731,7 @@ hr {
 
   code {
     background-color: #e0e0e0;
-    padding: 0 $tiny;
+    padding: 0 $space_mini;
     border-radius: 2px;
   }
 }
@@ -749,7 +749,7 @@ hr {
 
 .ui.top.left.flowing.popup.transition.visible {
   .ui--AddressComponents-address {
-    font-size: $font_big;
+    font-size: $font_large;
   }
 
   .DfPopup-username {
@@ -757,12 +757,12 @@ hr {
   }
 
   .Df--AddressComponents-details {
-    margin-right: $tiny;
+    margin-right: $space_mini;
   }
 }
 
 .DfAvatar {
-  margin-right: $small !important;
+  margin-right: $space_tiny !important;
   display: inline-block;
   border-radius: 50%;
   vertical-align: middle;
@@ -771,7 +771,7 @@ hr {
 
 .ui.top.left.flowing.popup.transition.visible {
   .DfAvatar {
-    margin: 0 $small $small 0;
+    margin: 0 $space_tiny $space_tiny 0;
   }
 }
 
@@ -782,7 +782,7 @@ hr {
 }
 
 .AddressComponents-fullname {
-  font-size: $font_big;
+  font-size: $font_large;
 }
 
 .DfPopup-username {
@@ -791,25 +791,25 @@ hr {
 }
 
 .DfMd {
-  margin-top: $tiny;
+  margin-top: $space_mini;
   font-size: $font_normal;
 }
 
 .DfMd.details {
-  margin-top: $huge;
+  margin-top: $space_huge;
 }
 
 .DfPopup-about {
-  margin: $small 0;
+  margin: $space_tiny 0;
 }
 
 .DfPopup-links {
-  color: $secondary;
+  color: $color_muted;
   display: flex;
   justify-content: flex-start;
 
   .DfPopup-link {
-    margin-right: $normal;
+    margin-right: $space_normal;
   }
 }
 
@@ -859,10 +859,14 @@ hr {
 }
 
 .ui.attached.tabular.menu {
-  padding: 0 $huge;
+  padding: 0 $space_huge;
 }
 
 .DfSearch {
+  &:first-of-type {
+    margin-top: 0 !important;
+  }
+
   width: 60%;
   color: rgba(0, 0, 0, 0.7);
   z-index: 2;
@@ -899,13 +903,13 @@ hr {
   background-color: #fff;
 
   .ui.attached.tabular.menu {
-    padding: $normal $normal 0rem $normal;
+    padding: $space_normal $space_normal 0rem $space_normal;
   }
 }
 
 .DfHeader {
   background: #fff;
-  padding: 0 $normal;
+  padding: 0 $space_normal;
   border-bottom: 1px solid #ddd;
   position: fixed;
   z-index: 2;
@@ -923,7 +927,7 @@ hr {
 }
 
 .DfDataList {
-  padding-top: $small;
+  padding-top: $space_tiny;
 
   .ant-list-pagination {
     display: flex;
@@ -932,7 +936,7 @@ hr {
 }
 
 .DfEmpty {
-  padding-top: $huge;
+  padding-top: $space_huge;
 }
 
 .DfTitle--List {
@@ -952,7 +956,7 @@ hr {
         display: none;
       }
 
-      margin-left: $little;
+      margin-left: $space_small;
     }
   }
 
@@ -965,8 +969,8 @@ hr {
   }
 
   .container.highlight {
-    margin-top: $small;
-    margin-right: $tiny;
+    margin-top: $space_tiny;
+    margin-right: $space_mini;
   }
 
   .content {
@@ -975,13 +979,13 @@ hr {
     align-items: center;
 
     .handle {
-      padding: $small 0rem;
+      padding: $space_tiny 0rem;
     }
   }
 
   .item {
-    padding: $small;
-    padding-left: $normal;
+    padding: $space_tiny;
+    padding-left: $space_normal;
   }
 
   .DfNoFollowed {
@@ -996,7 +1000,7 @@ hr {
       display: none;
     }
 
-    margin-left: $little;
+    margin-left: $space_small;
   }
 }
 
@@ -1031,15 +1035,15 @@ hr {
   display: contents;
 
   .DfSearchIcon {
-    padding: $small;
-    margin-right: $small;
+    padding: $space_tiny;
+    margin-right: $space_tiny;
     margin-top: 1.15rem;
     font-size: 1.3rem;
   }
 
   .DfCloseSearchIcon {
     font-size: 1.3rem;
-    padding-left: $small;
+    padding-left: $space_tiny;
   }
 }
 
@@ -1059,24 +1063,24 @@ hr {
 }
 
 .DfCreator {
-  font-size: $normal;
-  margin-top: $normal;
+  font-size: $space_normal;
+  margin-top: $space_normal;
 
   i {
-    margin-right: $tiny;
+    margin-right: $space_mini;
   }
 
   div:not(.DfCreator--data) {
     display: inline;
   }
 
-  color: $secondary !important;
+  color: $color_muted !important;
 }
 
 .DfStatItem {
-  font-size: $normal;
+  font-size: $space_normal;
   display: inline;
-  margin-right: $small;
+  margin-right: $space_tiny;
 }
 
 .DfSpacedButtons {
@@ -1100,5 +1104,5 @@ hr {
 
 .TopMenuAccountPopover {
   left: auto !important;
-  right: $normal !important;
+  right: $space_normal !important;
 }
