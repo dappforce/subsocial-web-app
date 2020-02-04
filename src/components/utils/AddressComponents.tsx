@@ -123,7 +123,7 @@ function AddressComponents (props: Props) {
     ? <div className='AddressComponents follow'><FollowAccountButton address={address} /></div>
     : null;
 
-  const AutorPreview = () => {
+  const AuthorPreview = () => {
     return <div
       className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
       style={style}
@@ -135,11 +135,14 @@ function AddressComponents (props: Props) {
             placement='topLeft'
             content={<ProfilePreview />}
           >
-            <div
-              className={`ui--AddressComponents-address ${'asLink'} ${className} ${asActivity && 'activity'}`}
-              onClick={() => Router.push(`/profile/${address}`)}
-            >
-              {fullname || username || toShortAddress(address)}
+            <div style={{ display: 'block' }}>
+              <Link
+                href={`/profile/${address}`}
+              >
+                <a className={`ui--AddressComponents-address ${className} ${asActivity && 'activity'}`}>
+                  {fullname || username || toShortAddress(address)}
+                </a>
+              </Link>
             </div>
           </Popover>
           {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
@@ -245,11 +248,12 @@ function AddressComponents (props: Props) {
   }
 
   const RenderAddressForProfile = () => {
+    const shortAddress = toShortAddress(address);
     return (
       <Link href='/profile/[address]' as={`/profile/${address}`}>
         <a className='ui--AddressComponents-address'>
-          <b className='AddressComponents-fullname'>{fullname || toShortAddress(address)}</b>
-          <div className='DfPopup-username'>{username}</div>
+          <b className='AddressComponents-fullname'>{fullname || shortAddress}</b>
+          <div className='DfPopup-username'>{`${username} - ${shortAddress}`}</div>
         </a>
       </Link>
     );
@@ -285,7 +289,7 @@ function AddressComponents (props: Props) {
       return <AddressPopup />;
     }
     case 'preview': {
-      return <AutorPreview />;
+      return <AuthorPreview />;
     }
   }
 }

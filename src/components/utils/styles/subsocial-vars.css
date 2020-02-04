@@ -1,20 +1,21 @@
 
-/*-------------Font-Size-----------*/
+/*-------------Font Size-----------*/
 $font_tiny: .75rem;
 $font_small: .875rem;
 $font_normal: 1rem;
-$font_big: 1.25rem;
-$font_huge: 1.5rem;
+$font_large: 1.25rem;
+$font_big: 1.5rem;
 
-/*----------Size-------------*/
-$tiny: .25rem;
-$small: .5rem;
-$little: .75rem;
-$normal: 1rem;
-$big: 1.25rem;
-$greate: 1.5rem;
-$huge: 2rem;
+/*----------Space Size-------------*/
+$space_mini: .25rem;
+$space_tiny: .5rem;
+$space_small: .75rem;
+$space_normal: 1rem;
+$space_large: 1.25rem;
+$space_big: 1.5rem;
+$space_huge: 2rem;
 
 /*-------------Colors----------*/
-$background: #fafafa;
-$secondary: #8c8c8c;
+$color_page_bg: #fafafa;
+$color_muted: #8c8c8c;
+$color_link: #1890ff;

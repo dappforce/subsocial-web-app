@@ -27,7 +27,7 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
         renderItem={(item, index) =>
           <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
         noDataDesc='Blogs not created yet'
-        noDataExt={<Button href='/blog/new'>Create blog</Button>}
+        noDataExt={<Button href='/blogs/new'>Create blog</Button>}
       />
     </div>
   );
@@ -71,7 +71,7 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
         dataSource={blogsData}
         renderItem={(item, index) => <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
         noDataDesc='You do not have your own blogs yet'
-        noDataExt={<Button href='/blog/new'>Create my first blog</Button>}
+        noDataExt={<Button href='/blogs/new'>Create my first blog</Button>}
       />
     </div>
   </>

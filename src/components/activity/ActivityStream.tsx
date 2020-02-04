@@ -10,7 +10,7 @@ import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { Loader } from 'semantic-ui-react';
-import { NoData } from '../utils/DataList';
+import { NoData, NotAuthorized } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
 import { Loading, getApi } from '../utils/utils';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -23,11 +23,19 @@ type ActivityProps = {
 
 export const ViewNewsFeed = () => {
   const { state: { address: myAddress } } = useMyAccount();
-  if (!myAddress) return <em>Oops...Incorect Account</em>;
 
   const [items, setItems] = useState([] as Activity[]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    if (!myAddress) return;
+
+    getNewsArray().catch(err => new Error(err));
+
+  }, [ false ]);
+
+  if (!myAddress) return <NotAuthorized/>;
 
   const getNewsArray = async () => {
     const data = await getNewsFeed(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
@@ -36,12 +44,6 @@ export const ViewNewsFeed = () => {
     setOffset(offset + SIZE_PAGE_INFINITY_LIST);
   };
 
-  useEffect(() => {
-    if (!myAddress) return;
-
-    getNewsArray().catch(err => new Error(err));
-
-  }, [false]);
   const totalCount = items && items.length;
   const NewsFeedArray = items.map((item, id) =>
     <ViewActivity key={id} activity={item} />);
@@ -67,11 +69,18 @@ export const ViewNewsFeed = () => {
 
 export const ViewNotifications = () => {
   const { state: { address: myAddress } } = useMyAccount();
-  if (!myAddress) return <NoData description='Opps...Incorect Account' />;
 
   const [items, setItems] = useState([] as Activity[]);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    if (!myAddress) return;
+
+    getNotificationsArray().catch(err => new Error(err));
+  }, [false]);
+
+  if (!myAddress) return <NotAuthorized/>;
 
   const getNotificationsArray = async () => {
     const data = await getNotifications(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
@@ -79,12 +88,6 @@ export const ViewNotifications = () => {
     setItems(items.concat(data));
     setOffset(offset + SIZE_PAGE_INFINITY_LIST);
   };
-
-  useEffect(() => {
-    if (!myAddress) return;
-
-    getNotificationsArray().catch(err => new Error(err));
-  }, [false]);
 
   const totalCount = items && items.length;
   const NotificationsArray = items.map((item, id) =>
@@ -144,7 +147,7 @@ export function Notification (props: ActivityProps) {
     PostShared = 'shared yout post',
     BlogFollowed = 'followed your blog',
     BlogCreated = 'created blog',
-    CommentCreated = 'commented your post',
+    CommentCreated = 'commented on your post',
     CommentReply = 'replied to your comment',
     PostReactionCreated = 'reacted to your post',
     CommentReactionCreated = 'reacted to your comment'

@@ -48,6 +48,7 @@ export const Navigation = (props: Props) => {
   const { children } = props;
 
   return <ReactiveBase
+    className='fontSizeNormal'
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >

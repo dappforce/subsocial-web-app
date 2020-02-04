@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 import Section from './Section';
 import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
 import { MutedSpan } from './MutedText';
+import LogInButton from './LogIn';
 
 type Props = {
   className?: string,
@@ -99,6 +100,7 @@ export default (props: Props) => {
 };
 
 type EmptyProps = {
+  image?: string
   description?: React.ReactNode | string,
   children?: React.ReactNode
 };
@@ -106,6 +108,7 @@ type EmptyProps = {
 export const NoData = (props: EmptyProps) => (
   <Empty
     className='DfEmpty'
+    image={props.image}
     description={
       <MutedSpan>
         {props.description}
@@ -115,3 +118,11 @@ export const NoData = (props: EmptyProps) => (
     {props.children}
   </Empty>
 );
+
+export const NotAuthorized = () => {
+  return <NoData
+    description='Only logged in users can access this page'
+  >
+    <LogInButton/>
+  </NoData>;
+};

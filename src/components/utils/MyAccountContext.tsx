@@ -113,4 +113,8 @@ export function useMyAccount () {
   return useContext(MyAccountContext);
 }
 
+export function checkIfLoggedIn () {
+  return typeof useMyAccount().state.address !== 'undefined';
+}
+
 export default MyAccountProvider;

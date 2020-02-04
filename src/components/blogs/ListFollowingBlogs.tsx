@@ -32,7 +32,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
             <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton/>
         )}
         noDataDesc='You are not subscribed to any blog'
-        noDataExt={<Button href='/blog/all'>Show all blogs</Button>}
+        noDataExt={<Button href='/blogs/all'>Show all blogs</Button>}
       />
     </div>
   );
@@ -99,7 +99,7 @@ export const RenderFollowedList = (props: Props) => {
           </div>
         </a>
       </Link>)
-    : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blog/all'>Show all</Button></div>}
+    : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blogs/all'>Show all</Button></div>}
   </>;
 };
 

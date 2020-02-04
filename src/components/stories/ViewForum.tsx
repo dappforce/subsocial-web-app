@@ -58,11 +58,11 @@ const options = [
         children: [
           {
             value: 'xihu',
-            label: 'West Lake',
-          },
-        ],
-      },
-    ],
+            label: 'West Lake'
+          }
+        ]
+      }
+    ]
   },
   {
     value: 'jiangsu',
@@ -74,12 +74,12 @@ const options = [
         children: [
           {
             value: 'zhonghuamen',
-            label: 'Zhong Hua Men',
-          },
-        ],
-      },
-    ],
-  },
+            label: 'Zhong Hua Men'
+          }
+        ]
+      }
+    ]
+  }
 ];
 
 function ViewForum () {
