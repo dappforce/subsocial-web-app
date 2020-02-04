@@ -10,7 +10,7 @@ import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { Loader } from 'semantic-ui-react';
-import { NoData, NoAutorization } from '../utils/DataList';
+import { NoData, NotAuthorized } from '../utils/DataList';
 import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
 import { Loading, getApi } from '../utils/utils';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -35,7 +35,7 @@ export const ViewNewsFeed = () => {
 
   }, [ false ]);
 
-  if (!myAddress) return <NoAutorization/>;
+  if (!myAddress) return <NotAuthorized/>;
 
   const getNewsArray = async () => {
     const data = await getNewsFeed(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
@@ -80,7 +80,7 @@ export const ViewNotifications = () => {
     getNotificationsArray().catch(err => new Error(err));
   }, [false]);
 
-  if (!myAddress) return <NoAutorization/>;
+  if (!myAddress) return <NotAuthorized/>;
 
   const getNotificationsArray = async () => {
     const data = await getNotifications(myAddress, offset, SIZE_PAGE_INFINITY_LIST);

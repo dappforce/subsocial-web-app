@@ -119,9 +119,9 @@ export const NoData = (props: EmptyProps) => (
   </Empty>
 );
 
-export const NoAutorization = () => {
+export const NotAuthorized = () => {
   return <NoData
-    description='You are on the page created for an authorized user to continue to register'
+    description='Only logged in users can access this page'
   >
     <LogInButton/>
   </NoData>;
