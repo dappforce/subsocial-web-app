@@ -135,7 +135,7 @@ function AddressComponents (props: Props) {
             placement='topLeft'
             content={<ProfilePreview />}
           >
-            <div style={{ display: 'block' }}>
+            <div style={{ display: asActivity ? 'inline' : 'block' }}>
               <Link
                 href={`/profile/${address}`}
               >
