@@ -21,8 +21,8 @@ const InnerAccountsListModal = (props: Props) => {
 
   const renderAccounts = () => {
     return accounts && accounts.map((account, index) =>
-      <div key={index} className='DfModal'>
         <AddressComponents
+          key={index}
           value={account}
           isShort={true}
           isPadded={false}
@@ -30,7 +30,6 @@ const InnerAccountsListModal = (props: Props) => {
           withFollowButton
           variant='mini-preview'
         />
-      </div>
     );
   };
 
@@ -42,7 +41,7 @@ const InnerAccountsListModal = (props: Props) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>{title}</h1></Modal.Header>
+      <Modal.Header>{title}</Modal.Header>
       <Modal.Content scrolling>
         {renderAccounts()}
       </Modal.Content>

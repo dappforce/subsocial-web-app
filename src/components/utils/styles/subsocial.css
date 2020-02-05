@@ -607,12 +607,12 @@ hr {
     margin-left: 0;
   }
 
+  .AddressComponents.follow {
+    float: right;
+  }
+
   .ui--AddressComponents-info {
     display: inline-flex;
-
-    .AddressComponents.follow {
-      float: right;
-    }
   }
 
   .Df--AddressComponents-details {

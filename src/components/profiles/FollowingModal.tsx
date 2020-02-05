@@ -7,6 +7,7 @@ import { Modal, Button } from 'semantic-ui-react';
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { BUTTON_SIZE } from '../../config/Size.config';
 import dynamic from 'next/dynamic';
+
 type Props = {
   following?: AccountId[],
   followingCount: Number
@@ -43,7 +44,7 @@ const InnerFollowingModal = (props: Props) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>Following ({followingCount})</h1></Modal.Header>
+      <Modal.Header>Following ({followingCount})</Modal.Header>
       <Modal.Content scrolling>
         {renderFollowing()}
       </Modal.Content>

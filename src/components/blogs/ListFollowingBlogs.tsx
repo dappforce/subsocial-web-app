@@ -49,27 +49,6 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   };
 };
 
-// const ListFollowingBlogs = () => {
-//   const { state: { address: myAddress } } = useMyAccount();
-//   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
-
-//   useEffect(() => {
-//     let isSubscribe = true;
-//     const loadBlogsData = async () => {
-//       const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
-//       const loadBlogs = ids.map(id => loadBlogData(api,id));
-//       const blogsData = await Promise.all<BlogData>(loadBlogs);
-//       isSubscribe && setFollowedBlogsData(blogsData);
-//     };
-
-//     loadBlogsData().catch(console.log);
-
-//     return () => { isSubscribe = false; };
-//   }, [ followedBlogsData.length > 0 ]);
-
-//   return
-// };
-
 type Props = {
   followedBlogsData: BlogData[]
 };
