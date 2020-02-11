@@ -6,7 +6,7 @@ import { MutedSpan } from '../utils/MutedText';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import { Pluralize } from '../utils/Plularize';
 import BN from 'bn.js';
-import { withCalls, withMulti, withApi } from '@polkadot/ui-api';
+import { withCalls, withMulti } from '@polkadot/ui-api';
 import { queryBlogsToProp } from '../utils';
 
 type StatsProps = {
@@ -16,7 +16,7 @@ type StatsProps = {
 
 const InnerStatsPanel = (props: StatsProps) => {
   const { postById } = props;
-  console.log('I am here');
+  console.log('I am here', postById);
   const [commentsSection, setCommentsSection] = useState(false);
   const [postVotersOpen, setPostVotersOpen] = useState(false);
   const [activeVoters, setActiveVoters] = useState(0);
@@ -47,7 +47,6 @@ const InnerStatsPanel = (props: StatsProps) => {
 export default withMulti<StatsProps>(
     InnerStatsPanel,
     withCalls(
-        queryBlogsToProp('id', 'postById')
-    ),
-    withApi
+        queryBlogsToProp('postById', 'id')
+    )
 );

@@ -32,6 +32,7 @@ export const Voter = (props: VoterProps) => {
   const kind = reactionState ? reactionState && reactionState.kind.toString() : 'None';
   const [ reactionKind, setReactionKind ] = useState(kind);
   const [ state , setState ] = useState(struct);
+  const [ trigger, setTrigger ] = useState(true);
   const { id } = state;
   const isComment = type === 'Comment';
   const Id = isComment ? CommentId : PostId;
@@ -69,7 +70,7 @@ export const Voter = (props: VoterProps) => {
     loadReaction().catch(console.log);
 
     return () => { isSubscribe = false; };
-  }, [ false ]);
+  }, [ trigger, address ]);
 
   const buildTxParams = (param: 'Downvote' | 'Upvote') => {
     if (reactionState === undefined) {
@@ -117,6 +118,7 @@ export const Voter = (props: VoterProps) => {
         compact
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
+        txSuccessCb={() => setTrigger(!trigger)}
         tx={reactionState === undefined
           ? `blogs.create${type}Reaction`
           : (reactionKind !== `${reactionName}`)
