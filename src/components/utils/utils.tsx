@@ -146,7 +146,14 @@ export const Loading = () => <Icon type='loading' />;
 let api: (ApiPromise | undefined) = undefined;
 
 export const getApi = async () => {
-  return webApi ? webApi.isReady : api ? api : Api.setup();
+  if (webApi) {
+    return webApi.isReady;
+  } else if (api) {
+    return api;
+  } else {
+    api = await Api.setup();
+    return api;
+  }
 };
 
 export const formatUnixDate = (seconds: number, format: string = 'lll') => {

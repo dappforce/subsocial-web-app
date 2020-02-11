@@ -12,15 +12,13 @@ import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
-import { MutedSpan } from '../utils/MutedText';
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 import { PostHistoryModal } from '../utils/ListsEditHistory';
-import { PostVoters, ActiveVoters } from '../voting/ListVoters';
+import { PostVoters } from '../voting/ListVoters';
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { ShareModal } from './ShareModal';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
-import { Pluralize } from '../utils/Plularize';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
@@ -31,6 +29,7 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
+const StatsPanel = dynamic(() => import('./StatsPost'), { ssr: false });
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
@@ -104,15 +103,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const [ content , setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
-  const [ activeVoters, setActiveVoters ] = useState(0);
+  const [ activeVoters ] = useState(0);
 
   const originalPost = postExtData && postExtData.post;
   const [ originalContent , setOriginalContent ] = useState(postExtData && postExtData.initialContent);
-
-  const openVoters = (type: ActiveVoters) => {
-    setPostVotersOpen(true);
-    setActiveVoters(type);
-  };
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -229,24 +223,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </div>);
   };
 
-  const renderStatsPanel = (post: Post) => {
-    if (post.id === undefined) return null;
-
-    const { upvotes_count, downvotes_count, comments_count, shares_count, score } = post;
-    const reactionsCount = new BN(upvotes_count).add(new BN(downvotes_count));
-
-    return (<>
-    <div className='DfCountsPreview'>
-      {<MutedSpan><div onClick={() => reactionsCount && openVoters(ActiveVoters.All)} className={reactionsCount ? '' : 'disable'}><Pluralize count={reactionsCount} singularText='Reaction'/></div></MutedSpan>}
-      <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
-      <Pluralize count={comments_count} singularText='Comment'/></div></MutedSpan>
-      <MutedSpan><div><Pluralize count={shares_count} singularText='Share'/></div></MutedSpan>
-      <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan>
-    </div>
-    {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
-    </>);
-  };
-
   const renderRegularPreview = () => {
     return <>
       <Segment className={`DfPostPreview`}>
@@ -257,7 +233,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         </div>
         {renderContent(post, content)}
       </div>
-      {withStats && renderStatsPanel(post)}
+      {withStats && <StatsPanel id={post.id}/>}
       {withActions && <RenderActionsPanel/>}
       {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
@@ -283,7 +259,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
             </div>
             {renderContent(originalPost, originalContent)}
           </div>
-          {withStats && renderStatsPanel(originalPost) /* TODO params originPost */}
+          {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
@@ -300,7 +276,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
       </div>
-      {renderStatsPanel(post)}
+      {<StatsPanel id={post.id}/>}
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
