@@ -33,20 +33,20 @@ const InnerStatsPanel = (props: StatsProps) => {
   const reactionsCount = new BN(upvotes_count).add(new BN(downvotes_count));
 
   return (<>
-        <div className='DfCountsPreview'>
-            {<MutedSpan><div onClick={() => reactionsCount && openVoters(ActiveVoters.All)} className={reactionsCount ? '' : 'disable'}><Pluralize count={reactionsCount} singularText='Reaction' /></div></MutedSpan>}
-            <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
-                <Pluralize count={comments_count} singularText='Comment' /></div></MutedSpan>
-            <MutedSpan><div><Pluralize count={shares_count} singularText='Share' /></div></MutedSpan>
-            <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan>
-        </div>
-        {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)} />}
-    </>);
+    <div className='DfCountsPreview'>
+      {<MutedSpan><div onClick={() => reactionsCount && openVoters(ActiveVoters.All)} className={reactionsCount ? '' : 'disable'}><Pluralize count={reactionsCount} singularText='Reaction' /></div></MutedSpan>}
+      <MutedSpan><div onClick={() => setCommentsSection(!commentsSection)}>
+        <Pluralize count={comments_count} singularText='Comment' /></div></MutedSpan>
+      <MutedSpan><div><Pluralize count={shares_count} singularText='Share' /></div></MutedSpan>
+      <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan>
+    </div>
+    {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)} />}
+  </>);
 };
 
 export default withMulti<StatsProps>(
-    InnerStatsPanel,
-    withCalls(
-        queryBlogsToProp('postById', 'id')
-    )
+  InnerStatsPanel,
+  withCalls(
+    queryBlogsToProp('postById', 'id')
+  )
 );

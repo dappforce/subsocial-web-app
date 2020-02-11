@@ -29,7 +29,7 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
-const StatsPanel = dynamic(() => import('./StatsPost'), { ssr: false });
+const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
