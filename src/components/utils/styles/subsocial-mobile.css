@@ -60,6 +60,9 @@
 
 @media (max-width: 450px) {
 
+  .am-drawer-content {
+    display: none;
+  }
 
   .item.header.disabled {
     zoom: 0.8;
@@ -168,7 +171,8 @@
   }
 
   .DfPageContent {
-    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
     padding: 0 1rem;
   }
 
