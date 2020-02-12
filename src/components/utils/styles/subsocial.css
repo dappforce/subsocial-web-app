@@ -431,6 +431,14 @@ hr {
   }
 }
 
+.NotificationItem {
+  border-bottom: 1px solid #ddd;
+  padding: $space_small;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .ui.segment.DfPostPreview {
   padding-bottom: 0;
   .DfRow {

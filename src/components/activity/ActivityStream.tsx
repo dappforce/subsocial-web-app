@@ -11,7 +11,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { Loader } from 'semantic-ui-react';
 import { NoData, NotAuthorized } from '../utils/DataList';
-import { SIZE_PAGE_INFINITY_LIST } from '../../config/ListData.config';
+import { INFINITY_LIST_PAGE_SIZE } from '../../config/ListData.config';
 import { Loading, getApi } from '../utils/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAccount } from '../utils/MyAccountContext';
@@ -40,12 +40,12 @@ export const ViewNewsFeed = () => {
   if (!myAddress) return <NotAuthorized/>;
 
   const getNewsArray = async (actualOffset: number = offset) => {
-    const isFirstLoad = actualOffset === 0;
-    const data = await getNewsFeed(myAddress, actualOffset, SIZE_PAGE_INFINITY_LIST);
+    const isFirstPage = actualOffset === 0;
+    const data = await getNewsFeed(myAddress, actualOffset, INFINITY_LIST_PAGE_SIZE);
     console.log('Data',actualOffset, data);
-    if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
-    setItems(isFirstLoad ? data : items.concat(data));
-    setOffset(actualOffset + SIZE_PAGE_INFINITY_LIST);
+    if (data.length < INFINITY_LIST_PAGE_SIZE) setHasMore(false);
+    setItems(isFirstPage ? data : items.concat(data));
+    setOffset(actualOffset + INFINITY_LIST_PAGE_SIZE);
   };
 
   const totalCount = items && items.length;
@@ -88,11 +88,11 @@ export const ViewNotifications = () => {
   if (!myAddress) return <NotAuthorized/>;
 
   const getNotificationsArray = async (actualOffset: number = offset) => {
-    const isFirstLoad = actualOffset === 0;
-    const data = await getNotifications(myAddress, actualOffset, SIZE_PAGE_INFINITY_LIST);
-    if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
-    setItems(isFirstLoad ? data : items.concat(data));
-    setOffset(actualOffset + SIZE_PAGE_INFINITY_LIST);
+    const isFirstPage = actualOffset === 0;
+    const data = await getNotifications(myAddress, actualOffset, INFINITY_LIST_PAGE_SIZE);
+    if (data.length < INFINITY_LIST_PAGE_SIZE) setHasMore(false);
+    setItems(isFirstPage ? data : items.concat(data));
+    setOffset(actualOffset + INFINITY_LIST_PAGE_SIZE);
   };
 
   const totalCount = items && items.length;
@@ -244,7 +244,7 @@ export function Notification (props: ActivityProps) {
 
   return loading
     ? <Loading/>
-    : <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+    : <div className='DfNotificationItem'>
     <AddressComponents
       value={account}
       isShort={true}

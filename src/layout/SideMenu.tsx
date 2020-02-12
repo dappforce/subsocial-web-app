@@ -115,7 +115,7 @@ const InnerMenu = () => {
       </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
-        <a href={`${appsUrl}`}>
+        <a href={appsUrl}>
         <Icon type='exception' />
           <span>Advanced</span>
         </a>
