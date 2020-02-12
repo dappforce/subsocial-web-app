@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Button, Icon } from 'antd';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
-import Router from 'next/router';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import AddressComponents from '../components/utils/AddressComponents';
 import LogInButton from '../components/utils/LogIn';
+import Link from 'next/link';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
@@ -24,7 +24,7 @@ const InnerMenu = () => {
         <Button type='link' onClick={toggle} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
-          <span className='DfBrand' onClick={() => Router.push('/')}>{'Subsocial'}</span>
+        <Link href='/'><a className='DfBrand'>{'Subsocial'}</a></Link>
       </div>
       {isBrowser && <Search/>}
       <div className='DfTopBar--rightContent'>

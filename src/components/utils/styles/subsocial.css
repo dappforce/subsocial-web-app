@@ -27,7 +27,12 @@ body,
 
 .DfBrand {
   font-size: $font_big;
+  color: $color_menu_font;
   cursor: pointer;
+}
+
+.DfBrand:hover {
+  color: $color_menu_font;
 }
 
 .DfSummary {
