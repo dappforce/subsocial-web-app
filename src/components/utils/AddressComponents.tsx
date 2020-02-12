@@ -2,7 +2,7 @@
 import { BareProps } from '@polkadot/ui-app/types';
 
 import BN from 'bn.js';
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, useEffect, FunctionComponent } from 'react';
 import { AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
 import { withCall, withMulti, withCalls } from '@polkadot/ui-api';
 import InputAddress from './InputAddress';
@@ -13,7 +13,7 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, queryBlogsToProp, ZERO } from './index';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { withSocialAccount } from './utils';
+import { withSocialAccount, getApi } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -25,6 +25,7 @@ import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import { isBrowser } from 'react-device-detect';
+import { getJsonFromIpfs } from './OffchainUtils';
 
 const LIMIT_SUMMARY = 40;
 
@@ -33,7 +34,7 @@ type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'ad
 export type Props = MyAccountProps & BareProps & {
   socialAccountOpt?: Option<SocialAccount>,
   profile?: Profile,
-  ProfileContent?: ProfileContent,
+  profileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   balance?: Balance | Array<Balance> | BN,
   children?: React.ReactNode,
@@ -68,9 +69,9 @@ function AddressComponents (props: Props) {
     style,
     size,
     value,
-    socialAccount,
-    profile = {} as Profile,
-    ProfileContent = {} as ProfileContent,
+    socialAccount: socialAccountInitial,
+    profile: profileInit = {} as Profile,
+    profileContent: profileContentInit = {} as ProfileContent,
     withFollowButton,
     withBalance = true,
     asActivity = false,
@@ -80,6 +81,38 @@ function AddressComponents (props: Props) {
     event,
     count,
     subject } = props;
+
+  const [ socialAccount, setSocialAccount ] = useState(socialAccountInitial);
+  const [ profile, setProfile ] = useState(profileInit);
+  const [ profileContent, setProfileContent ] = useState(profileContentInit);
+
+  useEffect(() => {
+
+    if (!value) return;
+
+    const UpdateSocialAccount = async () => {
+      const api = await getApi();
+      const socialAccountOpt = await api.query.blogs.socialAccountById(value) as unknown as Option<SocialAccount>;
+      console.log('Soc.Acc', socialAccountOpt);
+      if (socialAccountOpt.isNone) return;
+
+      const socialAccount = socialAccountOpt.unwrap();
+      setSocialAccount(socialAccount);
+
+      const profileOpt = socialAccount.profile;
+      if (profileOpt.isNone) return;
+
+      const profile = profileOpt.unwrap() as Profile;
+      setProfile(profile);
+
+      const profileContent = await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
+      setProfileContent(profileContent);
+    };
+
+    UpdateSocialAccount().catch(console.log);
+
+  }, [ value ]);
+
   if (!value) {
     return null;
   }
@@ -94,7 +127,7 @@ function AddressComponents (props: Props) {
     fullname,
     avatar,
     about
-  } = ProfileContent;
+  } = profileContent;
 
   const [followersOpen, setFollowersOpen] = useState(false);
   const [followingOpen, setFollowingOpen] = useState(false);
@@ -236,7 +269,7 @@ function AddressComponents (props: Props) {
     return <div className='addressPreview'>
       <div className='profileInfo'>
         <div className='profileDesc'>
-          My reputations: {reputation.toString()}
+          My reputation: {reputation.toString()}
         </div>
       </div>
       <InputAddress
@@ -253,7 +286,7 @@ function AddressComponents (props: Props) {
       <Link href='/profile/[address]' as={`/profile/${address}`}>
         <a className='ui--AddressComponents-address'>
           <b className='AddressComponents-fullname'>{fullname || shortAddress}</b>
-          <div className='DfPopup-username'>{`${username} - ${shortAddress}`}</div>
+    <div className='DfPopup-username'>{username && `${username} - `}{shortAddress}</div>
         </a>
       </Link>
     );
