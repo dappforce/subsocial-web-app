@@ -4,16 +4,16 @@ import { BareProps } from '@polkadot/ui-app/types';
 import BN from 'bn.js';
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import { AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
-import { withCall, withMulti, withCalls } from '@polkadot/ui-api';
+import { withMulti } from '@polkadot/ui-api';
 import InputAddress from './InputAddress';
 import classes from '@polkadot/ui-app/util/classes';
 import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-import { findNameByAddress, nonEmptyStr, queryBlogsToProp, ZERO } from './index';
+import { findNameByAddress, nonEmptyStr, ZERO } from './index';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { withSocialAccount, getApi } from './utils';
+import { getApi } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -94,13 +94,23 @@ function AddressComponents (props: Props) {
       const api = await getApi();
       const socialAccountOpt = await api.query.blogs.socialAccountById(value) as unknown as Option<SocialAccount>;
       console.log('Soc.Acc', socialAccountOpt);
-      if (socialAccountOpt.isNone) return;
+      if (socialAccountOpt.isNone) {
+        await setSocialAccount(undefined);
+        await setProfile({} as Profile);
+        await setProfileContent({} as ProfileContent);
+        return;
+      }
 
       const socialAccount = socialAccountOpt.unwrap();
       setSocialAccount(socialAccount);
 
       const profileOpt = socialAccount.profile;
-      if (profileOpt.isNone) return;
+
+      if (profileOpt.isNone) {
+        await setProfile({} as Profile);
+        await setProfileContent({} as ProfileContent);
+        return;
+      }
 
       const profile = profileOpt.unwrap() as Profile;
       setProfile(profile);
@@ -298,6 +308,7 @@ function AddressComponents (props: Props) {
   };
 
   const RenderAddress: FunctionComponent<AddressProps> = ({ asLink = true, isShort = true }) => {
+    console.log('Fullname', fullname);
     return (
       <div
         className={`ui--AddressComponents-address ${asLink && 'asLink'} ${className} ${asActivity && 'activity'}`}
@@ -374,11 +385,5 @@ const RenderBalance: FunctionComponent<BalanceProps> = ({ address }) => {
 
 export default withMulti(
   AddressComponents,
-  withMyAccount,
-  withCall('query.session.validators'),
-  withCalls<Props>(
-    queryBlogsToProp('socialAccountById',
-      { paramName: 'value', propName: 'socialAccountOpt' })
-  ),
-  withSocialAccount
+  withMyAccount
 );

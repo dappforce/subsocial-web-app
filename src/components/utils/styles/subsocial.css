@@ -432,6 +432,7 @@ hr {
 }
 
 .ui.segment.DfPostPreview {
+  padding-bottom: 0;
   .DfRow {
     display: flex;
     justify-content: space-between;
