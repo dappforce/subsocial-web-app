@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DataSearch } from '@appbaseio/reactivesearch';
 import Router from 'next/router';
 import { Icon } from 'antd';
 import { ElasticFields } from '../../config/ElasticConfig';
+import { isBrowser } from 'react-device-detect';
 
 const App = () => {
+
+  let focus = false;
+  let input: HTMLInputElement | undefined;
+
+  useEffect(() => {
+
+    if (!input) return;
+
+    input.focus();
+    focus = true;
+
+  }, [ focus ]);
+
   return (
     <div className='DfSearch'>
       <DataSearch
@@ -22,6 +36,10 @@ const App = () => {
         fieldWeights={[2, 1, 2, 1, 2, 2, 1]}
         URLParams
         autoFocus
+        ref={(c: any) => {
+          if (focus || isBrowser) return;
+          input = c._inputRef;
+        }}
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
         placeholder='Search Subsocial'
         iconPosition='left'

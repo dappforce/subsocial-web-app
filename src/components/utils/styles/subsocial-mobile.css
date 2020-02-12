@@ -1,7 +1,7 @@
 @import './subsocial-vars.css';
 
 .DfMobileSideBar {
-  position: absolute;
+  position: fixed;
   top: 60px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
