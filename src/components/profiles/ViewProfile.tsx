@@ -9,7 +9,7 @@ import mdToText from 'markdown-to-txt';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SocialAccount, ProfileContent, Profile } from '../types';
-import { withSocialAccount, withAddressFromUrl, getApi } from '../utils/utils';
+import { withSocialAccount, getApi } from '../utils/utils';
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
@@ -280,7 +280,6 @@ export default Component;
 
 export const ViewProfile = withMulti(
   Component,
-  withAddressFromUrl,
   withCalls<Props>(
     queryBlogsToProp('socialAccountById',
       { paramName: 'id', propName: 'socialAccountOpt' })
