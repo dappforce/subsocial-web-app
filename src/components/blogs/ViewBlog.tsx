@@ -173,7 +173,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
         <div className='content'>
           <span className='header DfBlogTitle'>
             <span><NameAsLink /></span>
-            <span>{isMyBlog && isBrowser && <Tag color='green' style={{ marginLeft: '.25rem' }}>My blog</Tag>}</span>
+            {isMyBlog && isBrowser && <Tag color='green' style={{ marginLeft: '.5rem' }}>My blog</Tag>}
             {!previewDetails && renderDropDownMenu()}
           </span>
           <div className='description'>

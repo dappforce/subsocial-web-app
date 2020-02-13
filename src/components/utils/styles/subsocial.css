@@ -42,6 +42,10 @@ body,
   max-width: 100%;
 }
 
+.DfMenuItem {
+  color: $color_menu_font;
+}
+
 .ProfilePreviews,
 .FullProfile {
   .item {
@@ -297,7 +301,7 @@ hr {
   }
 
   .header {
-    font-size: 1.15rem;
+    font-size: 1rem;
   }
 
   .name {
@@ -535,7 +539,7 @@ hr {
 
 .DfSelectedBlog {
   background-color: #e6f7ff;
-  color: #1890fe !important;
+  color: #1890fe;
   border-right: 2px solid #1890f3;
 }
 
@@ -546,7 +550,7 @@ hr {
 
 .text.muted,
 .text.grey {
-  color: #999999;
+  color: $color_muted;
 }
 
 .text.smaller {
@@ -603,12 +607,12 @@ hr {
     margin-left: 0;
   }
 
+  .AddressComponents.follow {
+    float: right;
+  }
+
   .ui--AddressComponents-info {
     display: inline-flex;
-
-    .AddressComponents.follow {
-      float: right;
-    }
   }
 
   .Df--AddressComponents-details {
@@ -762,7 +766,6 @@ hr {
 }
 
 .DfAvatar {
-  margin-right: $space_tiny !important;
   display: inline-block;
   border-radius: 50%;
   vertical-align: middle;

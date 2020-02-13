@@ -135,7 +135,7 @@ function AddressComponents (props: Props) {
             placement='topLeft'
             content={<ProfilePreview />}
           >
-            <div style={{ display: 'block' }}>
+            <div style={{ display: asActivity ? 'inline' : 'block' }}>
               <Link
                 href={`/profile/${address}`}
               >
@@ -153,9 +153,9 @@ function AddressComponents (props: Props) {
             : <RenderPreviewForAddress />
           }
         </div>
-        {withFollowButton && <RenderFollowButton />}
         {children}
       </div>
+      {withFollowButton && <RenderFollowButton />}
     </div>;
   };
 
@@ -303,7 +303,7 @@ type ImageProps = {
 
 const RenderAvatar: FunctionComponent<ImageProps> = ({ size, avatar, address, style }) => {
   return avatar && nonEmptyStr(avatar)
-    ? <DfBgImg size={size} src={avatar} className='DfAvatar' style={style} rounded />
+    ? <DfBgImg size={size} src={avatar} className='DfAvatar ui--IdentityIcon' style={style} rounded />
     : <IdentityIcon
       style={style}
       size={size}

@@ -16,6 +16,8 @@ import { Loading, getApi } from '../utils/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAccount } from '../utils/MyAccountContext';
 import dynamic from 'next/dynamic';
+import { DfBgImg } from '../utils/DfBgImg';
+import { isEmptyStr } from '../utils';
 
 type ActivityProps = {
   activity: Activity;
@@ -31,17 +33,19 @@ export const ViewNewsFeed = () => {
   useEffect(() => {
     if (!myAddress) return;
 
-    getNewsArray().catch(err => new Error(err));
+    getNewsArray(0).catch(err => new Error(err));
 
-  }, [ false ]);
+  }, [ myAddress ]);
 
   if (!myAddress) return <NotAuthorized/>;
 
-  const getNewsArray = async () => {
-    const data = await getNewsFeed(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
+  const getNewsArray = async (actualOffset: number = offset) => {
+    const isFirstLoad = actualOffset === 0;
+    const data = await getNewsFeed(myAddress, actualOffset, SIZE_PAGE_INFINITY_LIST);
+    console.log('Data',actualOffset, data);
     if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
-    setItems(items.concat(data));
-    setOffset(offset + SIZE_PAGE_INFINITY_LIST);
+    setItems(isFirstLoad ? data : items.concat(data));
+    setOffset(actualOffset + SIZE_PAGE_INFINITY_LIST);
   };
 
   const totalCount = items && items.length;
@@ -77,16 +81,18 @@ export const ViewNotifications = () => {
   useEffect(() => {
     if (!myAddress) return;
 
-    getNotificationsArray().catch(err => new Error(err));
-  }, [false]);
+    getNotificationsArray(0).catch(err => new Error(err));
+
+  }, [ myAddress ]);
 
   if (!myAddress) return <NotAuthorized/>;
 
-  const getNotificationsArray = async () => {
-    const data = await getNotifications(myAddress, offset, SIZE_PAGE_INFINITY_LIST);
+  const getNotificationsArray = async (actualOffset: number = offset) => {
+    const isFirstLoad = actualOffset === 0;
+    const data = await getNotifications(myAddress, actualOffset, SIZE_PAGE_INFINITY_LIST);
     if (data.length < SIZE_PAGE_INFINITY_LIST) setHasMore(false);
-    setItems(items.concat(data));
-    setOffset(offset + SIZE_PAGE_INFINITY_LIST);
+    setItems(isFirstLoad ? data : items.concat(data));
+    setOffset(actualOffset + SIZE_PAGE_INFINITY_LIST);
   };
 
   const totalCount = items && items.length;
@@ -139,6 +145,7 @@ export function Notification (props: ActivityProps) {
   const formatDate = moment(date).format('lll');
   const [message, setMessage] = useState('string');
   const [subject, setSubject] = useState<React.ReactNode>(<></>);
+  const [ image, setImage ] = useState('');
   const [ loading, setLoading ] = useState(true);
   let postId = new PostId(0);
 
@@ -193,6 +200,8 @@ export function Notification (props: ActivityProps) {
           }
           const postData = await loadPostData(api, postId);
           setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          const { initialContent } = postData;
+          setImage(initialContent ? initialContent.image : '');
           break;
         }
         case 'PostShared': {
@@ -200,6 +209,8 @@ export function Notification (props: ActivityProps) {
           const postData = await loadPostData(api, postId);
           setMessage(Events.PostShared);
           setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          const { initialContent } = postData;
+          setImage(initialContent ? initialContent.image : '');
           break;
         }
         case 'PostReactionCreated': {
@@ -207,6 +218,8 @@ export function Notification (props: ActivityProps) {
           const postData = await loadPostData(api, postId);
           setMessage(Events.PostReactionCreated);
           setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          const { initialContent } = postData;
+          setImage(initialContent ? initialContent.image : '');
           break;
         }
         case 'CommentReactionCreated': {
@@ -219,6 +232,8 @@ export function Notification (props: ActivityProps) {
           const postData = await loadPostData(api, postId);
           setMessage(Events.CommentReactionCreated);
           setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          const { initialContent } = postData;
+          setImage(initialContent ? initialContent.image : '');
           break;
         }
       }
@@ -229,7 +244,7 @@ export function Notification (props: ActivityProps) {
 
   return loading
     ? <Loading/>
-    : <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem' }}>
+    : <div style={{ borderBottom: '1px solid #ddd', padding: '.5rem', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
     <AddressComponents
       value={account}
       isShort={true}
@@ -241,5 +256,6 @@ export function Notification (props: ActivityProps) {
       count={agg_count}
       asActivity
     />
+    {isEmptyStr(image) && <DfBgImg width={80} height={60} src={image}/>}
   </div>;
 }

@@ -11,6 +11,8 @@ import { BlogId } from '../components/types';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import Link from 'next/link';
 
+const appsUrl = process.env.APPS_URL || 'http://127.0.0.1:3002';
+
 type MenuItem = {
   name: string,
   page: string[],
@@ -97,7 +99,7 @@ const InnerMenu = () => {
 
   return (
     <Menu
-        defaultSelectedKeys={[pathname || '/all']}
+        selectedKeys={[pathname]}
         mode='inline'
         theme='light'
         style={{ height: '100%', borderRight: 0 }}
@@ -113,7 +115,7 @@ const InnerMenu = () => {
       </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
-        <a href='http://subsocial.network:3002'>
+        <a href={`${appsUrl}`}>
         <Icon type='exception' />
           <span>Advanced</span>
         </a>

@@ -65,7 +65,7 @@ const InnerModalVoters = (props: VotersProps) => {
         value={reaction.created.account}
         isPadded={false}
         size={28}
-        extraDetails={`${reaction.kind}ed`}
+        extraDetails={`${reaction.kind}d`}
         withFollowButton
       />
     </div>;
@@ -91,7 +91,7 @@ const InnerModalVoters = (props: VotersProps) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1><Pluralize count={votersCount} singularText='Reaction'/></h1></Modal.Header>
+      <Modal.Header><Pluralize count={votersCount} singularText='Reaction'/></Modal.Header>
       <Modal.Content scrolling>
       <Tab panes={panes} defaultActiveIndex={active}/>
       </Modal.Content>

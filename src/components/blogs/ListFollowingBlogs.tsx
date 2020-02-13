@@ -49,27 +49,6 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   };
 };
 
-// const ListFollowingBlogs = () => {
-//   const { state: { address: myAddress } } = useMyAccount();
-//   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
-
-//   useEffect(() => {
-//     let isSubscribe = true;
-//     const loadBlogsData = async () => {
-//       const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
-//       const loadBlogs = ids.map(id => loadBlogData(api,id));
-//       const blogsData = await Promise.all<BlogData>(loadBlogs);
-//       isSubscribe && setFollowedBlogsData(blogsData);
-//     };
-
-//     loadBlogsData().catch(console.log);
-
-//     return () => { isSubscribe = false; };
-//   }, [ followedBlogsData.length > 0 ]);
-
-//   return
-// };
-
 type Props = {
   followedBlogsData: BlogData[]
 };
@@ -85,7 +64,7 @@ export const RenderFollowedList = (props: Props) => {
   return <>{totalCount > 0
     ? followedBlogsData.map((item, index) =>
       <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
-        <a className='DfGreyLink'>
+        <a className='DfMenuItem'>
           <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
               key={index}

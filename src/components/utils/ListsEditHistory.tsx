@@ -150,7 +150,7 @@ const InnerCommentHistoryModal = (props: CommentHistoryProps) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>Edit History</h1></Modal.Header>
+      <Modal.Header>Edit History</Modal.Header>
       <Modal.Content scrolling>
         {edit_history ? renderCommentHistory() : 'No change history'}
       </Modal.Content>
@@ -235,7 +235,7 @@ const InnerPostHistoryModal = (props: PostHistoryProps) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>Edit History</h1></Modal.Header>
+      <Modal.Header>Edit History</Modal.Header>
       <Modal.Content scrolling>
         {history && renderPostHistory()}
       </Modal.Content>
@@ -332,7 +332,7 @@ const InnerBlogHistoryModal = (props: BlogHistoryProps) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>Edit History</h1></Modal.Header>
+      <Modal.Header>Edit History</Modal.Header>
       <Modal.Content scrolling>
         {edit_history.length > 0 && renderBlogHistory()}
       </Modal.Content>
@@ -430,7 +430,7 @@ const InnerProfileHistoryModal = (props: ProfileHistoryProps) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>Edit History</h1></Modal.Header>
+      <Modal.Header>Edit History</Modal.Header>
       <Modal.Content scrolling>
         {edit_history.length > 0 && renderProfileHistory()}
       </Modal.Content>
