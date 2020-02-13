@@ -46,7 +46,6 @@ const resultToPreview = (res: DataResults, i: number) => {
     case ElasticIndex.blogs:
       return <ViewBlog id={res._id} previewDetails withFollowButton />;
     case ElasticIndex.posts:
-      console.log(res._id);
       return <ViewPost key={i} id={new PostId(res._id)} variant='preview' withLink={true} />;
     case ElasticIndex.profiles:
       return <Segment>
