@@ -6,9 +6,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { withApi, withMulti } from '@polkadot/ui-api';
 import settings from '../settings';
-
-import translate from './translate';
-
 type Props = I18nProps & ApiProps;
 
 const Wrapper = styled.div`
@@ -29,10 +26,12 @@ const isFirefox = typeof InstallTrigger !== 'undefined';
 
 class Connecting extends React.PureComponent<Props> {
   render () {
-    const { isApiConnected, t } = this.props;
+    const { isApiConnected } = this.props;
 
-    if (isApiConnected || !window) {
-      return null;
+    if (process) return <></>;
+
+    if (isApiConnected) {
+      return <Wrapper />;
     }
 
     const wsUrl = settings.apiUrl;
@@ -42,15 +41,15 @@ class Connecting extends React.PureComponent<Props> {
 
     return (
       <Wrapper>
-        <div>{t('You are not connected to a node. Ensure that your node is running and that the Websocket endpoint is reachable.')}</div>
+        <div>{'You are not connected to a node. Ensure that your node is running and that the Websocket endpoint is reachable.'}</div>
         {
           isFirefox && isWs
-            ? <div>{t('With the Firefox browser connecting to insecure WebSockets ({{wsUrl}}) will fail due to the browser not allowing localhost access from a secure site.', { replace: { wsUrl } })}</div>
+            ? <div>{'With the Firefox browser connecting to insecure WebSockets ({{wsUrl}}) will fail due to the browser not allowing localhost access from a secure site.'}</div>
             : undefined
         }
         {
           isWs && isWsRemote && isHttps
-            ? <div>{t(`You are connecting from a secure location to an insecure WebSocket ({{wsUrl}}). Due to browser mixed-content security policies this connection type is not allowed. Change the RPC service to a secure 'wss' endpoint.`, { replace: { wsUrl } })}</div>
+            ? <div>{`You are connecting from a secure location to an insecure WebSocket ({{wsUrl}}). Due to browser mixed-content security policies this connection type is not allowed. Change the RPC service to a secure 'wss' endpoint.`}</div>
             : undefined
         }
       </Wrapper>
@@ -60,6 +59,5 @@ class Connecting extends React.PureComponent<Props> {
 
 export default withMulti(
   Connecting,
-  translate,
   withApi
 );

@@ -1,104 +1,92 @@
-import BN from 'bn.js';
 import React from 'react';
 
-import { ApiProps } from '@polkadot/ui-api/types';
 import { I18nProps } from '@polkadot/ui-app/types';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
-import { queryBlogsToProp, SeoHeads } from '../utils/index';
-import translate from '../utils/translate';
-import ViewBlog from './ViewBlog';
+import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
 import { BlogId } from '../types';
-import { AccountId } from '@polkadot/types';
-import { useMyAccount } from '../utils/MyAccountContext';
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
-import { Loading } from '../utils/utils';
+import { NextPage } from 'next';
+import { AccountId } from '@polkadot/types';
+import { HeadMeta } from '../utils/HeadMeta';
+import { getApi } from '../utils/utils';
 
-type Props = ApiProps & I18nProps & {
-  nextBlogId?: BN
+type Props = I18nProps & {
+  totalCount: number,
+  blogsData: BlogData[]
 };
 
-class Component extends React.PureComponent<Props> {
+export const ListBlog: NextPage<Props> = (props: Props) => {
+  const { totalCount, blogsData } = props;
+  return (
+    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <HeadMeta title='All blogs' desc='Subsocial blogs' />
+      <ListData
+        title={`All blogs (${totalCount})`}
+        dataSource={blogsData}
+        renderItem={(item, index) =>
+          <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
+        noDataDesc='Blogs not created yet'
+        noDataExt={<Button href='/blogs/new'>Create blog</Button>}
+      />
+    </div>
+  );
+};
 
-  render () {
-    const { nextBlogId = new BlogId(1) } = this.props;
+ListBlog.getInitialProps = async (props): Promise<any> => {
+  const api = await getApi();
+  const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
 
-    const firstBlogId = new BlogId(1);
-    const totalCount = nextBlogId.sub(firstBlogId).toNumber();
-    const ids: BlogId[] = [];
-    if (totalCount > 0) {
-      const firstId = firstBlogId.toNumber();
-      const lastId = nextBlogId.toNumber();
-      for (let i = firstId; i < lastId; i++) {
-        ids.push(new BlogId(i));
-      }
+  const firstBlogId = new BlogId(1);
+  const totalCount = nextBlogId.sub(firstBlogId).toNumber();
+  let blogsData: BlogData[] = [];
+  if (totalCount > 0) {
+    const firstId = firstBlogId.toNumber();
+    const lastId = nextBlogId.toNumber();
+    const loadBlogs: Promise<BlogData>[] = [];
+    for (let i = firstId; i < lastId; i++) {
+      loadBlogs.push(loadBlogData(api, new BlogId(i)));
     }
-
-    return (
-      <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-        <ListData
-          title={`All blogs (${totalCount})`}
-          dataSource={ids}
-          renderItem={(item, index) =>
-            <ViewBlog {...this.props} key={index} id={item} previewDetails withFollowButton />}
-          noDataDesc='Blogs not created yet'
-          noDataExt={<Button href='/new-blog'>Create blog</Button>}
-        />
-      </div>
-    );
+    blogsData = await Promise.all<BlogData>(loadBlogs);
   }
-}
 
-export const ListBlogs = translate(
-  withCalls<Props>(
-    queryBlogsToProp('nextBlogId')
-  )(Component)
-);
+  return {
+    totalCount,
+    blogsData
+  };
+};
 
 type MyBlogProps = {
-  id: AccountId,
-  myblogsIds?: BlogId[]
+  blogsData: BlogData[]
 };
 
-const InnerListMyBlogs = (props: MyBlogProps) => {
-  const { myblogsIds } = props;
-  if (!myblogsIds) return <Loading />;
-
-  const totalCount = myblogsIds.length;
+export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
+  const { blogsData } = props;
+  const totalCount = blogsData.length;
   return (<>
-    <SeoHeads title='List blogs' desc='Subsocial list blogs' image={substrateLogo} />
+    <HeadMeta title='My blogs' desc='Subsocial blogs' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`My Blogs (${totalCount})`}
-        dataSource={myblogsIds}
-        renderItem={(item, index) => <ViewBlog {...props} key={index} id={item} previewDetails withFollowButton />}
+        dataSource={blogsData}
+        renderItem={(item, index) => <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
         noDataDesc='You do not have your own blogs yet'
-        noDataExt={<Button href='/new-blog'>Create my first blog</Button>}
+        noDataExt={<Button href='/blogs/new'>Create my first blog</Button>}
       />
     </div>
   </>
   );
 };
 
-function withIdFromUseMyAccount (Component: React.ComponentType<MyBlogProps>) {
-  return function () {
-    const { state: { address: myAddress } } = useMyAccount();
-    try {
-      return <Component id={new AccountId(myAddress)} />;
-    } catch (err) {
-      return <em>Invalid Account id</em>;
-    }
+ListMyBlogs.getInitialProps = async (props): Promise<any> => {
+  const { query: { address } } = props;
+  console.log(props);
+  const api = await getApi();
+  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(address as string)) as unknown as BlogId[];
+  const loadBlogs = myBlogIds.map(id => loadBlogData(api, id));
+  const blogsData = await Promise.all<BlogData>(loadBlogs);
+  console.log(blogsData);
+  return {
+    blogsData
   };
-}
-
-export const ListMyBlogs = withMulti(
-  InnerListMyBlogs,
-  withIdFromUseMyAccount,
-  withCalls<MyBlogProps>(
-    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'id', propName: 'myblogsIds' })
-  )
-);
-
-export default ListBlogs;
+};

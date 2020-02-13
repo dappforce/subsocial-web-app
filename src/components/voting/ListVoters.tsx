@@ -4,10 +4,11 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
-import AddressMini from '../utils/AddressMiniDf';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { ReactionId, Reaction, CommentId, PostId } from '../types';
 import { api } from '@polkadot/ui-api/Api';
 import { Pluralize } from '../utils/Plularize';
+import dynamic from 'next/dynamic';
 
 type VotersProps = {
   id: CommentId | PostId,
@@ -39,6 +40,8 @@ const InnerModalVoters = (props: VotersProps) => {
 
     if (!open) return toggleTrigger();
 
+    let isSubscribe = true;
+
     const loadVoters = async () => {
 
       if (!reactions) return toggleTrigger();
@@ -46,9 +49,11 @@ const InnerModalVoters = (props: VotersProps) => {
       const apiCalls: Promise<Option<Reaction>>[] = reactions.map(async reactionId =>
         await api.query.blogs.reactionById(reactionId) as Option<Reaction>);
       const loadedReaction = (await Promise.all<Option<Reaction>>(apiCalls)).map(x => x.unwrap() as Reaction);
-      setReactionView(loadedReaction);
+      isSubscribe && setReactionView(loadedReaction);
     };
     loadVoters().catch(err => console.log(err));
+
+    return () => { isSubscribe = false; };
   }, [ trigger ]);
 
   if (!reactionView) return null;
@@ -56,11 +61,11 @@ const InnerModalVoters = (props: VotersProps) => {
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
       return <div key={reaction.id.toNumber()} style={{ textAlign: 'left', margin: '1rem' }}>
-      <AddressMini
+      <AddressComponents
         value={reaction.created.account}
         isPadded={false}
         size={28}
-        extraDetails={`${reaction.kind}ed`}
+        extraDetails={`${reaction.kind}d`}
         withFollowButton
       />
     </div>;
@@ -86,7 +91,7 @@ const InnerModalVoters = (props: VotersProps) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1><Pluralize count={votersCount} singularText='Reaction'/></h1></Modal.Header>
+      <Modal.Header><Pluralize count={votersCount} singularText='Reaction'/></Modal.Header>
       <Modal.Content scrolling>
       <Tab panes={panes} defaultActiveIndex={active}/>
       </Modal.Content>

@@ -4,8 +4,9 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
-import AddressMiniDf from '../utils/AddressMiniDf';
-import {BUTTON_SIZE} from '../../config/Size.config';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
+import { BUTTON_SIZE } from '../../config/Size.config';
+import dynamic from 'next/dynamic';
 type Props = {
   accounts?: AccountId[],
   accountsCount: Number,
@@ -20,17 +21,15 @@ const InnerAccountsListModal = (props: Props) => {
 
   const renderAccounts = () => {
     return accounts && accounts.map((account, index) =>
-      <div key={index} className='DfModal'>
-        <AddressMiniDf
+        <AddressComponents
+          key={index}
           value={account}
           isShort={true}
           isPadded={false}
           size={30}
           withFollowButton
-          withProfilePreview
-          miniPreview
+          variant='mini-preview'
         />
-      </div>
     );
   };
 
@@ -42,7 +41,7 @@ const InnerAccountsListModal = (props: Props) => {
       centered={true}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><h1>{title}</h1></Modal.Header>
+      <Modal.Header>{title}</Modal.Header>
       <Modal.Content scrolling>
         {renderAccounts()}
       </Modal.Content>

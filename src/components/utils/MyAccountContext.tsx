@@ -3,7 +3,7 @@ import store from 'store';
 
 export const MY_ADDRESS = 'df.myAddress';
 
-function readMyAddress (): string | undefined {
+export function readMyAddress (): string | undefined {
   const myAddress: string | undefined = store.get(MY_ADDRESS);
   console.log('Read my address from the local storage:', myAddress);
   return myAddress;
@@ -111,6 +111,10 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
 export function useMyAccount () {
   return useContext(MyAccountContext);
+}
+
+export function checkIfLoggedIn () {
+  return typeof useMyAccount().state.address !== 'undefined';
 }
 
 export default MyAccountProvider;

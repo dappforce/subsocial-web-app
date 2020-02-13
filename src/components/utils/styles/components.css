@@ -39,27 +39,27 @@ header .ui--Button-Group {
   margin: 0;
 }
 
-.ui--AddressMini {
+.ui--AddressComponents {
   display: inline-block;
   padding: 0 0.25rem 0 0;
 }
 
-.ui--AddressMini.padded {
+.ui--AddressComponents.padded {
   display: inline-block;
   padding: 0.25rem 0 0 0;
 }
 
-.ui--AddressMini.summary {
+.ui--AddressComponents.summary {
   position: relative;
   top: -0.2rem;
 }
 
-.ui--AddressMini-info div {
+.ui--AddressComponents-info div {
   display: inline-block;
   vertical-align: middle;
 }
 
-.ui--AddressMini-address {
+.ui--AddressComponents-address {
   width: 100%;
   text-align: left;
   &.activity {
@@ -75,16 +75,9 @@ header .ui--Button-Group {
   }
 }
 
-.ui--AddressMini .ui--IdentityIcon {
+.ui--AddressComponents .ui--IdentityIcon {
   margin-left: 1rem;
   margin-right: 0.5rem;
-}
-
-.ui--AddressMini .ui--Balance,
-.ui--AddressMini .ui--Bonded {
-  font-size: 0.75rem;
-  margin-top: -0.5rem;
-  text-align: right;
 }
 
 .ui--AddressRow-base {
@@ -127,14 +120,6 @@ header .ui--Button-Group {
 
 .ui--AddressSummary-icon {
   display: block
-}
-
-.ui--Balance,
-.ui--AddressSummary-balance,
-.ui--AddressSummary-bonded,
-.ui--AddressSummary-nonce {
-  font-weight: 100;
-  opacity: 0.75;
 }
 
 .ui--Bonded {
@@ -340,6 +325,10 @@ header .ui--Button-Group {
   word-break: break-all;
 }
 
+.ui--Static.ui.dropdown.selection.disabled {
+  max-width: 100%;;
+}
+
 .ui--Status {
   display: inline-block;
   position: fixed;
@@ -347,6 +336,9 @@ header .ui--Button-Group {
   top: 0.25rem;
   width: 20rem;
   z-index: 1001;
+  .header {
+    font-size: 1.25rem;
+  }
 
   .ui--IdentityIcon {
     margin-left: 0 !important;
@@ -372,7 +364,7 @@ header .ui--Button-Group {
 
       .desc {
         flex: 1;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem;
 
         .status {
           font-weight: 700;
@@ -380,7 +372,7 @@ header .ui--Button-Group {
       }
 
       .short {
-        font-size: 2.5rem;
+        font-size: 1.5rem;
         padding: 0.5rem;
 
         i.icon {

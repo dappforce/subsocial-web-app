@@ -1,17 +1,13 @@
 // Copyright 2017-2019 @polkadot/ui-signer authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { I18nProps } from '@polkadot/ui-app/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 
 import React from 'react';
 import { Password } from '@polkadot/ui-app';
 import keyring from '@polkadot/ui-keyring';
 
-import translate from './translate';
-
-type Props = I18nProps & {
+type Props = {
   autoFocus?: boolean,
   error?: string,
   onChange: (password: string) => void,
@@ -49,7 +45,7 @@ class Unlock extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { autoFocus, onChange, onKeyDown, password, t, tabIndex } = this.props;
+    const { autoFocus, onChange, onKeyDown, password, tabIndex } = this.props;
     const { isError, isLocked } = this.state;
 
     if (!isLocked) {
@@ -61,7 +57,7 @@ class Unlock extends React.PureComponent<Props, State> {
         <Password
           autoFocus={autoFocus}
           isError={isError}
-          label={t('unlock account with password')}
+          label={'unlock account with password'}
           onChange={onChange}
           onKeyDown={onKeyDown}
           tabIndex={tabIndex}
@@ -72,4 +68,4 @@ class Unlock extends React.PureComponent<Props, State> {
   }
 }
 
-export default translate(Unlock);
+export default Unlock;

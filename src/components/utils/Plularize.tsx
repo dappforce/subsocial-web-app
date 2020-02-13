@@ -1,4 +1,5 @@
 import React from 'react';
+import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js';
 
 type PluralizeProps = {
@@ -10,13 +11,15 @@ type PluralizeProps = {
 const ZERO = new BN(0);
 const ONE = new BN(1);
 
-export function Pluralize (props: PluralizeProps) {
-  let { count, singularText, pluralText } = props;
-
+export function pluralize (
+  count: number | BN | string,
+  singularText: string,
+  pluralText?: string
+) {
   if (!count) {
     count = ZERO;
   } else if (!(count instanceof BN)) {
-    count = new BN(count);
+    count = hexToBn(count);
   }
 
   const plural = () => !pluralText
@@ -27,5 +30,10 @@ export function Pluralize (props: PluralizeProps) {
     ? singularText
     : plural();
 
-  return <>{count.toString()} {text}</>;
+  return `${count.toNumber()} ${text}`;
+}
+
+export function Pluralize (props: PluralizeProps) {
+  const { count, singularText, pluralText } = props;
+  return <>{pluralize(count, singularText, pluralText)}</>;
 }

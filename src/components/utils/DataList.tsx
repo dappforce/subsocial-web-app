@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 import Section from './Section';
 import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
 import { MutedSpan } from './MutedText';
+import LogInButton from './LogIn';
 
 type Props = {
   className?: string,
@@ -26,16 +27,20 @@ export default (props: Props) => {
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
-    if (isEmpty(routerQuery)) {
+    let isSubscribe = true;
+
+    if (isEmpty(routerQuery) && isSubscribe) {
       setPageSize(DEFAULT_PAGE_SIZE);
       setCurrentPage(DEFAULT_CURENT_PAGE);
     } else {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);
 
-      setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
-      setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
+      isSubscribe && setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
+      isSubscribe && setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
     }
+
+    return () => { isSubscribe = false; };
   }, [false]);
 
   const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
@@ -95,13 +100,15 @@ export default (props: Props) => {
 };
 
 type EmptyProps = {
+  image?: string
   description?: React.ReactNode | string,
   children?: React.ReactNode
-}
+};
 
 export const NoData = (props: EmptyProps) => (
   <Empty
     className='DfEmpty'
+    image={props.image}
     description={
       <MutedSpan>
         {props.description}
@@ -111,3 +118,11 @@ export const NoData = (props: EmptyProps) => (
     {props.children}
   </Empty>
 );
+
+export const NotAuthorized = () => {
+  return <NoData
+    description='Only logged in users can access this page'
+  >
+    <LogInButton/>
+  </NoData>;
+};

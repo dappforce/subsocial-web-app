@@ -5,19 +5,21 @@ import * as Yup from 'yup';
 
 import { Option, Text, AccountId } from '@polkadot/types';
 import Section from '../utils/Section';
-import TxButton from '../utils/TxButton';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api';
 
 import { addJsonToIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { ProfileData, Profile, ProfileUpdate, SocialAccount } from '../types';
+import { ProfileContent, Profile, ProfileUpdate, SocialAccount } from '../types';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { queryBlogsToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
+import HeadMeta from '../utils/HeadMeta';
 
 // TODO get next settings from Substrate:
 const USERNAME_REGEX = /^[A-Za-z0-9_-]+$/;
@@ -79,12 +81,12 @@ type ValidationProps = {
 export type OuterProps = MyAccountProps & ValidationProps & {
   myAddress?: AccountId,
   profile?: Profile,
-  profileData?: ProfileData,
+  ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   requireProfile?: boolean
 };
 
-type FormValues = ProfileData & {
+type FormValues = ProfileContent & {
   username: string;
 };
 
@@ -124,7 +126,7 @@ const InnerForm = (props: FormProps) => {
 
   const goToView = () => {
     if (myAddress) {
-      Router.push(`/profile?address=${myAddress}`).catch(console.log);
+      Router.push(`/profile/${myAddress}`).catch(console.log);
     }
   };
 
@@ -173,7 +175,8 @@ const InnerForm = (props: FormProps) => {
   const title = profile ? `Edit profile` : `New profile`;
   const shouldBeValidUrlText = `Should be a valid URL.`;
 
-  return (
+  return (<>
+    <HeadMeta title={title}/>
     <Section className='EditEntityBox' title={title}>
     <Form className='ui form DfForm EditEntityForm'>
 
@@ -281,6 +284,7 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>
     </Form>
     </Section>
+  </>
   );
 };
 
@@ -288,12 +292,12 @@ const EditForm = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
-    const { profile, profileData } = props;
-    if (profile && profileData) {
+    const { profile, ProfileContent } = props;
+    if (profile && ProfileContent) {
       const username = profile.username.toString();
       return {
         username,
-        ...profileData
+        ...ProfileContent
       };
     } else {
       return {

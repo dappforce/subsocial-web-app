@@ -1,40 +1,39 @@
-body, #root {
-  background-color: #fafafa !important;
+@import './subsocial-vars.css';
+
+body,
+#root {
+  background-color: $color_page_bg !important;
+}
+
+/*Used as hack to fixed React base font-size */
+.fontSizeNormal {
+  font-size: $font_normal !important;
 }
 
 .DfPageContent {
-  min-width: 60%;
-  max-width: 100%;
+  padding: 1.5rem 1.5rem;
+  overflow-wrap: break-word;
+  min-width: 428px;
+  max-width: 728px;
   color: #111;
 }
 
+
 @media (min-width: 1200px) {
-  .DfPageContent {
-    min-width: 50%;
-    width: 50%;
-    max-width: 60%;
+  .DfBrand {
+    font-size: $font_large;
   }
 }
 
-/*-------------Font-Size-----------*/
-$font_tiny: .75rem;
-$font_small: .875rem;
-$font_normal: 1rem;
-$font_big: 1.25rem;
-$font_huge: 1.5rem;
+.DfBrand {
+  font-size: $font_big;
+  color: $color_menu_font;
+  cursor: pointer;
+}
 
-/*----------Size-------------*/
-$tiny: .25rem;
-$small: .5rem;
-$little: .75rem;
-$normal: 1rem;
-$big: 1.25rem;
-$greate: 1.5rem;
-$huge: 2rem;
-
-/*-------------Colors----------*/
-$secondary: #8c8c8c;
-
+.DfBrand:hover {
+  color: $color_menu_font;
+}
 
 .DfSummary {
   margin-top: 1rem;
@@ -43,21 +42,29 @@ $secondary: #8c8c8c;
 .DfPostfName {
   margin-right: .5rem;
 }
+
 .DfPostImage {
   max-width: 100%;
 }
+
+.DfMenuItem {
+  color: $color_menu_font;
+}
+
 .ProfilePreviews,
 .FullProfile {
   .item {
     .image {
       padding: 0 !important;
     }
+
     .description {
       font-size: $font_normal;
     }
   }
+
   .ant-dropdown-trigger {
-    margin-left: $small;
+    margin-left: $space_tiny;
     height: min-content;
   }
 }
@@ -68,10 +75,11 @@ $secondary: #8c8c8c;
 
 .ProfilePreviews {
   &.ui.list>.item:first-child {
-    padding-top: $little;
+    padding-top: $space_small;
   }
+
   &.ui.list>.item:last-child {
-    padding-bottom: $little;
+    padding-bottom: $space_small;
   }
 }
 
@@ -82,35 +90,41 @@ $secondary: #8c8c8c;
   }
 }
 
-.header { 
+.header {
   display: flex !important;
   align-items: center;
-  font-size: $font_huge;
+  font-size: $font_big;
   font-weight: bold;
 }
 
 .ProfileDetails {
   display: flex !important;
+
   .content {
-    padding-left: $small;
-    padding-right: $small;
+    padding-left: $space_tiny;
+    padding-right: $space_tiny;
   }
+
   .button {
-    height: min-content;
+    max-height: 4vh;
   }
+
   .handle {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
-    margin-right: $small;
+    margin-right: $space_tiny;
+
     .button {
-      padding: $small $little;
+      padding: $space_tiny $space_small;
     }
   }
 }
+
 .ProfileDetailsTable {
   font-size: $font_normal !important;
+
   tr td:first-child {
     width: 1%;
     white-space: nowrap;
@@ -131,20 +145,21 @@ $secondary: #8c8c8c;
 }
 
 .DfCountsPreview {
-  margin-top: $small;
+  margin-top: $space_tiny;
   font-size: $font_small;
+
   .MutedText {
-    margin-right: $normal;
+    margin-right: $space_normal;
   }
 }
 
-.ui--AddressMini-info div {
+.ui--AddressComponents-info div {
   vertical-align: initial;
 }
 
-.ui.threaded.comments .comment .comments{
-  padding: 0 0 0 $big;
-  margin: -1rem 0 0 $big;
+.ui.threaded.comments .comment .comments {
+  padding: 0 0 0 $space_large;
+  margin: -1rem 0 0 $space_large;
 }
 
 .DfCommentContent {
@@ -155,10 +170,10 @@ $secondary: #8c8c8c;
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $huge;
+  margin-bottom: $space_huge;
 }
 
-.ui.basic.button {
+.ui.basic.button:not(.disabled) {
   background-color: #fff !important;
 }
 
@@ -167,34 +182,40 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .DfSpacedButtons {
-  margin-top: $normal;
-  margin-bottom: calc(2*$normal);
+  margin-top: $space_normal;
+  margin-bottom: calc(2*$space_normal);
+
   .button {
-    margin-right: $small;
+    margin-right: $space_tiny;
   }
 }
 
 .DfVoter {
   &.vertical {
-    margin-right: $small;
+    margin-right: $space_tiny;
   }
+
   .ui.button:first-of-type {
     padding-left: 0;
   }
+
   .ui.button {
     background-color: transparent !important;
-    color: $secondary;
+    color: $color_muted;
     min-width: initial;
     max-height: initial;
-    padding: $small $small $small .1rem;
+    padding: $space_tiny $space_tiny $space_tiny .1rem;
 
     &.red {
+
       &:hover,
       &.active {
         color: red !important;
       }
     }
+
     &.green {
+
       &:hover,
       &.active {
         color: green !important;
@@ -210,32 +231,37 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfCommentsByPost {
   h4 {
-    font-size: $font_huge;
-    font-weight: bold;
-    color:$secondary;
+    font-size: $font_large;
+    font-weight: 400;
+    color: $color_muted;
     border-top: #ddd 1px solid;
   }
+
   .ui.comments .comment .metadata {
     margin-left: 0;
-    color:$secondary;
+    color: $color_muted;
   }
+
   .ui.comments .comment .text {
     margin: 0;
   }
+
   .ui.comments {
     max-width: 100%;
   }
 }
+
 .DfCommentContent {
-  margin-bottom: $huge;
+  margin-bottom: $space_huge;
+
   .reply {
-    color: $secondary;
+    color: $color_muted;
   }
 }
 
 .ChildComment {
   .DfComment {
-    padding-top: $normal;
+    padding-top: $space_normal;
   }
 }
 
@@ -245,12 +271,14 @@ form.ui.form.DfForm.EditEntityForm {
   width: auto;
   height: min-content;
   width: initial;
+
   i {
-    color: $secondary;
+    color: $color_muted;
   }
+
   .ui.selection.dropdown.menu {
     padding: .5rem .75rem !important;
-}
+  }
 }
 
 hr {
@@ -259,29 +287,32 @@ hr {
 }
 
 .DfFollowButton {
-  margin-top: $small;
+  margin-top: $space_tiny;
 }
 
-.disable, .disable:hover{
-  margin-right: $small;
-  color: $secondary;
+.disable,
+.disable:hover {
+  margin-right: $space_tiny;
+  color: $color_muted;
   text-decoration: none;
   cursor: default;
 }
 
 .DfActivityStreamItem {
-  .handle, a { 
+
+  .handle,
+  a {
     font-weight: bold;
   }
 
   .header {
-    font-size: 1.15rem;
+    font-size: 1rem;
   }
 
-  .name{
+  .name {
     text-transform: uppercase;
   }
-  
+
   /*.activity{
     margin-left: .25rem;
     margin-right: .25rem;
@@ -295,15 +326,24 @@ hr {
 }
 
 .DfSocialLinks {
-  margin-top: $normal;
-  font-size: $font_big;
+  margin-top: $space_small;
+  font-size: $font_normal;
+
   a {
-    margin-right: $normal;
+    margin-right: $space_small;
+  }
+}
+
+.Profile--actions {
+  margin-left: 4rem;
+
+  button {
+    background-color: $color_page_bg;
   }
 }
 
 .asLink {
-  color: #2185d0;
+  color: $color_link;
   text-decoration: none;
   cursor: pointer;
 }
@@ -313,63 +353,67 @@ hr {
 }
 
 .DfBlogStats {
-  margin-top: $small;
+  margin-top: $space_tiny;
   font-size: $font_small;
   display: flex;
 
   .DfStatItem {
-    margin-right: $normal;
+    margin-right: $space_normal;
   }
 }
 
 .DfBlogBody {
   display: flex;
   width: 100%;
+
   .handle {
     max-width: 30rem;
   }
 }
 
-.DfCountsPreview{
-  a{
-    margin-right: $small;
+.DfCountsPreview {
+  a {
+    margin-right: $space_tiny;
   }
 }
 
-.ui.attached:not(.message)+.ui.attached.segment:not(.top){
+.ui.attached:not(.message)+.ui.attached.segment:not(.top) {
   border: none;
 }
 
-.DfPostPreview, .DfPost {
+.DfPostPreview,
+.DfPost {
   .ui.button {
     min-width: initial;
     max-height: initial;
-  }  
+  }
 }
 
 .DfPostPreview {
   h2 {
-    margin-top: $normal; 
+    margin-top: $space_normal;
   }
+
   .DfSharedSummary {
-    margin-left: calc($huge + 1rem);
-    margin-top: $small;
-    font-size: $font_big;
+    margin-left: calc($space_huge + 1rem);
+    margin-top: $space_tiny;
+    font-size: $font_large;
     width: 95%;
   }
+
   .ui.button {
     min-width: initial;
     max-height: initial;
-  }  
+  }
 }
-.ui.segment.DfPostPreview.p-b-0 {
-  padding: $normal $normal 0rem $normal;
-}
+
 
 .DfCountsPreview {
   margin-top: 0;
-  a, span {
-    color: rgba(34,36,38,.8) !important;
+
+  a,
+  span {
+    color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small
   }
 }
@@ -377,31 +421,46 @@ hr {
 .DfCountsPreview {
   display: flex;
   justify-content: flex-start;
-  margin-top: $small;
-  margin-bottom: $small;
-  a, span {
-    color: rgba(34,36,38,.8) !important;
+  margin-top: $space_tiny;
+  margin-bottom: $space_tiny;
+
+  a,
+  span {
+    color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small;
   }
 }
 
+.NotificationItem {
+  border-bottom: 1px solid #ddd;
+  padding: $space_small;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .ui.segment.DfPostPreview {
+  padding-bottom: 0;
   .DfRow {
     display: flex;
     justify-content: space-between;
-    padding-right: $small;
+    padding-right: $space_tiny;
   }
+
   .DfInfo {
     width: -webkit-fill-available;
   }
+
   .DfContent {
     display: flex;
     justify-content: space-between;
   }
+
   .DfActionsPanel {
     display: flex;
-    border-top: 1px solid rgba(34,36,38,.15);
+    border-top: 1px solid rgba(34, 36, 38, .15);
   }
+
   .DfAction {
     width: 32%;
     display: flex;
@@ -411,16 +470,19 @@ hr {
       margin-right: .35rem;
     }
   }
+
   .DfCountsPreview {
     justify-content: flex-end;
   }
+
   .ui.tiny.button.basic.DfAction {
     font-weight: bold;
     font-size: $font_normal;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    background-color: rgba(255,255,255,0) !important;
+    background-color: rgba(255, 255, 255, 0) !important;
   }
+
   img.DfPostImagePreview {
     border-radius: .2rem;
     max-width: 16rem;
@@ -430,36 +492,43 @@ hr {
 
 .DfShareModal {
   .DfSection {
-    margin-top: $huge;
+    margin-top: $space_huge;
     margin-bottom: 0;
   }
+
   .EditEntityBox {
     width: 100%;
     max-width: none;
   }
-  .ui.input>input, .ui.selection.dropdown {
+
+  .ui.input>input,
+  .ui.selection.dropdown {
     width: 100%;
   }
+
   .ui.segment.DfPostPreview {
     text-align: left;
   }
 }
 
 .DfGreyLink {
-  color: $secondary !important;
+  color: $color_muted !important;
   cursor: pointer;
+
   a {
-    color: $secondary !important;
+    color: $color_muted !important;
     cursor: pointer;
   }
 }
+
 .DfGreyLink:hover {
   a {
-    color: $secondary !important;
+    color: $color_muted !important;
     text-decoration: underline;
     cursor: pointer;
   }
-  color: $secondary !important;
+
+  color: $color_muted !important;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -484,7 +553,7 @@ hr {
 
 .DfSelectedBlog {
   background-color: #e6f7ff;
-  color: #1890fe !important;
+  color: #1890fe;
   border-right: 2px solid #1890f3;
 }
 
@@ -495,7 +564,7 @@ hr {
 
 .text.muted,
 .text.grey {
-  color: #999999;
+  color: $color_muted;
 }
 
 .text.smaller {
@@ -513,23 +582,33 @@ hr {
 .ui--row {
   .ui.message {
     margin: 0;
-    padding: $little $normal;
+    padding: $space_small $space_normal;
   }
+
   textarea,
   .ui--InputFile {
-    margin: $tiny 0 !important;
+    margin: $space_mini 0 !important;
     height: 5rem;
   }
 }
 
 .modal {
-  .ui--AddressMini {
+  .ui--AddressComponents {
     width: 100%;
   }
-  .AddressMini{
-    .button{
+
+  .AddressComponents {
+    .button {
       min-width: 8rem;
     }
+  }
+
+  .button {
+    max-height: initial;
+  }
+
+  .content {
+    min-width: 75%;
   }
 }
 
@@ -537,49 +616,86 @@ hr {
   text-align: left;
 }
 
-.ui--AddressMini {
+.ui--AddressComponents {
   .ui--IdentityIcon {
     margin-left: 0;
   }
-  .ui--AddressMini-info {
-    display: inline-flex;
-    .AddressMini.follow{
-      float: right;
-    }
+
+  .AddressComponents.follow {
+    float: right;
   }
-  .ui--AddressMini-details {
+
+  .ui--AddressComponents-info {
+    display: inline-flex;
+  }
+
+  .Df--AddressComponents-details {
     display: block;
     text-align: left;
     float: left;
-    color: $secondary !important;
-    font-size: $font_small!important
+    color: $color_muted !important;
+    font-size: $font_small !important
   }
+
   .ui--AddressSummary-name,
   .ui--AddressSummary-balance {
-    display: block;
-    margin-top: 0;
+    display: inline-flex;
     padding-top: 0;
+    margin-right: 0 !important;
     font-size: $font_small !important;
-    margin-right: $normal;
-    font-weight: 100;
-    opacity: .80;
-    overflow: hidden;
-    float: left;
+    margin-right: $space_normal;
+    color: $color_muted;
+  }
+}
+
+.Df--profile-balance {
+  margin-right: .5rem;
+  font-size: $font_normal;
+  color: $color_muted;
+}
+
+.TopMenuAccount {
+  line-height: 1.25rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  .addressInfo {
+    margin: 0 $space_tiny;
+  }
+
+  .ui--Balance {
+    font-size: $font_small;
+    color: $color_muted;
+  }
+}
+
+.addressPreview {
+  .profileInfo {
+    .profileDesc {
+      padding-bottom: $space_tiny;
+    }
+  }
+
+  .ui.search.dropdown {
+    max-width: 25rem;
   }
 }
 
 .ui--Bubble.ui.label {
   background-color: #f2f2f2;
-  margin: $tiny 0;
-  margin-right: $small;
+  margin: $space_mini 0;
+  margin-right: $space_tiny;
 
   &.pointing:before {
     background-color: #e6e6e6;
   }
+
   &.warn {
     color: #f2711c !important;
     border: 1px solid;
   }
+
   &.ok {
     color: #21ba45 !important;
     border: 1px solid;
@@ -588,7 +704,7 @@ hr {
 
 .DfCommentsByPost {
   .DfSection-title {
-    font-size: $font_big;
+    font-size: $font_large;
     font-weight: bold !important;
   }
 }
@@ -599,27 +715,29 @@ hr {
 }
 
 .DfSection {
-  margin-top: $huge;
-  margin-bottom: $normal;
+  margin-top: $space_huge;
+  margin-bottom: $space_normal;
 
   .DfSection-title {
     border-bottom: 1px solid #ddd;
     margin: 0rem;
-    margin-bottom: $small;
-    padding: $small 0;
+    margin-bottom: $space_tiny;
+    padding: $space_tiny 0;
     display: flex;
   }
+
   li.ant-list-item.ant-list-item-no-flex {
     border: none;
-    padding-top: $small;
-    padding-bottom: $small;
+    padding-top: $space_tiny;
+    padding-bottom: $space_tiny;
   }
 }
 
 .DfForm .ui--Labelled {
   align-items: end;
+
   &>label {
-    padding-top: $little;
+    padding-top: $space_small;
   }
 }
 
@@ -628,9 +746,10 @@ hr {
   img {
     max-width: 100%;
   }
+
   code {
     background-color: #e0e0e0;
-    padding: 0 $tiny;
+    padding: 0 $space_mini;
     border-radius: 2px;
   }
 }
@@ -646,58 +765,71 @@ hr {
   }
 }
 
-.ui.top.left.flowing.popup.transition.visible{
-  .ui--AddressMini-address{
-    font-size: $font_big;
+.ui.top.left.flowing.popup.transition.visible {
+  .ui--AddressComponents-address {
+    font-size: $font_large;
   }
-  .DfPopup-username{
+
+  .DfPopup-username {
     font-size: $font_small;
   }
-  .ui--AddressMini-details {
-    margin-right: $tiny;
+
+  .Df--AddressComponents-details {
+    margin-right: $space_mini;
   }
 }
 
-.DfAvatar{
-  margin-right: $small !important;
+.DfAvatar {
   display: inline-block;
   border-radius: 50%;
   vertical-align: middle;
   border: 1px solid #ddd;
 }
 
-.ui.top.left.flowing.popup.transition.visible{
-  .DfAvatar{
-    margin: 0 $small $small 0;
-  }
-}
-.ui.top.left.flowing.popup.transition.visible{
-  .item.ProfileDetails.MyProfile{
-    padding-left: 0!important;
+.ui.top.left.flowing.popup.transition.visible {
+  .DfAvatar {
+    margin: 0 $space_tiny $space_tiny 0;
   }
 }
 
-.DfPopup-username{
+.ui.top.left.flowing.popup.transition.visible {
+  .item.ProfileDetails.MyProfile {
+    padding-left: 0 !important;
+    border-bottom: 1px solid #ccc;
+    padding: .5rem 0;
+  }
+}
+
+.AddressComponents-fullname {
+  font-size: $font_large;
+}
+
+.DfPopup-username {
   font-size: $font_small;
   color: #4e4e4e;
 }
 
-.DfMd{
-  margin-top: $tiny;
+.DfMd {
+  margin-top: $space_mini;
   font-size: $font_normal;
 }
 
 .DfMd.details {
-  margin-top: $huge;
+  margin-top: $space_huge;
 }
 
-.DfPopup-about{
-  margin-top: $small;
+.DfPopup-about {
+  margin: $space_tiny 0;
 }
 
 .DfPopup-links {
+  color: $color_muted;
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
+
+  .DfPopup-link {
+    margin-right: $space_normal;
+  }
 }
 
 .DfMdEditor {
@@ -705,9 +837,10 @@ hr {
     min-height: 5rem !important;
   }
 
-  .CodeMirror.cm-s-easymde.CodeMirror-wrap.CodeMirror-fullscreen{
+  .CodeMirror.cm-s-easymde.CodeMirror-wrap.CodeMirror-fullscreen {
     z-index: 1000;
   }
+
   .editor-toolbar.fullscreen {
     z-index: 1000;
   }
@@ -716,12 +849,12 @@ hr {
 
 .DfMdEditor.error {
   .editor-statusbar {
-      float: right;
+    float: right;
   }
 
   .CodeMirror.cm-s-easymde.CodeMirror-wrap {
-      background-color: #fff6f6;
-      border-color: #e0b4b4;
+    background-color: #fff6f6;
+    border-color: #e0b4b4;
   }
 
   .editor-toolbar {
@@ -734,43 +867,50 @@ hr {
   background-color: #3f3f3f;
   color: #fff;
   border-radius: 0;
+
   label {
     color: #fff;
   }
+
   .search.selection.dropdown {
     background-color: #333;
   }
 }
 
 .ui.attached.tabular.menu {
-  padding: 0 $huge;
+  padding: 0 $space_huge;
 }
 
 .DfSearch {
+  &:first-of-type {
+    margin-top: 0 !important;
+  }
+
   width: 60%;
   color: rgba(0, 0, 0, 0.7);
-  z-index:2;
+  z-index: 2;
+
   input {
     border-radius: .5rem;
   }
+
   input:hover {
     border-color: #1e99ff;
   }
+
   input:focus {
     border-color: #1e99ff;
-    -moz-box-shadow:0 0 10px #1e99ff; -webkit-box-shadow:0 0 10px #1e99ff; box-shadow:0 0 10px #1e99ff;
+    -moz-box-shadow: 0 0 10px #1e99ff;
+    -webkit-box-shadow: 0 0 10px #1e99ff;
+    box-shadow: 0 0 10px #1e99ff;
   }
+
   ul {
     top: 50px;
   }
+
   li {
     line-height: initial;
-  }
-}
-
-.DfTopBar--InputAddress {
-  .ui.input>input, .ui.selection.dropdown {
-    width: 1rem;
   }
 }
 
@@ -780,14 +920,15 @@ hr {
 
 .DfTab {
   background-color: #fff;
+
   .ui.attached.tabular.menu {
-    padding: $normal $normal 0rem $normal ;
+    padding: $space_normal $space_normal 0rem $space_normal;
   }
 }
 
 .DfHeader {
   background: #fff;
-  padding: 0 $normal;
+  padding: 0 $space_normal;
   border-bottom: 1px solid #ddd;
   position: fixed;
   z-index: 2;
@@ -804,8 +945,9 @@ hr {
   background-color: #fff;
 }
 
-.DfDataList { 
-  padding-top: $small;
+.DfDataList {
+  padding-top: $space_tiny;
+
   .ant-list-pagination {
     display: flex;
     justify-content: center;
@@ -813,11 +955,10 @@ hr {
 }
 
 .DfEmpty {
-  padding-top: $huge;
+  padding-top: $space_huge;
 }
 
 .DfTitle--List {
-  margin-bottom: $small;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -828,33 +969,57 @@ hr {
 }
 
 .DfSideMenu--FollowedBlogs {
+  && .collapsed {
+    .ant-menu-item-group-list {
+      .content {
+        display: none;
+      }
+
+      margin-left: $space_small;
+    }
+  }
+
   color: #666;
   cursor: pointer;
+
   .ant-menu-item-group-title {
-    border-top: #ccc 1px solid;
     text-transform: uppercase;
     font-size: $font_small
   }
 
   .container.highlight {
-    margin-top: $small;
-    margin-right: $tiny;
+    margin-top: $space_tiny;
+    margin-right: $space_mini;
   }
+
   .content {
     width: 80%;
     display: flex;
     align-items: center;
+
     .handle {
-      padding: $small 0rem;
+      padding: $space_tiny 0rem;
     }
   }
+
   .item {
-    padding: $small;
-    padding-left: $normal;
+    padding: $space_tiny;
+    padding-left: $space_normal;
   }
+
   .DfNoFollowed {
     display: flex;
     justify-content: center;
+  }
+}
+
+.DfSideMenu--FollowedBlogs.collapsed {
+  .ant-menu-item-group-list {
+    .content {
+      display: none;
+    }
+
+    margin-left: $space_small;
   }
 }
 
@@ -863,11 +1028,16 @@ hr {
   border-right: 1px solid #ddd;
   overflow: hidden;
   height: 100vh;
-  position: fixed;
   left: 0;
 }
 
-.ant-list-something-after-last-item .ant-spin-container > .ant-list-items > .ant-list-item:last-child {
+.ant-layout-sider-children {
+  width: inherit;
+  border-right: 1px #ddd solid;
+  position: fixed;
+}
+
+.ant-list-something-after-last-item .ant-spin-container>.ant-list-items>.ant-list-item:last-child {
   border: none;
 }
 
@@ -882,14 +1052,17 @@ hr {
 .DfTopBar {
   width: 100%;
   display: contents;
+
   .DfSearchIcon {
-    padding: $small;
+    padding: $space_tiny;
+    margin-right: $space_tiny;
     margin-top: 1.15rem;
     font-size: 1.3rem;
   }
+
   .DfCloseSearchIcon {
     font-size: 1.3rem;
-    padding-left: .5rem;
+    padding-left: $space_tiny;
   }
 }
 
@@ -902,27 +1075,31 @@ hr {
   display: -webkit-inline-box;
   display: -moz-inline-box;
 }
+
 /*---fix-syntax-error-md----*/
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
   background: none !important;
 }
 
 .DfCreator {
-  font-size: $normal;
-  margin-top: $normal;
+  font-size: $space_normal;
+  margin-top: $space_normal;
+
   i {
-    margin-right: $tiny;
+    margin-right: $space_mini;
   }
+
   div:not(.DfCreator--data) {
     display: inline;
   }
-  color: $secondary !important;
+
+  color: $color_muted !important;
 }
 
 .DfStatItem {
-  font-size: $normal;
+  font-size: $space_normal;
   display: inline;
-  margin-right: $small;
+  margin-right: $space_tiny;
 }
 
 .DfSpacedButtons {
@@ -934,257 +1111,17 @@ hr {
     margin-left: .5rem;
   }
 }
+
 .DfModal {
   text-align: left;
   margin: 1rem;
-}
 
-/*----------MOBILE--------------*/
-
-.DfMobileSideBar {
-  position: relative;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  .ant-menu-inline {
-    width: 250px;
-  }
-}
-.DfMobileSideBar .am-drawer-sidebar {
-  background-color: #fff;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.DfMobileSideBar .am-drawer-sidebar .am-list {
-  width: 200px;
-  padding: 0;
-}
-
-.ui.search.selection.dropdown {
-  min-width: 14rem;
-  .address { 
-    visibility: hidden;
-    display: none;
-  }
-}
-.item.header.disabled {
-  margin: 0;
-  span {
-    width: 3rem;
-    overflow: hidden;
-  }
-}
-.am-drawer-draghandle {
-  background-color: initial;
-}
-
-.infinite-scroll-component {
-  overflow: initial !important;
-}
-
-.DfModal:first-child {
-  margin: $tiny;
-  padding: $tiny !important;
-}
-.DfModal {
-  margin: $greate $tiny;
-  padding: $normal $tiny $tiny $tiny;
-  border-top: 1px solid #ddd;
-  .DfContent {
-    padding: 0;
-  }
-  .DfDescription {
-    font-size: $normal;
+  content {
+    min-width: 75%;
   }
 }
 
-@media (max-width: 450px) {
-  .ui--Dropdown.ui--InputAddress.DfTopBar--InputAddress {
-    zoom: .8;
-  }
-  .ui.search.selection.dropdown {
-    min-width: 11rem;
-  }
-  .editor-toolbar {
-    zoom: .7;
-  }
-  .ProfilePreviews, .ui.modal {
-    button.ui.tiny {
-      padding: .6rem;
-      font-size: $font_tiny;
-    }
-  }
-  .ui.modal {
-    button.ui.tiny.primary, button.ui.tiny.basic {
-      padding: .6rem .6rem 1.2rem .6rem;
-      font-size: $font_tiny;
-    }
-  }
-  li.ant-list-item.ant-list-item-no-flex {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-bottom: .5rem;
-  }
-  .infinite-scroll-component {
-    .ui.segment {
-      margin-top: .5rem;
-    }
-  }
-  .ui.modal.transition.visible.active {
-    .scrolling.content, .actions {
-      padding: $small !important;
-    }
-  }
-  .modal {
-    .AddressMini{
-      .button{
-        min-width: inherit;;
-      }
-    }
-    .ui--AddressMini-info {
-      min-width: 100%;
-    }
-    .ui.attached.tabular.menu {
-      padding: 0 .5rem !important;
-    }
-    h1:first-child {
-      font-size: $font_huge !important;
-    }
-    .DfAddressMini-popup {
-      width: 100%;
-    }
-  }
-  .DfModal:first-child {
-    margin: $tiny;
-    padding:$tiny !important;
-  }
-  .DfModal {
-    margin: $small $tiny;
-    padding: $normal $tiny $tiny $tiny !important;
-    border-top: .5px solid #ddd;
-    .DfContent {
-      padding: 0;
-    }
-    .DfDescription {
-      font-size: $normal;
-    }
-  }
-  .DfAddressMini-popup {
-    line-height: 1rem;
-    font-size: 1rem !important;
-    .header {
-      font-size: 1rem !important;
-    }
-  }
-  .DfStatItem {
-    font-size: $font_small;
-  }
-  .DfPageContent {
-    width: 100% !important;
-    padding: 0 1rem;
-  }
-  .DfBurgerIcon {
-    padding-left: 0;
-    padding-right: $small;
-  }
-  .DfCreator {
-    font-size: $font_small;
-  }
-  .DfSection {
-    margin-top: $greate !important;
-    .DfSection-title {
-      border: none;
-      font-size: $font_huge;
-      margin: 0;
-      margin-top: $normal;
-      padding: 0;
-
-      .DfTitle--List {
-        margin-bottom: $tiny
-      }
-    }
-  }
-  .ProfileDetails .content {
-    padding-left: 0;
-    padding-right: .5rem;
-}
-  .DfContent,.content {
-    text-align: left !important;
-  }
-  .content {
-    width: 80%;
-    line-height: $greate;
-  }
-  .header {
-    line-height: normal;
-    font-size: $font_big !important;
-    font-weight: 500;
-  }
-  .header.DfPostTitle--preview {
-    margin: $small 0;
-  }
-  .DfPostPreview h2 {
-    margin-top: 0;
-    font-size: $big;
-  }
-  .DfBlogStats {
-    font-size: $font_tiny;
-    .DfStatItem {
-      margin-right: $small;
-    }
-  }
-  .ui.segment {
-    z-index: 1;
-    border-radius: 0;
-    margin: 0 -1rem;
-    padding: .5rem !important;
-    border-left: 0;
-    border-right: 0;
-    box-shadow: none;
-    .ui.segment {
-      margin: 0;
-    }
-  }
-  .am-drawer-content {
-    padding-top: 0 !important;
-    text-align: left !important;
-  }
-  .ui--Status {
-    zoom: .7;
-    max-width: 50%;
-  }
-  .DfPostName {
-    margin-right: $small;
-    width: 87%;
-  }
-  .DfContentPage {
-    text-align: left !important;
-    .FullProfile {
-      margin-top: $tiny !important;
-    }
-  }
-  .DfSummary {
-    margin-top: $tiny !important;
-  }
-  .DfCountsPreview .MutedText {
-    margin-right: $normal;
-    .disable {
-      margin: 0;
-    }
-  }
-  .ui--IdentityIcon.image {
-    margin-right: $small;
-  }
-  .DfCommentContent {
-    margin-bottom: 1.75rem;
-  }
-  .DfDataList {
-    padding: 0;
-  }
-  .DfSearch {
-    width: 100%;
-  }
-  .DfSocialLinks {
-    margin-top: .25rem;
-    font-size: 1rem;
-  }
+.TopMenuAccountPopover {
+  left: auto !important;
+  right: $space_normal !important;
 }

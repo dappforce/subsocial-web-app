@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 
@@ -7,28 +8,37 @@ import { Option, AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { nonEmptyStr, queryBlogsToProp, SeoHeads } from '../utils/index';
-import { BlogId, Blog, PostId, BlogData } from '../types';
-import { MyAccountProps, withMyAccount } from '../utils/MyAccount';
-import { ViewPost } from '../posts/ViewPost';
+import { HeadMeta } from '../utils/HeadMeta';
+import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
+import { BlogId, Blog, PostId, BlogContent } from '../types';
+import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { FollowBlogButton } from '../utils/FollowButton';
-import { Loading } from '../utils/utils';
+const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
+import { Loading, getApi, formatUnixDate } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
-import Router from 'next/router';
 import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
-import AddressMiniDf from '../utils/AddressMiniDf';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
+import { NextPage } from 'next';
+import { useMyAccount } from '../utils/MyAccountContext';
+import { ApiPromise } from '@polkadot/api';
+import BN from 'bn.js';
+import mdToText from 'markdown-to-txt';
 
 const SUB_SIZE = 2;
 
-type Props = MyAccountProps & {
+export type BlogData = {
+  blog?: Blog,
+  initialContent?: BlogContent
+};
+
+type Props = {
   preview?: boolean,
   nameOnly?: boolean,
   dropdownPreview?: boolean,
@@ -36,18 +46,19 @@ type Props = MyAccountProps & {
   miniPreview?: boolean,
   previewDetails?: boolean,
   withFollowButton?: boolean,
-  id: BlogId,
+  id?: BlogId,
+  blogData: BlogData,
   blogById?: Option<Blog>,
-  postIds?: PostId[],
+  posts?: PostDataListItem[],
   followers?: AccountId[],
-  imageSize?: number
+  imageSize?: number,
+  onClick?: () => void
 };
 
-function Component (props: Props) {
-  const { blogById } = props;
+export const ViewBlogPage: NextPage<Props> = (props: Props) => {
+  const { blog } = props.blogData;
 
-  if (blogById === undefined) return <Loading />;
-  else if (blogById.isNone) return <NoData description={<span>Blog not found</span>} />;
+  if (!blog) return <NoData description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -57,37 +68,43 @@ function Component (props: Props) {
     previewDetails = false,
     withFollowButton = false,
     dropdownPreview = false,
-    myAddress,
-    postIds = [],
-    imageSize = 36
+    posts = [],
+    imageSize = 36,
+    onClick,
+    blogData: { initialContent = {} as BlogContent }
   } = props;
 
-  const blog = blogById.unwrap();
   const {
     id,
     score,
     created: { account, time },
     ipfs_hash,
-    followers_count,
+    posts_count,
+    followers_count: followers,
     edit_history
   } = blog;
-  const followers = followers_count.toNumber();
-  const [content, setContent] = useState({} as BlogData);
+
+  const { state: { address } } = useMyAccount();
+  const [content, setContent] = useState(initialContent);
   const { desc, name, image } = content;
 
   const [followersOpen, setFollowersOpen] = useState(false);
 
   useEffect(() => {
     if (!ipfs_hash) return;
-    getJsonFromIpfs<BlogData>(ipfs_hash).then(json => {
-      const content = json;
-      setContent(content);
-    }).catch(err => console.log(err));
-  }, [id]);
+    let isSubscribe = true;
 
-  const isMyBlog = myAddress && account && myAddress === account.toString();
+    getJsonFromIpfs<BlogContent>(ipfs_hash).then(json => {
+      const content = json;
+      if (isSubscribe) setContent(content);
+    }).catch(err => console.log(err));
+
+    return () => { isSubscribe = false; };
+  }, [ false ]);
+
+  const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
-  const postsCount = postIds ? postIds.length : 0;
+  const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
 
@@ -98,7 +115,7 @@ function Component (props: Props) {
     const menu = (
       <Menu>
         {isMyBlog && <Menu.Item key='0'>
-          <Link href={`/edit-blog?id=${id.toString()}`}><a className='item'>Edit</a></Link>
+          <Link href={`/blogs/[id]/edit`} as={`/blogs/${id.toString()}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -114,7 +131,7 @@ function Component (props: Props) {
     </>);
   };
 
-  const NameAsLink = () => <Link href={`/blog?id=${id}`}><a>{name}</a></Link>;
+  const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${id}`}><a>{name}</a></Link>;
 
   const renderNameOnly = () => {
     return withLink
@@ -135,7 +152,7 @@ function Component (props: Props) {
   );
 
   const renderMiniPreview = () => (
-    <div onClick={() => Router.push(`/blog?id=${id}`)} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+    <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
         ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
@@ -156,7 +173,7 @@ function Component (props: Props) {
         <div className='content'>
           <span className='header DfBlogTitle'>
             <span><NameAsLink /></span>
-            <span>{isMyBlog && isBrowser && <Tag color='green' style={{ marginLeft: '.25rem' }}>My blog</Tag>}</span>
+            {isMyBlog && isBrowser && <Tag color='green' style={{ marginLeft: '.5rem' }}>My blog</Tag>}
             {!previewDetails && renderDropDownMenu()}
           </span>
           <div className='description'>
@@ -173,7 +190,7 @@ function Component (props: Props) {
   const renderPreviewExtraDetails = () => {
     return <>
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
-        <Link href={`/blog?id=${id}`}>
+        <Link href='/blogs/[blogId]' as={`/blogs/${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
           <Pluralize count={postsCount} singularText='Post'/>
           </a>
@@ -183,7 +200,7 @@ function Component (props: Props) {
           <Pluralize count={followers} singularText='Follower'/>
         </div>
 
-        <MutedSpan className='DfStatItem'><Pluralize count={score.toNumber()} singularText='Point' /></MutedSpan>
+        <MutedSpan className='DfStatItem'><Pluralize count={score} singularText='Point' /></MutedSpan>
 
         <MutedSpan>{renderDropDownMenu()}</MutedSpan>
 
@@ -191,7 +208,7 @@ function Component (props: Props) {
           <BlogFollowersModal
             id={id}
             title={<Pluralize count={followers} singularText='Follower'/>}
-            accountsCount={blog.followers_count.toNumber()}
+            accountsCount={blog.followers_count}
             open={followersOpen}
             close={() => setFollowersOpen(false)}
           />}
@@ -212,42 +229,42 @@ function Component (props: Props) {
   const renderPostPreviews = () => {
     return <ListData
       title={postsSectionTitle()}
-      dataSource={postIds}
-      renderItem={(id, index) =>
-        <ViewPost key={index} id={id} preview />}
+      dataSource={posts}
+      renderItem={(item, index) =>
+        <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData}/>}
       noDataDesc='No posts yet'
-      noDataExt={<Button href={`/new-post?blogId=${id}`}>Create post</Button>}
+      noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
   };
-  const NewPostButton = () => <Button href={`/new-post?blogId=${id}`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;
+  const NewPostButton = () => isMyBlog ? <Button href={`/blogs/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button> : null;
 
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
       <span style={{ marginRight: '1rem' }}>{<Pluralize count={postsCount} singularText='Post'/>}</span>
-      {postIds.length ? <NewPostButton /> : null}
+      {posts.length ? <NewPostButton /> : null}
     </div>;
   };
 
   const RenderBlogCreator = () => (
     <MutedDiv className='DfCreator'>
-      <div className='DfCreator--data'><Icon type='calendar' />Created on {time}</div>
+      <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time)}</div>
       <div className='DfCreator-owner'>
         <Icon type='user' />
         {'Owned by '}
-        <AddressMiniDf
+        <AddressComponents
           className='DfGreyLink'
           value={account}
           isShort={true}
           isPadded={false}
           size={30}
-          onlyUserName
+          variant='username'
         />
       </div>
     </MutedDiv>
   );
 
   return <Section className='DfContentPage'>
-    <SeoHeads title={name} name={name} desc={desc} image={image} />
+    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
     <div className='FullProfile'>
       {renderPreview()}
     </div>
@@ -258,16 +275,51 @@ function Component (props: Props) {
       </div>
     </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count.toNumber()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
+    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
     {renderPostPreviews()}
   </Section>;
-}
+};
 
-export default withMulti(
-  Component,
-  withMyAccount,
+export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<BlogData> => {
+  const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
+  const blog = blogIdOpt.isSome ? blogIdOpt.unwrap() : undefined;
+  const content = blog && await getJsonFromIpfs<BlogContent>(blog.ipfs_hash);
+  return {
+    blog: blog,
+    initialContent: content
+  };
+};
+
+ViewBlogPage.getInitialProps = async (props): Promise<any> => {
+  const { query: { blogId } } = props;
+  const api = await getApi();
+  const blogData = await loadBlogData(api, new BlogId(blogId as string));
+  const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
+  const posts = await loadPostDataList(api, postIds);
+  return {
+    blogData,
+    posts
+  };
+};
+
+export default ViewBlogPage;
+
+const withUnwrap = (Component: React.ComponentType<Props>) => {
+  return (props: Props) => {
+    const { blogById } = props;
+    if (!blogById) return <Loading/>;
+
+    const blog = blogById.unwrap();
+
+    return <Component blogData={{ blog: blog }} {...props}/>;
+  };
+};
+
+export const ViewBlog = withMulti(
+  ViewBlogPage,
   withCalls<Props>(
     queryBlogsToProp('blogById', 'id'),
     queryBlogsToProp('postIdsByBlogId', { paramName: 'id', propName: 'postIds' })
-  )
+  ),
+  withUnwrap
 );

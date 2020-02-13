@@ -3,27 +3,31 @@ import React, { useState, useEffect } from 'react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import Section from '../utils/Section';
-import AddressMini from '../utils/AddressMiniDf';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/ui-api/types';
 import { api } from '@polkadot/ui-api';
 import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
+import mdToText from 'markdown-to-txt';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { partition } from 'lodash';
-import { PostId, CommentId, Comment, OptionComment, CommentData, PostData, Post } from '../types';
+import { partition, isEmpty } from 'lodash';
+import { PostId, CommentId, Comment, OptionComment, CommentContent, PostContent, Post } from '../types';
 import { NewComment } from './EditComment';
-import { queryBlogsToProp, SeoHeads } from '../utils/index';
+import { queryBlogsToProp } from '../utils/index';
+import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
 import { CommentHistoryModal } from '../utils/ListsEditHistory';
 import ReactMarkdown from 'react-markdown';
-import { useRouter } from 'next/router';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
-import { Pluralize } from '../utils/Plularize';
-import { Loading } from '../utils/utils';
+import { Pluralize, pluralize } from '../utils/Plularize';
+import { Loading, getApi, formatUnixDate } from '../utils/utils';
 import { Icon, Menu, Dropdown } from 'antd';
+import { NextPage } from 'next';
+import { loadPostData, PostData } from './ViewPost';
+import dynamic from 'next/dynamic';
 
 type Props = ApiProps & {
   postId: PostId,
@@ -48,6 +52,8 @@ export function CommentsTree (props: Props) {
   const [comments, setComments] = useState(new Array<Comment>());
 
   useEffect(() => {
+    let isSubscribe = true;
+
     const loadComments = async () => {
       if (!commentsCount) return;
       const apiCalls: Promise<OptionComment>[] = commentIds.map(id =>
@@ -55,11 +61,15 @@ export function CommentsTree (props: Props) {
 
       const loadedComments = (await Promise.all<OptionComment>(apiCalls)).map(x => x.unwrap() as Comment);
 
-      setComments(loadedComments);
-      setLoaded(true);
+      if (isSubscribe) {
+        setComments(loadedComments);
+        setLoaded(true);
+      }
     };
 
     loadComments().catch(err => console.log(err));
+
+    return () => { isSubscribe = false; };
   }, [ commentsCount ]);// TODO change dependense on post.comments_counts or CommentCreated, CommentUpdated with current postId
 
   const isPage = commentIdForPage ? true : false;
@@ -101,49 +111,60 @@ export function CommentsTree (props: Props) {
   return isPage ? <RenderCommentPage/> : <RenderCommentsOnPost/>;
 }
 
-export const CommentsByPost = withMulti(
+export default withMulti(
   CommentsTree,
   withCalls<Props>(
     queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
   )
 );
 
-export function withIdsFromUrl (Component: React.ComponentType<Props>) {
-  return function (props: Props) {
-    const router = useRouter();
-    const { postId, commentId } = router.query;
-    try {
-      return <Component postId={new PostId(postId as string)} commentIdForPage={new CommentId(commentId as string)} {...props}/>;
-    } catch (err) {
-      return <em>Invalid url</em>;
-    }
-  };
-}
+// export function withIdsFromUrl (Component: React.ComponentType<Props>) {
+//   return function (props: Props) {
+//     const router = useRouter();
+//     const { postId, commentId } = router.query;
+//     try {
+//       return <Component postId={new PostId(postId as string)} commentIdForPage={new CommentId(commentId as string)} {...props}/>;
+//     } catch (err) {
+//       return <em>Invalid url</em>;
+//     }
+//   };
+// }
 
-export const CommentPage = withMulti(
-  CommentsTree,
-  withIdsFromUrl,
-  withCalls<Props>(
-    queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
-  )
-);
+// export const CommentPage = withMulti(
+//   CommentsTree,
+//   withIdsFromUrl,
+//   withCalls<Props>(
+//     queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
+//   )
+// );
 
 type ViewCommentProps = {
   comment: Comment,
   commentsWithParentId: Comment[],
-  isPage?: boolean
+  isPage?: boolean,
+  post?: Post,
+  postContent?: PostContent,
+  commentContent?: CommentContent
 };
 
-export function ViewComment (props: ViewCommentProps) {
+export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps) => {
 
-  const { comment, commentsWithParentId, isPage = false } = props;
+  const {
+    comment,
+    commentsWithParentId,
+    isPage = false,
+    post: initialPost = {} as Post,
+    postContent: initialPostContent = {} as PostContent,
+    commentContent = {} as CommentContent
+  } = props;
   const { state: { address: myAddress } } = useMyAccount();
   const [parentComments, childrenComments] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
   const { id, score, created: { account, time }, post_id, edit_history } = comment;
   const [ struct , setStruct ] = useState(comment);
-  const [ postContent, setPostContent ] = useState({} as PostData);
-  const [ content , setContent ] = useState({} as CommentData);
+  const [ post, setPost ] = useState(initialPost);
+  const [ postContent, setPostContent ] = useState(initialPostContent);
+  const [ content , setContent ] = useState(commentContent);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [doReloadComment, setDoReloadComment] = useState(true);
@@ -152,35 +173,39 @@ export function ViewComment (props: ViewCommentProps) {
   if (!comment || comment.isEmpty) {
     return null;
   }
+
   useEffect(() => {
 
-    if (!doReloadComment) return;
+    let isSubscribe = true;
 
-    getJsonFromIpfs<CommentData>(struct.ipfs_hash).then(json => {
-      setContent(json);
+    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
+      isSubscribe && setContent(json);
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
       const result = await api.query.blogs.commentById(id) as OptionComment;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
-      setStruct(comment);
-
-      setDoReloadComment(false);
+      if (isSubscribe) {
+        setStruct(comment);
+      }
     };
     loadComment().catch(console.log);
 
     const loadPostContent = async () => {
-      const result = await api.query.blogs.postById(post_id) as Option<Post>;
-      if (result.isNone) return;
-      const post = result.unwrap();
-      const content = await getJsonFromIpfs<PostData>(post.ipfs_hash);
-      setPostContent(content);
-
-      setDoReloadComment(false);
+      if (isEmpty(post)) {
+        const result = await api.query.blogs.postById(post_id) as Option<Post>;
+        if (result.isNone) return;
+        isSubscribe && setPost(result.unwrap());
+      }
+      const content = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
+      if (isSubscribe) {
+        setPostContent(content);
+      }
     };
     loadPostContent().catch(console.log);
 
+    return () => { isSubscribe = false; };
   },[ doReloadComment ]);
 
   const isMyStruct = myAddress === account.toString();
@@ -218,23 +243,29 @@ export function ViewComment (props: ViewCommentProps) {
     </span>
   );
 
-  const responseTitle = <>In response to <Link href={`/post?id=${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
+  const responseTitle = <>In response to <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${post.blog_id}/posts/${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
+  const bodyAsText = mdToText(content.body);
 
   return <div id={`comment-${id}`} className='DfComment'>
     {isPage && <>
-      <SeoHeads name={`In response to ${postContent.title}`} desc={content.body} title={`${account} commented on ${postContent.title}`} />
+      <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
     <MutedDiv style={{ marginTop: '1rem' }}>{responseTitle}</MutedDiv>
     </>}
     <SuiComment.Group threaded>
     <SuiComment>
       <div className='DfCommentContent'>
         <SuiComment.Metadata>
-          <AddressMini
+          <AddressComponents
             value={account}
             isShort={true}
             isPadded={false}
             size={32}
-            extraDetails={<Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}><a className='DfGreyLink'>{`${moment(time).fromNow()} · comment score: ${score}`}</a></Link>}
+            extraDetails={
+              <Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}>
+                <a className='DfGreyLink'>
+                  {`${moment(formatUnixDate(time)).fromNow()} · ${pluralize(score, 'Point')}`}
+                </a>
+              </Link>}
           />
         </SuiComment.Metadata>
         <SuiComment.Content>
@@ -244,7 +275,7 @@ export function ViewComment (props: ViewCommentProps) {
               id={struct.id}
               postId={struct.post_id}
               json={content.body}
-              onSuccess={() => { setShowEditForm(false); setDoReloadComment(true); }}
+              onSuccess={() => { setShowEditForm(false); setDoReloadComment(!doReloadComment); }}
             />
             : <>
               <SuiComment.Text>
@@ -262,7 +293,7 @@ export function ViewComment (props: ViewCommentProps) {
                   </SuiComment.Action>
                 : <>
                   <SuiComment.Action>
-                  <Voter struct={struct} />
+                  <Voter struct={struct} type={'Comment'} />
                   </SuiComment.Action>
                   <SuiComment.Action>
                     {replyButton()}
@@ -279,4 +310,21 @@ export function ViewComment (props: ViewCommentProps) {
     </SuiComment>
   </SuiComment.Group>
 </div>;
-}
+};
+
+ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
+  const { query: { commentId } } = props;
+  const api = await getApi();
+  const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
+  const comment = commentOpt.unwrapOr({} as Comment);
+  const postData = comment && await loadPostData(api, comment.post_id) as PostData;
+  const commentContent = comment && await getJsonFromIpfs<CommentContent>(comment.ipfs_hash);
+  return {
+    comment: comment,
+    post: postData.post,
+    postContent: postData.initialContent,
+    commentsWithParentId: [] as Comment[],
+    commentContent,
+    isPage: true
+  };
+};

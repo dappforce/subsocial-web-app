@@ -11,9 +11,6 @@ import React from 'react';
 import { Compact } from '@polkadot/types';
 import { withCall, withMulti } from '@polkadot/ui-api';
 import { Icon } from '@polkadot/ui-app';
-import { formatBalance } from '@polkadot/util';
-
-import translate from '../translate';
 
 type Props = I18nProps & {
   deposit: BN | Compact,
@@ -54,28 +51,19 @@ export class Proposal extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { democracy_minimumDeposit = new BN(0), t } = this.props;
     const { extraAmount, isBelowMinimum } = this.state;
 
     return (
       <>
         {
           isBelowMinimum
-            ? <div><Icon name='warning sign' />{t('The deposit is below the {{minimum}} minimum required for the proposal to be evaluated', {
-              replace: {
-                minimum: formatBalance(democracy_minimumDeposit)
-              }
-            })}</div>
+            ? <div><Icon name='warning sign' />{'The deposit is below the {{minimum}} minimum required for the proposal to be evaluated'}</div>
             : undefined
         }
         {
           extraAmount.isZero()
             ? undefined
-            : <div><Icon name='arrow right' />{t('The deposit of {{deposit}} will be reserved until the proposal is completed', {
-              replace: {
-                deposit: formatBalance(extraAmount)
-              }
-            })}</div>
+            : <div><Icon name='arrow right' />{'The deposit of {{deposit}} will be reserved until the proposal is completed'}</div>
         }
       </>
     );
@@ -84,6 +72,5 @@ export class Proposal extends React.PureComponent<Props, State> {
 
 export default withMulti(
   Proposal,
-  translate,
   withCall('query.democracy.minimumDeposit')
 );
