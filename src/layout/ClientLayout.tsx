@@ -18,8 +18,9 @@ export type LayoutProps = {
   isClient: boolean
 };
 
-const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient }) => {
+const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
+  console.log(url);
 
   return <Queue>
         <QueueConsumer>
