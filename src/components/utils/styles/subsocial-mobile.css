@@ -2,8 +2,10 @@
 
 .DfMobileSideBar {
   position: fixed;
+  z-index: 10;
   top: 60px;
   overflow: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 
   .ant-menu-inline {

@@ -90,36 +90,40 @@ function AddressComponents (props: Props) {
 
     if (!value) return;
 
+    let isSubscribe = true;
+
     const UpdateSocialAccount = async () => {
       const api = await getApi();
       const socialAccountOpt = await api.query.blogs.socialAccountById(value) as unknown as Option<SocialAccount>;
       console.log('Soc.Acc', socialAccountOpt);
       if (socialAccountOpt.isNone) {
-        await setSocialAccount(undefined);
-        await setProfile({} as Profile);
-        await setProfileContent({} as ProfileContent);
+        isSubscribe && setSocialAccount(undefined);
+        isSubscribe && setProfile({} as Profile);
+        isSubscribe && setProfileContent({} as ProfileContent);
         return;
       }
 
       const socialAccount = socialAccountOpt.unwrap();
-      setSocialAccount(socialAccount);
+      isSubscribe && setSocialAccount(socialAccount);
 
       const profileOpt = socialAccount.profile;
 
       if (profileOpt.isNone) {
-        await setProfile({} as Profile);
-        await setProfileContent({} as ProfileContent);
+        isSubscribe && setProfile({} as Profile);
+        isSubscribe && setProfileContent({} as ProfileContent);
         return;
       }
 
       const profile = profileOpt.unwrap() as Profile;
-      setProfile(profile);
+      isSubscribe && setProfile(profile);
 
       const profileContent = await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
-      setProfileContent(profileContent);
+      isSubscribe && setProfileContent(profileContent);
     };
 
     UpdateSocialAccount().catch(console.log);
+
+    return () => { isSubscribe = false; };
 
   }, [ value ]);
 

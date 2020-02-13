@@ -795,6 +795,8 @@ hr {
 .ui.top.left.flowing.popup.transition.visible {
   .item.ProfileDetails.MyProfile {
     padding-left: 0 !important;
+    border-bottom: 1px solid #ccc;
+    padding: .5rem 0;
   }
 }
 

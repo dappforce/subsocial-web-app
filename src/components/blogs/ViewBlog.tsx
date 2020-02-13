@@ -208,7 +208,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           <BlogFollowersModal
             id={id}
             title={<Pluralize count={followers} singularText='Follower'/>}
-            accountsCount={blog.followers_count.toNumber()}
+            accountsCount={blog.followers_count}
             open={followersOpen}
             close={() => setFollowersOpen(false)}
           />}

@@ -40,7 +40,7 @@ const InnerMenu = () => {
       const loadBlogs = ids.map(id => loadBlogData(api,id));
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);
-      setLoaded(true);
+      isSubscribe && setLoaded(true);
     };
 
     loadBlogsData().catch(console.log);
