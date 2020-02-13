@@ -2,18 +2,18 @@
 import { BareProps } from '@polkadot/ui-app/types';
 
 import BN from 'bn.js';
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, useEffect, FunctionComponent } from 'react';
 import { AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
-import { withCall, withMulti, withCalls } from '@polkadot/ui-api';
+import { withMulti } from '@polkadot/ui-api';
 import InputAddress from './InputAddress';
 import classes from '@polkadot/ui-app/util/classes';
 import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-import { findNameByAddress, nonEmptyStr, queryBlogsToProp, ZERO } from './index';
+import { findNameByAddress, nonEmptyStr, ZERO } from './index';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { withSocialAccount } from './utils';
+import { getApi } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -25,6 +25,7 @@ import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import { isBrowser } from 'react-device-detect';
+import { getJsonFromIpfs } from './OffchainUtils';
 
 const LIMIT_SUMMARY = 40;
 
@@ -33,7 +34,7 @@ type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'ad
 export type Props = MyAccountProps & BareProps & {
   socialAccountOpt?: Option<SocialAccount>,
   profile?: Profile,
-  ProfileContent?: ProfileContent,
+  profileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   balance?: Balance | Array<Balance> | BN,
   children?: React.ReactNode,
@@ -68,9 +69,9 @@ function AddressComponents (props: Props) {
     style,
     size,
     value,
-    socialAccount,
-    profile = {} as Profile,
-    ProfileContent = {} as ProfileContent,
+    socialAccount: socialAccountInitial,
+    profile: profileInit = {} as Profile,
+    profileContent: profileContentInit = {} as ProfileContent,
     withFollowButton,
     withBalance = true,
     asActivity = false,
@@ -80,6 +81,52 @@ function AddressComponents (props: Props) {
     event,
     count,
     subject } = props;
+
+  const [ socialAccount, setSocialAccount ] = useState(socialAccountInitial);
+  const [ profile, setProfile ] = useState(profileInit);
+  const [ profileContent, setProfileContent ] = useState(profileContentInit);
+
+  useEffect(() => {
+
+    if (!value) return;
+
+    let isSubscribe = true;
+
+    const UpdateSocialAccount = async () => {
+      const api = await getApi();
+      const socialAccountOpt = await api.query.blogs.socialAccountById(value) as unknown as Option<SocialAccount>;
+      console.log('Soc.Acc', socialAccountOpt);
+      if (socialAccountOpt.isNone) {
+        isSubscribe && setSocialAccount(undefined);
+        isSubscribe && setProfile({} as Profile);
+        isSubscribe && setProfileContent({} as ProfileContent);
+        return;
+      }
+
+      const socialAccount = socialAccountOpt.unwrap();
+      isSubscribe && setSocialAccount(socialAccount);
+
+      const profileOpt = socialAccount.profile;
+
+      if (profileOpt.isNone) {
+        isSubscribe && setProfile({} as Profile);
+        isSubscribe && setProfileContent({} as ProfileContent);
+        return;
+      }
+
+      const profile = profileOpt.unwrap() as Profile;
+      isSubscribe && setProfile(profile);
+
+      const profileContent = await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
+      isSubscribe && setProfileContent(profileContent);
+    };
+
+    UpdateSocialAccount().catch(console.log);
+
+    return () => { isSubscribe = false; };
+
+  }, [ value ]);
+
   if (!value) {
     return null;
   }
@@ -94,7 +141,7 @@ function AddressComponents (props: Props) {
     fullname,
     avatar,
     about
-  } = ProfileContent;
+  } = profileContent;
 
   const [followersOpen, setFollowersOpen] = useState(false);
   const [followingOpen, setFollowingOpen] = useState(false);
@@ -236,7 +283,7 @@ function AddressComponents (props: Props) {
     return <div className='addressPreview'>
       <div className='profileInfo'>
         <div className='profileDesc'>
-          My reputations: {reputation.toString()}
+          My reputation: {reputation.toString()}
         </div>
       </div>
       <InputAddress
@@ -253,7 +300,7 @@ function AddressComponents (props: Props) {
       <Link href='/profile/[address]' as={`/profile/${address}`}>
         <a className='ui--AddressComponents-address'>
           <b className='AddressComponents-fullname'>{fullname || shortAddress}</b>
-          <div className='DfPopup-username'>{`${username} - ${shortAddress}`}</div>
+    <div className='DfPopup-username'>{username && `${username} - `}{shortAddress}</div>
         </a>
       </Link>
     );
@@ -265,6 +312,7 @@ function AddressComponents (props: Props) {
   };
 
   const RenderAddress: FunctionComponent<AddressProps> = ({ asLink = true, isShort = true }) => {
+    console.log('Fullname', fullname);
     return (
       <div
         className={`ui--AddressComponents-address ${asLink && 'asLink'} ${className} ${asActivity && 'activity'}`}
@@ -341,11 +389,5 @@ const RenderBalance: FunctionComponent<BalanceProps> = ({ address }) => {
 
 export default withMulti(
   AddressComponents,
-  withMyAccount,
-  withCall('query.session.validators'),
-  withCalls<Props>(
-    queryBlogsToProp('socialAccountById',
-      { paramName: 'value', propName: 'socialAccountOpt' })
-  ),
-  withSocialAccount
+  withMyAccount
 );

@@ -208,7 +208,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           <BlogFollowersModal
             id={id}
             title={<Pluralize count={followers} singularText='Follower'/>}
-            accountsCount={blog.followers_count.toNumber()}
+            accountsCount={blog.followers_count}
             open={followersOpen}
             close={() => setFollowersOpen(false)}
           />}
@@ -233,10 +233,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       renderItem={(item, index) =>
         <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData}/>}
       noDataDesc='No posts yet'
-      noDataExt={<Button href={`/blogs/${id}/posts/new`}>Create post</Button>}
+      noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
   };
-  const NewPostButton = () => <Button href={`/blogs/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button>;
+  const NewPostButton = () => isMyBlog ? <Button href={`/blogs/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button> : null;
 
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>

@@ -27,7 +27,12 @@ body,
 
 .DfBrand {
   font-size: $font_big;
+  color: $color_menu_font;
   cursor: pointer;
+}
+
+.DfBrand:hover {
+  color: $color_menu_font;
 }
 
 .DfSummary {
@@ -426,7 +431,16 @@ hr {
   }
 }
 
+.NotificationItem {
+  border-bottom: 1px solid #ddd;
+  padding: $space_small;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .ui.segment.DfPostPreview {
+  padding-bottom: 0;
   .DfRow {
     display: flex;
     justify-content: space-between;
@@ -781,6 +795,8 @@ hr {
 .ui.top.left.flowing.popup.transition.visible {
   .item.ProfileDetails.MyProfile {
     padding-left: 0 !important;
+    border-bottom: 1px solid #ccc;
+    padding: .5rem 0;
   }
 }
 

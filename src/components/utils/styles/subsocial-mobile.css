@@ -1,9 +1,11 @@
 @import './subsocial-vars.css';
 
 .DfMobileSideBar {
-  position: absolute;
+  position: fixed;
+  z-index: 10;
   top: 60px;
   overflow: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 
   .ant-menu-inline {
@@ -60,6 +62,9 @@
 
 @media (max-width: 450px) {
 
+  .am-drawer-content {
+    display: none;
+  }
 
   .item.header.disabled {
     zoom: 0.8;
@@ -168,7 +173,8 @@
   }
 
   .DfPageContent {
-    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
     padding: 0 1rem;
   }
 

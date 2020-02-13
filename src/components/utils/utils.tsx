@@ -160,7 +160,9 @@ export const formatUnixDate = (seconds: number, format: string = 'lll') => {
   return moment(new Date(seconds * 1000)).format(format);
 };
 
-export const makeSummary = (body: string, limit: number = 50) => (
+const DEFAULT_SUMMARY_LENGTH = 50;
+
+export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => (
   body.length > limit
   ? body.substr(0, limit) + '...'
   : body

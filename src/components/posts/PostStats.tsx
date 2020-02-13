@@ -16,7 +16,7 @@ type StatsProps = {
 
 const InnerStatsPanel = (props: StatsProps) => {
   const { postById } = props;
-  console.log('I am here', postById);
+
   const [commentsSection, setCommentsSection] = useState(false);
   const [postVotersOpen, setPostVotersOpen] = useState(false);
   const [activeVoters, setActiveVoters] = useState(0);
@@ -26,7 +26,7 @@ const InnerStatsPanel = (props: StatsProps) => {
     setActiveVoters(type);
   };
 
-  if (!postById || postById.isNone) return <></>;
+  if (!postById || postById.isNone) return null;
   const post = postById.unwrap();
 
   const { upvotes_count, downvotes_count, comments_count, shares_count, score, id } = post;

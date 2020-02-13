@@ -240,7 +240,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     try {
       return <Component id={new BlogId(blogId as string)} />;
     } catch (err) {
-      return <em>Invalid post ID: {blogId}</em>;
+      return <em>Invalid blog ID: {blogId}</em>;
     }
   };
 }

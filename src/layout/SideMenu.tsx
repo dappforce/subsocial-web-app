@@ -40,7 +40,7 @@ const InnerMenu = () => {
       const loadBlogs = ids.map(id => loadBlogData(api,id));
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);
-      setLoaded(true);
+      isSubscribe && setLoaded(true);
     };
 
     loadBlogsData().catch(console.log);
@@ -115,7 +115,7 @@ const InnerMenu = () => {
       </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
-        <a href={`${appsUrl}`}>
+        <a href={appsUrl}>
         <Icon type='exception' />
           <span>Advanced</span>
         </a>
