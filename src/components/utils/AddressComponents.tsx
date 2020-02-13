@@ -300,7 +300,7 @@ function AddressComponents (props: Props) {
       <Link href='/profile/[address]' as={`/profile/${address}`}>
         <a className='ui--AddressComponents-address'>
           <b className='AddressComponents-fullname'>{fullname || shortAddress}</b>
-    <div className='DfPopup-username'>{username && `${username} - `}{shortAddress}</div>
+          <div className='DfPopup-username'>{username && `${username} - `}{shortAddress}</div>
         </a>
       </Link>
     );
@@ -312,7 +312,6 @@ function AddressComponents (props: Props) {
   };
 
   const RenderAddress: FunctionComponent<AddressProps> = ({ asLink = true, isShort = true }) => {
-    console.log('Fullname', fullname);
     return (
       <div
         className={`ui--AddressComponents-address ${asLink && 'asLink'} ${className} ${asActivity && 'activity'}`}
