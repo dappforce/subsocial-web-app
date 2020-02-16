@@ -47,6 +47,8 @@ const MobileNav: FunctionComponent = ({ children }) => {
 export const Navigation = (props: Props) => {
   const { children } = props;
 
+  const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
+
   return <ReactiveBase
     className='fontSizeNormal'
     url={ElasticNodeURL}
@@ -60,10 +62,10 @@ export const Navigation = (props: Props) => {
       {isBrowser
         ? <>
             <DesktopNav />
-            <Content className='DfPageContent'>{children}</Content>
+            <MainContent/>
           </>
         : <MobileNav>
-            <Content className='DfPageContent'>{children}</Content>
+            <MainContent/>
           </MobileNav>
       }
     </Layout>
