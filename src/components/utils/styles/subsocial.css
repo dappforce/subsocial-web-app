@@ -1075,6 +1075,17 @@ hr {
   }
 }
 
+@media (min-width: 800px) and  (max-width: 991px) {
+  .DfTopBar .DfBrand {
+    font-size: $font_normal;
+  }
+}
+@media (min-width: 450px) and (max-width: 800px) {
+  .DfTopBar .DfBrand {
+    display: none;
+  }
+}
+
 .DfTopBar--search {
   display: flex;
   align-items: center;
