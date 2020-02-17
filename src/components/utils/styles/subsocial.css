@@ -235,6 +235,7 @@ form.ui.form.DfForm.EditEntityForm {
     font-weight: 400;
     color: $color_muted;
     border-top: $color_light_border 1px solid;
+    padding-top: 1rem;
   }
 
   .ui.comments .comment .metadata {
@@ -841,12 +842,12 @@ hr {
     z-index: 1000;
   }
 
-  .editor-toolbar.fullscreen {
-    z-index: 1000;
-  }
-
   .editor-toolbar {
     border-color: $color_light_border;
+
+  &.fullscreen {
+     z-index: 1000;
+   }
   }
 }
 
