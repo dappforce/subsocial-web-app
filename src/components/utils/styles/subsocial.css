@@ -234,7 +234,7 @@ form.ui.form.DfForm.EditEntityForm {
     font-size: $font_large;
     font-weight: 400;
     color: $color_muted;
-    border-top: #ddd 1px solid;
+    border-top: $color_light_border 1px solid;
   }
 
   .ui.comments .comment .metadata {
@@ -283,7 +283,7 @@ form.ui.form.DfForm.EditEntityForm {
 
 hr {
   border: 0;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid $color_light_border;
 }
 
 .DfFollowButton {
@@ -432,7 +432,7 @@ hr {
 }
 
 .NotificationItem {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid $color_light_border;
   padding: $space_small;
   display: flex;
   justify-content: space-between;
@@ -547,7 +547,7 @@ hr {
 
 .DfGreyButton:hover {
   background-color: #ccc;
-  border-color: #ddd;
+  border-color: $color_light_border;
   color: #333;
 }
 
@@ -719,7 +719,7 @@ hr {
   margin-bottom: $space_normal;
 
   .DfSection-title {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid $color_light_border;
     margin: 0rem;
     margin-bottom: $space_tiny;
     padding: $space_tiny 0;
@@ -783,7 +783,7 @@ hr {
   display: inline-block;
   border-radius: 50%;
   vertical-align: middle;
-  border: 1px solid #ddd;
+  border: 1px solid $color_light_border;
 }
 
 .ui.top.left.flowing.popup.transition.visible {
@@ -846,7 +846,7 @@ hr {
   }
 
   .editor-toolbar {
-    border-color: #ddd;
+    border-color: $color_light_border;
   }
 }
 
@@ -933,7 +933,7 @@ hr {
 .DfHeader {
   background: #fff;
   padding: 0 $space_normal;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid $color_light_border;
   position: fixed;
   z-index: 2;
   width: 100%;
@@ -1029,7 +1029,7 @@ hr {
 
 .DfSider {
   background: #fff;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid $color_light_border;
   overflow: hidden;
   height: 100vh;
   left: 0;
@@ -1037,7 +1037,7 @@ hr {
 
 .ant-layout-sider-children {
   width: inherit;
-  border-right: 1px #ddd solid;
+  border-right: 1px $color_light_border solid;
   position: fixed;
 }
 
