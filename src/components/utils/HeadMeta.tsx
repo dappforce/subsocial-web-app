@@ -37,7 +37,7 @@ export function HeadMeta (props: HeadMetaProps) {
       <title>{createTitle(title)}</title>
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={image} />
-      <meta property='og:title' content={title} />summary
+      <meta property='og:title' content={title} />
       <meta property='og:description' content={desc} />
       <meta name='twitter:site' content={SITE_NAME} />
       <meta name='twitter:image' content={image} />

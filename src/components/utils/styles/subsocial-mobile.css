@@ -3,7 +3,7 @@
 .DfMobileSideBar {
   position: fixed;
   z-index: 10;
-  top: 64px; /*  */
+  top: 64px; /* 64px is a height of Ant Design toolbar */
   overflow: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
