@@ -844,6 +844,10 @@ hr {
   .editor-toolbar.fullscreen {
     z-index: 1000;
   }
+
+  .editor-toolbar {
+    border-color: #ddd;
+  }
 }
 
 
@@ -1125,7 +1129,3 @@ hr {
   left: auto !important;
   right: $space_normal !important;
 }
-
-.DfMdEditor .editor-toolbar {
-   border-color: #ddd;
- }
