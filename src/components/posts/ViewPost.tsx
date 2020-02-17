@@ -30,6 +30,7 @@ import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
+import mdToText from 'markdown-to-txt';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
@@ -368,7 +369,7 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = makeSummary(ipfsContent.body, LIMIT_SUMMARY);
+  const summary = makeSummary(mdToText(ipfsContent.body), LIMIT_SUMMARY);
   return {
     ...ipfsContent,
     summary

@@ -138,6 +138,8 @@ const Component: NextPage<Props> = (props: Props) => {
     }
   };
 
+  const descWithoutMd = mdToText(about);
+
   const NameAsLink = () => (
     <Link href='/profile/[address]' as={`/profile/${address}`}>
       <a className='handle'>{getName()}</a>
@@ -229,7 +231,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 }
               </div>
             </div>
-            <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>
+            <ReactMarkdown className='DfMd' source={preview ? about : descWithoutMd} linkTarget='_blank'/>
           </div>
         </div>
       </div>
@@ -243,7 +245,7 @@ const Component: NextPage<Props> = (props: Props) => {
   }
 
   return <>
-    <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
+    <HeadMeta title={getName()} desc={descWithoutMd} image={avatar} />
     <Section>
       <div className='FullProfile'>
         {renderPreview()}
