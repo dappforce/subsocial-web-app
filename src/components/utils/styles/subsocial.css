@@ -1125,3 +1125,7 @@ hr {
   left: auto !important;
   right: $space_normal !important;
 }
+
+.DfMdEditor .editor-toolbar {
+   border-color: #ddd;
+ }
