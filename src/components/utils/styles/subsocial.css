@@ -235,7 +235,7 @@ form.ui.form.DfForm.EditEntityForm {
     font-weight: 400;
     color: $color_muted;
     border-top: $color_light_border 1px solid;
-    padding-top: 1rem;
+    padding-top: $space_normal;
   }
 
   .ui.comments .comment .metadata {
@@ -250,6 +250,10 @@ form.ui.form.DfForm.EditEntityForm {
   .ui.comments {
     max-width: 100%;
   }
+
+  &.DfSection {
+    margin-top: $space_normal;
+   }
 }
 
 .DfCommentContent {
