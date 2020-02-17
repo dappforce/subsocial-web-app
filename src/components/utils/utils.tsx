@@ -11,6 +11,8 @@ import { Icon } from 'antd';
 import { NoData } from './DataList';
 import moment from 'moment-timezone';
 import Api from './SubstrateApi';
+import mdToText from 'markdown-to-txt';
+import { truncate } from 'lodash';
 
 type PaginationProps = {
   currentPage?: number;
@@ -162,8 +164,12 @@ export const formatUnixDate = (seconds: number, format: string = 'lll') => {
 
 const DEFAULT_SUMMARY_LENGTH = 50;
 
-export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => (
-  body.length > limit
-  ? body.substr(0, limit) + '...'
-  : body
-);
+export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => {
+  const text = mdToText(body);
+  return text.length > limit
+  ? truncate(text, {
+    'length': limit,
+    'separator': /,? +/
+  }) + '...'
+  : text;
+};

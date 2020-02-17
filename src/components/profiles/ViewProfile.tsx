@@ -5,11 +5,10 @@ import Link from 'next/link';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-import mdToText from 'markdown-to-txt';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SocialAccount, ProfileContent, Profile } from '../types';
-import { withSocialAccount, getApi } from '../utils/utils';
+import { withSocialAccount, getApi, makeSummary } from '../utils/utils';
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
@@ -138,7 +137,9 @@ const Component: NextPage<Props> = (props: Props) => {
     }
   };
 
-  const descWithoutMd = mdToText(about);
+  const renderDescription = () => preview
+    ? makeSummary(about)
+    : <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>;
 
   const NameAsLink = () => (
     <Link href='/profile/[address]' as={`/profile/${address}`}>
@@ -231,7 +232,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 }
               </div>
             </div>
-            <ReactMarkdown className='DfMd' source={preview ? about : descWithoutMd} linkTarget='_blank'/>
+            {renderDescription()}
           </div>
         </div>
       </div>
@@ -245,7 +246,7 @@ const Component: NextPage<Props> = (props: Props) => {
   }
 
   return <>
-    <HeadMeta title={getName()} desc={descWithoutMd} image={avatar} />
+    <HeadMeta title={getName()} desc={about} image={avatar} />
     <Section>
       <div className='FullProfile'>
         {renderPreview()}

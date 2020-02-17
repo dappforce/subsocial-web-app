@@ -13,7 +13,7 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, ZERO } from './index';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { getApi } from './utils';
+import { getApi, makeSummary } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -161,9 +161,6 @@ function AddressComponents (props: Props) {
   const followers = socialAccount !== undefined ? socialAccount.followers_count.toNumber() : 0;
   const following = socialAccount !== undefined ? socialAccount.following_accounts_count.toNumber() : 0;
   const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
-
-  const summary = about !== undefined && about.length > LIMIT_SUMMARY ? about.substr(0, LIMIT_SUMMARY) + '...' : about;
-
   const isMyProfile: boolean = address === myAddress;
 
   const RenderFollowButton = () => (!isMyProfile)
@@ -262,7 +259,7 @@ function AddressComponents (props: Props) {
           </div>
           {!mini && <>
             <div className='DfPopup-about'>
-              <ReactMarkdown source={summary} linkTarget='_blank' />
+            {about && makeSummary(about)}
             </div>
             <div className='DfPopup-links'>
             <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>

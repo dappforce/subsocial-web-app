@@ -30,7 +30,6 @@ import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
-import mdToText from 'markdown-to-txt';
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
@@ -194,7 +193,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <div className='DfPostText'>
         {renderNameOnly(title ? title : summary, post.id)}
         <div className='DfSummary'>
-          <ReactMarkdown className='DfMd' source={summary} linkTarget='_blank' />
+          {summary}
         </div>
       </div>
       {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
@@ -369,7 +368,7 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = makeSummary(mdToText(ipfsContent.body), LIMIT_SUMMARY);
+  const summary = makeSummary(ipfsContent.body, LIMIT_SUMMARY);
   return {
     ...ipfsContent,
     summary
