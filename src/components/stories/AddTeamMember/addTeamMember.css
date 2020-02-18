@@ -1,0 +1,56 @@
+.add_team_member {
+	width: 600px;
+    padding: 20px;
+    background-color: #d3d3d3;
+}
+.add_team_member .atm_input_label {
+	font-weight: 600;
+}
+.add_team_member .atm_input_label.atm_required:after {
+	content: '*';
+	color: deepskyblue;
+    margin-left: 5px;
+}
+.add_team_member .atm_switch_label {
+	display: inline-block;
+    margin-left: 20px;
+}
+.add_team_member .atm_dates_wrapper {
+	display: flex;
+}
+.add_team_member .atm_start_date {
+	margin-right: 20px;
+}
+
+.add_team_member .atm_company_autocomplete {
+	cursor: pointer;
+}
+.add_team_member .atm_company_autocomplete img {
+    width: 20px;
+    margin: 5px;
+}
+.add_team_member .atm_prefix {
+	width: 16px;
+	margin-right: 5px;
+}
+
+/* With Formik */
+.atm_switch_wrapper {
+    display: flex;
+    margin: 2rem 0 1rem;
+}
+.atm_switch_label {
+    margin-left: 1rem;
+}
+.atm_submit_button span {
+    color: #fff;
+}
+.atm_dates_wrapper {
+    display: flex;
+}
+.atm_dates_wrapper .field {
+    margin-right: 2rem!important;
+}
+.atm_dates_wrapper input {
+    padding: 1.286rem!important;
+}
