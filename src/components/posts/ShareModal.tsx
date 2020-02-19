@@ -23,11 +23,10 @@ const InnerShareModal = (props: Props) => {
 
   if (!blogIds) return <Loading />;
 
-  const [blogId, setBlogId] = useState(blogIds[0]);
+  const [ blogId, setBlogId ] = useState(blogIds[0]);
   const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
-
     if (blogIds.length === 0) {
       return (
         <Link href='/blogs/new'><a className='ui button primary'>Create your first blog</a></Link>

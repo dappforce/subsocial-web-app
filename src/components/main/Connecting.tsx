@@ -25,7 +25,7 @@ const Wrapper = styled.div`
 const isFirefox = typeof InstallTrigger !== 'undefined';
 
 class Connecting extends React.PureComponent<Props> {
-  render () {
+  public render () {
     const { isApiConnected } = this.props;
 
     if (process) return <></>;

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 // Copyright 2017-2019 @polkadot/ui-signer authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
@@ -133,7 +134,7 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
     // display all the errors, warning and information messages (in that order)
     return (
       <article
-        className={[feeClass, 'padded'].join(' ')}
+        className={[ feeClass, 'padded' ].join(' ')}
         key='txinfo'
       >
         {
@@ -178,7 +179,7 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
       return null;
     }
 
-    const [, deposit] = extrinsic.args;
+    const [ , deposit ] = extrinsic.args;
 
     return (
       <Proposal
@@ -197,7 +198,7 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
       return null;
     }
 
-    const [recipientId, amount] = extrinsic.args;
+    const [ recipientId, amount ] = extrinsic.args;
 
     return (
       <Transfer
@@ -215,7 +216,7 @@ export class FeeDisplay extends React.PureComponent<Props, State> {
 }
 
 export default withCalls<Props>(
-    'derive.balances.fees',
-    ['derive.balances.votingBalance', { paramName: 'accountId' }],
-    ['query.system.accountNonce', { paramName: 'accountId' }]
-  )(FeeDisplay);
+  'derive.balances.fees',
+  [ 'derive.balances.votingBalance', { paramName: 'accountId' } ],
+  [ 'query.system.accountNonce', { paramName: 'accountId' } ]
+)(FeeDisplay);

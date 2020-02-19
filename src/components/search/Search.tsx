@@ -6,17 +6,14 @@ import { ElasticFields } from '../../config/ElasticConfig';
 import { isBrowser } from 'react-device-detect';
 
 const App = () => {
-
   let focus = false;
   let input: HTMLInputElement | undefined;
 
   useEffect(() => {
-
     if (!input) return;
 
     input.focus();
     focus = true;
-
   }, [ focus ]);
 
   return (
@@ -33,7 +30,7 @@ const App = () => {
           ElasticFields.profile.fullname,
           ElasticFields.profile.about
         ]}
-        fieldWeights={[2, 1, 2, 1, 2, 2, 1]}
+        fieldWeights={[ 2, 1, 2, 1, 2, 2, 1 ]}
         URLParams
         autoFocus
         ref={(c: any) => {

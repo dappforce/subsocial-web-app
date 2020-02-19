@@ -15,14 +15,12 @@ import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewP
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 import { Loading, getApi, formatUnixDate } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
@@ -30,6 +28,8 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
+const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 const SUB_SIZE = 2;
 
@@ -85,10 +85,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const [content, setContent] = useState(initialContent);
+  const [ content, setContent ] = useState(initialContent);
   const { desc, name, image } = content;
 
-  const [followersOpen, setFollowersOpen] = useState(false);
+  const [ followersOpen, setFollowersOpen ] = useState(false);
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -107,8 +107,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
-
-    const [open, setOpen] = useState(false);
+    const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
     const showDropdown = isMyBlog || edit_history.length > 0;
 
@@ -124,10 +123,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     );
 
     return (showDropdown && <>
-    <Dropdown overlay={menu} placement='bottomRight'>
-      <Icon type='ellipsis' />
-    </Dropdown>
-    {open && <BlogHistoryModal id={id} open={open} close={close} />}
+      <Dropdown overlay={menu} placement='bottomRight'>
+        <Icon type='ellipsis' />
+      </Dropdown>
+      {open && <BlogHistoryModal id={id} open={open} close={close} />}
     </>);
   };
 
@@ -192,7 +191,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
         <Link href='/blogs/[blogId]' as={`/blogs/${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
-          <Pluralize count={postsCount} singularText='Post'/>
+            <Pluralize count={postsCount} singularText='Post'/>
           </a>
         </Link>
 
@@ -271,7 +270,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     <div className='DfSpacedButtons'>
       <FollowBlogButton blogId={id} />
       <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
-          <Pluralize count={followers} singularText='Follower'/>
+        <Pluralize count={followers} singularText='Follower'/>
       </div>
     </div>
 

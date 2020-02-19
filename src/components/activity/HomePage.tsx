@@ -19,7 +19,6 @@ type Props = ApiProps & {
 };
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {
-
   const { blogsData, postsData } = props;
 
   return (
@@ -43,15 +42,15 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
   );
 };
 
-LatestUpdate.getInitialProps = async (props): Promise<any> => {
+LatestUpdate.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
   const nextPostId = await api.query.blogs.nextPostId() as PostId;
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
-    let latestIds = new Array<BN>(initIds).fill(ZERO);
+    const latestIds = new Array<BN>(initIds).fill(ZERO);
 
-    return latestIds.map((_,index) => nextId.sub(new BN(index + 1)));
+    return latestIds.map((_, index) => nextId.sub(new BN(index + 1)));
   };
 
   const latestBlogIds = getLastNIds(nextBlogId, FIVE);

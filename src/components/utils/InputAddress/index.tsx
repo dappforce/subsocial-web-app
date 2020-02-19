@@ -153,13 +153,11 @@ class InputAddress extends React.PureComponent<Props, State> {
         }
         onSearch={this.onSearch}
         options={
-          options
-            ? options
-            : (
-                isDisabled && actualValue
-                  ? [createOption(actualValue)]
-                  : (optionsAll ? optionsAll[type] : [])
-            )
+          options || (
+            isDisabled && actualValue
+              ? [ createOption(actualValue) ]
+              : (optionsAll ? optionsAll[type] : [])
+          )
         }
         placeholder={placeholder}
         renderLabel={

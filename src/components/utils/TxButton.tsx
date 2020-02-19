@@ -26,7 +26,7 @@ type Props = BareProps & ApiProps & MyAccountProps & PartialQueueTx$Extrinsic & 
 
 class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   render () {
-    const { myAddress, accountId, isBasic, isPrimary = isBasic ? false : true, isDisabled, label, onClick } = this.props;
+    const { myAddress, accountId, isBasic, isPrimary = !isBasic, isDisabled, label, onClick } = this.props;
     const origin = accountId || myAddress;
 
     return (
@@ -50,7 +50,7 @@ class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
       txFailedCb, txSuccessCb, txSentCb, txCancelledCb
     } = this.props;
     const origin = accountId || myAddress;
-    const [section, method] = tx.split('.');
+    const [ section, method ] = tx.split('.');
 
     assert(api.tx[section] && api.tx[section][method], `Unable to find api.tx.${section}.${method}`);
 

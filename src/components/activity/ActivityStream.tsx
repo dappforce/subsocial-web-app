@@ -8,7 +8,6 @@ import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
 import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { Loader } from 'semantic-ui-react';
 import { NoData, NotAuthorized } from '../utils/DataList';
 import { INFINITY_LIST_PAGE_SIZE } from '../../config/ListData.config';
@@ -19,6 +18,8 @@ import dynamic from 'next/dynamic';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmptyStr } from '../utils';
 
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
+
 type ActivityProps = {
   activity: Activity;
 };
@@ -26,15 +27,14 @@ type ActivityProps = {
 export const ViewNewsFeed = () => {
   const { state: { address: myAddress } } = useMyAccount();
 
-  const [items, setItems] = useState([] as Activity[]);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [ items, setItems ] = useState([] as Activity[]);
+  const [ offset, setOffset ] = useState(0);
+  const [ hasMore, setHasMore ] = useState(true);
 
   useEffect(() => {
     if (!myAddress) return;
 
     getNewsArray(0).catch(err => new Error(err));
-
   }, [ myAddress ]);
 
   if (!myAddress) return <NotAuthorized/>;
@@ -42,7 +42,7 @@ export const ViewNewsFeed = () => {
   const getNewsArray = async (actualOffset: number = offset) => {
     const isFirstPage = actualOffset === 0;
     const data = await getNewsFeed(myAddress, actualOffset, INFINITY_LIST_PAGE_SIZE);
-    console.log('Data',actualOffset, data);
+    console.log('Data', actualOffset, data);
     if (data.length < INFINITY_LIST_PAGE_SIZE) setHasMore(false);
     setItems(isFirstPage ? data : items.concat(data));
     setOffset(actualOffset + INFINITY_LIST_PAGE_SIZE);
@@ -52,37 +52,35 @@ export const ViewNewsFeed = () => {
   const NewsFeedArray = items.map((item, id) =>
     <ViewActivity key={id} activity={item} />);
   return (<>
-      <HeadMeta title='Feed' />
-      <Section title={`News Feed (${totalCount})`}>{
-        totalCount === 0
-          ? <NoData description='Your feed is empty'/>
-          :
-          <InfiniteScroll
-            dataLength={totalCount}
-            next={getNewsArray}
-            hasMore={hasMore}
+    <HeadMeta title='Feed' />
+    <Section title={`News Feed (${totalCount})`}>{
+      totalCount === 0
+        ? <NoData description='Your feed is empty'/>
+        : <InfiniteScroll
+          dataLength={totalCount}
+          next={getNewsArray}
+          hasMore={hasMore}
             // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
-            loader={<Loader active inline='centered' />}
-          >
-            {NewsFeedArray}
-          </InfiniteScroll>
-      }</Section>
-    </>
+          loader={<Loader active inline='centered' />}
+        >
+          {NewsFeedArray}
+        </InfiniteScroll>
+    }</Section>
+  </>
   );
 };
 
 export const ViewNotifications = () => {
   const { state: { address: myAddress } } = useMyAccount();
 
-  const [items, setItems] = useState([] as Activity[]);
-  const [hasMore, setHasMore] = useState(true);
-  const [offset, setOffset] = useState(0);
+  const [ items, setItems ] = useState([] as Activity[]);
+  const [ hasMore, setHasMore ] = useState(true);
+  const [ offset, setOffset ] = useState(0);
 
   useEffect(() => {
     if (!myAddress) return;
 
     getNotificationsArray(0).catch(err => new Error(err));
-
   }, [ myAddress ]);
 
   if (!myAddress) return <NotAuthorized/>;
@@ -99,23 +97,22 @@ export const ViewNotifications = () => {
   const NotificationsArray = items.map((item, id) =>
     <Notification key={id} activity={item} />);
   return (<>
-      <HeadMeta title='Notifications' />
-      <Section title={`Notifications (${totalCount})`}>
-        {totalCount === 0
-          ? <NoData description='No notifications for you'/>
-          :
-          <InfiniteScroll
-            dataLength={totalCount}
-            next={getNotificationsArray}
-            hasMore={hasMore}
+    <HeadMeta title='Notifications' />
+    <Section title={`Notifications (${totalCount})`}>
+      {totalCount === 0
+        ? <NoData description='No notifications for you'/>
+        : <InfiniteScroll
+          dataLength={totalCount}
+          next={getNotificationsArray}
+          hasMore={hasMore}
             // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
-            loader={<Loader active inline='centered' />}
-          >
-            {NotificationsArray}
-          </InfiniteScroll>
-        }
-      </Section>
-    </>
+          loader={<Loader active inline='centered' />}
+        >
+          {NotificationsArray}
+        </InfiniteScroll>
+      }
+    </Section>
+  </>
   );
 };
 
@@ -143,8 +140,8 @@ export function Notification (props: ActivityProps) {
   const { activity } = props;
   const { account, event, date, post_id, comment_id, blog_id, agg_count } = activity;
   const formatDate = moment(date).format('lll');
-  const [message, setMessage] = useState('string');
-  const [subject, setSubject] = useState<React.ReactNode>(<></>);
+  const [ message, setMessage ] = useState('string');
+  const [ subject, setSubject ] = useState<React.ReactNode>(<></>);
   const [ image, setImage ] = useState('');
   const [ loading, setLoading ] = useState(true);
   let postId = new PostId(0);
@@ -245,17 +242,17 @@ export function Notification (props: ActivityProps) {
   return loading
     ? <Loading/>
     : <div className='DfNotificationItem'>
-    <AddressComponents
-      value={account}
-      isShort={true}
-      isPadded={false}
-      size={36}
-      date={formatDate}
-      event={message}
-      subject={subject}
-      count={agg_count}
-      asActivity
-    />
-    {isEmptyStr(image) && <DfBgImg width={80} height={60} src={image}/>}
-  </div>;
+      <AddressComponents
+        value={account}
+        isShort={true}
+        isPadded={false}
+        size={36}
+        date={formatDate}
+        event={message}
+        subject={subject}
+        count={agg_count}
+        asActivity
+      />
+      {isEmptyStr(image) && <DfBgImg width={80} height={60} src={image}/>}
+    </div>;
 }

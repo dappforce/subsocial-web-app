@@ -4,32 +4,31 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { BUTTON_SIZE } from '../../config/Size.config';
 import dynamic from 'next/dynamic';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 type Props = {
   accounts?: AccountId[],
-  accountsCount: Number,
+  accountsCount: number,
   title: string,
   open: boolean,
   close: () => void
 };
 
 const InnerAccountsListModal = (props: Props) => {
-
   const { accounts, open, close, title } = props;
 
   const renderAccounts = () => {
     return accounts && accounts.map((account, index) =>
-        <AddressComponents
-          key={index}
-          value={account}
-          isShort={true}
-          isPadded={false}
-          size={30}
-          withFollowButton
-          variant='mini-preview'
-        />
+      <AddressComponents
+        key={index}
+        value={account}
+        isShort={true}
+        isPadded={false}
+        size={30}
+        withFollowButton
+        variant='mini-preview'
+      />
     );
   };
 
