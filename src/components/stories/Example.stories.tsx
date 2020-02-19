@@ -91,6 +91,7 @@ type MenuItem = {
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import AddTeamMemberFormik from "./AddTeamMember/AddTeamMemberFormik";
+import {CompanyData} from "./AddTeamMember/AddTeamMemberFormik";
 
 const MenuItems: MenuItem[] = [
   {
@@ -169,5 +170,19 @@ export const AddTeamMemberExample = () => {
 };
 
 export const AddTeamMemberFormikExample = () => {
-    return (<AddTeamMemberFormik/>);
+  const companyData = [{
+    name: 'Web3 Foundation',
+    id: 1,
+    img: 'https://storage.googleapis.com/job-listing-logos/2ae39131-4f27-4944-b9f2-cd7a2e4e2bef.png',
+  }]
+
+  const employerTypesData = [
+    'qwerty',
+    'asdfgh'
+  ]
+
+  return (<AddTeamMemberFormik
+    companyData={companyData}
+    employerTypesData={employerTypesData}
+  />);
 };
