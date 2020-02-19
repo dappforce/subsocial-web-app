@@ -17,8 +17,11 @@ type Props = BareProps & {
 
 export default class Modal extends React.PureComponent<Props> {
   static Actions = SUIModal.Actions;
+
   static Content = SUIModal.Content;
+
   static Header = SUIModal.Header;
+
   static Description = SUIModal.Description;
 
   render () {

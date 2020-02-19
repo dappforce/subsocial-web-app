@@ -20,7 +20,6 @@ type MyAccountAction = {
 };
 
 function reducer (state: MyAccountState, action: MyAccountAction): MyAccountState {
-
   function forget () {
     console.log('Forget my address');
     store.remove(MY_ADDRESS);
@@ -30,7 +29,6 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
   let address: string | undefined;
 
   switch (action.type) {
-
     case 'reload':
       address = readMyAddress();
       console.log('Reload my address:', address);
@@ -88,13 +86,13 @@ const contextStub: MyAccountContextProps = {
 export const MyAccountContext = createContext<MyAccountContextProps>(contextStub);
 
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [ state, dispatch ] = useReducer(reducer, initialState);
 
   useEffect(() => {
     if (!state.inited) {
       dispatch({ type: 'reload' });
     }
-  }, [state.inited]); // Don't call this effect if `invited` is not changed
+  }, [ state.inited ]); // Don't call this effect if `invited` is not changed
 
   const contextValue = {
     state,

@@ -3,7 +3,6 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
@@ -20,6 +19,7 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -129,13 +129,12 @@ const InnerForm = (props: FormProps) => {
 
     closeModal && closeModal();
 
-    const _id = id ? id : getNewIdFromEvent<PostId>(_txResult);
+    const _id = id || getNewIdFromEvent<PostId>(_txResult);
     _id && isRegularPost && goToView(_id);
   };
 
   const buildTxParams = () => {
     if (isValid || !isRegularPost) {
-
       if (!struct) {
         return [ blogId, ipfsHash, extention ];
       } else {
@@ -153,24 +152,24 @@ const InnerForm = (props: FormProps) => {
   };
 
   const renderTxButton = () => (
-      <TxButton
-        type='submit'
-        size='medium'
-        label={!struct
-          ? `Create a post`
-          : `Update a post`
-        }
-        isDisabled={isSubmitting || (isRegularPost && !dirty)}
-        params={buildTxParams()}
-        tx={struct
-          ? 'blogs.updatePost'
-          : 'blogs.createPost'
-        }
-        onClick={onSubmit}
-        txCancelledCb={onTxCancelled}
-        txFailedCb={onTxFailed}
-        txSuccessCb={onTxSuccess}
-      />
+    <TxButton
+      type='submit'
+      size='medium'
+      label={!struct
+        ? `Create a post`
+        : `Update a post`
+      }
+      isDisabled={isSubmitting || (isRegularPost && !dirty)}
+      params={buildTxParams()}
+      tx={struct
+        ? 'blogs.updatePost'
+        : 'blogs.createPost'
+      }
+      onClick={onSubmit}
+      txCancelledCb={onTxCancelled}
+      txFailedCb={onTxFailed}
+      txSuccessCb={onTxSuccess}
+    />
   );
 
   const form =
@@ -186,7 +185,7 @@ const InnerForm = (props: FormProps) => {
 
           <LabelledField name='body' label='Description' {...props}>
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
-         </LabelledField>
+          </LabelledField>
         </>
         : <>
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
@@ -283,11 +282,9 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
     const toggleTrigger = () => {
       json === undefined && setTrigger(!trigger);
-      return;
     };
 
     useEffect(() => {
-
       if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
       setStruct(structOpt.unwrap());

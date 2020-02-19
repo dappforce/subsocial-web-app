@@ -6,7 +6,6 @@ import * as Yup from 'yup';
 import { Option, Text } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api';
 
@@ -20,6 +19,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
 const SLUG_REGEX = /^[A-Za-z0-9_-]+$/;
@@ -66,13 +66,13 @@ type ValidationProps = {
 };
 
 type OuterProps = ValidationProps & {
-  id?: BlogId,
-  struct?: Blog,
-  json?: BlogContent
+  id?: BlogId;
+  struct?: Blog;
+  json?: BlogContent;
 };
 
 type FormValues = BlogContent & {
-  slug: string
+  slug: string;
 };
 
 type FormProps = OuterProps & FormikProps<FormValues>;
@@ -132,7 +132,7 @@ const InnerForm = (props: FormProps) => {
   const onTxSuccess = (_txResult: SubmittableResult) => {
     setSubmitting(false);
 
-    const _id = id ? id : getNewIdFromEvent<BlogId>(_txResult);
+    const _id = id || getNewIdFromEvent<BlogId>(_txResult);
     _id && goToView(_id);
   };
 
@@ -144,7 +144,7 @@ const InnerForm = (props: FormProps) => {
       // TODO update only dirty values.
       const update = new BlogUpdate({
         // TODO get updated writers from the form
-        writers: new Option(VecAccountId,(struct.writers)),
+        writers: new Option(VecAccountId, (struct.writers)),
         slug: new Option(Text, slug),
         ipfs_hash: new Option(Text, ipfsCid)
       });
@@ -157,48 +157,48 @@ const InnerForm = (props: FormProps) => {
   return (<>
     <HeadMeta title={title}/>
     <Section className='EditEntityBox' title={title}>
-    <Form className='ui form DfForm EditEntityForm'>
+      <Form className='ui form DfForm EditEntityForm'>
 
-      <LabelledText name='name' label='Blog name' placeholder='Name of your blog.' {...props} />
+        <LabelledText name='name' label='Blog name' placeholder='Name of your blog.' {...props} />
 
-      <LabelledText name='slug' label='URL slug' placeholder={`You can use a-z, 0-9, dashes and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
+        <LabelledText name='slug' label='URL slug' placeholder={`You can use a-z, 0-9, dashes and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
 
-      <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
+        <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
 
-      <LabelledField name='desc' label='Description' {...props}>
-        <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
-      </LabelledField>
+        <LabelledField name='desc' label='Description' {...props}>
+          <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
+        </LabelledField>
 
-      {/* TODO tags */}
+        {/* TODO tags */}
 
-      <LabelledField {...props}>
-        <TxButton
-          type='submit'
-          size='medium'
-          label={struct
-            ? 'Update blog'
-            : 'Create new blog'
-          }
-          isDisabled={!dirty || isSubmitting}
-          params={buildTxParams()}
-          tx={struct
-            ? 'blogs.updateBlog'
-            : 'blogs.createBlog'
-          }
-          onClick={onSubmit}
-          txCancelledCb={onTxCancelled}
-          txFailedCb={onTxFailed}
-          txSuccessCb={onTxSuccess}
-        />
-        <Button
-          type='button'
-          size='medium'
-          disabled={!dirty || isSubmitting}
-          onClick={() => resetForm()}
-          content='Reset form'
-        />
-      </LabelledField>
-    </Form>
+        <LabelledField {...props}>
+          <TxButton
+            type='submit'
+            size='medium'
+            label={struct
+              ? 'Update blog'
+              : 'Create new blog'
+            }
+            isDisabled={!dirty || isSubmitting}
+            params={buildTxParams()}
+            tx={struct
+              ? 'blogs.updateBlog'
+              : 'blogs.createBlog'
+            }
+            onClick={onSubmit}
+            txCancelledCb={onTxCancelled}
+            txFailedCb={onTxFailed}
+            txSuccessCb={onTxSuccess}
+          />
+          <Button
+            type='button'
+            size='medium'
+            disabled={!dirty || isSubmitting}
+            onClick={() => resetForm()}
+            content='Reset form'
+          />
+        </LabelledField>
+      </Form>
     </Section>
   </>
   );
@@ -246,7 +246,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
 }
 
 type LoadStructProps = OuterProps & {
-  structOpt: Option<Blog>
+  structOpt: Option<Blog>;
 };
 
 type StructJson = BlogContent | undefined;
@@ -254,7 +254,6 @@ type StructJson = BlogContent | undefined;
 type Struct = Blog | undefined;
 
 function LoadStruct (props: LoadStructProps) {
-
   const { state: { address: myAddress } } = useMyAccount();
   const { structOpt } = props;
   const [ json, setJson ] = useState(undefined as StructJson);
@@ -264,11 +263,9 @@ function LoadStruct (props: LoadStructProps) {
 
   const toggleTrigger = () => {
     json === undefined && setTrigger(!trigger);
-    return;
   };
 
   useEffect(() => {
-
     if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
     setStruct(structOpt.unwrap());

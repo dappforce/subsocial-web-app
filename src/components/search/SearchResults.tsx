@@ -67,12 +67,12 @@ const resultToPreview = (res: DataResults, i: number) => {
 const Previews = (props: Props) => {
   const { results } = props;
   return <div className='DfBgColor'>
-      <ListData
-        dataSource={results}
-        renderItem={(res, i) => resultToPreview(res,i)}
-        noDataDesc='No results found'
-      />
-    </div>;
+    <ListData
+      dataSource={results}
+      renderItem={(res, i) => resultToPreview(res, i)}
+      noDataDesc='No results found'
+    />
+  </div>;
 };
 
 type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
@@ -88,7 +88,7 @@ const Tabs = () => {
 
   const initialTabIndex = getTabIndexFromUrl();
   const initialTabKey = panes[initialTabIndex].key;
-  const [activeTabKey, setActiveTabKey] = useState(initialTabKey);
+  const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
 
   const handleTabChange: OnTabChangeFn = (_event, data) => {
     if (!data || !data.panes) return;
@@ -130,7 +130,7 @@ const App = () => {
       <ReactiveList
         componentId='page'
         dataField='id'
-        react={{ and: ['q', 'tab'] }}
+        react={{ and: [ 'q', 'tab' ] }}
         showResultStats={false}
         URLParams={true}
         loader={' '}

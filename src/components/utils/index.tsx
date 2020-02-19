@@ -1,4 +1,19 @@
+/* eslint-disable no-mixed-operators */
 import BN from 'bn.js';
+
+// Keyring stuff:
+// --------------------------------------
+
+import keyring from '@polkadot/ui-keyring';
+
+// Substrate/Polkadot API utils
+// --------------------------------------
+import { Options as QueryOptions } from '@polkadot/ui-api/with/types';
+
+// Parse URLs
+// --------------------------------------
+
+import queryString from 'query-string';
 
 export const ZERO = new BN(0);
 
@@ -45,11 +60,6 @@ export const parseNumStr = (num: string): number | undefined => {
 export const nonEmptyArr = (x: any): boolean =>
   Array.isArray(x) && x.length > 0;
 
-// Keyring stuff:
-// --------------------------------------
-
-import keyring from '@polkadot/ui-keyring';
-
 export function findNameByAddress (address: string): string | undefined {
   try {
     return keyring.getAccount(address).getMeta().name;
@@ -63,16 +73,11 @@ export function findNameByAddress (address: string): string | undefined {
   }
 }
 
-// Substrate/Polkadot API utils
-// --------------------------------------
-import { Options as QueryOptions } from '@polkadot/ui-api/with/types';
-
 /** Example of apiQuery: 'query.councilElection.round' */
 export function queryToProp (
   apiQuery: string,
   paramNameOrOpts?: string | QueryOptions
 ): [ string, QueryOptions ] {
-
   let paramName: string | undefined;
   let propName: string | undefined;
 
@@ -94,11 +99,6 @@ export function queryToProp (
 export const queryBlogsToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
   return queryToProp(`query.blogs.${storageItem}`, paramNameOrOpts);
 };
-
-// Parse URLs
-// --------------------------------------
-
-import queryString from 'query-string';
 
 export function getUrlParam (location: Location, paramName: string, deflt: string | undefined = undefined): string | undefined {
   const params = queryString.parse(location.search);

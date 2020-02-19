@@ -11,7 +11,6 @@ import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, ZERO } from './index';
-const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { getApi } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
@@ -26,6 +25,7 @@ import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import { isBrowser } from 'react-device-detect';
 import { getJsonFromIpfs } from './OffchainUtils';
+const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 const LIMIT_SUMMARY = 40;
 
@@ -60,7 +60,6 @@ export type Props = MyAccountProps & BareProps & {
 };
 
 function AddressComponents (props: Props) {
-
   const { children,
     myAddress,
     className,
@@ -87,7 +86,6 @@ function AddressComponents (props: Props) {
   const [ profileContent, setProfileContent ] = useState(profileContentInit);
 
   useEffect(() => {
-
     if (!value) return;
 
     let isSubscribe = true;
@@ -124,7 +122,6 @@ function AddressComponents (props: Props) {
     UpdateSocialAccount().catch(console.log);
 
     return () => { isSubscribe = false; };
-
   }, [ value ]);
 
   if (!value) {
@@ -143,8 +140,8 @@ function AddressComponents (props: Props) {
     about
   } = profileContent;
 
-  const [followersOpen, setFollowersOpen] = useState(false);
-  const [followingOpen, setFollowingOpen] = useState(false);
+  const [ followersOpen, setFollowersOpen ] = useState(false);
+  const [ followingOpen, setFollowingOpen ] = useState(false);
 
   const openFollowersModal = () => {
     if (!followers) return;
@@ -265,13 +262,13 @@ function AddressComponents (props: Props) {
               <ReactMarkdown source={summary} linkTarget='_blank' />
             </div>
             <div className='DfPopup-links'>
-            <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
-              <Pluralize count={followers} singularText='Follower'/>
+              <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
+                <Pluralize count={followers} singularText='Follower'/>
+              </div>
+              <div onClick={openFollowingModal} className={`DfPopup-link ${following ? '' : 'disable'}`}>
+                <Pluralize count={following} singularText='Following'/>
+              </div>
             </div>
-            <div onClick={openFollowingModal} className={`DfPopup-link ${following ? '' : 'disable'}`}>
-              <Pluralize count={following} singularText='Following'/>
-            </div>
-          </div>
           </>}
         </div>
         <RenderFollowButton />
@@ -364,9 +361,9 @@ type NameProps = {
 };
 
 const RenderName: FunctionComponent<NameProps> = ({ address, name }) => {
-  const nameAccount = name ? name : findNameByAddress(address);
-  return (nonEmptyStr(nameAccount) ?
-    <div className={'ui--AddressSummary-name'} >
+  const nameAccount = name || findNameByAddress(address);
+  return (nonEmptyStr(nameAccount)
+    ? <div className={'ui--AddressSummary-name'} >
       Name: <b style={{ textTransform: 'uppercase' }}>{nameAccount}</b>
     </div> : null
   );

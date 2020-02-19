@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { withMulti, withCalls } from '@polkadot/ui-api/with';
 import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
-const AddressComponents = dynamic(() => import('./AddressComponents'), { ssr: false });
 import { Post, Blog, PostId, PostContent, BlogContent, BlogId, CommentId, CommentContent, Comment, OptionComment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, VecBlogHistoryRecord, VecPostHistoryRecord, ProfileHistoryRecord, ProfileContent, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '../types';
 import { queryBlogsToProp } from './index';
 import { Option, AccountId } from '@polkadot/types';
@@ -14,6 +13,7 @@ import { withRequireProfile, withSocialAccount, Loading } from './utils';
 import { NoData } from '../utils/DataList';
 import { DfBgImg } from './DfBgImg';
 import dynamic from 'next/dynamic';
+const AddressComponents = dynamic(() => import('./AddressComponents'), { ssr: false });
 
 type ModalController = {
   open: boolean,
@@ -25,7 +25,7 @@ function fillHistory<T extends (BlogHistoryRecord | ProfileHistoryRecord)[]> (hi
 
   const stringForSlugOrUsername = historyLast[0] instanceof ProfileHistoryRecord ? 'username' : 'slug';
 
-  const history = [...historyLast];
+  const history = [ ...historyLast ];
   let ipfsHash = history[0].old_data.ipfs_hash;
   let slug = history[0].old_data.get(stringForSlugOrUsername) as OptionText;
 
@@ -67,7 +67,7 @@ function fillHistory<T extends (BlogHistoryRecord | ProfileHistoryRecord)[]> (hi
 function fillHistoryForPost<T extends PostHistoryRecord[]> (historyLast: T) {
   if (historyLast[0] === undefined) return;
 
-  const history = [...historyLast];
+  const history = [ ...historyLast ];
   let ipfsHash = history[0].old_data.ipfs_hash;
 
   if (ipfsHash.isNone) {
@@ -94,7 +94,6 @@ type PropsCommentFromHistory = {
 };
 
 const CommentFromHistory = (props: PropsCommentFromHistory) => {
-
   const { history: { old_data, edited } } = props;
   const { ipfs_hash } = old_data;
   const [ content, setContent ] = useState({} as CommentContent);
@@ -129,7 +128,6 @@ type CommentHistoryProps = ModalController & {
 };
 
 const InnerCommentHistoryModal = (props: CommentHistoryProps) => {
-
   const { open, close, commentOpt } = props;
 
   if (commentOpt === undefined) return <Modal><Loading /></Modal>;
@@ -140,7 +138,7 @@ const InnerCommentHistoryModal = (props: CommentHistoryProps) => {
   const { edit_history } = comment;
 
   const renderCommentHistory = () => {
-    const commentArrays = edit_history.map((x,index) => <CommentFromHistory history={x} key={index} />);
+    const commentArrays = edit_history.map((x, index) => <CommentFromHistory history={x} key={index} />);
     return commentArrays.reverse();
   };
 
@@ -176,7 +174,6 @@ type PropsPostFromHistory = {
 };
 
 const PostFromHistory = (props: PropsPostFromHistory) => {
-
   const { history: { old_data, edited }, current_data } = props;
   const { ipfs_hash } = old_data;
   const [ content, setContent ] = useState({} as PostContent);
@@ -189,7 +186,7 @@ const PostFromHistory = (props: PropsPostFromHistory) => {
       setContent(data);
     };
     loadData().catch(err => new Error(err));
-  },[ipfsHash]);
+  }, [ ipfsHash ]);
 
   return (<div className='DfModal'>
     <h1 style={{ display: 'flex' }}>
@@ -210,7 +207,6 @@ type PostHistoryProps = ModalController & {
 };
 
 const InnerPostHistoryModal = (props: PostHistoryProps) => {
-
   const { open, close, postOpt } = props;
 
   if (postOpt === undefined) return <Modal><Loading /></Modal>;
@@ -222,7 +218,7 @@ const InnerPostHistoryModal = (props: PostHistoryProps) => {
   const history = fillHistoryForPost<VecPostHistoryRecord>(edit_history);
 
   const renderPostHistory = () => {
-    return history && history.map((x,index) => <PostFromHistory
+    return history && history.map((x, index) => <PostFromHistory
       history={x}
       key={index}
       current_data={{ ipfs_hash: post.ipfs_hash }}
@@ -267,7 +263,6 @@ type PropsBlogFromHistory = {
 };
 
 const BlogFromHistory = (props: PropsBlogFromHistory) => {
-
   const { history: { old_data, edited }, current_data } = props;
   const { ipfs_hash, slug } = old_data;
   const [ content, setContent ] = useState({} as BlogContent);
@@ -282,32 +277,31 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
       setContent(data);
     };
     loadData().catch(err => new Error(err));
-  },[ipfsHash, _slug]);
+  }, [ ipfsHash, _slug ]);
 
   return (<div className='DfModal'>
-      <div className='ui massive relaxed middle aligned list FullProfile'>
-        <div className={`item ProfileDetails MyBlog`}>
+    <div className='ui massive relaxed middle aligned list FullProfile'>
+      <div className={`item ProfileDetails MyBlog`}>
         {content.image
-        ? <DfBgImg className='ui avatar image DfAvatar' src={content.image} size={40} rounded/>
-        : <IdentityIcon className='image' value={edited.account} size={38} />
+          ? <DfBgImg className='ui avatar image DfAvatar' src={content.image} size={40} rounded/>
+          : <IdentityIcon className='image' value={edited.account} size={38} />
         }
-          <div className='DfContent'>
-            <div className='header DfHistoryTitle'>
-              <Link href='#'><a className='handle'>{content.name}</a></Link>
-            </div>
-            <div className='DfDescription'>{`slug: ${_slug}`}</div>
-            <div className='DfDescription'>
-              <ReactMarkdown className='DfMd' source={content.desc} linkTarget='_blank' />
-            </div>
+        <div className='DfContent'>
+          <div className='header DfHistoryTitle'>
+            <Link href='#'><a className='handle'>{content.name}</a></Link>
+          </div>
+          <div className='DfDescription'>{`slug: ${_slug}`}</div>
+          <div className='DfDescription'>
+            <ReactMarkdown className='DfMd' source={content.desc} linkTarget='_blank' />
           </div>
         </div>
       </div>
-      <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
+    </div>
+    <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
   </div>);
 };
 
 const InnerBlogHistoryModal = (props: BlogHistoryProps) => {
-
   const { open, close, blogOpt } = props;
 
   if (blogOpt === undefined) return <Modal><Loading /></Modal>;
@@ -319,7 +313,7 @@ const InnerBlogHistoryModal = (props: BlogHistoryProps) => {
   const history = fillHistory<VecBlogHistoryRecord>(edit_history);
 
   const renderBlogHistory = () => {
-    return history && history.map((x,index) => <BlogFromHistory
+    return history && history.map((x, index) => <BlogFromHistory
       history={x}
       key={index}
       current_data={{ ipfs_hash: blog.ipfs_hash, slug: blog.slug.toString() }}
@@ -367,7 +361,6 @@ type PropsProfileFromHistory = {
 };
 
 const ProfileFromHistory = (props: PropsProfileFromHistory) => {
-
   const { history: { old_data, edited }, current_data } = props;
   const { ipfs_hash, username } = old_data;
   const [ content, setContent ] = useState({} as ProfileContent);
@@ -382,32 +375,31 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
       setContent(data);
     };
     loadData().catch(err => new Error(err));
-  },[ipfsHash, _username]);
+  }, [ ipfsHash, _username ]);
 
   return (<div className='DfModal'>
-      <div className='ui massive relaxed middle aligned list FullProfile'>
-        <div className={`item ProfileDetails MyBlog`}>
+    <div className='ui massive relaxed middle aligned list FullProfile'>
+      <div className={`item ProfileDetails MyBlog`}>
         {content.avatar
-        ? <DfBgImg className='ui avatar image DfAvatar' src={content.avatar} size={40} rounded/>
-        : <IdentityIcon className='image' value={edited.account} size={38} />
+          ? <DfBgImg className='ui avatar image DfAvatar' src={content.avatar} size={40} rounded/>
+          : <IdentityIcon className='image' value={edited.account} size={38} />
         }
-          <div className='content'>
-            <div className='header DfHistoryTitle'>
-              <Link href='#'><a className='handle'>{content.fullname}</a></Link>
-            </div>
-            <div className='about' style={{ margin: '0.2rem' }}>{`username: ${_username}`}</div>
-            <div className='about' style={{ margin: '0.2rem' }}>
-              <ReactMarkdown className='DfMd' source={content.about} linkTarget='_blank' />
-            </div>
+        <div className='content'>
+          <div className='header DfHistoryTitle'>
+            <Link href='#'><a className='handle'>{content.fullname}</a></Link>
+          </div>
+          <div className='about' style={{ margin: '0.2rem' }}>{`username: ${_username}`}</div>
+          <div className='about' style={{ margin: '0.2rem' }}>
+            <ReactMarkdown className='DfMd' source={content.about} linkTarget='_blank' />
           </div>
         </div>
       </div>
-      <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
+    </div>
+    <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
   </div>);
 };
 
 const InnerProfileHistoryModal = (props: ProfileHistoryProps) => {
-
   const { open, close, profile } = props;
 
   if (!profile) return <em>Profile not found</em>;
@@ -417,7 +409,7 @@ const InnerProfileHistoryModal = (props: ProfileHistoryProps) => {
   const history = fillHistory<VecProfileHistoryRecord>(edit_history);
 
   const renderProfileHistory = () => {
-    return history && history.map((x,index) => <ProfileFromHistory
+    return history && history.map((x, index) => <ProfileFromHistory
       history={x}
       key={index}
       current_data={{ ipfs_hash: profile.ipfs_hash, username: profile.username.toString() }}
@@ -445,7 +437,7 @@ export const ProfileHistoryModal = withMulti(
   InnerProfileHistoryModal,
   withCalls<ProfileHistoryProps>(
     queryBlogsToProp('socialAccountById',
-    { paramName: 'id', propName: 'socialAccountOpt' })
+      { paramName: 'id', propName: 'socialAccountOpt' })
   ),
   withRequireProfile,
   withSocialAccount

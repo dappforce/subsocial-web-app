@@ -12,7 +12,6 @@ type State = {
 };
 
 export default class AccountSelector extends React.PureComponent<Props, State> {
-
   state: State = {};
 
   render () {
@@ -27,10 +26,10 @@ export default class AccountSelector extends React.PureComponent<Props, State> {
       />
       <Labelled>
         <Bubble label='Balance'>
-          <Balance params={[accountId]} />
+          <Balance params={[ accountId ]} />
         </Bubble>
         <Bubble label='Transactions'>
-          <Nonce params={[accountId]} />
+          <Nonce params={[ accountId ]} />
         </Bubble>
         <Bubble icon='address card' label='Index'>
           <AccountIndex value={accountId} />

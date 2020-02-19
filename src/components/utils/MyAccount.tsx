@@ -17,7 +17,7 @@ function withMyAddress<P extends MyAccountProps> (Component: React.ComponentType
 }
 
 export const withMyAccount = <P extends MyAccountProps> (Component: React.ComponentType<P>) =>
-withMulti(
-  Component,
-  withMyAddress
-);
+  withMulti(
+    Component,
+    withMyAddress
+  );
