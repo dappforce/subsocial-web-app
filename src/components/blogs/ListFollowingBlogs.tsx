@@ -24,17 +24,17 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   const totalCount = blogsData !== undefined ? blogsData && blogsData.length : 0;
 
   return (<div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta title='Blogs I follow' desc='Subsocial blogs' />
-      <ListData
-        title={<Pluralize count={totalCount} singularText='Following blog'/>}
-        dataSource={blogsData}
-        renderItem={(item,index) => (
-            <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton/>
-        )}
-        noDataDesc='You are not subscribed to any blog'
-        noDataExt={<Button href='/blogs/all'>Show all blogs</Button>}
-      />
-    </div>
+    <HeadMeta title='Blogs I follow' desc='Subsocial blogs' />
+    <ListData
+      title={<Pluralize count={totalCount} singularText='Following blog'/>}
+      dataSource={blogsData}
+      renderItem={(item, index) => (
+        <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton/>
+      )}
+      noDataDesc='You are not subscribed to any blog'
+      noDataExt={<Button href='/blogs/all'>Show all blogs</Button>}
+    />
+  </div>
   );
 };
 

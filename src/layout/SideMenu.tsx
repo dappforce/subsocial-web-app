@@ -13,11 +13,11 @@ import Link from 'next/link';
 
 const appsUrl = process.env.APPS_URL || 'http://127.0.0.1:3002';
 
-type MenuItem = {
-  name: string,
-  page: string[],
-  image: string
-};
+interface MenuItem {
+  name: string;
+  page: string[];
+  image: string;
+}
 
 const InnerMenu = () => {
   const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
@@ -37,7 +37,7 @@ const InnerMenu = () => {
       setLoaded(false);
       const api = await getApi();
       const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
-      const loadBlogs = ids.map(id => loadBlogData(api,id));
+      const loadBlogs = ids.map(id => loadBlogData(api, id));
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);
       isSubscribe && setLoaded(true);
@@ -46,7 +46,7 @@ const InnerMenu = () => {
     loadBlogsData().catch(console.log);
 
     return () => { isSubscribe = false; };
-  }, [ trigerFollowed ,myAddress ]);
+  }, [ trigerFollowed, myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();
@@ -56,7 +56,7 @@ const InnerMenu = () => {
   const DefaultMenu: MenuItem[] = [
     {
       name: 'All blogs',
-      page: ['/blogs/all'],
+      page: [ '/blogs/all' ],
       image: 'global'
     }
   ];
@@ -64,33 +64,33 @@ const InnerMenu = () => {
   const AuthorizedMenu: MenuItem[] = [
     {
       name: 'Feed',
-      page: ['/feed'],
+      page: [ '/feed' ],
       image: 'profile'
     },
     ...DefaultMenu,
     {
       name: 'New blog',
-      page: ['/blogs/new'],
+      page: [ '/blogs/new' ],
       image: 'plus'
     },
     {
       name: 'My blogs',
-      page: ['/blogs/my/[address]', `/blogs/my/${myAddress}`],
+      page: [ '/blogs/my/[address]', `/blogs/my/${myAddress}` ],
       image: 'book'
     },
     {
       name: 'Following blogs',
-      page: ['/blogs/following/[address]', `/blogs/following/${myAddress}`],
+      page: [ '/blogs/following/[address]', `/blogs/following/${myAddress}` ],
       image: 'book'
     },
     {
       name: 'Notifications',
-      page: ['/notifications'],
+      page: [ '/notifications' ],
       image: 'notification'
     },
     {
       name: 'My profile',
-      page: ['/profile/[address]', `/profile/${myAddress}`],
+      page: [ '/profile/[address]', `/profile/${myAddress}` ],
       image: 'idcard'
     }
   ];
@@ -99,24 +99,24 @@ const InnerMenu = () => {
 
   return (
     <Menu
-        selectedKeys={[pathname]}
-        mode='inline'
-        theme='light'
-        style={{ height: '100%', borderRight: 0 }}
+      selectedKeys={[ pathname ]}
+      mode='inline'
+      theme='light'
+      style={{ height: '100%', borderRight: 0 }}
     >
       {MenuItems.map(item =>
-      <Menu.Item key={item.page[0]} onClick={() => onClick(item.page)}>
-        <Link href={item.page[0]} as={item.page[1]}>
-          <a>
-            <Icon type={item.image} />
-            <span>{item.name}</span>
-          </a>
-        </Link>
-      </Menu.Item>)}
+        <Menu.Item key={item.page[0]} onClick={() => onClick(item.page)}>
+          <Link href={item.page[0]} as={item.page[1]}>
+            <a>
+              <Icon type={item.image} />
+              <span>{item.name}</span>
+            </a>
+          </Link>
+        </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
         <a href={appsUrl}>
-        <Icon type='exception' />
+          <Icon type='exception' />
           <span>Advanced</span>
         </a>
       </Menu.Item>

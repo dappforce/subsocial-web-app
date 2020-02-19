@@ -1,5 +1,4 @@
 
-
 import { KeyringOptions } from '@polkadot/ui-keyring/options/types';
 import { QueueStatus, QueueTx, QueueAction$Add } from '@polkadot/ui-app/Status/types';
 import { I18nProps } from '@polkadot/ui-app/types';
@@ -15,9 +14,9 @@ import { xxhashAsHex } from '@polkadot/util-crypto';
 type Props = I18nProps & {
   optionsAll?: KeyringOptions,
   queueAction: QueueAction$Add,
-  stqueue: Array<QueueStatus>,
-  system_events?: Array<EventRecord>,
-  txqueue: Array<QueueTx>
+  stqueue: QueueStatus[],
+  system_events?: EventRecord[],
+  txqueue: QueueTx[]
 };
 
 let prevEventHash: string;

@@ -12,6 +12,7 @@ import { Hash } from '@polkadot/types';
 
 export default class ApiSigner implements Signer {
   private _queueExtrinsic: QueueTx$ExtrinsicAdd;
+
   private _queueSetTxStatus: QueueTx$MessageSetStatus;
 
   constructor (queueExtrinsic: QueueTx$ExtrinsicAdd, queueSetTxStatus: QueueTx$MessageSetStatus) {

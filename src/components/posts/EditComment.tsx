@@ -4,7 +4,6 @@ import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
 import dynamic from 'next/dynamic';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import * as DfForms from '../utils/forms';
@@ -19,6 +18,7 @@ import { PostId, CommentId, Comment, CommentUpdate, CommentContent } from '../ty
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
 import { NoData } from '../utils/DataList';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
@@ -154,28 +154,28 @@ const InnerForm = (props: FormProps) => {
 
       <LabelledField {...props}>
         <>
-        <TxButton
-          type='submit'
-          label={!struct
-            ? `Comment`
-            : `Update my comment`
-          }
-          isDisabled={!dirty || isSubmitting}
-          params={buildTxParams()}
-          tx={struct
-            ? 'blogs.updateComment'
-            : 'blogs.createComment'
-          }
-          onClick={onSubmit}
-          txCancelledCb={onTxCancelled}
-          txFailedCb={onTxFailed}
-          txSuccessCb={onTxSuccess}
-        />
-        {!isNewRoot && <Button
-          type='button'
-          onClick={onSuccess}
-          content='Cancel'
-        />}
+          <TxButton
+            type='submit'
+            label={!struct
+              ? `Comment`
+              : `Update my comment`
+            }
+            isDisabled={!dirty || isSubmitting}
+            params={buildTxParams()}
+            tx={struct
+              ? 'blogs.updateComment'
+              : 'blogs.createComment'
+            }
+            onClick={onSubmit}
+            txCancelledCb={onTxCancelled}
+            txFailedCb={onTxFailed}
+            txSuccessCb={onTxSuccess}
+          />
+          {!isNewRoot && <Button
+            type='button'
+            onClick={onSuccess}
+            content='Cancel'
+          />}
         </>
       </LabelledField>
     </Form>);
@@ -225,11 +225,9 @@ function LoadStruct (props: LoadStructProps) {
 
   const toggleTrigger = () => {
     json === undefined && setTrigger(!trigger);
-    return;
   };
 
   useEffect(() => {
-
     if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
     setStruct(structOpt.unwrap());
@@ -253,7 +251,6 @@ function LoadStruct (props: LoadStructProps) {
   }
 
   return <EditForm {...props} struct={struct} json={json as CommentContent} />;
-
 }
 
 export const EditComment = withMulti<LoadStructProps>(

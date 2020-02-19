@@ -4,19 +4,18 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { BUTTON_SIZE } from '../../config/Size.config';
 import dynamic from 'next/dynamic';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type Props = {
   following?: AccountId[],
-  followingCount: Number
+  followingCount: number
 };
 
 const InnerFollowingModal = (props: Props) => {
-
   const { following, followingCount } = props;
-  const [open, setOpen] = useState(false);
+  const [ open, setOpen ] = useState(false);
 
   const renderFollowing = () => {
     return following && following.map((account, index) =>

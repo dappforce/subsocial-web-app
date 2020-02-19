@@ -29,14 +29,14 @@ export function LabelledField<FormValues = FormValuesType> () {
     </>;
     return (label || invisibleLabel)
       ? <div className={`ui--Labelled field ${hasError ? 'error' : ''}`}>
-          <label htmlFor={name as string}>{nonEmptyStr(label) && label + ':'}</label>
-          <div className='ui--Labelled-content'>
-            {fieldWithError}
-          </div>
-        </div>
-      : <div className={`field ${hasError ? 'error' : ''}`}>
+        <label htmlFor={name as string}>{nonEmptyStr(label) && label + ':'}</label>
+        <div className='ui--Labelled-content'>
           {fieldWithError}
-        </div>;
+        </div>
+      </div>
+      : <div className={`field ${hasError ? 'error' : ''}`}>
+        {fieldWithError}
+      </div>;
   };
 }
 

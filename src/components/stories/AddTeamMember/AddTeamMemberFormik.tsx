@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {withFormik, FormikProps, Form, Field} from 'formik';
 import * as DfForms from '../../utils/forms';
-import SimpleMDEReact from "react-simplemde-editor";
+import SimpleMDEReact from 'react-simplemde-editor';
 import {Switch, DatePicker, Button} from 'antd';
-import {Moment} from "moment-timezone/moment-timezone";
-import moment from "moment-timezone";
-import * as Yup from "yup";
-import HeadMeta from "../../utils/HeadMeta";
-import Section from "../../utils/Section";
+import {Moment} from 'moment-timezone/moment-timezone';
+import moment from 'moment-timezone';
+import * as Yup from 'yup';
+import HeadMeta from '../../utils/HeadMeta';
+import Section from '../../utils/Section';
 
 import './addTeamMember.css';
 
@@ -17,12 +17,12 @@ const LabelledText = DfForms.LabelledText<FormValues>();
 // Shape of form values
 interface FormValues {
     title: string,
-    employment_type: string,
+    employmentType: string,
     company: string
     location: string
     startDate: Moment
     endDate: Moment
-    description: any,
+    description: string,
     switchField: boolean
 }
 
@@ -30,9 +30,13 @@ interface OtherProps {
     message: string;
 }
 
-type Company = { id: number, name: string, img: string };
-type CompanyData = Array<Company>;
+type Company = { 
+  id: number, 
+  name: string, 
+  img: string 
+};
 
+type CompanyData = Array<Company>;
 
 // Aside: You may see InjectedFormikProps<OtherProps, FormValues> instead of what comes below in older code.. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
@@ -50,10 +54,19 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         switchField
     } = values;
 
-    const [companyPrefix, setCompanyPrefix] = useState('');
-    const [companyAutocomplete, setCompanyAutocomplete] = useState<CompanyData>([]);
+    const fields = {
+      description: 'description' as 'description',
+      company: 'company' as 'company',
+      startDate: 'startDate' as 'startDate',
+      endDate: 'endDate' as 'endDate',
+      switchField: 'switchField' as 'switchField',
+      location: 'location' as 'location',
+      employmentType: 'employmentType' as 'employmentType',
+      title: 'title' as 'title',
+    }
 
-    console.log('Prefix: ', companyPrefix);
+    const [companyLogo, setCompanyLogo] = useState<string | undefined>(undefined);
+    const [companyAutocomplete, setCompanyAutocomplete] = useState<CompanyData>([]);
 
     const handleCompanyChange = (e: React.FormEvent<HTMLInputElement>) => {
         let companyData: CompanyData = [{
@@ -66,8 +79,8 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             setCompanyAutocomplete([]);
         }
 
-        setFieldValue('company', e.currentTarget.value);
-        setCompanyPrefix('');
+        setFieldValue(fields.company, e.currentTarget.value);
+        setCompanyLogo('');
 
         if (company) {
             company.toLowerCase();
@@ -80,113 +93,106 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         }
     };
 
-    let handleAutocomplete = (data: Company) => {
-        setFieldValue('company', data.name);
+    const handleAutocomplete = (data: Company) => {
+        setFieldValue(fields.company, data.name);
 
         setCompanyAutocomplete([]);
-        setCompanyPrefix(data.img);
+        setCompanyLogo(data.img);
     };
 
-    let handleSwitch = () => {
-        setFieldValue('switchField', !switchField);
+    const handleSwitch = () => {
+        setFieldValue(fields.switchField, !switchField);
     };
 
-    let disabledStartDate = (current: Moment | null) => {
-        if (current === null) return true;
+    const disabledStartEndDate = (current: Moment | null) => {
+        if (!current) return true;
         return moment().diff(current, 'days') <= 0;
     };
 
-    let disabledEndDate = (current: Moment | null) => {
-        if (current === null) return true;
-        return moment().diff(current, 'days') > 0;
-    };
+    return <>
+    <HeadMeta title={'Add Team Member'} />
+    <Section className='EditEntityBox' title={'Add Team Member'}>
+        <Form className='ui form DfForm EditEntityForm'>
+            <LabelledText name='title' label='Title' placeholder='Your title' {...props} />
 
-    return (
-        <>
-            <HeadMeta title={'Add Team Member'}/>
-            <Section className='EditEntityBox' title={'Add Team Member'}>
-                <Form className='ui form DfForm EditEntityForm'>
-                    <LabelledText name='title' label='Title' placeholder='Your title' {...props} />
+            <LabelledField name={fields.employmentType} label='Employment Type' {...props}>
+                <Field component="select" name={fields.employmentType}>
+                    <option value="">-</option>
+                    <option value="type1">type1</option>
+                    <option value="type2">type2</option>
+                    <option value="type3">type3</option>
+                </Field>
+            </LabelledField>
 
-                    <LabelledField name='employment_type' label='Employment Type' {...props}>
-                        <Field component="select" name="employment_type">
-                            <option value="">-</option>
-                            <option value="type1">type1</option>
-                            <option value="type2">type2</option>
-                            <option value="type3">type3</option>
-                        </Field>
-                    </LabelledField>
+            <LabelledField name={fields.company} label='Company' {...props}>
+              <div className={companyLogo?'atm_company_wrapper with_prefix':'atm_company_wrapper'}>
+                <Field name={fields.company}
+                        type={'text'}
+                        value={company}
+                        onChange={handleCompanyChange}
+                        autocomplete={'off'}
+                />
+                <div className={'atm_prefix'}>
+                  <img src={companyLogo} />
+                </div>
+              </div>
+            </LabelledField>
+            <div className="atm_company_autocomplete_wrapper">
+              {companyAutocomplete.map((x) => (
+                <div className={'atm_company_autocomplete'} 
+                    key={`${x.id}`} 
+                    onClick={() => handleAutocomplete(x)}>
+                <img src={x.img} />
+                <span>{x.name}</span>
+              </div>))}
+            </div>
 
-                    <LabelledField name='company' label='Company' {...props}>
-                        <Field name="company"
-                               type={'text'}
-                               value={company}
-                               onChange={handleCompanyChange}
-                        />
-                    </LabelledField>
-                    {companyAutocomplete.map((i) => {
-                        return (
-                            <div className={'atm_company_autocomplete'}
-                                 key={`${i.id}`}
-                                 onClick={() => handleAutocomplete(i)}
-                            >
-                                <img src={i.img}/>
-                                <span>{i.name}</span>
-                            </div>
-                        );
-                    })}
+            <LabelledText name={fields.location} 
+                          label='Location'
+                          placeholder='Ex: London, United Kingdom' {...props} />
 
-                    <LabelledText name='location' label='Location'
-                                  placeholder='Ex: London, United Kingdom' {...props} />
+            <div className={'atm_switch_wrapper'}>
+                <Switch onChange={handleSwitch} checked={switchField} />
+                <div className={'atm_switch_label'}>I am currently working in this role.</div>
+            </div>
 
-                    <div className={'atm_switch_wrapper'}>
-                        <Switch onChange={handleSwitch} checked={switchField}/>
-                        <div className={'atm_switch_label'}>I am currently working in this role.</div>
-                    </div>
+            <div className={'atm_dates_wrapper'}>
+                <LabelledField name={fields.startDate} label='Start Date' {...props}>
+                    <DatePicker name={fields.startDate}
+                                value={startDate}
+                                onChange={(date) => setFieldValue(fields.startDate, date)}
+                                disabledDate={disabledStartEndDate}
+                    />
+                </LabelledField>
 
-                    <div className={'atm_dates_wrapper'}>
+                <LabelledField name={fields.endDate} label='End Date' {...props}>
+                {switchField === true ?
+                    <div>Present</div>
+                    :
+                    <DatePicker name={fields.endDate}
+                                value={endDate}
+                                onChange={(date) => setFieldValue(fields.endDate, date)}
+                                disabledDate={disabledStartEndDate}
+                    />
+                }
+                </LabelledField>
+            </div>
 
-                        <LabelledField name='startDate' label='Start Date' {...props}>
-                            <DatePicker name={'startDate'}
-                                        value={startDate}
-                                        onChange={(date) => setFieldValue('startDate', date)}
-                                        disabledDate={disabledStartDate}
-                            />
-                        </LabelledField>
+            <LabelledField name={fields.description} label='Description' {...props}>
+                <Field component={SimpleMDEReact}
+                        name={fields.description}
+                        value={description}
+                        onChange={(data: string) => setFieldValue(fields.description, data)}
+                        className={`DfMdEditor ${errors[fields.description] && 'error'}`} />
+            </LabelledField>
 
-
-                        {switchField === true ?
-                            <LabelledField name='endDate' label='End Date' {...props}>
-                                <div>Present</div>
-                            </LabelledField>
-                            :
-                            <LabelledField name='endDate' label='End Date' {...props}>
-                                <DatePicker name={'endDate'}
-                                            value={endDate}
-                                            onChange={(date) => setFieldValue('endDate', date)}
-                                            disabledDate={disabledEndDate}
-                                />
-                            </LabelledField>
-                        }
-                    </div>
-
-                    <LabelledField name='description' label='Description' {...props}>
-                        <Field component={SimpleMDEReact}
-                               name='description'
-                               value={description}
-                               onChange={(data: string) => setFieldValue('description', data)}
-                               className={`DfMdEditor ${errors['description'] && 'error'}`}/>
-                    </LabelledField>
-
-                    <Button type="primary" htmlType="submit" disabled={false} className={'atm_submit_button'}>
-                        Save
-                    </Button>
-                </Form>
-            </Section>
-        </>
-    );
+            <Button type="primary" htmlType="submit" disabled={false} className={'atm_submit_button'}>
+                Save
+            </Button>
+        </Form>
+    </Section>
+</>
 };
-
 
 // Validation
 const TITLE_REGEX = /^[A-Za-z0-9_-]+$/;
@@ -223,9 +229,9 @@ const buildSchema = () => Yup.object().shape({
     ),
     endDate: Yup.object().test(
         "endDate",
-        "End date should not be in past",
+        "End date should not be in future",
         value => {
-            return value ? moment().diff(value, 'days') <= 0 : true;
+            return value ? moment().diff(value, 'days') >= 0 : true;
         }
     ),
     description: Yup.string()
@@ -239,13 +245,13 @@ interface MyFormProps {
 }
 
 // Wrap our form with the withFormik HoC
-const MyForm = withFormik<MyFormProps, FormValues>({
+const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
     // Transform outer props into form values
     mapPropsToValues: props => {
         return {
             title: props.initialTitle || '',
             description: '',
-            employment_type: '',
+            employmentType: '',
             company: '',
             location: '',
             startDate: moment(new Date()).add(-1, 'days'),
@@ -260,10 +266,5 @@ const MyForm = withFormik<MyFormProps, FormValues>({
         console.log(values)
     },
 })(InnerForm);
-
-// Use <MyForm /> wherevs
-const AddTeamMemberFormik = () => (
-    <MyForm message="Sign up"/>
-);
 
 export default AddTeamMemberFormik;

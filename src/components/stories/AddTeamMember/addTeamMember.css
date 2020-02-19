@@ -54,3 +54,37 @@
 .atm_dates_wrapper input {
     padding: 1.286rem!important;
 }
+.atm_company_autocomplete_wrapper {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: #fff;
+    width: 100%;
+}
+.atm_company_autocomplete {
+    display: flex;
+    height: 2rem;
+    -webkit-box-align: center;
+    align-items: center;
+    margin-left: .5rem;
+    cursor: pointer;
+}
+.atm_company_autocomplete img {
+    height: 2rem;
+    margin-right: .5rem;
+}
+
+.atm_company_wrapper {
+    position: relative; 
+}
+.atm_company_wrapper.with_prefix input {
+    padding-left: 2.5rem!important;
+}
+.atm_prefix {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+}
+.atm_prefix img {
+    height: 1.5rem;
+}

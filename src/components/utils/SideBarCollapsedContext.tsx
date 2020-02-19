@@ -17,11 +17,9 @@ type SidebarCollapsedAction = {
 };
 
 function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction): SidebarCollapsedState {
-
   let collapsed: boolean | undefined;
 
   switch (action.type) {
-
     case 'reload':
       collapsed = isMobile;
       console.log('Reload collapsed:', collapsed);
@@ -33,7 +31,7 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
       if (collapsed !== state.collapsed) {
         console.log('Set new collapsed:', collapsed);
         store.set(SIDEBAR_COLLAPSED, collapsed);
-        return { ...state, collapsed, trigerFollowed: trigerFollowed ,inited: true };
+        return { ...state, collapsed, trigerFollowed: trigerFollowed, inited: true };
       }
       return state;
 
@@ -75,13 +73,13 @@ const contextStub: SidebarCollapsedContextProps = {
 export const SidebarCollapsedContext = createContext<SidebarCollapsedContextProps>(contextStub);
 
 export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [ state, dispatch ] = useReducer(reducer, initialState);
 
   useEffect(() => {
     if (!state.inited) {
       dispatch({ type: 'reload' });
     }
-  }, [state.inited]); // Don't call this effect if `invited` is not changed
+  }, [ state.inited ]); // Don't call this effect if `invited` is not changed
 
   const contextValue = {
     state,

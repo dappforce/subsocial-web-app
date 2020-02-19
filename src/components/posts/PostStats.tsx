@@ -10,16 +10,16 @@ import { withCalls, withMulti } from '@polkadot/ui-api';
 import { queryBlogsToProp } from '../utils';
 
 type StatsProps = {
-  id: PostId,
+  id: PostId
   postById?: Option<Post>
 };
 
 const InnerStatsPanel = (props: StatsProps) => {
   const { postById } = props;
 
-  const [commentsSection, setCommentsSection] = useState(false);
-  const [postVotersOpen, setPostVotersOpen] = useState(false);
-  const [activeVoters, setActiveVoters] = useState(0);
+  const [ commentsSection, setCommentsSection ] = useState(false);
+  const [ postVotersOpen, setPostVotersOpen ] = useState(false);
+  const [ activeVoters, setActiveVoters ] = useState(0);
 
   const openVoters = (type: ActiveVoters) => {
     setPostVotersOpen(true);

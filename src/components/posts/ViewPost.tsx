@@ -11,11 +11,8 @@ import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
-const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
-const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { ShareModal } from './ShareModal';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
@@ -29,6 +26,9 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
+const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
+const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
 const LIMIT_SUMMARY = isMobile ? 75 : 150;
@@ -42,36 +42,36 @@ type PostExtContent = PostContent & {
 };
 
 export type PostData = {
-  post?: Post,
-  initialContent?: PostExtContent
+  post?: Post;
+  initialContent?: PostExtContent;
 };
 
 export type PostDataListItem = {
-  postData: PostData,
-  postExtData: PostData
+  postData: PostData;
+  postExtData: PostData;
 };
 
 type ViewPostProps = {
-  variant: PostVariant,
-  withLink?: boolean,
-  withCreatedBy?: boolean,
-  withStats?: boolean,
-  withActions?: boolean,
-  withBlogName?: boolean,
-  id?: PostId,
-  commentIds?: CommentId[]
+  variant: PostVariant;
+  withLink?: boolean;
+  withCreatedBy?: boolean;
+  withStats?: boolean;
+  withActions?: boolean;
+  withBlogName?: boolean;
+  id?: PostId;
+  commentIds?: CommentId[];
 };
 
 type ViewPostPageProps = {
-  variant: PostVariant,
-  withLink?: boolean,
-  withCreatedBy?: boolean,
-  withStats?: boolean,
-  withActions?: boolean,
-  withBlogName?: boolean,
-  postData: PostData,
-  postExtData?: PostData,
-  commentIds?: CommentId[]
+  variant: PostVariant;
+  withLink?: boolean;
+  withCreatedBy?: boolean;
+  withStats?: boolean;
+  withActions?: boolean;
+  withBlogName?: boolean;
+  postData: PostData;
+  postExtData?: PostData;
+  commentIds?: CommentId[];
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
@@ -100,13 +100,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
   const { state: { address } } = useMyAccount();
-  const [ content , setContent ] = useState(initialContent);
+  const [ content, setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
 
   const originalPost = postExtData && postExtData.post;
-  const [ originalContent , setOriginalContent ] = useState(postExtData && postExtData.initialContent);
+  const [ originalContent, setOriginalContent ] = useState(postExtData && postExtData.initialContent);
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -119,21 +119,20 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   }, [ false ]);
 
   type DropdownProps = {
-    account: string | AccountId
+    account: string | AccountId;
   };
 
   const RenderDropDownMenu = (props: DropdownProps) => {
-
     const isMyStruct = address === props.account;
 
-    const [open, setOpen] = useState(false);
+    const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
       <Menu>
         {isMyStruct && <Menu.Item key='0'>
-        <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
+          <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -142,11 +141,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     );
 
     return (<>
-    {showDropdown &&
+      {showDropdown &&
       <Dropdown overlay={menu} placement='bottomRight'>
-      <Icon type='ellipsis' />
-    </Dropdown>}
-    {open && <PostHistoryModal id={id} open={open} close={close} />}
+        <Icon type='ellipsis' />
+      </Dropdown>}
+      {open && <PostHistoryModal id={id} open={open} close={close} />}
     </>);
   };
 
@@ -163,7 +162,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderPostCreator = (post: Post, size?: number) => {
     if (isEmpty(post)) return null;
-    const { blog_id , created: { account, time } } = post;
+    const { blog_id, created: { account, time } } = post;
     return <>
       <AddressComponents
         value={account}
@@ -190,7 +189,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     return <div className='DfContent'>
       <div className='DfPostText'>
-        {renderNameOnly(title ? title : summary, post.id)}
+        {renderNameOnly(title || summary, post.id)}
         <div className='DfSummary'>
           <ReactMarkdown className='DfMd' source={summary} linkTarget='_blank' />
         </div>
@@ -200,42 +199,42 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const RenderActionsPanel = () => {
-    const [open, setOpen] = useState(false);
+    const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
     return (
-    <div className='DfActionsPanel'>
-      <div className='DfAction'><Voter struct={post} type={'Post'} /></div>
-      <div
-        className='ui tiny button basic DfAction'
-        onClick={() => setCommentsSection(!commentsSection)}
-      >
-        <Icon type='message' />
+      <div className='DfActionsPanel'>
+        <div className='DfAction'><Voter struct={post} type={'Post'} /></div>
+        <div
+          className='ui tiny button basic DfAction'
+          onClick={() => setCommentsSection(!commentsSection)}
+        >
+          <Icon type='message' />
         Comment
-      </div>
-      <div
-        className='ui tiny button basic DfAction'
-        onClick={() => setOpen(true)}
-      >
-        <Icon type='share-alt' />
+        </div>
+        <div
+          className='ui tiny button basic DfAction'
+          onClick={() => setOpen(true)}
+        >
+          <Icon type='share-alt' />
         Share
-      </div>
-      {open && <ShareModal postId={isRegularPost ? id : originalPost && originalPost.id} open={open} close={close} />}
-    </div>);
+        </div>
+        {open && <ShareModal postId={isRegularPost ? id : originalPost && originalPost.id} open={open} close={close} />}
+      </div>);
   };
 
   const renderRegularPreview = () => {
     return <>
       <Segment className={`DfPostPreview`}>
-      <div className='DfInfo'>
-        <div className='DfRow'>
-          {renderPostCreator(post)}
-          <RenderDropDownMenu account={created.account}/>
+        <div className='DfInfo'>
+          <div className='DfRow'>
+            {renderPostCreator(post)}
+            <RenderDropDownMenu account={created.account}/>
+          </div>
+          {renderContent(post, content)}
         </div>
-        {renderContent(post, content)}
-      </div>
-      {withStats && <StatsPanel id={post.id}/>}
-      {withActions && <RenderActionsPanel/>}
-      {commentsSection && <CommentsByPost postId={post.id} post={post} />}
+        {withStats && <StatsPanel id={post.id}/>}
+        {withActions && <RenderActionsPanel/>}
+        {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
     </>;
   };
@@ -245,12 +244,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const account = originalPost.created.account;
     return <>
       <Segment className={`DfPostPreview`}>
-          <div className='DfRow'>
-            {renderPostCreator(post)}
-            <RenderDropDownMenu account={created.account}/>
-          </div>
+        <div className='DfRow'>
+          {renderPostCreator(post)}
+          <RenderDropDownMenu account={created.account}/>
+        </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
-        {/* TODO add body*/}
+        {/* TODO add body */}
         <Segment className='DfPostPreview'>
           <div className='DfInfo'>
             <div className='DfRow'>
@@ -392,7 +391,7 @@ export const loadPostData = async (api: ApiPromise, postId: PostId) => {
 
 export const loadExtPost = async (api: ApiPromise, post: Post) => {
   const { isSharedPost, extension } = post;
-  let postData: PostData = {};
+  const postData: PostData = {};
 
   if (isSharedPost) {
     const postId = extension.value as PostId;

@@ -5,7 +5,6 @@ let api: (ApiPromise | undefined);
 
 export { api };
 export class SubstrateApi {
-
   protected api!: ApiPromise;
 
   public setup = async () => {
@@ -37,7 +36,7 @@ export class SubstrateApi {
     const system = this.api.rpc.system;
 
     const [ chain, nodeName, nodeVersion ] = await Promise.all(
-    [ system.chain(), system.name(), system.version() ]);
+      [ system.chain(), system.name(), system.version() ]);
 
     console.log(`Connected to chain '${chain}' (${nodeName} v${nodeVersion})`);
   }
