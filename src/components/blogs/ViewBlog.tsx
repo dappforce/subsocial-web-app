@@ -53,13 +53,10 @@ type Props = {
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void,
-  temp?: any
 };
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const { blog } = props.blogData;
-
-  console.log(props.temp)
 
   if (!blog) return <NoData description={<span>Blog not found</span>} />;
 
@@ -293,10 +290,10 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
 };
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const blogId = props.query.blogId;
+  //const blogId = props.query.blogId;
   const api = await getApi();
 
-  //const blogId = await api.query.blogs.blogIdBySlug('merov') as unknown as string;
+  const blogId = await api.query.blogs.blogIdBySlug(props.query.blogId as string) as unknown as string;
   
   const blogData = await loadBlogData(api, new BlogId(blogId as string));
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
@@ -304,7 +301,6 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   return {
     blogData,
     posts,
-    temp: blogId
   };
 };
 
