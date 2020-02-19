@@ -293,7 +293,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   //const blogId = props.query.blogId;
   const api = await getApi();
 
-  const blogId = await api.query.blogs.blogIdBySlug(props.query.blogId as string) as unknown as string;
+  const blogId = await api.query.blogs.blogIdBySlug(props.query.blogId as string).toString();
   
   const blogData = await loadBlogData(api, new BlogId(blogId as string));
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
