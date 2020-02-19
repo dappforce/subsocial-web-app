@@ -18,6 +18,9 @@ type Props = I18nProps & {
 
 export const ListBlog: NextPage<Props> = (props: Props) => {
   const { totalCount, blogsData } = props;
+
+  //console.log('blogs data: ', blogsData);
+
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <HeadMeta title='All blogs' desc='Subsocial blogs' />
