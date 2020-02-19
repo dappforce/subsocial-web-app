@@ -1,20 +1,8 @@
 {
+  "extends": "./node_modules/@polkadot/dev/config/tsconfig",
   "compilerOptions": {
     "skipLibCheck": true,
     "baseUrl": ".",
-    "outDir": "build",
-    "target": "esnext",
-    "module": "esnext",
-    "jsx": "preserve",
-    "strict": true,
-    "isolatedModules": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noImplicitReturns": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -23,15 +11,20 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "resolveJsonModule": true
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "typeRoots": [
     "./node_modules/@polkadot/ts",
     "./node_modules/@types"
   ],
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx", ".next/blogs.tsx", "src/pages/_app.js"
+    "**/*.tsx"
   ]
 }
