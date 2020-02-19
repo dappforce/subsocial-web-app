@@ -1,0 +1,51 @@
+.teamMembers {
+	width: 600px;
+}
+.teamMembers .tm_header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+	padding: 0 20px;
+}
+.teamMembers .tm_header h2 {
+	margin-bottom: 0;
+}
+.teamMembers .tm_plus_icon {
+	font-size: 2em;
+    cursor: pointer;
+}
+
+.teamMembers .tm_item {
+	display: flex;
+    border-top: 1px solid #D3D3D3;
+	padding: 20px;
+}
+.teamMembers .tm_item_avatar {
+	width: 100px;
+    height: 100px;
+}
+.teamMembers .tm_item_right_content {
+	width: 80%;
+    display: flex;
+    justify-content: space-between;
+    margin-left: 10px;
+}
+.teamMembers .tm_item_f_col {}
+.teamMembers .tm_item_position {
+	font-weight: 600;
+    margin-top: 10px;
+}
+.teamMembers .tm_item_company {}
+.teamMembers .tm_item_lastupdate {
+    color: #d3d3d3;
+}
+.teamMembers .tm_item_s_col {}
+.teamMembers .tm_edit_icon {
+	font-size: 1.4em;
+	cursor: pointer;
+	display: none;
+}
+.teamMembers .tm_item:hover .tm_edit_icon {
+	display: inline-block;
+}
