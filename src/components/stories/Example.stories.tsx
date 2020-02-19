@@ -5,11 +5,14 @@ import { withKnobs } from '@storybook/addon-knobs';
 import { Menu, Icon, Button, Avatar } from 'antd';
 import ListForumTopics from './ListForumTopics';
 import ViewForum from './ViewForum';
+import TeamMembers from './TeamMembers/TeamMembers';
+import AddTeamMember from './AddTeamMember/AddTeamMember';
 
 const { SubMenu } = Menu;
 import faker from 'faker';
 
 import './style.css';
+import '../utils/styles/subsocial.css';
 
 const items = [{ avatar: faker.image.avatar(),name: faker.company.companyName() },
   { avatar: faker.image.avatar(),name: faker.company.companyName() },
@@ -87,6 +90,7 @@ type MenuItem = {
 };
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import AddTeamMemberFormik from "./AddTeamMember/AddTeamMemberFormik";
 
 const MenuItems: MenuItem[] = [
   {
@@ -154,4 +158,16 @@ export const ListForum = () => {
 
 export const Forum = () => {
   return (<ViewForum/>);
-}
+};
+
+export const TeamMembersExample = () => {
+  return (<TeamMembers/>);
+};
+
+export const AddTeamMemberExample = () => {
+  return (<AddTeamMember/>);
+};
+
+export const AddTeamMemberFormikExample = () => {
+    return (<AddTeamMemberFormik/>);
+};
