@@ -85,10 +85,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const [ content, setContent ] = useState(initialContent);
+  const [content, setContent] = useState(initialContent);
   const { desc, name, image } = content;
 
-  const [ followersOpen, setFollowersOpen ] = useState(false);
+  const [followersOpen, setFollowersOpen] = useState(false);
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -100,14 +100,14 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     }).catch(err => console.log(err));
 
     return () => { isSubscribe = false; };
-  }, [ false ]);
+  }, [false]);
 
   const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
-    const [ open, setOpen ] = useState(false);
+    const [open, setOpen] = useState(false);
     const close = () => setOpen(false);
     const showDropdown = isMyBlog || edit_history.length > 0;
 
@@ -141,7 +141,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderDropDownPreview = () => (
     <div className={`item ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded />
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
       }
       <div className='content'>
@@ -153,7 +153,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderMiniPreview = () => (
     <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       {hasImage
-        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded />
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
       }
       <div className='content'>
@@ -166,7 +166,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} rounded/>
+          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} rounded />
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
         }
         <div className='content'>
@@ -191,12 +191,12 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
         <Link href='/blogs/[blogId]' as={`/blogs/${id}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
-            <Pluralize count={postsCount} singularText='Post'/>
+            <Pluralize count={postsCount} singularText='Post' />
           </a>
         </Link>
 
         <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
-          <Pluralize count={followers} singularText='Follower'/>
+          <Pluralize count={followers} singularText='Follower' />
         </div>
 
         <MutedSpan className='DfStatItem'><Pluralize count={score} singularText='Point' /></MutedSpan>
@@ -206,7 +206,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
         {followersOpen &&
           <BlogFollowersModal
             id={id}
-            title={<Pluralize count={followers} singularText='Follower'/>}
+            title={<Pluralize count={followers} singularText='Follower' />}
             accountsCount={blog.followers_count}
             open={followersOpen}
             close={() => setFollowersOpen(false)}
@@ -230,7 +230,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       title={postsSectionTitle()}
       dataSource={posts}
       renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData}/>}
+        <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData} />}
       noDataDesc='No posts yet'
       noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
@@ -239,7 +239,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
-      <span style={{ marginRight: '1rem' }}>{<Pluralize count={postsCount} singularText='Post'/>}</span>
+      <span style={{ marginRight: '1rem' }}>{<Pluralize count={postsCount} singularText='Post' />}</span>
       {posts.length ? <NewPostButton /> : null}
     </div>;
   };
@@ -270,11 +270,11 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     <div className='DfSpacedButtons'>
       <FollowBlogButton blogId={id} />
       <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
-        <Pluralize count={followers} singularText='Follower'/>
+        <Pluralize count={followers} singularText='Follower' />
       </div>
     </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
+    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
     {renderPostPreviews()}
   </Section>;
 };
@@ -294,25 +294,32 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId } } = props;
 
   const idOrSlug = blogId as string
-  let id: BlogId 
+  let id: BlogId
 
-  const api = await getApi();
+  try {
+    const api = await getApi();
 
-  if (idOrSlug.startsWith('@')) {
-    const slug = idOrSlug.substring(1)
-    id = await api.query.blogs.blogIdBySlug(slug) as unknown as BlogId;
-  } else {
-    const blogId = idOrSlug
-    id = new BlogId(blogId as string)
+    if (idOrSlug.startsWith('@')) {
+      const slug = idOrSlug.substring(1)
+      id = await api.query.blogs.blogIdBySlug(slug) as unknown as BlogId;
+    } else {
+      const blogId = idOrSlug
+      id = new BlogId(blogId as string)
+    }
+
+    const blogData = await loadBlogData(api, id);
+    const postIds = await api.query.blogs.postIdsByBlogId(id as unknown as string) as unknown as PostId[];
+    const posts = await loadPostDataList(api, postIds.reverse());
+
+    return {
+      blogData,
+      posts,
+    };
+
+  } catch (err) {
+    console.log(err)
   }
   
-  const blogData = await loadBlogData(api, id);
-  const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
-  const posts = await loadPostDataList(api, postIds.reverse());
-  return {
-    blogData,
-    posts,
-  };
 };
 
 export default ViewBlogPage;
@@ -320,11 +327,11 @@ export default ViewBlogPage;
 const withUnwrap = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { blogById } = props;
-    if (!blogById) return <Loading/>;
+    if (!blogById) return <Loading />;
 
     const blog = blogById.unwrap();
 
-    return <Component blogData={{ blog: blog }} {...props}/>;
+    return <Component blogData={{ blog: blog }} {...props} />;
   };
 };
 
