@@ -172,7 +172,7 @@ export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH
   return text.length > limit
     ? truncate(text, {
       length: limit,
-      separator: /,? +/
+      separator: /.,:;!?()[]{} +/
     }) + '...'
     : text;
 };
