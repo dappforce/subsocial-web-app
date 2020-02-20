@@ -118,7 +118,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             <Field component="select" name={fields.employmentType}>
               <option value="">-</option>
               {
-                employerTypesData.map((x) => <option value={x}>{x}</option>)
+                employerTypesData.map((x) => <option key={x} value={x}>{x}</option>)
               }
             </Field>
           </LabelledField>
@@ -129,7 +129,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 type={'text'}
                 value={company}
                 onChange={handleCompanyChange}
-                autocomplete={'off'}
+                autoComplete={'off'}
               />
               <div className={'atm_prefix'}>
                 <img src={companyLogo} />
