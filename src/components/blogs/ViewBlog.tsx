@@ -291,11 +291,23 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   //const blogId = props.query.blogId;
+  const { query: { blogId } } = props;
+
+  const idOrSlug = blogId as string
+  let id: BlogId 
+
+  if (idOrSlug.startsWith('@')) {
+    const slug = idOrSlug.substring(1)
+    blogId = await api.query.blogs.blogIdBySlug(slug) as unknown as BlogId;
+    //new BlogId(blogId as string)
+  } else {
+    id = new BlogId(...)
+  }
   const api = await getApi();
 
-  const blogId = await api.query.blogs.blogIdBySlug(props.query.blogId as string).toString();
-  
-  const blogData = await loadBlogData(api, new BlogId(blogId as string));
+  //const blogId = await api.query.blogs.blogIdBySlug(props.query.blogId as string) as unknown as BlogId;
+  //new BlogId(blogId as string)
+  const blogData = await loadBlogData(api, blogId);
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   const posts = await loadPostDataList(api, postIds.reverse());
   return {
