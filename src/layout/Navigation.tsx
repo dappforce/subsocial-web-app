@@ -2,18 +2,19 @@ import React, { FunctionComponent } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
-const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 import Menu from './SideMenu';
 import { isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Drawer } from 'antd-mobile';
 import dynamic from 'next/dynamic';
 
+const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
+
 const { Header, Sider, Content } = Layout;
 
-type Props = {
-  children: React.ReactNode
-};
+interface Props {
+  children: React.ReactNode;
+}
 
 console.log('The browser: ', isBrowser);
 
@@ -44,7 +45,7 @@ const MobileNav: FunctionComponent = ({ children }) => {
   </Drawer>;
 };
 
-export const Navigation = (props: Props) => {
+export const Navigation = (props: Props): JSX.Element => {
   const { children } = props;
 
   const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
@@ -69,6 +70,5 @@ export const Navigation = (props: Props) => {
           </MobileNav>
       }
     </Layout>
-  </Layout>
   </ReactiveBase>;
 };

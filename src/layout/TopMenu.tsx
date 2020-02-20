@@ -15,11 +15,11 @@ const InnerMenu = () => {
   const isLoggedIn = checkIfLoggedIn();
 
   return isMobile && show
-  ? <div className='DfTopBar DfTopBar--search'>
-    <Search/>
-    <Icon type='close-circle' className='DfCloseSearchIcon' onClick={() => setShow(false)} />
-  </div>
-  : <div className='DfTopBar'>
+    ? <div className='DfTopBar DfTopBar--search'>
+      <Search/>
+      <Icon type='close-circle' className='DfCloseSearchIcon' onClick={() => setShow(false)} />
+    </div>
+    : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
         <Button type='link' onClick={toggle} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
@@ -32,17 +32,17 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        {isLoggedIn ?
-        <AddressComponents
-          className='profileName'
-          value={address}
-          isShort={true}
-          isPadded={false}
-          size={30}
-          variant='address-popup'
-        /> : <LogInButton/>}
+        {isLoggedIn
+          ? <AddressComponents
+            className='profileName'
+            value={address}
+            isShort={true}
+            isPadded={false}
+            size={30}
+            variant='address-popup'
+          /> : <LogInButton/>}
       </div>
-  </div>;
+    </div>;
 };
 
 export default InnerMenu;

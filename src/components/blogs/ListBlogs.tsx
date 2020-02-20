@@ -12,8 +12,8 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/utils';
 
 type Props = I18nProps & {
-  totalCount: number,
-  blogsData: BlogData[]
+  totalCount: number;
+  blogsData: BlogData[];
 };
 
 export const ListBlog: NextPage<Props> = (props: Props) => {
@@ -33,7 +33,7 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
   );
 };
 
-ListBlog.getInitialProps = async (props): Promise<any> => {
+ListBlog.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
 
@@ -57,7 +57,7 @@ ListBlog.getInitialProps = async (props): Promise<any> => {
 };
 
 type MyBlogProps = {
-  blogsData: BlogData[]
+  blogsData: BlogData[];
 };
 
 export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
@@ -88,5 +88,5 @@ ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   console.log(blogsData);
   return {
     blogsData
-  };
-};
+  }
+}

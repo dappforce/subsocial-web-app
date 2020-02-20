@@ -9,7 +9,6 @@ type Props = BareProps & {
 };
 
 export default class Section extends React.PureComponent<Props> {
-
   render () {
     let { id, className, children } = this.props;
     className = (className || '') + ' DfSection';

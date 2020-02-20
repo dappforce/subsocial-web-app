@@ -15,7 +15,7 @@ import { Navigation } from './Navigation';
 import Connecting from '../components/main/Connecting';
 
 export type LayoutProps = {
-  isClient: boolean
+  isClient: boolean;
 };
 
 const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children }) => {
@@ -23,14 +23,14 @@ const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   console.log(url);
 
   return <Queue>
-        <QueueConsumer>
-        {({ queueExtrinsic, queueSetTxStatus }) => {
-          return (
-            <Api
-                queueExtrinsic={queueExtrinsic}
-                queueSetTxStatus={queueSetTxStatus}
-                url={url}
-            >
+    <QueueConsumer>
+      {({ queueExtrinsic, queueSetTxStatus }) => {
+        return (
+          <Api
+            queueExtrinsic={queueExtrinsic}
+            queueSetTxStatus={queueSetTxStatus}
+            url={url}
+          >
             <MyAccountProvider>
                 <QueueConsumer>
                     {({ queueAction, stqueue, txqueue }: QueueProps) => (

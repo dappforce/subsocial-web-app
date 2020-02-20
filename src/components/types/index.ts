@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/adjacent-overload-signatures */
 import { Option, Struct, Enum, EnumType } from '@polkadot/types/codec';
 import { getTypeRegistry, BlockNumber, Moment, AccountId, u16, u32, u64, Text, Vector, i32, Null } from '@polkadot/types';
 import BN from 'bn.js';
@@ -187,6 +188,7 @@ export class BlogUpdate extends Struct {
       value
     );
   }
+
   get writers (): OptionVecAccountId {
     return this.get('writers') as OptionVecAccountId;
   }
@@ -475,7 +477,7 @@ export const ReactionKinds: { [key: string]: string } = {
 
 export class ReactionKind extends Enum {
   constructor (value?: any) {
-    super(['Upvote', 'Downvote'], value);
+    super([ 'Upvote', 'Downvote' ], value);
   }
 }
 

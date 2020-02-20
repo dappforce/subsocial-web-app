@@ -9,8 +9,11 @@ import { Options, SettingsStruct } from './types';
 
 export class Settings implements SettingsStruct {
   private _apiUrl: string;
+
   private _i18nLang: string;
+
   private _uiMode: string;
+
   private _uiTheme: string;
 
   constructor () {

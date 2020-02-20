@@ -6,7 +6,6 @@ import * as Yup from 'yup';
 import { Option, Text, AccountId } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api';
 
@@ -20,6 +19,7 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
 const USERNAME_REGEX = /^[A-Za-z0-9_-]+$/;
@@ -178,111 +178,111 @@ const InnerForm = (props: FormProps) => {
   return (<>
     <HeadMeta title={title}/>
     <Section className='EditEntityBox' title={title}>
-    <Form className='ui form DfForm EditEntityForm'>
+      <Form className='ui form DfForm EditEntityForm'>
 
-      <LabelledText
-        name='username'
-        label='Username'
-        placeholder={`You can use a-z, 0-9, dashes and underscores.`}
-        style={{ maxWidth: '30rem' }}
-        {...props}
-      />
-
-      <LabelledText
-        name='fullname'
-        label='Fullname'
-        placeholder='Enter your fullname'
-        {...props}
-      />
-
-      <LabelledText
-        name='avatar'
-        label='Avatar URL'
-        placeholder={`Should be a valid image URL.`}
-        {...props}
-      />
-
-      <LabelledText
-        name='email'
-        label='Email'
-        placeholder='Enter your email'
-        {...props}
-      />
-
-      <LabelledText
-        name='personal_site'
-        label='Personal site'
-        placeholder='Address for personal site'
-        {...props}
-      />
-
-      <LabelledText
-        name='facebook'
-        label='Facebook profile'
-        placeholder={shouldBeValidUrlText}
-        {...props}
-      />
-
-      <LabelledText
-        name='twitter'
-        label='Twitter profile'
-        placeholder={shouldBeValidUrlText}
-        {...props}
-      />
-
-      <LabelledText
-        name='linkedIn'
-        label='LinkedIn profile'
-        placeholder={shouldBeValidUrlText}
-        {...props}
-      />
-
-      <LabelledText
-        name='github'
-        label='GitHub profile'
-        placeholder={shouldBeValidUrlText}
-        {...props}
-      />
-
-      <LabelledText
-        name='instagram'
-        label='Instagram profile'
-        placeholder={shouldBeValidUrlText}
-        {...props}
-      />
-
-      <LabelledField name='about' label='About' {...props}>
-        <Field component={SimpleMDEReact} name='about' value={about} onChange={(data: string) => setFieldValue('about', data)} className={`DfMdEditor ${errors['about'] && 'error'}`} />
-      </LabelledField>
-
-      <LabelledField {...props}>
-        <TxButton
-          type='submit'
-          size='medium'
-          label={profile
-            ? 'Update my profile'
-            : 'Create my profile'
-          }
-          isDisabled={!dirty || isSubmitting}
-          params={buildTxParams()}
-          tx={profile
-            ? 'blogs.updateProfile'
-            : 'blogs.createProfile'
-          }
-          onClick={onSubmit}
-          txCancelledCb={onTxCancelled}
-          txFailedCb={onTxFailed}
-          txSuccessCb={onTxSuccess}
+        <LabelledText
+          name='username'
+          label='Username'
+          placeholder={`You can use a-z, 0-9, dashes and underscores.`}
+          style={{ maxWidth: '30rem' }}
+          {...props}
         />
-        <Button
-          type='button'
-          size='medium'
-          disabled={!dirty || isSubmitting}
-          onClick={() => resetForm()}
-          content='Reset form'
+
+        <LabelledText
+          name='fullname'
+          label='Fullname'
+          placeholder='Enter your fullname'
+          {...props}
         />
-      </LabelledField>
-    </Form>
+
+        <LabelledText
+          name='avatar'
+          label='Avatar URL'
+          placeholder={`Should be a valid image URL.`}
+          {...props}
+        />
+
+        <LabelledText
+          name='email'
+          label='Email'
+          placeholder='Enter your email'
+          {...props}
+        />
+
+        <LabelledText
+          name='personal_site'
+          label='Personal site'
+          placeholder='Address for personal site'
+          {...props}
+        />
+
+        <LabelledText
+          name='facebook'
+          label='Facebook profile'
+          placeholder={shouldBeValidUrlText}
+          {...props}
+        />
+
+        <LabelledText
+          name='twitter'
+          label='Twitter profile'
+          placeholder={shouldBeValidUrlText}
+          {...props}
+        />
+
+        <LabelledText
+          name='linkedIn'
+          label='LinkedIn profile'
+          placeholder={shouldBeValidUrlText}
+          {...props}
+        />
+
+        <LabelledText
+          name='github'
+          label='GitHub profile'
+          placeholder={shouldBeValidUrlText}
+          {...props}
+        />
+
+        <LabelledText
+          name='instagram'
+          label='Instagram profile'
+          placeholder={shouldBeValidUrlText}
+          {...props}
+        />
+
+        <LabelledField name='about' label='About' {...props}>
+          <Field component={SimpleMDEReact} name='about' value={about} onChange={(data: string) => setFieldValue('about', data)} className={`DfMdEditor ${errors['about'] && 'error'}`} />
+        </LabelledField>
+
+        <LabelledField {...props}>
+          <TxButton
+            type='submit'
+            size='medium'
+            label={profile
+              ? 'Update my profile'
+              : 'Create my profile'
+            }
+            isDisabled={!dirty || isSubmitting}
+            params={buildTxParams()}
+            tx={profile
+              ? 'blogs.updateProfile'
+              : 'blogs.createProfile'
+            }
+            onClick={onSubmit}
+            txCancelledCb={onTxCancelled}
+            txFailedCb={onTxFailed}
+            txSuccessCb={onTxSuccess}
+          />
+          <Button
+            type='button'
+            size='medium'
+            disabled={!dirty || isSubmitting}
+            onClick={() => resetForm()}
+            content='Reset form'
+          />
+        </LabelledField>
+      </Form>
     </Section>
   </>
   );

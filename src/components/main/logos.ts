@@ -11,13 +11,13 @@ import settings from '../settings/index';
 type LogoMap = Map<string, any>;
 
 const LOGOS_NORMAL: LogoMap = new Map([
-  ['polkadot', polkadotLogo],
-  ['substrate', substrateLogo]
+  [ 'polkadot', polkadotLogo ],
+  [ 'substrate', substrateLogo ]
 ]);
 
 const LOGOS_SMALL: LogoMap = new Map([
-  ['polkadot', polkadotSmall],
-  ['substrate', substrateSmall]
+  [ 'polkadot', polkadotSmall ],
+  [ 'substrate', substrateSmall ]
 ]);
 
 export default function getLogo (isSmall: boolean) {

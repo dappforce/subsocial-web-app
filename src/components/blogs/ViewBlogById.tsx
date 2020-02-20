@@ -8,8 +8,8 @@ const Component = () => {
   const router = useRouter();
   const { blogId } = router.query;
   return blogId
-  ? <ViewBlog id={new BlogId(blogId as string)} />
-  : null;
+    ? <ViewBlog id={new BlogId(blogId as string)} />
+    : null;
 };
 
-export default Component;
+export default Component

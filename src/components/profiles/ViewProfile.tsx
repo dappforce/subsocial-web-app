@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -13,7 +14,6 @@ const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton')
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { MutedDiv } from '../utils/MutedText';
 import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
@@ -26,6 +26,8 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
+const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 export type Props = {
   preview?: boolean,
@@ -40,7 +42,6 @@ export type Props = {
 };
 
 const Component: NextPage<Props> = (props: Props) => {
-
   const {
     id,
     preview = false,
@@ -52,8 +53,8 @@ const Component: NextPage<Props> = (props: Props) => {
     ProfileContent = {} as ProfileContent
   } = props;
 
-  const [followersOpen, setFollowersOpen] = useState(false);
-  const [followingOpen, setFollowingOpen] = useState(false);
+  const [ followersOpen, setFollowersOpen ] = useState(false);
+  const [ followingOpen, setFollowingOpen ] = useState(false);
 
   const address = id.toString();
   const { state: { address: myAddress } } = useMyAccount();
@@ -100,7 +101,7 @@ const Component: NextPage<Props> = (props: Props) => {
     </Link>;
 
   const renderDropDownMenu = () => {
-    const [open, setOpen] = useState(false);
+    const [ open, setOpen ] = useState(false);
 
     if (profileIsNone) return null;
 
@@ -111,7 +112,7 @@ const Component: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
-        <Link href={`/profile/edit`} ><a className='item'>Edit</a></Link>
+          <Link href={`/profile/edit`} ><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -120,10 +121,10 @@ const Component: NextPage<Props> = (props: Props) => {
     );
 
     return (showDropdown && <>
-    <Dropdown overlay={menu} placement='bottomRight'>
-      <Icon type='ellipsis' />
-    </Dropdown>
-    {open && <ProfileHistoryModal id={id} open={open} close={close} />}
+      <Dropdown overlay={menu} placement='bottomRight'>
+        <Icon type='ellipsis' />
+      </Dropdown>
+      {open && <ProfileHistoryModal id={id} open={open} close={close} />}
     </>);
   };
 

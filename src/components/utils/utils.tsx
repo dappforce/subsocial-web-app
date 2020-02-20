@@ -46,7 +46,7 @@ export function getNewIdFromEvent<IdType extends BlogId | PostId | CommentId> (
       event: { data, method }
     } = event;
     if (method.indexOf(`Created`) >= 0) {
-      const [, /* owner */ newId] = data.toArray();
+      const [ , /* owner */ newId ] = data.toArray();
       id = newId as IdType;
       return true;
     }
@@ -116,7 +116,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
     const profile = profileOpt.unwrap() as Profile;
 
     const ipfsHash = profile.ipfs_hash;
-    const [ProfileContent, setProfileContent] = useState(undefined as (ProfileContent | undefined));
+    const [ ProfileContent, setProfileContent ] = useState(undefined as (ProfileContent | undefined));
 
     useEffect(() => {
       if (!ipfsHash) return;
@@ -129,7 +129,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
         .catch(err => console.log(err));
 
       return () => { isSubscribe = false; };
-    }, [false]);
+    }, [ false ]);
 
     if (requireProfile && !ProfileContent) return <Loading />;
 
@@ -145,7 +145,7 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 
 export const Loading = () => <Icon type='loading' />;
 
-let api: (ApiPromise | undefined) = undefined;
+let api: (ApiPromise | undefined);
 
 export const getApi = async () => {
   if (webApi) {

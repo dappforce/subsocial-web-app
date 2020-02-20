@@ -7,7 +7,7 @@ type Props = {
   as?: any,
   autoHeight?: boolean,
   rows?: number | string,
-  style?: Object,
+  style?: Record<string, any>,
   value?: number | string,
   placeholder?: string,
 

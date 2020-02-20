@@ -16,7 +16,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), postId]);
+  const dataForQuery = new Tuple([ AccountId, BlogId ], [ new AccountId(myAddress), postId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
@@ -61,7 +61,7 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
   const { commentId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple([AccountId, BlogId], [new AccountId(myAddress), commentId]);
+  const dataForQuery = new Tuple([ AccountId, BlogId ], [ new AccountId(myAddress), commentId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
@@ -72,7 +72,6 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
       setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
-
   }, [ commentId ]);
 
   const buildTxParams = () => {
