@@ -296,18 +296,17 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const idOrSlug = blogId as string
   let id: BlogId 
 
-  if (idOrSlug.startsWith('@')) {
-    const slug = idOrSlug.substring(1)
-    blogId = await api.query.blogs.blogIdBySlug(slug) as unknown as BlogId;
-    //new BlogId(blogId as string)
-  } else {
-    id = new BlogId(...)
-  }
   const api = await getApi();
 
-  //const blogId = await api.query.blogs.blogIdBySlug(props.query.blogId as string) as unknown as BlogId;
-  //new BlogId(blogId as string)
-  const blogData = await loadBlogData(api, blogId);
+  if (idOrSlug.startsWith('@')) {
+    const slug = idOrSlug.substring(1)
+    id = await api.query.blogs.blogIdBySlug(slug) as unknown as BlogId;
+  } else {
+    const blogId = idOrSlug
+    id = new BlogId(blogId as string)
+  }
+  
+  const blogData = await loadBlogData(api, id);
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   const posts = await loadPostDataList(api, postIds.reverse());
   return {
