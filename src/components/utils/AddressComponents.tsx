@@ -12,7 +12,7 @@ import BalanceDisplay from '@polkadot/ui-app/Balance';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { getApi, makeSummary } from './utils';
+import { getApi, summarize } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
@@ -253,7 +253,7 @@ function AddressComponents (props: Props) {
           </div>
           {!mini && <>
             <div className='DfPopup-about'>
-              {about && makeSummary(about)}
+              {about && summarize(about)}
             </div>
             <div className='DfPopup-links'>
               <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>

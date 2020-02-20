@@ -9,7 +9,7 @@ import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SocialAccount, ProfileContent, Profile } from '../types';
-import { withSocialAccount, getApi, makeSummary } from '../utils/utils';
+import { withSocialAccount, getApi, summarize } from '../utils/utils';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -138,7 +138,7 @@ const Component: NextPage<Props> = (props: Props) => {
   };
 
   const renderDescription = () => preview
-    ? makeSummary(about)
+    ? summarize(about)
     : <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>;
 
   const NameAsLink = () => (

@@ -167,12 +167,12 @@ export const formatUnixDate = (seconds: number, format: string = 'lll') => {
 
 const DEFAULT_SUMMARY_LENGTH = 300;
 
-export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => {
+export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => {
   const text = mdToText(body);
   return text.length > limit
     ? truncate(text, {
       length: limit,
-      separator: /.,:;!?()[]{} +/
+      separator: /.,:;!?\(\)\[\]\{\} +/
     }) + '...'
     : text;
 };

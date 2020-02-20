@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { isEmptyStr } from '.';
-import { makeSummary } from './utils';
+import { summarize } from './utils';
 
 type HeadMetaProps = {
   title: string,
@@ -31,7 +31,7 @@ export const createTitle = (title: string) => {
 
 export function HeadMeta (props: HeadMetaProps) {
   const { title, desc = DEFAULT_DESC, image = 'public/subsocial-logo.png' } = props;
-  const summary = makeSummary(desc, MAX_DESC_LEN);
+  const summary = summarize(desc, MAX_DESC_LEN);
   return <div>
     <Head>
       <title>{createTitle(title)}</title>

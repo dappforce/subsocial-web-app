@@ -10,7 +10,7 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
+import { Loading, getApi, formatUnixDate, summarize } from '../utils/utils';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
@@ -367,7 +367,7 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = makeSummary(ipfsContent.body, LIMIT_SUMMARY);
+  const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
   return {
     ...ipfsContent,
     summary
