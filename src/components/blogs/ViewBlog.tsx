@@ -290,37 +290,29 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
 };
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  //const blogId = props.query.blogId;
-  const { query: { blogId } } = props;
-
+  const { query: { blogId } } = props
   const idOrSlug = blogId as string
-  let id: BlogId
+  let id: BlogId | string
 
-  try {
-    const api = await getApi();
+  const api = await getApi()
 
-    if (idOrSlug.startsWith('@')) {
-      const slug = idOrSlug.substring(1)
-      id = await api.query.blogs.blogIdBySlug(slug) as unknown as BlogId;
-    } else {
-      const blogId = idOrSlug
-      id = new BlogId(blogId as string)
-    }
-
-    const blogData = await loadBlogData(api, id);
-    const postIds = await api.query.blogs.postIdsByBlogId(id as unknown as string) as unknown as PostId[];
-    const posts = await loadPostDataList(api, postIds.reverse());
-
-    return {
-      blogData,
-      posts,
-    };
-
-  } catch (err) {
-    console.log(err)
+  if (idOrSlug.startsWith('@')) {
+    const slug = idOrSlug.substring(1)
+    const tempIdOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
+    id = tempIdOpt.isSome ? tempIdOpt.unwrap() : 'undefined' // excluding wrong assertion
+  } else {
+    id = new BlogId(idOrSlug as string)
   }
-  
-};
+
+  const blogData = await loadBlogData(api, id as BlogId)
+  const postIds = await api.query.blogs.postIdsByBlogId(id as unknown as string) as unknown as PostId[]
+  const posts = await loadPostDataList(api, postIds.reverse())
+
+  return {
+    blogData,
+    posts,
+  }
+}
 
 export default ViewBlogPage;
 
