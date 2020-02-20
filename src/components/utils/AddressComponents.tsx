@@ -14,7 +14,6 @@ import { findNameByAddress, nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { getApi, makeSummary } from './utils';
 import { SocialAccount, Profile, ProfileContent } from '../types';
-import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
 import Router from 'next/router';
@@ -26,8 +25,6 @@ import dynamic from 'next/dynamic';
 import { isBrowser } from 'react-device-detect';
 import { getJsonFromIpfs } from './OffchainUtils';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
-
-const LIMIT_SUMMARY = 40;
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
 

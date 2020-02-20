@@ -10,7 +10,6 @@ import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index'
 import { HeadMeta } from '../utils/HeadMeta';
 import { SocialAccount, ProfileContent, Profile } from '../types';
 import { withSocialAccount, getApi, makeSummary } from '../utils/utils';
-const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';

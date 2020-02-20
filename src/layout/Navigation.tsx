@@ -55,20 +55,21 @@ export const Navigation = (props: Props): JSX.Element => {
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-  <Layout style={{ backgroundColor: '#fafafa !important' }}>
-    <Header className='DfHeader'>
-      <TopMenu />
-    </Header>
-    <Layout style={{ marginTop: '60px' }}>
-      {isBrowser
-        ? <>
+    <Layout style={{ backgroundColor: '#fafafa !important' }}>
+      <Header className='DfHeader'>
+        <TopMenu />
+      </Header>
+      <Layout style={{ marginTop: '60px' }}>
+        {isBrowser
+          ? <>
             <DesktopNav />
             <MainContent/>
           </>
-        : <MobileNav>
+          : <MobileNav>
             <MainContent/>
           </MobileNav>
-      }
+        }
+      </Layout>
     </Layout>
   </ReactiveBase>;
 };
