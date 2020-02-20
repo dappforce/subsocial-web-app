@@ -165,7 +165,7 @@ export const formatUnixDate = (seconds: number, format: string = 'lll') => {
   return moment(new Date(seconds * 1000)).format(format);
 };
 
-const DEFAULT_SUMMARY_LENGTH = 50;
+const DEFAULT_SUMMARY_LENGTH = 300;
 
 export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => {
   const text = mdToText(body);
