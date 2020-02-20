@@ -167,9 +167,9 @@ const DEFAULT_SUMMARY_LENGTH = 50;
 export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => {
   const text = mdToText(body);
   return text.length > limit
-  ? truncate(text, {
-    'length': limit,
-    'separator': /,? +/
-  }) + '...'
-  : text;
+    ? truncate(text, {
+      length: limit,
+      separator: /,? +/
+    }) + '...'
+    : text;
 };
