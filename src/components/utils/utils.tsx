@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { AccountId, Option } from '@polkadot/types';
-import { SubmittableResult, ApiPromise } from '@polkadot/api';
-import { api as webApi } from '@polkadot/ui-api';
+import { SubmittableResult } from '@polkadot/api';
 import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
 import moment from 'moment-timezone';
-import Api from './SubstrateApi';
 import mdToText from 'markdown-to-txt';
 import { truncate } from 'lodash';
 
@@ -144,22 +142,6 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 }
 
 export const Loading = () => <Icon type='loading' />;
-
-let api: (ApiPromise | undefined);
-
-export const getApi = async () => {
-  if (webApi) {
-    console.log('api = webApi');
-    return webApi.isReady;
-  } else if (api) {
-    console.log('api = api');
-    return api;
-  } else {
-    console.log('api = Api.setup');
-    api = await Api.setup();
-    return api;
-  }
-};
 
 export const formatUnixDate = (seconds: number, format: string = 'lll') => {
   return moment(new Date(seconds * 1000)).format(format);

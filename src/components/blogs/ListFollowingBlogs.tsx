@@ -12,7 +12,7 @@ import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
-import { getApi } from '../utils/utils';
+import { getApi } from '../utils/SubstrateApi';
 import Link from 'next/link';
 
 type ListBlogPageProps = {

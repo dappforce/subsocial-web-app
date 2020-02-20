@@ -9,7 +9,7 @@ import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { NextPage } from 'next';
-import { getApi } from '../utils/utils';
+import { getApi } from '../utils/SubstrateApi';
 
 const FIVE = new BlogId(5);
 const ZERO = new BlogId(0);

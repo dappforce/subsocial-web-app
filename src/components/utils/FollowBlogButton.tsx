@@ -7,7 +7,7 @@ import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { isMobile } from 'react-device-detect';
-import { getApi } from './utils';
+import { getApi } from './SubstrateApi';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 type FollowBlogButtonProps = {
   blogId: BlogId,
