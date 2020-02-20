@@ -16,7 +16,7 @@ const Component = () => {
     : null;
 };
 
-const getId = async(idOrSlug: string) => {
+const getId = async (idOrSlug: string) => {
   try {
     let id:BlogId;
 
@@ -32,7 +32,7 @@ const getId = async(idOrSlug: string) => {
   
     return id
   } catch (err) {
-    console.log(err)
+    return console.log(err)
   }
   
 }
