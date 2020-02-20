@@ -49,7 +49,7 @@
 .DfModal {
   margin: $space_big $space_mini;
   padding: $space_normal $space_mini $space_mini $space_mini;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid $color_light_border;
 
   .DfContent {
     padding: 0;
@@ -148,7 +148,7 @@
   .DfModal {
     margin: $space_tiny $space_mini;
     padding: $space_normal $space_mini $space_mini $space_mini !important;
-    border-top: .5px solid #ddd;
+    border-top: .5px solid $color_light_border;
 
     .DfContent {
       padding: 0;
