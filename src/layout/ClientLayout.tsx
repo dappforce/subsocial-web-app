@@ -32,27 +32,27 @@ const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children }) => {
             url={url}
           >
             <MyAccountProvider>
-                <QueueConsumer>
-                    {({ queueAction, stqueue, txqueue }: QueueProps) => (
-                      <Signer>
-                        <Status
-                            queueAction={queueAction}
-                            stqueue={stqueue}
-                            txqueue={txqueue}
-                        />
-                      </Signer>
-                    )}
-                </QueueConsumer>
-                <Navigation>
-                  {children}
-                </Navigation>
-                </MyAccountProvider>
-                <Connecting/>
-            </Api>
-          );
-        }}
-        </QueueConsumer>
-    </Queue>;
+              <QueueConsumer>
+                {({ queueAction, stqueue, txqueue }: QueueProps) => (
+                  <Signer>
+                    <Status
+                      queueAction={queueAction}
+                      stqueue={stqueue}
+                      txqueue={txqueue}
+                    />
+                  </Signer>
+                )}
+              </QueueConsumer>
+              <Navigation>
+                {children}
+              </Navigation>
+            </MyAccountProvider>
+            <Connecting/>
+          </Api>
+        );
+      }}
+    </QueueConsumer>
+  </Queue>;
 };
 
 export default ClientLayout;

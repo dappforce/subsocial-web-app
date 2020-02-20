@@ -329,7 +329,7 @@ class Signer extends React.PureComponent<Props, State> {
     console.log('makeExtrinsicCall: extrinsic ::', extrinsic.toHex());
 
     try {
-      const unsubscribe = await extrinsicCall.apply(extrinsic, [..._params, async (result: SubmittableResult) => {
+      const unsubscribe = await extrinsicCall.apply(extrinsic, [ ..._params, async (result: SubmittableResult) => {
         if (!result || !result.status) {
           return;
         }
@@ -356,7 +356,7 @@ class Signer extends React.PureComponent<Props, State> {
               }
             });
         }
-      }]);
+      } ]);
     } catch (error) {
       console.error('makeExtrinsicCall: error:', error.message);
       queueSetTxStatus(id, 'error', {}, error);

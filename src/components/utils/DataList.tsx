@@ -17,7 +17,7 @@ type Props = {
 };
 
 export default (props: Props) => {
-  const { dataSource,renderItem, className, title, noDataDesc = 'no data', noDataExt } = props;
+  const { dataSource, renderItem, className, title, noDataDesc = 'no data', noDataExt } = props;
   const total = dataSource.length;
 
   const router = useRouter();
@@ -41,7 +41,7 @@ export default (props: Props) => {
     }
 
     return () => { isSubscribe = false; };
-  }, [false]);
+  }, [ false ]);
 
   const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
   const isEmptyData = dataSource.length === 0;
@@ -66,7 +66,7 @@ export default (props: Props) => {
         },
         pageSize: pageSize,
         showSizeChanger: total > 0,
-        onShowSizeChange: (_,size: number) => {
+        onShowSizeChange: (_, size: number) => {
           setPageSize(size);
           routerQuery.size = size.toString();
 
@@ -78,11 +78,11 @@ export default (props: Props) => {
         pageSizeOptions: itemsSelect
       }}
       dataSource={dataSource}
-      renderItem={(item,index) => (
+      renderItem={(item, index) => (
         <List.Item
           key={index}
         >
-          {renderItem(item,index)}
+          {renderItem(item, index)}
         </List.Item>
       )}
     />
@@ -90,8 +90,8 @@ export default (props: Props) => {
 
   const SectionOfList = (props: any): JSX.Element => (
     title
-    ? <Section title={<div className='DfTitle--List'>{title}</div>}>{props.children}</Section>
-    : props.children
+      ? <Section title={<div className='DfTitle--List'>{title}</div>}>{props.children}</Section>
+      : props.children
   );
 
   return <SectionOfList>

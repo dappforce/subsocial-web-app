@@ -253,7 +253,7 @@ function AddressComponents (props: Props) {
           </div>
           {!mini && <>
             <div className='DfPopup-about'>
-            {about && makeSummary(about)}
+              {about && makeSummary(about)}
             </div>
             <div className='DfPopup-links'>
               <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>

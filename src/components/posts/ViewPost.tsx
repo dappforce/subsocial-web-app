@@ -99,7 +99,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
-  const [ content , setContent ] = useState(initialContent);
+  const [ content, setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
@@ -122,7 +122,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const RenderDropDownMenu = (props: DropdownProps) => {
-
     const { state: { address } } = useMyAccount();
 
     const isMyStruct = address === props.account;

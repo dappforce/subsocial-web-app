@@ -4,11 +4,11 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 import { ReactionId, Reaction, CommentId, PostId } from '../types';
 import { api } from '@polkadot/ui-api/Api';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
+const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type VotersProps = {
   id: CommentId | PostId,
@@ -25,7 +25,6 @@ export enum ActiveVoters {
 }// TODO fix activeIndex lock
 
 const InnerModalVoters = (props: VotersProps) => {
-
   const { reactions, open, close, active = ActiveVoters.All } = props;
   const votersCount = reactions ? reactions.length : 0;
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
@@ -33,17 +32,14 @@ const InnerModalVoters = (props: VotersProps) => {
 
   const toggleTrigger = () => {
     reactions === undefined && setTrigger(!trigger);
-    return;
   };
 
   useEffect(() => {
-
     if (!open) return toggleTrigger();
 
     let isSubscribe = true;
 
     const loadVoters = async () => {
-
       if (!reactions) return toggleTrigger();
 
       const apiCalls: Promise<Option<Reaction>>[] = reactions.map(async reactionId =>
@@ -61,14 +57,14 @@ const InnerModalVoters = (props: VotersProps) => {
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
       return <div key={reaction.id.toNumber()} style={{ textAlign: 'left', margin: '1rem' }}>
-      <AddressComponents
-        value={reaction.created.account}
-        isPadded={false}
-        size={28}
-        extraDetails={`${reaction.kind}d`}
-        withFollowButton
-      />
-    </div>;
+        <AddressComponents
+          value={reaction.created.account}
+          isPadded={false}
+          size={28}
+          extraDetails={`${reaction.kind}d`}
+          withFollowButton
+        />
+      </div>;
     });
   };
 
@@ -78,7 +74,7 @@ const InnerModalVoters = (props: VotersProps) => {
   };
 
   const panes = [
-  { key: 'all', menuItem: 'All', render: () => <Tab.Pane>{renderVoters(reactionView)}</Tab.Pane> },
+    { key: 'all', menuItem: 'All', render: () => <Tab.Pane>{renderVoters(reactionView)}</Tab.Pane> },
     { key: 'upvote', menuItem: 'Upvoters', render: () => filterVoters('Upvote') },
     { key: 'downvote', menuItem: 'Downvoters', render: () => filterVoters('Downvote') }
   ];
@@ -93,7 +89,7 @@ const InnerModalVoters = (props: VotersProps) => {
     >
       <Modal.Header><Pluralize count={votersCount} singularText='Reaction'/></Modal.Header>
       <Modal.Content scrolling>
-      <Tab panes={panes} defaultActiveIndex={active}/>
+        <Tab panes={panes} defaultActiveIndex={active}/>
       </Modal.Content>
       <Modal.Actions>
         <Button content='Close' onClick={close} />

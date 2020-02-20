@@ -5,11 +5,13 @@ import { withKnobs } from '@storybook/addon-knobs';
 import { Menu, Icon, Button, Avatar } from 'antd';
 import ListForumTopics from './ListForumTopics';
 import ViewForum from './ViewForum';
-
-const { SubMenu } = Menu;
 import faker from 'faker';
 
 import './style.css';
+
+import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+
+const { SubMenu } = Menu;
 
 const items = [{ avatar: faker.image.avatar(),name: faker.company.companyName() },
   { avatar: faker.image.avatar(),name: faker.company.companyName() },
@@ -85,8 +87,6 @@ type MenuItem = {
   route: string,
   image: string
 };
-
-import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 
 const MenuItems: MenuItem[] = [
   {

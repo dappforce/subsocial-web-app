@@ -5,7 +5,7 @@ export type ElasticIndexTypes = 'blogs' | 'posts' | 'profiles';
 export const ElasticIndex = {
   profiles: 'subsocial_profiles',
   blogs: 'subsocial_blogs',
-  posts: 'subsocial_posts',
+  posts: 'subsocial_posts'
   // comments: 'subsocial_comments'
 };
 

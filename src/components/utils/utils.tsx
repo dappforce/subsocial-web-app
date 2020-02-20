@@ -149,10 +149,13 @@ let api: (ApiPromise | undefined);
 
 export const getApi = async () => {
   if (webApi) {
+    console.log('api = webApi');
     return webApi.isReady;
   } else if (api) {
+    console.log('api = api');
     return api;
   } else {
+    console.log('api = Api.setup');
     api = await Api.setup();
     return api;
   }

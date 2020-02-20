@@ -4,12 +4,12 @@ import React, { useState } from 'react';
 import { withKnobs } from '@storybook/addon-knobs';
 import './mobile.css';
 
+import { Drawer, List, NavBar, Icon, SearchBar } from 'antd-mobile';
+
 export default {
   title: 'Mobile',
-  decorators: [withKnobs]
+  decorators: [ withKnobs ]
 };
-
-import { Drawer, List, NavBar, Icon, SearchBar } from 'antd-mobile';
 
 export const MobileSideBar = () => {
   const [ open, setOpen ] = useState(false);
@@ -19,7 +19,7 @@ export const MobileSideBar = () => {
   };
 
   const sidebar = (<List>
-    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((i, index) => {
+    {[ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ].map((i, index) => {
       if (index === 0) {
         return (<List.Item key={index}
           thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
@@ -35,9 +35,9 @@ export const MobileSideBar = () => {
   return (<div>
     <NavBar leftContent={<Icon type='ellipsis' />} onLeftClick={onOpenChange}>
       {searchCollapsed ? <>
-      <h4>S.</h4>
-      <div onClick={() => setCollapsed(false)} style={{width: 200 }}><Icon type='search'/></div></>
-      : <SearchBar placeholder='Search' maxLength={8} onCancel={() => setCollapsed(true)}/>
+        <h4>S.</h4>
+        <div onClick={() => setCollapsed(false)} style={{ width: 200 }}><Icon type='search'/></div></>
+        : <SearchBar placeholder='Search' maxLength={8} onCancel={() => setCollapsed(true)}/>
       }
     </NavBar>
     <Drawer

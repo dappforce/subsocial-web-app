@@ -30,7 +30,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   const { myAddress, address, size = BUTTON_SIZE } = props;
 
   const accountId = new AccountId(address);
-  const dataForQuery = new Tuple([AccountId, AccountId], [new AccountId(myAddress), accountId]);
+  const dataForQuery = new Tuple([ AccountId, AccountId ], [ new AccountId(myAddress), accountId ]);
 
   const [ isFollow, setIsFollow ] = useState(true);
 
