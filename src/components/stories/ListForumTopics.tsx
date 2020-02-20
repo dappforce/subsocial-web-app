@@ -18,7 +18,6 @@ type Props = {
 };
 
 function ListForumTopics (props: Props) {
-
   const { data } = props;
 
   return (

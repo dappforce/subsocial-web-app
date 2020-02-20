@@ -6,11 +6,10 @@ import Link from 'next/link';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-import mdToText from 'markdown-to-txt';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SocialAccount, ProfileContent, Profile } from '../types';
-import { withSocialAccount, getApi } from '../utils/utils';
+import { withSocialAccount, getApi, summarize } from '../utils/utils';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -138,6 +137,10 @@ const Component: NextPage<Props> = (props: Props) => {
     }
   };
 
+  const renderDescription = () => preview
+    ? summarize(about)
+    : <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>;
+
   const NameAsLink = () => (
     <Link href='/profile/[address]' as={`/profile/${address}`}>
       <a className='handle'>{getName()}</a>
@@ -229,7 +232,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 }
               </div>
             </div>
-            <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>
+            {renderDescription()}
           </div>
         </div>
       </div>
@@ -243,7 +246,7 @@ const Component: NextPage<Props> = (props: Props) => {
   }
 
   return <>
-    <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
+    <HeadMeta title={getName()} desc={about} image={avatar} />
     <Section>
       <div className='FullProfile'>
         {renderPreview()}

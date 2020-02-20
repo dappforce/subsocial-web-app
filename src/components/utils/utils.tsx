@@ -11,6 +11,8 @@ import { Icon } from 'antd';
 import { NoData } from './DataList';
 import moment from 'moment-timezone';
 import Api from './SubstrateApi';
+import mdToText from 'markdown-to-txt';
+import { truncate } from 'lodash';
 
 type PaginationProps = {
   currentPage?: number;
@@ -147,10 +149,13 @@ let api: (ApiPromise | undefined);
 
 export const getApi = async () => {
   if (webApi) {
+    console.log('api = webApi');
     return webApi.isReady;
   } else if (api) {
+    console.log('api = api');
     return api;
   } else {
+    console.log('api = Api.setup');
     api = await Api.setup();
     return api;
   }
@@ -160,10 +165,14 @@ export const formatUnixDate = (seconds: number, format: string = 'lll') => {
   return moment(new Date(seconds * 1000)).format(format);
 };
 
-const DEFAULT_SUMMARY_LENGTH = 50;
+const DEFAULT_SUMMARY_LENGTH = 300;
 
-export const makeSummary = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => (
-  body.length > limit
-    ? body.substr(0, limit) + '...'
-    : body
-);
+export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => {
+  const text = mdToText(body);
+  return text.length > limit
+    ? truncate(text, {
+      length: limit,
+      separator: /.,:;!?\(\)\[\]\{\} +/
+    }) + '...'
+    : text;
+};

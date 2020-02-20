@@ -8,13 +8,13 @@ class MyApp extends App {
     isClient: false
   };
 
-  componentDidMount() {
+  componentDidMount () {
     this.setState({
       isClient: true
     });
-  };
+  }
 
-  render() {
+  render () {
     console.log('>>>>>>>>>>>>>> isClient: ', this.state.isClient);
     const { Component, pageProps } = this.props
     return (

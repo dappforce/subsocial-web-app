@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { AccountId, Option } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
@@ -11,6 +10,7 @@ import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } 
 import { Icon } from 'antd';
 import BN from 'bn.js';
 import { getApi } from '../utils/utils';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const ZERO = new BN(0);
 
@@ -31,14 +31,14 @@ export const Voter = (props: VoterProps) => {
 
   const kind = reactionState ? reactionState && reactionState.kind.toString() : 'None';
   const [ reactionKind, setReactionKind ] = useState(kind);
-  const [ state , setState ] = useState(struct);
+  const [ state, setState ] = useState(struct);
   const [ updateTrigger, setUpdateTrigger ] = useState(true);
   const { id } = state;
   const isComment = type === 'Comment';
   const Id = isComment ? CommentId : PostId;
   const structQuery = type.toLowerCase();
 
-  const dataForQuery = new Tuple([AccountId, Id], [new AccountId(address), id]);
+  const dataForQuery = new Tuple([ AccountId, Id ], [ new AccountId(address), id ]);
 
   useEffect(() => {
     let isSubscribe = true;
@@ -83,7 +83,6 @@ export const Voter = (props: VoterProps) => {
   };
 
   const VoterRender = () => {
-
     let countColor = '';
 
     const calcVotingPercentage = () => {
@@ -103,11 +102,10 @@ export const Voter = (props: VoterProps) => {
       }
     };
 
-    const [open, setOpen] = useState(false);
+    const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
 
     const renderTxButton = (isUpvote: boolean) => {
-
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
@@ -122,8 +120,8 @@ export const Voter = (props: VoterProps) => {
         tx={!reactionState
           ? `blogs.create${type}Reaction`
           : (reactionKind !== `${reactionName}`)
-          ? `blogs.update${type}Reaction`
-          : `blogs.delete${type}Reaction`}
+            ? `blogs.update${type}Reaction`
+            : `blogs.delete${type}Reaction`}
       >
         <Icon type={`${icon}like`}/>
       </TxButton>);
@@ -138,8 +136,8 @@ export const Voter = (props: VoterProps) => {
         {renderTxButton(false)}
       </Button.Group>
       {isComment
-      ? open && <CommentVoters id={id} open={open} close={close}/>
-      : open && <PostVoters id={id} open={open} close={close}/>}
+        ? open && <CommentVoters id={id} open={open} close={close}/>
+        : open && <PostVoters id={id} open={open} close={close}/>}
     </>;
   };
 

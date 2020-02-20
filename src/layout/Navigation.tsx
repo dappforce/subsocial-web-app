@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FunctionComponent } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
@@ -30,7 +30,7 @@ const DesktopNav = () => {
   </Sider></div>;
 };
 
-const MobileNav = () => {
+const MobileNav: FunctionComponent = ({ children }) => {
   const { state: { collapsed }, toggle } = useSidebarCollapsed();
   return <Drawer
     className='DfMobileSideBar'
@@ -41,12 +41,14 @@ const MobileNav = () => {
     open={!collapsed}
     onOpenChange={toggle}
   >
-    <></>
+    {children}
   </Drawer>;
 };
 
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props;
+
+  const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
 
   return <ReactiveBase
     className='fontSizeNormal'
@@ -59,10 +61,14 @@ export const Navigation = (props: Props): JSX.Element => {
       </Header>
       <Layout style={{ marginTop: '60px' }}>
         {isBrowser
-          ? <DesktopNav />
-          : <MobileNav />
+          ? <>
+            <DesktopNav />
+            <MainContent/>
+          </>
+          : <MobileNav>
+            <MainContent/>
+          </MobileNav>
         }
-        <Content className='DfPageContent'>{children}</Content>
       </Layout>
     </Layout>
   </ReactiveBase>;

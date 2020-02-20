@@ -34,18 +34,18 @@ const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children }) => {
             <MyAccountProvider>
               <QueueConsumer>
                 {({ queueAction, stqueue, txqueue }: QueueProps) => (
-                  <Navigation>
-                    <Signer>
-                      <Status
-                        queueAction={queueAction}
-                        stqueue={stqueue}
-                        txqueue={txqueue}
-                      />
-                    </Signer>
-                    {children}
-                  </Navigation>
+                  <Signer>
+                    <Status
+                      queueAction={queueAction}
+                      stqueue={stqueue}
+                      txqueue={txqueue}
+                    />
+                  </Signer>
                 )}
               </QueueConsumer>
+              <Navigation>
+                {children}
+              </Navigation>
             </MyAccountProvider>
             <Connecting/>
           </Api>

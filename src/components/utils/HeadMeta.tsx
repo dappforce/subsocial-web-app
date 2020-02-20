@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { isEmptyStr } from '.';
+import { summarize } from './utils';
 
 type HeadMetaProps = {
   title: string,
@@ -12,6 +13,7 @@ type HeadMetaProps = {
 // If you keep your titles under 60 characters, our research suggests
 // that you can expect about 90% of your titles to display properly.
 const MAX_TITLE_LEN = 45;
+const MAX_DESC_LEN = 300;
 
 const SITE_NAME = 'Subsocial Network';
 
@@ -29,6 +31,7 @@ export const createTitle = (title: string) => {
 
 export function HeadMeta (props: HeadMetaProps) {
   const { title, desc = DEFAULT_DESC, image = 'public/subsocial-logo.png' } = props;
+  const summary = summarize(desc, MAX_DESC_LEN);
   return <div>
     <Head>
       <title>{createTitle(title)}</title>
@@ -39,7 +42,7 @@ export function HeadMeta (props: HeadMetaProps) {
       <meta name='twitter:site' content={SITE_NAME} />
       <meta name='twitter:image' content={image} />
       <meta name='twitter:title' content={title} />
-      <meta name='twitter:description' content={desc} />
+      <meta name='twitter:description' content={summary} />
     </Head>
   </div>;
 }

@@ -10,7 +10,7 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, getApi, formatUnixDate, makeSummary } from '../utils/utils';
+import { Loading, getApi, formatUnixDate, summarize } from '../utils/utils';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
@@ -99,7 +99,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
-  const { state: { address } } = useMyAccount();
   const [ content, setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
@@ -123,6 +122,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const RenderDropDownMenu = (props: DropdownProps) => {
+    const { state: { address } } = useMyAccount();
+
     const isMyStruct = address === props.account;
 
     const [ open, setOpen ] = useState(false);
@@ -191,7 +192,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <div className='DfPostText'>
         {renderNameOnly(title || summary, post.id)}
         <div className='DfSummary'>
-          <ReactMarkdown className='DfMd' source={summary} linkTarget='_blank' />
+          {summary}
         </div>
       </div>
       {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
@@ -366,7 +367,7 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = makeSummary(ipfsContent.body, LIMIT_SUMMARY);
+  const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
   return {
     ...ipfsContent,
     summary
