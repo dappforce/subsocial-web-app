@@ -8,6 +8,7 @@ import ViewForum from './ViewForum';
 import faker from 'faker';
 
 import './style.css';
+import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 
@@ -88,6 +89,10 @@ type MenuItem = {
   image: string
 };
 
+import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import AddTeamMemberFormik from "./AddTeamMember/AddTeamMemberFormik";
+import {CompanyData} from "./AddTeamMember/AddTeamMemberFormik";
+
 const MenuItems: MenuItem[] = [
   {
     name: 'All blogs',
@@ -154,4 +159,26 @@ export const ListForum = () => {
 
 export const Forum = () => {
   return (<ViewForum/>);
-}
+};
+
+export const TeamMembersExample = () => {
+  return (<TeamMembers/>);
+};
+
+export const AddTeamMemberFormikExample = () => {
+  const companyData = [{
+    name: 'Web3 Foundation',
+    id: 1,
+    img: 'https://storage.googleapis.com/job-listing-logos/2ae39131-4f27-4944-b9f2-cd7a2e4e2bef.png',
+  }]
+
+  const employerTypesData = [
+    'qwerty',
+    'asdfgh'
+  ]
+
+  return (<AddTeamMemberFormik
+    companyData={companyData}
+    employerTypesData={employerTypesData}
+  />);
+};
