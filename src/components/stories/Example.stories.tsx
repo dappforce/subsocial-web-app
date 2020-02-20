@@ -160,10 +160,6 @@ export const Forum = () => {
   return (<ViewForum/>);
 };
 
-export const TeamMembersExample = () => {
-  return (<TeamMembers/>);
-};
-
 export const AddTeamMemberFormikExample = () => {
   const companyData:CompanyData = [{
     name: 'Web3 Foundation',
