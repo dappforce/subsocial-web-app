@@ -1,46 +1,57 @@
 .atm_switch_wrapper {
-    display: flex;
-    margin: 2rem 0 1rem;
+  display: flex;
+  margin : 2rem 0 1rem;
 }
+
 .atm_switch_label {
-    margin-left: 1rem;
+  margin-left: 1rem;
 }
+
 .atm_submit_button span {
-    color: #fff;
+  color: #fff;
 }
+
 .atm_dates_wrapper {
-    display: flex;
+  display: flex;
 }
+
 .atm_dates_wrapper .field {
-    margin-right: 2rem!important;
+  margin-right: 2rem !important;
 }
+
 .atm_dates_wrapper input {
-    padding: 1.286rem!important;
+  padding: 1.286rem !important;
 }
 
 .atm_company_wrapper {
-    position: relative;
+  position: relative;
 }
+
 .atm_prefix {
-  left: 0.5rem;
-  display: flex;
+  left    : 0.5rem;
+  display : flex;
   position: absolute;
-  top: 0.5rem;
+  top     : 0.5rem;
 }
+
 .atm_prefix img {
   height: 2rem;
 }
+
 .atm_company_autocomplete {
   background-color: #fff;
-  position: absolute;
-  width: 100%;
+  position        : absolute;
+  width           : 100%;
 }
+
 .atm_company_autocomplete_item {
   cursor: pointer;
 }
+
 .atm_company_autocomplete_item img {
   height: 2rem;
 }
+
 .atm_company_wrapper.with_prefix input {
-  padding-left: 2.5rem!important;
+  padding-left: 2.5rem !important;
 }
