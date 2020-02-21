@@ -9,7 +9,7 @@ import { Button } from 'antd';
 import { NextPage } from 'next';
 import { AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
-import { getApi } from '../utils/utils';
+import { getApi } from '../utils/SubstrateApi';
 
 type Props = I18nProps & {
   totalCount: number;

@@ -2,14 +2,12 @@ import React from 'react';
 import { registerSubsocialTypes } from '../components/types';
 
 import '../components/utils/styles';
-// import dynamic from 'next/dynamic';
-import ClientLayout, { LayoutProps } from './ClientLayout';
-// const ClientLayout = dynamic(() => import('./ClientLayout'));
+import ClientLayout from './ClientLayout';
 
-const NextLayout: React.FunctionComponent<LayoutProps> = ({ children, isClient }) => {
+const NextLayout: React.FunctionComponent = ({ children }) => {
   registerSubsocialTypes();
 
-  return <ClientLayout isClient={isClient}>{children}</ClientLayout>;
+  return <ClientLayout>{children}</ClientLayout>;
 };
 
 export default NextLayout;

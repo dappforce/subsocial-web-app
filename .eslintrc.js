@@ -15,6 +15,7 @@ module.exports = {
     'comma-spacing': 'warn',
     'array-bracket-spacing': ['warn', "always"],
     'react/display-name': 'off',
+    'padded-blocks': 'off',
     'prefer-promise-reject-errors': 'warn',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/indent': ['warn', 2],

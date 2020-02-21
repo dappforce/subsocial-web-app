@@ -9,7 +9,7 @@ import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } from '../types';
 import { Icon } from 'antd';
 import BN from 'bn.js';
-import { getApi } from '../utils/utils';
+import { getApi } from '../utils/SubstrateApi';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const ZERO = new BN(0);

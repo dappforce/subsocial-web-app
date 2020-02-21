@@ -14,11 +14,7 @@ import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
 import Connecting from '../components/main/Connecting';
 
-export type LayoutProps = {
-  isClient: boolean;
-};
-
-const ClientLayout: React.FunctionComponent<LayoutProps> = ({ children }) => {
+const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
   console.log(url);
 
