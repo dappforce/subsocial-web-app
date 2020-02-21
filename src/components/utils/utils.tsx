@@ -155,6 +155,6 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     ? truncate(text, {
       length: limit,
       separator: /.,:;!?\(\)\[\]\{\} +/
-    }) + '...'
+    })
     : text;
 };
