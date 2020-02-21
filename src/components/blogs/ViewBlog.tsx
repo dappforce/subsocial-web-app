@@ -289,21 +289,23 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
   };
 };
 
-ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { blogId } } = props
-  const idOrSlug = blogId as string
-  let id: BlogId | string
-
-  const api = await getApi()
-
+export const checkIdByIdOrSlug = async (api:ApiPromise, idOrSlug: string ):Promise<BlogId | string> => {
   if (idOrSlug.startsWith('@')) {
     const slug = idOrSlug.substring(1)
     const tempIdOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
-    id = tempIdOpt.isSome ? tempIdOpt.unwrap() : 'undefined' // excluding wrong assertion
+    // excluding wrong assertion
+    return tempIdOpt.isSome ? tempIdOpt.unwrap() : ''
   } else {
-    id = new BlogId(idOrSlug as string)
+    return new BlogId(idOrSlug as string)
   }
+}
 
+ViewBlogPage.getInitialProps = async (props): Promise<any> => {
+  const { query: { blogId } } = props
+  const idOrSlug = blogId as string
+  
+  const api = await getApi()
+  const id = await checkIdByIdOrSlug(api, idOrSlug)
   const blogData = await loadBlogData(api, id as BlogId)
   const postIds = await api.query.blogs.postIdsByBlogId(id as unknown as string) as unknown as PostId[]
   const posts = await loadPostDataList(api, postIds.reverse())
