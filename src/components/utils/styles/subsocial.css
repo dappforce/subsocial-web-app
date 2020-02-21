@@ -11,7 +11,7 @@ body,
 }
 
 .DfPageContent {
-  padding: 1.5rem 1.5rem;
+  padding: $space_big;
   overflow-wrap: break-word;
   min-width: 428px;
   max-width: 728px;
@@ -36,11 +36,11 @@ body,
 }
 
 .DfSummary {
-  margin-top: 1rem;
+  margin-top: $space_normal;
 }
 
-.DfPostfName {
-  margin-right: .5rem;
+.DfPostName {
+  margin-right: $space_tiny;
 }
 
 .DfPostImage {
@@ -183,7 +183,7 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfSpacedButtons {
   margin-top: $space_normal;
-  margin-bottom: calc(2*$space_normal);
+  margin-bottom: calc(2 * $space_normal);
 
   .button {
     margin-right: $space_tiny;
@@ -204,7 +204,7 @@ form.ui.form.DfForm.EditEntityForm {
     color: $color_muted;
     min-width: initial;
     max-height: initial;
-    padding: $space_tiny $space_tiny $space_tiny .1rem;
+    padding: $space_tiny $space_tiny $space_tiny $space_normal;
 
     &.red {
 
@@ -311,18 +311,12 @@ hr {
   }
 
   .header {
-    font-size: 1rem;
+    font-size: $font_normal;
   }
 
   .name {
     text-transform: uppercase;
   }
-
-  /*.activity{
-    margin-left: .25rem;
-    margin-right: .25rem;
-  }*/
-
 }
 
 .DfDate {
@@ -720,7 +714,6 @@ hr {
 }
 
 .DfSection {
-  margin-top: $space_huge;
   margin-bottom: $space_normal;
 
   .DfSection-title {
@@ -924,7 +917,7 @@ hr {
 }
 
 .DfBgColor {
-  background-color: #fafafa;
+  background-color: $color_page_bg;
 }
 
 .DfTab {
@@ -947,7 +940,17 @@ hr {
 }
 
 .ant-layout {
-  background-color: #fafafa !important;
+  background-color: $color_page_bg !important;
+
+  &.ant-layout-has-sider {
+    margin-top: $height_top_menu;
+  }
+}
+
+.ant-menu-inline {
+  .ant-menu-item:not(:last-child) {
+    margin-bottom: 4px;
+  }
 }
 
 .ui.segment {
@@ -971,10 +974,6 @@ hr {
   display: flex;
   justify-content: space-between;
   width: 100%;
-}
-
-.DfSelestedBlog {
-  color: #1890fe;
 }
 
 .DfSideMenu--FollowedBlogs {
@@ -1085,7 +1084,7 @@ hr {
   display: -moz-inline-box;
 }
 
-/*---fix-syntax-error-md----*/
+/* Fix syntax error in Markdown editor */
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
   background: none !important;
 }
@@ -1117,7 +1116,7 @@ hr {
 
 .DfBlogTitle {
   .ui.dropdown {
-    margin-left: .5rem;
+    margin-left: $space_tiny;
   }
 }
 

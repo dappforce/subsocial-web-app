@@ -55,11 +55,11 @@ export const Navigation = (props: Props): JSX.Element => {
     url={ElasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
-    <Layout style={{ backgroundColor: '#fafafa !important' }}>
+    <Layout>
       <Header className='DfHeader'>
         <TopMenu />
       </Header>
-      <Layout style={{ marginTop: '60px' }}>
+      <Layout>
         {isBrowser
           ? <>
             <DesktopNav />
