@@ -811,15 +811,6 @@ hr {
   color: #4e4e4e;
 }
 
-.DfMd {
-  margin-top: $space_mini;
-  font-size: $font_normal;
-}
-
-.DfMd.details {
-  margin-top: $space_huge;
-}
-
 .DfPopup-about {
   margin: $space_tiny 0;
 }

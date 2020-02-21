@@ -18,7 +18,7 @@ import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
 import { CommentHistoryModal } from '../utils/ListsEditHistory';
-import ReactMarkdown from 'react-markdown';
+import { DfMd } from '../utils/DfMd';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize, pluralize } from '../utils/Plularize';
@@ -28,6 +28,7 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
+
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type Props = ApiProps & {
@@ -278,7 +279,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
               />
               : <>
                 <SuiComment.Text>
-                  <ReactMarkdown className='DfMd' source={content.body} linkTarget='_blank' />
+                  <DfMd source={content.body} />
                 </SuiComment.Text>
                 <SuiComment.Actions>
                   {showReplyForm

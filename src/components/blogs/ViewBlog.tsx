@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
+import { DfMd } from '../utils/DfMd';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { Option, AccountId } from '@polkadot/types';
@@ -29,6 +29,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
+
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -177,7 +178,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
             {!previewDetails && renderDropDownMenu()}
           </span>
           <div className='description'>
-            <ReactMarkdown className='DfMd' source={desc} linkTarget='_blank' />
+            <DfMd source={desc} />
           </div>
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-target-blank */
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
@@ -26,6 +26,7 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
+
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -140,7 +141,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const renderDescription = () => preview
     ? summarize(about)
-    : <ReactMarkdown className='DfMd' source={about} linkTarget='_blank'/>;
+    : <DfMd source={about} />;
 
   const NameAsLink = () => (
     <Link href='/profile/[address]' as={`/profile/${address}`}>
