@@ -17,6 +17,13 @@ export type Activity = {
   agg_count: number
 };
 
+export class Score extends i32 {
+  public toHex (): string {
+    console.log('Score toHex', super.toHex(), this.isNeg());
+    return (this.isNeg() && typeof window === 'undefined' ? '-' : '') + super.toHex()
+  }
+}
+
 export class BlogId extends u64 {}
 export class PostId extends u64 {}
 export class CommentId extends u64 {}
@@ -102,7 +109,7 @@ export type BlogType = {
   posts_count: u16;
   followers_count: u32;
   edit_history: VecBlogHistoryRecord;
-  score: i32;
+  score: Score;
 };
 
 export class Blog extends Struct {
@@ -118,7 +125,7 @@ export class Blog extends Struct {
         posts_count: u16,
         followers_count: u32,
         edit_history: VecBlogHistoryRecord,
-        score: i32
+        score: Score
       },
       value
     );
@@ -166,8 +173,8 @@ export class Blog extends Struct {
     return this.get('edit_history') as VecBlogHistoryRecord;
   }
 
-  get score (): i32 {
-    return this.get('score') as i32;
+  get score (): Score {
+    return this.get('score') as Score;
   }
 }
 
@@ -232,7 +239,7 @@ export type PostType = {
   downvotes_count: u16;
   shares_count: u16;
   edit_history: VecPostHistoryRecord;
-  score: i32;
+  score: Score;
 };
 
 export class Post extends Struct {
@@ -250,7 +257,7 @@ export class Post extends Struct {
         downvotes_count: u16,
         shares_count: u16,
         edit_history: VecPostHistoryRecord,
-        score: i32
+        score: Score
       },
       value
     );
@@ -307,8 +314,8 @@ export class Post extends Struct {
     return this.get('edit_history') as VecPostHistoryRecord;
   }
 
-  get score (): BN {
-    return new BN(this.get('score') as i32);
+  get score (): Score {
+    return this.get('score') as Score;
   }
 
   get isRegularPost (): boolean {
@@ -369,7 +376,7 @@ export type CommentType = {
   shares_count: u16;
   direct_replies_count: u16;
   edit_history: VecCommentHistoryRecord;
-  score: i32;
+  score: Score;
 };
 
 export class Comment extends Struct {
@@ -387,7 +394,7 @@ export class Comment extends Struct {
         shares_count: u16,
         direct_replies_count: u16,
         edit_history: VecCommentHistoryRecord,
-        score: i32
+        score: Score
       },
       value
     );
@@ -444,8 +451,8 @@ export class Comment extends Struct {
     return this.get('edit_history') as VecCommentHistoryRecord;
   }
 
-  get score (): i32 {
-    return this.get('score') as i32;
+  get score (): Score {
+    return this.get('score') as Score;
   }
 }
 
