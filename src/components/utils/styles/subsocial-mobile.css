@@ -280,7 +280,7 @@
   }
 
   .DfSummary {
-    margin-top: $space_mini !important;
+    margin-top: $space_tiny !important;
   }
 
   .DfCountsPreview .MutedText {

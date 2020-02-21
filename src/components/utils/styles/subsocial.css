@@ -36,7 +36,11 @@ body,
 }
 
 .DfSummary {
-  margin-top: $space_normal;
+  margin-top: $space_small;
+}
+
+.DfPostText {
+  margin-top: $space_tiny;
 }
 
 .DfPostName {
@@ -101,8 +105,7 @@ body,
   display: flex !important;
 
   .content {
-    padding-left: $space_tiny;
-    padding-right: $space_tiny;
+    padding: 0 $space_small;
   }
 
   .button {
@@ -618,6 +621,7 @@ hr {
 .ui--AddressComponents {
   .ui--IdentityIcon {
     margin-left: 0;
+    margin-right: $space_small;
   }
 
   .AddressComponents.follow {
@@ -891,9 +895,15 @@ hr {
   width: 60%;
   color: rgba(0, 0, 0, 0.7);
   z-index: 2;
+  padding: 0 1rem;
 
   input {
     border-radius: .5rem;
+    font-size: $font_normal;
+  }
+
+  input::placeholder {
+    color: #aaa;
   }
 
   input:hover {
@@ -902,9 +912,9 @@ hr {
 
   input:focus {
     border-color: #1e99ff;
-    -moz-box-shadow: 0 0 10px #1e99ff;
-    -webkit-box-shadow: 0 0 10px #1e99ff;
-    box-shadow: 0 0 10px #1e99ff;
+    -moz-box-shadow: 0 0 5px #1e99ff;
+    -webkit-box-shadow: 0 0 5px #1e99ff;
+    box-shadow: 0 0 5px #1e99ff;
   }
 
   ul {
