@@ -104,3 +104,11 @@ export function getUrlParam (location: Location, paramName: string, deflt: strin
   const params = queryString.parse(location.search);
   return params[paramName] ? params[paramName] as string : deflt;
 }
+
+export function isServerSide (): boolean {
+  return typeof window === 'undefined'
+}
+
+export function isClientSide (): boolean {
+  return !isServerSide()
+}
