@@ -2,6 +2,7 @@
 import { Option, Struct, Enum, EnumType } from '@polkadot/types/codec';
 import { getTypeRegistry, BlockNumber, Moment, AccountId, u16, u32, u64, Text, Vector, i32, Null } from '@polkadot/types';
 import BN from 'bn.js';
+import { isServerSide } from '../utils';
 
 export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
 
@@ -19,8 +20,9 @@ export type Activity = {
 
 export class Score extends i32 {
   public toHex (): string {
-    console.log('Score toHex', super.toHex(), this.isNeg());
-    return (this.isNeg() && typeof window === 'undefined' ? '-' : '') + super.toHex()
+    // console.log('Score.toHex:', super.toHex(), '; is negative?', this.isNeg())
+    const prefix = this.isNeg() && isServerSide() ? '-' : ''
+    return prefix + super.toHex()
   }
 }
 
