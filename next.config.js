@@ -1,9 +1,6 @@
 const withCSS = require('@zeit/next-css');
 const withImages = require('next-images');
 const withPlugins = require('next-compose-plugins');
-
-require('dotenv').config();
-
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
 
@@ -35,7 +32,7 @@ module.exports = withPlugins([withImages, withCSS({
       // Read the .env file
       new Dotenv({
         path: path.join(__dirname, '.env'),
-        systemvars: true,
+        // systemvars: true,
       }),
     ]
 
