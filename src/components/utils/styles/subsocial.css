@@ -227,6 +227,12 @@ form.ui.form.DfForm.EditEntityForm {
   }
 }
 
+.DfNoVoters {
+  text-align: center;
+  background-color: #fff;
+  padding: 1rem;
+}
+
 .ui.img.avatar {
   width: initial;
   height: initial;

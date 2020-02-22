@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { queryBlogsToProp } from '../utils/index';
-import { Modal, Button, Tab } from 'semantic-ui-react';
+import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
 import { ReactionId, Reaction, CommentId, PostId } from '../types';
 import { api } from '@polkadot/ui-api/Api';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
+import { partition } from 'lodash';
+import { MutedDiv, MutedSpan } from '../utils/MutedText';
+
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type VotersProps = {
@@ -29,6 +31,7 @@ const InnerModalVoters = (props: VotersProps) => {
   const votersCount = reactions ? reactions.length : 0;
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
   const [ trigger, setTrigger ] = useState(false);
+  const [ upvoters, downvoters ] = partition(reactionView, (x) => x.kind.toString() === 'Upvote')
 
   const toggleTrigger = () => {
     reactions === undefined && setTrigger(!trigger);
@@ -68,15 +71,20 @@ const InnerModalVoters = (props: VotersProps) => {
     });
   };
 
-  const filterVoters = (type: 'Upvote' | 'Downvote') => {
-    const reactionWithVoters = reactionView.filter(reaction => reaction.kind.toString() === type);
-    return <Tab.Pane>{renderVoters(reactionWithVoters)}</Tab.Pane>;
-  };
+  const TabContent = (voters: Array<Reaction>) => {
+    return voters && voters.length
+      ? <Tab.Pane>{renderVoters(voters)}</Tab.Pane>
+      : <MutedDiv className='DfNoVoters'><em>No reactions yet</em></MutedDiv>
+  }
+
+  const TabTitle = (title: string, voters: Array<Reaction>) => {
+    return <Menu.Item>{title}<MutedSpan style={{ marginLeft: '.5rem' }}>({voters.length})</MutedSpan></Menu.Item>
+  }
 
   const panes = [
-    { key: 'all', menuItem: 'All', render: () => <Tab.Pane>{renderVoters(reactionView)}</Tab.Pane> },
-    { key: 'upvote', menuItem: 'Upvoters', render: () => filterVoters('Upvote') },
-    { key: 'downvote', menuItem: 'Downvoters', render: () => filterVoters('Downvote') }
+    { key: 'all', menuItem: TabTitle('All', reactionView), render: () => TabContent(reactionView) },
+    { key: 'upvote', menuItem: TabTitle('Upvoters', upvoters), render: () => TabContent(upvoters) },
+    { key: 'downvote', menuItem: TabTitle('Downvoters', downvoters), render: () => TabContent(downvoters) }
   ];
 
   return (
