@@ -49,6 +49,7 @@ body,
 
 .DfPostImage {
   max-width: 100%;
+  margin-bottom: $space_normal;
 }
 
 .DfMenuItem {
