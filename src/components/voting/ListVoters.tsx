@@ -26,12 +26,16 @@ export enum ActiveVoters {
   Downvote
 }// TODO fix activeIndex lock
 
+function isUpvote (reaction: Reaction): boolean {
+  return reaction && reaction.kind.toString() === 'Upvote'
+}
+
 const InnerModalVoters = (props: VotersProps) => {
   const { reactions, open, close, active = ActiveVoters.All } = props;
   const votersCount = reactions ? reactions.length : 0;
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
   const [ trigger, setTrigger ] = useState(false);
-  const [ upvoters, downvoters ] = partition(reactionView, (x) => x.kind.toString() === 'Upvote')
+  const [ upvoters, downvoters ] = partition(reactionView, (x) => isUpvote(x))
 
   const toggleTrigger = () => {
     reactions === undefined && setTrigger(!trigger);
@@ -64,7 +68,10 @@ const InnerModalVoters = (props: VotersProps) => {
           value={reaction.created.account}
           isPadded={false}
           size={28}
-          extraDetails={`${reaction.kind}d`}
+          extraDetails={isUpvote(reaction)
+            ? <span style={{ color: 'green' }}>Upvoted</span>
+            : <span style={{ color: 'red' }}>Downvoted</span>
+          }
           withFollowButton
         />
       </div>;
