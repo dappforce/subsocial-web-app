@@ -36,7 +36,7 @@ const MobileNav: FunctionComponent = ({ children }) => {
     className='DfMobileSideBar'
     style={{ minHeight: document.documentElement.clientHeight }}
     enableDragHandle
-    contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
+    contentStyle={{ color: '#a6a6a6', textAlign: 'center', paddingTop: 42 }}
     sidebar={<Menu />}
     open={!collapsed}
     onOpenChange={toggle}
@@ -63,10 +63,10 @@ export const Navigation = (props: Props): JSX.Element => {
         {isBrowser
           ? <>
             <DesktopNav />
-            <MainContent/>
+            <MainContent />
           </>
           : <MobileNav>
-            <MainContent/>
+            <MainContent />
           </MobileNav>
         }
       </Layout>
