@@ -8,5 +8,17 @@
         "node_modules": true,
         ".next": true
     },
-    "explorerExclude.backup": null
+    "files.autoSave": "afterDelay",
+    "eslint.format.enable": true,
+    "eslint.lintTask.enable": true,
+    "files.associations": {
+        "*.css": "scss",
+        "*.sass": "scss"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": false
+    }
 }
