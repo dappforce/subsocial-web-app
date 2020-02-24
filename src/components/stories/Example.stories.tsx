@@ -39,7 +39,7 @@ class App extends React.Component {
     });
   }
 
-  render () {
+  render() {
     return (
       <div style={{ width: 256 }}>
         <Button type='primary' onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
@@ -121,7 +121,7 @@ const MenuItems: MenuItem[] = [
 ];
 
 export const Navigations = () => {
-  const [ collapsed, setCollapsed ] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -190,4 +190,27 @@ export const ReorderNavTabsExample = () => {
     ]
   }
   return <ReorderNavTabs {...navTabs} />
+}
+
+
+export const NavigationEditorExample = () => {
+  const NavProps: NavEditorFormProps = {
+    tags: ['tag1', 'tag2', 'tag3'],
+    posts: [
+      { id: new PostId('3'), title: 'Post title (id: 3)' },
+      { id: new PostId('4'), title: 'Post title (id: 4)' }
+    ],
+    navTabs: [
+      { id: 1, name: 'first name', type: 'by-tag', value: 'first, value', show: true, },
+      { id: 2, name: 'second name', type: 'ext-url', value: 'http://google.com', show: true, },
+      { id: 3, name: 'third name', type: 'blog-url', value: '/blogs/2/post/3', show: true, },
+      { id: 4, name: 'fourth name', type: 'ext-url', value: 'fourth, value', show: false, },
+      { id: 5, name: 'fifth name', type: 'by-tag', value: 'fifth, value', show: true, },
+    ],
+    typesOfContent: [
+      'by-tag', 'ext-url', 'blog-url'
+    ]
+  }
+
+  return <NavigationEditor {...NavProps} />
 }
