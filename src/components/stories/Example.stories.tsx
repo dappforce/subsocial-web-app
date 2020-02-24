@@ -10,22 +10,24 @@ import faker from 'faker';
 import './style.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import NavigationEditor, { NavEditorFormProps } from './navigation-editor/NavigationEditor';
+import { PostId } from '../types';
 
 const { SubMenu } = Menu;
 
-const items = [{ avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() }];
+const items = [{ avatar: faker.image.avatar(), name: faker.company.companyName() },
+{ avatar: faker.image.avatar(), name: faker.company.companyName() },
+{ avatar: faker.image.avatar(), name: faker.company.companyName() },
+{ avatar: faker.image.avatar(), name: faker.company.companyName() },
+{ avatar: faker.image.avatar(), name: faker.company.companyName() },
+{ avatar: faker.image.avatar(), name: faker.company.companyName() },
+{ avatar: faker.image.avatar(), name: faker.company.companyName() }];
 
 const renderMenu = items.map((d, index) =>
-<Menu.Item key={index}>
-<Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
-<span>{d.name}</span>
-</Menu.Item>);
+  <Menu.Item key={index}>
+    <Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
+    <span>{d.name}</span>
+  </Menu.Item>);
 
 class App extends React.Component {
   state = {
@@ -38,7 +40,7 @@ class App extends React.Component {
     });
   }
 
-  render () {
+  render() {
     return (
       <div style={{ width: 256 }}>
         <Button type='primary' onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
@@ -51,10 +53,10 @@ class App extends React.Component {
           theme='light'
           inlineCollapsed={this.state.collapsed}
         >
-        <Menu.Item key='menu1'>
-          <Icon type='notification' />
-          <span>My Feed</span>
-        </Menu.Item>
+          <Menu.Item key='menu1'>
+            <Icon type='notification' />
+            <span>My Feed</span>
+          </Menu.Item>
           <SubMenu
             key='sub1'
             title={
@@ -117,7 +119,7 @@ const MenuItems: MenuItem[] = [
 ];
 
 export const Navigations = () => {
-  const [ collapsed, setCollapsed ] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -135,14 +137,14 @@ export const Navigations = () => {
         theme='light'
         inlineCollapsed={collapsed}
       >
-      <Menu.Item style={{ marginRight: '1.5em' }}>
-        <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
-        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
-      </Menu.Item>
-      {MenuItems.map((item, index) => <Menu.Item key={index}>
-        <Icon type={item.image} />
-        <span>{item.name}</span>
-      </Menu.Item>)}
+        <Menu.Item style={{ marginRight: '1.5em' }}>
+          <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
+          <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
+        </Menu.Item>
+        {MenuItems.map((item, index) => <Menu.Item key={index}>
+          <Icon type={item.image} />
+          <span>{item.name}</span>
+        </Menu.Item>)}
       </Menu>
     </div>
   );
@@ -153,5 +155,28 @@ export const ListForum = () => {
 };
 
 export const Forum = () => {
-  return (<ViewForum/>);
+  return (<ViewForum />);
+}
+
+
+export const NavigationEditorExample = () => {
+  const NavProps: NavEditorFormProps = {
+    tags: ['tag1', 'tag2', 'tag3'],
+    posts: [
+      { id: new PostId('3'), title: 'Post title (id: 3)' },
+      { id: new PostId('4'), title: 'Post title (id: 4)' }
+    ],
+    navTabs: [
+      { id: 1, name: 'first name', type: 'by-tag', value: 'first, value', show: true, },
+      { id: 2, name: 'second name', type: 'ext-url', value: 'http://google.com', show: true, },
+      { id: 3, name: 'third name', type: 'blog-url', value: '/blogs/2/post/3', show: true, },
+      { id: 4, name: 'fourth name', type: 'ext-url', value: 'fourth, value', show: false, },
+      { id: 5, name: 'fifth name', type: 'by-tag', value: 'fifth, value', show: true, },
+    ],
+    typesOfContent: [
+      'by-tag', 'ext-url', 'blog-url'
+    ]
+  }
+
+  return <NavigationEditor {...NavProps} />
 }

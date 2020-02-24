@@ -1,0 +1,92 @@
+.NavigationEditor {
+  display       : flex;
+  flex-direction: column;
+  max-width     : 840px;
+}
+
+.NavigationEditor .NERow {
+  display        : flex;
+  justify-content: space-between;
+  margin-left    : 0rem;
+  margin-bottom  : 1.5rem;
+}
+
+.NavigationEditor .NERow.NEHead {
+  margin-left: 8rem;
+}
+
+.NavigationEditor .NEText {
+  color       : #000;
+  font-style  : normal;
+  font-weight : 500;
+  font-size   : 1rem;
+  margin-right: 2rem;
+  width       : 16rem;
+  margin-top  : 1.5rem;
+}
+
+.NavigationEditor .NavigationEditorForm {
+  display       : flex;
+  flex-direction: column;
+}
+
+.NavigationEditor .NavigationEditorForm input,
+.NavigationEditor .NavigationEditorForm select {
+  margin-right: 2rem !important;
+  height: 3rem!important;
+  max-width: 15.2rem!important;
+}
+
+
+.NavigationEditor .NavigationEditorForm .NEHidden input,
+.NavigationEditor .NavigationEditorForm .NEHidden select {
+  color: #8C8C8C!important;
+}
+
+.NavigationEditor .NEHideButton,
+.NavigationEditor .NERemoveButton {
+  display     : flex;
+  align-items : center;
+  margin-right: 2rem;
+  cursor: pointer;
+  height: 3rem;
+}
+.NavigationEditor .NEHideButton {
+  opacity: 0;
+}
+.NavigationEditor .NEHidden .NEHideButton,
+.NavigationEditor .NERow:hover .NEHideButton {
+  opacity: 100;
+}
+
+.NavigationEditor .NEAddTab {
+  margin-left     : 7.2rem;
+  background-color: #fff;
+  color           : #1890FF;
+  display         : flex;
+  border-radius   : .28571429rem;
+  line-height     : 1.21428571rem;
+  padding         : .67857143rem 1rem;
+  max-width       : 15.2rem;
+  width           : 100%;
+  justify-content : center;
+  border          : 1px dashed #D9D9D9;
+  cursor          : pointer;
+}
+
+.NavigationEditor .ant-btn span {
+  color: #fff!important;
+}
+
+.NavigationEditor .NESubmit {
+  max-width       : 8.5rem;
+  width           : 100%;
+}
+
+.NavigationEditor .NETagsWrapper {
+  width: 100%;
+  max-width: 17.2rem;
+}
+.NavigationEditor .NETagsWrapper input {
+  height: 1.5rem!important;
+}
