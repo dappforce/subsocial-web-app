@@ -1,98 +1,90 @@
 
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import { Tag, Input, Tooltip, Icon } from 'antd';
+import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
 import { FormikProps } from 'formik';
-import { PostId } from 'src/components/types';
-
-export interface PartialPost { id: PostId, title: string }
-
-export interface NavTab {
-  id: number
-  name: string
-  type: string
-  value: string
-  show: boolean
-}
-
-interface FormValues {
-  navTabs: NavTab[]
-  typesOfContent: string[]
-}
+import { FormValues } from '../navigation-editor/NavigationEditor'
+import { SelectValue } from 'antd/lib/select';
 
 interface OtherProps {
-  tags: string[]
+  tagsData: string[]
   currentTab: number
 }
 
 const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
-    const {setFieldValue, values, currentTab} = props
-    const {navTabs} = values;
+  const { setFieldValue, values, currentTab, tagsData } = props
+  const { navTabs } = values;
 
-    const tags = navTabs[currentTab].value.split(', ')
-    const [inputVisible, setInputVisible] = useState(false)
-    const [inputValue, setInputValue] = useState('')
+  let tags: string[] = navTabs[currentTab].content.tags ? navTabs[currentTab].content.tags : []
 
+  const [inputVisible, setInputVisible] = useState(false)
+  const [inputValue, setInputValue] = useState('')
 
-    const handleClose = (removedTag: string) => {
-        const newTags = tags.filter(tag => tag !== removedTag);
-        setFieldValue(`navTabs.${currentTab}.value`, newTags.join(', '))
-    };
+  const handleClose = (removedTag: string) => {
+    const newTags = tags.filter(tag => tag !== removedTag);
+    setFieldValue(`navTabs.${currentTab}.content.tags`, newTags)
+  };
 
-    const showInput = () => {
-        setInputVisible(true);
-    };
+  const showInput = () => {
+    setInputVisible(true);
+  };
 
-    const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-        setInputValue(e.currentTarget.value);
-    };
+  const handleInputChange = (e: SelectValue) => {
+    setInputValue(e.toString());
+  };
 
-    const handleInputConfirm = () => {
-        let newTags = ['']
-        if (inputValue && tags.indexOf(inputValue) === -1) {
-            newTags = [...tags, inputValue];
-            setFieldValue(`navTabs.${currentTab}.value`, newTags.join(', '))
-        }
-        setInputVisible(false)
-        setInputValue('')
-    };
+  const handleInputConfirm = () => {
+    let newTags = ['']
+    if (inputValue && tags.indexOf(inputValue) === -1) {
+      newTags = [...tags, inputValue];
+      setFieldValue(`navTabs.${currentTab}.content.tags`, newTags)
+    }
+    setInputVisible(false)
+    setInputValue('')
+  };
 
-    return (
-        <div>
-            {tags.map((tag, index) => {
-                const isLongTag = tag.length > 20;
-                const tagElem = (
-                    <Tag key={tag} closable={index !== 0} onClose={() => handleClose(tag)}>
-                        {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-                    </Tag>
-                );
-                return isLongTag ? (
-                    <Tooltip title={tag} key={tag}>
-                        {tagElem}
-                    </Tooltip>
-                ) : (
-                        tagElem
-                    );
-            })}
-            {inputVisible && (
-                <Input
-                    autoFocus 
-                    type="text"
-                    size="small"
-                    style={{ width: 78 }}
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onBlur={handleInputConfirm}
-                    onPressEnter={handleInputConfirm}
-                />
-            )}
-            {!inputVisible && (
-                <Tag onClick={showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
-                    <Icon type="plus" /> New Tag
+  return (
+    <div>
+      {tags.map((tag, index) => {
+        const isLongTag = tag.length > 20;
+        const tagElem = (
+          <Tag key={tag} closable={index !== 0} onClose={() => handleClose(tag)}>
+            {isLongTag ? `${tag.slice(0, 20)}...` : tag}
           </Tag>
-            )}
-        </div>
-    );
+        );
+        return isLongTag ? (
+          <Tooltip title={tag} key={tag}>
+            {tagElem}
+          </Tooltip>
+        ) : (
+            tagElem
+          );
+      })}
+      {inputVisible && (
+        <AutoComplete
+          autoFocus
+          size="small"
+          style={{ width: 78 }}
+          onChange={handleInputChange}
+          onBlur={handleInputConfirm}
+          value={inputValue}
+          dataSource={tagsData}
+          placeholder="try to type `tag`"
+          filterOption={(inputValue, option) =>
+            option.props.children?.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+          }
+        >
+          <Input onPressEnter={handleInputConfirm}  />
+        </AutoComplete>
+      )}
+      
+      {!inputVisible && (
+        <Tag onClick={showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
+          <Icon type="plus" /> New Tag
+          </Tag>
+      )}
+    </div>
+  );
 
 }
 

@@ -6,51 +6,123 @@ import Section from '../../utils/Section';
 import { Button, Icon } from 'antd';
 import { PostId } from 'src/components/types';
 import TagsInput from '../tags-input/TagsInput';
-
+import SimpleMDEReact from 'react-simplemde-editor';
 import './NavigationEditor.css'
 
 // Shape of form values
 export interface PartialPost { id: PostId, title: string }
 
-export interface NavTab {
-  id: number
-  name: string
-  type: string
-  value: string
-  show: boolean
+interface FilterByTags {
+  tags: string[]
 }
 
-interface FormValues {
+interface SpecificPost {
+  postId: PostId
+}
+
+interface OuterUrl {
+  url: string
+}
+
+type NavTabContent = FilterByTags | SpecificPost | OuterUrl
+
+export interface NavTab {
+  id: number
+  title: string
+  content: NavTabContent
+  description: string
+  hidden: boolean
+  type: string
+}
+
+export interface FormValues {
   navTabs: NavTab[]
-  typesOfContent: string[]
 }
 
 interface OtherProps {
-  tags: string[]
+  tagsData: string[]
   posts: PartialPost[]
+  typesOfContent: string[]
 }
 
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const {
     values,
     //posts,
-    //errors,
+    errors,
+    touched,
     setFieldValue,
+    typesOfContent,
+    tagsData
   } = props;
 
   const {
     navTabs,
-    typesOfContent
   } = values;
+
+  const getMaxId = ():number => {
+    const x = navTabs.reduce((cur, prev) => (cur.id > prev.id ? cur : prev))
+    return x.id
+  }
+
+  const defaultTab = { id: getMaxId() + 1, title: '', type: 'by-tag', description: '', content: { tags: [] }, hidden: false, }
+
+  const renderValueField = (nt: NavTab, index: number) => {
+    let url = nt.content.url ? nt.content.url : ''
+    let postId = nt.content.postId ? nt.content.postId.toString() : ''
+
+    switch (nt.type){
+      case 'ext-url': {
+        return (
+          <Field
+            type="text"
+            name={`nt.${index}.content.url`}
+            value={url}
+            onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.content.url`, e.currentTarget.value)}
+          />
+        )
+      }
+      case 'blog-url': {
+        return (
+          <Field
+            type="text"
+            name={`nt.${index}.content.postId`}
+            value={postId}
+            onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.content.postId`, e.currentTarget.value)}
+          />
+        )
+
+      }
+      case 'by-tag': {
+        return (
+          <div className="NETagsWrapper">
+            <TagsInput
+              currentTab={index}
+              tagsData={tagsData}
+              {...props}
+            />
+          </div>
+        )
+      }
+      default: {
+        return undefined
+      }
+    } 
+  }
+
+  console.log('errors', errors)
+  console.log('touched', touched)
+
+  const renderError = (index: number, name: string) => {
+    if (errors.navTabs && errors.navTabs[index]?.title && name === 'title') {
+      return <div className='ui pointing red label NEErrorMessage' >{ errors.navTabs[index]?.title } </div>
+    }
+    return null
+  } 
 
   return <>
     <HeadMeta title={'Navigation Editor'} />
     <Section className='NavigationEditor' title={'Navigation Editor'}>
-      <div className="NERow NEHead">
-        <div className="NEText">Tab Name</div>
-        <div className="NEText">Type of content</div>
-        <div className="NEText">Filter value</div>
-      </div>
       <Form className='ui form DfForm NavigationEditorForm'>
         <FieldArray
           name="navTabs"
@@ -58,61 +130,67 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             <div>
               {values.navTabs && values.navTabs.length > 0 && (
                 values.navTabs.map((nt, index) => (
-                  <div className={`NERow ${(!nt.show && 'NEHidden')}`} key={nt.id}>
-                    <div className="NEHideButton">
-                      <Icon
-                        type="eye-invisible"
-                        onClick={() => setFieldValue(`navTabs.${index}.show`, !nt.show)}
-                      />
-                    </div>
-                    <div className="NERemoveButton">
-                      <Icon
-                        type="delete"
-                        onClick={() => arrayHelpers.remove(index)}
-                      />
-                    </div>
+                  <div className={`NERow ${(nt.hidden ? 'NEHidden' : '')}`} key={nt.id}>
+                    
+                    <div className="NEText">Name:</div>
                     <Field
                       type="text"
-                      name={`nt.${index}.name`}
+                      name={`nt.${index}.title`}
                       placeholder="Tab Name"
-                      value={nt.name}
-                      onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.name`, e.currentTarget.value)}
+                      value={nt.title}
+                      onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.title`, e.currentTarget.value)}
                     />
-                    <Field component="select" name={`nt.${index}.type`} defaultValue={nt.type}>
+                    { renderError(index, 'title') }
+                    <div className="NEText">Description:</div>
+                    <Field 
+                      component={SimpleMDEReact} 
+                      name={`navTabs.${index}.description`} value={nt.description} 
+                      onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)} 
+                      className={`DfMdEditor NETextEditor`} />
+                    <div className="NEText">Type of content:</div>
+                    <Field 
+                      component="select" 
+                      name={`nt.${index}.type`} 
+                      defaultValue={nt.type}
+                      onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.type`, e.currentTarget.value)}
+                    >
                       {
                         typesOfContent.map((x) => <option key={x} value={x} >{x}</option>)
                       }
                     </Field>
-                    {nt.type === 'ext-url' || nt.type === 'blog-url' ?
-                      <Field
-                        type="text"
-                        name={`nt.${index}.value`}
-                        value={nt.value}
-                        onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.value`, e.currentTarget.value)}
-                      />
-                      :
-                      <div className="NETagsWrapper">
-                        <TagsInput 
-                          currentTab={index}
-                          {...props}
+                    <div className="NEText">Value:</div>
+                    {
+                      renderValueField(nt, index)
+                    }
+                    <div className="NEButtonsWrapper">
+                      <div className="NEHideButton">
+                        <Icon
+                          type="eye-invisible"
+                          onClick={() => setFieldValue(`navTabs.${index}.hidden`, nt.hidden)}
                         />
                       </div>
-                    }
+                      <div className="NERemoveButton">
+                        <Icon
+                          type="delete"
+                          onClick={() => arrayHelpers.remove(index)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))
               )}
               <div className="NERow">
-                <div 
+                <div
                   className="NEAddTab"
-                  onClick={() => {arrayHelpers.push({id: navTabs.length+1, name: '', type: 'ext-url', value: '', show: true })}}
-                  >
-                    + Add Tab
+                  onClick={() => { arrayHelpers.push(defaultTab) }}
+                >
+                  + Add Tab
                 </div>
               </div>
             </div>
           )}
         />
-        
+
         <Button type="primary" htmlType="submit" disabled={false} className={'NESubmit'}>
           Save
         </Button>
@@ -122,24 +200,26 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   </>
 }
 
-
-
 // Validation
-const TITLE_REGEX = /^[A-Za-z0-9_-]+$/;
+//const TITLE_REGEX = /^[A-Za-z0-9_-]+$/;
 const TITLE_MIN_LEN = 2;
 const TITLE_MAX_LEN = 50;
 
-const buildSchema = () => Yup.object().shape({
-  name: Yup.string()
-    .required('Title is required')
-    .matches(TITLE_REGEX, 'Title can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(TITLE_MIN_LEN, `Title is too short. Minimum length is ${TITLE_MIN_LEN} chars.`)
-    .max(TITLE_MAX_LEN, `Title is too long. Maximum length is ${TITLE_MAX_LEN} chars.`),
-})
+const schema = Yup.object().shape({
+  navTabs: Yup.array()
+    .of(
+      Yup.object().shape({
+        title: Yup.string()
+          .min(TITLE_MIN_LEN, 'too short')
+          .max(TITLE_MAX_LEN, 'too long')
+          .required('Required message') // these constraints take precedence
+      })
+    )
+});
 
 // The type of props MyForm receives
 export interface NavEditorFormProps {
-  tags: string[]
+  tagsData: string[]
   posts: PartialPost[]
   navTabs: NavTab[]
   typesOfContent: string[]
@@ -151,11 +231,10 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   mapPropsToValues: props => {
     return {
       navTabs: props.navTabs,
-      typesOfContent: props.typesOfContent
     };
   },
 
-  //validationSchema: buildSchema,
+  validationSchema: schema,
 
   handleSubmit: values => {
     console.log(values)
