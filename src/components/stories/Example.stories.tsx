@@ -12,6 +12,7 @@ import './style.css';
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import NavigationEditor, { NavEditorFormProps } from './navigation-editor/NavigationEditor';
 import { PostId } from '../types';
+import QuoteApp from './drag-n-drop/DragNDrop';
 
 const { SubMenu } = Menu;
 
@@ -161,17 +162,17 @@ export const Forum = () => {
 
 export const NavigationEditorExample = () => {
   const NavProps: NavEditorFormProps = {
-    tags: ['tag1', 'tag2', 'tag3'],
+    tagsData: ['tag1', 'tag2', 'tag3'],
     posts: [
       { id: new PostId('3'), title: 'Post title (id: 3)' },
       { id: new PostId('4'), title: 'Post title (id: 4)' }
     ],
     navTabs: [
-      { id: 1, name: 'first name', type: 'by-tag', value: 'first, value', show: true, },
-      { id: 2, name: 'second name', type: 'ext-url', value: 'http://google.com', show: true, },
-      { id: 3, name: 'third name', type: 'blog-url', value: '/blogs/2/post/3', show: true, },
-      { id: 4, name: 'fourth name', type: 'ext-url', value: 'fourth, value', show: false, },
-      { id: 5, name: 'fifth name', type: 'by-tag', value: 'fifth, value', show: true, },
+      { id: 1, title: 'first name', type: 'by-tag', description: '', content: { tags: ['first', 'value'] }, hidden: false, },
+      { id: 2, title: 'second name', type: 'ext-url', description: '', content: { url: 'http://google.com' }, hidden: false, },
+      { id: 3, title: 'third name', type: 'blog-url', description: '', content: { postId: new PostId('3') }, hidden: false, },
+      { id: 4, title: 'fourth name', type: 'ext-url', description: '', content: { url: 'http://ya.ru' }, hidden: true, },
+      { id: 5, title: 'fifth name', type: 'by-tag', description: '', content: { tags: ['fifth', 'value'] }, hidden: false, },
     ],
     typesOfContent: [
       'by-tag', 'ext-url', 'blog-url'
@@ -179,4 +180,8 @@ export const NavigationEditorExample = () => {
   }
 
   return <NavigationEditor {...NavProps} />
+}
+
+export const QuoteAppExample = () => {
+  return <QuoteApp />
 }

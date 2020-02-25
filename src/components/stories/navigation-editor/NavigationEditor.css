@@ -9,10 +9,8 @@
   justify-content: space-between;
   margin-left    : 0rem;
   margin-bottom  : 1.5rem;
-}
-
-.NavigationEditor .NERow.NEHead {
-  margin-left: 8rem;
+  position: relative;
+  flex-direction : column;
 }
 
 .NavigationEditor .NEText {
@@ -34,13 +32,16 @@
 .NavigationEditor .NavigationEditorForm select {
   margin-right: 2rem !important;
   height: 3rem!important;
-  max-width: 15.2rem!important;
 }
 
 
 .NavigationEditor .NavigationEditorForm .NEHidden input,
 .NavigationEditor .NavigationEditorForm .NEHidden select {
   color: #8C8C8C!important;
+}
+
+.NavigationEditor .NEButtonsWrapper {
+  display: flex;
 }
 
 .NavigationEditor .NEHideButton,
@@ -85,8 +86,18 @@
 
 .NavigationEditor .NETagsWrapper {
   width: 100%;
-  max-width: 17.2rem;
 }
 .NavigationEditor .NETagsWrapper input {
   height: 1.5rem!important;
+}
+
+.NavigationEditor .NEErrorMessage {
+  position: absolute!important;
+  top: 2.5rem;
+  left: 10rem;
+}
+
+.NavigationEditor .NEAutoCompleteItem {
+  position: absolute;
+  
 }
