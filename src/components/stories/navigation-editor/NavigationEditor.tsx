@@ -33,13 +33,15 @@ interface SpecificBlog {
 
 type NavTabContent = FilterByTags | SpecificPost | OuterUrl | SpecificBlog
 
+type ContentType = 'by-tag' | 'ext-url' | 'post-url' | 'blog-url'
+
 export interface NavTab {
   id: number
   title: string
   content: NavTabContent
   description: string
   hidden: boolean
-  type: 'by-tag' | 'ext-url' | 'post-url' | 'blog-url'
+  type: ContentType
 }
 
 export interface FormValues {
@@ -245,7 +247,7 @@ export interface NavEditorFormProps {
   tagsData: string[]
   posts: PartialPost[]
   navTabs: NavTab[]
-  typesOfContent: string[]
+  typesOfContent: ContentType[]
 }
 
 // Wrap our form with the withFormik HoC
