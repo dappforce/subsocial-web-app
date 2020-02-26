@@ -11,18 +11,17 @@ import './style.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import NavigationEditor, { NavEditorFormProps } from './navigation-editor/NavigationEditor';
-import { PostId } from '../types';
-import QuoteApp from './drag-n-drop/DragNDrop';
+import { PostId, BlogId } from '../types';
 
 const { SubMenu } = Menu;
 
-const items = [{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() }];
+const items = [ { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() } ];
 
 const renderMenu = items.map((d, index) =>
   <Menu.Item key={index}>
@@ -41,15 +40,15 @@ class App extends React.Component {
     });
   }
 
-  render() {
+  render () {
     return (
       <div style={{ width: 256 }}>
         <Button type='primary' onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
           <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
         </Button>
         <Menu
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
+          defaultSelectedKeys={[ '1' ]}
+          defaultOpenKeys={[ 'sub1' ]}
           mode='inline'
           theme='light'
           inlineCollapsed={this.state.collapsed}
@@ -76,7 +75,7 @@ class App extends React.Component {
 
 export default {
   title: 'Examples | States',
-  decorators: [withKnobs]
+  decorators: [ withKnobs ]
 };
 
 export const DefaultState = () => {
@@ -120,7 +119,7 @@ const MenuItems: MenuItem[] = [
 ];
 
 export const Navigations = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [ collapsed, setCollapsed ] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -132,8 +131,8 @@ export const Navigations = () => {
         <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
       </Button>
       <Menu
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
+        defaultSelectedKeys={[ '1' ]}
+        defaultOpenKeys={[ 'sub1' ]}
         mode='inline'
         theme='light'
         inlineCollapsed={collapsed}
@@ -159,23 +158,22 @@ export const Forum = () => {
   return (<ViewForum />);
 }
 
-
 export const NavigationEditorExample = () => {
   const navProps: NavEditorFormProps = {
-    tagsData: ['tag1', 'tag2', 'tag3'],
+    tagsData: [ 'tag1', 'tag2', 'tag3' ],
     posts: [
       { id: new PostId('3'), title: 'Post title (id: 3)' },
       { id: new PostId('4'), title: 'Post title (id: 4)' }
     ],
     navTabs: [
-      { id: 1, title: 'first name', type: 'by-tag', description: '', content: { data: ['first', 'value'] }, hidden: false, },
-      { id: 2, title: 'second name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: false, },
-      { id: 3, title: 'third name', type: 'blog-url', description: '', content: { data: new PostId('3') }, hidden: false, },
-      { id: 4, title: 'fourth name', type: 'ext-url', description: '', content: { data: 'http://ya.ru' }, hidden: true, },
-      { id: 5, title: 'fifth name', type: 'by-tag', description: '', content: { data: ['fifth', 'value'] }, hidden: false, },
+      { id: 1, title: 'first name', type: 'by-tag', description: '', content: { data: [ 'first', 'value' ] }, hidden: false },
+      { id: 2, title: 'second name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: true },
+      { id: 3, title: 'third name', type: 'post-url', description: '', content: { data: new PostId('3') }, hidden: false },
+      { id: 4, title: 'fourth name', type: 'blog-url', description: '', content: { data: new BlogId('2') }, hidden: false },
+      { id: 5, title: 'fifth name', type: 'by-tag', description: '', content: { data: [ 'fifth', 'value' ] }, hidden: false }
     ],
     typesOfContent: [
-      'by-tag', 'ext-url', 'blog-url'
+      'by-tag', 'ext-url', 'post-url', 'blog-url'
     ]
   }
 

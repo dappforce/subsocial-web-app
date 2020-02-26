@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
 import { Button, Icon, AutoComplete } from 'antd';
-import { PostId } from 'src/components/types';
+import { PostId, BlogId } from 'src/components/types';
 import TagsInput from '../tags-input/TagsInput';
 import SimpleMDEReact from 'react-simplemde-editor';
 import './NavigationEditor.css'
@@ -27,7 +27,11 @@ interface OuterUrl {
   data: string
 }
 
-type NavTabContent = FilterByTags | SpecificPost | OuterUrl
+interface SpecificBlog {
+  data: BlogId
+}
+
+type NavTabContent = FilterByTags | SpecificPost | OuterUrl | SpecificBlog
 
 export interface NavTab {
   id: number
@@ -35,7 +39,7 @@ export interface NavTab {
   content: NavTabContent
   description: string
   hidden: boolean
-  type: string
+  type: 'by-tag' | 'ext-url' | 'post-url' | 'blog-url'
 }
 
 export interface FormValues {
@@ -53,29 +57,21 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     values,
     posts,
     errors,
-    //touched,
     setFieldValue,
     typesOfContent,
     tagsData
   } = props;
 
   const {
-    navTabs,
+    navTabs
   } = values;
-
 
   const getMaxId = (): number => {
     const x = navTabs.reduce((cur, prev) => (cur.id > prev.id ? cur : prev))
     return x.id
   }
 
-  const defaultTab = { id: getMaxId() + 1, title: '', type: 'ext-url', description: '', content: { data: '' }, hidden: false, }
-
-  //console.log('errors', errors)
-  //console.log('touched', touched)
-
-  
-
+  const defaultTab = { id: getMaxId() + 1, title: '', type: 'ext-url', description: '', content: { data: '' }, hidden: false }
 
   const renderValueField = (nt: NavTab, index: number) => {
     switch (nt.type) {
@@ -90,9 +86,9 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           />
         )
       }
-      case 'blog-url': {
+      case 'post-url': {
         const postId = nt.content.data ? nt.content.data.toString() : undefined
-        const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId )
+        const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId)
         let currentPostTitle = ''
         if (currentPost) currentPostTitle = currentPost.title
         const options = posts.map(x => (
@@ -104,7 +100,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         return (
           <AutoComplete
             dataSource={options}
-            onChange={(e: SelectValue) => setFieldValue(`navTabs.${index}.content.data`, new PostId(e.toString()) )}
+            onChange={(e: SelectValue) => setFieldValue(`navTabs.${index}.content.data`, new PostId(e.toString()))}
             optionLabelProp={'value'}
             value={currentPostTitle}
           >
@@ -239,7 +235,7 @@ const schema = Yup.object().shape({
           .matches(TITLE_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
           .min(TITLE_MIN_LEN, 'Title is too short (min length: 2)')
           .max(TITLE_MAX_LEN, 'Title is too long (max length: 50)')
-          .required('Required message') 
+          .required('Required message')
       })
     )
 });
@@ -257,7 +253,7 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: props => {
     return {
-      navTabs: props.navTabs,
+      navTabs: props.navTabs
     };
   },
 
@@ -265,8 +261,7 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
 
   handleSubmit: values => {
     console.log(values)
-  },
+  }
 })(InnerForm);
-
 
 export default NavigationEditor
