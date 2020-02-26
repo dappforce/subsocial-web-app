@@ -12,8 +12,7 @@ import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
 import NavigationEditor, { NavEditorFormProps } from './navigation-editor/NavigationEditor';
-import { PostId } from '../types';
-import QuoteApp from './drag-n-drop/DragNDrop';
+import { PostId, BlogId } from '../types';
 
 const { SubMenu } = Menu;
 
@@ -41,7 +40,7 @@ class App extends React.Component {
     });
   }
 
-  render() {
+  render () {
     return (
       <div style={{ width: 256 }}>
         <Button type='primary' onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
@@ -123,7 +122,7 @@ const MenuItems: MenuItem[] = [
 ];
 
 export const Navigations = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [ collapsed, setCollapsed ] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -194,23 +193,22 @@ export const ReorderNavTabsExample = () => {
   return <ReorderNavTabs {...navTabs} />
 }
 
-
 export const NavigationEditorExample = () => {
   const navProps: NavEditorFormProps = {
-    tagsData: ['tag1', 'tag2', 'tag3'],
+    tagsData: [ 'tag1', 'tag2', 'tag3' ],
     posts: [
       { id: new PostId('3'), title: 'Post title (id: 3)' },
       { id: new PostId('4'), title: 'Post title (id: 4)' }
     ],
     navTabs: [
-      { id: 1, title: 'first name', type: 'by-tag', description: '', content: { data: ['first', 'value'] }, hidden: false, },
-      { id: 2, title: 'second name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: false, },
-      { id: 3, title: 'third name', type: 'blog-url', description: '', content: { data: new PostId('3') }, hidden: false, },
-      { id: 4, title: 'fourth name', type: 'ext-url', description: '', content: { data: 'http://ya.ru' }, hidden: true, },
-      { id: 5, title: 'fifth name', type: 'by-tag', description: '', content: { data: ['fifth', 'value'] }, hidden: false, },
+      { id: 1, title: 'first name', type: 'by-tag', description: '', content: { data: [ 'first', 'value' ] }, hidden: false },
+      { id: 2, title: 'second name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: true },
+      { id: 3, title: 'third name', type: 'post-url', description: '', content: { data: new PostId('3') }, hidden: false },
+      { id: 4, title: 'fourth name', type: 'blog-url', description: '', content: { data: new BlogId('2') }, hidden: false },
+      { id: 5, title: 'fifth name', type: 'by-tag', description: '', content: { data: [ 'fifth', 'value' ] }, hidden: false }
     ],
     typesOfContent: [
-      'by-tag', 'ext-url', 'blog-url'
+      'by-tag', 'ext-url', 'post-url', 'blog-url'
     ]
   }
 
