@@ -92,7 +92,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         let currentPostTitle = ''
         if (currentPost) currentPostTitle = currentPost.title
         const options = posts.map(x => (
-          <Option key={x.id} value={x.id.toString()}>
+          <Option key={x.id.toString()} value={x.id.toString()}>
             {x.title}
           </Option>
         ))
