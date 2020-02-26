@@ -92,7 +92,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         let currentPostTitle = ''
         if (currentPost) currentPostTitle = currentPost.title
         const options = posts.map(x => (
-          <Option key={x.id.toString()} value={x.id.toString()}>
+          <Option key={x.id} value={x.id.toString()}>
             {x.title}
           </Option>
         ))
@@ -232,7 +232,7 @@ const schema = Yup.object().shape({
     .of(
       Yup.object().shape({
         title: Yup.string()
-          .matches(TITLE_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
+          .matches(TITLE_REGEX, 'Title can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
           .min(TITLE_MIN_LEN, 'Title is too short (min length: 2)')
           .max(TITLE_MAX_LEN, 'Title is too long (max length: 50)')
           .required('Required message')
