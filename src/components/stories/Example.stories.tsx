@@ -196,27 +196,23 @@ export const ReorderNavTabsExample = () => {
 
 
 export const NavigationEditorExample = () => {
-  const NavProps: NavEditorFormProps = {
+  const navProps: NavEditorFormProps = {
     tagsData: ['tag1', 'tag2', 'tag3'],
     posts: [
       { id: new PostId('3'), title: 'Post title (id: 3)' },
       { id: new PostId('4'), title: 'Post title (id: 4)' }
     ],
     navTabs: [
-      { id: 1, title: 'first name', type: 'by-tag', description: '', content: { tags: ['first', 'value'] }, hidden: false, },
-      { id: 2, title: 'second name', type: 'ext-url', description: '', content: { url: 'http://google.com' }, hidden: false, },
-      { id: 3, title: 'third name', type: 'blog-url', description: '', content: { postId: new PostId('3') }, hidden: false, },
-      { id: 4, title: 'fourth name', type: 'ext-url', description: '', content: { url: 'http://ya.ru' }, hidden: true, },
-      { id: 5, title: 'fifth name', type: 'by-tag', description: '', content: { tags: ['fifth', 'value'] }, hidden: false, },
+      { id: 1, title: 'first name', type: 'by-tag', description: '', content: { data: ['first', 'value'] }, hidden: false, },
+      { id: 2, title: 'second name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: false, },
+      { id: 3, title: 'third name', type: 'blog-url', description: '', content: { data: new PostId('3') }, hidden: false, },
+      { id: 4, title: 'fourth name', type: 'ext-url', description: '', content: { data: 'http://ya.ru' }, hidden: true, },
+      { id: 5, title: 'fifth name', type: 'by-tag', description: '', content: { data: ['fifth', 'value'] }, hidden: false, },
     ],
     typesOfContent: [
       'by-tag', 'ext-url', 'blog-url'
     ]
   }
 
-  return <NavigationEditor {...NavProps} />
-}
-
-export const QuoteAppExample = () => {
-  return <QuoteApp />
+  return <NavigationEditor {...navProps} />
 }

@@ -14,15 +14,16 @@ interface OtherProps {
 const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
   const { setFieldValue, values, currentTab, tagsData } = props
   const { navTabs } = values;
+  const data = navTabs[currentTab].content.data as string[]
 
-  let tags: string[] = navTabs[currentTab].content.tags ? navTabs[currentTab].content.tags : []
+  const tags: string[] = data ? data : []
 
   const [inputVisible, setInputVisible] = useState(false)
   const [inputValue, setInputValue] = useState('')
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter(tag => tag !== removedTag);
-    setFieldValue(`navTabs.${currentTab}.content.tags`, newTags)
+    setFieldValue(`navTabs.${currentTab}.content.data`, newTags)
   };
 
   const showInput = () => {
@@ -37,7 +38,7 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
     let newTags = ['']
     if (inputValue && tags.indexOf(inputValue) === -1) {
       newTags = [...tags, inputValue];
-      setFieldValue(`navTabs.${currentTab}.content.tags`, newTags)
+      setFieldValue(`navTabs.${currentTab}.content.data`, newTags)
     }
     setInputVisible(false)
     setInputValue('')
@@ -69,7 +70,6 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
           onBlur={handleInputConfirm}
           value={inputValue}
           dataSource={tagsData}
-          placeholder="try to type `tag`"
           filterOption={(inputValue, option) =>
             option.props.children?.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
           }
