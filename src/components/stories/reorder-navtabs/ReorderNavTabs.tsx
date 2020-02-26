@@ -54,7 +54,7 @@ const ReorderNavTabs = (props: Values) => {
       if (e.id !== initialTabs[i].id) diff.push(i)
     })
 
-    if (diff.length > 0) {
+    if (diff.length === 0) {
       setIsDisabled(true)
     } else {
       setIsDisabled(false)
