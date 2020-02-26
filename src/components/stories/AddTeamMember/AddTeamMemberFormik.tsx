@@ -57,19 +57,19 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     switchField
   } = values;
 
-  const fields = {
-    title: 'title' as 'title',
-    employmentType: 'employmentType' as 'employmentType',
-    company: 'company' as 'company',
-    location: 'location' as 'location',
-    startDate: 'startDate' as 'startDate',
-    endDate: 'endDate' as 'endDate',
-    description: 'description' as 'description',
-    switchField: 'switchField' as 'switchField'
+  const fields: { [name: string]: keyof FormValues } = {
+    title: 'title',
+    employmentType: 'employmentType',
+    company: 'company',
+    location: 'location',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    description: 'description',
+    switchField: 'switchField'
   }
 
-  const [companyLogo, setCompanyLogo] = useState<string | undefined>(undefined);
-  const [companyAutocomplete, setCompanyAutocomplete] = useState<CompanyData>([]);
+  const [ companyLogo, setCompanyLogo ] = useState<string | undefined>(undefined);
+  const [ companyAutocomplete, setCompanyAutocomplete ] = useState<CompanyData>([]);
 
   const handleCompanyChange = (e: React.FormEvent<HTMLInputElement>) => {
 
@@ -124,7 +124,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           </LabelledField>
 
           <LabelledField name={fields.company} label='Company' {...props}>
-            <div className={companyLogo?'atm_company_wrapper with_prefix':'atm_company_wrapper'}>
+            <div className={companyLogo ? 'atm_company_wrapper with_prefix' : 'atm_company_wrapper'}>
               <Field name={fields.company}
                 type={'text'}
                 value={company}
@@ -137,16 +137,17 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           </LabelledField>
           {companyAutocomplete.map((x) => (
-          <div 
-            className={'atm_company_autocomplete'} 
-            key={`${x.id}`} 
-            onClick={() => handleAutocomplete(x)}
-          >
-            <div className={'atm_company_autocomplete_item'}>
-              <img src={x.img} />
-              <span>{x.name}</span>
+            <div
+              className={'atm_company_autocomplete'}
+              key={`${x.id}`}
+              onClick={() => handleAutocomplete(x)}>
+              <div className={'atm_company_autocomplete_item'}>
+                <img src={x.img} />
+                <span>{x.name}</span>
+              </div>
             </div>
-          </div>))}
+          )
+          )}
 
           <LabelledText name={fields.location} label='Location'
             placeholder='Ex: London, United Kingdom' {...props} />
@@ -167,15 +168,14 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             </LabelledField>
 
             <LabelledField name={fields.endDate} label='End Date' {...props}>
-            {switchField === true ?
-              <div>Present</div>
-              :
-              <DatePicker name={fields.endDate}
-                value={endDate}
-                onChange={(date) => setFieldValue(fields.endDate, date)}
-                disabledDate={disabledStartEndDate}
-              />
-            }
+              {switchField === true
+                ? <div>Present</div>
+                : <DatePicker name={fields.endDate}
+                  value={endDate}
+                  onChange={(date) => setFieldValue(fields.endDate, date)}
+                  disabledDate={disabledStartEndDate}
+                />
+              }
             </LabelledField>
           </div>
 
@@ -196,9 +196,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   );
 };
 
-
 // Validation
-const TITLE_REGEX = /^[A-Za-z0-9_-]+$/;
 const TITLE_MIN_LEN = 2;
 const TITLE_MAX_LEN = 50;
 
@@ -213,7 +211,6 @@ const DESCRIPTION_MAX_LEN = 5000;
 const buildSchema = () => Yup.object().shape({
   title: Yup.string()
     .required('Title is required')
-    .matches(TITLE_REGEX, 'Title can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
     .min(TITLE_MIN_LEN, `Title is too short. Minimum length is ${TITLE_MIN_LEN} chars.`)
     .max(TITLE_MAX_LEN, `Title is too long. Maximum length is ${TITLE_MAX_LEN} chars.`),
   company: Yup.string()
@@ -224,21 +221,21 @@ const buildSchema = () => Yup.object().shape({
     .min(LOCATION_MIN_LEN, `Location is too short. Minimum length is ${LOCATION_MIN_LEN} chars.`)
     .max(LOCATION_MAX_LEN, `Location is too long. Maximum length is ${LOCATION_MAX_LEN} chars.`),
   startDate: Yup.object().test(
-    "startDate",
-    "Start date should not be in future",
+    'startDate',
+    'Start date should not be in future',
     value => {
       return moment().diff(value, 'days') >= 0;
     }
   ),
   endDate: Yup.object().test(
-    "endDate",
-    "End date should not be in future",
+    'endDate',
+    'End date should not be in future',
     value => {
       return value ? moment().diff(value, 'days') >= 0 : true;
     }
   ),
   description: Yup.string()
-    .max(DESCRIPTION_MAX_LEN, `Description is too long. Maximum length is ${DESCRIPTION_MAX_LEN} chars.`),
+    .max(DESCRIPTION_MAX_LEN, `Description is too long. Maximum length is ${DESCRIPTION_MAX_LEN} chars.`)
 });
 
 // The type of props MyForm receives
@@ -250,7 +247,7 @@ interface MyFormProps {
 // Wrap our form with the withFormik HoC
 const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
   // Transform outer props into form values
-  mapPropsToValues: props => {
+  mapPropsToValues: () => {
     return {
       title: '',
       description: '',
@@ -267,7 +264,7 @@ const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
 
   handleSubmit: values => {
     console.log(values)
-  },
+  }
 })(InnerForm);
 
 export default AddTeamMemberFormik;
