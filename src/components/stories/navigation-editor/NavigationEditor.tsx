@@ -69,7 +69,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     return x.id
   }
 
-  const defaultTab = { id: getMaxId() + 1, title: '', type: 'by-tag', description: '', content: { tags: [] }, hidden: false, }
+  const defaultTab = { id: getMaxId() + 1, title: '', type: 'ext-url', description: '', content: { data: '' }, hidden: false, }
 
   //console.log('errors', errors)
   //console.log('touched', touched)
