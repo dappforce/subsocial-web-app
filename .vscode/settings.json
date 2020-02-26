@@ -8,5 +8,6 @@
         "node_modules": true,
         ".next": true
     },
-    "explorerExclude.backup": null
+    "explorerExclude.backup": null,
+    "eslint.format.enable": true
 }
