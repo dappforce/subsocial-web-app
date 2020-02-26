@@ -3,25 +3,28 @@ import { withFormik, FormikProps, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
-import { Button, Icon } from 'antd';
+import { Button, Icon, AutoComplete } from 'antd';
 import { PostId } from 'src/components/types';
 import TagsInput from '../tags-input/TagsInput';
 import SimpleMDEReact from 'react-simplemde-editor';
 import './NavigationEditor.css'
+import Select, { SelectValue } from 'antd/lib/select';
+
+const { Option } = AutoComplete;
 
 // Shape of form values
-export interface PartialPost { id: PostId, title: string }
+interface PartialPost { id: PostId, title: string }
 
 interface FilterByTags {
-  tags: string[]
+  data: string[]
 }
 
 interface SpecificPost {
-  postId: PostId
+  data: PostId
 }
 
 interface OuterUrl {
-  url: string
+  data: string
 }
 
 type NavTabContent = FilterByTags | SpecificPost | OuterUrl
@@ -48,9 +51,9 @@ interface OtherProps {
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const {
     values,
-    //posts,
+    posts,
     errors,
-    touched,
+    //touched,
     setFieldValue,
     typesOfContent,
     tagsData
@@ -60,36 +63,57 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     navTabs,
   } = values;
 
-  const getMaxId = ():number => {
+
+  const getMaxId = (): number => {
     const x = navTabs.reduce((cur, prev) => (cur.id > prev.id ? cur : prev))
     return x.id
   }
 
   const defaultTab = { id: getMaxId() + 1, title: '', type: 'by-tag', description: '', content: { tags: [] }, hidden: false, }
 
-  const renderValueField = (nt: NavTab, index: number) => {
-    let url = nt.content.url ? nt.content.url : ''
-    let postId = nt.content.postId ? nt.content.postId.toString() : ''
+  //console.log('errors', errors)
+  //console.log('touched', touched)
 
-    switch (nt.type){
+  
+
+
+  const renderValueField = (nt: NavTab, index: number) => {
+    switch (nt.type) {
       case 'ext-url': {
+        const url = nt.content.data ? nt.content.data : ''
         return (
           <Field
             type="text"
-            name={`nt.${index}.content.url`}
+            name={`nt.${index}.content.data`}
             value={url}
-            onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.content.url`, e.currentTarget.value)}
+            onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.content.data`, e.currentTarget.value)}
           />
         )
       }
       case 'blog-url': {
+        const postId = nt.content.data ? nt.content.data.toString() : undefined
+        const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId )
+        let currentPostTitle = ''
+        if (currentPost) currentPostTitle = currentPost.title
+        const options = posts.map(x => (
+          <Option key={x.id.toString()} value={x.id.toString()}>
+            {x.title}
+          </Option>
+        ))
+
         return (
-          <Field
-            type="text"
-            name={`nt.${index}.content.postId`}
-            value={postId}
-            onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.content.postId`, e.currentTarget.value)}
-          />
+          <AutoComplete
+            dataSource={options}
+            onChange={(e: SelectValue) => setFieldValue(`navTabs.${index}.content.data`, new PostId(e.toString()) )}
+            optionLabelProp={'value'}
+            value={currentPostTitle}
+          >
+            <Field
+              AutoComplete={'off'}
+              type="text"
+              name={`nt.${index}.content.data`}
+            />
+          </AutoComplete>
         )
 
       }
@@ -107,18 +131,20 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
       default: {
         return undefined
       }
-    } 
+    }
   }
 
-  console.log('errors', errors)
-  console.log('touched', touched)
+  const handleTypeChange = (e: SelectValue, index: number) => {
+    setFieldValue(`navTabs.${index}.type`, e)
+    setFieldValue(`navTabs.${index}.content.data`, '')
+  }
 
   const renderError = (index: number, name: string) => {
     if (errors.navTabs && errors.navTabs[index]?.title && name === 'title') {
-      return <div className='ui pointing red label NEErrorMessage' >{ errors.navTabs[index]?.title } </div>
+      return <div className='ui pointing red label NEErrorMessage' >{errors.navTabs[index]?.title} </div>
     }
     return null
-  } 
+  }
 
   return <>
     <HeadMeta title={'Navigation Editor'} />
@@ -131,7 +157,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
               {values.navTabs && values.navTabs.length > 0 && (
                 values.navTabs.map((nt, index) => (
                   <div className={`NERow ${(nt.hidden ? 'NEHidden' : '')}`} key={nt.id}>
-                    
+
                     <div className="NEText">Name:</div>
                     <Field
                       type="text"
@@ -140,22 +166,22 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                       value={nt.title}
                       onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.title`, e.currentTarget.value)}
                     />
-                    { renderError(index, 'title') }
+                    {renderError(index, 'title')}
                     <div className="NEText">Description:</div>
-                    <Field 
-                      component={SimpleMDEReact} 
-                      name={`navTabs.${index}.description`} value={nt.description} 
-                      onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)} 
+                    <Field
+                      component={SimpleMDEReact}
+                      name={`navTabs.${index}.description`} value={nt.description}
+                      onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)}
                       className={`DfMdEditor NETextEditor`} />
                     <div className="NEText">Type of content:</div>
-                    <Field 
-                      component="select" 
-                      name={`nt.${index}.type`} 
+                    <Field
+                      component={Select}
+                      name={`nt.${index}.type`}
                       defaultValue={nt.type}
-                      onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.type`, e.currentTarget.value)}
+                      onChange={(e: SelectValue) => handleTypeChange(e, index)}
                     >
                       {
-                        typesOfContent.map((x) => <option key={x} value={x} >{x}</option>)
+                        typesOfContent.map((x) => <Option key={x} value={x} >{x}</Option>)
                       }
                     </Field>
                     <div className="NEText">Value:</div>
@@ -166,7 +192,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                       <div className="NEHideButton">
                         <Icon
                           type="eye-invisible"
-                          onClick={() => setFieldValue(`navTabs.${index}.hidden`, nt.hidden)}
+                          onClick={() => setFieldValue(`navTabs.${index}.hidden`, !nt.hidden)}
                         />
                       </div>
                       <div className="NERemoveButton">
@@ -201,7 +227,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 }
 
 // Validation
-//const TITLE_REGEX = /^[A-Za-z0-9_-]+$/;
+const TITLE_REGEX = /^[A-Za-z0-9_-]+$/;
 const TITLE_MIN_LEN = 2;
 const TITLE_MAX_LEN = 50;
 
@@ -210,9 +236,10 @@ const schema = Yup.object().shape({
     .of(
       Yup.object().shape({
         title: Yup.string()
-          .min(TITLE_MIN_LEN, 'too short')
-          .max(TITLE_MAX_LEN, 'too long')
-          .required('Required message') // these constraints take precedence
+          .matches(TITLE_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
+          .min(TITLE_MIN_LEN, 'Title is too short (min length: 2)')
+          .max(TITLE_MAX_LEN, 'Title is too long (max length: 50)')
+          .required('Required message') 
       })
     )
 });
