@@ -1,3 +1,5 @@
+@import '../../utils/styles/subsocial-vars.css';
+
 .NavigationEditor {
   display       : flex;
   flex-direction: column;
@@ -7,11 +9,11 @@
 .NavigationEditor .NERow {
   display        : flex;
   justify-content: space-between;
-  margin-left    : 0rem;
-  margin-bottom  : 1.5rem;
+  margin-left    : 0;
+  margin-bottom  : $space_big;
   position: relative;
   flex-direction : column;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid $color_light_border;
 }
 .NavigationEditor .NERow:last-child {
   border-bottom: none;
@@ -21,10 +23,10 @@
   color       : #000;
   font-style  : normal;
   font-weight : 500;
-  font-size   : 1rem;
-  margin-right: 2rem;
+  font-size   : $font_normal;
+  margin-right: $space_huge;
   width       : 16rem;
-  margin-top  : 1.5rem;
+  margin-top  : $space_big;
 }
 
 .NavigationEditor .NavigationEditorForm {
@@ -34,7 +36,7 @@
 
 .NavigationEditor .NavigationEditorForm input,
 .NavigationEditor .NavigationEditorForm select {
-  margin-right: 2rem !important;
+  margin-right: $space_huge !important;
   height: 3rem!important;
 }
 
@@ -44,13 +46,13 @@
 
 .NavigationEditor .NavigationEditorForm .NEHidden input,
 .NavigationEditor .NavigationEditorForm .NEHidden select {
-  color: #8C8C8C!important;
+  color: $color_muted!important;
 }
 
 .NavigationEditor .NEButtonsWrapper {
   display: flex;
   flex-direction: column;
-  margin: 2rem 0;
+  margin: $space_huge 0;
 }
 
 .NavigationEditor .NERemoveButton button:hover {
@@ -62,15 +64,15 @@
 } 
 
 .NavigationEditor .NEHideButton {
-  margin-bottom: 1rem;
+  margin-bottom: $space_normal;
 }
 .NavigationEditor .NEHideButton button {
-  margin-right: 2rem;
+  margin-right: $space_huge;
 }
 
 .NavigationEditor .NEAddTab {
   background-color: #fff;
-  color           : #1890FF;
+  color           : $color_link;
   display         : flex;
   border-radius   : .28571429rem;
   line-height     : 1.21428571rem;
@@ -95,7 +97,7 @@
   width: 100%;
 }
 .NavigationEditor .NETagsWrapper input {
-  height: 1.5rem!important;
+  height: $space_big!important;
 }
 
 .NavigationEditor .NEErrorMessage {
@@ -106,5 +108,4 @@
 
 .NavigationEditor .NEAutoCompleteItem {
   position: absolute;
-  
 }
