@@ -3,7 +3,7 @@ import { withFormik, FormikProps, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
-import { Button, Icon, AutoComplete } from 'antd';
+import { Button, AutoComplete, Switch } from 'antd';
 import { PostId, BlogId } from 'src/components/types';
 import TagsInput from '../tags-input/TagsInput';
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -14,6 +14,7 @@ const { Option } = AutoComplete;
 
 // Shape of form values
 interface PartialPost { id: PostId, title: string }
+interface PartialBlog { id: BlogId, title: string }
 
 interface FilterByTags {
   data: string[]
@@ -52,13 +53,16 @@ interface OtherProps {
   tagsData: string[]
   posts: PartialPost[]
   typesOfContent: string[]
+  blogs: PartialBlog[]
 }
 
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const {
     values,
     posts,
+    blogs,
     errors,
+    touched,
     setFieldValue,
     typesOfContent,
     tagsData
@@ -88,6 +92,33 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           />
         )
       }
+      case 'blog-url': {
+        const blogId = nt.content.data ? nt.content.data.toString() : undefined
+        const currentBlog: PartialBlog | undefined = blogs.find(x => x.id.toString() === blogId)
+        let currentBlogTitle = ''
+        if (currentBlog) currentBlogTitle = currentBlog.title
+        const options = blogs.map(x => (
+          <Option key={x.id.toString()} value={x.id.toString()}>
+            {x.title}
+          </Option>
+        ))
+
+        return (
+          <AutoComplete
+            dataSource={options}
+            onChange={(e: SelectValue) => setFieldValue(`navTabs.${index}.content.data`, new BlogId(e.toString()))}
+            optionLabelProp={'value'}
+            value={currentBlogTitle}
+          >
+            <Field
+              autoComplete={'off'}
+              type="text"
+              name={`nt.${index}.content.data`}
+            />
+          </AutoComplete>
+        )
+
+      }
       case 'post-url': {
         const postId = nt.content.data ? nt.content.data.toString() : undefined
         const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId)
@@ -107,7 +138,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             value={currentPostTitle}
           >
             <Field
-              AutoComplete={'off'}
+              autoComplete={'off'}
               type="text"
               name={`nt.${index}.content.data`}
             />
@@ -137,9 +168,10 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     setFieldValue(`navTabs.${index}.content.data`, '')
   }
 
-  const renderError = (index: number, name: string) => {
-    if (errors.navTabs && errors.navTabs[index]?.title && name === 'title') {
-      return <div className='ui pointing red label NEErrorMessage' >{errors.navTabs[index]?.title} </div>
+  const renderError = (index: number, name: keyof NavTab) => {
+    if (touched &&
+      errors.navTabs && errors.navTabs[index]?.[name]) {
+      return <div className='ui pointing red label NEErrorMessage' >{errors.navTabs[index]?.[name]} </div>
     }
     return null
   }
@@ -177,6 +209,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                       name={`nt.${index}.type`}
                       defaultValue={nt.type}
                       onChange={(e: SelectValue) => handleTypeChange(e, index)}
+                      className={'NESelectType'}
                     >
                       {
                         typesOfContent.map((x) => <Option key={x} value={x} >{x}</Option>)
@@ -188,16 +221,11 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                     }
                     <div className="NEButtonsWrapper">
                       <div className="NEHideButton">
-                        <Icon
-                          type="eye-invisible"
-                          onClick={() => setFieldValue(`navTabs.${index}.hidden`, !nt.hidden)}
-                        />
+                        <Switch onChange={() => setFieldValue(`navTabs.${index}.hidden`, !nt.hidden)} />
+                        Don&apos;t show this tab in blog navigation
                       </div>
                       <div className="NERemoveButton">
-                        <Icon
-                          type="delete"
-                          onClick={() => arrayHelpers.remove(index)}
-                        />
+                        <Button type="default" onClick={() => arrayHelpers.remove(index)}>Delete tab</Button>
                       </div>
                     </div>
                   </div>
@@ -248,6 +276,7 @@ export interface NavEditorFormProps {
   posts: PartialPost[]
   navTabs: NavTab[]
   typesOfContent: ContentType[]
+  blogs: PartialBlog[]
 }
 
 // Wrap our form with the withFormik HoC

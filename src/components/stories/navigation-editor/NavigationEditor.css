@@ -11,6 +11,10 @@
   margin-bottom  : 1.5rem;
   position: relative;
   flex-direction : column;
+  border-bottom: 1px solid #ddd;
+}
+.NavigationEditor .NERow:last-child {
+  border-bottom: none;
 }
 
 .NavigationEditor .NEText {
@@ -34,6 +38,9 @@
   height: 3rem!important;
 }
 
+.NavigationEditor .NESelectType {
+  width: 50%;
+}
 
 .NavigationEditor .NavigationEditorForm .NEHidden input,
 .NavigationEditor .NavigationEditorForm .NEHidden select {
@@ -42,26 +49,26 @@
 
 .NavigationEditor .NEButtonsWrapper {
   display: flex;
+  flex-direction: column;
+  margin: 2rem 0;
 }
 
-.NavigationEditor .NEHideButton,
-.NavigationEditor .NERemoveButton {
-  display     : flex;
-  align-items : center;
-  margin-right: 2rem;
-  cursor: pointer;
-  height: 3rem;
+.NavigationEditor .NERemoveButton button:hover {
+  background-color:#ff0000;
+  border-color: #d9d9d9;
 }
+.NavigationEditor .NERemoveButton button:hover span {
+  color: #fff;
+} 
+
 .NavigationEditor .NEHideButton {
-  opacity: 0;
+  margin-bottom: 1rem;
 }
-.NavigationEditor .NEHidden .NEHideButton,
-.NavigationEditor .NERow:hover .NEHideButton {
-  opacity: 100;
+.NavigationEditor .NEHideButton button {
+  margin-right: 2rem;
 }
 
 .NavigationEditor .NEAddTab {
-  margin-left     : 7.2rem;
   background-color: #fff;
   color           : #1890FF;
   display         : flex;
@@ -75,7 +82,7 @@
   cursor          : pointer;
 }
 
-.NavigationEditor .ant-btn span {
+.NavigationEditor .NESubmit span {
   color: #fff!important;
 }
 
@@ -93,8 +100,8 @@
 
 .NavigationEditor .NEErrorMessage {
   position: absolute!important;
-  top: 2.5rem;
-  left: 10rem;
+  top: 5.5rem;
+  left: 6rem;
 }
 
 .NavigationEditor .NEAutoCompleteItem {
