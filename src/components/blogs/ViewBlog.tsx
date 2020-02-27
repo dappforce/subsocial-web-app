@@ -14,7 +14,7 @@ import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewP
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { Loading, formatUnixDate } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import ListData, { NoData } from '../utils/DataList';
@@ -293,35 +293,20 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
   };
 };
 
-export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BlogId | undefined> => {
-  if (idOrSlug.startsWith('@')) {
-    const slug = idOrSlug.substring(1)
-    const idOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
-    return idOpt.unwrapOr(undefined)
-  } else {
-    return new BlogId(idOrSlug)
-  }
-}
-
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { req, res, query: { blogId } } = props
   const idOrSlug = blogId as string
   const api = await getApi()
-  
   const id = await getBlogId(api, idOrSlug)
   if (!id && res && req) {
     res.statusCode = 404
-    return {
-      statusCode: 404
-    }
+    return { statusCode: 404 }
   }
 
   const blogData = await loadBlogData(api, id as BlogId)
   if (!blogData.blog && res && req) {
     res.statusCode = 404
-    return {
-      statusCode: 404
-    }
+    return { statusCode: 404 }
   }
 
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
