@@ -8,7 +8,7 @@ interface NavTab {
   name: string
 }
 
-export interface Values {
+export interface Props {
   tabs: NavTab[]
 }
 
