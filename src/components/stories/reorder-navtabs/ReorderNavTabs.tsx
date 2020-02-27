@@ -98,7 +98,7 @@ const ReorderNavTabs = (props: Values) => {
       </Droppable>
     </DragDropContext>
 
-    <Button type="primary" disabled={isDisabled} onClick={handleSave} className={'RNTSaveButton'}>Save</Button>
+    <Button type="primary" disabled={!isNewOrder} onClick={handleSave} className={'RNTSaveButton'}>Save</Button>
   </>
   )
 }
