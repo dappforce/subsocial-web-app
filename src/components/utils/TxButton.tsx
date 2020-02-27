@@ -7,8 +7,6 @@ import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 import { withApi } from '@polkadot/ui-api';
 import { assert } from '@polkadot/util';
 import { withMyAccount, MyAccountProps } from './MyAccount';
-import { useStorybookContext } from '../stories/StorybookContext';
-import { Button$Sizes } from '@polkadot/ui-app/Button/types';
 
 type InjectedProps = {
   queueExtrinsic: QueueTx$ExtrinsicAdd;
@@ -16,7 +14,6 @@ type InjectedProps = {
 
 type Props = BareProps & ApiProps & MyAccountProps & PartialQueueTx$Extrinsic & {
   accountId?: string,
-  size?: Button$Sizes,
   type?: 'submit' | 'button',
   isBasic?: boolean,
   isPrimary?: boolean,
@@ -29,14 +26,13 @@ type Props = BareProps & ApiProps & MyAccountProps & PartialQueueTx$Extrinsic & 
 
 class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   render () {
-    const { myAddress, accountId, isBasic, isPrimary = !isBasic, size, isDisabled, label, onClick } = this.props;
+    const { myAddress, accountId, isBasic, isPrimary = !isBasic, isDisabled, label, onClick } = this.props;
     const origin = accountId || myAddress;
 
     return (
       <Button
         {...this.props}
         isDisabled={isDisabled || !origin}
-        size={size}
         isBasic={isBasic}
         isPrimary={isPrimary}
         label={label}
@@ -84,34 +80,4 @@ class TxButton extends React.PureComponent<Props> {
   }
 }
 
-function MockTxButton (props: Props) {
-  const { isPrimary = true, onClick } = props;
-
-  const mockSendTx = () => {
-    console.warn('WARN: Cannot send tx in a mock mode');
-  };
-
-  return (
-    <Button
-      {...props}
-      icon=''
-      isPrimary={isPrimary}
-      onClick={() => {
-        if (onClick) onClick(mockSendTx);
-        else mockSendTx();
-      }}
-    />
-  );
-}
-
-function ResolvedButton (props: Props) {
-  const { isStorybook = false } = useStorybookContext();
-
-  const Component = isStorybook
-    ? MockTxButton
-    : withApi(withMyAccount(TxButton));
-
-  return <Component {...props} />;
-}
-
-export default ResolvedButton;
+export default withApi(withMyAccount(TxButton));

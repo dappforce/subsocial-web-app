@@ -209,7 +209,7 @@ const InnerForm = (props: FormProps) => {
     </>;
 };
 
-export const InnerEditPost = withFormik<OuterProps, FormValues>({
+const EditForm = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
@@ -311,14 +311,16 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 }
 
 export const NewPost = withMulti(
-  InnerEditPost,
+  EditForm,
   withBlogIdFromUrl
 );
 
-export const NewSharePost = InnerEditPost;
+export const NewSharePost = withMulti(
+  EditForm
+);
 
 export const EditPost = withMulti<OuterProps>(
-  InnerEditPost,
+  EditForm,
   withIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('postById',
