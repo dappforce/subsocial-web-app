@@ -62,7 +62,8 @@ const ReorderNavTabs = (props: Values) => {
   }
 
   const handleSave = () => {
-    console.log(tabs)
+    console.warn('Save operation is not implemented yet')
+    console.log('The current order of tabs:', tabs)
   }
 
   return (<>
