@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
-
+import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
@@ -73,9 +73,11 @@ type ViewPostPageProps = {
   postData: PostData;
   postExtData?: PostData;
   commentIds?: CommentId[];
+  statusCode?: number
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
+  if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
   const { post, initialContent = {} as PostExtContent } = props.postData;
 
   if (!post) return <NoData description={<span>Post not found</span>} />;
@@ -316,9 +318,20 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { postId } } = props;
+  const { query: { postId }, req, res } = props;
   const api = await getApi();
   const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
+  let statusCode = 200
+  if (!postData.post) {
+    if (req) {
+      // "getInitialProps - res.redirect cause server"
+      statusCode = 404
+      if (res) res.statusCode = 404
+      return {
+        statusCode
+      }
+    }
+  }
   const postExtData = await loadExtPost(api, postData.post as Post);
   return {
     postData,
