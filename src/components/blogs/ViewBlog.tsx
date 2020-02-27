@@ -315,6 +315,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
       statusCode: 404
     }
   }
+
   const blogData = await loadBlogData(api, id as BlogId)
   if (!blogData.blog && res && req) {
     res.statusCode = 404
