@@ -323,6 +323,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
       statusCode: 404
     }
   }
+
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   const posts = await loadPostDataList(api, postIds.reverse());
   return {
