@@ -1,5 +1,5 @@
 import React from 'react';
-import { StorybookProvider } from './StoribookContext';
+import { StorybookProvider } from './StorybookContext';
 
 export const withStorybookContext = (storyFn: () => React.ReactElement) =>
   <StorybookProvider>{storyFn()}</StorybookProvider>

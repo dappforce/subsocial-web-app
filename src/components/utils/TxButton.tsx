@@ -7,7 +7,7 @@ import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 import { withApi } from '@polkadot/ui-api';
 import { assert } from '@polkadot/util';
 import { withMyAccount, MyAccountProps } from './MyAccount';
-import { useStorybookContext } from '../stories/StoribookContext';
+import { useStorybookContext } from '../stories/StorybookContext';
 import { Button$Sizes } from '@polkadot/ui-app/Button/types';
 
 type InjectedProps = {
@@ -88,7 +88,7 @@ function MockTxButton (props: Props) {
   const { isPrimary = true, onClick } = props;
 
   const mockSendTx = () => {
-    console.log('WARN: Cannot send tx in a mock mode');
+    console.warn('WARN: Cannot send tx in a mock mode');
   };
 
   return (
