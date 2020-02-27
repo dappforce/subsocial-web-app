@@ -200,6 +200,10 @@ export const NavigationEditorExample = () => {
       { id: new PostId('3'), title: 'Post title (id: 3)' },
       { id: new PostId('4'), title: 'Post title (id: 4)' }
     ],
+    blogs: [
+      { id: new BlogId('2'), title: 'Blog title (id: 2)' },
+      { id: new BlogId('3'), title: 'Blog title (id: 3)' }
+    ],
     navTabs: [
       { id: 1, title: 'first_name', type: 'by-tag', description: '', content: { data: [ 'first', 'value' ] }, hidden: false },
       { id: 2, title: 'second_name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: true },
