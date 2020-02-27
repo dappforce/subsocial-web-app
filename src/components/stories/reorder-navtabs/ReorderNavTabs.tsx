@@ -17,7 +17,6 @@ const ReorderNavTabs = (props: Props) => {
 
   const [ tabs, setTabs ] = useState(initialTabs)
   const [ isNewOrder, setIsNewOrder ] = useState(false)
-
   const reorder = (list: NavTab[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
     const [ removed ] = result.splice(startIndex, 1);
