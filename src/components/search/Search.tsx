@@ -38,7 +38,7 @@ const App = () => {
           input = c._inputRef;
         }}
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
-        placeholder='Search Subsocial'
+        placeholder='Search for blogs, posts or comments'
         iconPosition='left'
         icon={<Icon
           type='search'

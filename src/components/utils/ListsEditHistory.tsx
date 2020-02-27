@@ -4,15 +4,16 @@ import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
 import { Post, Blog, PostId, PostContent, BlogContent, BlogId, CommentId, CommentContent, Comment, OptionComment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, VecBlogHistoryRecord, VecPostHistoryRecord, ProfileHistoryRecord, ProfileContent, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '../types';
 import { queryBlogsToProp } from './index';
 import { Option, AccountId } from '@polkadot/types';
-import ReactMarkdown from 'react-markdown';
+import { DfMd } from './DfMd';
 import IdentityIcon from '@polkadot/ui-identicon/Identicon';
 import Link from 'next/link';
 import { CreatedBy } from './CreatedBy';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { withRequireProfile, withSocialAccount, Loading } from './utils';
-import { NoData } from '../utils/DataList';
+import { NoData } from './DataList';
 import { DfBgImg } from './DfBgImg';
 import dynamic from 'next/dynamic';
+
 const AddressComponents = dynamic(() => import('./AddressComponents'), { ssr: false });
 
 type ModalController = {
@@ -195,7 +196,7 @@ const PostFromHistory = (props: PropsPostFromHistory) => {
     <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
     <div className='DfModal'>
       {content.image && <img src={content.image} className='DfPostImage' /* add onError handler */ />}
-      <ReactMarkdown className='DfMd' source={content.body} linkTarget='_blank' />
+      <DfMd source={content.body} />
       {/* TODO render tags */}
     </div>
   </div>);
@@ -292,7 +293,7 @@ const BlogFromHistory = (props: PropsBlogFromHistory) => {
           </div>
           <div className='DfDescription'>{`slug: ${_slug}`}</div>
           <div className='DfDescription'>
-            <ReactMarkdown className='DfMd' source={content.desc} linkTarget='_blank' />
+            <DfMd source={content.desc} />
           </div>
         </div>
       </div>
@@ -390,7 +391,7 @@ const ProfileFromHistory = (props: PropsProfileFromHistory) => {
           </div>
           <div className='about' style={{ margin: '0.2rem' }}>{`username: ${_username}`}</div>
           <div className='about' style={{ margin: '0.2rem' }}>
-            <ReactMarkdown className='DfMd' source={content.about} linkTarget='_blank' />
+            <DfMd source={content.about} />
           </div>
         </div>
       </div>

@@ -1,11 +1,11 @@
 const withCSS = require('@zeit/next-css');
 const withImages = require('next-images');
 const withPlugins = require('next-compose-plugins');
-
-require('dotenv').config();
-
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
+
+// Required by Docker
+require('dotenv').config();
 
 // fix: prevents error when .css files are required by node
 if (typeof require !== 'undefined') {
@@ -35,7 +35,7 @@ module.exports = withPlugins([withImages, withCSS({
       // Read the .env file
       new Dotenv({
         path: path.join(__dirname, '.env'),
-        systemvars: true,
+        systemvars: true, // Required by Docker
       }),
     ]
 

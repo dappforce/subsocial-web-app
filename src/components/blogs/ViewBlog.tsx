@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
+import { DfMd } from '../utils/DfMd';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { Option, AccountId } from '@polkadot/types';
@@ -15,7 +15,8 @@ import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewP
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { Loading, getApi, formatUnixDate } from '../utils/utils';
+import { Loading, formatUnixDate } from '../utils/utils';
+import { getApi } from '../utils/SubstrateApi';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
@@ -28,6 +29,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
+
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -176,7 +178,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
             {!previewDetails && renderDropDownMenu()}
           </span>
           <div className='description'>
-            <ReactMarkdown className='DfMd' source={desc} linkTarget='_blank' />
+            <DfMd source={desc} />
           </div>
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}

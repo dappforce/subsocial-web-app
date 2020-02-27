@@ -1,7 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { registerSubsocialTypes } from '../types';
+import { api as polkadotApi } from '@polkadot/ui-api';
 
-let api: (ApiPromise | undefined);
+let api: ApiPromise | undefined
 
 export { api };
 export class SubstrateApi {
@@ -44,3 +45,23 @@ export class SubstrateApi {
 
 export const Api = new SubstrateApi();
 export default Api;
+
+const MAX_CONN_TIME_SECS = 10
+
+export const getApi = async () => {
+  if (polkadotApi) {
+    console.warn('Get Substrate API: @polkadot api');
+    return polkadotApi.isReady;
+  } else if (api) {
+    console.warn('Get Substrate API: SSR api');
+    return api;
+  } else {
+    console.warn('Get Substrate API: Api.setup()');
+    api = await Api.setup();
+    setTimeout(() => {
+      console.warn(`Disconecting from Substrate API after ${MAX_CONN_TIME_SECS} secs`)
+      Api.destroy()
+    }, MAX_CONN_TIME_SECS * 1000);
+    return api;
+  }
+}

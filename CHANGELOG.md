@@ -1,57 +1,59 @@
-# 0.31.1
+# Changelog
 
-- Cleanups, fixes and features around the poc-4 staking module
-- Number of UI enhancements
+## M3
 
-# 0.30.1
+### SEO optimizations
 
-- Staking page indicator for offline nodes (count & block)
-- Rework page tabs and content layouts
-- Cleanup of all UI summary headers
-- Emberic Elem support (replaces Dried Danta)
+It’s essential for any blogging platform or a social network to be indexed by the search engines so other people could find your blogs or posts through a web search.
 
-# 0.29.1
+- Integration with Next.js for server-side rendering of read-only parts: view blog, post, comment, and public user’s profile.
+- Server-side rendering of a blog.
+- Server-side rendering of a post.
+- Server-side rendering of every comment.
+- Server-side rendering of a user profile. (Profiles should be optional)
 
-- @polkadot/util & @polkadot/api 0.75.1
+### Full-text search
 
-# 0.28.1
+Currently, it’s hard to build a full-text search service in a decentralized way because we don’t have a proper incentivization model for technology that is not built on blockchain (as a full-text search is). That's why we will implement it as a centralized service built on the open-source technology: [ElasticSearch](https://www.elastic.co/).
 
-- Support for substrate 1.0-rc
+- Full-text search for blogs.
+- Full-text search for posts.
 
-# 0.27.1
+## M2
 
-- Bring in new staking & nominating functions
-- Swap default keyring accounts (on creation) to sr25519
-- New faster crypto algorithms
-- Misc. bug fixes all around
+### Rating and reputation
 
-# 0.26.1
+- Update a comment rating after the comment upvoted/downvoted.
+- Update a post rating after it has been upvoted/downvoted.
+- Update a blog rating after its post has been upvoted/downvoted.
+- Update an account/member reputation after their post/comment upvoted/downvoted.
 
-- Swap keyring to HDKD derivation, mnemonic keys are now not backwards compatible with those created earlier. (Defaults are still for ed25519)
-- Swap crypto to new WASM-backed version (and remove libsodium dependency)
-- UI to allow for derived keys for ed25519 and sr25519
-- New mobile-friendly sidebar
-- Fix issues with nominating (old non-bonds interface)
+### Activity stream
 
-# 0.25.1
+- Follow an account.
+- List blogs you follow.
+- List accounts you follow.
+- List account followers.
+- Render an activity stream based on the blogs you follow.
+- Render an activity stream based on the accounts you follow.
+- Share a post with your followers (the post will be included in their activity stream).
 
-- Swap to publishing -beta.x on merge (non-breaking testing)
+## M1
 
- # 0.24.1
+### IPFS integration
 
- Storage now handles Option type properly
+Currently we store all text content onchain. And in this milestone we want to refactor Subsocial module to store text content of blogs, posts and comments on IPFS.
 
- # 0.23.1
+- Store blogs on IPFS (name, description, cover image, etc.).
+- Store posts on IPFS (title, body, summary, tags, cover image, publishing date, etc.)
+- Store comments on IPFS.
+- Store public member profiles on IPFS (username, avatar, about, links to other social networks).
 
- JavaScript console introduced
+### Edit history
 
-# 0.22.1
+Store an edit history on IPFS + list of CIDs in Substrate storage in a corresponding struct: blog, post, comment or profile.
 
-- Use new Compact<Index> transaction format - this requires the latest binaries from either Polkadot or Substrate
-
-# 0.21.1
-
-- PoC-3 support with latest Substrate master & Polkadot master
-- Add support for Charred Cherry (Substrate) and Alexander (Polkadot) testnets
-- Too many changes to mention, master now only supports latest PoC-3 iteration
-- Use https://poc-2.polkadot.io if access is required to PoC-2 era networks
+- Save and view an edit history of a post.
+- Save and view an edit history of a blog.
+- Save and view an edit history of a comment.
+- Save and view an edit history of a member profile.

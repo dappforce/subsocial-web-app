@@ -11,7 +11,7 @@ body,
 }
 
 .DfPageContent {
-  padding: 1.5rem 1.5rem;
+  padding: $space_big;
   overflow-wrap: break-word;
   min-width: 428px;
   max-width: 728px;
@@ -36,15 +36,20 @@ body,
 }
 
 .DfSummary {
-  margin-top: 1rem;
+  margin-top: $space_small;
 }
 
-.DfPostfName {
-  margin-right: .5rem;
+.DfPostText {
+  margin-top: $space_tiny;
+}
+
+.DfPostName {
+  margin-right: $space_tiny;
 }
 
 .DfPostImage {
   max-width: 100%;
+  margin-bottom: $space_normal;
 }
 
 .DfMenuItem {
@@ -101,8 +106,7 @@ body,
   display: flex !important;
 
   .content {
-    padding-left: $space_tiny;
-    padding-right: $space_tiny;
+    padding: 0 $space_small;
   }
 
   .button {
@@ -183,7 +187,7 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfSpacedButtons {
   margin-top: $space_normal;
-  margin-bottom: calc(2*$space_normal);
+  margin-bottom: calc(2 * $space_normal);
 
   .button {
     margin-right: $space_tiny;
@@ -204,7 +208,7 @@ form.ui.form.DfForm.EditEntityForm {
     color: $color_muted;
     min-width: initial;
     max-height: initial;
-    padding: $space_tiny $space_tiny $space_tiny .1rem;
+    padding: $space_tiny $space_tiny $space_tiny $space_normal;
 
     &.red {
 
@@ -222,6 +226,12 @@ form.ui.form.DfForm.EditEntityForm {
       }
     }
   }
+}
+
+.DfNoVoters {
+  text-align: center;
+  background-color: #fff;
+  padding: 1rem;
 }
 
 .ui.img.avatar {
@@ -311,18 +321,12 @@ hr {
   }
 
   .header {
-    font-size: 1rem;
+    font-size: $font_normal;
   }
 
   .name {
     text-transform: uppercase;
   }
-
-  /*.activity{
-    margin-left: .25rem;
-    margin-right: .25rem;
-  }*/
-
 }
 
 .DfDate {
@@ -624,6 +628,7 @@ hr {
 .ui--AddressComponents {
   .ui--IdentityIcon {
     margin-left: 0;
+    margin-right: $space_small;
   }
 
   .AddressComponents.follow {
@@ -720,7 +725,6 @@ hr {
 }
 
 .DfSection {
-  margin-top: $space_huge;
   margin-bottom: $space_normal;
 
   .DfSection-title {
@@ -814,15 +818,6 @@ hr {
   color: #4e4e4e;
 }
 
-.DfMd {
-  margin-top: $space_mini;
-  font-size: $font_normal;
-}
-
-.DfMd.details {
-  margin-top: $space_huge;
-}
-
 .DfPopup-about {
   margin: $space_tiny 0;
 }
@@ -898,9 +893,15 @@ hr {
   width: 60%;
   color: rgba(0, 0, 0, 0.7);
   z-index: 2;
+  padding: 0 1rem;
 
   input {
     border-radius: .5rem;
+    font-size: $font_normal;
+  }
+
+  input::placeholder {
+    color: #aaa;
   }
 
   input:hover {
@@ -909,9 +910,9 @@ hr {
 
   input:focus {
     border-color: #1e99ff;
-    -moz-box-shadow: 0 0 10px #1e99ff;
-    -webkit-box-shadow: 0 0 10px #1e99ff;
-    box-shadow: 0 0 10px #1e99ff;
+    -moz-box-shadow: 0 0 5px #1e99ff;
+    -webkit-box-shadow: 0 0 5px #1e99ff;
+    box-shadow: 0 0 5px #1e99ff;
   }
 
   ul {
@@ -924,7 +925,7 @@ hr {
 }
 
 .DfBgColor {
-  background-color: #fafafa;
+  background-color: $color_page_bg;
 }
 
 .DfTab {
@@ -947,7 +948,11 @@ hr {
 }
 
 .ant-layout {
-  background-color: #fafafa !important;
+  background-color: $color_page_bg !important;
+
+  &.ant-layout-has-sider {
+    margin-top: $height_top_menu;
+  }
 }
 
 .ui.segment {
@@ -971,10 +976,6 @@ hr {
   display: flex;
   justify-content: space-between;
   width: 100%;
-}
-
-.DfSelestedBlog {
-  color: #1890fe;
 }
 
 .DfSideMenu--FollowedBlogs {
@@ -1038,6 +1039,10 @@ hr {
   overflow: hidden;
   height: 100vh;
   left: 0;
+
+  .ant-menu-item:not(:last-child) {
+    margin-bottom: 4px;
+  }
 }
 
 .ant-layout-sider-children {
@@ -1085,7 +1090,7 @@ hr {
   display: -moz-inline-box;
 }
 
-/*---fix-syntax-error-md----*/
+/* Fix syntax error in Markdown editor */
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
   background: none !important;
 }
@@ -1117,7 +1122,7 @@ hr {
 
 .DfBlogTitle {
   .ui.dropdown {
-    margin-left: .5rem;
+    margin-left: $space_tiny;
   }
 }
 

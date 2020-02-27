@@ -18,15 +18,17 @@ import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
 import { CommentHistoryModal } from '../utils/ListsEditHistory';
-import ReactMarkdown from 'react-markdown';
+import { DfMd } from '../utils/DfMd';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize, pluralize } from '../utils/Plularize';
-import { Loading, getApi, formatUnixDate } from '../utils/utils';
+import { Loading, formatUnixDate } from '../utils/utils';
+import { getApi } from '../utils/SubstrateApi';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
+
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type Props = ApiProps & {
@@ -259,7 +261,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
               isPadded={false}
               size={32}
               extraDetails={
-                <Link href={`/comment?postId=${struct.post_id.toString()}&&commentId=${id.toString()}`}>
+                <Link href={`/comment?postId=${struct.post_id.toString()}&commentId=${id.toString()}`}>
                   <a className='DfGreyLink'>
                     {`${moment(formatUnixDate(time)).fromNow()} · ${pluralize(score, 'Point')}`}
                   </a>
@@ -277,7 +279,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
               />
               : <>
                 <SuiComment.Text>
-                  <ReactMarkdown className='DfMd' source={content.body} linkTarget='_blank' />
+                  <DfMd source={content.body} />
                 </SuiComment.Text>
                 <SuiComment.Actions>
                   {showReplyForm

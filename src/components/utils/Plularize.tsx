@@ -18,8 +18,18 @@ export function pluralize (
 ) {
   if (!count) {
     count = ZERO;
-  } else if (!(count instanceof BN)) {
-    count = hexToBn(count);
+  } else if (typeof count === 'string') {
+
+    if (count.startsWith('0x')) {
+      count = hexToBn(count);
+    } else if (count.startsWith('-0x')) {
+      count = hexToBn(count.substring(1), { isNegative: true });
+    } else {
+      count = new BN(count);
+    }
+
+  } else if (typeof count === 'number') {
+    count = new BN(count);
   }
 
   const plural = () => !pluralText

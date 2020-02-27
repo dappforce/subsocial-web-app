@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
-import ReactMarkdown from 'react-markdown';
+import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
 
@@ -10,7 +10,8 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, getApi, formatUnixDate, summarize } from '../utils/utils';
+import { Loading, formatUnixDate, summarize } from '../utils/utils';
+import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
@@ -280,7 +281,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        <ReactMarkdown className='DfMd details' source={body} linkTarget='_blank' />
+        <DfMd source={body} />
         {/* TODO render tags */}
       </div>
       <Voter struct={post} type={'Post'}/>
