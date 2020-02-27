@@ -65,7 +65,9 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     touched,
     setFieldValue,
     typesOfContent,
-    tagsData
+    tagsData,
+    isValid,
+    isSubmitting
   } = props;
 
   const {
@@ -243,7 +245,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           )}
         />
 
-        <Button type="primary" htmlType="submit" disabled={false} className={'NESubmit'}>
+        <Button type='primary' htmlType='submit' disabled={!isValid || isSubmitting} className={'NESubmit'}>
           Save
         </Button>
       </Form>
@@ -253,7 +255,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 }
 
 // Validation
-const TITLE_REGEX = /^[A-Za-z0-9_-]+$/;
 const TITLE_MIN_LEN = 2;
 const TITLE_MAX_LEN = 50;
 
@@ -262,9 +263,8 @@ const schema = Yup.object().shape({
     .of(
       Yup.object().shape({
         title: Yup.string()
-          .matches(TITLE_REGEX, 'Title can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-          .min(TITLE_MIN_LEN, 'Title is too short (min length: 2)')
-          .max(TITLE_MAX_LEN, 'Title is too long (max length: 50)')
+          .min(TITLE_MIN_LEN, `Title is too short. Min length is ${TITLE_MIN_LEN} chars.`)
+          .max(TITLE_MAX_LEN, `Title is too long. Max length is ${TITLE_MAX_LEN} chars.`)
           .required('Required message')
       })
     )
@@ -291,7 +291,7 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   validationSchema: schema,
 
   handleSubmit: values => {
-    console.log(values)
+    // console.log(values)
   }
 })(InnerForm);
 
