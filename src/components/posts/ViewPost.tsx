@@ -323,7 +323,6 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
   let statusCode = 200
   if (!postData.post && req) {
-    if (req) {
       // "getInitialProps - res.redirect cause server"
       statusCode = 404
       if (res) res.statusCode = 404
