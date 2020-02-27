@@ -78,6 +78,7 @@ type ViewPostPageProps = {
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
+  
   const { post, initialContent = {} as PostExtContent } = props.postData;
 
   if (!post) return <NoData description={<span>Post not found</span>} />;
