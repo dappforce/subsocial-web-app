@@ -81,7 +81,7 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
       {!inputVisible && (
         <Tag onClick={showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
           <Icon type="plus" /> New Tag
-          </Tag>
+        </Tag>
       )}
     </div>
   );
