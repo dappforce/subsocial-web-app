@@ -1,5 +1,5 @@
 .RNTListItem {
-  margin-bottom: 1rem;
+  margin-bottom: $space_normal;
 }
 .RNTIcon {
   transform: rotate(90deg);
