@@ -83,7 +83,7 @@ const ReorderNavTabs = (props: Values) => {
                     >
                       <List.Item>
                         <Icon type="pause" className={'RNTIcon'}/>
-                        <List.Item.Meta
+                        <List.Item.Meta title={tab.name} />
                           title={tab.name}
                         />
                       </List.Item>
