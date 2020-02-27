@@ -1,10 +1,12 @@
+@import '../../utils/styles/subsocial-vars.css';
+
 .atm_switch_wrapper {
   display: flex;
-  margin : 2rem 0 1rem;
+  margin : $space_huge 0 $space_normal;
 }
 
 .atm_switch_label {
-  margin-left: 1rem;
+  margin-left: $space_normal;
 }
 
 .atm_submit_button span {
@@ -16,7 +18,7 @@
 }
 
 .atm_dates_wrapper .field {
-  margin-right: 2rem !important;
+  margin-right: $space_huge !important;
 }
 
 .atm_dates_wrapper input {
@@ -28,14 +30,14 @@
 }
 
 .atm_prefix {
-  left    : 0.5rem;
+  left    : $space_tiny;
   display : flex;
   position: absolute;
-  top     : 0.5rem;
+  top     : $space_tiny;
 }
 
 .atm_prefix img {
-  height: 2rem;
+  height: $space_huge;
 }
 
 .atm_company_autocomplete {
@@ -49,7 +51,7 @@
 }
 
 .atm_company_autocomplete_item img {
-  height: 2rem;
+  height: $space_huge;
 }
 
 .atm_company_wrapper.with_prefix input {
