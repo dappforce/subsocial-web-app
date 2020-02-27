@@ -12,12 +12,11 @@ export interface Props {
   tabs: NavTab[]
 }
 
-const ReorderNavTabs = (props: Values) => {
+const ReorderNavTabs = (props: Props) => {
   const initialTabs = props.tabs
 
   const [ tabs, setTabs ] = useState(initialTabs)
   const [ isNewOrder, setIsNewOrder ] = useState(false)
-
 
   const reorder = (list: NavTab[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
@@ -48,17 +47,7 @@ const ReorderNavTabs = (props: Values) => {
 
     setTabs(newTabs)
 
-    const diff: number[] = []
-
-    newTabs.forEach((e, i) => {
-      if (e.id !== initialTabs[i].id) diff.push(i)
-    })
-
-    if (diff.length === 0) {
-      setIsDisabled(true)
-    } else {
-      setIsDisabled(false)
-    }
+    setIsNewOrder(newTabs.find((tab, i) => tab.id !== initialTabs[i].id) !== undefined)
   }
 
   const handleSave = () => {
@@ -84,8 +73,6 @@ const ReorderNavTabs = (props: Values) => {
                       <List.Item>
                         <Icon type="pause" className={'RNTIcon'}/>
                         <List.Item.Meta title={tab.name} />
-                          title={tab.name}
-                        />
                       </List.Item>
                     </div>
                   )}
