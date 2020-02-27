@@ -18,7 +18,6 @@ const ReorderNavTabs = (props: Values) => {
   const [ tabs, setTabs ] = useState(initialTabs)
   const [ isDisabled, setIsDisabled ] = useState(true)
 
-  console.log(tabs)
 
   const reorder = (list: NavTab[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
