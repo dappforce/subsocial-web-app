@@ -1,0 +1,10 @@
+.RNTListItem {
+  margin-bottom: 1rem;
+}
+.RNTIcon {
+  transform: rotate(90deg);
+  margin-right: 1rem;
+}
+.RNTSaveButton span {
+  color: #fff;
+}

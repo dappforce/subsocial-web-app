@@ -14,13 +14,13 @@ import ReorderNavTabs, { Values } from './reorder-navtabs/ReorderNavTabs';
 
 const { SubMenu } = Menu;
 
-const items = [{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() },
-{ avatar: faker.image.avatar(), name: faker.company.companyName() }];
+const items = [ { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() } ];
 
 const renderMenu = items.map((d, index) =>
   <Menu.Item key={index}>
@@ -39,15 +39,15 @@ class App extends React.Component {
     });
   }
 
-  render() {
+  render () {
     return (
       <div style={{ width: 256 }}>
         <Button type='primary' onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
           <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
         </Button>
         <Menu
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
+          defaultSelectedKeys={[ '1' ]}
+          defaultOpenKeys={[ 'sub1' ]}
           mode='inline'
           theme='light'
           inlineCollapsed={this.state.collapsed}
@@ -74,7 +74,7 @@ class App extends React.Component {
 
 export default {
   title: 'Examples | States',
-  decorators: [withKnobs]
+  decorators: [ withKnobs ]
 };
 
 export const DefaultState = () => {
@@ -118,7 +118,7 @@ const MenuItems: MenuItem[] = [
 ];
 
 export const Navigations = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [ collapsed, setCollapsed ] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -130,8 +130,8 @@ export const Navigations = () => {
         <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
       </Button>
       <Menu
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
+        defaultSelectedKeys={[ '1' ]}
+        defaultOpenKeys={[ 'sub1' ]}
         mode='inline'
         theme='light'
         inlineCollapsed={collapsed}
@@ -162,7 +162,7 @@ export const ReorderNavTabsExample = () => {
     tabs: [
       { id: 1, name: 'first name' },
       { id: 2, name: 'second name' },
-      { id: 3, name: 'third name' },
+      { id: 3, name: 'third name' }
     ]
   }
   return <ReorderNavTabs {...navTabs} />

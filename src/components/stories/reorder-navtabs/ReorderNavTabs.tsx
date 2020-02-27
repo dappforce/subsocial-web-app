@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List, Icon, Button } from 'antd';
+import './ReorderNavTabs.css'
 
 interface NavTab {
   id: number
@@ -62,14 +63,14 @@ const ReorderNavTabs = (props: Values) => {
   }
 
   const handleSave = () => {
-
+    console.log(tabs)
   }
 
   return (<>
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="list" >
         {provided => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
+          <div ref={provided.innerRef} {...provided.droppableProps} className={'RNTList'}>
             {
               tabs.map((tab: NavTab, index: number) => (
                 <Draggable draggableId={tab.id.toString()} index={index} key={tab.id.toString()}>
@@ -78,9 +79,10 @@ const ReorderNavTabs = (props: Values) => {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
+                      className={'RNTListItem'}
                     >
                       <List.Item>
-                        <Icon type="pause" />
+                        <Icon type="pause" className={'RNTIcon'}/>
                         <List.Item.Meta
                           title={tab.name}
                         />
@@ -96,7 +98,7 @@ const ReorderNavTabs = (props: Values) => {
       </Droppable>
     </DragDropContext>
 
-    <Button type="primary" disabled={isDisabled} onClick={handleSave}>Save</Button>
+    <Button type="primary" disabled={isDisabled} onClick={handleSave} className={'RNTSaveButton'}>Save</Button>
   </>
   )
 }
