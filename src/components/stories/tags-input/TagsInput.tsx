@@ -85,7 +85,6 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
       )}
     </div>
   );
-
 }
 
 export default EditableTagGroup
