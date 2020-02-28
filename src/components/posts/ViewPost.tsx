@@ -10,7 +10,7 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate, summarize } from '../utils/utils';
+import { Loading, formatUnixDate, summarize, getBlogId } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
@@ -320,11 +320,17 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { postId }, req, res } = props;
   const api = await getApi();
+  const idOrSlug = props.query.blogId as string
+  const URLblogId = await getBlogId(api, idOrSlug)
   const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
-
   if (!postData.post && req && res) {
     res.statusCode = 404
     return { statusCode: 404 }
+  }
+
+  if (postData.post?.blog_id.toString() !== URLblogId?.toString() && res && req) {
+    res.writeHead(301, { Location: `/blogs/${postData.post?.blog_id.toString()}/posts/${postId}` })
+    res.end()
   }
   const postExtData = await loadExtPost(api, postData.post as Post);
   return {
