@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { DfMd } from '../utils/DfMd';
-
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { Option, AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-
+import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
@@ -15,7 +14,7 @@ import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewP
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { Loading, formatUnixDate } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import ListData, { NoData } from '../utils/DataList';
@@ -54,10 +53,13 @@ type Props = {
   posts?: PostDataListItem[],
   followers?: AccountId[],
   imageSize?: number,
-  onClick?: () => void
+  onClick?: () => void,
+  statusCode?: number
 };
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
+  if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
+  
   const { blog } = props.blogData;
 
   if (!blog) return <NoData description={<span>Blog not found</span>} />;
@@ -292,9 +294,21 @@ export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<Blo
 };
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { blogId } } = props;
-  const api = await getApi();
-  const blogData = await loadBlogData(api, new BlogId(blogId as string));
+  const { req, res, query: { blogId } } = props
+  const idOrSlug = blogId as string
+  const api = await getApi()
+  const id = await getBlogId(api, idOrSlug)
+  if (!id && res && req) {
+    res.statusCode = 404
+    return { statusCode: 404 }
+  }
+
+  const blogData = await loadBlogData(api, id as BlogId)
+  if (!blogData.blog && res && req) {
+    res.statusCode = 404
+    return { statusCode: 404 }
+  }
+
   const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
   const posts = await loadPostDataList(api, postIds.reverse());
   return {
