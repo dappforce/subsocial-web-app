@@ -74,7 +74,7 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
             option.props.children?.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
           }
         >
-          <Input onPressEnter={handleInputConfirm}  />
+          <Input onPressEnter={handleInputConfirm} />
         </AutoComplete>
       )}
       
