@@ -327,7 +327,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
       // "getInitialProps - res.redirect cause server"
       statusCode = 404
       if (res) res.statusCode = 404
-      return {
+      return { statusCode }
         statusCode
       }
   }
