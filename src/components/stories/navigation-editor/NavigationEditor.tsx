@@ -265,7 +265,7 @@ const schema = Yup.object().shape({
         title: Yup.string()
           .min(TITLE_MIN_LEN, `Title is too short. Min length is ${TITLE_MIN_LEN} chars.`)
           .max(TITLE_MAX_LEN, `Title is too long. Max length is ${TITLE_MAX_LEN} chars.`)
-          .required('Required message')
+          .required('This field is required')
       })
     )
 });
