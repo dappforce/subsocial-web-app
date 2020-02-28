@@ -13,7 +13,7 @@ export class SubstrateApi {
   public setup = async () => {
     await this.connectToApi();
     api = this.api;
-    this.isConnecting = true;
+    this.сonnected = true;
     return this.api;
   }
 
