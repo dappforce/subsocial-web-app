@@ -50,8 +50,8 @@ export const ViewNewsFeed = () => {
   };
 
   const totalCount = items && items.length;
-  const NewsFeedArray = items.map((item, id) =>
-    <ViewActivity key={id} activity={item} />);
+  const NewsFeedArray = items.map((item) =>
+    <ViewActivity key={item.id} activity={item} />);
   return (<>
     <HeadMeta title='Feed' />
     <Section title={`News Feed (${totalCount})`}>{
@@ -95,8 +95,8 @@ export const ViewNotifications = () => {
   };
 
   const totalCount = items && items.length;
-  const NotificationsArray = items.map((item, id) =>
-    <Notification key={id} activity={item} />);
+  const NotificationsArray = items.map((item) =>
+    <Notification key={item.id} activity={item} />);
   return (<>
     <HeadMeta title='Notifications' />
     <Section title={`Notifications (${totalCount})`}>

@@ -13,19 +13,19 @@ import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg
 
 const { SubMenu } = Menu;
 
-const items = [{ avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() },
-  { avatar: faker.image.avatar(),name: faker.company.companyName() }];
+const items = [ { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() },
+  { avatar: faker.image.avatar(), name: faker.company.companyName() } ];
 
-const renderMenu = items.map((d, index) =>
-<Menu.Item key={index}>
-<Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
-<span>{d.name}</span>
-</Menu.Item>);
+const renderMenu = items.map((d) =>
+  <Menu.Item key={d.name}>
+    <Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
+    <span>{d.name}</span>
+  </Menu.Item>);
 
 class App extends React.Component {
   state = {
@@ -45,16 +45,16 @@ class App extends React.Component {
           <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
         </Button>
         <Menu
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
+          defaultSelectedKeys={[ '1' ]}
+          defaultOpenKeys={[ 'sub1' ]}
           mode='inline'
           theme='light'
           inlineCollapsed={this.state.collapsed}
         >
-        <Menu.Item key='menu1'>
-          <Icon type='notification' />
-          <span>My Feed</span>
-        </Menu.Item>
+          <Menu.Item key='menu1'>
+            <Icon type='notification' />
+            <span>My Feed</span>
+          </Menu.Item>
           <SubMenu
             key='sub1'
             title={
@@ -73,7 +73,7 @@ class App extends React.Component {
 
 export default {
   title: 'Examples | States',
-  decorators: [withKnobs]
+  decorators: [ withKnobs ]
 };
 
 export const DefaultState = () => {
@@ -129,20 +129,20 @@ export const Navigations = () => {
         <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
       </Button>
       <Menu
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
+        defaultSelectedKeys={[ '1' ]}
+        defaultOpenKeys={[ 'sub1' ]}
         mode='inline'
         theme='light'
         inlineCollapsed={collapsed}
       >
-      <Menu.Item style={{ marginRight: '1.5em' }}>
-        <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
-        <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
-      </Menu.Item>
-      {MenuItems.map((item, index) => <Menu.Item key={index}>
-        <Icon type={item.image} />
-        <span>{item.name}</span>
-      </Menu.Item>)}
+        <Menu.Item style={{ marginRight: '1.5em' }}>
+          <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
+          <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
+        </Menu.Item>
+        {MenuItems.map((item) => <Menu.Item key={item.name}>
+          <Icon type={item.image} />
+          <span>{item.name}</span>
+        </Menu.Item>)}
       </Menu>
     </div>
   );

@@ -38,8 +38,8 @@ type Props = ApiProps & {
 };
 
 const renderLevelOfComments = (parentComments: Comment[], childrenComments: Comment[]) => {
-  return parentComments.map((comment, i) =>
-    <ViewComment key={i} comment={comment} commentsWithParentId={childrenComments} />);
+  return parentComments.map((comment) =>
+    <ViewComment key={comment.id.toString()} comment={comment} commentsWithParentId={childrenComments} />);
 };
 
 export function CommentsTree (props: Props) {
