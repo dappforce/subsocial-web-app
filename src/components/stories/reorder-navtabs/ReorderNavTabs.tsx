@@ -54,7 +54,7 @@ const ReorderNavTabs = (props: Props) => {
     console.log('The current order of tabs:', tabs)
   }
 
-  return (<>
+  return <>
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="list" >
         {provided => (
