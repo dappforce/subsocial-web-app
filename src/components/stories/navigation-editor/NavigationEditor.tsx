@@ -270,7 +270,6 @@ const schema = Yup.object().shape({
     )
 });
 
-// The type of props MyForm receives
 export interface NavEditorFormProps {
   tagsData: string[]
   posts: PartialPost[]
