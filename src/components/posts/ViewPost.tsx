@@ -328,7 +328,6 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
       statusCode = 404
       if (res) res.statusCode = 404
       return { statusCode }
-      }
   }
   const postExtData = await loadExtPost(api, postData.post as Post);
   return {
