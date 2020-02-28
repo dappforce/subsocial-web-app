@@ -189,7 +189,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
               className={`DfMdEditor ${errors[fields.description] && 'error'}`} />
           </LabelledField>
 
-          <Button type="primary" htmlType="submit" disabled={!isValid && isSubmitting} className={'atm_submit_button'}>
+          <Button type="primary" htmlType="submit" disabled={!isValid || isSubmitting} className={'atm_submit_button'}>
             Save
           </Button>
         </Form>
