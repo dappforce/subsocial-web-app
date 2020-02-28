@@ -102,9 +102,13 @@ body,
   font-weight: bold;
 }
 
+.DfProfileTitle {
+  margin-bottom: $space_normal;
+}
+
 .ProfileDetails {
   display: flex !important;
-
+  margin-bottom: $space_big;
   .content {
     padding: 0 $space_small;
   }
@@ -261,9 +265,6 @@ form.ui.form.DfForm.EditEntityForm {
     max-width: 100%;
   }
 
-  &.DfSection {
-    margin-top: $space_normal;
-  }
 }
 
 .DfCommentContent {
@@ -336,7 +337,7 @@ hr {
 
 .DfSocialLinks {
   margin-top: $space_small;
-  font-size: $font_normal;
+  font-size: $space_big;
 
   a {
     margin-right: $space_small;
@@ -468,6 +469,7 @@ hr {
   .DfActionsPanel {
     display: flex;
     border-top: 1px solid rgba(34, 36, 38, .15);
+    margin-bottom: $space_normal;
   }
 
   .DfAction {
