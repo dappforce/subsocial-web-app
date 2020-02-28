@@ -625,6 +625,9 @@ hr {
 
 .ui.modal .scrolling.content {
   text-align: left;
+  .ReactionsItem {
+    margin: $space_normal 0;
+  }
 }
 
 .ui--AddressComponents {
