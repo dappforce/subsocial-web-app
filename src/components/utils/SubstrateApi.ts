@@ -8,7 +8,7 @@ export { api };
 export class SubstrateApi {
   protected api!: ApiPromise;
 
-  protected isConnecting: boolean = false;
+  protected сonnected: boolean = false;
 
   public setup = async () => {
     await this.connectToApi();
