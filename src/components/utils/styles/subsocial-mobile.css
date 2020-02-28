@@ -86,7 +86,7 @@
 
     button.ui.tiny.primary,
     button.ui.tiny.basic {
-      padding: .6rem .6rem 1.2rem .6rem;
+      padding: .6rem .6rem .6rem .6rem;
       font-size: $font_tiny;
     }
   }
@@ -120,7 +120,7 @@
     }
 
     .ui--AddressComponents-info {
-      min-width: 100%;
+      max-width: 11rem;
     }
 
     .ui.attached.tabular.menu {
@@ -199,10 +199,15 @@
     }
   }
 
-  .ProfileDetails .content {
-    padding-left: 0;
-    padding-right: .5rem;
+  .ProfileDetails {
+    max-width: 18rem;
+    .content {
+      padding-left: 0;
+      padding-right: .5rem;
+    }
   }
+
+  
 
   .DfContent,
   .content {
