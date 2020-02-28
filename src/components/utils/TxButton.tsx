@@ -104,7 +104,7 @@ function MockTxButton (props: Props) {
   );
 }
 
-function ResolvedButton (props: Props) {
+function ResolvedButton (props: any) {
   const { isStorybook = false } = useStorybookContext();
 
   const Component = isStorybook

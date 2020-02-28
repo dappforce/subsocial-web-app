@@ -4,7 +4,7 @@ type Storybook = {
   isStorybook: boolean
 }
 
-export const StorybookContext = createContext<Storybook>({ isStorybook: true });
+export const StorybookContext = createContext<Storybook>({ isStorybook: false });
 
 export const useStorybookContext = () =>
   useContext(StorybookContext)
