@@ -86,7 +86,6 @@ const ReorderNavTabs = (props: Props) => {
 
     <Button type="primary" disabled={!isNewOrder} onClick={handleSave} className={'RNTSaveButton'}>Save</Button>
   </>
-  )
 }
 
 export default ReorderNavTabs
