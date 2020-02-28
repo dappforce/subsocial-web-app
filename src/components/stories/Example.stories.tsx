@@ -154,7 +154,7 @@ export const ListForum = () => {
 };
 
 export const Forum = () => {
-  return (<ViewForum />);
+  return <ViewForum />;
 }
 
 export const ReorderNavTabsExample = () => {
