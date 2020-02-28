@@ -8,15 +8,18 @@ export { api };
 export class SubstrateApi {
   protected api!: ApiPromise;
 
+  protected сonnected: boolean = false;
+
   public setup = async () => {
     await this.connectToApi();
     api = this.api;
+    this.сonnected = true;
     return this.api;
   }
 
   public destroy = () => {
-    const { api } = this;
-    if (api && api.isReady) {
+    const { api, сonnected } = this;
+    if (api && api.isReady && connected) {
       api.disconnect();
       console.log(`Disconnected from Substrate API.`);
     }
@@ -50,16 +53,16 @@ const MAX_CONN_TIME_SECS = 10
 
 export const getApi = async () => {
   if (polkadotApi) {
-    console.warn('Get Substrate API: @polkadot api');
+    console.log('Get Substrate API: @polkadot api');
     return polkadotApi.isReady;
   } else if (api) {
-    console.warn('Get Substrate API: SSR api');
+    console.log('Get Substrate API: SSR api');
     return api;
   } else {
-    console.warn('Get Substrate API: Api.setup()');
+    console.log('Get Substrate API: Api.setup()');
     api = await Api.setup();
     setTimeout(() => {
-      console.warn(`Disconecting from Substrate API after ${MAX_CONN_TIME_SECS} secs`)
+      console.log(`Disconecting from Substrate API after ${MAX_CONN_TIME_SECS} secs`)
       Api.destroy()
     }, MAX_CONN_TIME_SECS * 1000);
     return api;
