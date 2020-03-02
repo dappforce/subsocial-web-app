@@ -56,7 +56,7 @@
   }
 
   .DfDescription {
-    font-size: $space_normal;
+    font-size: $font_normal;
   }
 }
 
@@ -151,7 +151,7 @@
     }
 
     .DfDescription {
-      font-size: $space_normal;
+      font-size: $font_normal;
     }
   }
 
@@ -232,7 +232,7 @@
   .DfPostPreview {
     &h2 {
       margin-top: 0;
-      font-size: $space_large;
+      font-size: $font_large;
     }
     &.ui.segment {
       padding-bottom: 0 !important;
