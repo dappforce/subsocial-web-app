@@ -329,7 +329,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
 
   const blogIdFromPost = postData.post?.blog_id
   if (blogIdFromPost.eq(blogIdFromUrl) && res) {
-    res.writeHead(301, { Location: `/blogs/${postData.post?.blog_id.toString()}/posts/${postId}` })
+    res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
     res.end()
   }
   const postExtData = await loadExtPost(api, postData.post as Post);
