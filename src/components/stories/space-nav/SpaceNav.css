@@ -1,0 +1,58 @@
+@import '../../utils/styles/subsocial-vars.css';
+
+.SpaceNav {
+  max-width: 20rem;
+
+  .SNhead {
+    display: flex;
+    flex-direction: column;
+    padding: $space_huge;
+    background-color: #fff;
+    border: 1px solid $color_light_border;
+    box-sizing: border-box;
+    border-radius: 2px;
+    margin-bottom: $space_huge;
+
+    .SNavatar {
+      img {
+        width: 100%;
+        border-radius: 10rem;
+      }
+    }
+
+    .SNheadText {
+      margin: $space_normal 0;
+
+      .SNheadTitle {
+        font-weight: 500;
+        font-size: $font_big;
+        line-height: $space_huge;
+        color: #000;
+      }
+  
+      .SNheadDescription {
+        font-size: $font_large;
+        font-weight: 500;
+        line-height: $space_huge;
+        color: rgba(0, 0, 0, 0.74);
+      }
+    }
+
+    .SNheadButton {
+      max-width: 6rem;
+      margin: auto;
+
+      &.unfollowed span {
+        color: #FFF;
+      }
+    }
+  }
+
+  .SNmenu {
+    border: 1px solid $color_light_border;
+    box-sizing: border-box;
+    border-radius: 2px;
+    margin-bottom: $space_huge;
+  }
+
+}
