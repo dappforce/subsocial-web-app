@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { AccountId } from '@polkadot/types';
+import { withCalls, withMulti } from '@polkadot/react-api';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { BUTTON_SIZE } from '../../config/Size.config';

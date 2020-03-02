@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { registerSubsocialTypes } from '../types';
-import { api as polkadotApi } from '@polkadot/ui-api';
+import { api as polkadotApi } from '@polkadot/react-api';
 
 let api: ApiPromise | undefined
 

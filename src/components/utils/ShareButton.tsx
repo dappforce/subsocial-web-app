@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { AccountId, Bool } from '@polkadot/types';
-
 import { BlogId, PostId, CommentId } from '../types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api } from '@polkadot/ui-api';
+import { api, registry } from '@polkadot/react-api';
+import AccountId from '@polkadot/types/generic/AccountId';
+import { GenericAccountId } from '@polkadot/types';
+import Bool from '@polkadot/types/primitive/Bool';
 
 type PropsShareButtonPost = {
   postId: PostId
@@ -16,7 +17,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple([ AccountId, BlogId ], [ new AccountId(myAddress), postId ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, PostId ], [ new GenericAccountId(registry, myAddress), postId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
@@ -61,7 +62,7 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
   const { commentId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple([ AccountId, BlogId ], [ new AccountId(myAddress), commentId ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, CommentId ], [ new GenericAccountId(registry, myAddress), commentId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);

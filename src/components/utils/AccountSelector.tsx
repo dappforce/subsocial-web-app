@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bubble, InputAddress, Labelled } from '@polkadot/ui-app';
+import { Bubble, InputAddress, Labelled } from '@polkadot/react-components';
 import { AccountIndex, Balance, Nonce } from '@polkadot/ui-reactive';
 
 type Props = {

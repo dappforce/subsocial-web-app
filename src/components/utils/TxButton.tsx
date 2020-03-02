@@ -1,14 +1,14 @@
-import { BareProps, ApiProps } from '@polkadot/ui-api/types';
+import { BareProps, ApiProps } from '@polkadot/react-api/types';
 import { QueueTx$ExtrinsicAdd, PartialQueueTx$Extrinsic } from './types';
 
 import React from 'react';
-import { Button } from '@polkadot/ui-app';
-import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
-import { withApi } from '@polkadot/ui-api';
+import { Button } from '@polkadot/react-components';
+import { QueueConsumer } from '@polkadot/react-components/Status/Context';
+import { withApi } from '@polkadot/react-api';
 import { assert } from '@polkadot/util';
 import { withMyAccount, MyAccountProps } from './MyAccount';
 import { useStorybookContext } from '../stories/StorybookContext';
-import { Button$Sizes } from '@polkadot/ui-app/Button/types';
+import { Button$Sizes } from '@polkadot/react-components/Button/types';
 
 type InjectedProps = {
   queueExtrinsic: QueueTx$ExtrinsicAdd;

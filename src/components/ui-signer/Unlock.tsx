@@ -4,7 +4,7 @@
 import { KeyringPair } from '@polkadot/keyring/types';
 
 import React from 'react';
-import { Password } from '@polkadot/ui-app';
+import { Password } from '@polkadot/react-components';
 import keyring from '@polkadot/ui-keyring';
 
 type Props = {

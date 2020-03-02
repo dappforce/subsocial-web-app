@@ -8,7 +8,7 @@ import keyring from '@polkadot/ui-keyring';
 
 // Substrate/Polkadot API utils
 // --------------------------------------
-import { Options as QueryOptions } from '@polkadot/ui-api/with/types';
+import { Options as QueryOptions } from '@polkadot/react-api/with/types';
 
 // Parse URLs
 // --------------------------------------

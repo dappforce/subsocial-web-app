@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
-import { AccountId, Option } from '@polkadot/types';
+import { Option, GenericAccountId } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
-import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } from '../types';
+import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId, BlogId } from '../types';
 import { Icon } from 'antd';
 import BN from 'bn.js';
 import { getApi } from '../utils/SubstrateApi';
+import { registry } from '@polkadot/react-api';
+import AccountId from '@polkadot/types/generic/AccountId';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const ZERO = new BN(0);
@@ -38,7 +40,7 @@ export const Voter = (props: VoterProps) => {
   const Id = isComment ? CommentId : PostId;
   const structQuery = type.toLowerCase();
 
-  const dataForQuery = new Tuple([ AccountId, Id ], [ new AccountId(address), id ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, Id ], [ new GenericAccountId(registry, address), id ]);
 
   useEffect(() => {
     let isSubscribe = true;

@@ -1,11 +1,11 @@
 // Copyright 2017-2019 @polkadot/ui-signer authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { QueueTx } from '@polkadot/ui-app/Status/types';
+import { QueueTx } from '@polkadot/react-components/Status/types';
 
 import React from 'react';
 import { Method } from '@polkadot/types';
-import { Call, InputAddress, Modal } from '@polkadot/ui-app';
+import { Call, InputAddress, Modal } from '@polkadot/react-components';
 
 import Checks from './Checks';
 

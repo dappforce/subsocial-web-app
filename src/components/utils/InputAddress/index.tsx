@@ -1,9 +1,9 @@
-// Copyright 2017-2019 @polkadot/ui-app authors & contributors
+// Copyright 2017-2019 @polkadot/react-components authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { KeyringOptions, KeyringSectionOption, KeyringSectionOptions, KeyringOption$Type } from '@polkadot/ui-keyring/options/types';
-import { BareProps } from '@polkadot/ui-app/types';
+import { BareProps } from '@polkadot/react-components/types';
 
 import './InputAddress.css';
 
@@ -12,11 +12,11 @@ import store from 'store';
 import keyring from '@polkadot/ui-keyring';
 import keyringOption from '@polkadot/ui-keyring/options';
 import createItem from '@polkadot/ui-keyring/options/item';
-import { withMulti, withObservable } from '@polkadot/ui-api';
+import { withMulti, withObservable } from '@polkadot/react-api';
 
-import Dropdown from '@polkadot/ui-app/Dropdown';
-import { classes, getAddrName } from '@polkadot/ui-app/util';
-import addressToAddress from '@polkadot/ui-app/util/toAddress';
+import Dropdown from '@polkadot/react-components/Dropdown';
+import { classes, getAddrName } from '@polkadot/react-components/util';
+import addressToAddress from '@polkadot/react-components/util/toAddress';
 import { MyAccountContext } from '../MyAccountContext';
 
 type Props = BareProps & {

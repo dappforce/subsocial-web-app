@@ -1,15 +1,15 @@
 
-import { BareProps } from '@polkadot/ui-app/types';
+import { BareProps } from '@polkadot/react-components/types';
 
 import BN from 'bn.js';
 import React, { useState, useEffect, FunctionComponent } from 'react';
-import { AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
-import { withMulti } from '@polkadot/ui-api';
+import { GenericAccountId as AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
+import { withMulti } from '@polkadot/react-api';
 import InputAddress from './InputAddress';
-import classes from '@polkadot/ui-app/util/classes';
-import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
-import BalanceDisplay from '@polkadot/ui-app/Balance';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
+import classes from '@polkadot/react-components/util/classes';
+import toShortAddress from '@polkadot/react-components/util/toShortAddress';
+import BalanceDisplay from '@polkadot/react-components/Balance';
+import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { findNameByAddress, nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { summarize } from './utils';

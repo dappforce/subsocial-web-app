@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
-import { Option, AccountId } from '@polkadot/types';
+import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
@@ -78,7 +78,7 @@ type ViewPostPageProps = {
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
-  
+
   const { post, initialContent = {} as PostExtContent } = props.postData;
 
   if (!post) return <NoData description={<span>Post not found</span>} />;

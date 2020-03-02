@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { I18nProps } from '@polkadot/ui-app/types';
+import { I18nProps } from '@polkadot/react-components/types';
 
 import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
 import { BlogId } from '../types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
-import { AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/SubstrateApi';
 

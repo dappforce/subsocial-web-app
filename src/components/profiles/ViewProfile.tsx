@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { AccountId, Option } from '@polkadot/types';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
+import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { GenericAccountId as AccountId, Option } from '@polkadot/types';
+import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SocialAccount, ProfileContent, Profile } from '../types';
@@ -25,7 +25,7 @@ import { NextPage } from 'next';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
-import BalanceDisplay from '@polkadot/ui-app/Balance';
+import BalanceDisplay from '@polkadot/react-components/Balance';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });

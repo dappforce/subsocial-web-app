@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
-import { AccountId, Option } from '@polkadot/types';
+import { Option } from '@polkadot/types';
 import { SubmittableResult, ApiPromise } from '@polkadot/api';
 import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
@@ -11,6 +11,7 @@ import { NoData } from './DataList';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 import { truncate } from 'lodash';
+import AccountId from '@polkadot/types/generic/AccountId';
 
 type PaginationProps = {
   currentPage?: number;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { withMulti, withCalls } from '@polkadot/ui-api/with';
+import { withMulti, withCalls } from '@polkadot/react-api';
 import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
 import { Post, Blog, PostId, PostContent, BlogContent, BlogId, CommentId, CommentContent, Comment, OptionComment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, VecBlogHistoryRecord, VecPostHistoryRecord, ProfileHistoryRecord, ProfileContent, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '../types';
 import { queryBlogsToProp } from './index';
-import { Option, AccountId } from '@polkadot/types';
+import { Option } from '@polkadot/types';
 import { DfMd } from './DfMd';
 import IdentityIcon from '@polkadot/ui-identicon/Identicon';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import { withRequireProfile, withSocialAccount, Loading } from './utils';
 import { NoData } from './DataList';
 import { DfBgImg } from './DfBgImg';
 import dynamic from 'next/dynamic';
+import { AccountId } from '@polkadot/types/interfaces';
 
 const AddressComponents = dynamic(() => import('./AddressComponents'), { ssr: false });
 

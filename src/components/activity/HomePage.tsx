@@ -1,7 +1,7 @@
 import BN from 'bn.js';
 import React from 'react';
 
-import { ApiProps } from '@polkadot/ui-api/types';
+import { ApiProps } from '@polkadot/react-api/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '../types';

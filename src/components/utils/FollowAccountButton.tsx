@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { AccountId, Bool } from '@polkadot/types';
+import { GenericAccountId, bool as Bool } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api } from '@polkadot/ui-api';
+import { api, registry } from '@polkadot/react-api';
 import { BUTTON_SIZE } from '../../config/Size.config';
-import { Button$Sizes } from '@polkadot/ui-app/Button/types';
+import { Button$Sizes } from '@polkadot/react-components/Button/types';
+import AccountId from '@polkadot/types/generic/AccountId';
 
 type FollowAccountButtonProps = {
   address: string,
@@ -30,8 +31,8 @@ type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   const { myAddress, address, size = BUTTON_SIZE } = props;
 
-  const accountId = new AccountId(address);
-  const dataForQuery = new Tuple([ AccountId, AccountId ], [ new AccountId(myAddress), accountId ]);
+  const accountId = new GenericAccountId(registry, address);
+  const dataForQuery = new Tuple(registry, [ AccountId, AccountId ], [ new GenericAccountId(registry, myAddress), accountId ]);
 
   const [ isFollow, setIsFollow ] = useState(true);
 

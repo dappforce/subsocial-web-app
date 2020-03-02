@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { DfMd } from '../utils/DfMd';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { Option, AccountId } from '@polkadot/types';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
+import { withCalls, withMulti } from '@polkadot/react-api';
+import { Option, GenericAccountId as AccountId } from '@polkadot/types';
+import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import { BlogId, Blog } from '../types';
 import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
 import ListData from '../utils/DataList';

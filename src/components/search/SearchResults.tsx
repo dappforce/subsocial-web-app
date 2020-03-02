@@ -7,7 +7,7 @@ import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
 import Section from '../utils/Section';
-import { AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import { PostId } from '../types';
 import AddressComponents from '../utils/AddressComponents';
 

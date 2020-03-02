@@ -4,17 +4,17 @@
 
 import { SubmittableResult } from '@polkadot/api/SubmittableExtrinsic';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
-import { ApiProps } from '@polkadot/ui-api/types';
-import { BareProps } from '@polkadot/ui-app/types';
+import { ApiProps } from '@polkadot/react-api/types';
+import { BareProps } from '@polkadot/react-components/types';
 import { RpcMethod } from '@polkadot/jsonrpc/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
-import { QueueTx, QueueTx$MessageSetStatus, QueueTx$Result, QueueTx$Status } from '@polkadot/ui-app/Status/types';
+import { QueueTx, QueueTx$MessageSetStatus, QueueTx$Result, QueueTx$Status } from '@polkadot/react-components/Status/types';
 
 import React from 'react';
-import { Button, Modal } from '@polkadot/ui-app';
+import { Button, Modal } from '@polkadot/react-components';
 import keyring from '@polkadot/ui-keyring';
-import { withApi, withMulti, withObservable } from '@polkadot/ui-api';
+import { withApi, withMulti, withObservable } from '@polkadot/react-api';
 import accountObservable from '@polkadot/ui-keyring/observable/accounts';
 import { assert, isFunction } from '@polkadot/util';
 import { format } from '@polkadot/util/logger';
