@@ -240,7 +240,6 @@ const buildSchema = () => Yup.object().shape({
     .max(DESCRIPTION_MAX_LEN, `Description is too long. Maximum length is ${DESCRIPTION_MAX_LEN} chars.`)
 });
 
-// The type of props MyForm receives
 interface MyFormProps {
   companyData: CompanyData,
   employerTypesData: Array<string>
