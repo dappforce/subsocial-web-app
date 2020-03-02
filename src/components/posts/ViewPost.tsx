@@ -318,7 +318,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { postId }, req, res } = props;
+  const { query: { blogId, postId }, req, res } = props;
   const api = await getApi();
   const idOrSlug = props.query.blogId as string
   const URLblogId = await getBlogId(api, idOrSlug)
