@@ -337,7 +337,7 @@ hr {
 
 .DfSocialLinks {
   margin-top: $space_small;
-  font-size: $space_big;
+  font-size: $font_big;
 
   a {
     margin-right: $space_small;
@@ -1100,7 +1100,7 @@ hr {
 }
 
 .DfCreator {
-  font-size: $space_normal;
+  font-size: $font_normal;
   margin-top: $space_normal;
 
   i {
@@ -1115,7 +1115,7 @@ hr {
 }
 
 .DfStatItem {
-  font-size: $space_normal;
+  font-size: $font_normal;
   display: inline;
   margin-right: $space_tiny;
 }
