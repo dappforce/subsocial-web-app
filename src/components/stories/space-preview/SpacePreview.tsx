@@ -1,5 +1,7 @@
 import React from 'react'
-import { Icon, Button } from 'antd'
+import { Icon } from 'antd'
+import { BUTTON_SIZE } from '../../../config/Size.config'
+import TxButton from '../../utils/TxButton'
 import './SpacePreview.css'
 
 type SpaceContent = {
@@ -11,11 +13,11 @@ type SpaceContent = {
 export interface SpacePreviewProps {
   spaces: SpaceContent[],
   name: string,
-  icon: 'user' | 'file'
+  iconType: 'user' | 'file'
 }
 
 const SpacePreview = (props: SpacePreviewProps) => {
-  const { spaces, name, icon } = props
+  const { spaces, name, iconType } = props
 
   return <div className="SpacePreview">
     <div className="SPHead">{name}</div>
@@ -23,11 +25,27 @@ const SpacePreview = (props: SpacePreviewProps) => {
       {
         spaces.map((x) => (
           <div className="SPitem" key={x.id.toString()}>
-            <div className="SPitemText"><Icon type={icon} /> {x.title}</div>
+            <div className="SPitemText"><Icon type={iconType} /> {x.title}</div>
             {
               x.isFollowed
-                ? <Button type="primary" className="SPbutton unfollowed" >Follow</Button>
-                : <Button type="default" className="SPbutton" >Unfollow</Button>
+                ? <TxButton
+                  isBasic={false}
+                  isPrimary={true}
+                  size={BUTTON_SIZE}
+                  // onClick={}
+                  className="SPbutton unfollowed"
+                >
+                  Follow
+                </TxButton>
+                : <TxButton
+                  isBasic={true}
+                  isPrimary={false}
+                  size={BUTTON_SIZE}
+                  // onClick={}
+                  className="SPbutton"
+                >
+                  Unfollow
+                </TxButton>
             }
           </div>
         ))

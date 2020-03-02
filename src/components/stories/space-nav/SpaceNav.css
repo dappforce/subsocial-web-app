@@ -1,7 +1,7 @@
 @import '../../utils/styles/subsocial-vars.css';
 
 .SpaceNav {
-  max-width: 20rem;
+  max-width: 22rem;
 
   .SNhead {
     display: flex;
@@ -39,7 +39,6 @@
     }
 
     .SNheadButton {
-      max-width: 6rem;
       margin: auto;
 
       &.unfollowed span {

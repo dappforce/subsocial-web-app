@@ -1,12 +1,10 @@
 import React from 'react'
-import { Button, Menu } from 'antd'
+import { Menu } from 'antd'
 import './SpaceNav.css'
 import { ProfileContent, PostId, BlogId } from 'src/components/types'
 import SpacePreview from '../space-preview/SpacePreview'
-import { BUTTON_SIZE } from '../../../config/Size.config';
-import { AccountId } from '@polkadot/types'
+import { BUTTON_SIZE } from '../../../config/Size.config'
 import TxButton from '../../utils/TxButton'
-import { withStorybookContext } from '../withStorybookContext';
 
 interface FilterByTags {
   data: string[]
@@ -54,7 +52,7 @@ export interface SpaceNavProps {
   followers?: number[],
 }
 
-export const SpaceNav = (props: SpaceNavProps) => {
+const SpaceNav = (props: SpaceNavProps) => {
   const {
     followers,
     ProfileContent = {} as ProfileContent,
@@ -100,18 +98,26 @@ export const SpaceNav = (props: SpaceNavProps) => {
         <div className="SNheadTitle">{fullname}</div>
         <div className="SNheadDescription">{about}</div>
       </div>
-      <TxButton
-        isBasic={true}
-        isPrimary={false}
-        size={BUTTON_SIZE}
-        // onClick={}
-      >
-          Follow
-      </TxButton>
       {
         followers
-          ? <Button type="default" className="SNheadButton">Unfollow</Button>
-          : <Button type="primary" className="SNheadButton unfollowed">Follow</Button>
+          ? <TxButton
+            isBasic={true}
+            isPrimary={false}
+            size={BUTTON_SIZE}
+            // onClick={}
+            className="SNheadButton"
+          >
+            Unfollow
+          </TxButton>
+          : <TxButton
+            isBasic={false}
+            isPrimary={true}
+            size={BUTTON_SIZE}
+            // onClick={}
+            className="SNheadButton unfollowed"
+          >
+            Follow
+          </TxButton>
       }
     </div>
     <Menu
@@ -122,17 +128,13 @@ export const SpaceNav = (props: SpaceNavProps) => {
     </Menu>
     {
       spaces.teamMembers &&
-        <SpacePreview spaces={spaces.teamMembers} name="Team" icon="user" />
+        <SpacePreview spaces={spaces.teamMembers} name="Team" iconType="user" />
     }
     {
       spaces.projects &&
-        <SpacePreview spaces={spaces.projects} name="Projects" icon="file" />
+        <SpacePreview spaces={spaces.projects} name="Projects" iconType="file" />
     }
   </div>
 }
 
-// export default SpaceNav
-export default {
-  title: 'SpaceNav',
-  decorators: [ withStorybookContext ]
-};
+export default SpaceNav
