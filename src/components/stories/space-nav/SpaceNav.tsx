@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Menu } from 'antd'
 import './SpaceNav.css'
 import { ProfileContent, PostId, BlogId } from 'src/components/types'
-import SpacePreview from '../SpacePreview/SpacePreview'
+import SpacePreview from '../space-preview/SpacePreview'
 import { BUTTON_SIZE } from '../../../config/Size.config';
 import { AccountId } from '@polkadot/types'
 import TxButton from '../../utils/TxButton'
