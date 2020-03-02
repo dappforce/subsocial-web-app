@@ -327,7 +327,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  if (postData.post?.blog_id.toString() !== URLblogId?.toString() && res && req) {
+  const blogIdFromPost = postData.post?.blog_id
+  if (blogIdFromPost.eq(blogIdFromUrl) && res) {
     res.writeHead(301, { Location: `/blogs/${postData.post?.blog_id.toString()}/posts/${postId}` })
     res.end()
   }
