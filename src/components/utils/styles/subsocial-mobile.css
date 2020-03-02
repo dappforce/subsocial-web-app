@@ -86,7 +86,7 @@
 
     button.ui.tiny.primary,
     button.ui.tiny.basic {
-      padding: .6rem .6rem .6rem .6rem;
+      padding: $space_tiny;
       font-size: $font_tiny;
     }
   }
