@@ -10,7 +10,7 @@ export class SubstrateApi {
 
   protected connected: boolean = false;
 
-  public setup = async () => { 
+  public setup = async () => {
     await this.connectToApi();
     api = this.api;
     this.connected = true;
