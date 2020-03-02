@@ -19,7 +19,7 @@ export class SubstrateApi {
 
   public destroy = () => {
     const { api, сonnected } = this;
-    if (api && api.isReady && connected) {
+    if (api && api.isReady && сonnected) {
       api.disconnect();
       console.log(`Disconnected from Substrate API.`);
     }
