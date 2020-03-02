@@ -8,18 +8,18 @@ export { api };
 export class SubstrateApi {
   protected api!: ApiPromise;
 
-  protected сonnected: boolean = false;
+  protected connected: boolean = false;
 
-  public setup = async () => {
+  public setup = async () => { 
     await this.connectToApi();
     api = this.api;
-    this.сonnected = true;
+    this.connected = true;
     return this.api;
   }
 
   public destroy = () => {
-    const { api, сonnected } = this;
-    if (api && api.isReady && сonnected) {
+    const { api, connected } = this;
+    if (api && api.isReady && connected) {
       api.disconnect();
       console.log(`Disconnected from Substrate API.`);
     }
