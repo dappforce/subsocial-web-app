@@ -30,6 +30,12 @@ export class Score extends i32 {
   }
 }
 
+export const newBlogId = (
+  number: number | string | number[] | Uint8Array | Buffer | BN,
+  base?: number | 'hex',
+  endian?: BN.Endianness
+) => new BN(number, base, endian) as BlogId
+
 export class BlogId extends u64 {}
 export class PostId extends u64 {}
 export class CommentId extends u64 {}

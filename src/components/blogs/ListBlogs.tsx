@@ -3,7 +3,7 @@ import React from 'react';
 import { I18nProps } from '@polkadot/react-components/types';
 
 import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
-import { BlogId } from '../types';
+import { BlogId, newBlogId } from '../types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
@@ -38,7 +38,7 @@ ListBlog.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
 
-  const firstBlogId = new BlogId(registry, 1);
+  const firstBlogId = newBlogId(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
   if (totalCount > 0) {
@@ -46,7 +46,7 @@ ListBlog.getInitialProps = async (): Promise<any> => {
     const lastId = nextBlogId.toNumber();
     const loadBlogs: Promise<BlogData>[] = [];
     for (let i = firstId; i < lastId; i++) {
-      loadBlogs.push(loadBlogData(api, new BlogId(registry, i)));
+      loadBlogs.push(loadBlogData(api, newBlogId(i)));
     }
     blogsData = await Promise.all<BlogData>(loadBlogs);
   }

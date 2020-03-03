@@ -3,7 +3,7 @@ import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult, ApiPromise } from '@polkadot/api';
-import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
+import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount, newBlogId } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
@@ -167,6 +167,6 @@ export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<Blog
     const idOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
     return idOpt.unwrapOr(undefined)
   } else {
-    return new BlogId(registry, idOrSlug)
+    return newBlogId(idOrSlug)
   }
 }

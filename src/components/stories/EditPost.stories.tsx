@@ -3,7 +3,7 @@ import React from 'react';
 import '../utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { InnerEditPost } from '../posts/EditPost';
-import { BlogId, Post, PostId, PostContent } from '../types';
+import { Post, PostId, PostContent, newBlogId } from '../types';
 import { registry } from '@polkadot/react-api';
 
 export default {
@@ -11,7 +11,7 @@ export default {
   decorators: [ withStorybookContext ]
 };
 
-const mockBlogId = new BlogId(registry, 99);
+const mockBlogId = newBlogId(99);
 
 const mockStruct = {
   id: new PostId(registry, 10),

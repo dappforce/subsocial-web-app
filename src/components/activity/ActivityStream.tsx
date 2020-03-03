@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Section from '../utils/Section';
 import { hexToNumber } from '@polkadot/util';
-import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../types';
+import { PostId, CommentId, OptionComment, Comment, Activity, newBlogId } from '../types';
 import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
 import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
@@ -168,14 +168,14 @@ export function Notification (props: ActivityProps) {
           break;
         }
         case 'BlogFollowed': {
-          const blogId = new BlogId(registry, hexToNumber('0x' + blog_id));
+          const blogId = newBlogId(hexToNumber('0x' + blog_id));
           const blogData = await loadBlogData(api, blogId);
           setMessage(Events.BlogFollowed);
           setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'BlogCreated': {
-          const blogId = new BlogId(registry, hexToNumber('0x' + blog_id));
+          const blogId = newBlogId(hexToNumber('0x' + blog_id));
           const blogData = await loadBlogData(api, blogId);
           setMessage(Events.BlogCreated);
           setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);

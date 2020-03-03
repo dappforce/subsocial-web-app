@@ -4,16 +4,15 @@ import React from 'react';
 import { ApiProps } from '@polkadot/react-api/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
-import { BlogId, PostId } from '../types';
+import { BlogId, PostId, newBlogId } from '../types';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { NextPage } from 'next';
 import { getApi } from '../utils/SubstrateApi';
-import { registry } from '@polkadot/react-api';
 
-const FIVE = new BlogId(registry, 5);
-const ZERO = new BlogId(registry, 0);
+const FIVE = newBlogId(5);
+const ZERO = newBlogId(0);
 type Props = ApiProps & {
   blogsData: BlogData[],
   postsData: PostDataListItem[]

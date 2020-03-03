@@ -12,7 +12,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
-import { BlogId, Blog, BlogContent, BlogUpdate, VecAccountId } from '../types';
+import { BlogId, Blog, BlogContent, BlogUpdate, VecAccountId, newBlogId } from '../types';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 
@@ -238,7 +238,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component id={new BlogId(registry, blogId as string)} />;
+      return <Component id={newBlogId(blogId as string)} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }
