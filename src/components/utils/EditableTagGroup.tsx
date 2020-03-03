@@ -12,14 +12,12 @@ interface OtherProps {
 }
 
 type FormValues = {
-  [s: string]: string[]
+  tags: string[]
 }
 
 const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
   const { setFieldValue, values, tagsData, label, name, touched, errors } = props
-  const {
-    tags
-  } = values;
+  const { tags } = values;
 
   const hasError = name && touched[name] && errors[name];
 
