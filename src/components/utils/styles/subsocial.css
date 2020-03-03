@@ -168,7 +168,18 @@ body,
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $space_normal;
+  margin-bottom: $space_huge;
+
+  .EPadvanced {
+    margin-bottom: $space_normal;
+    padding-bottom: $space_normal;
+
+    .EPadvacedTitle {
+      cursor: pointer;
+      font-size: $font_normal;
+      font-weight: 700;
+    }
+  }
 }
 
 .ui.basic.button:not(.disabled) {
