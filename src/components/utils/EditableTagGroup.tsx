@@ -6,7 +6,7 @@ import { SelectValue } from 'antd/lib/select';
 import { nonEmptyStr } from '.';
 
 interface OtherProps {
-  tagsData: string[],
+  tagsData?: string[],
   name?: keyof FormValues,
   label?: string
 }
