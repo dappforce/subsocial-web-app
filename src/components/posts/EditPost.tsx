@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
-
+import EditableTagGroup from '../utils/EditableTagGroup'
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
@@ -19,7 +19,10 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+import { Icon } from 'antd';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
+const MAX_TAGS_PER_POST = 10
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -33,8 +36,11 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
     .required('Post body is required'),
 
   image: Yup.string()
-    .url('Image must be a valid URL.')
     // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
+    .url('Image must be a valid URL.'),
+
+  tags: Yup.array()
+    .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`)
 });
 
 type ValidationProps = {
@@ -52,7 +58,8 @@ type OuterProps = ValidationProps & {
   json?: PostContent,
   onlyTxButton?: boolean,
   closeModal?: () => void,
-  withButtons?: boolean
+  withButtons?: boolean,
+  tagsData?: string[]
 };
 
 type FormValues = PostContent;
@@ -79,7 +86,8 @@ const InnerForm = (props: FormProps) => {
     resetForm,
     onlyTxButton = false,
     withButtons = true,
-    closeModal
+    closeModal,
+    tagsData = [ 'qwe', 'asd', 'zxc' ]
   } = props;
 
   const isRegularPost = extention.value instanceof RegularPost;
@@ -106,6 +114,7 @@ const InnerForm = (props: FormProps) => {
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
+  const [ showAdvanced, setShowAdvaced ] = useState(false)
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
@@ -132,6 +141,10 @@ const InnerForm = (props: FormProps) => {
     const _id = id || getNewIdFromEvent<PostId>(_txResult);
     _id && isRegularPost && goToView(_id);
   };
+
+  const handleAdvancedSettings = () => {
+    setShowAdvaced(!showAdvanced)
+  }
 
   const buildTxParams = () => {
     if (isValid || !isRegularPost) {
@@ -182,10 +195,21 @@ const InnerForm = (props: FormProps) => {
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
+          <EditableTagGroup name='tags' label='Tags' tagsData={tagsData} {...props}/>
 
           <LabelledField name='body' label='Description' {...props}>
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
+
+          <div className="EPadvanced">
+            <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
+              {!showAdvanced ? 'Show' : 'Hide'} Advanced Settings
+              <Icon type={showAdvanced ? 'up' : 'down'} />
+            </div>
+            {showAdvanced &&
+              <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
+            }
+          </div>
         </>
         : <>
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
@@ -224,7 +248,8 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
         title: '',
         body: '',
         image: '',
-        tags: []
+        tags: [],
+        canonical: ''
       };
     }
   },
