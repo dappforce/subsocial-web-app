@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Dropdown, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
@@ -24,7 +24,7 @@ const InnerShareModal = (props: Props) => {
   if (!blogIds) return <Loading />;
 
   const [ blogId, setBlogId ] = useState(blogIds[0]);
-  const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
+  const extension = new PostExtension(registry, { SharedPost: new SharedPost(registry, postId) });
 
   const renderShareView = () => {
     if (blogIds.length === 0) {

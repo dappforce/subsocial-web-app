@@ -238,7 +238,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component id={new BlogId(blogId as string)} />;
+      return <Component id={new BlogId(registry, blogId as string)} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }

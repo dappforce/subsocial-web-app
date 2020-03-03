@@ -9,7 +9,6 @@ import StatusContext from '@polkadot/react-components/Status/Context';
 import Queue from '@polkadot/react-components/Status/Queue';
 import Signer from '@polkadot/react-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
-import { QueueProps } from '@polkadot/react-components/Status/types';
 import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
 import Connecting from '../components/main/Connecting';

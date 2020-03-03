@@ -4,16 +4,17 @@ import '../utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { InnerEditPost } from '../posts/EditPost';
 import { BlogId, Post, PostId, PostContent } from '../types';
+import { registry } from '@polkadot/react-api';
 
 export default {
   title: 'EditPost',
   decorators: [ withStorybookContext ]
 };
 
-const mockBlogId = new BlogId(99);
+const mockBlogId = new BlogId(registry, 99);
 
 const mockStruct = {
-  id: new PostId(10),
+  id: new PostId(registry, 10),
   blog_id: mockBlogId
 } as unknown as Post
 

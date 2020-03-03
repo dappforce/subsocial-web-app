@@ -81,7 +81,7 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
     const router = useRouter();
     const { address } = router.query;
     try {
-      return <Component id={new GenericAccountId(address as string)} {...props}/>;
+      return <Component id={new GenericAccountId(registry, address as string)} {...props}/>;
     } catch (err) {
       return <em>Invalid address: {address}</em>;
     }
@@ -167,6 +167,6 @@ export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<Blog
     const idOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
     return idOpt.unwrapOr(undefined)
   } else {
-    return new BlogId(idOrSlug)
+    return new BlogId(registry, idOrSlug)
   }
 }

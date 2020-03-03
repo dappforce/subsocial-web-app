@@ -6,7 +6,7 @@ import { BlockNumber, Moment, AccountId } from '@polkadot/types/interfaces';
 import BN from 'bn.js';
 import { isServerSide } from '../utils';
 import { Registry } from '@polkadot/types/types';
-export { registerSubsocialTypes } from '@subsocial/utils';
+export { registerSubsocialTypes } from './DfRegister';
 
 export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
 

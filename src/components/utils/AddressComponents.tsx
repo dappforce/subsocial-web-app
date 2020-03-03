@@ -10,7 +10,7 @@ import classes from '@polkadot/react-components/util/classes';
 import toShortAddress from '@polkadot/react-components/util/toShortAddress';
 import BalanceDisplay from '@polkadot/react-components/Balance';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
-import { findNameByAddress, nonEmptyStr, ZERO } from './index';
+import { nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { summarize } from './utils';
 import { getApi } from '../utils/SubstrateApi';
@@ -28,6 +28,7 @@ import { getJsonFromIpfs } from './OffchainUtils';
 import { Balance } from '@polkadot/types/interfaces';
 import AccountIndex from '@polkadot/types/generic/AccountIndex';
 import Address from '@polkadot/types/generic/Address';
+import { AccountName } from '@polkadot/react-components';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
@@ -44,7 +45,6 @@ export type Props = MyAccountProps & BareProps & {
   isShort?: boolean,
   session_validators?: Array<AccountId>,
   value?: AccountId | AccountIndex | Address | string,
-  name?: string,
   size?: number,
   withAddress?: boolean,
   withBalance?: boolean,
@@ -189,7 +189,7 @@ function AddressComponents (props: Props) {
           </Popover>
           {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
-          {withName && <RenderName address={address} name={name} />}
+          {withName && <AccountName value={address} />}
           {asActivity
             ? <RenderPreviewForActivity />
             : <RenderPreviewForAddress />
@@ -351,20 +351,6 @@ const RenderAvatar: FunctionComponent<ImageProps> = ({ size, avatar, address, st
       size={size}
       value={address}
     />;
-};
-
-type NameProps = {
-  address: string,
-  name: string
-};
-
-const RenderName: FunctionComponent<NameProps> = ({ address, name }) => {
-  const nameAccount = name || findNameByAddress(address);
-  return (nonEmptyStr(nameAccount)
-    ? <div className={'ui--AddressSummary-name'} >
-      Name: <b style={{ textTransform: 'uppercase' }}>{nameAccount}</b>
-    </div> : null
-  );
 };
 
 type BalanceProps = {

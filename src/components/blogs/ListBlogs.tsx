@@ -38,7 +38,7 @@ ListBlog.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
 
-  const firstBlogId = new BlogId(1);
+  const firstBlogId = new BlogId(registry, 1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
   if (totalCount > 0) {
@@ -46,7 +46,7 @@ ListBlog.getInitialProps = async (): Promise<any> => {
     const lastId = nextBlogId.toNumber();
     const loadBlogs: Promise<BlogData>[] = [];
     for (let i = firstId; i < lastId; i++) {
-      loadBlogs.push(loadBlogData(api, new BlogId(i)));
+      loadBlogs.push(loadBlogData(api, new BlogId(registry, i)));
     }
     blogsData = await Promise.all<BlogData>(loadBlogs);
   }
@@ -83,7 +83,7 @@ ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
   console.log(props);
   const api = await getApi();
-  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(address as string)) as unknown as BlogId[];
+  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
   const loadBlogs = myBlogIds.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
   console.log(blogsData);

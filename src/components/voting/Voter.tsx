@@ -6,7 +6,7 @@ import { Option, GenericAccountId } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
-import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId, BlogId } from '../types';
+import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } from '../types';
 import { Icon } from 'antd';
 import BN from 'bn.js';
 import { getApi } from '../utils/SubstrateApi';
@@ -40,7 +40,7 @@ export const Voter = (props: VoterProps) => {
   const Id = isComment ? CommentId : PostId;
   const structQuery = type.toLowerCase();
 
-  const dataForQuery = new Tuple(registry, [ AccountId, Id ], [ new GenericAccountId(address), id ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, Id ], [ new GenericAccountId(registry, address), id ]);
 
   useEffect(() => {
     let isSubscribe = true;
@@ -76,9 +76,9 @@ export const Voter = (props: VoterProps) => {
 
   const buildTxParams = (param: 'Downvote' | 'Upvote') => {
     if (reactionState === undefined) {
-      return [ id, new ReactionKind(param) ];
+      return [ id, new ReactionKind(registry, param) ];
     } else if (reactionKind !== param) {
-      return [ id, reactionState.id, new ReactionKind(param) ];
+      return [ id, reactionState.id, new ReactionKind(registry, param) ];
     } else {
       return [ id, reactionState.id ];
     }

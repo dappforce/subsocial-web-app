@@ -21,6 +21,8 @@ import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
+const DefaultPostExt = new PostExtension(registry, { RegularPost: new RegularPost(registry) })
+
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
     // .min(p.minTitleLen, `Title is too short. Minimum length is ${p.minTitleLen} chars.`)
@@ -68,7 +70,7 @@ const InnerForm = (props: FormProps) => {
     id,
     blogId,
     struct,
-    extention = new PostExtension({ RegularPost: new RegularPost() }),
+    extention = DefaultPostExt,
     values,
     dirty,
     isValid,
@@ -139,8 +141,7 @@ const InnerForm = (props: FormProps) => {
         return [ blogId, ipfsHash, extention ];
       } else {
         // TODO update only dirty values.
-        const update = new PostUpdate(
-          registry,
+        const update = new PostUpdate(registry,
           {
           // TODO setting new blog_id will move the post to another blog.
             blog_id: new Option(registry, BlogId, null),
@@ -247,7 +248,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     if (id) return <Component />;
 
     try {
-      return <Component id={new PostId(postId as string)} {...props}/>;
+      return <Component id={new PostId(registry, postId as string)} {...props}/>;
     } catch (err) {
       return <em>Invalid post ID: {postId}</em>;
     }
@@ -259,7 +260,7 @@ function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component blogId={new BlogId(blogId as string)} />;
+      return <Component blogId={new BlogId(registry, blogId as string)} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }

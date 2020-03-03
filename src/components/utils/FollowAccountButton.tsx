@@ -31,8 +31,8 @@ type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   const { myAddress, address, size = BUTTON_SIZE } = props;
 
-  const accountId = new GenericAccountId(address);
-  const dataForQuery = new Tuple(registry, [ AccountId, AccountId ], [ new GenericAccountId(myAddress), accountId ]);
+  const accountId = new GenericAccountId(registry, address);
+  const dataForQuery = new Tuple(registry, [ AccountId, AccountId ], [ new GenericAccountId(registry, myAddress), accountId ]);
 
   const [ isFollow, setIsFollow ] = useState(true);
 

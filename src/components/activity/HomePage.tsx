@@ -10,9 +10,10 @@ import { Button } from 'antd';
 import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { NextPage } from 'next';
 import { getApi } from '../utils/SubstrateApi';
+import { registry } from '@polkadot/react-api';
 
-const FIVE = new BlogId(5);
-const ZERO = new BlogId(0);
+const FIVE = new BlogId(registry, 5);
+const ZERO = new BlogId(registry, 0);
 type Props = ApiProps & {
   blogsData: BlogData[],
   postsData: PostDataListItem[]

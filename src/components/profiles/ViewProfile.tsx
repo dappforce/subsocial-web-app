@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { GenericAccountId as AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
@@ -274,7 +274,7 @@ Component.getInitialProps = async (props): Promise<Props> => {
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
   const content = profile && await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
   return {
-    id: new AccountId(address as string),
+    id: new AccountId(registry, address as string),
     socialAccount: socialAccount,
     profile: profile,
     ProfileContent: content

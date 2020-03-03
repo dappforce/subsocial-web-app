@@ -21,7 +21,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { reloadFollowed } = useSidebarCollapsed();
 
-  const dataForQuery = new Tuple(registry, [ AccountId, BlogId ], [ new GenericAccountId(myAddress), blogId ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, BlogId ], [ new GenericAccountId(registry, myAddress), blogId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
 

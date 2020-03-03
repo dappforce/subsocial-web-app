@@ -10,6 +10,7 @@ import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { PostId } from '../types';
 import AddressComponents from '../utils/AddressComponents';
+import { registry } from '@polkadot/react-api';
 
 type DataResults = {
   _id: string;
@@ -46,12 +47,12 @@ const resultToPreview = (res: DataResults, i: number) => {
     case ElasticIndex.blogs:
       return <ViewBlog id={res._id} previewDetails withFollowButton />;
     case ElasticIndex.posts:
-      return <ViewPost key={i} id={new PostId(res._id)} variant='preview' withLink={true} />;
+      return <ViewPost key={i} id={new PostId(registry, res._id)} variant='preview' withLink={true} />;
     case ElasticIndex.profiles:
       return <Segment>
         <AddressComponents
           key={res._id}
-          value={new AccountId(res._id)}
+          value={new AccountId(registry, res._id)}
           isShort={true}
           isPadded={false}
           size={30}

@@ -11,11 +11,13 @@ import React from 'react';
 import store from 'store';
 import keyring from '@polkadot/ui-keyring';
 import keyringOption from '@polkadot/ui-keyring/options';
-import createItem from '@polkadot/ui-keyring/options/item';
+import createKeyringItem from '@polkadot/ui-keyring/options/item';
+import createItem from '@polkadot/react-components/InputAddress/createItem';
+import { Option } from '@polkadot/react-components/InputAddress/types';
 import { withMulti, withObservable } from '@polkadot/react-api';
 
 import Dropdown from '@polkadot/react-components/Dropdown';
-import { classes, getAddrName } from '@polkadot/react-components/util';
+import { classes, getAddressName } from '@polkadot/react-components/util';
 import addressToAddress from '@polkadot/react-components/util/toAddress';
 import { MyAccountContext } from '../MyAccountContext';
 
@@ -62,22 +64,26 @@ const transformToAccountId = (value: string): string | null => {
     ? null
     : accountId;
 };
-
-const createOption = (address: string) => {
+function createOption (address: string): Option {
+  let isRecent: boolean | undefined;
+  const pair = keyring.getAccount(address);
   let name: string | undefined;
 
-  try {
-    name = keyring.getAccount(address).getMeta().name;
-  } catch (error) {
-    try {
-      name = keyring.getAddress(address).getMeta().name;
-    } catch (error) {
-      // ok, we don't have account or address
+  if (pair) {
+    name = pair.meta.name;
+  } else {
+    const addr = keyring.getAddress(address);
+
+    if (addr) {
+      name = addr.meta.name;
+      isRecent = addr.meta.isRecent;
+    } else {
+      isRecent = true;
     }
   }
 
-  return createItem(address, name);
-};
+  return createItem(createKeyringItem(address, name), !isRecent);
+}
 
 class InputAddress extends React.PureComponent<Props, State> {
   state: State = {};
@@ -176,12 +182,12 @@ class InputAddress extends React.PureComponent<Props, State> {
     );
   }
 
-  private renderLabel = ({ value }: KeyringSectionOption): string | undefined => {
+  private renderLabel = ({ value }: KeyringSectionOption) => {
     if (!value) {
       return undefined;
     }
 
-    return getAddrName(value, true);
+    return getAddressName(value);
   }
 
   private getLastOptionValue (): KeyringSectionOption | undefined {

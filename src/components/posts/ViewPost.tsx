@@ -27,6 +27,7 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
+import { registry } from '@polkadot/react-api';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -321,7 +322,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { postId }, req, res } = props;
   const api = await getApi();
-  const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
+  const postData = await loadPostData(api, new PostId(registry, postId as string)) as PostData;
   let statusCode = 200
   if (!postData.post && req) {
     // "getInitialProps - res.redirect cause server"

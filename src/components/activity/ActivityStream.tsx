@@ -18,6 +18,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import dynamic from 'next/dynamic';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmptyStr } from '../utils';
+import { registry } from '@polkadot/react-api';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -121,7 +122,7 @@ function ViewActivity (props: ActivityProps) {
   const { activity } = props;
   const { post_id } = activity;
   const [ data, setData ] = useState([] as PostData[]);
-  const postId = new PostId(hexToNumber('0x' + post_id));// TODO create function
+  const postId = new PostId(registry, hexToNumber('0x' + post_id));// TODO create function
 
   useEffect(() => {
     const loadData = async () => {
@@ -145,7 +146,7 @@ export function Notification (props: ActivityProps) {
   const [ subject, setSubject ] = useState<React.ReactNode>(<></>);
   const [ image, setImage ] = useState('');
   const [ loading, setLoading ] = useState(true);
-  let postId = new PostId(0);
+  let postId = new PostId(registry, 0);
 
   enum Events {
     AccountFollowed = 'followed your account',
@@ -167,29 +168,29 @@ export function Notification (props: ActivityProps) {
           break;
         }
         case 'BlogFollowed': {
-          const blogId = new BlogId(hexToNumber('0x' + blog_id));
+          const blogId = new BlogId(registry, hexToNumber('0x' + blog_id));
           const blogData = await loadBlogData(api, blogId);
           setMessage(Events.BlogFollowed);
           setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'BlogCreated': {
-          const blogId = new BlogId(hexToNumber('0x' + blog_id));
+          const blogId = new BlogId(registry, hexToNumber('0x' + blog_id));
           const blogData = await loadBlogData(api, blogId);
           setMessage(Events.BlogCreated);
           setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'CommentCreated': {
-          if (postId === new PostId(0)) {
-            postId = new PostId(hexToNumber('0x' + post_id));
+          if (postId === new PostId(registry, 0)) {
+            postId = new PostId(registry, hexToNumber('0x' + post_id));
           } else {
-            const commentId = new CommentId(hexToNumber('0x' + comment_id));
+            const commentId = new CommentId(registry, hexToNumber('0x' + comment_id));
             const commentOpt = await api.query.blogs.commentById(commentId) as OptionComment;
             if (commentOpt.isNone) return;
 
             const comment = commentOpt.unwrap() as Comment;
-            postId = new PostId(hexToNumber('0x' + comment.post_id));
+            postId = new PostId(registry, hexToNumber('0x' + comment.post_id));
             if (comment.parent_id.isSome) {
               setMessage(Events.CommentReactionCreated);
             } else {
@@ -203,7 +204,7 @@ export function Notification (props: ActivityProps) {
           break;
         }
         case 'PostShared': {
-          postId = new PostId(hexToNumber('0x' + post_id));
+          postId = new PostId(registry, hexToNumber('0x' + post_id));
           const postData = await loadPostData(api, postId);
           setMessage(Events.PostShared);
           setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
@@ -212,7 +213,7 @@ export function Notification (props: ActivityProps) {
           break;
         }
         case 'PostReactionCreated': {
-          postId = new PostId(hexToNumber('0x' + post_id));
+          postId = new PostId(registry, hexToNumber('0x' + post_id));
           const postData = await loadPostData(api, postId);
           setMessage(Events.PostReactionCreated);
           setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
@@ -221,12 +222,12 @@ export function Notification (props: ActivityProps) {
           break;
         }
         case 'CommentReactionCreated': {
-          const commentId = new CommentId(hexToNumber('0x' + comment_id));
+          const commentId = new CommentId(registry, hexToNumber('0x' + comment_id));
           const commentOpt = await api.query.blogs.commentById(commentId) as OptionComment;
           if (commentOpt.isNone) return;
 
           const comment = commentOpt.unwrap() as Comment;
-          postId = new PostId(hexToNumber('0x' + comment.post_id));
+          postId = new PostId(registry, hexToNumber('0x' + comment.post_id));
           const postData = await loadPostData(api, postId);
           setMessage(Events.CommentReactionCreated);
           setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
@@ -238,7 +239,7 @@ export function Notification (props: ActivityProps) {
       setLoading(false);
     };
     loadActivity().catch(err => new Error(err));
-  }, [ postId > new PostId(0), message ]);
+  }, [ postId > new PostId(registry, 0), message ]);
 
   return loading
     ? <Loading/>
