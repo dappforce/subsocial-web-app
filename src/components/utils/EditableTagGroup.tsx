@@ -83,7 +83,7 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
           </AutoComplete>
         )}
         {!inputVisible && (
-          <Tag onClick={showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
+          <Tag onClick={showInput} className={'ETGtag'}>
             <Icon type="plus" /> New Tag
           </Tag>
         )}
