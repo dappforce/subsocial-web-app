@@ -17,7 +17,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple(registry, [ AccountId, PostId ], [ new GenericAccountId(registry, myAddress), postId ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, PostId ], [ new GenericAccountId(myAddress), postId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
@@ -62,7 +62,7 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
   const { commentId } = props;
   const { state: { address: myAddress } } = useMyAccount();
 
-  const dataForQuery = new Tuple(registry, [ AccountId, CommentId ], [ new GenericAccountId(registry, myAddress), commentId ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, CommentId ], [ new GenericAccountId(myAddress), commentId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);

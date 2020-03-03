@@ -14,6 +14,7 @@ import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/SubstrateApi';
 import Link from 'next/link';
+import { registry } from '@polkadot/react-api';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]

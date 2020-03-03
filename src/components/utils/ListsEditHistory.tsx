@@ -5,7 +5,7 @@ import { Post, Blog, PostId, PostContent, BlogContent, BlogId, CommentId, Commen
 import { queryBlogsToProp } from './index';
 import { Option } from '@polkadot/types';
 import { DfMd } from './DfMd';
-import IdentityIcon from '@polkadot/react-components';
+import { IdentityIcon } from '@polkadot/react-components';
 import Link from 'next/link';
 import { CreatedBy } from './CreatedBy';
 import { getJsonFromIpfs } from './OffchainUtils';

@@ -40,7 +40,7 @@ export const Voter = (props: VoterProps) => {
   const Id = isComment ? CommentId : PostId;
   const structQuery = type.toLowerCase();
 
-  const dataForQuery = new Tuple(registry, [ AccountId, Id ], [ new GenericAccountId(registry, address), id ]);
+  const dataForQuery = new Tuple(registry, [ AccountId, Id ], [ new GenericAccountId(address), id ]);
 
   useEffect(() => {
     let isSubscribe = true;

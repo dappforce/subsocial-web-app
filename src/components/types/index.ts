@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/adjacent-overload-signatures */
-import { Option, Struct, Enum, EnumType } from '@polkadot/types/codec';
-import { getTypeRegistry, BlockNumber, Moment, AccountId, u16, u32, u64, Text, Vector, i32, Null } from '@polkadot/types';
+import { u16, u32, u64, Text, Vec as Vector, i32, Null, GenericAccountId, Option, Struct } from '@polkadot/types';
+import Date from '@polkadot/types/codec/Date';
+import Enum from '@polkadot/types/codec/Enum';
+import { BlockNumber, Moment, AccountId } from '@polkadot/types/interfaces';
 import BN from 'bn.js';
 import { isServerSide } from '../utils';
+import { Registry } from '@polkadot/types/types';
+export { registerSubsocialTypes } from '@subsocial/utils';
 
 export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
 
@@ -48,28 +52,32 @@ type PostExtensionEnumValue =
   { SharedPost: SharedPost } |
   { SharedComment: SharedComment };
 
-export class PostExtension extends EnumType<PostExtensionEnumValue> {
-  constructor (value?: PostExtensionEnumValue, index?: number) {
-    super({
-      RegularPost,
-      SharedPost,
-      SharedComment
-    }, value, index);
+export class PostExtension extends Enum {
+  constructor (registry: Registry, value?: PostExtensionEnumValue, index?: number) {
+    super(
+      registry,
+      {
+        RegularPost,
+        SharedPost,
+        SharedComment
+      }, value, index);
   }
 }
 
 export type ChangeType = {
-  account: AccountId,
+  account: GenericAccountId,
   block: BlockNumber,
   time: Moment
 };
 export class Change extends Struct {
-  constructor (value?: ChangeType) {
-    super({
-      account: AccountId,
-      block: BlockNumber,
-      time: Moment
-    }, value);
+  constructor (registry: Registry, value?: ChangeType) {
+    super(
+      registry,
+      {
+        account: GenericAccountId,
+        block: u64,
+        time: Date
+      }, value);
   }
 
   get account (): AccountId {
@@ -86,7 +94,7 @@ export class Change extends Struct {
   }
 }
 
-export class VecAccountId extends Vector.with(AccountId) {}
+export class VecAccountId extends Vector.with(GenericAccountId) {}
 
 export class OptionText extends Option.with(Text) {}
 export class OptionChange extends Option.with(Change) {}
@@ -115,8 +123,9 @@ export type BlogType = {
 };
 
 export class Blog extends Struct {
-  constructor (value?: BlogType) {
+  constructor (registry: Registry, value?: BlogType) {
     super(
+      registry,
       {
         id: BlogId,
         created: Change,
@@ -187,8 +196,9 @@ export type BlogUpdateType = {
 };
 
 export class BlogUpdate extends Struct {
-  constructor (value?: BlogUpdateType) {
+  constructor (registry: Registry, value?: BlogUpdateType) {
     super(
+      registry,
       {
         writers: OptionVecAccountId,
         slug: OptionText,
@@ -245,8 +255,9 @@ export type PostType = {
 };
 
 export class Post extends Struct {
-  constructor (value?: PostType) {
+  constructor (registry: Registry, value?: PostType) {
     super(
+      registry,
       {
         id: PostId,
         blog_id: BlogId,
@@ -339,8 +350,9 @@ export type PostUpdateType = {
 };
 
 export class PostUpdate extends Struct {
-  constructor (value?: PostUpdateType) {
+  constructor (registry: Registry, value?: PostUpdateType) {
     super(
+      registry,
       {
         blog_id: OptionBlogId,
         ipfs_hash: OptionIpfsHash
@@ -382,8 +394,9 @@ export type CommentType = {
 };
 
 export class Comment extends Struct {
-  constructor (value?: CommentType) {
+  constructor (registry: Registry, value?: CommentType) {
     super(
+      registry,
       {
         id: CommentId,
         parent_id: OptionCommentId,
@@ -463,8 +476,9 @@ export type CommentUpdateType = {
 };
 
 export class CommentUpdate extends Struct {
-  constructor (value?: CommentUpdateType) {
+  constructor (registry: Registry, value?: CommentUpdateType) {
     super(
+      registry,
       {
         ipfs_hash: IpfsHash
       },
@@ -485,8 +499,8 @@ export const ReactionKinds: { [key: string]: string } = {
 };
 
 export class ReactionKind extends Enum {
-  constructor (value?: any) {
-    super([ 'Upvote', 'Downvote' ], value);
+  constructor (registry: Registry, value?: any) {
+    super(registry, [ 'Upvote', 'Downvote' ], value);
   }
 }
 
@@ -498,8 +512,9 @@ export type ReactionType = {
 };
 
 export class Reaction extends Struct {
-  constructor (value?: ReactionType) {
+  constructor (registry: Registry, value?: ReactionType) {
     super(
+      registry,
       {
         id: ReactionId,
         created: Change,
@@ -536,8 +551,9 @@ export type SocialAccountType = {
 };
 
 export class SocialAccount extends Struct {
-  constructor (value?: SocialAccountType) {
+  constructor (registry: Registry, value?: SocialAccountType) {
     super(
+      registry,
       {
         followers_count: u32,
         following_accounts_count: u16,
@@ -592,8 +608,9 @@ export type ProfileType = {
 };
 
 export class Profile extends Struct {
-  constructor (value?: ProfileType) {
+  constructor (registry: Registry, value?: ProfileType) {
     super(
+      registry,
       {
         created: Change,
         updated: OptionChange,
@@ -635,8 +652,9 @@ export type ProfileUpdateType = {
 };
 
 export class ProfileUpdate extends Struct {
-  constructor (value?: ProfileUpdateType) {
+  constructor (registry: Registry, value?: ProfileUpdateType) {
     super(
+      registry,
       {
         username: OptionText,
         ipfs_hash: OptionIpfsHash
@@ -668,8 +686,9 @@ export type BlogHistoryRecordType = {
 };
 
 export class BlogHistoryRecord extends Struct {
-  constructor (value?: BlogHistoryRecordType) {
+  constructor (registry: Registry, value?: BlogHistoryRecordType) {
     super(
+      registry,
       {
         edited: Change,
         old_data: BlogUpdate
@@ -695,8 +714,9 @@ export type PostHistoryRecordType = {
 };
 
 export class PostHistoryRecord extends Struct {
-  constructor (value?: PostHistoryRecordType) {
+  constructor (registry: Registry, value?: PostHistoryRecordType) {
     super(
+      registry,
       {
         edited: Change,
         old_data: PostUpdate
@@ -722,8 +742,9 @@ export type CommentHistoryRecordType = {
 };
 
 export class CommentHistoryRecord extends Struct {
-  constructor (value?: CommentHistoryRecordType) {
+  constructor (registry: Registry, value?: CommentHistoryRecordType) {
     super(
+      registry,
       {
         edited: Change,
         old_data: CommentUpdate
@@ -749,8 +770,9 @@ export type ProfileHistoryRecordType = {
 };
 
 export class ProfileHistoryRecord extends Struct {
-  constructor (value?: ProfileHistoryRecordType) {
+  constructor (registry: Registry, value?: ProfileHistoryRecordType) {
     super(
+      registry,
       {
         edited: Change,
         old_data: ProfileUpdate
@@ -782,8 +804,9 @@ export const ScoringActions: { [key: string]: string } = {
 };
 
 export class ScoringAction extends Enum {
-  constructor (value?: any) {
+  constructor (registry: Registry, value?: any) {
     super(
+      registry,
       [
         'UpvotePost',
         'DownvotePost',
@@ -796,37 +819,5 @@ export class ScoringAction extends Enum {
       ],
       value
     );
-  }
-}
-
-export function registerSubsocialTypes () {
-  try {
-    const typeRegistry = getTypeRegistry();
-    typeRegistry.register({
-      BlogId,
-      PostId,
-      CommentId,
-      ReactionId,
-      Change,
-      Blog,
-      BlogUpdate,
-      BlogHistoryRecord,
-      PostExtension,
-      Post,
-      PostUpdate,
-      PostHistoryRecord,
-      Comment,
-      CommentUpdate,
-      CommentHistoryRecord,
-      ReactionKind,
-      Reaction,
-      SocialAccount,
-      ScoringAction,
-      Profile,
-      ProfileUpdate,
-      ProfileHistoryRecord
-    });
-  } catch (err) {
-    console.error('Failed to register custom types of blogs module', err);
   }
 }

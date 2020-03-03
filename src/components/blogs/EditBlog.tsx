@@ -7,7 +7,7 @@ import { Option, Text } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
@@ -142,11 +142,11 @@ const InnerForm = (props: FormProps) => {
       return [ slug, ipfsCid ];
     } else {
       // TODO update only dirty values.
-      const update = new BlogUpdate({
+      const update = new BlogUpdate(registry, {
         // TODO get updated writers from the form
-        writers: new Option(VecAccountId, (struct.writers)),
-        slug: new Option(Text, slug),
-        ipfs_hash: new Option(Text, ipfsCid)
+        writers: new Option(registry, VecAccountId, (struct.writers)),
+        slug: new Option(registry, Text, slug),
+        ipfs_hash: new Option(registry, Text, ipfsCid)
       });
       return [ struct.id, update ];
     }

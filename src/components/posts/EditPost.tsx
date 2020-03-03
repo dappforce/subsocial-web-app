@@ -4,7 +4,7 @@ import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
@@ -139,11 +139,13 @@ const InnerForm = (props: FormProps) => {
         return [ blogId, ipfsHash, extention ];
       } else {
         // TODO update only dirty values.
-        const update = new PostUpdate({
+        const update = new PostUpdate(
+          registry,
+          {
           // TODO setting new blog_id will move the post to another blog.
-          blog_id: new Option(BlogId, null),
-          ipfs_hash: new Option(Text, ipfsHash)
-        });
+            blog_id: new Option(registry, BlogId, null),
+            ipfs_hash: new Option(registry, Text, ipfsHash)
+          });
         return [ struct.id, update ];
       }
     } else {

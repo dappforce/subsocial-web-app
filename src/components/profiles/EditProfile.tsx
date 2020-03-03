@@ -7,7 +7,7 @@ import { Option, Text, GenericAccountId as AccountId } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
 import { addJsonToIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
@@ -164,9 +164,9 @@ const InnerForm = (props: FormProps) => {
       return [ username, ipfsCid ];
     } else {
       // TODO update only dirty values.
-      const update = new ProfileUpdate({
-        username: new Option(Text, username),
-        ipfs_hash: new Option(Text, ipfsCid)
+      const update = new ProfileUpdate(registry, {
+        username: new Option(registry, Text, username),
+        ipfs_hash: new Option(registry, Text, ipfsCid)
       });
       return [ update ];
     }

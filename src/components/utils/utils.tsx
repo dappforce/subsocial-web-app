@@ -81,7 +81,7 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
     const router = useRouter();
     const { address } = router.query;
     try {
-      return <Component id={new GenericAccountId(registry, address as string)} {...props}/>;
+      return <Component id={new GenericAccountId(address as string)} {...props}/>;
     } catch (err) {
       return <em>Invalid address: {address}</em>;
     }

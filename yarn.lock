@@ -2611,7 +2611,7 @@
     memoizee "^0.4.14"
     rxjs "^6.5.4"
 
-"@polkadot/api@1.4.2", "@polkadot/api@^1.4.0-beta.46":
+"@polkadot/api@1.4.2", "@polkadot/api@^1.1.0-beta.0", "@polkadot/api@^1.4.0-beta.46":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@polkadot/api/-/api-1.4.2.tgz#fefabcd45f80fddbec488cfb9368faa7782be569"
   integrity sha512-jXpW8rvmGGEIyBv9+SC4VW4MtH4iV7C6K1oXOQyF6SIds+Tzub97JwlLJexbCvYFx6j5ABNHyDjp+EQ6LEvr2w==
@@ -2722,6 +2722,14 @@
     typescript "^3.5.3"
     vuepress "^1.0.3"
 
+"@polkadot/extension-dapp@^0.21.0-beta.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.21.1.tgz#8746a43fef8e7f818bf801e0415445cd554f5db3"
+  integrity sha512-qky1AURWqWaeuzVTkdcvEUf1eWQJp06wFZg3D2MzA0f8+ARfT73ccdo+xE71IkC/SLWYYoT14/UqF+7K6Adphg==
+  dependencies:
+    "@babel/runtime" "^7.8.3"
+    "@polkadot/extension-inject" "^0.21.1"
+
 "@polkadot/extension-dapp@^0.22.0-beta.5":
   version "0.22.0-beta.10"
   resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.22.0-beta.10.tgz#953cdfae0a6c47378b869e8773455a36c7a35fa0"
@@ -2736,6 +2744,13 @@
   integrity sha512-A1S3B331Z0WbrHYLjQYBei6wNfGQRekCflU0Ft1NYscw9N0L7PHn4BsiiBt5y/64huekh/xvqehzXx6tdzh9Og==
   dependencies:
     "@babel/runtime" "^7.8.4"
+
+"@polkadot/extension-inject@^0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-inject/-/extension-inject-0.21.1.tgz#fc6595ae25f0ae37c2c416fd8a81fbef43dc7752"
+  integrity sha512-2KgDp2ZEghgcc8E72bWKStwMDWs/4Scbwcig5PaQwfLObSqwEgqHYNkbeTf4gSC9AMw9VVBF4NP/WoR6Amu25Q==
+  dependencies:
+    "@babel/runtime" "^7.8.3"
 
 "@polkadot/jsonrpc@1.4.2":
   version "1.4.2"
@@ -2785,6 +2800,17 @@
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.4.0-beta.46"
     "@polkadot/extension-dapp" "^0.22.0-beta.5"
+    edgeware-node-types "^1.1.0"
+    rxjs-compat "^6.5.3"
+
+"@polkadot/react-api@^0.39.1":
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/react-api/-/react-api-0.39.1.tgz#418059e4d909a915b8344d67b3224d135ec33985"
+  integrity sha512-L+Q5+/TpOrrCSqbEdExDsd5nh2azWEqVWw/RG7d+tDIGEIeot5W4ox8CJdNQJ55LDk8YeFnHObHJPa+PQNiIjg==
+  dependencies:
+    "@babel/runtime" "^7.8.3"
+    "@polkadot/api" "^1.1.0-beta.0"
+    "@polkadot/extension-dapp" "^0.21.0-beta.1"
     edgeware-node-types "^1.1.0"
     rxjs-compat "^6.5.3"
 
@@ -3460,6 +3486,22 @@
     store2 "^2.7.1"
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
+
+"@subsocial/types@>=0.1.3", "@subsocial/types@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.3.tgz#94b013a695d9822aa465e03d9fa77342bb302e9e"
+  integrity sha512-cI4UmMtWFMARejgCEJY7w+/uptp5taup0Y4LCaY2j+eyPvei0IsCs9pW84LvgKUlAlw+J9dxO6gwqcgR/Ktm7A==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+
+"@subsocial/utils@>=0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.5.tgz#6884cccf69b2b1d23e5350600f0ce984e7373351"
+  integrity sha512-hhiDwA/zluVUstPwu3L/LsRhm27y/w6fMnYtVgd9bKcxSYThXOiUcW9j1PTUpcVvVsSB6+yQFZNodY2+y5KAeQ==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@polkadot/react-api" "^0.39.1"
+    "@subsocial/types" "^0.1.3"
 
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"

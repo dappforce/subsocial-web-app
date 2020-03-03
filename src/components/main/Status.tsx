@@ -5,11 +5,11 @@ import { I18nProps } from '@polkadot/react-components/types';
 
 import React from 'react';
 import keyringOption from '@polkadot/ui-keyring/options';
-import { EventRecord } from '@polkadot/types';
 import { Status as StatusDisplay } from '@polkadot/react-components';
-import { withCall, withMulti, withObservable } from '@polkadot/react-api';
 import { stringToU8a } from '@polkadot/util';
 import { xxhashAsHex } from '@polkadot/util-crypto';
+import { EventRecord } from '@polkadot/types/interfaces';
+import { withCall, withMulti, withObservable } from '@polkadot/react-api/hoc';
 
 type Props = I18nProps & {
   optionsAll?: KeyringOptions,

@@ -120,26 +120,6 @@ export default withMulti(
   )
 );
 
-// export function withIdsFromUrl (Component: React.ComponentType<Props>) {
-//   return function (props: Props) {
-//     const router = useRouter();
-//     const { postId, commentId } = router.query;
-//     try {
-//       return <Component postId={new PostId(postId as string)} commentIdForPage={new CommentId(commentId as string)} {...props}/>;
-//     } catch (err) {
-//       return <em>Invalid url</em>;
-//     }
-//   };
-// }
-
-// export const CommentPage = withMulti(
-//   CommentsTree,
-//   withIdsFromUrl,
-//   withCalls<Props>(
-//     queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
-//   )
-// );
-
 type ViewCommentProps = {
   comment: Comment;
   commentsWithParentId: Comment[];

@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
@@ -118,11 +118,11 @@ const InnerForm = (props: FormProps) => {
     if (!isValid) return [];
 
     if (!struct) {
-      const parentCommentId = new Option(CommentId, parentId);
+      const parentCommentId = new Option(registry, CommentId, parentId);
       return [ postId, parentCommentId, ipfsCid ];
     } else if (dirty) {
-      const update = new CommentUpdate({
-        ipfs_hash: new Text(ipfsCid)
+      const update = new CommentUpdate(registry, {
+        ipfs_hash: new Text(registry, ipfsCid)
       });
       return [ struct.id, update ];
     } else {
