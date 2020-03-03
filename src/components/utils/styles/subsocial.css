@@ -180,6 +180,11 @@ form.ui.form.DfForm.EditEntityForm {
       font-weight: 700;
     }
   }
+
+  .ETGtag{ 
+    background: '#fff';
+    border-style: dashed; 
+  }
 }
 
 .ui.basic.button:not(.disabled) {
