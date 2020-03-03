@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
 import { FormikProps, ErrorMessage } from 'formik';
-import { PostContent } from '../types';
 import { SelectValue } from 'antd/lib/select';
 import { nonEmptyStr } from '.';
 
@@ -12,7 +11,9 @@ interface OtherProps {
   label?: string
 }
 
-type FormValues = PostContent;
+type FormValues = {
+  [s: string]: string[]
+}
 
 const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
   const { setFieldValue, values, tagsData, label, name, touched, errors } = props
