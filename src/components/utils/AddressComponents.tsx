@@ -3,7 +3,7 @@ import { BareProps } from '@polkadot/react-components/types';
 
 import BN from 'bn.js';
 import React, { useState, useEffect, FunctionComponent } from 'react';
-import { GenericAccountId as AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
+import { GenericAccountId as AccountId, Option } from '@polkadot/types';
 import { withMulti } from '@polkadot/react-api';
 import InputAddress from './InputAddress';
 import classes from '@polkadot/react-components/util/classes';
@@ -25,6 +25,9 @@ import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 import { isBrowser } from 'react-device-detect';
 import { getJsonFromIpfs } from './OffchainUtils';
+import { Balance } from '@polkadot/types/interfaces';
+import AccountIndex from '@polkadot/types/generic/AccountIndex';
+import Address from '@polkadot/types/generic/Address';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';

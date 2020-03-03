@@ -10,6 +10,7 @@ import { NextPage } from 'next';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/SubstrateApi';
+import { registry } from '@polkadot/react-api';
 
 type Props = I18nProps & {
   totalCount: number;
@@ -37,7 +38,7 @@ ListBlog.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
 
-  const firstBlogId = new BlogId(1);
+  const firstBlogId = new BlogId(registry, 1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
   if (totalCount > 0) {

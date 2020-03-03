@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
-import { Option } from '@polkadot/types';
+import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult, ApiPromise } from '@polkadot/api';
 import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
@@ -12,6 +12,7 @@ import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 import { truncate } from 'lodash';
 import AccountId from '@polkadot/types/generic/AccountId';
+import { registry } from '@polkadot/react-api';
 
 type PaginationProps = {
   currentPage?: number;
@@ -80,7 +81,7 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
     const router = useRouter();
     const { address } = router.query;
     try {
-      return <Component id={new AccountId(address as string)} {...props}/>;
+      return <Component id={new GenericAccountId(registry, address as string)} {...props}/>;
     } catch (err) {
       return <em>Invalid address: {address}</em>;
     }

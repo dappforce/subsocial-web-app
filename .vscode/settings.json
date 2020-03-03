@@ -5,7 +5,7 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "node_modules": true,
+        "node_modules": false,
         ".next": true
     },
     "files.autoSave": "afterDelay",
@@ -20,5 +20,6 @@
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": false
-    }
+    },
+    "explorerExclude.backup": null
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withMulti } from '@polkadot/react-api/with';
+import { withMulti } from '@polkadot/react-api';
 
 import { useMyAccount } from './MyAccountContext';
 

@@ -1,7 +1,7 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/react-api/types';

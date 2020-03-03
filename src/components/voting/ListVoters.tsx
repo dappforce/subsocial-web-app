@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';

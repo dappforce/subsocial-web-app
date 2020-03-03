@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
-import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import { GenericAccountId as AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';

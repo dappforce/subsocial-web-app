@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/react-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
