@@ -64,7 +64,7 @@ export const getApi = async () => {
     console.log('Get Substrate API: SSR api');
     return api;
   } else {
-    console.log('Get Substrate API: Api.setup()');
+    console.log('Get Substrate API: Api.connect()');
     api = await Api.connect();
     setTimeout(() => {
       console.log(`Disconecting from Substrate API after ${MAX_CONN_TIME_SECS} secs`)
