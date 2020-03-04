@@ -6,26 +6,12 @@ let api: ApiPromise | undefined
 
 export { api };
 export class SubstrateApi {
+
   protected api!: ApiPromise;
 
   protected connected: boolean = false;
 
-  public setup = async () => {
-    await this.connectToApi();
-    api = this.api;
-    this.connected = true;
-    return this.api;
-  }
-
-  public destroy = () => {
-    const { api, connected } = this;
-    if (api && api.isReady && connected) {
-      api.disconnect();
-      console.log(`Disconnected from Substrate API.`);
-    }
-  }
-
-  private connectToApi = async () => {
+  public connect = async (): Promise<ApiPromise> => {
     const rpcEndpoint = process.env.SUBSTRATE_URL || `ws://127.0.0.1:9944/`;
     const provider = new WsProvider(rpcEndpoint);
 
@@ -35,14 +21,33 @@ export class SubstrateApi {
     // Create the API and wait until ready:
     console.log(`Connecting to Substrate API at ${rpcEndpoint}`);
     this.api = await ApiPromise.create(provider);
+    this.connected = true
 
-    // Retrieve the chain & node information information via rpc calls
+    return this.api
+  }
+
+  public disconnect = () => {
+    const { api, connected } = this;
+    if (api && api.isReady && connected) {
+      try {
+        api.disconnect();
+        console.log(`Disconnected from Substrate API.`);
+      } catch (err) {
+        console.log('Failed to disconnect from Substrate. Error:', err)
+      } finally {
+        this.connected = false
+      }
+    }
+  }
+
+  /** Retrieve the chain & node information via RPC calls and log into console.  */
+  protected logChainInfo = () => {
     const system = this.api.rpc.system;
 
     const [ chain, nodeName, nodeVersion ] = await Promise.all(
       [ system.chain(), system.name(), system.version() ]);
 
-    console.log(`Connected to chain '${chain}' (${nodeName} v${nodeVersion})`);
+    console.log(`Connected to Substrate chain '${chain}' (${nodeName} v${nodeVersion})`)
   }
 }
 
@@ -60,10 +65,10 @@ export const getApi = async () => {
     return api;
   } else {
     console.log('Get Substrate API: Api.setup()');
-    api = await Api.setup();
+    api = await Api.connect();
     setTimeout(() => {
       console.log(`Disconecting from Substrate API after ${MAX_CONN_TIME_SECS} secs`)
-      Api.destroy()
+      Api.disconnect()
     }, MAX_CONN_TIME_SECS * 1000);
     return api;
   }
