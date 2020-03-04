@@ -41,7 +41,7 @@ export class SubstrateApi {
   }
 
   /** Retrieve the chain & node information via RPC calls and log into console.  */
-  protected logChainInfo = () => {
+  protected logChainInfo = async () => {
     const system = this.api.rpc.system;
 
     const [ chain, nodeName, nodeVersion ] = await Promise.all(
