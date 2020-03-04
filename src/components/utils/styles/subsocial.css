@@ -16,6 +16,10 @@ body,
   min-width: 428px;
   max-width: 728px;
   color: #111;
+
+  .DfTags {
+    margin: $space_normal 0;
+  }
 }
 
 

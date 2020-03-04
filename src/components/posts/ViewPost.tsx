@@ -21,7 +21,7 @@ import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { Icon, Menu, Dropdown } from 'antd';
+import { Icon, Menu, Dropdown, Tag } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
@@ -78,7 +78,6 @@ type ViewPostPageProps = {
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
-  
   const { post, initialContent = {} as PostExtContent } = props.postData;
 
   if (!post) return <NoData description={<span>Post not found</span>} />;
@@ -203,6 +202,15 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </div>;
   };
 
+  const renderTags = (content: PostExtContent) => {
+    if (!content) return null;
+    const { tags } = content;
+    console.log('tags', tags)
+    return <div className='DfTags'>
+      { tags.map((x) => (<Tag key={x}>{x}</Tag>)) }
+    </div>
+  }
+
   const RenderActionsPanel = () => {
     const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
@@ -238,6 +246,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {renderContent(post, content)}
         </div>
         {withStats && <StatsPanel id={post.id}/>}
+        {renderTags(content)}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
@@ -265,6 +274,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
+        {renderTags(content)}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
@@ -287,6 +297,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <DfMd source={body} />
         {/* TODO render tags */}
       </div>
+      {renderTags(content)}
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
@@ -324,10 +335,10 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
   let statusCode = 200
   if (!postData.post && req) {
-      // "getInitialProps - res.redirect cause server"
-      statusCode = 404
-      if (res) res.statusCode = 404
-      return { statusCode }
+    // "getInitialProps - res.redirect cause server"
+    statusCode = 404
+    if (res) res.statusCode = 404
+    return { statusCode }
   }
   const postExtData = await loadExtPost(api, postData.post as Post);
   return {
