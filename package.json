@@ -27,7 +27,7 @@
     "clean": "polkadot-dev-clean-build",
     "postinstall": "polkadot-dev-yarn-only",
     "test": "echo \"skipping tests\"",
-    "dev": "next",
+    "dev": "next -p 3003",
     "build": "next build",
     "export": "next export",
     "start-built": "next start",
