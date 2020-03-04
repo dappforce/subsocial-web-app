@@ -4,7 +4,7 @@ import { Table } from 'semantic-ui-react';
 import AddressComponents from './AddressComponents';
 import { formatNumber } from '@polkadot/util';
 
-import { Change } from '../types';
+import { Change } from '@subsocial/types/interfaces/runtime';
 import { formatUnixDate } from './utils';
 
 type CreatedByProps = {
@@ -18,7 +18,7 @@ export const CreatedBy = (props: CreatedByProps) => (
     <Table.Body>
       <Table.Row>
         <Table.Cell>{props.dateLabel ? props.dateLabel : 'Created on'}</Table.Cell>
-        <Table.Cell>{formatUnixDate(props.created.time)} at block #{formatNumber(props.created.block)}</Table.Cell>
+        <Table.Cell>{formatUnixDate(props.created.time.toNumber())} at block #{formatNumber(props.created.block)}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.Cell>{props.accountLabel ? props.accountLabel : 'Created by'}</Table.Cell>

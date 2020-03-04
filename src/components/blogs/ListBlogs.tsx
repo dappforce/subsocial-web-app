@@ -3,7 +3,7 @@ import React from 'react';
 import { I18nProps } from '@polkadot/react-components/types';
 
 import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
-import { BlogId, newBlogId } from '../types';
+import { BlogId } from '@subsocial/types/interfaces/runtime';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
@@ -11,6 +11,7 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/SubstrateApi';
 import { registry } from '@polkadot/react-api';
+import BN from 'bn.js';
 
 type Props = I18nProps & {
   totalCount: number;
@@ -38,7 +39,7 @@ ListBlog.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
 
-  const firstBlogId = newBlogId(1);
+  const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
   if (totalCount > 0) {
@@ -46,7 +47,7 @@ ListBlog.getInitialProps = async (): Promise<any> => {
     const lastId = nextBlogId.toNumber();
     const loadBlogs: Promise<BlogData>[] = [];
     for (let i = firstId; i < lastId; i++) {
-      loadBlogs.push(loadBlogData(api, newBlogId(i)));
+      loadBlogs.push(loadBlogData(api, new BN(i)));
     }
     blogsData = await Promise.all<BlogData>(loadBlogs);
   }

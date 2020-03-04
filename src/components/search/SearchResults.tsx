@@ -8,7 +8,7 @@ import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { PostId } from '../types';
+import BN from 'bn.js';
 import AddressComponents from '../utils/AddressComponents';
 import { registry } from '@polkadot/react-api';
 
@@ -47,7 +47,7 @@ const resultToPreview = (res: DataResults, i: number) => {
     case ElasticIndex.blogs:
       return <ViewBlog id={res._id} previewDetails withFollowButton />;
     case ElasticIndex.posts:
-      return <ViewPost key={i} id={new PostId(registry, res._id)} variant='preview' withLink={true} />;
+      return <ViewPost key={i} id={new BN(res._id)} variant='preview' withLink={true} />;
     case ElasticIndex.profiles:
       return <Segment>
         <AddressComponents

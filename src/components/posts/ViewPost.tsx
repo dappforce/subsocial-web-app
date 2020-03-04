@@ -7,12 +7,13 @@ import { Segment } from 'semantic-ui-react';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostContent } from '../types';
+import { PostContent } from '../types';
+import { PostId, Post } from '@subsocial/types/interfaces/runtime';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, summarize } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
-import { PostHistoryModal } from '../utils/ListsEditHistory';
+// import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
 import { NoData } from '../utils/DataList';
@@ -27,7 +28,6 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
-import { registry } from '@polkadot/react-api';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -60,8 +60,8 @@ type ViewPostProps = {
   withStats?: boolean;
   withActions?: boolean;
   withBlogName?: boolean;
-  id?: PostId;
-  commentIds?: CommentId[];
+  id?: BN;
+  commentIds?: BN[];
 };
 
 type ViewPostPageProps = {
@@ -73,7 +73,7 @@ type ViewPostPageProps = {
   withBlogName?: boolean;
   postData: PostData;
   postExtData?: PostData;
-  commentIds?: CommentId[];
+  commentIds?: BN[];
   statusCode?: number
 };
 
@@ -133,6 +133,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
+    console.log(open, close());
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -151,7 +152,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <Dropdown overlay={menu} placement='bottomRight'>
         <Icon type='ellipsis' />
       </Dropdown>}
-      {open && <PostHistoryModal id={id} open={open} close={close} />}
+      {/*open && <PostHistoryModal id={id} open={open} close={close} />*/}
     </>);
   };
 
@@ -179,7 +180,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
           <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
             <a className='DfGreyLink'>
-              {formatUnixDate(time)}
+              {formatUnixDate(time.toNumber())}
             </a>
           </Link>
         </div>}
@@ -322,7 +323,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { postId }, req, res } = props;
   const api = await getApi();
-  const postData = await loadPostData(api, new PostId(registry, postId as string)) as PostData;
+  const postData = await loadPostData(api, postId as string) as PostData;
   let statusCode = 200
   if (!postData.post && req) {
     // "getInitialProps - res.redirect cause server"
@@ -368,9 +369,9 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
 export const ViewPost = withLoadedData(ViewPostPage);
 
 export const getTypePost = (post: Post): PostType => {
-  const { isSharedPost, extension } = post;
+  const { extension } = post;
   console.log('Shared', typeof extension.value);
-  if (isSharedPost) {
+  if (typeof extension.value !== 'object') { // TODO maybe fixed after run UI
     return 'share';
   } else {
     return 'regular';
@@ -386,7 +387,7 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   };
 };
 
-export const loadPostData = async (api: ApiPromise, postId: PostId) => {
+export const loadPostData = async (api: ApiPromise, postId: BN | string) => {
   const postOpt = await api.query.blogs.postById(postId) as Option<Post>;
   let postData: PostData = {};
 
@@ -403,10 +404,10 @@ export const loadPostData = async (api: ApiPromise, postId: PostId) => {
 };
 
 export const loadExtPost = async (api: ApiPromise, post: Post) => {
-  const { isSharedPost, extension } = post;
+  const { extension } = post;
   const postData: PostData = {};
 
-  if (isSharedPost) {
+  if (typeof extension.value !== 'object') {
     const postId = extension.value as PostId;
     const postData = await loadPostData(api, postId);
     return postData;

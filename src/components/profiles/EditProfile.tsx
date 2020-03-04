@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { Option, Text, GenericAccountId as AccountId } from '@polkadot/types';
+import { Option, Text, GenericAccountId as AccountId, Struct } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -11,7 +11,8 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
 import { addJsonToIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { ProfileContent, Profile, ProfileUpdate, SocialAccount } from '../types';
+import { Profile, SocialAccount } from '@subsocial/types/interfaces/runtime';
+import { ProfileContent } from '../types';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { queryBlogsToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
@@ -164,7 +165,12 @@ const InnerForm = (props: FormProps) => {
       return [ username, ipfsCid ];
     } else {
       // TODO update only dirty values.
-      const update = new ProfileUpdate(registry, {
+      const update = new Struct(registry,
+      {
+        username: 'Text',
+        ipfs_hash: 'Text'
+      },
+      {
         username: new Option(registry, Text, username),
         ipfs_hash: new Option(registry, Text, ipfsCid)
       });

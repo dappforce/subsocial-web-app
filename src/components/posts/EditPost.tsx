@@ -8,20 +8,21 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { Text } from '@polkadot/types';
-import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, newBlogId } from '../types';
+import { Null } from '@polkadot/types';
+import { Option, Enum, Struct } from '@polkadot/types/codec';
+import { Post } from '@subsocial/types/interfaces/runtime';
+import { PostContent } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
-
+import BN from 'bn.js';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const DefaultPostExt = new PostExtension(registry, { RegularPost: new RegularPost(registry) })
+const DefaultPostExt = new Enum(registry, { RegularPost: Null })
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -47,9 +48,9 @@ type ValidationProps = {
 };
 
 type OuterProps = ValidationProps & {
-  blogId?: BlogId,
-  id?: PostId,
-  extention?: PostExtension,
+  blogId?: BN,
+  id?: BN,
+  extention?: Enum,
   struct?: Post
   json?: PostContent,
   onlyTxButton?: boolean,
@@ -84,7 +85,7 @@ const InnerForm = (props: FormProps) => {
     closeModal
   } = props;
 
-  const isRegularPost = extention.value instanceof RegularPost;
+  const isRegularPost = extention.value.isEmpty; // TODO maybe fix after run UI
 
   const renderResetButton = () => (
     <Button
@@ -103,7 +104,7 @@ const InnerForm = (props: FormProps) => {
     tags
   } = values;
 
-  const goToView = (id: PostId) => {
+  const goToView = (id: BN) => {
     Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
   };
 
@@ -131,7 +132,7 @@ const InnerForm = (props: FormProps) => {
 
     closeModal && closeModal();
 
-    const _id = id || getNewIdFromEvent<PostId>(_txResult);
+    const _id = id || getNewIdFromEvent(_txResult);
     _id && isRegularPost && goToView(_id);
   };
 
@@ -141,11 +142,15 @@ const InnerForm = (props: FormProps) => {
         return [ blogId, ipfsHash, extention ];
       } else {
         // TODO update only dirty values.
-        const update = new PostUpdate(registry,
+        const update = new Struct(registry,
+          {
+            blog_id: 'Option<u64>',
+            ipfs_hash: 'Option<Text>'
+          },
           {
           // TODO setting new blog_id will move the post to another blog.
-            blog_id: new Option(registry, BlogId, null),
-            ipfs_hash: new Option(registry, Text, ipfsHash)
+            blog_id: new Option(registry, 'u64', null),
+            ipfs_hash: new Option(registry, 'Text', ipfsHash)
           });
         return [ struct.id, update ];
       }
@@ -248,7 +253,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     if (id) return <Component />;
 
     try {
-      return <Component id={new PostId(registry, postId as string)} {...props}/>;
+      return <Component id={new BN(postId as string)} {...props}/>;
     } catch (err) {
       return <em>Invalid post ID: {postId}</em>;
     }
@@ -260,7 +265,7 @@ function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component blogId={newBlogId(blogId as string)} />;
+      return <Component blogId={new BN(blogId as string)} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }
@@ -272,14 +277,14 @@ type LoadStructProps = OuterProps & {
 };
 
 type StructJson = PostContent | undefined;
-type Struct = Post | undefined;
+type PostStruct = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
     const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
-    const [ struct, setStruct ] = useState(undefined as Struct);
+    const [ struct, setStruct ] = useState(undefined as PostStruct);
     const [ trigger, setTrigger ] = useState(false);
     const jsonIsNone = json === undefined;
 

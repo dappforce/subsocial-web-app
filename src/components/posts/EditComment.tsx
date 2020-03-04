@@ -7,17 +7,19 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../utils/forms';
-import { Text } from '@polkadot/types';
-import { Option } from '@polkadot/types/codec';
+import { createType } from '@polkadot/types';
+import { Option, Struct } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import { queryBlogsToProp } from '../utils/index';
-import { PostId, CommentId, Comment, CommentUpdate, CommentContent } from '../types';
+import { CommentContent } from '../types';
+import BN from 'bn.js';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
 import { NoData } from '../utils/DataList';
+import { Comment } from '@subsocial/types/interfaces/runtime' 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
@@ -34,9 +36,9 @@ type ValidationProps = {
 };
 
 type OuterProps = ValidationProps & {
-  postId: PostId,
-  parentId?: CommentId,
-  id?: CommentId,
+  postId: BN,
+  parentId?: BN,
+  id?: BN,
   struct?: Comment,
   onSuccess: () => void,
   autoFocus: boolean,
@@ -118,11 +120,15 @@ const InnerForm = (props: FormProps) => {
     if (!isValid) return [];
 
     if (!struct) {
-      const parentCommentId = new Option(registry, CommentId, parentId);
+      const parentCommentId = createType(registry, 'Option<u64>', parentId);// new Option(registry, CommentId, parentId);
       return [ postId, parentCommentId, ipfsCid ];
     } else if (dirty) {
-      const update = new CommentUpdate(registry, {
-        ipfs_hash: new Text(registry, ipfsCid)
+      const update = new Struct(registry, 
+      {
+        ipfs_hash: 'Text'
+      },
+      {
+        ipfs_hash: createType(registry, 'Text', ipfsCid)
       });
       return [ struct.id, update ];
     } else {
@@ -213,13 +219,13 @@ type LoadStructProps = OuterProps & {
 
 type StructJson = CommentContent | undefined;
 
-type Struct = Comment | undefined;
+type CommentStruct = Comment | undefined;
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { structOpt } = props;
   const [ json, setJson ] = useState(undefined as StructJson);
-  const [ struct, setStruct ] = useState(undefined as Struct);
+  const [ struct, setStruct ] = useState(undefined as CommentStruct);
   const [ trigger, setTrigger ] = useState(false);
   const jsonIsNone = json === undefined;
 

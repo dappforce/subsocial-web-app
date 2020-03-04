@@ -11,12 +11,13 @@ import mdToText from 'markdown-to-txt';
 
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { partition, isEmpty } from 'lodash';
-import { PostId, CommentId, Comment, OptionComment, CommentContent, PostContent, Post } from '../types';
+import { CommentId, Comment, Post } from '@subsocial/types/interfaces/runtime';
+import { CommentContent, PostContent } from '../types';
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
-import { CommentHistoryModal } from '../utils/ListsEditHistory';
+// import { CommentHistoryModal } from '../utils/ListsEditHistory';
 import { DfMd } from '../utils/DfMd';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
@@ -27,11 +28,12 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
+import BN from 'bn.js'
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type Props = ApiProps & {
-  postId: PostId;
+  postId: BN;
   commentIds?: CommentId[];
   commentIdForPage?: CommentId;
 };
@@ -57,10 +59,10 @@ export function CommentsTree (props: Props) {
 
     const loadComments = async () => {
       if (!commentsCount) return;
-      const apiCalls: Promise<OptionComment>[] = commentIds.map(id =>
-        api.query.blogs.commentById(id) as Promise<OptionComment>);
+      const apiCalls: Promise<Option<Comment>>[] = commentIds.map(id =>
+        api.query.blogs.commentById(id) as Promise<Option<Comment>>);
 
-      const loadedComments = (await Promise.all<OptionComment>(apiCalls)).map(x => x.unwrap() as Comment);
+      const loadedComments = (await Promise.all<Option<Comment>>(apiCalls)).map(x => x.unwrap() as Comment);
 
       if (isSubscribe) {
         setComments(loadedComments);
@@ -162,7 +164,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
-      const result = await api.query.blogs.commentById(id) as OptionComment;
+      const result = await api.query.blogs.commentById(id) as Option<Comment>;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
       if (isSubscribe) {
@@ -192,6 +194,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   const RenderDropDownMenu = () => {
     const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
+    console.log(open, close());
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -209,7 +212,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     <Dropdown overlay={menu} placement='bottomRight'>
       <Icon type='ellipsis' />
     </Dropdown>}
-    {open && <CommentHistoryModal id={id} open={open} close={close} />}
+    {/* open && <CommentHistoryModal id={id} open={open} close={close} />*/}
     </>);
   };
 
@@ -242,7 +245,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
               extraDetails={
                 <Link href={`/comment?postId=${struct.post_id.toString()}&commentId=${id.toString()}`}>
                   <a className='DfGreyLink'>
-                    {`${moment(formatUnixDate(time)).fromNow()} · ${pluralize(score, 'Point')}`}
+                    {`${moment(formatUnixDate(time.toNumber())).fromNow()} · ${pluralize(score, 'Point')}`}
                   </a>
                 </Link>}
             />

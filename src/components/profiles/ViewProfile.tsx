@@ -8,11 +8,12 @@ import { GenericAccountId as AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { SocialAccount, ProfileContent, Profile } from '../types';
+import { SocialAccount, Profile } from '@subsocial/types/interfaces/runtime';
+import { ProfileContent } from '../types';
 import { withSocialAccount, summarize } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
-import { ProfileHistoryModal } from '../utils/ListsEditHistory';
+// import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
 import { useMyAccount } from '../utils/MyAccountContext';
@@ -107,7 +108,7 @@ const Component: NextPage<Props> = (props: Props) => {
     if (profileIsNone) return null;
 
     const close = () => setOpen(false);
-
+    console.log(open, close());
     const showDropdown = isMyAccount || edit_history.length > 0;
 
     const menu = (
@@ -125,7 +126,7 @@ const Component: NextPage<Props> = (props: Props) => {
       <Dropdown overlay={menu} placement='bottomRight'>
         <Icon type='ellipsis' />
       </Dropdown>
-      {open && <ProfileHistoryModal id={id} open={open} close={close} />}
+      {/*open && <ProfileHistoryModal id={id} open={open} close={close} />*/}
     </>);
   };
 

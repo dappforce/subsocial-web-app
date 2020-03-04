@@ -3,7 +3,8 @@ import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult, ApiPromise } from '@polkadot/api';
-import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount, newBlogId } from '../types';
+import { BlogId, Profile, SocialAccount } from '@subsocial/types/interfaces/runtime';
+import { ProfileContent } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
@@ -13,6 +14,7 @@ import mdToText from 'markdown-to-txt';
 import { truncate } from 'lodash';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { registry } from '@polkadot/react-api';
+import BN from 'bn.js';
 
 type PaginationProps = {
   currentPage?: number;
@@ -36,10 +38,10 @@ export const Pagination = (p: PaginationProps) => {
   );
 };
 
-export function getNewIdFromEvent<IdType extends BlogId | PostId | CommentId> (
+export function getNewIdFromEvent (
   _txResult: SubmittableResult
-): IdType | undefined {
-  let id: IdType | undefined;
+): BN | undefined {
+  let id: BN | undefined;
 
   _txResult.events.find(event => {
     const {
@@ -47,7 +49,7 @@ export function getNewIdFromEvent<IdType extends BlogId | PostId | CommentId> (
     } = event;
     if (method.indexOf(`Created`) >= 0) {
       const [ , /* owner */ newId ] = data.toArray();
-      id = newId as IdType;
+      id = new BN(newId.toString());
       return true;
     }
     return false;
@@ -161,12 +163,12 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     : text;
 };
 
-export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BlogId | undefined> => {
+export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BN | undefined> => {
   if (idOrSlug.startsWith('@')) {
     const slug = idOrSlug.substring(1)
     const idOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
     return idOpt.unwrapOr(undefined)
   } else {
-    return newBlogId(idOrSlug)
+    return new BN(idOrSlug)
   }
 }

@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { Option, Text } from '@polkadot/types';
+import { Option, createType } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -12,10 +12,11 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
-import { BlogId, Blog, BlogContent, BlogUpdate, VecAccountId, newBlogId } from '../types';
+import { Blog  } from '@subsocial/types/interfaces/runtime';
+import { BlogContent } from '../types';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
-
+import BN from 'bn.js';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
@@ -66,7 +67,7 @@ type ValidationProps = {
 };
 
 type OuterProps = ValidationProps & {
-  id?: BlogId;
+  id?: BN;
   struct?: Blog;
   json?: BlogContent;
 };
@@ -103,7 +104,7 @@ const InnerForm = (props: FormProps) => {
     tags
   } = values;
 
-  const goToView = (id: BlogId) => {
+  const goToView = (id: BN) => {
     Router.push('/blogs/' + id.toString()).catch(console.log);
   };
 
@@ -132,7 +133,7 @@ const InnerForm = (props: FormProps) => {
   const onTxSuccess = (_txResult: SubmittableResult) => {
     setSubmitting(false);
 
-    const _id = id || getNewIdFromEvent<BlogId>(_txResult);
+    const _id = id || getNewIdFromEvent(_txResult);
     _id && goToView(_id);
   };
 
@@ -142,12 +143,12 @@ const InnerForm = (props: FormProps) => {
       return [ slug, ipfsCid ];
     } else {
       // TODO update only dirty values.
-      const update = new BlogUpdate(registry, {
+      const update = {
         // TODO get updated writers from the form
-        writers: new Option(registry, VecAccountId, (struct.writers)),
-        slug: new Option(registry, Text, slug),
-        ipfs_hash: new Option(registry, Text, ipfsCid)
-      });
+        writers: createType(registry, 'Vec<AccountId>', (struct.writers)),
+        slug: createType(registry, 'Text', slug),
+        ipfs_hash: createType(registry, 'Text', ipfsCid)
+      }
       return [ struct.id, update ];
     }
   };
@@ -238,7 +239,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component id={newBlogId(blogId as string)} />;
+      return <Component id={new BN(blogId as string)} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }

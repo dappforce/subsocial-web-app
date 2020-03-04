@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import { GenericAccountId, bool as Bool } from '@polkadot/types';
 
-import { BlogId } from '../types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
@@ -10,9 +9,10 @@ import { isMobile } from 'react-device-detect';
 import { getApi } from './SubstrateApi';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import { registry } from '@polkadot/react-api';
-import AccountId from '@polkadot/types/generic/AccountId';
+import BN from 'bn.js';
+
 type FollowBlogButtonProps = {
-  blogId: BlogId,
+  blogId: BN,
   size?: string
 };
 
@@ -21,7 +21,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { reloadFollowed } = useSidebarCollapsed();
 
-  const dataForQuery = new Tuple(registry, [ AccountId, BlogId ], [ new GenericAccountId(registry, myAddress), blogId ]);
+  const dataForQuery = new Tuple(registry, [ 'AccountId', 'u64' ], [ new GenericAccountId(registry, myAddress), blogId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
 

@@ -1,5 +1,6 @@
 import { IpfsData, Activity } from '../types';
 import axios from 'axios';
+import { IpfsHash } from '@subsocial/types/interfaces/runtime';
 
 export const baseUrl = (process.env.OFFCHAIN_URL || 'http://localhost:3001') + '/v1';
 
@@ -13,7 +14,7 @@ export async function removeFromIpfs (hash: string) {
   await axios.post(`${baseUrl}/ipfs/remove/${hash}`);
 }
 
-export async function getJsonFromIpfs<T extends IpfsData> (hash: string): Promise<T> {
+export async function getJsonFromIpfs<T extends IpfsData> (hash: string | IpfsHash): Promise<T> {
   const res = await axios.get(`${baseUrl}/ipfs/get/${hash}`);
   const { data } = res;
   return data as T;

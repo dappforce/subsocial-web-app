@@ -4,15 +4,15 @@ import React from 'react';
 import { ApiProps } from '@polkadot/react-api/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
-import { BlogId, PostId, newBlogId } from '../types';
+import { BlogId, PostId } from '@subsocial/types/interfaces/runtime';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { NextPage } from 'next';
 import { getApi } from '../utils/SubstrateApi';
 
-const FIVE = newBlogId(5);
-const ZERO = newBlogId(0);
+const FIVE = new BN(5);
+const ZERO = new BN(0);
 type Props = ApiProps & {
   blogsData: BlogData[],
   postsData: PostDataListItem[]

@@ -3,20 +3,21 @@ import React from 'react';
 import '../utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { InnerEditPost } from '../posts/EditPost';
-import { Post, PostId, PostContent, newBlogId } from '../types';
-import { registry } from '@polkadot/react-api';
+import { PostContent } from '../types';
+import { Post } from '@subsocial/types/interfaces/runtime';
+import BN from 'bn.js';
 
 export default {
   title: 'EditPost',
   decorators: [ withStorybookContext ]
 };
 
-const mockBlogId = newBlogId(99);
+const mockBlogId = new BN(99);
 
-const mockStruct = {
-  id: new PostId(registry, 10),
+const mockStruct: Post = {
+  id: new BN(10),
   blog_id: mockBlogId
-} as unknown as Post
+} as any;
 
 const mockJson: PostContent = {
   title: 'Example post',

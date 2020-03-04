@@ -9,10 +9,11 @@ import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
-import { BlogId, Blog, PostId, BlogContent } from '../types';
+import { BlogId, Blog, PostId } from '@subsocial/types/interfaces/runtime';
+import { BlogContent } from '../types';
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
-import { BlogHistoryModal } from '../utils/ListsEditHistory';
+// import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
@@ -113,6 +114,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderDropDownMenu = () => {
     const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
+    console.log(open, close());
     const showDropdown = isMyBlog || edit_history.length > 0;
 
     const menu = (
@@ -130,7 +132,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       <Dropdown overlay={menu} placement='bottomRight'>
         <Icon type='ellipsis' />
       </Dropdown>
-      {open && <BlogHistoryModal id={id} open={open} close={close} />}
+      {/* open && <BlogHistoryModal id={id} open={open} close={close} />*/}
     </>);
   };
 
@@ -250,7 +252,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const RenderBlogCreator = () => (
     <MutedDiv className='DfCreator'>
-      <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time)}</div>
+      <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time.toNumber())}</div>
       <div className='DfCreator-owner'>
         <Icon type='user' />
         {'Owned by '}
@@ -283,7 +285,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   </Section>;
 };
 
-export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<BlogData> => {
+export const loadBlogData = async (api: ApiPromise, blogId: BN): Promise<BlogData> => {
   const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
   const blog = blogIdOpt.isSome ? blogIdOpt.unwrap() : undefined;
   const content = blog && await getJsonFromIpfs<BlogContent>(blog.ipfs_hash);

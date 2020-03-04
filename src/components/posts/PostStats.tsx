@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Option } from '@polkadot/types';
 
-import { PostId, Post } from '../types';
+import { PostId, Post } from '@subsocial/types/interfaces/runtime';
 import { MutedSpan } from '../utils/MutedText';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import { Pluralize } from '../utils/Plularize';

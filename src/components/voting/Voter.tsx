@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
-import { Option, GenericAccountId } from '@polkadot/types';
+import { Option, GenericAccountId, Enum } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
-import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } from '../types';
+import { Post, Reaction, Comment, ReactionId } from '@subsocial/types/interfaces/runtime';
 import { Icon } from 'antd';
 import BN from 'bn.js';
 import { getApi } from '../utils/SubstrateApi';
 import { registry } from '@polkadot/react-api';
-import AccountId from '@polkadot/types/generic/AccountId';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const ZERO = new BN(0);
@@ -37,10 +36,9 @@ export const Voter = (props: VoterProps) => {
   const [ updateTrigger, setUpdateTrigger ] = useState(true);
   const { id } = state;
   const isComment = type === 'Comment';
-  const Id = isComment ? CommentId : PostId;
   const structQuery = type.toLowerCase();
 
-  const dataForQuery = new Tuple(registry, [ AccountId, Id ], [ new GenericAccountId(registry, address), id ]);
+  const dataForQuery = new Tuple(registry, [ 'AccountId', 'u64' ], [ new GenericAccountId(registry, address), id ]);
 
   useEffect(() => {
     let isSubscribe = true;
@@ -76,9 +74,9 @@ export const Voter = (props: VoterProps) => {
 
   const buildTxParams = (param: 'Downvote' | 'Upvote') => {
     if (reactionState === undefined) {
-      return [ id, new ReactionKind(registry, param) ];
+      return [ id, new Enum(registry, { kind: 'Text' } ,param) ];
     } else if (reactionKind !== param) {
-      return [ id, reactionState.id, new ReactionKind(registry, param) ];
+      return [ id, reactionState.id, new Enum(registry, { kind: 'Text' } ,param) ];
     } else {
       return [ id, reactionState.id ];
     }
@@ -88,8 +86,8 @@ export const Voter = (props: VoterProps) => {
     let countColor = '';
 
     const calcVotingPercentage = () => {
-      const { reactions_count, upvotes_count } = state;
-      const totalCount = new BN(reactions_count);
+      const { downvotes_count, upvotes_count } = state;
+      const totalCount = new BN(upvotes_count).add(downvotes_count);
       if (totalCount.eq(ZERO)) return 0;
 
       const per = upvotes_count.toNumber() / totalCount.toNumber() * 100;
