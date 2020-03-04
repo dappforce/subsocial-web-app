@@ -9,6 +9,7 @@ import { assert } from '@polkadot/util';
 import { withMyAccount, MyAccountProps } from './MyAccount';
 import { useStorybookContext } from '../stories/StorybookContext';
 import { Button$Sizes } from '@polkadot/ui-app/Button/types';
+import { isClientSide } from './index';
 
 type InjectedProps = {
   queueExtrinsic: QueueTx$ExtrinsicAdd;
@@ -29,7 +30,7 @@ type Props = BareProps & ApiProps & MyAccountProps & PartialQueueTx$Extrinsic & 
 
 class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   render () {
-    const { myAddress, accountId, isBasic, isPrimary = !isBasic, size, isDisabled, label, onClick } = this.props;
+    const { myAddress, accountId, isBasic, isPrimary = isBasic !== true, size, isDisabled, label, onClick } = this.props;
     const origin = accountId || myAddress;
 
     return (
@@ -69,49 +70,42 @@ class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   }
 }
 
-class TxButton extends React.PureComponent<Props> {
-  render () {
-    return (
-      <QueueConsumer>
-        {({ queueExtrinsic }) => (
-          <TxButtonInner
-            {...this.props}
-            queueExtrinsic={queueExtrinsic}
-          />
-        )}
-      </QueueConsumer>
-    );
+const mockSendTx = () => {
+  const msg = 'Cannot send a Substrate tx in a mock mode'
+  if (isClientSide()) {
+    window.alert(`WARN: ${msg}`)
+  } else if (typeof console.warn === 'function') {
+    console.warn(msg)
+  } else {
+    console.log(`WARN: ${msg}`)
   }
 }
 
-function MockTxButton (props: Props) {
-  const { isPrimary = true, onClick } = props;
+function TxButton (props: Props) {
+  const { isStorybook = false } = useStorybookContext()
+  const { isBasic, isPrimary = isBasic !== true, onClick } = props
 
-  const mockSendTx = () => {
-    console.warn('WARN: Cannot send tx in a mock mode');
-  };
-
-  return (
+  if (isStorybook) return (
     <Button
       {...props}
-      icon=''
       isPrimary={isPrimary}
       onClick={() => {
         if (onClick) onClick(mockSendTx);
         else mockSendTx();
       }}
     />
-  );
+  )
+  
+  return (
+    <QueueConsumer>
+      {({ queueExtrinsic }) => (
+        <TxButtonInner
+          {...props}
+          queueExtrinsic={queueExtrinsic}
+        />
+      )}
+    </QueueConsumer>
+  )
 }
 
-function ResolvedButton (props: any) { // TODO fix props type!
-  const { isStorybook = false } = useStorybookContext();
-
-  const Component = isStorybook
-    ? MockTxButton
-    : withApi(withMyAccount(TxButton));
-
-  return <Component {...props} />;
-}
-
-export default ResolvedButton;
+export default withApi(withMyAccount(TxButton))
