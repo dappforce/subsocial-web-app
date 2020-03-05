@@ -285,7 +285,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderDetails = (content: PostExtContent) => {
     const { title, body, image, canonical } = content;
     return <Section className='DfContentPage'>
-      <HeadMeta title={title} desc={body} image={image} canonical={`/blogs/${post.blog_id}/posts/${canonical}`} />
+      <HeadMeta title={title} desc={body} image={image} canonical={canonical} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
