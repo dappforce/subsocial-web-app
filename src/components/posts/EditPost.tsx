@@ -101,7 +101,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: PostId) => {
-    Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
+    Router.push(`/blogs/${blogId?.toString()}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
@@ -206,7 +206,7 @@ const InnerForm = (props: FormProps) => {
           <a href="/">Home</a>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <a href={`/blogs/${blogId}`}>My Blog</a>
+          <a href={`/blogs/${blogId?.toString()}`}>My Blog</a>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           Edit Post
