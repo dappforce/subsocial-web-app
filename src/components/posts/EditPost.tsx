@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
-
+import { getApi } from '../utils/SubstrateApi';
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text, U32 } from '@polkadot/types';
@@ -19,7 +19,7 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { ViewBlog } from '../blogs/ViewBlog';
+import { ViewBlog, BlogData, loadBlogData } from '../blogs/ViewBlog';
 import Link from 'next/link';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -81,8 +81,13 @@ const InnerForm = (props: FormProps) => {
     resetForm,
     onlyTxButton = false,
     withButtons = true,
-    closeModal
+    closeModal,
+    myBlogsData,
+    temp
   } = props;
+
+  console.log('myBlogsData', myBlogsData)
+  console.log('temp', temp)
 
   const isRegularPost = extention.value instanceof RegularPost;
 
@@ -379,3 +384,14 @@ export const EditPost = withMulti<OuterProps>(
   ),
   LoadStruct
 );
+
+InnerForm.getInitialProps = async (): Promise<any> => {
+  const { state: { address: myAddress } } = useMyAccount();
+  const api = await getApi();
+  const BlogsData = await api.query.blogs.blogIdsByOwner(new AccountId(myAddress as string)) as unknown as BlogId[];
+  const loadBlogs = BlogsData.map(id => loadBlogData(api, id));
+  const myBlogsData = await Promise.all<BlogData>(loadBlogs);
+  return {
+    myBlogsData
+  };
+};
