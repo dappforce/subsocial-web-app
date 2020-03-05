@@ -60,7 +60,7 @@ type Props = {
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
-  
+
   const { blog } = props.blogData;
 
   if (!blog) return <NoData description={<span>Blog not found</span>} />;
@@ -112,9 +112,6 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
-    console.log(open, close());
     const showDropdown = isMyBlog || edit_history.length > 0;
 
     const menu = (
@@ -122,9 +119,9 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
         {isMyBlog && <Menu.Item key='0'>
           <Link href={`/blogs/[id]/edit`} as={`/blogs/${id.toString()}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
-        {edit_history.length > 0 && <Menu.Item key='1'>
+        {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>}
+        </Menu.Item>} */}
       </Menu>
     );
 
@@ -132,7 +129,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       <Dropdown overlay={menu} placement='bottomRight'>
         <Icon type='ellipsis' />
       </Dropdown>
-      {/* open && <BlogHistoryModal id={id} open={open} close={close} />*/}
+      {/* open && <BlogHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
 
@@ -286,7 +283,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 };
 
 export const loadBlogData = async (api: ApiPromise, blogId: BN): Promise<BlogData> => {
-  const blogIdOpt = await api.query.blogs.blogById(blogId) as Option<Blog>;
+  const blogIdOpt = await api.query.social.blogById(blogId) as Option<Blog>;
   const blog = blogIdOpt.isSome ? blogIdOpt.unwrap() : undefined;
   const content = blog && await getJsonFromIpfs<BlogContent>(blog.ipfs_hash);
   return {
@@ -311,7 +308,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const postIds = await api.query.blogs.postIdsByBlogId(blogId) as unknown as PostId[];
+  const postIds = await api.query.social.postIdsByBlogId(blogId) as unknown as PostId[];
   const posts = await loadPostDataList(api, postIds.reverse());
   return {
     blogData,

@@ -34,7 +34,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     let isSubscribe = true;
     const load = async () => {
       const api = await getApi();
-      const _isFollow = await (api.query.blogs[`blogFollowedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.social[`blogFollowedByAccount`](dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -56,8 +56,8 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
       : 'Follow'}
     params={buildTxParams()}
     tx={isFollow
-      ? `blogs.unfollowBlog`
-      : `blogs.followBlog`}
+      ? `social.unfollowBlog`
+      : `social.followBlog`}
     txSuccessCb={TxSuccess}
   />;
 }

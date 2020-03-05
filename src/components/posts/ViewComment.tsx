@@ -60,7 +60,7 @@ export function CommentsTree (props: Props) {
     const loadComments = async () => {
       if (!commentsCount) return;
       const apiCalls: Promise<Option<Comment>>[] = commentIds.map(id =>
-        api.query.blogs.commentById(id) as Promise<Option<Comment>>);
+        api.query.social.commentById(id) as Promise<Option<Comment>>);
 
       const loadedComments = (await Promise.all<Option<Comment>>(apiCalls)).map(x => x.unwrap() as Comment);
 
@@ -164,7 +164,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
-      const result = await api.query.blogs.commentById(id) as Option<Comment>;
+      const result = await api.query.social.commentById(id) as Option<Comment>;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
       if (isSubscribe) {
@@ -175,7 +175,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
-        const result = await api.query.blogs.postById(post_id) as Option<Post>;
+        const result = await api.query.social.postById(post_id) as Option<Post>;
         if (result.isNone) return;
         isSubscribe && setPost(result.unwrap());
       }
@@ -192,9 +192,9 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   const isMyStruct = myAddress === account.toString();
 
   const RenderDropDownMenu = () => {
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
-    console.log(open, close());
+    // const [ open, setOpen ] = useState(false);
+    // const close = () => setOpen(false);
+    // console.log(open, close());
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -202,9 +202,9 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         {(isMyStruct || showEditForm) && <Menu.Item key='0'>
           <div onClick={() => setShowEditForm(true)} >Edit</div>
         </Menu.Item>}
-        {edit_history.length > 0 && <Menu.Item key='1'>
+        {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>}
+        </Menu.Item>} */}
       </Menu>
     );
 
@@ -212,7 +212,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     <Dropdown overlay={menu} placement='bottomRight'>
       <Icon type='ellipsis' />
     </Dropdown>}
-    {/* open && <CommentHistoryModal id={id} open={open} close={close} />*/}
+    {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
 
@@ -297,7 +297,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
   const api = await getApi();
-  const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
+  const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
   const comment = commentOpt.unwrapOr({} as Comment);
   const postData = comment && await loadPostData(api, comment.post_id) as PostData;
   const commentContent = comment && await getJsonFromIpfs<CommentContent>(comment.ipfs_hash);

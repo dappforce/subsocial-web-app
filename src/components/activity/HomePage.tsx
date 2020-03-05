@@ -44,8 +44,8 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 
 LatestUpdate.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
-  const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
-  const nextPostId = await api.query.blogs.nextPostId() as PostId;
+  const nextBlogId = await api.query.social.nextBlogId() as BlogId;
+  const nextPostId = await api.query.social.nextPostId() as PostId;
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
     const latestIds = new Array<BN>(initIds).fill(ZERO);

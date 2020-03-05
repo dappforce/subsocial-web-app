@@ -79,7 +79,7 @@ export function queryToProp (
 }
 
 export const queryBlogsToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
-  return queryToProp(`query.blogs.${storageItem}`, paramNameOrOpts);
+  return queryToProp(`query.social.${storageItem}`, paramNameOrOpts);
 };
 
 export function getUrlParam (location: Location, paramName: string, deflt: string | undefined = undefined): string | undefined {

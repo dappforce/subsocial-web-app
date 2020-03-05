@@ -8,7 +8,7 @@ import { withMulti } from '@polkadot/react-api';
 import InputAddress from '@polkadot/react-components/InputAddress';
 import classes from '@polkadot/react-components/util/classes';
 import toShortAddress from '@polkadot/react-components/util/toShortAddress';
-import BalanceDisplay from '@polkadot/react-components/Balance';
+// import BalanceDisplay from '@polkadot/react-components/Balance';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
@@ -24,7 +24,7 @@ import { Pluralize } from './Plularize';
 import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
-import { isBrowser } from 'react-device-detect';
+// import { isBrowser } from 'react-device-detect';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { Balance } from '@polkadot/types/interfaces';
 import AccountIndex from '@polkadot/types/generic/AccountIndex';
@@ -74,7 +74,6 @@ function AddressComponents (props: Props) {
     profile: profileInit = {} as Profile,
     profileContent: profileContentInit = {} as ProfileContent,
     withFollowButton,
-    withBalance = true,
     asActivity = false,
     withName = false,
     variant = 'preview',
@@ -94,7 +93,7 @@ function AddressComponents (props: Props) {
 
     const UpdateSocialAccount = async () => {
       const api = await getApi();
-      const socialAccountOpt = await api.query.blogs.socialAccountById(value) as unknown as Option<SocialAccount>;
+      const socialAccountOpt = await api.query.social.socialAccountById(value) as unknown as Option<SocialAccount>;
       console.log('Soc.Acc', socialAccountOpt);
       if (socialAccountOpt.isNone) {
         isSubscribe && setSocialAccount(undefined);
@@ -205,7 +204,7 @@ function AddressComponents (props: Props) {
   function RenderPreviewForAddress () {
     return <>
       <div className='Df--AddressComponents-details'>
-        {withBalance && <RenderBalance address={address} />}
+        {/* {withBalance && <RenderBalance address={address} />} */}
         {' · '}
         {extraDetails}
       </div>
@@ -225,7 +224,7 @@ function AddressComponents (props: Props) {
       </div>
       <div className='addressInfo'>
         <RenderAddress asLink={false} />
-        <RenderBalance address={address} />
+        {/* <RenderBalance address={address} /> */}
       </div>
       <Icon type='caret-down' />
     </Popover>;
@@ -354,19 +353,19 @@ const RenderAvatar: FunctionComponent<ImageProps> = ({ size, avatar, address, st
     />;
 };
 
-type BalanceProps = {
-  address: string
-};
+// type BalanceProps = {
+//   address: string
+// };
 
-const RenderBalance: FunctionComponent<BalanceProps> = ({ address }) => {
-  return (
-    <BalanceDisplay
-      label={isBrowser ? 'Balance: ' : ''}
-      className='ui--AddressSummary-balance'
-      params={address}
-    />
-  );
-};
+// const RenderBalance: FunctionComponent<BalanceProps> = ({ address }) => {
+//   return (
+//     <BalanceDisplay
+//       label={isBrowser ? 'Balance: ' : ''}
+//       className='ui--AddressSummary-balance'
+//       params={address}
+//     />
+//   );
+// };
 
 export default withMulti(
   AddressComponents,

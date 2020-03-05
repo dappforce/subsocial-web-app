@@ -131,9 +131,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     const isMyStruct = address === props.account;
 
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
-    console.log(open, close());
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -141,9 +138,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         {isMyStruct && <Menu.Item key='0'>
           <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
-        {edit_history.length > 0 && <Menu.Item key='1'>
+        {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>}
+        </Menu.Item>} */}
       </Menu>
     );
 
@@ -152,7 +149,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <Dropdown overlay={menu} placement='bottomRight'>
         <Icon type='ellipsis' />
       </Dropdown>}
-      {/*open && <PostHistoryModal id={id} open={open} close={close} />*/}
+      {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
 
@@ -388,7 +385,7 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
 };
 
 export const loadPostData = async (api: ApiPromise, postId: BN | string) => {
-  const postOpt = await api.query.blogs.postById(postId) as Option<Post>;
+  const postOpt = await api.query.social.postById(postId) as Option<Post>;
   let postData: PostData = {};
 
   if (postOpt.isSome) {

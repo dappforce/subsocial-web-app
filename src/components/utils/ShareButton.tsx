@@ -26,7 +26,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
     let isSubscribe = true;
 
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`postSharedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.social[`postSharedByAccount`](dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -48,8 +48,8 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
       : 'Share post'}
     params={buildTxParams()}
     tx={isFollow
-      ? `blogs.unsharePost`
-      : `blogs.sharePost`}
+      ? `social.unsharePost`
+      : `social.sharePost`}
     txSuccessCb={() => setTriggerReload(!triggerReload) }
   />;
 }
@@ -69,7 +69,7 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
 
   useEffect(() => {
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`commentSharedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.social[`commentSharedByAccount`](dataForQuery)) as Bool;
       setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -90,8 +90,8 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
       : 'Share post'}
     params={buildTxParams()}
     tx={isFollow
-      ? `blogs.unshareComment`
-      : `blogs.shareComment`}
+      ? `social.unshareComment`
+      : `social.shareComment`}
     txSuccessCb={() => setTriggerReload(!triggerReload) }
   />;
 }

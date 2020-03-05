@@ -37,7 +37,7 @@ const InnerMenu = () => {
     const loadBlogsData = async () => {
       setLoaded(false);
       const api = await getApi();
-      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      const ids = await api.query.social.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
       const loadBlogs = ids.map(id => loadBlogData(api, id));
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);

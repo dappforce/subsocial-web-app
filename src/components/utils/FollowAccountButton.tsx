@@ -39,7 +39,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   useEffect(() => {
     let isSubscribe = true;
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`accountFollowedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.social[`accountFollowedByAccount`](dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -61,8 +61,8 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
       : 'Follow'}
     params={buildTxParams()}
     tx={isFollow
-      ? `blogs.unfollowAccount`
-      : `blogs.followAccount`}
+      ? `social.unfollowAccount`
+      : `social.followAccount`}
     txSuccessCb={() => setIsFollow(!isFollow) }
   />;
 }

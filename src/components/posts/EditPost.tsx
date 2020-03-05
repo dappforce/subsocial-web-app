@@ -170,8 +170,8 @@ const InnerForm = (props: FormProps) => {
       isDisabled={isSubmitting || (isRegularPost && !dirty)}
       params={buildTxParams()}
       tx={struct
-        ? 'blogs.updatePost'
-        : 'blogs.createPost'
+        ? 'social.updatePost'
+        : 'social.createPost'
       }
       onClick={onSubmit}
       txCancelledCb={onTxCancelled}

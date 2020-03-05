@@ -45,7 +45,7 @@ export const Voter = (props: VoterProps) => {
 
     async function loadStruct<T extends Comment | Post> (_: T) {
       const api = await getApi();
-      const result = await api.query.blogs[`${structQuery}ById`](id) as Option<T>;
+      const result = await api.query.social[`${structQuery}ById`](id) as Option<T>;
       if (result.isNone) return;
 
       const _struct = result.unwrap();
@@ -55,8 +55,8 @@ export const Voter = (props: VoterProps) => {
 
     async function loadReaction () {
       const api = await getApi();
-      const reactionId = await api.query.blogs[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
-      const reactionOpt = await api.query.blogs.reactionById(reactionId) as Option<Reaction>;
+      const reactionId = await api.query.social[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
+      const reactionOpt = await api.query.social.reactionById(reactionId) as Option<Reaction>;
       if (reactionOpt.isNone) {
         isSubscribe && setReactionState(undefined);
       } else {
@@ -118,10 +118,10 @@ export const Voter = (props: VoterProps) => {
         params={buildTxParams(reactionName)}
         txSuccessCb={() => setUpdateTrigger(!updateTrigger)}
         tx={!reactionState
-          ? `blogs.create${type}Reaction`
+          ? `social.create${type}Reaction`
           : (reactionKind !== `${reactionName}`)
-            ? `blogs.update${type}Reaction`
-            : `blogs.delete${type}Reaction`}
+            ? `social.update${type}Reaction`
+            : `social.delete${type}Reaction`}
       >
         <Icon type={`${icon}like`}/>
       </TxButton>);

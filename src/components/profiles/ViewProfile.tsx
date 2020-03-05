@@ -103,12 +103,8 @@ const Component: NextPage<Props> = (props: Props) => {
     </Link>;
 
   const renderDropDownMenu = () => {
-    const [ open, setOpen ] = useState(false);
-
     if (profileIsNone) return null;
 
-    const close = () => setOpen(false);
-    console.log(open, close());
     const showDropdown = isMyAccount || edit_history.length > 0;
 
     const menu = (
@@ -116,9 +112,9 @@ const Component: NextPage<Props> = (props: Props) => {
         {isMyAccount && <Menu.Item key='0'>
           <Link href={`/profile/edit`} ><a className='item'>Edit</a></Link>
         </Menu.Item>}
-        {edit_history.length > 0 && <Menu.Item key='1'>
+        {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>}
+        </Menu.Item>} */}
       </Menu>
     );
 
@@ -126,7 +122,7 @@ const Component: NextPage<Props> = (props: Props) => {
       <Dropdown overlay={menu} placement='bottomRight'>
         <Icon type='ellipsis' />
       </Dropdown>
-      {/*open && <ProfileHistoryModal id={id} open={open} close={close} />*/}
+      {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
 
@@ -269,7 +265,7 @@ const Component: NextPage<Props> = (props: Props) => {
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
   const api = await getApi();
-  const socialAccountOpt = await api.query.blogs.socialAccountById(address) as Option<SocialAccount>;
+  const socialAccountOpt = await api.query.social.socialAccountById(address) as Option<SocialAccount>;
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;

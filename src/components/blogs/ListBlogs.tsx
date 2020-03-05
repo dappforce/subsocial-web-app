@@ -37,7 +37,7 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
 
 ListBlog.getInitialProps = async (): Promise<any> => {
   const api = await getApi();
-  const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
+  const nextBlogId = await api.query.social.nextBlogId() as BlogId;
 
   const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
@@ -84,7 +84,7 @@ ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
   console.log(props);
   const api = await getApi();
-  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
+  const myBlogIds = await api.query.social.blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
   const loadBlogs = myBlogIds.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
   console.log(blogsData);

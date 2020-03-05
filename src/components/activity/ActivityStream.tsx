@@ -188,7 +188,7 @@ export function Notification (props: ActivityProps) {
             postId = new BN(hexToNumber('0x' + post_id));
           } else {
             const commentId = new BN(hexToNumber('0x' + comment_id));
-            const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
+            const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
             if (commentOpt.isNone) return;
 
             const comment = commentOpt.unwrap() as Comment;
@@ -225,7 +225,7 @@ export function Notification (props: ActivityProps) {
         }
         case 'CommentReactionCreated': {
           const commentId = new BN(hexToNumber('0x' + comment_id));
-          const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
+          const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
           if (commentOpt.isNone) return;
 
           const comment = commentOpt.unwrap() as Comment;
