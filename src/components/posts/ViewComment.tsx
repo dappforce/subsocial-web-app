@@ -245,7 +245,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
               extraDetails={
                 <Link href={`/comment?postId=${struct.post_id.toString()}&commentId=${id.toString()}`}>
                   <a className='DfGreyLink'>
-                    {`${moment(formatUnixDate(time.toNumber())).fromNow()} · ${pluralize(score, 'Point')}`}
+                    {`${moment(formatUnixDate(time)).fromNow()} · ${pluralize(score, 'Point')}`}
                   </a>
                 </Link>}
             />

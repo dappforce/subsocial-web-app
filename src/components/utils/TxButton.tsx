@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
-import { QueueTx, QueueTxExtrinsicAdd } from '@polkadot/react-components/Status/types';
-import { TxButtonProps as Props } from '@polkadot/react-components/types';
+import { QueueTx, QueueTxExtrinsicAdd, TxFailedCallback, TxCallback } from '@polkadot/react-components/Status/types';
+import { TxButtonProps, TxProps } from '@polkadot/react-components/types';
 
 import React from 'react';
 import { SubmittableResult } from '@polkadot/api';
@@ -14,16 +14,44 @@ import { assert, isFunction, isUndefined } from '@polkadot/util';
 import Button from '@polkadot/react-components/Button';
 import { QueueConsumer } from '@polkadot/react-components/Status/Context';
 import { useStorybookContext } from '../stories/StorybookContext';
-import { withMyAccount, MyAccountProps } from './MyAccount';
+import { MyAccountProps } from './MyAccount';
+import { isClientSide } from '.';
+import { Button$Sizes } from '@polkadot/react-components/Button/types';
+import { SemanticShorthandItem, IconProps } from 'semantic-ui-react'
+import { Index } from '@polkadot/types/interfaces';
+import { useMyAccount } from './MyAccountContext';
 
 interface InjectedProps {
   queueExtrinsic: QueueTxExtrinsicAdd;
   txqueue: QueueTx[];
 }
 
-type InnerProps = Props & InjectedProps & MyAccountProps & {
+type BasicButtonProps = TxProps & {
+  accountId?: string;
+  accountNonce?: Index;
+  className?: string;
+  iconSize?: Button$Sizes;
+  isBasic?: boolean;
+  isDisabled?: boolean;
+  isNegative?: boolean;
+  isPrimary?: boolean;
+  isUnsigned?: boolean;
+  label?: React.ReactNode;
+  onFailed?: TxFailedCallback;
+  onStart?: () => void;
+  onSuccess?: TxCallback;
+  onUpdate?: TxCallback;
+  tooltip?: string;
+  withSpinner?: boolean;
+  // our props:
+  type?: 'button' | 'submit',
+  size?: Button$Sizes,
+  icon?: SemanticShorthandItem<IconProps>,
   onClick?: (sendTx: () => void) => void
-};
+}
+
+type InnerProps = InjectedProps & MyAccountProps & BasicButtonProps &
+Omit<TxButtonProps, 'onClick' | 'icon'>;
 
 interface State {
   extrinsic?: SubmittableExtrinsic;
@@ -36,7 +64,7 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
   };
 
   public render (): React.ReactNode {
-    const { accountId, className, icon, iconSize, innerRef, isBasic, isDisabled, isNegative, isPrimary = !isBasic, isUnsigned, label, tooltip, onClick } = this.props;
+    const { accountId, className, icon, size, iconSize, innerRef = null, isBasic, isDisabled, isNegative, isPrimary = !isBasic, isUnsigned, label = '', tooltip, onClick } = this.props;
 
     const { isSending } = this.state;
     const needsAccount = isUnsigned
@@ -47,7 +75,7 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
       <Button
         className={className}
         tooltip={tooltip}
-        icon={icon}
+        icon={icon as string}
         isBasic={isBasic}
         isDisabled={isSending || isDisabled || needsAccount}
         isLoading={isSending}
@@ -59,23 +87,23 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
         }
         label={label}
         onClick={() => {
-          if (onClick) onClick(this.send);
+          if (typeof onClick === 'function') onClick(this.send);
           else this.send();
         }}
         ref={innerRef}
-        size={iconSize}
+        size={size || iconSize}
       />
     );
   }
 
   protected send = (): void => {
-    const { accountId, api, extrinsic: propsExtrinsic, isUnsigned, onClick, onFailed, onStart, onSuccess, onUpdate, params = [], queueExtrinsic, tx = '', withSpinner = true } = this.props;
+    const { accountId, api, extrinsic: propsExtrinsic, isUnsigned, onFailed, onStart, onSuccess, onUpdate, params = [], queueExtrinsic, tx = '', withSpinner = true } = this.props;
     let extrinsic: any;
 
     if (propsExtrinsic) {
       extrinsic = propsExtrinsic;
     } else {
-      const [section, method] = tx.split('.');
+      const [ section, method ] = tx.split('.');
 
       assert(api.tx[section] && api.tx[section][method], `Unable to find api.tx.${section}.${method}`);
 
@@ -102,7 +130,8 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
       txUpdateCb: onUpdate
     });
 
-    onClick && onClick();
+    // TODO pay attention to this part. Maybe recursion
+    // onClick && onClick();
   }
 
   private onFailed = (result: SubmittableResult | null): void => {
@@ -146,34 +175,42 @@ class TxButton extends React.PureComponent<InnerProps, State> {
   }
 }
 
-function MockTxButton (props: InnerProps) {
-  const { isPrimary = true, onClick } = props;
+const mockSendTx = () => {
+  const msg = 'Cannot send a Substrate tx in a mock mode'
+  if (isClientSide()) {
+    window.alert(`WARN: ${msg}`)
+  } else if (typeof console.warn === 'function') {
+    console.warn(msg)
+  } else {
+    console.log(`WARN: ${msg}`)
+  }
+}
 
-  const mockSendTx = () => {
-    console.warn('WARN: Cannot send tx in a mock mode');
-  };
+function MockTxButton (props: BasicButtonProps) {
+  const { isBasic, isPrimary = isBasic !== true, icon = '', onClick } = props
 
   return (
     <Button
       {...props}
-      icon=''
       isPrimary={isPrimary}
+      icon={icon as string}
       onClick={() => {
-        if (onClick) onClick(mockSendTx);
-        else mockSendTx();
+        if (typeof onClick === 'function') onClick(mockSendTx)
+        else mockSendTx()
       }}
     />
-  );
+  )
 }
 
-function ResolvedButton (props: any) { // TODO fix props type!
-  const { isStorybook = false } = useStorybookContext();
+const SubstrateTxButton = withApi((TxButton))
 
-  const Component = isStorybook
-    ? MockTxButton
-    : withApi(withMyAccount(TxButton));
-
-  return <Component {...props} />;
+function ResolvedButton (props: BasicButtonProps) {
+  const { isStorybook = false } = useStorybookContext()
+  const { state: { address } } = useMyAccount();
+  console.log()
+  return isStorybook
+    ? <MockTxButton {...props} />
+    : <SubstrateTxButton accountId={address} {...props} />
 }
 
-export default ResolvedButton;
+export default ResolvedButton

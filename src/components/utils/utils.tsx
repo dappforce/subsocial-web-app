@@ -3,7 +3,7 @@ import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult, ApiPromise } from '@polkadot/api';
-import { BlogId, Profile, SocialAccount } from '@subsocial/types/interfaces/runtime';
+import { BlogId, Profile, SocialAccount, Moment } from '@subsocial/types/interfaces/runtime';
 import { ProfileContent } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
@@ -147,7 +147,8 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 
 export const Loading = () => <Icon type='loading' />;
 
-export const formatUnixDate = (seconds: number, format: string = 'lll') => {
+export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
+  const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber();
   return moment(new Date(seconds * 1000)).format(format);
 };
 

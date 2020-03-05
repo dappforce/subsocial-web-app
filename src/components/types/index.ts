@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/adjacent-overload-signatures */
-// import { u16, u32, u64, Text, Vec as Vector, i32, Null, GenericAccountId, Option, Struct } from '@polkadot/types';
+import { u64, Null, Enum, Option, Struct, Text } from '@polkadot/types';
 import Date from '@polkadot/types/codec/Date';
+import { registry } from '@polkadot/react-api';
+import { Registry } from '@polkadot/types/types';
+import { IpfsHash, BlogId, OptionVecAccountId } from '@subsocial/types/interfaces/runtime';
 export { registerSubsocialTypes } from './DfRegister';
-// import { isServerSide } from '../utils';
+// import { isServerSide } from '../utils';``
 
 export type IpfsData = CommentContent | PostContent | BlogContent | ProfileContent | SharedPostContent;
 export type Activity = {
@@ -37,33 +40,39 @@ export type Activity = {
 // export class ReactionId extends u64 {}
 
 // export class IpfsHash extends Text {}
-// export class OptionIpfsHash extends Option.with(IpfsHash) {}
+export class OptionText extends Option<Text> {
+  constructor (value: string) {
+    super(registry, 'Text', value)
+  }
+}
 
-// export class RegularPost extends Null {}
-// export class SharedPost extends PostId {}
-// export class SharedComment extends CommentId {}
+export class OptionIpfsHash extends OptionText {}
 
-// export type PostExtensionEnum =
-//   RegularPost |
-//   SharedPost |
-//   SharedComment;
+export class RegularPost extends Null {}
+export class SharedPost extends u64 {}
+export class SharedComment extends u64 {}
 
-// type PostExtensionEnumValue =
-//   { RegularPost: RegularPost } |
-//   { SharedPost: SharedPost } |
-//   { SharedComment: SharedComment };
+export type PostExtensionEnum =
+  RegularPost |
+  SharedPost |
+  SharedComment;
 
-// export class PostExtension extends Enum {
-//   constructor (registry: Registry, value?: PostExtensionEnumValue, index?: number) {
-//     super(
-//       registry,
-//       {
-//         RegularPost,
-//         SharedPost,
-//         SharedComment
-//       }, value, index);
-//   }
-// }
+type PostExtensionEnumValue =
+  { RegularPost: RegularPost } |
+  { SharedPost: SharedPost } |
+  { SharedComment: SharedComment };
+
+export class PostExtension extends Enum {
+  constructor (registry: Registry, value?: PostExtensionEnumValue, index?: number) {
+    super(
+      registry,
+      {
+        RegularPost,
+        SharedPost,
+        SharedComment
+      }, value, index);
+  }
+}
 
 // export type ChangeType = {
 //   account: GenericAccountId,
@@ -190,45 +199,45 @@ export type BlogContent = {
 //   }
 // }
 
-// export type BlogUpdateType = {
-//   writers: OptionVecAccountId;
-//   slug: OptionText;
-//   ipfs_hash: OptionIpfsHash;
-// };
+export type BlogUpdateType = {
+  writers: OptionVecAccountId;
+  slug: OptionText;
+  ipfs_hash: OptionIpfsHash;
+};
 
-// export class BlogUpdate extends Struct {
-//   constructor (registry: Registry, value?: BlogUpdateType) {
-//     super(
-//       registry,
-//       {
-//         writers: OptionVecAccountId,
-//         slug: OptionText,
-//         ipfs_hash: OptionIpfsHash
-//       },
-//       value
-//     );
-//   }
+export class BlogUpdate extends Struct {
+  constructor (value?: BlogUpdateType) {
+    super(
+      registry,
+      {
+        writers: 'Option<BitVec>',
+        slug: 'Option<Text>',
+        ipfs_hash: 'Option<Text>'
+      },
+      value
+    );
+  }
 
-//   get writers (): OptionVecAccountId {
-//     return this.get('writers') as OptionVecAccountId;
-//   }
+  get writers (): OptionVecAccountId {
+    return this.get('writers') as OptionVecAccountId;
+  }
 
-//   get slug (): OptionText {
-//     return this.get('slug') as OptionIpfsHash;
-//   }
+  get slug (): OptionText {
+    return this.get('slug') as OptionIpfsHash;
+  }
 
-//   get ipfs_hash (): OptionIpfsHash {
-//     return this.get('ipfs_hash') as OptionIpfsHash;
-//   }
+  get ipfs_hash (): OptionIpfsHash {
+    return this.get('ipfs_hash') as OptionIpfsHash;
+  }
 
-//   set ipfs_hash (value: OptionIpfsHash) {
-//     this.set('ipfs_hash', value);
-//   }
+  set ipfs_hash (value: OptionIpfsHash) {
+    this.set('ipfs_hash', value);
+  }
 
-//   set slug (value: OptionText) {
-//     this.set('slug', value);
-//   }
-// }
+  set slug (value: OptionText) {
+    this.set('slug', value);
+  }
+}
 
 export type SharedPostContent = {
   body: string
@@ -345,35 +354,35 @@ export type PostContent = SharedPostContent & {
 //   }
 // }
 
-// export type PostUpdateType = {
-//   blog_id: OptionBlogId;
-//   ipfs_hash: OptionIpfsHash;
-// };
+export type PostUpdateType = {
+  blog_id: Option<BlogId>;
+  ipfs_hash: Option<IpfsHash>;
+};
 
-// export class PostUpdate extends Struct {
-//   constructor (registry: Registry, value?: PostUpdateType) {
-//     super(
-//       registry,
-//       {
-//         blog_id: OptionBlogId,
-//         ipfs_hash: OptionIpfsHash
-//       },
-//       value
-//     );
-//   }
+export class PostUpdate extends Struct {
+  constructor (value?: PostUpdateType) {
+    super(
+      registry,
+      {
+        blog_id: 'Option<u64>',
+        ipfs_hash: 'Option<Text>'
+      },
+      value
+    );
+  }
 
-//   get ipfs_hash (): OptionIpfsHash {
-//     return this.get('ipfs_hash') as OptionIpfsHash;
-//   }
+  get ipfs_hash (): OptionIpfsHash {
+    return this.get('ipfs_hash') as OptionIpfsHash;
+  }
 
-//   set ipfs_hash (value: OptionIpfsHash) {
-//     this.set('ipfs_hash', value);
-//   }
+  set ipfs_hash (value: OptionIpfsHash) {
+    this.set('ipfs_hash', value);
+  }
 
-//   set slug (value: OptionText) {
-//     this.set('slug', value);
-//   }
-// }
+  set slug (value: OptionText) {
+    this.set('slug', value);
+  }
+}
 
 export type CommentContent = {
   body: string;
@@ -472,38 +481,38 @@ export type CommentContent = {
 //   }
 // }
 
-// export type CommentUpdateType = {
-//   ipfs_hash: IpfsHash;
-// };
+export type CommentUpdateType = {
+  ipfs_hash: IpfsHash;
+};
 
-// export class CommentUpdate extends Struct {
-//   constructor (registry: Registry, value?: CommentUpdateType) {
-//     super(
-//       registry,
-//       {
-//         ipfs_hash: IpfsHash
-//       },
-//       value
-//     );
-//   }
+export class CommentUpdate extends Struct {
+  constructor (value?: CommentUpdateType) {
+    super(
+      registry,
+      {
+        ipfs_hash: 'Text'
+      },
+      value
+    );
+  }
 
-//   get ipfs_hash (): IpfsHash {
-//     return this.get('ipfs_hash') as IpfsHash;
-//   }
-// }
+  get ipfs_hash (): IpfsHash {
+    return this.get('ipfs_hash') as IpfsHash;
+  }
+}
 
 // export class OptionComment extends Option.with(Comment) {}
 
-// export const ReactionKinds: { [key: string]: string } = {
-//   Upvote: 'Upvote',
-//   Downvote: 'Downvote'
-// };
+export const ReactionKinds: { [key: string]: string } = {
+  Upvote: 'Upvote',
+  Downvote: 'Downvote'
+};
 
-// export class ReactionKind extends Enum {
-//   constructor (registry: Registry, value?: any) {
-//     super(registry, [ 'Upvote', 'Downvote' ], value);
-//   }
-// }
+export class ReactionKind extends Enum {
+  constructor (value?: any) {
+    super(registry, [ 'Upvote', 'Downvote' ], value);
+  }
+}
 
 // export type ReactionType = {
 //   id: ReactionId;
@@ -647,39 +656,39 @@ export type ProfileContent = {
 
 // export class OptionProfile extends Option.with(Profile) {}
 
-// export type ProfileUpdateType = {
-//   username: OptionText;
-//   ipfs_hash: OptionIpfsHash;
-// };
+export type ProfileUpdateType = {
+  username: OptionText;
+  ipfs_hash: OptionIpfsHash;
+};
 
-// export class ProfileUpdate extends Struct {
-//   constructor (registry: Registry, value?: ProfileUpdateType) {
-//     super(
-//       registry,
-//       {
-//         username: OptionText,
-//         ipfs_hash: OptionIpfsHash
-//       },
-//       value
-//     );
-//   }
+export class ProfileUpdate extends Struct {
+  constructor (value?: ProfileUpdateType) {
+    super(
+      registry,
+      {
+        username: 'Option<Text>',
+        ipfs_hash: 'Option<Text>'
+      },
+      value
+    );
+  }
 
-//   get ipfs_hash (): OptionIpfsHash {
-//     return this.get('ipfs_hash') as OptionIpfsHash;
-//   }
+  get ipfs_hash (): OptionIpfsHash {
+    return this.get('ipfs_hash') as OptionIpfsHash;
+  }
 
-//   get username (): OptionIpfsHash {
-//     return this.get('username') as OptionIpfsHash;
-//   }
+  get username (): OptionIpfsHash {
+    return this.get('username') as OptionIpfsHash;
+  }
 
-//   set ipfs_hash (value: OptionIpfsHash) {
-//     this.set('ipfs_hash', value);
-//   }
+  set ipfs_hash (value: OptionIpfsHash) {
+    this.set('ipfs_hash', value);
+  }
 
-//   set username (value: OptionText) {
-//     this.set('username', value);
-//   }
-// }
+  set username (value: OptionText) {
+    this.set('username', value);
+  }
+}
 
 // export type BlogHistoryRecordType = {
 //   edited: ChangeType;

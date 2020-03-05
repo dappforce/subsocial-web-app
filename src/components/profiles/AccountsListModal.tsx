@@ -4,7 +4,7 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
-import { BUTTON_SIZE } from '../../config/Size.config';
+import { TxBUTTON_SIZE } from '../../config/Size.config';
 import dynamic from 'next/dynamic';
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 type Props = {
@@ -45,7 +45,7 @@ const InnerAccountsListModal = (props: Props) => {
         {renderAccounts()}
       </Modal.Content>
       <Modal.Actions>
-        <Button content='Close' size={BUTTON_SIZE} onClick={close} />
+        <Button content='Close' size={TxBUTTON_SIZE} onClick={close} />
       </Modal.Actions>
     </Modal>
   );

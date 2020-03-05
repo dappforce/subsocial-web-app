@@ -8,18 +8,20 @@ import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../utils/forms';
 import { createType } from '@polkadot/types';
-import { Option, Struct } from '@polkadot/types/codec';
+import { Option } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import { queryBlogsToProp } from '../utils/index';
-import { CommentContent } from '../types';
+import { CommentContent, CommentUpdate } from '../types';
 import BN from 'bn.js';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
 import { NoData } from '../utils/DataList';
-import { Comment } from '@subsocial/types/interfaces/runtime' 
+import { Comment } from '@subsocial/types/interfaces/runtime'
+import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxCallback } from '../utils/types';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
@@ -93,19 +95,14 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const onTxCancelled = () => {
-    removeFromIpfs(ipfsCid).catch(err => console.log(err));
-    setSubmitting(false);
-  };
-
-  const onTxFailed = (_txResult: SubmittableResult) => {
+  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
     removeFromIpfs(ipfsCid).catch(err => console.log(err));
     setSubmitting(false);
   };
 
   const isNewRoot = !hasParent && !struct;
 
-  const onTxSuccess = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
     setSubmitting(false);
 
     if (isNewRoot) {
@@ -123,13 +120,10 @@ const InnerForm = (props: FormProps) => {
       const parentCommentId = createType(registry, 'Option<u64>', parentId);// new Option(registry, CommentId, parentId);
       return [ postId, parentCommentId, ipfsCid ];
     } else if (dirty) {
-      const update = new Struct(registry, 
-      {
-        ipfs_hash: 'Text'
-      },
-      {
-        ipfs_hash: createType(registry, 'Text', ipfsCid)
-      });
+      const update = new CommentUpdate(
+        {
+          ipfs_hash: createType(registry, 'Text', ipfsCid)
+        });
       return [ struct.id, update ];
     } else {
       console.log('Nothing to update in a comment');
@@ -173,9 +167,8 @@ const InnerForm = (props: FormProps) => {
               : 'social.createComment'
             }
             onClick={onSubmit}
-            txCancelledCb={onTxCancelled}
-            txFailedCb={onTxFailed}
-            txSuccessCb={onTxSuccess}
+            onFailed={onTxFailed}
+            onSuccess={onTxSuccess}
           />
           {!isNewRoot && <Button
             type='button'

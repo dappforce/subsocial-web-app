@@ -40,7 +40,6 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
 
   return <TxButton
     type='submit'
-    compact
     isBasic={true}
     isPrimary={false}
     label={isFollow
@@ -50,7 +49,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
     tx={isFollow
       ? `social.unsharePost`
       : `social.sharePost`}
-    txSuccessCb={() => setTriggerReload(!triggerReload) }
+    onSuccess={() => setTriggerReload(!triggerReload) }
   />;
 }
 
@@ -81,7 +80,6 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
 
   return <TxButton
     type='submit'
-    compact
     size='tiny'
     isBasic={true}
     isPrimary={false}
@@ -92,6 +90,6 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
     tx={isFollow
       ? `social.unshareComment`
       : `social.shareComment`}
-    txSuccessCb={() => setTriggerReload(!triggerReload) }
+    onSuccess={() => setTriggerReload(!triggerReload) }
   />;
 }

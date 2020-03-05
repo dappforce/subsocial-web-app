@@ -9,9 +9,9 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
-import { Option, Enum, Struct } from '@polkadot/types/codec';
+import { Option, Enum } from '@polkadot/types/codec';
 import { Post } from '@subsocial/types/interfaces/runtime';
-import { PostContent } from '../types';
+import { PostContent, PostUpdate } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
@@ -20,6 +20,8 @@ import BN from 'bn.js';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxCallback } from '../utils/types';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const DefaultPostExt = new Enum(registry, { RegularPost: Null })
@@ -119,15 +121,12 @@ const InnerForm = (props: FormProps) => {
       }).catch(err => new Error(err));
     }
   };
-  const onTxCancelled = () => {
+
+  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
     setSubmitting(false);
   };
 
-  const onTxFailed = (_txResult: SubmittableResult) => {
-    setSubmitting(false);
-  };
-
-  const onTxSuccess = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
     setSubmitting(false);
 
     closeModal && closeModal();
@@ -142,11 +141,7 @@ const InnerForm = (props: FormProps) => {
         return [ blogId, ipfsHash, extention ];
       } else {
         // TODO update only dirty values.
-        const update = new Struct(registry,
-          {
-            blog_id: 'Option<u64>',
-            ipfs_hash: 'Option<Text>'
-          },
+        const update = new PostUpdate(
           {
           // TODO setting new blog_id will move the post to another blog.
             blog_id: new Option(registry, 'u64', null),
@@ -174,9 +169,8 @@ const InnerForm = (props: FormProps) => {
         : 'social.createPost'
       }
       onClick={onSubmit}
-      txCancelledCb={onTxCancelled}
-      txFailedCb={onTxFailed}
-      txSuccessCb={onTxSuccess}
+      onFailed={onTxFailed}
+      onSuccess={onTxSuccess}
     />
   );
 

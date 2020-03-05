@@ -50,7 +50,6 @@
     "@polkadot/typegen": "^1.4.0-beta.46",
     "@polkadot/types": "1.4.0-beta.46",
     "@polkadot/ui-assets": "^0.52.0-beta.3",
-    "@polkadot/ui-keyring": "0.52.0-beta.3",
     "@storybook/addon-knobs": "^5.2.5",
     "@storybook/addon-storysource": "^5.2.5",
     "@types/jest": "^24.0.16",

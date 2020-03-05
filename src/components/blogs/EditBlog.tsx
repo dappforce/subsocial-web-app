@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { Option, createType } from '@polkadot/types';
+import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -12,7 +12,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
-import { Blog  } from '@subsocial/types/interfaces/runtime';
+import { Blog } from '@subsocial/types/interfaces/runtime';
 import { BlogContent } from '../types';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
@@ -20,6 +20,9 @@ import BN from 'bn.js';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxCallback } from '../utils/types';
+import { BlogUpdate } from '../types/index';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
@@ -120,20 +123,16 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const onTxCancelled = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onTxFailed: TxFailedCallback = (txResult: SubmittableResult | null) => {
     removeFromIpfs(ipfsCid).catch(err => new Error(err));
     setSubmitting(false);
   };
 
-  const onTxFailed = (_txResult: SubmittableResult) => {
-    removeFromIpfs(ipfsCid).catch(err => new Error(err));
-    setSubmitting(false);
-  };
-
-  const onTxSuccess = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (txResult: SubmittableResult) => {
     setSubmitting(false);
 
-    const _id = id || getNewIdFromEvent(_txResult);
+    const _id = id || getNewIdFromEvent(txResult);
     _id && goToView(_id);
   };
 
@@ -143,12 +142,12 @@ const InnerForm = (props: FormProps) => {
       return [ slug, ipfsCid ];
     } else {
       // TODO update only dirty values.
-      const update = {
+      const update = new BlogUpdate({
         // TODO get updated writers from the form
-        writers: createType(registry, 'Vec<AccountId>', (struct.writers)),
-        slug: createType(registry, 'Text', slug),
-        ipfs_hash: createType(registry, 'Text', ipfsCid)
-      }
+        writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
+        slug: new Option(registry, 'Text', slug),
+        ipfs_hash: new Option(registry, 'Text', ipfsCid)
+      });
       return [ struct.id, update ];
     }
   };
@@ -187,9 +186,8 @@ const InnerForm = (props: FormProps) => {
               : 'social.createBlog'
             }
             onClick={onSubmit}
-            txCancelledCb={onTxCancelled}
-            txFailedCb={onTxFailed}
-            txSuccessCb={onTxSuccess}
+            onFailed={onTxFailed}
+            onSuccess={onTxSuccess}
           />
           <Button
             type='button'

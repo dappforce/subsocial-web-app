@@ -249,7 +249,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const RenderBlogCreator = () => (
     <MutedDiv className='DfCreator'>
-      <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time.toNumber())}</div>
+      <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time)}</div>
       <div className='DfCreator-owner'>
         <Icon type='user' />
         {'Owned by '}

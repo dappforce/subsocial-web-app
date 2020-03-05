@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
-import { Option, GenericAccountId, Enum } from '@polkadot/types';
+import { Option, GenericAccountId } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, Comment, ReactionId } from '@subsocial/types/interfaces/runtime';
-import { Icon } from 'antd';
 import BN from 'bn.js';
 import { getApi } from '../utils/SubstrateApi';
 import { registry } from '@polkadot/react-api';
+import { ReactionKind } from '../types';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const ZERO = new BN(0);
@@ -74,9 +74,9 @@ export const Voter = (props: VoterProps) => {
 
   const buildTxParams = (param: 'Downvote' | 'Upvote') => {
     if (reactionState === undefined) {
-      return [ id, new Enum(registry, { kind: 'Text' } ,param) ];
+      return [ id, new ReactionKind(param) ];
     } else if (reactionKind !== param) {
-      return [ id, reactionState.id, new Enum(registry, { kind: 'Text' } ,param) ];
+      return [ id, reactionState.id, new ReactionKind(param) ];
     } else {
       return [ id, reactionState.id ];
     }
@@ -87,10 +87,12 @@ export const Voter = (props: VoterProps) => {
 
     const calcVotingPercentage = () => {
       const { downvotes_count, upvotes_count } = state;
-      const totalCount = new BN(upvotes_count).add(downvotes_count);
+      const upvotesCount = new BN(upvotes_count);
+      const downvotesCount = new BN(downvotes_count);
+      const totalCount = upvotesCount.add(downvotesCount);
       if (totalCount.eq(ZERO)) return 0;
 
-      const per = upvotes_count.toNumber() / totalCount.toNumber() * 100;
+      const per = upvotesCount.toNumber() / totalCount.toNumber() * 100;
       const ceilPer = Math.ceil(per);
 
       if (per >= 50) {
@@ -109,22 +111,20 @@ export const Voter = (props: VoterProps) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
-      const icon = isUpvote ? '' : 'dis';
+      const icon = `thumbs ${isUpvote ? 'up' : 'down'} outline`;
 
       return (<TxButton
         type='submit'
-        compact
+        icon={icon}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
-        txSuccessCb={() => setUpdateTrigger(!updateTrigger)}
+        onSuccess={() => setUpdateTrigger(!updateTrigger)}
         tx={!reactionState
           ? `social.create${type}Reaction`
           : (reactionKind !== `${reactionName}`)
             ? `social.update${type}Reaction`
             : `social.delete${type}Reaction`}
-      >
-        <Icon type={`${icon}like`}/>
-      </TxButton>);
+      />);
     };
 
     const count = calcVotingPercentage();

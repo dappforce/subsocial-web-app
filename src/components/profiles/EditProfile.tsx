@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { Option, Text, GenericAccountId as AccountId, Struct } from '@polkadot/types';
+import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -12,7 +12,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { addJsonToIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Profile, SocialAccount } from '@subsocial/types/interfaces/runtime';
-import { ProfileContent } from '../types';
+import { ProfileContent, ProfileUpdate } from '../types';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { queryBlogsToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
@@ -20,6 +20,8 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxCallback } from '../utils/types';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
@@ -143,17 +145,12 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const onTxCancelled = () => {
+  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
     removeFromIpfs(ipfsCid).catch(err => new Error(err));
     setSubmitting(false);
   };
 
-  const onTxFailed = (_txResult: SubmittableResult) => {
-    removeFromIpfs(ipfsCid).catch(err => new Error(err));
-    setSubmitting(false);
-  };
-
-  const onTxSuccess = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
     setSubmitting(false);
     goToView();
   };
@@ -165,15 +162,11 @@ const InnerForm = (props: FormProps) => {
       return [ username, ipfsCid ];
     } else {
       // TODO update only dirty values.
-      const update = new Struct(registry,
-      {
-        username: 'Text',
-        ipfs_hash: 'Text'
-      },
-      {
-        username: new Option(registry, Text, username),
-        ipfs_hash: new Option(registry, Text, ipfsCid)
-      });
+      const update = new ProfileUpdate(
+        {
+          username: new Option(registry, 'Text', username),
+          ipfs_hash: new Option(registry, 'Text', ipfsCid)
+        });
       return [ update ];
     }
   };
@@ -265,6 +258,7 @@ const InnerForm = (props: FormProps) => {
           <TxButton
             type='submit'
             size='medium'
+            icon='send'
             label={profile
               ? 'Update my profile'
               : 'Create my profile'
@@ -276,9 +270,8 @@ const InnerForm = (props: FormProps) => {
               : 'social.createProfile'
             }
             onClick={onSubmit}
-            txCancelledCb={onTxCancelled}
-            txFailedCb={onTxFailed}
-            txSuccessCb={onTxSuccess}
+            onFailed={onTxFailed}
+            onSuccess={onTxSuccess}
           />
           <Button
             type='button'

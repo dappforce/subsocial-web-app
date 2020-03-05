@@ -10,10 +10,11 @@ import { getApi } from './SubstrateApi';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
+import { Button$Sizes } from '@polkadot/react-components/Button/types';
 
 type FollowBlogButtonProps = {
   blogId: BN,
-  size?: string
+  size?: Button$Sizes
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
@@ -47,8 +48,6 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   };
 
   return <TxButton
-    type='submit'
-    compact
     size = {size}
     isBasic={isFollow}
     label={isFollow
@@ -58,7 +57,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     tx={isFollow
       ? `social.unfollowBlog`
       : `social.followBlog`}
-    txSuccessCb={TxSuccess}
+    onSuccess={TxSuccess}
   />;
 }
 

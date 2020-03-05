@@ -2975,21 +2975,6 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@polkadot/ui-keyring@0.52.0-beta.3":
-  version "0.52.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@polkadot/ui-keyring/-/ui-keyring-0.52.0-beta.3.tgz#355eef39a0eca0e8c3009c8983708f9f5e8df0a2"
-  integrity sha512-LslJjAH66VQXRMZrpE6U/0arAWtkVm68fboHd9FQMxRaw5sxAqQ37YjGF2G+2hKqBsAjcSPBv3/U9tl2orN8Vw==
-  dependencies:
-    "@babel/runtime" "^7.8.4"
-    "@ledgerhq/hw-transport-u2f" "^5.7.0"
-    "@ledgerhq/hw-transport-webusb" "^5.7.0"
-    extensionizer "^1.0.1"
-    ledger-polkadot "^0.7.0"
-    mkdirp "^1.0.3"
-    store "^2.0.12"
-  optionalDependencies:
-    "@ledgerhq/hw-transport-node-hid" "^5.7.0"
-
 "@polkadot/ui-keyring@^0.52.0-beta.3":
   version "0.52.0-beta.5"
   resolved "https://registry.yarnpkg.com/@polkadot/ui-keyring/-/ui-keyring-0.52.0-beta.5.tgz#2b82df0acb30b56c9b73d98da5a279e2781cfd8e"

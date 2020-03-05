@@ -177,7 +177,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
           <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
             <a className='DfGreyLink'>
-              {formatUnixDate(time.toNumber())}
+              {formatUnixDate(time)}
             </a>
           </Link>
         </div>}
