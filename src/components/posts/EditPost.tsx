@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, Dropdown } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { getApi } from '../utils/SubstrateApi';
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text, U32 } from '@polkadot/types';
@@ -15,12 +14,11 @@ import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
-
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { ViewBlog, BlogData, loadBlogData } from '../blogs/ViewBlog';
-import Link from 'next/link';
+import { ViewBlog } from '../blogs/ViewBlog';
+import { withMyAccount } from '../utils/MyAccount';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const { Panel } = Collapse;
@@ -82,12 +80,8 @@ const InnerForm = (props: FormProps) => {
     onlyTxButton = false,
     withButtons = true,
     closeModal,
-    myBlogsData,
-    temp
+    blogIds
   } = props;
-
-  console.log('myBlogsData', myBlogsData)
-  console.log('temp', temp)
 
   const isRegularPost = extention.value instanceof RegularPost;
 
@@ -183,12 +177,28 @@ const InnerForm = (props: FormProps) => {
   );
 
   const renderBlogsPreviewDropdown = () => {
-    return <div className={'blogMiniPreview'}>
-      <Link href='/blogs/[blogId]/' as={`/blogs/${preparedBlogId}`} >
-        <a className='DfPostTitle--preview'>
-          <ViewBlog miniPreview={true} id={struct?.blog_id || blogId} />
-        </a>
-      </Link>
+    if (!blogIds) return undefined
+    const blogs = blogIds.map(id => ({
+      key: id.toNumber(),
+      text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
+      value: id.toNumber()
+    }));
+
+    return <div>
+      <Dropdown
+        placeholder='Select blog...'
+        selection
+        search
+        size='tiny'
+        options={blogs}
+        // onChange={saveBlog}
+        defaultValue={blogs[0].value}
+      />
+      <NewSharePost
+        blogId={blogId}
+        extention={extention}
+        withButtons={false}
+      />
     </div>
   }
 
@@ -379,19 +389,9 @@ export const NewSharePost = InnerFormWithValidation;
 export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
   withIdFromUrl,
+  withMyAccount,
   withCalls<OuterProps>(
     queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
   LoadStruct
 );
-
-InnerForm.getInitialProps = async (): Promise<any> => {
-  const { state: { address: myAddress } } = useMyAccount();
-  const api = await getApi();
-  const BlogsData = await api.query.blogs.blogIdsByOwner(new AccountId(myAddress as string)) as unknown as BlogId[];
-  const loadBlogs = BlogsData.map(id => loadBlogData(api, id));
-  const myBlogsData = await Promise.all<BlogData>(loadBlogs);
-  return {
-    myBlogsData
-  };
-};
