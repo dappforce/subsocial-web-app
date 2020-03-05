@@ -78,7 +78,6 @@ type ViewPostPageProps = {
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
-  
   const { post, initialContent = {} as PostExtContent } = props.postData;
 
   if (!post) return <NoData description={<span>Post not found</span>} />;
@@ -164,6 +163,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       </Link>
       : <div className='header DfPostTitle--preview'>{title}</div>;
   };
+
+  const renderBlogMiniPreview = (post: Post) => {
+    return <div className={'blogMiniPreview'}>
+      <ViewBlog miniPreview={true} id={post.blog_id} />
+    </div>
+  }
 
   const renderPostCreator = (post: Post, size?: number) => {
     if (isEmpty(post)) return null;
@@ -281,6 +286,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <RenderDropDownMenu account={created.account}/>
       </div>
       {<StatsPanel id={post.id}/>}
+      {renderBlogMiniPreview(post)}
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
