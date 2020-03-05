@@ -166,7 +166,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderBlogMiniPreview = (post: Post) => {
     return <div className={'blogMiniPreview'}>
-      <ViewBlog miniPreview={true} id={post.blog_id} />
+      <Link href='/blogs/[blogId]/' as={`/blogs/${post.blog_id}`} >
+        <a className='DfPostTitle--preview'>
+          <ViewBlog miniPreview={true} id={post.blog_id} />
+        </a>
+      </Link>
     </div>
   }
 
