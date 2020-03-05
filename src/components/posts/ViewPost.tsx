@@ -205,7 +205,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderTags = (content: PostExtContent) => {
     if (!content) return null;
     const { tags } = content;
-    console.log('tags', tags)
+
     return <div className='DfTags'>
       { tags.map((x) => (<Tag key={x}>{x}</Tag>)) }
     </div>
@@ -283,9 +283,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderDetails = (content: PostExtContent) => {
-    const { title, body, image } = content;
+    const { title, body, image, canonical } = content;
     return <Section className='DfContentPage'>
-      <HeadMeta title={title} desc={body} image={image} />
+      <HeadMeta title={title} desc={body} image={image} canonical={`/blogs/${post.blog_id}/posts/${canonical}`} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>

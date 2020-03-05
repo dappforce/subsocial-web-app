@@ -106,7 +106,8 @@ const InnerForm = (props: FormProps) => {
     title,
     body,
     image,
-    tags
+    tags,
+    canonical
   } = values;
 
   const goToView = (id: PostId) => {
@@ -118,7 +119,7 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
-      const json = { title, body, image, tags };
+      const json = { title, body, image, tags, canonical };
       addJsonToIpfs(json).then(hash => {
         setIpfsCid(hash);
         sendTx();
