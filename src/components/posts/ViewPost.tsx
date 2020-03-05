@@ -165,6 +165,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       : <div className='header DfPostTitle--preview'>{title}</div>;
   };
 
+  const renderBlogMiniPreview = (post: Post) => {
+    return <div className={'blogMiniPreview'}>
+      <ViewBlog miniPreview={true} id={post.blog_id} />
+    </div>
+  }
+
   const renderPostCreator = (post: Post, size?: number) => {
     if (isEmpty(post)) return null;
     const { blog_id, created: { account, time } } = post;
@@ -281,6 +287,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <RenderDropDownMenu account={created.account}/>
       </div>
       {<StatsPanel id={post.id}/>}
+      {renderBlogMiniPreview(post)}
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
