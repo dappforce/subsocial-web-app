@@ -100,8 +100,10 @@ const InnerForm = (props: FormProps) => {
     tags
   } = values;
 
+  const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
+
   const goToView = (id: PostId) => {
-    Router.push(`/blogs/${blogId?.toString()}/posts/${id}`).catch(console.log);
+    Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
@@ -202,15 +204,8 @@ const InnerForm = (props: FormProps) => {
     ? renderTxButton()
     : <>
       <Breadcrumb>
-        <Breadcrumb.Item>
-          <a href="/">Home</a>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <a href={`/blogs/${blogId?.toString()}`}>My Blog</a>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          Edit Post
-        </Breadcrumb.Item>
+        <Breadcrumb.Item><a href={`/blogs/${preparedBlogId}`}>My Blog</a></Breadcrumb.Item>
+        <Breadcrumb.Item>Edit Post</Breadcrumb.Item>
       </Breadcrumb>
       <HeadMeta title={sectionTitle}/>
       <Section className='EditEntityBox' title={sectionTitle}>
