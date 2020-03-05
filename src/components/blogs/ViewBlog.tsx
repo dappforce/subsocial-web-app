@@ -59,7 +59,6 @@ type Props = {
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
-  
   const { blog } = props.blogData;
 
   if (!blog) return <NoData description={<span>Blog not found</span>} />;

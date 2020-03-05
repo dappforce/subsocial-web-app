@@ -19,8 +19,8 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Breadcrumb } from 'antd';
 import { ViewBlog } from '../blogs/ViewBlog';
+import Link from 'next/link';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
@@ -174,6 +174,16 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
+  const renderBlogsPreviewDropdown = () => {
+    return <div className={'blogMiniPreview'}>
+      <Link href='/blogs/[blogId]/' as={`/blogs/${preparedBlogId}`} >
+        <a className='DfPostTitle--preview'>
+          <ViewBlog miniPreview={true} id={struct?.blog_id || blogId} />
+        </a>
+      </Link>
+    </div>
+  }
+
   const form =
     <Form className='ui form DfForm EditEntityForm'>
 
@@ -204,14 +214,7 @@ const InnerForm = (props: FormProps) => {
   return onlyTxButton
     ? renderTxButton()
     : <>
-      <Breadcrumb>
-        <Breadcrumb.Item>
-          <a href={`/blogs/${preparedBlogId}`}>
-            <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
-          </a>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Edit Post</Breadcrumb.Item>
-      </Breadcrumb>
+      {renderBlogsPreviewDropdown()}
       <HeadMeta title={sectionTitle}/>
       <Section className='EditEntityBox' title={sectionTitle}>
         {form}
