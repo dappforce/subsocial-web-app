@@ -40,7 +40,10 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
     .url('Image must be a valid URL.'),
 
   tags: Yup.array()
-    .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`)
+    .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`),
+
+  canonical: Yup.string()
+    .url('Canonical must be a valid URL.')
 });
 
 type ValidationProps = {
