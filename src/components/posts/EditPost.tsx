@@ -19,9 +19,8 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Collapse } from 'antd';
 import { ViewBlog } from '../blogs/ViewBlog';
-
+import Link from 'next/link';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const { Panel } = Collapse;
@@ -178,6 +177,16 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
+  const renderBlogsPreviewDropdown = () => {
+    return <div className={'blogMiniPreview'}>
+      <Link href='/blogs/[blogId]/' as={`/blogs/${preparedBlogId}`} >
+        <a className='DfPostTitle--preview'>
+          <ViewBlog miniPreview={true} id={struct?.blog_id || blogId} />
+        </a>
+      </Link>
+    </div>
+  }
+
   const form =
     <Form className='ui form DfForm EditEntityForm'>
 
@@ -231,6 +240,7 @@ const InnerForm = (props: FormProps) => {
   return onlyTxButton
     ? renderTxButton()
     : <>
+      {renderBlogsPreviewDropdown()}
       <HeadMeta title={sectionTitle}/>
       {isRegularPost
         ? editRegularPost()
