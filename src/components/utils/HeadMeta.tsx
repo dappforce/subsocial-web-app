@@ -36,7 +36,7 @@ export function HeadMeta (props: HeadMetaProps) {
   return <div>
     <Head>
       <title>{createTitle(title)}</title>
-      {canonical && <link rel="canonical" href={canonical} />}
+      {nonEmptyStr(canonical) && <link rel="canonical" href={canonical} />}
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={image} />
       <meta property='og:title' content={title} />
