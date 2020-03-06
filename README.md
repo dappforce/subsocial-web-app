@@ -27,4 +27,9 @@ If you want to build docker image from your local repository (it takes a while..
 docker build -f docker/Dockerfile -t [your_nickname]/subsocial-ui .
 ```
 
-### Start all parts of Subsocial at once with [Subsocial-Starter](https://github.com/dappforce/dappforce-subsocial-starter)
+### Start all parts of Subsocial at once with [Subsocial Starter](https://github.com/dappforce/dappforce-subsocial-starter).
+
+## License
+
+Subsocial is [GPL 3.0](./LICENSE) licensed.
+
