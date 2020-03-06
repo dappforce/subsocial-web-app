@@ -18,8 +18,9 @@ import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { ViewBlog } from '../blogs/ViewBlog';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { Select } from 'antd';
+import { LabeledValue } from 'antd/lib/select';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -175,11 +176,11 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
-  const handleBlogSelect = (value: string) => {
+  const handleBlogSelect = (value: string|number|LabeledValue) => {
     console.log('value', value)
     if (!value) return;
 
-    setCurrentBlogId(new BlogId(value))
+    setCurrentBlogId(new BlogId(value as string))
   };
 
   const renderBlogsPreviewDropdown = () => {
@@ -187,7 +188,7 @@ const InnerForm = (props: FormProps) => {
 
     const blogs = blogIds.map(id => ({
       key: id.toNumber(),
-      text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
+      // text: <ViewBlog id={id} nameOnly imageSize={26}/>,
       value: id.toNumber()
     }));
 
@@ -195,16 +196,10 @@ const InnerForm = (props: FormProps) => {
     // const currentText = blogs.find((x) => (x.value === currentBlogId.toNumber()))?.text
 
     return <Select
-      showSearch
       style={{ width: 200 }}
-      defaultValue={initialBlogId.toNumber()}
-      // optionFilterProp="children"
-      // onChange={onChange}
-      // onFocus={onFocus}
-      // onBlur={onBlur}
-      onSearch={handleBlogSelect}
+      onSelect={handleBlogSelect}
     >
-      { blogs.map((x) => <Select.Option value={x.value} key={x.value}>{x.text}</Select.Option>) }
+      { blogs.map((x) => <Select.Option value={x.value} key={x.value}><ViewBlog id={new BlogId(x.value)} dropdownPreview imageSize={26}/></Select.Option>) }
     </Select>
   }
 
