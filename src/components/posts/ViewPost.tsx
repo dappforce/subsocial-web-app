@@ -217,7 +217,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { tags } = content;
 
     return <div className='DfTags'>
-      { tags.map((x) => (<Tag key={x}>{x}</Tag>)) }
+      { tags.map((x) => <Tag key={x}>{x}</Tag>) }
     </div>
   }
 
