@@ -16,6 +16,22 @@ body,
   min-width: 428px;
   max-width: 728px;
   color: #111;
+
+  .blogMiniPreview {
+    margin: $space_normal 0;
+  }
+
+  .EPdropdown {
+    /* margin */
+    input {
+      cursor: pointer !important;
+    }
+
+    .DfPreview {
+      line-height: 1.5;
+      margin-top: -$space_tiny;
+    }
+  }
 }
 
 @media (min-width: 1200px) {

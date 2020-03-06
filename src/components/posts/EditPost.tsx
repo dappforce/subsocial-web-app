@@ -193,6 +193,7 @@ const InnerForm = (props: FormProps) => {
         options={blogs}
         // onChange={saveBlog}
         defaultValue={blogs[0].value}
+        className={'EPdropdown'}
       />
       <NewSharePost
         blogId={blogId}
