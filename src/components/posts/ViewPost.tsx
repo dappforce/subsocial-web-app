@@ -204,6 +204,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderTags = (content: PostExtContent) => {
     if (!content) return null;
+
     const { tags } = content;
 
     return <div className='DfTags'>
