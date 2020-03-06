@@ -26,8 +26,7 @@ import { NextPage } from 'next';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
-import BalanceDisplay from '@polkadot/react-components/Balance';
-
+const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = {

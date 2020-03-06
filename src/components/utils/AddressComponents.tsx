@@ -5,7 +5,7 @@ import BN from 'bn.js';
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import { GenericAccountId as AccountId, Option } from '@polkadot/types';
 import { withMulti } from '@polkadot/react-api';
-import InputAddress from '@polkadot/react-components/InputAddress';
+import InputAddress from './InputAddress';
 import classes from '@polkadot/react-components/util/classes';
 import toShortAddress from '@polkadot/react-components/util/toShortAddress';
 // import BalanceDisplay from '@polkadot/react-components/Balance';

@@ -1,21 +1,18 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import settings from '../components/settings';
 import '../components/utils/styles';
 
 import { Api } from '@polkadot/react-api';
 
-import StatusContext from '@polkadot/react-components/Status/Context';
 import Queue from '@polkadot/react-components/Status/Queue';
 import Signer from '@polkadot/react-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
-import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
 import Connecting from '../components/main/Connecting';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
-  const { queueAction, stqueue, txqueue } = useContext(StatusContext);
   console.log(url);
 
   return <Queue>
@@ -24,15 +21,10 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
     >
       <MyAccountProvider>
         <Signer>
-          <Status
-            queueAction={queueAction}
-            stqueue={stqueue}
-            txqueue={txqueue}
-          />
+          <Navigation>
+            {children}
+          </Navigation>
         </Signer>
-        <Navigation>
-          {children}
-        </Navigation>
       </MyAccountProvider>
       <Connecting/>
     </Api>

@@ -149,7 +149,7 @@ export const Loading = () => <Icon type='loading' />;
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber();
-  return moment(new Date(seconds * 1000)).format(format);
+  return moment(new Date(seconds)).format(format);
 };
 
 const DEFAULT_SUMMARY_LENGTH = 300;

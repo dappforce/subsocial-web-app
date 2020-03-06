@@ -24,14 +24,15 @@ export class SubstrateApi {
   }
 
   public disconnect = () => {
-    const { api, connected } = this;
-    if (api && api.isReady && connected) {
+    const { api: localApi, connected } = this;
+    if (localApi && localApi.isReady && connected) {
       try {
-        api.disconnect();
+        localApi.disconnect();
         console.log(`Disconnected from Substrate API.`);
       } catch (err) {
         console.log('Failed to disconnect from Substrate. Error:', err)
       } finally {
+        api = undefined;
         this.connected = false
       }
     }
