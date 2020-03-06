@@ -20,18 +20,6 @@ body,
   .blogMiniPreview {
     margin: $space_normal 0;
   }
-
-  .EPdropdown {
-    /* margin */
-    input {
-      cursor: pointer !important;
-    }
-
-    .DfPreview {
-      line-height: 1.5;
-      margin-top: -$space_tiny;
-    }
-  }
 }
 
 

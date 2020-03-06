@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dropdown } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
@@ -18,8 +18,8 @@ import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { ViewBlog } from '../blogs/ViewBlog';
-import { withMyAccount } from '../utils/MyAccount';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+import { Select } from 'antd';
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -100,13 +100,15 @@ const InnerForm = (props: FormProps) => {
     tags
   } = values;
 
-  const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
-
+  const initialBlogId: BlogId = struct?.blog_id || blogId as BlogId
   const goToView = (id: PostId) => {
     Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
+  const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
+
+  const preparedBlogId = currentBlogId?.toString()
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
@@ -142,7 +144,7 @@ const InnerForm = (props: FormProps) => {
         // TODO update only dirty values.
         const update = new PostUpdate({
           // TODO setting new blog_id will move the post to another blog.
-          blog_id: new Option(BlogId, null),
+          blog_id: new Option(BlogId, currentBlogId),
           ipfs_hash: new Option(Text, ipfsHash)
         });
         return [ struct.id, update ];
@@ -173,31 +175,37 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
+  const handleBlogSelect = (value: string) => {
+    console.log('value', value)
+    if (!value) return;
+
+    setCurrentBlogId(new BlogId(value))
+  };
+
   const renderBlogsPreviewDropdown = () => {
-    if (!blogIds) return undefined
+    if (!blogIds) return;
+
     const blogs = blogIds.map(id => ({
       key: id.toNumber(),
       text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
       value: id.toNumber()
     }));
 
-    return <div>
-      <Dropdown
-        placeholder='Select blog...'
-        selection
-        search
-        size='tiny'
-        options={blogs}
-        // onChange={saveBlog}
-        defaultValue={blogs[0].value}
-        className={'EPdropdown'}
-      />
-      <NewSharePost
-        blogId={blogId}
-        extention={extention}
-        withButtons={false}
-      />
-    </div>
+    // const defaultValue = blogs.find((x) => (x.value === initialBlogId.toNumber()))?.value
+    // const currentText = blogs.find((x) => (x.value === currentBlogId.toNumber()))?.text
+
+    return <Select
+      showSearch
+      style={{ width: 200 }}
+      defaultValue={initialBlogId.toNumber()}
+      // optionFilterProp="children"
+      // onChange={onChange}
+      // onFocus={onFocus}
+      // onBlur={onBlur}
+      onSearch={handleBlogSelect}
+    >
+      { blogs.map((x) => <Select.Option value={x.value} key={x.value}>{x.text}</Select.Option>) }
+    </Select>
   }
 
   const form =
@@ -205,6 +213,7 @@ const InnerForm = (props: FormProps) => {
 
       {isRegularPost
         ? <>
+          {renderBlogsPreviewDropdown()}
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
@@ -230,7 +239,6 @@ const InnerForm = (props: FormProps) => {
   return onlyTxButton
     ? renderTxButton()
     : <>
-      {renderBlogsPreviewDropdown()}
       <HeadMeta title={sectionTitle}/>
       <Section className='EditEntityBox' title={sectionTitle}>
         {form}
@@ -362,9 +370,11 @@ export const NewSharePost = InnerFormWithValidation;
 export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
   withIdFromUrl,
-  withMyAccount,
   withCalls<OuterProps>(
     queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
-  LoadStruct
+  LoadStruct,
+  withCalls<OuterProps>(
+    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+  )
 );
