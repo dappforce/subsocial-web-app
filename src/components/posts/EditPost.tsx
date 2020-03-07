@@ -11,7 +11,7 @@ import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option, Enum } from '@polkadot/types/codec';
 import { Post } from '@subsocial/types/interfaces/runtime';
-import { PostContent, PostUpdate } from '../types';
+import { PostContent, PostUpdate, PostExtension, RegularPost } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
@@ -24,7 +24,7 @@ import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const DefaultPostExt = new Enum(registry, { RegularPost: Null })
+const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -87,6 +87,7 @@ const InnerForm = (props: FormProps) => {
     closeModal
   } = props;
 
+  console.log(extention.value);
   const isRegularPost = extention.value.isEmpty; // TODO maybe fix after run UI
 
   const renderResetButton = () => (

@@ -2,7 +2,6 @@
 import { u64, Null, Enum, Option, Struct, Text } from '@polkadot/types';
 import Date from '@polkadot/types/codec/Date';
 import { registry } from '@polkadot/react-api';
-import { Registry } from '@polkadot/types/types';
 import { IpfsHash, BlogId, OptionVecAccountId } from '@subsocial/types/interfaces/runtime';
 export { registerSubsocialTypes } from './DfRegister';
 // import { isServerSide } from '../utils';``
@@ -63,7 +62,7 @@ type PostExtensionEnumValue =
   { SharedComment: SharedComment };
 
 export class PostExtension extends Enum {
-  constructor (registry: Registry, value?: PostExtensionEnumValue, index?: number) {
+  constructor (value?: PostExtensionEnumValue, index?: number) {
     super(
       registry,
       {

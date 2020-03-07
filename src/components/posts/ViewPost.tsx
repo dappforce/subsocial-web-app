@@ -103,6 +103,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   } = post;
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
+  console.log('TYPE POST', id, type);
   const isRegularPost = type === 'regular';
   const [ content, setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
@@ -403,8 +404,7 @@ export const loadPostData = async (api: ApiPromise, postId: BN | string) => {
 export const loadExtPost = async (api: ApiPromise, post: Post) => {
   const { extension } = post;
   const postData: PostData = {};
-
-  if (typeof extension.value !== 'object') {
+  if (nonEmptyStr(extension.value.toString())) {
     const postId = extension.value as PostId;
     const postData = await loadPostData(api, postId);
     return postData;

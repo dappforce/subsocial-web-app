@@ -26,7 +26,7 @@ import { NextPage } from 'next';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
-const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
+// const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = {
@@ -163,11 +163,12 @@ const Component: NextPage<Props> = (props: Props) => {
             {renderDropDownMenu()}
           </div>
           {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
-          <BalanceDisplay
+          {/* <BalanceDisplay
+
             label='Balance: '
             className='Df--profile-balance'
             params={address}
-          />
+          /> */}
           <div className='about'>
             <div>
               <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>

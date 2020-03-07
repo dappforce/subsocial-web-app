@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Dropdown, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { BlogId } from '@subsocial/types/interfaces/runtime';
-import { Enum } from '@polkadot/types/codec';
 import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
 import { ViewBlog } from '../blogs/ViewBlog';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
 import BN from 'bn.js';
+import { PostExtension, SharedPost } from '../types';
 
 type Props = MyAccountProps & {
   postId: BN,
@@ -26,7 +26,7 @@ const InnerShareModal = (props: Props) => {
   if (!blogIds) return <Loading />;
 
   const [ blogId, setBlogId ] = useState(blogIds[0]);
-  const extension = new Enum(registry, { SharedPost: 'u64' }, { SharedPost: postId });
+  const extension = new PostExtension({ SharedPost: postId as SharedPost });
 
   const renderShareView = () => {
     if (blogIds.length === 0) {
