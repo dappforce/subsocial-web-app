@@ -287,12 +287,16 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json} />;
 }
 
+const commonQueries = [
+  queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
+  queryBlogsToProp('slugMinLen', { propName: 'slugMinLen' }),
+  queryBlogsToProp('slugMaxLen', { propName: 'slugMaxLen' })
+]
+
 export const NewBlog = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
-    queryBlogsToProp('slugMinLen', { propName: 'slugMinLen' }),
-    queryBlogsToProp('slugMaxLen', { propName: 'slugMaxLen' })
+    ...commonQueries
   )
   // , withOnlyMembers
 );
@@ -302,9 +306,7 @@ export const EditBlog = withMulti(
   withIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
-    queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
-    queryBlogsToProp('slugMinLen', { propName: 'slugMinLen' }),
-    queryBlogsToProp('slugMaxLen', { propName: 'slugMaxLen' })
+    ...commonQueries
   )
 );
 
