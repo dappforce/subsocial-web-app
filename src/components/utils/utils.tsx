@@ -48,8 +48,8 @@ export function getNewIdFromEvent (
       event: { data, method }
     } = event;
     if (method.indexOf(`Created`) >= 0) {
-      const [ , /* owner */ newId ] = data.toArray();
-      id = new BN(newId.toString());
+      const [ /* owner */, newId ] = data.toArray();
+      id = newId as unknown as BN;
       return true;
     }
     return false;
