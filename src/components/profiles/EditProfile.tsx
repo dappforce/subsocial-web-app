@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { Option, Text, AccountId } from '@polkadot/types';
+import { Option, Text, AccountId, U32 } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -22,12 +22,9 @@ import HeadMeta from '../utils/HeadMeta';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
-const USERNAME_REGEX = /^[A-Za-z0-9_-]+$/;
+const USERNAME_REGEX = /^[A-Za-z0-9-]+$/;
 
 const URL_MAX_LEN = 2000;
-
-const USERNAME_MIN_LEN = 5;
-const USERNAME_MAX_LEN = 50;
 
 const FULLNAME_MIN_LEN = 2;
 const FULLNAME_MAX_LEN = 100;
@@ -44,8 +41,8 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
   username: Yup.string()
     .required('Username is required')
     .matches(USERNAME_REGEX, 'Username can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(USERNAME_MIN_LEN, `Username is too short. Minimum length is ${USERNAME_MIN_LEN} chars.`)
-    .max(USERNAME_MAX_LEN, `Username is too long. Maximum length is ${USERNAME_MAX_LEN} chars.`),
+    .min(p.usernameMinLen, `Username is too short. Minimum length is ${p.usernameMinLen} chars.`)
+    .max(p.usernameMaxLen, `Username is too long. Maximum length is ${p.usernameMaxLen} chars.`),
 
   fullname: Yup.string()
     .min(FULLNAME_MIN_LEN, `Full name is too short. Minimum length is ${FULLNAME_MIN_LEN} chars.`)
@@ -75,7 +72,8 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 });
 
 type ValidationProps = {
-  // TODO get username validation params
+  usernameMinLen: number,
+  usernameMaxLen: number
 };
 
 export type OuterProps = MyAccountProps & ValidationProps & {
@@ -83,7 +81,9 @@ export type OuterProps = MyAccountProps & ValidationProps & {
   profile?: Profile,
   ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
-  requireProfile?: boolean
+  requireProfile?: boolean,
+  usernameMinLen?: U32,
+  usernameMaxLen?: U32
 };
 
 type FormValues = ProfileContent & {
@@ -316,7 +316,10 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: buildSchema,
+  validationSchema: (props: OuterProps) => buildSchema({
+    usernameMinLen: props.usernameMinLen.toNumber(),
+    usernameMaxLen: props.usernameMaxLen.toNumber()
+  }),
 
   handleSubmit: values => {
     // do submitting things
@@ -330,10 +333,13 @@ export const NewProfile = withMulti(
 
 export const EditProfile = withMulti(
   EditForm,
+  withCalls<OuterProps>(
+    queryBlogsToProp('usernameMinLen', { propName: 'usernameMinLen' }),
+    queryBlogsToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
+  ),
   withMyAccount,
   withCalls<OuterProps>(
-    queryBlogsToProp('socialAccountById',
-      { paramName: 'myAddress', propName: 'socialAccountOpt' })
+    queryBlogsToProp('socialAccountById', { paramName: 'myAddress', propName: 'socialAccountOpt' })
   ),
   withRequireProfile,
   withSocialAccount
