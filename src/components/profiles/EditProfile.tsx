@@ -82,8 +82,8 @@ export type OuterProps = MyAccountProps & ValidationProps & {
   ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   requireProfile?: boolean,
-  usernameMinLen?: U32,
-  usernameMaxLen?: U32
+  usernameMinLen: U32,
+  usernameMaxLen: U32
 };
 
 type FormValues = ProfileContent & {
