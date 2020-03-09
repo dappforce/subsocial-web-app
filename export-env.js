@@ -18,7 +18,6 @@ if (!window.process) window.process = {};
 if (!window.process.ENV) window.process.ENV = {};
 
 window.process.ENV = {
-    I_AM_NOT_FROM_ENV: 'Haha',
   ${vals}
 };
 `,
