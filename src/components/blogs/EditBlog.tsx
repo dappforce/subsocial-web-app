@@ -282,8 +282,8 @@ function LoadStruct (props: LoadStructProps) {
     return <Loading />;
   }
 
-  if (!struct || struct.created.account.toString() !== myAddress) {
-    return <em>You have no rights to edit this post</em>;
+  if (!struct || !struct.created.account.eq(myAddress)) {
+    return <em>You have no rights to edit this blog</em>;
   }
 
   if (structOpt.isNone) {

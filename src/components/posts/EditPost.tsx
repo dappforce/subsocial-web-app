@@ -306,7 +306,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>Post not found</em>;
     }
 
-    if (!struct || struct.created.account.toString() !== myAddress) {
+    if (!struct || !struct.created.account.eq(myAddress)) {
       return <em>You have no rights to edit this post</em>;
     }
 
