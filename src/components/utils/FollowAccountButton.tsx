@@ -5,7 +5,7 @@ import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { api, registry } from '@polkadot/react-api';
-import { TxBUTTON_SIZE } from '../../config/Size.config';
+import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import AccountId from '@polkadot/types/generic/AccountId';
 
@@ -29,7 +29,7 @@ type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
 };
 
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
-  const { myAddress, address, size = TxBUTTON_SIZE } = props;
+  const { myAddress, address, size = TX_BUTTON_SIZE } = props;
 
   const accountId = new GenericAccountId(registry, address);
   const dataForQuery = new Tuple(registry, [ AccountId, AccountId ], [ new GenericAccountId(registry, myAddress), accountId ]);
