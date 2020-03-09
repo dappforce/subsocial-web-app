@@ -24,8 +24,8 @@ type BasicButtonProps = {
   isPrimary?: boolean,
   isDisabled?: boolean,
   label?: React.ReactNode,
-  params: Array<any>,
-  tx: string,
+  params?: Array<any>,
+  tx?: string,
 
   className?: string
   style?: React.CSSProperties
@@ -66,11 +66,11 @@ class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
 
   private send = (): void => {
     const {
-      myAddress, accountId, api, params, queueExtrinsic, tx,
+      myAddress, accountId, api, params = [], queueExtrinsic, tx,
       txFailedCb, txSuccessCb, txSentCb, txCancelledCb
     } = this.props;
     const origin = accountId || myAddress;
-    const [ section, method ] = tx.split('.');
+    const [ section, method ] = tx ? tx.split('.') : [];
 
     assert(api.tx[section] && api.tx[section][method], `Unable to find api.tx.${section}.${method}`);
 
@@ -132,7 +132,7 @@ const SubstrateTxButton = withApi(withMyAccount(TxButton))
 function ResolvedButton (props: BasicButtonProps) {
   const { isStorybook = false } = useStorybookContext()
 
-  return isStorybook 
+  return isStorybook
     ? <MockTxButton {...props} />
     : <SubstrateTxButton {...props} />
 }
