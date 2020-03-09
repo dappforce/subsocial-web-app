@@ -15,7 +15,7 @@ interface Props {
 export default function Accounts ({ className }: Props): React.ReactElement<Props> | null {
   const { hasAccounts } = useAccounts();
   const { isApiReady } = useApi();
-  const [isHidden, setIsHidden] = useState(false);
+  const [ isHidden, setIsHidden ] = useState(false);
 
   if (!isApiReady || hasAccounts || isHidden) {
     return null;
