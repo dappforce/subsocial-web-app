@@ -326,21 +326,21 @@ const EditForm = withFormik<OuterProps, FormValues>({
   }
 })(InnerForm);
 
-export const NewProfile = withMulti(
+export const EditFormWithValidation = withMulti(
   EditForm,
   withCalls<OuterProps>(
     queryBlogsToProp('usernameMinLen', { propName: 'usernameMinLen' }),
     queryBlogsToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
-  ),
+  )
+);
+
+export const NewProfile = withMulti(
+  EditFormWithValidation,
   withMyAccount
 );
 
 export const EditProfile = withMulti(
-  EditForm,
-  withCalls<OuterProps>(
-    queryBlogsToProp('usernameMinLen', { propName: 'usernameMinLen' }),
-    queryBlogsToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
-  ),
+  EditFormWithValidation,
   withMyAccount,
   withCalls<OuterProps>(
     queryBlogsToProp('socialAccountById', { paramName: 'myAddress', propName: 'socialAccountOpt' })

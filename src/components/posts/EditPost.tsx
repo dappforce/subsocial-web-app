@@ -310,26 +310,22 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   };
 }
 
-export const NewPost = withMulti(
-  InnerEditPost,
-  withCalls<OuterProps>(
-    queryBlogsToProp('postMaxLen', { propName: 'postMaxLen' })
-  ),
-  withBlogIdFromUrl
-);
-
-export const NewSharePost = withMulti(
+export const InnerFormWithValidation = withMulti(
   InnerEditPost,
   withCalls<OuterProps>(
     queryBlogsToProp('postMaxLen', { propName: 'postMaxLen' })
   )
 );
 
+export const NewPost = withMulti(
+  InnerFormWithValidation,
+  withBlogIdFromUrl
+);
+
+export const NewSharePost = InnerFormWithValidation;
+
 export const EditPost = withMulti<OuterProps>(
-  InnerEditPost,
-  withCalls<OuterProps>(
-    queryBlogsToProp('postMaxLen', { propName: 'postMaxLen' })
-  ),
+  InnerFormWithValidation,
   withIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('postById',

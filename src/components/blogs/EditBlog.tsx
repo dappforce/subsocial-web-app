@@ -26,19 +26,8 @@ const SLUG_REGEX = /^[A-Za-z0-9_-]+$/;
 
 const URL_MAX_LEN = 2000;
 
-// const SLUG_MIN_LEN = 5;
-// const SLUG_MAX_LEN = 50;
-
 const NAME_MIN_LEN = 3;
 const NAME_MAX_LEN = 100;
-// const DESC_MAX_LEN = 1000;
-
-// const POST_TITLE_MIN_LEN = 3;
-// const POST_TITLE_MAX_LEN = 100;
-// const POST_BODY_MAX_LEN = 10000;
-
-// const COMMENT_MIN_LEN = 2;
-// const COMMENT_MAX_LEN = 1000;
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
