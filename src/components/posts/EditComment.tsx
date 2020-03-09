@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import * as DfForms from '../utils/forms';
-import { Text } from '@polkadot/types';
+import { Text, U32 } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
@@ -24,12 +24,12 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
   body: Yup.string()
     // .min(p.minTextLen, `Your comment is too short. Minimum length is ${p.minTextLen} chars.`)
-    // .max(p.maxTextLen, `Your comment is too long. Maximum length is ${p.maxTextLen} chars.`)
+    .max(p.commentMaxLen, `Your comment is too long. Maximum length is ${p.commentMaxLen} chars.`)
     .required('Comment body is required')
 });
 
 type ValidationProps = {
-  // minTextLen: number,
+  commentMaxLen: number
   // maxTextLen: number
 };
 
@@ -40,7 +40,8 @@ type OuterProps = ValidationProps & {
   struct?: Comment,
   onSuccess: () => void,
   autoFocus: boolean,
-  json: CommentContent
+  json: CommentContent,
+  commentMaxLen: U32
 };
 
 type FormValues = CommentContent;
@@ -200,7 +201,9 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: buildSchema,
+  validationSchema: (props: OuterProps) => buildSchema({
+    commentMaxLen: props.commentMaxLen?.toNumber()
+  }),
 
   handleSubmit: values => {
     // do submitting things
@@ -256,11 +259,14 @@ function LoadStruct (props: LoadStructProps) {
 export const EditComment = withMulti<LoadStructProps>(
   LoadStruct,
   withCalls<OuterProps>(
-    queryBlogsToProp('commentById',
-      { paramName: 'id', propName: 'structOpt' })
+    queryBlogsToProp('commentById', { paramName: 'id', propName: 'structOpt' }),
+    queryBlogsToProp('commentMaxLen', { propName: 'commentMaxLen' })
   )
 );
 
 export const NewComment = withMulti<OuterProps>(
-  EditForm
+  EditForm,
+  withCalls<OuterProps>(
+    queryBlogsToProp('commentMaxLen', { propName: 'commentMaxLen' })
+  )
 );
