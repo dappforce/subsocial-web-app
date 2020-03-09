@@ -8,7 +8,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { Text, AccountId } from '@polkadot/types';
+import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost } from '../types';
 import Section from '../utils/Section';
@@ -53,8 +53,6 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postIdsByBlogId?: PostId[],
-  accountId?: AccountId
 };
 
 type FormValues = PostContent;
@@ -308,23 +306,11 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>Post not found</em>;
     }
 
-    return <Component {...props} struct={struct} json={json} accountId={new AccountId(myAddress)} />;
-  };
-}
-
-function WithAccessCheck (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
-    const { postIdsByBlogId, id, accountId } = props
-    console.log('accountId', accountId)
-    console.log('postIdsByBlogId', postIdsByBlogId)
-    console.log('id', id)
-
-    if (postIdsByBlogId?.indexOf(id as PostId) === -1) {
-      return <em>You have no right to edit this post</em>;
-    } else {
-      return <Component { ...props } />
+    if (!struct || struct.created.account.toString() !== myAddress) {
+      return <em>You have no rights to edit this post</em>;
     }
 
+    return <Component {...props} struct={struct} json={json} />;
   };
 }
 
@@ -339,13 +325,7 @@ export const EditPost = withMulti<OuterProps>(
   InnerEditPost,
   withIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('postById',
-      { paramName: 'id', propName: 'structOpt' })
+    queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
-  LoadStruct,
-  withCalls<OuterProps>(
-    queryBlogsToProp('blogIdsByOwner', { paramName: 'accountId', propName: 'blogIdsByOwner' }),
-    queryBlogsToProp('postIdsByBlogId', { paramName: 'id', propName: 'postIdsByBlogId' })
-  ),
-  WithAccessCheck
+  LoadStruct
 );
