@@ -282,6 +282,10 @@ function LoadStruct (props: LoadStructProps) {
     return <Loading />;
   }
 
+  if (!struct || struct.created.account.toString() !== myAddress) {
+    return <em>You have no rights to edit this post</em>;
+  }
+
   if (structOpt.isNone) {
     return <em>Blog not found...</em>;
   }
