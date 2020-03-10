@@ -5,7 +5,6 @@
 import { KeyringSectionOption, KeyringOption$Type } from '@polkadot/ui-keyring/options/types';
 import { BareProps } from '@polkadot/react-components/types';
 import { Option } from '@polkadot/react-components/InputAddress/types';
-import './InputAddress.css';
 
 import React, { useState } from 'react';
 import { useMyAccount } from '../MyAccountContext';

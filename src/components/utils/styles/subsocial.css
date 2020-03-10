@@ -18,6 +18,16 @@ body,
   color: #111;
 }
 
+.gAsmwL .ui.search.selection.dropdown > .text {
+  margin-left: 0;
+  .ui--KeyPair {
+    margin-left: 14.5%;
+    width: 85.5%;
+  }
+}
+
+
+
 
 @media (min-width: 1200px) {
   .DfBrand {
@@ -309,8 +319,8 @@ hr {
 .disable:hover {
   margin-right: $space_tiny;
   color: $color_muted;
-  text-decoration: none;
-  cursor: default;
+  text-decoration: none !important;
+  cursor: default !important;
 }
 
 .DfActivityStreamItem {
@@ -345,6 +355,7 @@ hr {
 
 .Profile--actions {
   margin-left: 4rem;
+  margin-bottom: 2rem;
 
   button {
     background-color: $color_page_bg;

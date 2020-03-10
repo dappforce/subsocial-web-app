@@ -20,8 +20,8 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
-import { ANT_BUTTON_SIZE, TX_BUTTON_SIZE } from '../../config/Size.config';
-import { Menu, Dropdown, Icon, Button } from 'antd';
+import { TX_BUTTON_SIZE } from '../../config/Size.config';
+import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
@@ -250,8 +250,8 @@ const Component: NextPage<Props> = (props: Props) => {
         {renderPreview()}
         <div className='Profile--actions'>
           <FollowAccountButton address={address} size={TX_BUTTON_SIZE}/>
-          <Button size={ANT_BUTTON_SIZE} onClick={() => setFollowersOpen(true)} disabled={followers.eq(ZERO)}><Pluralize count={followers.toString()} singularText='Follower'/></Button>
-          <Button size={ANT_BUTTON_SIZE} onClick={() => setFollowingOpen(true)} disabled={following.eq(ZERO)}>{following.toString()} Following </Button>
+          <span onClick={() => !followers.eq(ZERO) && setFollowersOpen(true)} className={`DfGreyLink ${followers.eq(ZERO) && 'disable'}`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
+          <span onClick={() => !following.eq(ZERO) && setFollowingOpen(true)} className={`DfGreyLink ${following.eq(ZERO) && 'disable'}`}>{following.toString()} Following </span>
         </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
