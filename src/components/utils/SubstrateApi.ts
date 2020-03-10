@@ -1,6 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { registerSubsocialTypes } from '../types';
 import { api as polkadotApi } from '@polkadot/ui-api';
+import { getEnv } from './utils';
 
 let api: ApiPromise | undefined
 
@@ -23,7 +24,7 @@ export class SubstrateApi {
   }
 
   private connectToApi = async () => {
-    const rpcEndpoint = process.env.SUBSTRATE_URL || `ws://127.0.0.1:9944/`;
+    const rpcEndpoint = getEnv('SUBSTRATE_URL') || `ws://127.0.0.1:9944/`;
     const provider = new WsProvider(rpcEndpoint);
 
     // Register types before creating the API:

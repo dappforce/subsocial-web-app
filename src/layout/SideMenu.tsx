@@ -5,14 +5,14 @@ import Router, { useRouter } from 'next/router';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { Loading } from '../components/utils/utils';
+import { Loading, getEnv } from '../components/utils/utils';
 import { getApi } from '../components/utils/SubstrateApi';
 import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
 import { BlogId } from '../components/types';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import Link from 'next/link';
 
-const appsUrl = process.env.APPS_URL || 'http://127.0.0.1:3002';
+const appsUrl = getEnv('APPS_URL') || 'http://127.0.0.1:3002';
 
 interface MenuItem {
   name: string;
