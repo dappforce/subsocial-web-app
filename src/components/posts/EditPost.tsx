@@ -306,7 +306,11 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>Post not found</em>;
     }
 
-    return <Component {...props} struct={struct} json={json}/>;
+    if (!struct || !struct.created.account.eq(myAddress)) {
+      return <em>You have no rights to edit this post</em>;
+    }
+
+    return <Component {...props} struct={struct} json={json} />;
   };
 }
 
@@ -328,8 +332,7 @@ export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
   withIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('postById',
-      { paramName: 'id', propName: 'structOpt' })
+    queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
   LoadStruct
 );

@@ -280,6 +280,10 @@ function LoadStruct (props: LoadStructProps) {
     return <Loading />;
   }
 
+  if (!struct || !struct.created.account.eq(myAddress)) {
+    return <em>You have no rights to edit this blog</em>;
+  }
+
   if (structOpt.isNone) {
     return <em>Blog not found...</em>;
   }
