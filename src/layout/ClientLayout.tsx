@@ -13,9 +13,10 @@ import { QueueProps } from '@polkadot/ui-app/Status/types';
 import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
 import Connecting from '../components/main/Connecting';
+import { getEnv } from '../components/utils/utils';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
-  const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
+  const url = getEnv('SUBSTRATE_URL') || settings.apiUrl || undefined;
   console.log(url);
 
   return <Queue>

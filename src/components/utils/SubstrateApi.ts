@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { getEnv } from './utils';
 import { registerSubsocialTypes } from '../types';
 import { api as polkadotApi } from '@polkadot/ui-api';
 
@@ -14,16 +15,8 @@ export class SubstrateApi {
     return this.api;
   }
 
-  public destroy = () => {
-    const { api } = this;
-    if (api && api.isReady) {
-      api.disconnect();
-      console.log(`Disconnected from Substrate API.`);
-    }
-  }
-
-  private connectToApi = async () => {
-    const rpcEndpoint = process.env.SUBSTRATE_URL || `ws://127.0.0.1:9944/`;
+  public connect = async (): Promise<ApiPromise> => {
+    const rpcEndpoint = getEnv('SUBSTRATE_URL') || `ws://127.0.0.1:9944/`;
     const provider = new WsProvider(rpcEndpoint);
 
     // Register types before creating the API:
