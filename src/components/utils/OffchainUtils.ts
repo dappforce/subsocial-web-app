@@ -1,8 +1,9 @@
 import { IpfsData, Activity } from '../types';
 import axios from 'axios';
 import { IpfsHash } from '@subsocial/types/interfaces/runtime';
+import { getEnv } from './utils';
 
-export const baseUrl = (process.env.OFFCHAIN_URL || 'http://localhost:3001') + '/v1';
+export const baseUrl = (getEnv('OFFCHAIN_URL') || 'http://localhost:3001') + '/v1';
 
 export async function addJsonToIpfs (ipfsData: IpfsData): Promise<string> {
   const res = await axios.post(`${baseUrl}/ipfs/add`, ipfsData);

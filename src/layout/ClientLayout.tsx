@@ -15,9 +15,10 @@ import { StatusContext } from '@polkadot/react-components';
 import Status from '../components/main/Status';
 import AccountsOverlay from '../components/main//overlays/Accounts';
 import ConnectingOverlay from '../components/main//overlays/Connecting';
+import { getEnv } from '../components/utils/utils';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
-  const url = process.env.SUBSTRATE_URL || settings.apiUrl || undefined;
+  const url = getEnv('SUBSTRATE_URL') || settings.apiUrl || undefined;
   const { queueAction, stqueue, txqueue } = useContext(StatusContext);
   console.log(url);
 

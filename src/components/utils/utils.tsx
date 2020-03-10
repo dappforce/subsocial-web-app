@@ -173,3 +173,10 @@ export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BN |
     return new BN(idOrSlug)
   }
 }
+
+export function getEnv (varName: string): string | undefined {
+  const { env } = typeof window === 'undefined' ? process : window.process;
+  console.log('Windows>>>>>>>>>>>>>>>:', typeof window !== 'undefined' && window.process.env);
+  console.log('>>>>>>>>>>>>>>>>>>ENV:', env[varName]);
+  return env[varName]
+}

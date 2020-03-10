@@ -6,7 +6,7 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "node_modules": false,
-        ".next": true
+        ".next": false
     },
     "files.autoSave": "afterDelay",
     "eslint.format.enable": true,

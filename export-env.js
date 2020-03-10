@@ -17,7 +17,7 @@ writeFileSync(`${__dirname}/public/env.js`,
 if (!window.process) window.process = {};
 if (!window.process.ENV) window.process.ENV = {};
 
-window.process.ENV = {
+window.process.env = {
   ${vals}
 };
 `,

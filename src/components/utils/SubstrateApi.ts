@@ -1,6 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { api as polkadotApi } from '@polkadot/react-api';
 import { types } from '../types/DfRegister';
+import { getEnv } from './utils';
 
 let api: ApiPromise | undefined
 
@@ -12,7 +13,7 @@ export class SubstrateApi {
   protected connected: boolean = false;
 
   public connect = async (): Promise<ApiPromise> => {
-    const rpcEndpoint = process.env.SUBSTRATE_URL || `ws://127.0.0.1:9944/`;
+    const rpcEndpoint = getEnv('SUBSTRATE_URL') || `ws://127.0.0.1:9944/`;
     const provider = new WsProvider(rpcEndpoint);
 
     // Create the API and wait until ready:
