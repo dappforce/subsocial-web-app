@@ -158,3 +158,8 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     })
     : text;
 };
+
+export function getEnv (varName: string): string | undefined {
+  const { env } = typeof window === 'undefined' ? process : window.process;
+  return env[varName]
+}
