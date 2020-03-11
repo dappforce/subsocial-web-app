@@ -10,7 +10,7 @@ class MyApp extends App {
     return (
       <SidebarCollapsedProvider>
         <Head>
-          <script src='env.js' />
+          <script src="/env.js"/>
         </Head>
         <MainPage>
           <Component {...pageProps}/>
