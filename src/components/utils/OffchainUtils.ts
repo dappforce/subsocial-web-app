@@ -2,10 +2,10 @@ import { IpfsData, Activity } from '../types';
 import axios from 'axios';
 import { getEnv } from './utils';
 
-const createUrl = (url: string) => (getEnv(url) || 'http://localhost:3001') + '/v1';
+const createUrl = (varName: string, defaultUrl: string = 'http://localhost:3001') => (getEnv(varName) || defaultUrl) + '/v1';
 
 export const offchainUrl = createUrl('OFFCHAIN_URL');
-export const ipfsUrl = createUrl('IPFS_URL');
+export const ipfsUrl = createUrl('IPFS_URL', getEnv('OFFCHAIN_URL'));
 
 export async function addJsonToIpfs (ipfsData: IpfsData): Promise<string> {
   const res = await axios.post(`${ipfsUrl}/ipfs/add`, ipfsData);
@@ -17,7 +17,7 @@ export async function removeFromIpfs (hash: string) {
   await axios.post(`${ipfsUrl}/ipfs/remove/${hash}`);
 }
 
-export async function getJsonFromIpfs<T extends IpfsData> (hash: string | IpfsHash): Promise<T> {
+export async function getJsonFromIpfs<T extends IpfsData> (hash: string): Promise<T> {
   const res = await axios.get(`${ipfsUrl}/ipfs/get/${hash}`);
   const { data } = res;
   return data as T;
