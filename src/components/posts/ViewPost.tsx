@@ -369,7 +369,7 @@ export const ViewPost = withLoadedData(ViewPostPage);
 export const getTypePost = (post: Post): PostType => {
   const { extension } = post;
   console.log('Shared', typeof extension.value);
-  if (typeof extension.value !== 'object') { // TODO maybe fixed after run UI
+  if (extension.isSharedPost) {
     return 'share';
   } else {
     return 'regular';
@@ -404,7 +404,7 @@ export const loadPostData = async (api: ApiPromise, postId: BN | string) => {
 export const loadExtPost = async (api: ApiPromise, post: Post) => {
   const { extension } = post;
   const postData: PostData = {};
-  if (nonEmptyStr(extension.value.toString())) {
+  if (extension.isSharedPost) {
     const postId = extension.value as PostId;
     const postData = await loadPostData(api, postId);
     return postData;

@@ -66,7 +66,6 @@ export const getApi = async () => {
     console.log('Get Substrate API: DfApi.setup()');
     api = await DfApi.connect();
     setTimeout(() => {
-      console.log(`Disconecting from Substrate API after ${MAX_CONN_TIME_SECS} secs`)
       DfApi.disconnect()
     }, MAX_CONN_TIME_SECS * 1000);
     return api;
