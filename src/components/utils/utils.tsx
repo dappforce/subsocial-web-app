@@ -159,6 +159,11 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     : text;
 };
 
+export function getEnv (varName: string): string | undefined {
+  const { env } = typeof window === 'undefined' ? process : window.process;
+  return env[varName]
+}
+        
 export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BlogId | undefined> => {
   if (idOrSlug.startsWith('@')) {
     const slug = idOrSlug.substring(1)
