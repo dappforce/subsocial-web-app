@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
 import { AccountId, Bool } from '@polkadot/types';
-
 import { BlogId } from '../types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
@@ -9,9 +7,11 @@ import TxButton from './TxButton';
 import { isMobile } from 'react-device-detect';
 import { getApi } from './SubstrateApi';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
+import { Button$Sizes } from '@polkadot/ui-app/Button/types';
+
 type FollowBlogButtonProps = {
   blogId: BlogId,
-  size?: string
+  size?: Button$Sizes
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
@@ -47,15 +47,17 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   return <TxButton
     type='submit'
     compact
-    size = {size}
+    size={size}
     isBasic={isFollow}
     label={isFollow
       ? 'Unfollow'
-      : 'Follow'}
+      : 'Follow'
+    }
     params={buildTxParams()}
     tx={isFollow
       ? `blogs.unfollowBlog`
-      : `blogs.followBlog`}
+      : `blogs.followBlog`
+    }
     txSuccessCb={TxSuccess}
   />;
 }
