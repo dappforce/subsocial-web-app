@@ -6,6 +6,12 @@ You can think of this as decentralized versions of Reddit, Stack Exchange or Med
 
 To learn more about Subsocial, please visit [Subsocial Network](http://subsocial.network).
 
+## Supported by Web3 Foundation
+
+<img src="https://github.com/dappforce/dappforce-subsocial/blob/master/w3f-badge.svg" width="100%" height="200" alt="Web3 Foundation grants badge" />
+
+Subsocial is a recipient of the technical grant from Web3 Foundation. We have successfully delivered all three milestones described in Subsocial's grant application. [Official announcement](https://medium.com/web3foundation/web3-foundation-grants-wave-3-recipients-6426e77f1230).
+
 ## Video demo
 
 [![Subsocial demo #4, 2019-11-28](http://i3.ytimg.com/vi/pFGvlKpJdss/maxresdefault.jpg)](https://www.youtube.com/watch?v=pFGvlKpJdss)
