@@ -14,6 +14,7 @@ import Status from '../components/main/Status';
 import { Navigation } from './Navigation';
 import Connecting from '../components/main/Connecting';
 import { getEnv } from '../components/utils/utils';
+import { NotifCounterProvider } from '../components/utils/NotifCounter';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = getEnv('SUBSTRATE_URL') || settings.apiUrl || undefined;
@@ -29,20 +30,22 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
             url={url}
           >
             <MyAccountProvider>
-              <QueueConsumer>
-                {({ queueAction, stqueue, txqueue }: QueueProps) => (
-                  <Signer>
-                    <Status
-                      queueAction={queueAction}
-                      stqueue={stqueue}
-                      txqueue={txqueue}
-                    />
-                  </Signer>
-                )}
-              </QueueConsumer>
-              <Navigation>
-                {children}
-              </Navigation>
+              <NotifCounterProvider>
+                <QueueConsumer>
+                  {({ queueAction, stqueue, txqueue }: QueueProps) => (
+                    <Signer>
+                      <Status
+                        queueAction={queueAction}
+                        stqueue={stqueue}
+                        txqueue={txqueue}
+                      />
+                    </Signer>
+                  )}
+                </QueueConsumer>
+                <Navigation>
+                  {children}
+                </Navigation>
+              </NotifCounterProvider>
             </MyAccountProvider>
             <Connecting/>
           </Api>
