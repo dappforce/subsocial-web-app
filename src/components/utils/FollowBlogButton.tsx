@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
 import { GenericAccountId, bool as Bool } from '@polkadot/types';
-
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
@@ -52,7 +50,8 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     isBasic={isFollow}
     label={isFollow
       ? 'Unfollow'
-      : 'Follow'}
+      : 'Follow'
+    }
     params={buildTxParams()}
     tx={isFollow
       ? `social.unfollowBlog`

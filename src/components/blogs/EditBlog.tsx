@@ -30,27 +30,16 @@ const SLUG_REGEX = /^[A-Za-z0-9_-]+$/;
 
 const URL_MAX_LEN = 2000;
 
-const SLUG_MIN_LEN = 5;
-const SLUG_MAX_LEN = 50;
-
 const NAME_MIN_LEN = 3;
 const NAME_MAX_LEN = 100;
-const DESC_MAX_LEN = 1000;
-
-// const POST_TITLE_MIN_LEN = 3;
-// const POST_TITLE_MAX_LEN = 100;
-// const POST_BODY_MAX_LEN = 10000;
-
-// const COMMENT_MIN_LEN = 2;
-// const COMMENT_MAX_LEN = 1000;
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
   slug: Yup.string()
     .required('Slug is required')
     .matches(SLUG_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(SLUG_MIN_LEN, `Slug is too short. Minimum length is ${SLUG_MIN_LEN} chars.`)
-    .max(SLUG_MAX_LEN, `Slug is too long. Maximum length is ${SLUG_MAX_LEN} chars.`),
+    .min(p.slugMinLen, `Slug is too short. Minimum length is ${p.slugMinLen} chars.`)
+    .max(p.slugMaxLen, `Slug is too long. Maximum length is ${p.slugMaxLen} chars.`),
 
   name: Yup.string()
     .required('Name is required')
@@ -62,17 +51,22 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
     .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
 
   desc: Yup.string()
-    .max(DESC_MAX_LEN, `Description is too long. Maximum length is ${DESC_MAX_LEN} chars.`)
+    .max(p.blogMaxLen, `Description is too long. Maximum length is ${p.blogMaxLen} chars.`)
 });
 
 type ValidationProps = {
-  // TODO get slug validation params
+  blogMaxLen: number;
+  slugMinLen: number;
+  slugMaxLen: number;
 };
 
 type OuterProps = ValidationProps & {
   id?: BN;
   struct?: Blog;
   json?: BlogContent;
+  blogMaxLen: U32;
+  slugMinLen: U32;
+  slugMaxLen: U32;
 };
 
 type FormValues = BlogContent & {
@@ -225,7 +219,11 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: buildSchema,
+  validationSchema: (props: OuterProps) => buildSchema({
+    blogMaxLen: props.blogMaxLen?.toNumber(),
+    slugMinLen: props.slugMinLen?.toNumber(),
+    slugMaxLen: props.slugMaxLen?.toNumber()
+  }),
 
   handleSubmit: values => {
     // do submitting things
@@ -233,7 +231,7 @@ const EditForm = withFormik<OuterProps, FormValues>({
 })(InnerForm);
 
 function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function () {
+  return function (props: OuterProps) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
@@ -281,6 +279,10 @@ function LoadStruct (props: LoadStructProps) {
     return <Loading />;
   }
 
+  if (!struct || !struct.created.account.eq(myAddress)) {
+    return <em>You have no rights to edit this blog</em>;
+  }
+
   if (structOpt.isNone) {
     return <em>Blog not found...</em>;
   }
@@ -288,8 +290,17 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json} />;
 }
 
+const commonQueries = [
+  queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
+  queryBlogsToProp('slugMinLen', { propName: 'slugMinLen' }),
+  queryBlogsToProp('slugMaxLen', { propName: 'slugMaxLen' })
+]
+
 export const NewBlog = withMulti(
-  EditForm
+  EditForm,
+  withCalls<OuterProps>(
+    ...commonQueries
+  )
   // , withOnlyMembers
 );
 
@@ -297,8 +308,8 @@ export const EditBlog = withMulti(
   LoadStruct,
   withIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('blogById',
-      { paramName: 'id', propName: 'structOpt' })
+    queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
+    ...commonQueries
   )
 );
 
