@@ -7,6 +7,7 @@ window.process.env = {
   SUBSTRATE_URL: 'ws://testnet.subsocial.network:9944',
   ELASTIC_URL: 'http://testnet.subsocial.network:9200',
   OFFCHAIN_URL: 'http://127.0.0.1:3001',
+  OFFCHAIN_WS: 'ws://127.0.0.1:3010',
   APPS_URL: 'http://testnet.subsocial.network:3002',
   IPFS_URL: 'http://testnet.subsocial.network:3001'
 };
