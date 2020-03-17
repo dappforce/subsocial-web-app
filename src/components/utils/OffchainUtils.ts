@@ -35,3 +35,9 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
   const { data } = res;
   return data;
 };
+
+export const clearNotifications = async (myAddress: string): Promise<Activity[]> => {
+  const res = await axios.get(`${offchainUrl}/offchain/clearnotifications/${myAddress}`);
+  const { data } = res;
+  return data;
+};
