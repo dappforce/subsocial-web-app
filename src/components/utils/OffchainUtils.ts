@@ -6,6 +6,7 @@ const createUrl = (varName: string, defaultUrl: string = 'http://localhost:3001'
 
 export const offchainUrl = createUrl('OFFCHAIN_URL');
 export const ipfsUrl = createUrl('IPFS_URL', getEnv('OFFCHAIN_URL'));
+export const offchainWs = getEnv('OFFCHAIN_WS') as string
 
 export async function addJsonToIpfs (ipfsData: IpfsData): Promise<string> {
   const res = await axios.post(`${ipfsUrl}/ipfs/add`, ipfsData);
