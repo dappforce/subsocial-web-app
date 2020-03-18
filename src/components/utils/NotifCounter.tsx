@@ -13,10 +13,18 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
 
   const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })
   const [ wsConnected, setWsConnected ] = useState(false)
+  const [ ws, setWs ] = useState<WebSocket>()
   const [ address, setAddress ] = useState(myAddress)
 
-  if (address !== myAddress) {
+  const closeWs = () => {
+    if (ws && !(ws.readyState === WebSocket.CLOSING || ws.readyState === WebSocket.CLOSED)) {
+      ws.close()
+    }
     setWsConnected(false)
+  }
+
+  if (address !== myAddress) {
+    closeWs()
     setAddress(myAddress)
   }
 
@@ -26,6 +34,7 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
       if (wsConnected || !myAddress || !offchainWs) return;
 
       const ws = new WebSocket(offchainWs)
+      setWs(ws)
 
       ws.onopen = () => {
         console.log('Connected to Notifications Counter Web Socket')
@@ -45,6 +54,8 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
     }
 
     subscribe()
+
+    return () => closeWs()
   }, [ wsConnected, myAddress ]);
 
   return (

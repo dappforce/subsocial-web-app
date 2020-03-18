@@ -36,9 +36,14 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
   return data;
 };
 
-export const clearNotifications = async (myAddress: string): Promise<Activity[]> => {
-  const res = await axios.post(`${offchainUrl}/offchain/notifications/${myAddress}/readAll`);
+export const clearNotifications = async (myAddress: string): Promise<void> => {
+  try {
+    const res = await axios.post(`${offchainUrl}/offchain/notifications/${myAddress}/readAll`);
 
-  const { data } = res;
-  return data;
+    if (res.status !== 200) {
+      console.warn('Failed to mark all notifications as read for account:', myAddress, 'res.status:', res.status)
+    }
+  } catch (err) {
+    console.log('Failed to mark all notifications as read for account:', err)
+  }
 };
