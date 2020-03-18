@@ -13,11 +13,7 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
 
   const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })
   const [ wsConnected, setWsConnected ] = useState(false)
-  const [ address, setAddress ] = useState<string | undefined>()
-
-  if (myAddress) {
-    setAddress(myAddress)
-  }
+  const [ address, setAddress ] = useState(myAddress)
 
   if (address !== myAddress) {
     setWsConnected(false)
@@ -27,7 +23,7 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
   useEffect(() => {
 
     const subscribe = async () => {
-      if (wsConnected || !myAddress) return;
+      if (wsConnected || !myAddress || !offchainWs) return;
 
       const ws = new WebSocket(offchainWs)
 
@@ -42,10 +38,14 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
         }
         ws.onerror = (error) => { console.log('NotificationCounter Websocket Error:', error) }
       };
+
+      ws.onclose = () => {
+        setWsConnected(false)
+      };
     }
 
     subscribe()
-  }, [ myAddress?.toString(), wsConnected ]);
+  }, [ wsConnected, myAddress ]);
 
   return (
     <NotifCounterContext.Provider value={contextValue}>
