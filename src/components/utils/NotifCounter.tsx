@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { offchainWs } from './OffchainUtils'
-import { useMyAccount, checkIfLoggedIn } from './MyAccountContext';
+import { useMyAccount } from './MyAccountContext';
 
 export type NotifCounterContextProps = {
   unreadCount: number
@@ -13,11 +13,9 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
 
   const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })
   const [ wsConnected, setWsConnected ] = useState(false)
-  const [ isLoggedIn, setIsLoggedIn ] = useState(false)
   const [ address, setAddress ] = useState<string | undefined>()
 
-  if (checkIfLoggedIn() && !isLoggedIn) {
-    setIsLoggedIn(true)
+  if (myAddress) {
     setAddress(myAddress)
   }
 
@@ -34,19 +32,20 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
       const ws = new WebSocket(offchainWs)
 
       ws.onopen = () => {
-        console.log('WS connected (NotificationCounter useEffect)')
+        console.log('Connected to Notifications Counter Web Socket')
         ws.send(myAddress?.toString());
         setWsConnected(true)
         ws.onmessage = (msg: MessageEvent) => {
-          setContextValue({ unreadCount: msg.data })
-          console.log(msg, 'msg from Effect')
+          const unreadCount = msg.data
+          setContextValue({ unreadCount })
+          console.log('Received a new value for unread notifications:', unreadCount)
         }
         ws.onerror = (error) => { console.log('NotificationCounter Websocket Error:', error) }
       };
     }
 
     subscribe()
-  }, [ isLoggedIn, wsConnected ]);
+  }, [ myAddress?.toString(), wsConnected ]);
 
   return (
     <NotifCounterContext.Provider value={contextValue}>

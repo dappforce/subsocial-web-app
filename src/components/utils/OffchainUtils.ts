@@ -6,7 +6,7 @@ const createUrl = (varName: string, defaultUrl: string = 'http://localhost:3001'
 
 export const offchainUrl = createUrl('OFFCHAIN_URL');
 export const ipfsUrl = createUrl('IPFS_URL', getEnv('OFFCHAIN_URL'));
-export const offchainWs = getEnv('OFFCHAIN_WS') as string
+export const offchainWs = getEnv('OFFCHAIN_WS')
 
 export async function addJsonToIpfs (ipfsData: IpfsData): Promise<string> {
   const res = await axios.post(`${ipfsUrl}/ipfs/add`, ipfsData);
@@ -37,7 +37,8 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
 };
 
 export const clearNotifications = async (myAddress: string): Promise<Activity[]> => {
-  const res = await axios.get(`${offchainUrl}/offchain/clearnotifications/${myAddress}`);
+  const res = await axios.post(`${offchainUrl}/offchain/notifications/${myAddress}/readAll`);
+
   const { data } = res;
   return data;
 };

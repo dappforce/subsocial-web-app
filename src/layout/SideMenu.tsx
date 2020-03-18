@@ -28,15 +28,8 @@ const InnerMenu = () => {
   const isLoggedIn = checkIfLoggedIn();
   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
   const [ loaded, setLoaded ] = useState(false);
-  const [ notificationCount, setNotificationCount ] = useState(unreadCount)
   const router = useRouter();
   const { pathname } = router;
-
-  useEffect(() => {
-    if (!isLoggedIn) return
-
-    setNotificationCount(unreadCount)
-  }, [ unreadCount ])
 
   useEffect(() => {
     if (!myAddress) return;
@@ -108,8 +101,8 @@ const InnerMenu = () => {
   const MenuItems = isLoggedIn ? AuthorizedMenu : DefaultMenu;
 
   const renderBadge = () => {
-    if (notificationCount <= 0) return null
-    return <Badge count={notificationCount} className="site-badge-count-4" />
+    if (!unreadCount || unreadCount <= 0) return null
+    return <Badge count={unreadCount} className="site-badge-count-4" />
   }
 
   return (
