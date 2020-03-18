@@ -54,8 +54,6 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
     }
 
     subscribe()
-
-    // return closeWs
   }, [ wsConnected, myAddress ]);
 
   return (
