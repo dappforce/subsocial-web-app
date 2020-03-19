@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { CommentId } from '@subsocial/types/interfaces/runtime';
+import { CommentId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';

@@ -9,10 +9,8 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
-import { addJsonToIpfs, removeFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { Profile, SocialAccount } from '@subsocial/types/interfaces/runtime';
-import { ProfileContent, ProfileUpdate } from '../types';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { queryBlogsToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
@@ -22,6 +20,9 @@ import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
+import { Profile, SocialAccount, IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { ProfileContent } from '@subsocial/types/offchain';
+import { ProfileUpdate } from '@subsocial/types/substrate/classes';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
@@ -133,12 +134,12 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const [ ipfsCid, setIpfsCid ] = useState('');
+  const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
       const json = { fullname, avatar, email, personal_site, about, facebook, twitter, linkedIn, github, instagram };
-      addJsonToIpfs(json).then(cid => {
+      ipfs.saveContent(json).then(cid => {
         setIpfsCid(cid);
         sendTx();
       }).catch(err => new Error(err));
@@ -146,7 +147,7 @@ const InnerForm = (props: FormProps) => {
   };
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    removeFromIpfs(ipfsCid).catch(err => new Error(err));
+    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => new Error(err));
     setSubmitting(false);
   };
 

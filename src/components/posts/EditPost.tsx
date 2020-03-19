@@ -6,12 +6,10 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
-import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option, Enum } from '@polkadot/types/codec';
-import { Post } from '@subsocial/types/interfaces/runtime';
-import { PostContent, PostUpdate, PostExtension, RegularPost } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
@@ -22,6 +20,9 @@ import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
+import { PostExtension, RegularPost, PostUpdate } from '@subsocial/types/substrate/classes';
+import { Post, IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { PostContent } from '@subsocial/types/offchain';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
@@ -109,12 +110,12 @@ const InnerForm = (props: FormProps) => {
     Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
   };
 
-  const [ ipfsHash, setIpfsCid ] = useState('');
+  const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
       const json = { title, body, image, tags };
-      addJsonToIpfs(json).then(hash => {
+      ipfs.savePost(json).then(hash => {
         setIpfsCid(hash);
         sendTx();
       }).catch(err => new Error(err));
@@ -295,7 +296,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       console.log('Loading post JSON from IPFS');
 
-      getJsonFromIpfs<PostContent>(struct.ipfs_hash).then(json => {
+      ipfs.findPost(struct.ipfs_hash).then(json => {
         setJson(json);
       }).catch(err => console.log(err));
     }, [ trigger ]);

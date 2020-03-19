@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Section from '../utils/Section';
 import { hexToBn } from '@polkadot/util';
-import { Comment } from '@subsocial/types/interfaces/runtime';
+import { Comment } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Option } from '@polkadot/types';
-import { Activity } from '../types';
 import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
 import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
@@ -21,6 +20,7 @@ import dynamic from 'next/dynamic';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmptyStr } from '../utils';
 import BN from 'bn.js';
+import { Activity } from '@subsocial/types/offchain';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 

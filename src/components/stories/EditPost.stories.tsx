@@ -3,9 +3,9 @@ import React from 'react';
 import '../utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { InnerEditPost } from '../posts/EditPost';
-import { PostContent } from '../types';
-import { Post } from '@subsocial/types/interfaces/runtime';
+import { Post } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';
+import { PostContent } from '@subsocial/types/offchain';
 
 export default {
   title: 'EditPost',

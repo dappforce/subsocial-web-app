@@ -6,11 +6,11 @@ import { Option, GenericAccountId } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
-import { Post, Reaction, Comment, ReactionId } from '@subsocial/types/interfaces/runtime';
+import { Post, Reaction, Comment, ReactionId } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';
 import { getApi } from '../utils/SubstrateApi';
 import { registry } from '@polkadot/react-api';
-import { ReactionKind } from '../types';
+import { ReactionKind } from '@subsocial/types/substrate/classes';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const ZERO = new BN(0);
