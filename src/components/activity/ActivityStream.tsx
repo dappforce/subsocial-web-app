@@ -124,7 +124,7 @@ function ViewActivity (props: ActivityProps) {
   const { activity } = props;
   const { post_id } = activity;
   const [ data, setData ] = useState([] as PostData[]);
-  const postId = hexToBn(post_id);// TODO create function
+  const postId = hexToBn(post_id);
 
   useEffect(() => {
     const loadData = async () => {
