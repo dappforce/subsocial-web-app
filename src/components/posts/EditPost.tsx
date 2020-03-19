@@ -50,7 +50,8 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postMaxLen: U32
+  postMaxLen: U32,
+  blogIds: BlogId[]
 };
 
 type FormValues = PostContent;
