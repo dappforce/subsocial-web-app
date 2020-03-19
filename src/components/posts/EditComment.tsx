@@ -220,7 +220,7 @@ type StructJson = CommentContent | undefined;
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { structOpt } = props;
-  const [ json, setJson ] = useState(undefined as StructJson);
+  const [ json, setJson ] = useState<StructJson>();
   const [ struct, setStruct ] = useState(undefined as CommentStruct);
   const [ trigger, setTrigger ] = useState(false);
   const jsonIsNone = json === undefined;
