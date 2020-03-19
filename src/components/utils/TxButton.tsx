@@ -209,7 +209,6 @@ const SubstrateTxButton = withApi((TxButton))
 function ResolvedButton (props: BasicButtonProps) {
   const { isStorybook = false } = useStorybookContext()
   const { state: { address } } = useMyAccount();
-  console.log()
   return isStorybook
     ? <MockTxButton {...props} />
     : <SubstrateTxButton accountId={address} {...props} />
