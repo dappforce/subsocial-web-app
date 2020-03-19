@@ -17,8 +17,6 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-// import { ViewBlog } from '../blogs/ViewBlog';
-// import { Select } from 'antd';
 import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -193,7 +191,7 @@ const InnerForm = (props: FormProps) => {
     return <SelectBlogPreview
       blogIds={blogIds}
       onSelect={handleBlogSelect}
-      imageSize={26}
+      imageSize={24}
       defaultValue={currentBlogId.toString()} />
   }
 
