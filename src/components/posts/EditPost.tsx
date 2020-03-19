@@ -85,7 +85,7 @@ const InnerForm = (props: FormProps) => {
     closeModal
   } = props;
 
-  console.log(extention.value);
+  // console.log(extention.value);
   const isRegularPost = extention.value.isEmpty; // TODO maybe fix after run UI
 
   const renderResetButton = () => (
