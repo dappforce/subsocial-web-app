@@ -30,8 +30,7 @@
     "dev": "node export-env.js && next -p 3003",
     "build": "next build",
     "export": "next export",
-    "start-built": "next start",
-    "start": "node export-env.js && next start -p 80",
+    "start": "node export-env.js && next start -p 3003",
     "storybook": "start-storybook -p 3002"
   },
   "devDependencies": {
