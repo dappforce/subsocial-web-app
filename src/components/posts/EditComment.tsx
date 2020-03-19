@@ -216,7 +216,6 @@ type LoadStructProps = OuterProps & {
 
 type StructJson = CommentContent | undefined;
 
-type CommentStruct = Comment | undefined;
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
