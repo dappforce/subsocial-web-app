@@ -54,7 +54,8 @@ type OuterProps = ValidationProps & {
   closeModal?: () => void,
   withButtons?: boolean,
   postMaxLen: U32,
-  blogIds: BlogId[]
+  myAddress?: string,
+  blogIds?: BlogId[]
 };
 
 type FormValues = PostContent;
@@ -363,7 +364,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>You have no rights to edit this post</em>;
     }
 
-    return <Component {...props} struct={struct} json={json} />;
+    return <Component {...props} struct={struct} json={json} myAddress={myAddress} />;
   };
 }
 
