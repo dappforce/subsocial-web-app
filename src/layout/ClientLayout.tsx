@@ -42,7 +42,7 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
             <ConnectingOverlay />
             <AccountsOverlay />
           </MyAccountProvider>
-          <Connecting/>
+          <Connecting />
         </Events>
       </BlockAuthors>
     </Api>
