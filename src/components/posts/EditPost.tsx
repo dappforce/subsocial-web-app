@@ -17,8 +17,9 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { ViewBlog } from '../blogs/ViewBlog';
-import { Select } from 'antd';
+// import { ViewBlog } from '../blogs/ViewBlog';
+// import { Select } from 'antd';
+import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -186,21 +187,11 @@ const InnerForm = (props: FormProps) => {
   const renderBlogsPreviewDropdown = () => {
     if (!blogIds) return;
 
-    const blogs = blogIds.map(id => ({
-      key: id.toNumber(),
-      // text: <ViewBlog id={id} nameOnly imageSize={26}/>,
-      value: id.toNumber()
-    }));
-
-    // const defaultValue = blogs.find((x) => (x.value === initialBlogId.toNumber()))?.value
-    // const currentText = blogs.find((x) => (x.value === currentBlogId.toNumber()))?.text
-
-    return <Select
-      style={{ width: 200 }}
+    return <SelectBlogPreview
+      blogIds={blogIds}
       onSelect={handleBlogSelect}
-    >
-      { blogs.map((x) => <Select.Option value={x.value} key={x.value}><ViewBlog id={new BlogId(x.value)} dropdownPreview imageSize={26}/></Select.Option>) }
-    </Select>
+      imageSize={26}
+      defaultValue={currentBlogId.toString()} />
   }
 
   const form =
