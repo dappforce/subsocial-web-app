@@ -6,6 +6,7 @@ const createUrl = (varName: string, defaultUrl: string = 'http://localhost:3001'
 
 export const offchainUrl = createUrl('OFFCHAIN_URL');
 export const ipfsUrl = createUrl('IPFS_URL', getEnv('OFFCHAIN_URL'));
+export const offchainWs = getEnv('OFFCHAIN_WS')
 
 export async function addJsonToIpfs (ipfsData: IpfsData): Promise<string> {
   const res = await axios.post(`${ipfsUrl}/ipfs/add`, ipfsData);
@@ -33,4 +34,16 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
   const res = await axios.get(`${offchainUrl}/offchain/notifications/${myAddress}?offset=${offset}&limit=${limit}`);
   const { data } = res;
   return data;
+};
+
+export const clearNotifications = async (myAddress: string): Promise<void> => {
+  try {
+    const res = await axios.post(`${offchainUrl}/offchain/notifications/${myAddress}/readAll`);
+
+    if (res.status !== 200) {
+      console.warn('Failed to mark all notifications as read for account:', myAddress, 'res.status:', res.status)
+    }
+  } catch (err) {
+    console.log('Failed to mark all notifications as read for account: ${myAddress}', err)
+  }
 };

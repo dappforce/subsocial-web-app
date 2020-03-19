@@ -6,7 +6,7 @@ import { PostId, CommentId, OptionComment, Comment, BlogId, Activity } from '../
 import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
 import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
-import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
+import { getNewsFeed, getNotifications, clearNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Loader } from 'semantic-ui-react';
 import { NoData, NotAuthorized } from '../utils/DataList';
@@ -82,6 +82,7 @@ export const ViewNotifications = () => {
     if (!myAddress) return;
 
     getNotificationsArray(0).catch(err => new Error(err));
+    clearNotifications(myAddress)
   }, [ myAddress ]);
 
   if (!myAddress) return <NotAuthorized/>;
