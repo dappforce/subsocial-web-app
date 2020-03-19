@@ -103,7 +103,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   } = post;
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
-  console.log('TYPE POST', id, type);
+  // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
   const [ content, setContent ] = useState(initialContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
