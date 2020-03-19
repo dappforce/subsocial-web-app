@@ -29,7 +29,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
   body: Yup.string()
     // .min(p.minTextLen, `Your post is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.postMaxLen, `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
+    .max(p.postMaxLen.toNumber(), `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
     .required('Post body is required'),
 
   image: Yup.string()
@@ -38,7 +38,8 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 });
 
 type ValidationProps = {
-  postMaxLen: number
+  // postMaxLen: number,
+  postMaxLen: U32
 };
 
 type OuterProps = ValidationProps & {
@@ -50,7 +51,6 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postMaxLen: U32
 };
 
 type FormValues = PostContent;
@@ -228,7 +228,7 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
   },
 
   validationSchema: (props: OuterProps) => buildSchema({
-    postMaxLen: props.postMaxLen?.toNumber()
+    postMaxLen: props.postMaxLen
   }),
 
   handleSubmit: values => {
