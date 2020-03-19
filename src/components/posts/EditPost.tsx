@@ -8,7 +8,7 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { Text } from '@polkadot/types';
+import { Text, U32 } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost } from '../types';
 import Section from '../utils/Section';
@@ -29,7 +29,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
   body: Yup.string()
     // .min(p.minTextLen, `Your post is too short. Minimum length is ${p.minTextLen} chars.`)
-    // .max(p.maxTextLen, `Your post description is too long. Maximum length is ${p.maxTextLen} chars.`)
+    .max(p.postMaxLen, `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
     .required('Post body is required'),
 
   image: Yup.string()
@@ -38,10 +38,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 });
 
 type ValidationProps = {
-  // minTitleLen: number,
-  // maxTitleLen: number,
-  // minTextLen: number,
-  // maxTextLen: number
+  postMaxLen: number
 };
 
 type OuterProps = ValidationProps & {
@@ -52,7 +49,8 @@ type OuterProps = ValidationProps & {
   json?: PostContent,
   onlyTxButton?: boolean,
   closeModal?: () => void,
-  withButtons?: boolean
+  withButtons?: boolean,
+  postMaxLen: U32
 };
 
 type FormValues = PostContent;
@@ -209,7 +207,7 @@ const InnerForm = (props: FormProps) => {
     </>;
 };
 
-const EditForm = withFormik<OuterProps, FormValues>({
+export const InnerEditPost = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
@@ -229,7 +227,9 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: buildSchema,
+  validationSchema: (props: OuterProps) => buildSchema({
+    postMaxLen: props.postMaxLen?.toNumber()
+  }),
 
   handleSubmit: values => {
     // do submitting things
@@ -242,7 +242,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const { postId } = router.query;
     const { id } = props;
 
-    if (id) return <Component />;
+    if (id) return <Component { ...props } />;
 
     try {
       return <Component id={new PostId(postId as string)} {...props}/>;
@@ -253,11 +253,11 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
 }
 
 function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function () {
+  return function (props: OuterProps) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component blogId={new BlogId(blogId as string)} />;
+      return <Component blogId={new BlogId(blogId as string)} { ...props } />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }
@@ -306,25 +306,33 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>Post not found</em>;
     }
 
-    return <Component {...props} struct={struct} json={json}/>;
+    if (!struct || !struct.created.account.eq(myAddress)) {
+      return <em>You have no rights to edit this post</em>;
+    }
+
+    return <Component {...props} struct={struct} json={json} />;
   };
 }
 
+export const InnerFormWithValidation = withMulti(
+  InnerEditPost,
+  withCalls<OuterProps>(
+    queryBlogsToProp('postMaxLen', { propName: 'postMaxLen' })
+  )
+);
+
 export const NewPost = withMulti(
-  EditForm,
+  InnerFormWithValidation,
   withBlogIdFromUrl
 );
 
-export const NewSharePost = withMulti(
-  EditForm
-);
+export const NewSharePost = InnerFormWithValidation;
 
 export const EditPost = withMulti<OuterProps>(
-  EditForm,
+  InnerFormWithValidation,
   withIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('postById',
-      { paramName: 'id', propName: 'structOpt' })
+    queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
   LoadStruct
 );

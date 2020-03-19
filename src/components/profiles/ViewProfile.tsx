@@ -20,7 +20,7 @@ import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 import { BUTTON_SIZE } from '../../config/Size.config';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown, Icon, Button } from 'antd';
 import { NextPage } from 'next';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
@@ -28,7 +28,6 @@ import { isEmpty } from 'lodash';
 import BalanceDisplay from '@polkadot/ui-app/Balance';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 export type Props = {
   preview?: boolean,
@@ -254,8 +253,8 @@ const Component: NextPage<Props> = (props: Props) => {
         {renderPreview()}
         <div className='Profile--actions'>
           <FollowAccountButton address={address} size={BUTTON_SIZE}/>
-          <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowersOpen(true)} isDisabled={followers.eq(ZERO)}><Pluralize count={followers.toString()} singularText='Follower'/></TxButton>
-          <TxButton isBasic={true} isPrimary={false} size={BUTTON_SIZE} onClick={() => setFollowingOpen(true)} isDisabled={following.eq(ZERO)}>{following.toString()} Following </TxButton>
+          <Button onClick={() => setFollowersOpen(true)} disabled={followers.eq(ZERO)}><Pluralize count={followers.toString()} singularText='Follower'/></Button>
+          <Button onClick={() => setFollowingOpen(true)} disabled={following.eq(ZERO)}>{following.toString()} Following </Button>
         </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
