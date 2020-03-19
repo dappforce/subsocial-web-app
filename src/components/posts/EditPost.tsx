@@ -272,7 +272,6 @@ type LoadStructProps = OuterProps & {
 };
 
 type StructJson = PostContent | undefined;
-type PostStruct = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
