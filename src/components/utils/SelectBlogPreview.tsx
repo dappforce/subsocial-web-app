@@ -13,66 +13,88 @@ type Props = {
   imageSize?: number,
   blogIds: BlogId[],
   onSelect?: (value: string | number | LabeledValue) => void,
-  defaultValue?: string
+  defaultValue?: string,
+  preparedBlogsData?: {
+    name: string,
+    image: string,
+    hasImage: boolean,
+    id: string | undefined
+  }[] | undefined
 };
 
 const SUB_SIZE = 2;
 
 const SelectBlogPreview = (props: Props) => {
-  const { blogIds, imageSize = 36, onSelect, defaultValue } = props
+  const { preparedBlogsData, imageSize = 36, onSelect, defaultValue } = props
 
-  if (!blogIds) return <NoData description={<span>Blogs not found</span>} />;
-
-  const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>()
-
-  console.log('blogIds from SelectBlogPreview', blogIds)
-
-  useEffect(() => {
-    const loadBlogs = async () => {
-      const { blogIds } = props
-      if (!blogIds) return
-
-      const api = await getApi();
-
-      console.log('blogIds from getInitialProps Select', blogIds)
-
-      const loadBlogs = blogIds.map(id => loadBlogData(api, id as BlogId));
-      const blogsData = await Promise.all<BlogData>(loadBlogs);
-
-      console.log('blogsData from Select Effect:', blogsData)
-
-      setCurrentBlogsData(blogsData)
-    }
-
-    loadBlogs();
-  }, [ blogIds ])
+  if (!preparedBlogsData) return <NoData description={<span>Blogs not found</span>} />;
 
   return <Select
     style={{ width: 200 }}
     onSelect={onSelect}
     defaultValue={defaultValue}
   >
-    { currentBlogsData && currentBlogsData.map((x) => {
-      const { initialContent } = x
-      const { name, image } = initialContent as BlogContent
-      const hasImage = image && nonEmptyStr(image)
-
-      return (
-        <Select.Option value={x.blog?.id.toString()} key={x.blog?.id.toString()}>
-          <div className={`item ProfileDetails DfPreview`}>
-            {hasImage
-              ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
-              : <IdentityIcon className='image' size={imageSize - SUB_SIZE} />
-            }
-            <div className='content'>
-              <div className='handle'>{name}</div>
-            </div>
+    { preparedBlogsData.map((x) => (
+      <Select.Option value={x.id} key={x.id}>
+        <div className={`item ProfileDetails DfPreview`}>
+          {x.hasImage
+            ? <DfBgImg className='DfAvatar' size={imageSize} src={x.image} style={{ border: '1px solid #ddd' }} rounded/>
+            : <IdentityIcon className='image' size={imageSize - SUB_SIZE} />
+          }
+          <div className='content'>
+            <div className='handle'>{x.name}</div>
           </div>
-        </Select.Option>
-      )
-    })
-    }
+        </div>
+      </Select.Option>
+    )
+    )}
   </Select>
 }
 
-export default SelectBlogPreview
+const GetBlogData = (Component: React.ComponentType<Props>) => {
+  return (props: Props) => {
+    const { blogIds } = props
+
+    if (!blogIds) return <NoData description={<span>Blogs not found</span>} />
+
+    const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>()
+
+    useEffect(() => {
+      const loadBlogs = async () => {
+        const { blogIds } = props
+        if (!blogIds) return
+
+        const api = await getApi();
+
+        console.log('blogIds from getInitialProps Select', blogIds)
+
+        const loadBlogs = blogIds.map(id => loadBlogData(api, id as BlogId));
+        const blogsData = await Promise.all<BlogData>(loadBlogs);
+
+        console.log('blogsData from Select Effect:', blogsData)
+
+        setCurrentBlogsData(blogsData)
+      }
+
+      loadBlogs();
+    }, [ blogIds ])
+
+    const preparedBlogsData = currentBlogsData?.map((x) => {
+      const { initialContent } = x
+      const { name, image } = initialContent as BlogContent
+      const hasImage = nonEmptyStr(image)
+      return {
+        id: x.blog?.id.toString(),
+        name,
+        image,
+        hasImage
+      }
+    })
+
+    if (!preparedBlogsData) return <NoData description={<span>Blogs not found</span>} />
+
+    return <Component preparedBlogsData={preparedBlogsData} {...props} />
+  }
+}
+
+export default GetBlogData(SelectBlogPreview)
