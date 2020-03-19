@@ -6,9 +6,7 @@ import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostContent } from '../types';
-import { PostId, Post } from '@subsocial/types/interfaces/runtime';
+import { ipfs } from '../utils/OffchainUtils';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, summarize } from '../utils/utils';
@@ -28,6 +26,8 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
+import { PostContent } from '@subsocial/types/offchain';
+import { Post, PostId } from '@subsocial/types/substrate/interfaces';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -377,7 +377,9 @@ export const getTypePost = (post: Post): PostType => {
 };
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
-  const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
+  const ipfsContent = await ipfs.findPost(post.ipfs_hash);
+  if (!ipfsContent) return {} as PostExtContent;
+
   const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
   return {
     ...ipfsContent,

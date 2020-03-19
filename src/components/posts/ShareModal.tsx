@@ -4,14 +4,14 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Dropdown, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { BlogId } from '@subsocial/types/interfaces/runtime';
+import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
 import { ViewBlog } from '../blogs/ViewBlog';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
 import BN from 'bn.js';
-import { PostExtension, SharedPost } from '../types';
+import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
 
 type Props = MyAccountProps & {
   postId: BN,
@@ -35,14 +35,20 @@ const InnerShareModal = (props: Props) => {
       );
     }
 
-    const blogs = blogIds.map(id => ({
+    type OptionDropdown = {
+      key: number,
+      text: JSX.Element,
+      value: BlogId
+    }
+
+    const blogs: OptionDropdown[] = blogIds.map(id => ({
       key: id.toNumber(),
       text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
-      value: id.toNumber()
+      value: id // value: id
     }));
 
-    const saveBlog = (event: any, data: any) => {
-      setBlogId(data);
+    const saveBlog = (event: any, data: OptionDropdown) => {
+      setBlogId(data.value);
     };
     return (<div className='DfShareModal'>
       <Dropdown
@@ -50,9 +56,9 @@ const InnerShareModal = (props: Props) => {
         selection
         search
         size='tiny'
-        options={blogs}
-        onChange={saveBlog}
-        defaultValue={blogs[0].value}
+        options={blogs as any}
+        onChange={saveBlog as any}
+        defaultValue={blogs[0].value.toString()}
       />
       <NewSharePost
         blogId={blogId}

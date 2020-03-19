@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { api as polkadotApi } from '@polkadot/react-api';
-import { types } from '../types/DfRegister';
+import { types } from '@subsocial/types/substrate/preparedTypes'
 import { getEnv } from './utils';
 
 let api: ApiPromise | undefined

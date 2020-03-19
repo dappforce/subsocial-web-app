@@ -8,7 +8,7 @@ import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext
 import { Loading, getEnv } from '../components/utils/utils';
 import { getApi } from '../components/utils/SubstrateApi';
 import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
-import { BlogId } from '@subsocial/types/interfaces/runtime';
+import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import Link from 'next/link';
 

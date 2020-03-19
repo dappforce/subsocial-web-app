@@ -4,7 +4,7 @@ import React from 'react';
 import { ApiProps } from '@polkadot/react-api/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
-import { BlogId, PostId } from '@subsocial/types/interfaces/runtime';
+import { BlogId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';

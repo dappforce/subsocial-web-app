@@ -9,10 +9,8 @@ import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import { partition, isEmpty } from 'lodash';
-import { CommentId, Comment, Post } from '@subsocial/types/interfaces/runtime';
-import { CommentContent, PostContent } from '../types';
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -29,6 +27,8 @@ import { NextPage } from 'next';
 import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
 import BN from 'bn.js'
+import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
+import { PostContent, CommentContent } from '@subsocial/types/offchain';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -159,8 +159,8 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   useEffect(() => {
     let isSubscribe = true;
 
-    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
-      isSubscribe && setContent(json);
+    ipfs.findComment(struct.ipfs_hash).then(json => {
+      isSubscribe && json && setContent(json);
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
@@ -179,8 +179,8 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         if (result.isNone) return;
         isSubscribe && setPost(result.unwrap());
       }
-      const content = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-      if (isSubscribe) {
+      const content = await ipfs.findPost(post.ipfs_hash);
+      if (isSubscribe && content) {
         setPostContent(content);
       }
     };
@@ -300,7 +300,7 @@ ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
   const comment = commentOpt.unwrapOr({} as Comment);
   const postData = comment && await loadPostData(api, comment.post_id) as PostData;
-  const commentContent = comment && await getJsonFromIpfs<CommentContent>(comment.ipfs_hash);
+  const commentContent = comment && await ipfs.findComment(comment.ipfs_hash);
   return {
     comment: comment,
     post: postData.post,

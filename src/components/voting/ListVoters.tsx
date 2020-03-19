@@ -3,7 +3,7 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
-import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/interfaces/runtime';
+import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { api } from '@polkadot/react-api/Api';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';

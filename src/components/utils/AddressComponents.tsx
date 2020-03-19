@@ -14,8 +14,6 @@ import { nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { summarize } from './utils';
 import { getApi } from '../utils/SubstrateApi';
-import { ProfileContent } from '../types';
-import { SocialAccount, Profile } from '@subsocial/types/interfaces/runtime';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
 import Router from 'next/router';
@@ -25,11 +23,14 @@ import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 // import { isBrowser } from 'react-device-detect';
-import { getJsonFromIpfs } from './OffchainUtils';
+import { ipfs } from './OffchainUtils';
 import { Balance } from '@polkadot/types/interfaces';
 import AccountIndex from '@polkadot/types/generic/AccountIndex';
 import Address from '@polkadot/types/generic/Address';
 import { AccountName } from '@polkadot/react-components';
+import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
+import { ProfileContent } from '@subsocial/types/offchain';
+import { getFirstOrUndefinded } from '@subsocial/api/utils';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
@@ -116,8 +117,8 @@ function AddressComponents (props: Props) {
       const profile = profileOpt.unwrap() as Profile;
       isSubscribe && setProfile(profile);
 
-      const profileContent = await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
-      isSubscribe && setProfileContent(profileContent);
+      const profileContent = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+      isSubscribe && profileContent && setProfileContent(profileContent);
     };
 
     UpdateSocialAccount().catch(console.log);

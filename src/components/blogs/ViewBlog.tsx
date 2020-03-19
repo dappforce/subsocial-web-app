@@ -6,11 +6,9 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
-import { BlogId, Blog, PostId } from '@subsocial/types/interfaces/runtime';
-import { BlogContent } from '../types';
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -29,6 +27,8 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
+import { BlogContent } from '@subsocial/types/offchain';
+import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -99,9 +99,9 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    getJsonFromIpfs<BlogContent>(ipfs_hash).then(json => {
+    ipfs.findBlog(ipfs_hash).then(json => {
       const content = json;
-      if (isSubscribe) setContent(content);
+      if (isSubscribe && content) setContent(content);
     }).catch(err => console.log(err));
 
     return () => { isSubscribe = false; };
@@ -285,7 +285,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 export const loadBlogData = async (api: ApiPromise, blogId: BN): Promise<BlogData> => {
   const blogIdOpt = await api.query.social.blogById(blogId) as Option<Blog>;
   const blog = blogIdOpt.isSome ? blogIdOpt.unwrap() : undefined;
-  const content = blog && await getJsonFromIpfs<BlogContent>(blog.ipfs_hash);
+  const content = blog && await ipfs.findBlog(blog.ipfs_hash.toString());
   return {
     blog: blog,
     initialContent: content

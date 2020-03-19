@@ -8,8 +8,6 @@ import { GenericAccountId as AccountId, Option } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { SocialAccount, Profile } from '@subsocial/types/interfaces/runtime';
-import { ProfileContent } from '../types';
 import { withSocialAccount, summarize } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
@@ -24,9 +22,12 @@ import { Pluralize } from '../utils/Plularize';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
+import { getFirstOrUndefinded } from '@subsocial/api/utils';
+import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
+import { ProfileContent } from '@subsocial/types/offchain';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -272,7 +273,7 @@ Component.getInitialProps = async (props): Promise<Props> => {
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
-  const content = profile && await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
+  const content = profile && getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
   return {
     id: new AccountId(registry, address as string),
     socialAccount: socialAccount,

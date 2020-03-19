@@ -3,9 +3,7 @@ import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult, ApiPromise } from '@polkadot/api';
-import { BlogId, Profile, SocialAccount, Moment } from '@subsocial/types/interfaces/runtime';
-import { ProfileContent } from '../types';
-import { getJsonFromIpfs } from './OffchainUtils';
+import { ipfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
@@ -15,6 +13,10 @@ import { truncate } from 'lodash';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
+import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/interfaces';
+import { ProfileContent } from '@subsocial/types/offchain';
+import { getFirstOrUndefinded } from '@subsocial/api/utils';
+import { Moment } from '@polkadot/types/interfaces';
 
 type PaginationProps = {
   currentPage?: number;
@@ -124,11 +126,12 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
       if (!ipfsHash) return;
 
       let isSubscribe = true;
-      getJsonFromIpfs<ProfileContent>(ipfsHash)
-        .then(json => {
-          isSubscribe && setProfileContent(json);
-        })
-        .catch(err => console.log(err));
+      const loadContent = async () => {
+        const content = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+        isSubscribe && content && setProfileContent(content);
+      }
+
+      loadContent().catch(console.log);
 
       return () => { isSubscribe = false; };
     }, [ false ]);
@@ -148,7 +151,7 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 export const Loading = () => <Icon type='loading' />;
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
-  const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber();
+  const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
 };
 

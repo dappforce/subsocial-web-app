@@ -12,17 +12,18 @@ import { createType } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
-import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import { queryBlogsToProp } from '../utils/index';
-import { CommentContent, CommentUpdate } from '../types';
 import BN from 'bn.js';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
 import { NoData } from '../utils/DataList';
-import { Comment } from '@subsocial/types/interfaces/runtime'
+import { Comment, IpfsHash } from '@subsocial/types/substrate/interfaces/subsocial'
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
+import { CommentContent } from '@subsocial/types/offchain';
+import { CommentUpdate } from '@subsocial/types/substrate/classes';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
@@ -80,12 +81,12 @@ const InnerForm = (props: FormProps) => {
     body
   } = values;
 
-  const [ ipfsCid, setIpfsCid ] = useState('');
+  const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = async (sendTx: () => void) => {
     if (isValid) {
       const json = { body };
-      const cid = await addJsonToIpfs(json).catch(err => console.log(err)) as string;
+      const cid = await ipfs.saveComment(json);
       setIpfsCid(cid);
       sendTx();
       // window.onunload = async (e) => {
@@ -98,7 +99,7 @@ const InnerForm = (props: FormProps) => {
   };
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    removeFromIpfs(ipfsCid).catch(err => console.log(err));
+    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => console.log(err));
     setSubmitting(false);
   };
 
@@ -238,7 +239,7 @@ function LoadStruct (props: LoadStructProps) {
 
     console.log('Loading comment JSON from IPFS');
 
-    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
+    ipfs.findComment(struct.ipfs_hash).then(json => {
       const content = json;
       setJson(content);
     }).catch(err => console.log(err));
