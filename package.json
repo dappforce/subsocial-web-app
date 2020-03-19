@@ -27,7 +27,7 @@
     "clean": "polkadot-dev-clean-build",
     "postinstall": "polkadot-dev-yarn-only",
     "test": "echo \"skipping tests\"",
-    "dev": "node export-env.js && next",
+    "dev": "node export-env.js && next -p 3003",
     "build": "next build",
     "export": "next export",
     "start": "node export-env.js && next start -p 3003",
