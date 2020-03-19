@@ -44,6 +44,6 @@ export const clearNotifications = async (myAddress: string): Promise<void> => {
       console.warn('Failed to mark all notifications as read for account:', myAddress, 'res.status:', res.status)
     }
   } catch (err) {
-    console.log('Failed to mark all notifications as read for account:', err)
+    console.log('Failed to mark all notifications as read for account: ${myAddress}', err)
   }
 };
