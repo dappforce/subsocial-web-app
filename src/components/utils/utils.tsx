@@ -166,7 +166,7 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
 
 export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BN | undefined> => {
   if (idOrSlug.startsWith('@')) {
-    const slug = idOrSlug.substring(1)
+    const slug = idOrSlug.substring(1) // Drop '@'
     const idOpt = await api.query.social.blogIdBySlug(slug) as Option<BlogId>
     return idOpt.unwrapOr(undefined)
   } else {
