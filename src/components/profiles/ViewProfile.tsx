@@ -244,6 +244,9 @@ const Component: NextPage<Props> = (props: Props) => {
     return renderPreview();
   }
 
+  const noFollowers = !followers.eq(ZERO);
+  const noFollowing = !following.eq(ZERO);
+
   return <>
     <HeadMeta title={getName()} desc={about} image={avatar} />
     <Section>
@@ -251,8 +254,8 @@ const Component: NextPage<Props> = (props: Props) => {
         {renderPreview()}
         <div className='Profile--actions'>
           <FollowAccountButton address={address} size={TX_BUTTON_SIZE}/>
-          <span onClick={() => !followers.eq(ZERO) && setFollowersOpen(true)} className={`DfGreyLink ${followers.eq(ZERO) && 'disable'}`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
-          <span onClick={() => !following.eq(ZERO) && setFollowingOpen(true)} className={`DfGreyLink ${following.eq(ZERO) && 'disable'}`}>{following.toString()} Following </span>
+          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`DfGreyLink ${noFollowers && 'disable'}`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
+          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`DfGreyLink ${noFollowing && 'disable'}`}>{following.toString()} Following </span>
         </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
