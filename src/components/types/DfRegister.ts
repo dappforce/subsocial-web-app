@@ -13,7 +13,7 @@ export const registerSubsocialTypes = (): void => {
   try {
     registry.register(types);
   } catch (err) {
-    console.error('Failed to register custom types of blogs module', err);
+    console.error('Failed to register Subsocial types', err);
   }
 };
 
