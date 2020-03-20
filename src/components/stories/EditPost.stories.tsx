@@ -4,6 +4,7 @@ import '../utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { InnerEditPost } from '../posts/EditPost';
 import { BlogId, Post, PostId, PostContent } from '../types';
+import { U32 } from '@polkadot/types';
 
 export default {
   title: 'EditPost',
@@ -25,7 +26,7 @@ const mockJson: PostContent = {
 }
 
 export const NewPost = () =>
-  <InnerEditPost blogId={mockBlogId}/>;
+  <InnerEditPost blogId={mockBlogId} postMaxLen={new U32(15)} />
 
 export const EditPost = () =>
-  <InnerEditPost blogId={mockBlogId} struct={mockStruct} json={mockJson}/>;
+  <InnerEditPost blogId={mockBlogId} struct={mockStruct} json={mockJson} postMaxLen={new U32(15)} />
