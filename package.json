@@ -31,7 +31,7 @@
     "build": "next build",
     "export": "next export",
     "start": "node export-env.js && next start -p 3003",
-    "storybook": "start-storybook -p 3002"
+    "storybook": "start-storybook -s ./public -p 3002"
   },
   "devDependencies": {
     "@appbaseio/reactivesearch": "^3.0.3",
