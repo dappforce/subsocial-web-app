@@ -729,6 +729,12 @@ hr {
 .DfSection {
   margin-bottom: $space_normal;
 
+  .viewblog-minipreview {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
     margin: 0rem;

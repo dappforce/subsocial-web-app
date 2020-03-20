@@ -186,6 +186,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
+  const renderBlogPreview = (post: Post) => {
+    if (isEmpty(post)) return null
+
+    const { blog_id } = post
+
+    return <ViewBlog id={blog_id} miniPreview withFollowButton />
+  }
+
   const renderContent = (post: Post, content: PostExtContent) => {
     if (!post || !content) return null;
 
@@ -286,6 +294,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <DfMd source={body} />
         {/* TODO render tags */}
         {withCreatedBy && renderPostCreator(post)}
+        {renderBlogPreview(post)}
       </div>
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
