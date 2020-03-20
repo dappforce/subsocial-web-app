@@ -59,7 +59,7 @@ type Props = {
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
-  
+
   const { blog } = props.blogData;
 
   if (!blog) return <NoData description={<span>Blog not found</span>} />;
@@ -109,6 +109,16 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
+
+  const renderTags = (content: BlogContent) => {
+    if (!content) return null;
+
+    const { tags } = content;
+
+    return <div className='DfTags'>
+      { tags.map((x) => <Tag key={x}>{x}</Tag>) }
+    </div>
+  }
 
   const renderDropDownMenu = () => {
     const [ open, setOpen ] = useState(false);
@@ -184,6 +194,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           </div>
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}
+          {renderTags(content)}
         </div>
       </div>
       {withFollowButton && <FollowBlogButton blogId={id} />}
