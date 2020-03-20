@@ -626,8 +626,8 @@ hr {
 }
 
 .ui--AddressComponents {
-  width: 100%;
-
+  width: 70%;
+  
   .ui--IdentityIcon {
     margin-left: 0;
     margin-right: $space_small;
@@ -635,6 +635,10 @@ hr {
 
   .AddressComponents.follow {
     float: right;
+
+    .button {
+      margin: 0;
+    }
   }
 
   .ui--AddressComponents-info {
@@ -732,7 +736,7 @@ hr {
   .viewblog-minipreview {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: 70%;
   }
 
   .DfSection-title {
