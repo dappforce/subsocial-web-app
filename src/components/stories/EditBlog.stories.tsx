@@ -31,7 +31,7 @@ const validations = {
 }
 
 export const NewBlog = () =>
-  <EditForm id={mockBlogId} {...validations} />
+  <EditForm {...validations} />
 
 export const EditBlog = () =>
   <EditForm id={mockBlogId} struct={mockStruct} json={mockJson} {...validations} />
