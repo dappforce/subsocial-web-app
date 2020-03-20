@@ -19,6 +19,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+import EditableTagGroup from '../utils/EditableTagGroup';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
@@ -160,7 +161,7 @@ const InnerForm = (props: FormProps) => {
           <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
         </LabelledField>
 
-        {/* TODO tags */}
+        <EditableTagGroup name='tags' label='Tags' tagsData={tags} {...props}/>
 
         <LabelledField {...props}>
           <TxButton
