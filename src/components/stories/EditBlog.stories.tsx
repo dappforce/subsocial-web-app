@@ -25,8 +25,8 @@ const mockJson: BlogContent = {
 }
 
 const validations = {
-  blogMaxLen: new U32(50),
-  slugMinLen: new U32(50),
+  blogMaxLen: new U32(500),
+  slugMinLen: new U32(5),
   slugMaxLen: new U32(50)
 }
 
