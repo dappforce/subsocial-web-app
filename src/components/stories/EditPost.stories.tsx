@@ -26,7 +26,7 @@ const mockJson: PostContent = {
 }
 
 export const NewPost = () =>
-  <InnerEditPost blogId={mockBlogId} postMaxLen={new U32(15)} />;
+  <InnerEditPost blogId={mockBlogId} postMaxLen={new U32(15)} />
 
 export const EditPost = () =>
-  <InnerEditPost blogId={mockBlogId} struct={mockStruct} json={mockJson} postMaxLen={new U32(15)}/>;
+  <InnerEditPost blogId={mockBlogId} struct={mockStruct} json={mockJson} postMaxLen={new U32(15)}/>
