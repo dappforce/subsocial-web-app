@@ -626,6 +626,8 @@ hr {
 }
 
 .ui--AddressComponents {
+  width: 100%;
+
   .ui--IdentityIcon {
     margin-left: 0;
     margin-right: $space_small;
