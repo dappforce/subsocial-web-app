@@ -200,78 +200,80 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 
   return <>
     <HeadMeta title={'Navigation Editor'} />
-    <Section className='NavigationEditor' title={'Navigation Editor'}>
-      {renderReorderNavTabs()}
-      <Form className='ui form DfForm NavigationEditorForm'>
-        <FieldArray
-          name="navTabs"
-          render={arrayHelpers => (
-            <div>
-              {values.navTabs && values.navTabs.length > 0 && (
-                values.navTabs.map((nt, index) => (
-                  <div className={`NERow ${(nt.hidden ? 'NEHidden' : '')}`} key={nt.id}>
+    <div className='NavEditorWrapper'>
+      <Section className='NavigationEditor' title={'Navigation Editor'}>
+        <Form className='ui form DfForm NavigationEditorForm'>
+          <FieldArray
+            name="navTabs"
+            render={arrayHelpers => (
+              <div>
+                {values.navTabs && values.navTabs.length > 0 && (
+                  values.navTabs.map((nt, index) => (
+                    <div className={`NERow ${(nt.hidden ? 'NEHidden' : '')}`} key={nt.id}>
 
-                    <div className="NEText">Name:</div>
-                    <Field
-                      type="text"
-                      name={`nt.${index}.title`}
-                      placeholder="Tab Name"
-                      value={nt.title}
-                      onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.title`, e.currentTarget.value)}
-                    />
-                    {renderError(index, 'title')}
-                    <div className="NEText">Description:</div>
-                    <Field
-                      component={SimpleMDEReact}
-                      name={`navTabs.${index}.description`} value={nt.description}
-                      onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)}
-                      className={`DfMdEditor NETextEditor`} />
-                    <div className="NEText">Type of content:</div>
-                    <Field
-                      component={Select}
-                      name={`nt.${index}.type`}
-                      defaultValue={nt.type}
-                      onChange={(e: SelectValue) => handleTypeChange(e, index)}
-                      className={'NESelectType'}
-                    >
+                      <div className="NEText">Name:</div>
+                      <Field
+                        type="text"
+                        name={`nt.${index}.title`}
+                        placeholder="Tab Name"
+                        value={nt.title}
+                        onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.title`, e.currentTarget.value)}
+                      />
+                      {renderError(index, 'title')}
+                      <div className="NEText">Description:</div>
+                      <Field
+                        component={SimpleMDEReact}
+                        name={`navTabs.${index}.description`} value={nt.description}
+                        onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)}
+                        className={`DfMdEditor NETextEditor`} />
+                      <div className="NEText">Type of content:</div>
+                      <Field
+                        component={Select}
+                        name={`nt.${index}.type`}
+                        defaultValue={nt.type}
+                        onChange={(e: SelectValue) => handleTypeChange(e, index)}
+                        className={'NESelectType'}
+                      >
+                        {
+                          typesOfContent.map((x) => <Option key={x} value={x} >{x}</Option>)
+                        }
+                      </Field>
+                      <div className="NEText">Value:</div>
                       {
-                        typesOfContent.map((x) => <Option key={x} value={x} >{x}</Option>)
+                        renderValueField(nt, index)
                       }
-                    </Field>
-                    <div className="NEText">Value:</div>
-                    {
-                      renderValueField(nt, index)
-                    }
-                    <div className="NEButtonsWrapper">
-                      <div className="NEHideButton">
-                        <Switch onChange={() => setFieldValue(`navTabs.${index}.hidden`, !nt.hidden)} />
-                        Don&apos;t show this tab in blog navigation
-                      </div>
-                      <div className="NERemoveButton">
-                        <Button type="default" onClick={() => arrayHelpers.remove(index)}>Delete tab</Button>
+                      <div className="NEButtonsWrapper">
+                        <div className="NEHideButton">
+                          <Switch onChange={() => setFieldValue(`navTabs.${index}.hidden`, !nt.hidden)} />
+                          Don&apos;t show this tab in blog navigation
+                        </div>
+                        <div className="NERemoveButton">
+                          <Button type="default" onClick={() => arrayHelpers.remove(index)}>Delete tab</Button>
+                        </div>
                       </div>
                     </div>
+                  ))
+                )}
+                <div className="NERow">
+                  <div
+                    className="NEAddTab"
+                    onClick={() => { arrayHelpers.push(defaultTab) }}
+                  >
+                    + Add Tab
                   </div>
-                ))
-              )}
-              <div className="NERow">
-                <div
-                  className="NEAddTab"
-                  onClick={() => { arrayHelpers.push(defaultTab) }}
-                >
-                  + Add Tab
                 </div>
               </div>
-            </div>
-          )}
-        />
+            )}
+          />
 
-        <Button type='primary' htmlType='submit' disabled={!isValid || isSubmitting} className={'NESubmit'}>
-          Save
-        </Button>
-      </Form>
+          <Button type='primary' htmlType='submit' disabled={!isValid || isSubmitting} className={'NESubmit'}>
+            Save
+          </Button>
+        </Form>
 
-    </Section>
+      </Section>
+      {renderReorderNavTabs()}
+    </div>
   </>
 }
 
