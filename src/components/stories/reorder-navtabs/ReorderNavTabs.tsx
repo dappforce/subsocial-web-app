@@ -10,11 +10,12 @@ interface NavTab {
 
 // TODO rename
 export interface Props {
-  tabs: NavTab[]
+  tabs: NavTab[],
+  onSave: (a: NavTab[]) => void
 }
 
 const ReorderNavTabs = (props: Props) => {
-  const initialTabs = props.tabs
+  const { onSave, tabs: initialTabs } = props
 
   const [ tabs, setTabs ] = useState(initialTabs)
   const [ isNewOrder, setIsNewOrder ] = useState(false)
@@ -51,11 +52,6 @@ const ReorderNavTabs = (props: Props) => {
     setIsNewOrder(newTabs.find((tab, i) => tab.id !== initialTabs[i].id) !== undefined)
   }
 
-  const handleSave = () => {
-    console.warn('Save operation is not implemented yet')
-    console.log('The current order of tabs:', tabs)
-  }
-
   return <>
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="list" >
@@ -86,7 +82,7 @@ const ReorderNavTabs = (props: Props) => {
       </Droppable>
     </DragDropContext>
 
-    <Button type="primary" disabled={!isNewOrder} onClick={handleSave} className={'RNTSaveButton'}>Save</Button>
+    <Button type="primary" disabled={!isNewOrder} onClick={() => onSave(tabs)} className={'RNTSaveButton'}>Save</Button>
   </>
 }
 

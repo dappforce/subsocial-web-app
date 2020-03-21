@@ -157,31 +157,10 @@ export const ListForum = () => {
   return <ListForumTopics data={[]} />
 };
 
-export const Forum = () => <ViewForum />
-
-export const AddTeamMember = () => {
-  const companyData:CompanyData = [{
-    name: 'Web3 Foundation',
-    id: 1,
-    img: 'https://storage.googleapis.com/job-listing-logos/2ae39131-4f27-4944-b9f2-cd7a2e4e2bef.png',
-  }]
-
-  const employerTypesData = [
-    'Full-time',
-    'Part-time',
-    'Self-employed',
-    'Freelance',
-    'Contract',
-    'Internship',
-    'Apprenticeship',
-  ]
-
-  return (<AddTeamMemberFormik
-    companyData={companyData}
-    employerTypesData={employerTypesData}
-  />);
-};
-
+export const Forum = () => {
+  return <ViewForum />;
+}
+/*
 export const ReorderNavTabsExample = () => {
   const navTabs = {
     tabs: [
@@ -192,7 +171,7 @@ export const ReorderNavTabsExample = () => {
   }
   return <ReorderNavTabs {...navTabs} />
 }
-
+*/
 export const NavigationEditorExample = () => {
   const navProps: NavEditorFormProps = {
     tagsData: [ 'tag1', 'tag2', 'tag3' ],
@@ -213,6 +192,11 @@ export const NavigationEditorExample = () => {
     ],
     typesOfContent: [
       'by-tag', 'ext-url', 'post-url', 'blog-url'
+    ],
+    tabsOrder: [
+      { id: 1, name: 'first name' },
+      { id: 2, name: 'second name' },
+      { id: 3, name: 'third name' }
     ]
   }
 
