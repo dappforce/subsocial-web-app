@@ -176,11 +176,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   }
 
   const renderReorderNavTabs = () => {
-    /*
-    const preparedTabs = values.navTabs.map((x) => (
-      { id: x.id, name: x.title }
-    ))
-    */
 
     return <ReorderNavTabs tabs={tabsOrder} onChange={(tabs) => handleSaveNavOreder(tabs)} />
   }
