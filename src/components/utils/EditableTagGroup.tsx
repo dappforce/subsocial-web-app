@@ -11,14 +11,11 @@ interface OtherProps {
   label?: string,
   tags: string[],
   setFieldValue: (a: string, b: string[]) => void,
-  touched: any,
-  errors: any
+  hasError?: boolean
 }
 
 const EditableTagGroup = (props: OtherProps) => {
-  const { setFieldValue, tags, tagsData, label, name, touched, errors } = props
-
-  const hasError = touched && errors;
+  const { setFieldValue, tags, tagsData, label, name, hasError } = props
 
   const [ inputVisible, setInputVisible ] = useState(false)
   const [ inputValue, setInputValue ] = useState('')
