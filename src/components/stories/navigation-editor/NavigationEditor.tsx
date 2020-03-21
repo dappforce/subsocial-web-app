@@ -182,7 +182,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     ))
     */
 
-    return <ReorderNavTabs tabs={tabsOrder} onSave={(tabs) => handleSaveNavOreder(tabs)} />
+    return <ReorderNavTabs tabs={tabsOrder} onChange={(tabs) => handleSaveNavOreder(tabs)} />
   }
 
   const handleSaveNavOreder = (tabs: NavTabForOrder[]) => {

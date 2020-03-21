@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { List, Icon, Button } from 'antd';
+import { List, Icon } from 'antd';
 import './ReorderNavTabs.css'
 
 interface NavTab {
@@ -11,14 +11,14 @@ interface NavTab {
 // TODO rename
 export interface Props {
   tabs: NavTab[],
-  onSave: (a: NavTab[]) => void
+  onChange: (a: NavTab[]) => void
 }
 
 const ReorderNavTabs = (props: Props) => {
-  const { onSave, tabs: initialTabs } = props
+  const { onChange, tabs: initialTabs } = props
 
   const [ tabs, setTabs ] = useState(initialTabs)
-  const [ isNewOrder, setIsNewOrder ] = useState(false)
+  // const [ isNewOrder, setIsNewOrder ] = useState(false)
 
   const reorder = (list: NavTab[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
@@ -49,7 +49,9 @@ const ReorderNavTabs = (props: Props) => {
 
     setTabs(newTabs)
 
-    setIsNewOrder(newTabs.find((tab, i) => tab.id !== initialTabs[i].id) !== undefined)
+    // setIsNewOrder(newTabs.find((tab, i) => tab.id !== initialTabs[i].id) !== undefined)
+
+    onChange(newTabs)
   }
 
   return <>
@@ -81,8 +83,6 @@ const ReorderNavTabs = (props: Props) => {
         )}
       </Droppable>
     </DragDropContext>
-
-    <Button type="primary" disabled={!isNewOrder} onClick={() => onSave(tabs)} className={'RNTSaveButton'}>Save</Button>
   </>
 }
 
