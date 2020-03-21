@@ -158,7 +158,7 @@ export const ListForum = () => {
 export const Forum = () => {
   return <ViewForum />;
 }
-
+/*
 export const ReorderNavTabsExample = () => {
   const navTabs = {
     tabs: [
@@ -169,7 +169,7 @@ export const ReorderNavTabsExample = () => {
   }
   return <ReorderNavTabs {...navTabs} />
 }
-
+*/
 export const NavigationEditorExample = () => {
   const navProps: NavEditorFormProps = {
     tagsData: [ 'tag1', 'tag2', 'tag3' ],
@@ -190,6 +190,11 @@ export const NavigationEditorExample = () => {
     ],
     typesOfContent: [
       'by-tag', 'ext-url', 'post-url', 'blog-url'
+    ],
+    tabsOrder: [
+      { id: 1, name: 'first name' },
+      { id: 2, name: 'second name' },
+      { id: 3, name: 'third name' }
     ]
   }
 

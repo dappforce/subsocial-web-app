@@ -47,7 +47,8 @@ export interface NavTab {
 }
 
 export interface FormValues {
-  navTabs: NavTab[]
+  navTabs: NavTab[],
+  tabsOrder: NavTabForOrder[]
 }
 
 interface OtherProps {
@@ -55,6 +56,11 @@ interface OtherProps {
   posts: PartialPost[]
   typesOfContent: string[]
   blogs: PartialBlog[]
+}
+
+interface NavTabForOrder {
+  id: number
+  name: string
 }
 
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
@@ -72,7 +78,8 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   } = props;
 
   const {
-    navTabs
+    navTabs,
+    tabsOrder
   } = values;
 
   const getMaxId = (): number => {
@@ -169,11 +176,18 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   }
 
   const renderReorderNavTabs = () => {
+    /*
     const preparedTabs = values.navTabs.map((x) => (
       { id: x.id, name: x.title }
     ))
+    */
 
-    return <ReorderNavTabs tabs={preparedTabs} />
+    return <ReorderNavTabs tabs={tabsOrder} onSave={(tabs) => handleSaveNavOreder(tabs)} />
+  }
+
+  const handleSaveNavOreder = (tabs: NavTabForOrder[]) => {
+    console.log('The current order of tabs:', tabs)
+    setFieldValue('tabsOrder', tabs)
   }
 
   const handleTypeChange = (e: SelectValue, index: number) => {
@@ -288,6 +302,7 @@ export interface NavEditorFormProps {
   navTabs: NavTab[]
   typesOfContent: ContentType[]
   blogs: PartialBlog[]
+  tabsOrder: NavTabForOrder[]
 }
 
 // Wrap our form with the withFormik HoC
@@ -295,7 +310,8 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: props => {
     return {
-      navTabs: props.navTabs
+      navTabs: props.navTabs,
+      tabsOrder: props.tabsOrder
     };
   },
 
