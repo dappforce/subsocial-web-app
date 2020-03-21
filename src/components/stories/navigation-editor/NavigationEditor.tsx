@@ -4,7 +4,6 @@ import * as Yup from 'yup';
 import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
 import { Button, AutoComplete, Switch } from 'antd';
-import { PostId, BlogId } from 'src/components/types';
 import SimpleMDEReact from 'react-simplemde-editor';
 import './NavigationEditor.css'
 import Select, { SelectValue } from 'antd/lib/select';
@@ -13,29 +12,17 @@ import ReorderNavTabs from '../reorder-navtabs/ReorderNavTabs';
 
 const { Option } = AutoComplete;
 
-// Shape of form values
-interface PartialPost { id: PostId, title: string }
-interface PartialBlog { id: BlogId, title: string }
-
 interface FilterByTags {
   data: string[]
 }
 
-interface SpecificPost {
+interface Url {
   data: string
 }
 
-interface OuterUrl {
-  data: string
-}
+type NavTabContent = FilterByTags | Url
 
-interface SpecificBlog {
-  data: string
-}
-
-type NavTabContent = FilterByTags | SpecificPost | OuterUrl | SpecificBlog
-
-type ContentType = 'by-tag' | 'ext-url' | 'post-url' | 'blog-url'
+type ContentType = 'by-tag' | 'url'
 
 export interface NavTab {
   id: number
@@ -47,15 +34,12 @@ export interface NavTab {
 }
 
 export interface FormValues {
-  navTabs: NavTab[],
-  tabsOrder: NavTabForOrder[]
+  navTabs: NavTab[]
 }
 
 interface OtherProps {
   tagsData: string[]
-  posts: PartialPost[]
   typesOfContent: string[]
-  blogs: PartialBlog[]
 }
 
 interface NavTabForOrder {
@@ -66,8 +50,6 @@ interface NavTabForOrder {
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const {
     values,
-    posts,
-    blogs,
     errors,
     touched,
     setFieldValue,
@@ -78,8 +60,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   } = props;
 
   const {
-    navTabs,
-    tabsOrder
+    navTabs
   } = values;
 
   const getMaxId = (): number => {
@@ -91,7 +72,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 
   const renderValueField = (nt: NavTab, index: number) => {
     switch (nt.type) {
-      case 'ext-url': {
+      case 'url': {
         const url = nt.content.data ? nt.content.data : ''
         return (
           <Field
@@ -101,72 +82,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.content.data`, e.currentTarget.value)}
           />
         )
-      }
-      case 'blog-url': {
-        // const blogId = nt.content.data ? nt.content.data.toString() : undefined
-        // const currentBlog: PartialBlog | undefined = blogs.find(x => x.id.toString() === blogId)
-        // let currentBlogTitle = ''
-        // if (currentBlog) currentBlogTitle = currentBlog.title
-        const options = blogs.map(x => (
-          <Option key={x.id.toString()} value={x.id.toString()}>
-            {x.title}
-          </Option>
-        ))
-
-        const handleBlogChange = (e: SelectValue) => {
-          // TODO if e is BlogId or link or slug
-
-          setFieldValue(`navTabs.${index}.content.data`, e.toString())
-        }
-
-        return (
-          <AutoComplete
-            dataSource={options}
-            onChange={(e: SelectValue) => handleBlogChange(e)}
-            optionLabelProp={'value'}
-            // value={currentBlogTitle}
-          >
-            <Field
-              autoComplete={'off'}
-              type="text"
-              name={`nt.${index}.content.data`}
-            />
-          </AutoComplete>
-        )
-
-      }
-      case 'post-url': {
-        // const postId = nt.content.data ? nt.content.data.toString() : undefined
-        // const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId)
-        // let currentPostTitle: string | undefined
-        // if (currentPost) currentPostTitle = currentPost.title
-        const options = posts.map(x => (
-          <Option key={x.id.toString()} value={x.id.toString()}>
-            {x.title}
-          </Option>
-        ))
-
-        const handlePostChange = (e: SelectValue) => {
-          // TODO if e is PostId or link or slug
-
-          setFieldValue(`navTabs.${index}.content.data`, e.toString())
-        }
-
-        return (
-          <AutoComplete
-            dataSource={options}
-            onChange={(e: SelectValue) => handlePostChange(e)}
-            optionLabelProp={'value'}
-            // value={currentPostTitle}
-          >
-            <Field
-              autoComplete={'off'}
-              type="text"
-              name={`nt.${index}.content.data`}
-            />
-          </AutoComplete>
-        )
-
       }
       case 'by-tag': {
         const tags = nt.content.data || []
@@ -188,13 +103,11 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   }
 
   const renderReorderNavTabs = () => {
-
-    return <ReorderNavTabs tabs={tabsOrder} onChange={(tabs) => handleSaveNavOreder(tabs)} />
+    return <ReorderNavTabs tabs={navTabs} onChange={(tabs) => handleSaveNavOreder(tabs)} />
   }
 
-  const handleSaveNavOreder = (tabs: NavTabForOrder[]) => {
-    console.log('The current order of tabs:', tabs)
-    setFieldValue('tabsOrder', tabs)
+  const handleSaveNavOreder = (tabs: NavTab[]) => {
+    setFieldValue('navTabs', tabs)
   }
 
   const handleTypeChange = (e: SelectValue, index: number) => {
@@ -307,16 +220,12 @@ const schema = Yup.object().shape({
 
 export interface NavEditorFormProps {
   tagsData: string[]
-  posts: PartialPost[]
   navTabs: NavTab[]
   typesOfContent: ContentType[]
-  blogs: PartialBlog[]
   tabsOrder: NavTabForOrder[]
 }
 
-// Wrap our form with the withFormik HoC
 const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
-  // Transform outer props into form values
   mapPropsToValues: props => {
     return {
       navTabs: props.navTabs,

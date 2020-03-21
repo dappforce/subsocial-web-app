@@ -2,11 +2,7 @@ import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List, Icon } from 'antd';
 import './ReorderNavTabs.css'
-
-interface NavTab {
-  id: number
-  name: string
-}
+import { NavTab } from '../navigation-editor/NavigationEditor';
 
 export interface Props {
   tabs: NavTab[],
@@ -17,7 +13,6 @@ const ReorderNavTabs = (props: Props) => {
   const { onChange, tabs: initialTabs } = props
 
   const [ tabs, setTabs ] = useState(initialTabs)
-  // const [ isNewOrder, setIsNewOrder ] = useState(false)
 
   const reorder = (list: NavTab[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
@@ -48,8 +43,6 @@ const ReorderNavTabs = (props: Props) => {
 
     setTabs(newTabs)
 
-    // setIsNewOrder(newTabs.find((tab, i) => tab.id !== initialTabs[i].id) !== undefined)
-
     onChange(newTabs)
   }
 
@@ -70,7 +63,7 @@ const ReorderNavTabs = (props: Props) => {
                     >
                       <List.Item>
                         <Icon type="pause" className={'RNTIcon'}/>
-                        <List.Item.Meta title={tab.name} />
+                        <List.Item.Meta title={tab.title} />
                       </List.Item>
                     </div>
                   )}
