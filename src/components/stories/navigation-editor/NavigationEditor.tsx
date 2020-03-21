@@ -39,12 +39,6 @@ export interface FormValues {
 
 interface OtherProps {
   tagsData: string[]
-  typesOfContent: string[]
-}
-
-interface NavTabForOrder {
-  id: number
-  name: string
 }
 
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
@@ -53,7 +47,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     errors,
     touched,
     setFieldValue,
-    typesOfContent,
     tagsData,
     isValid,
     isSubmitting
@@ -67,6 +60,8 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     const x = navTabs.reduce((cur, prev) => (cur.id > prev.id ? cur : prev))
     return x.id
   }
+
+  const typesOfContent = [ 'url', 'by-tag' ]
 
   const defaultTab = { id: getMaxId() + 1, title: '', type: 'ext-url', description: '', content: { data: '' }, hidden: false }
 
@@ -221,15 +216,12 @@ const schema = Yup.object().shape({
 export interface NavEditorFormProps {
   tagsData: string[]
   navTabs: NavTab[]
-  typesOfContent: ContentType[]
-  tabsOrder: NavTabForOrder[]
 }
 
 const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   mapPropsToValues: props => {
     return {
-      navTabs: props.navTabs,
-      tabsOrder: props.tabsOrder
+      navTabs: props.navTabs
     };
   },
 
