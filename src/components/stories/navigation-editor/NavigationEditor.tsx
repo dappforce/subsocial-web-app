@@ -5,7 +5,7 @@ import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
 import { Button, AutoComplete, Switch } from 'antd';
 import { PostId, BlogId } from 'src/components/types';
-import TagsInput from '../tags-input/TagsInput';
+import TagsInput from './TagsInput';
 import SimpleMDEReact from 'react-simplemde-editor';
 import './NavigationEditor.css'
 import Select, { SelectValue } from 'antd/lib/select';
