@@ -10,7 +10,6 @@ import faker from 'faker';
 import './style.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import ReorderNavTabs from './reorder-navtabs/ReorderNavTabs';
 import NavigationEditor, { NavEditorFormProps } from './navigation-editor/NavigationEditor';
 import { PostId, BlogId } from '../types';
 
@@ -184,8 +183,8 @@ export const NavigationEditorExample = () => {
     navTabs: [
       { id: 1, title: 'first_name', type: 'by-tag', description: '', content: { data: [ 'first', 'value' ] }, hidden: false },
       { id: 2, title: 'second_name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: true },
-      { id: 3, title: 'third_name', type: 'post-url', description: '', content: { data: new PostId('3') }, hidden: false },
-      { id: 4, title: 'fourth_name', type: 'blog-url', description: '', content: { data: new BlogId('2') }, hidden: false },
+      { id: 3, title: 'third_name', type: 'post-url', description: '', content: { data: '3' }, hidden: false },
+      { id: 4, title: 'fourth_name', type: 'blog-url', description: '', content: { data: '2' }, hidden: false },
       { id: 5, title: 'fifth_name', type: 'by-tag', description: '', content: { data: [ 'fifth', 'value' ] }, hidden: false }
     ],
     typesOfContent: [
