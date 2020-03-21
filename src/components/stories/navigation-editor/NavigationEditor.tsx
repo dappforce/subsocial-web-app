@@ -9,6 +9,7 @@ import SimpleMDEReact from 'react-simplemde-editor';
 import './NavigationEditor.css'
 import Select, { SelectValue } from 'antd/lib/select';
 import EditableTagGroup from 'src/components/utils/EditableTagGroup';
+import ReorderNavTabs from '../reorder-navtabs/ReorderNavTabs';
 
 const { Option } = AutoComplete;
 
@@ -157,8 +158,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
               name={`navTabs.${index}.content.data`}
               tags={tags as string[]}
               setFieldValue={setFieldValue}
-              touched={touched}
-              errors={errors.navTabs && errors.navTabs[index]?.[name]}
             />
           </div>
         )
@@ -167,6 +166,14 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         return undefined
       }
     }
+  }
+
+  const renderReorderNavTabs = () => {
+    const preparedTabs = values.navTabs.map((x) => (
+      { id: x.id, name: x.title }
+    ))
+
+    return <ReorderNavTabs tabs={preparedTabs} />
   }
 
   const handleTypeChange = (e: SelectValue, index: number) => {
@@ -185,6 +192,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   return <>
     <HeadMeta title={'Navigation Editor'} />
     <Section className='NavigationEditor' title={'Navigation Editor'}>
+      {renderReorderNavTabs()}
       <Form className='ui form DfForm NavigationEditorForm'>
         <FieldArray
           name="navTabs"
@@ -294,7 +302,7 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   validationSchema: schema,
 
   handleSubmit: values => {
-    // console.log(values)
+    console.log(values)
   }
 })(InnerForm);
 
