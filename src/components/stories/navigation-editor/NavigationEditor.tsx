@@ -103,22 +103,28 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         )
       }
       case 'blog-url': {
-        const blogId = nt.content.data ? nt.content.data.toString() : undefined
-        const currentBlog: PartialBlog | undefined = blogs.find(x => x.id.toString() === blogId)
-        let currentBlogTitle = ''
-        if (currentBlog) currentBlogTitle = currentBlog.title
+        // const blogId = nt.content.data ? nt.content.data.toString() : undefined
+        // const currentBlog: PartialBlog | undefined = blogs.find(x => x.id.toString() === blogId)
+        // let currentBlogTitle = ''
+        // if (currentBlog) currentBlogTitle = currentBlog.title
         const options = blogs.map(x => (
           <Option key={x.id.toString()} value={x.id.toString()}>
             {x.title}
           </Option>
         ))
 
+        const handleBlogChange = (e: SelectValue) => {
+          // TODO if e is BlogId or link or slug
+
+          setFieldValue(`navTabs.${index}.content.data`, new BlogId(e.toString()))
+        }
+
         return (
           <AutoComplete
             dataSource={options}
-            onChange={(e: SelectValue) => setFieldValue(`navTabs.${index}.content.data`, new BlogId(e.toString()))}
+            onChange={(e: SelectValue) => handleBlogChange(e)}
             optionLabelProp={'value'}
-            value={currentBlogTitle}
+            // value={currentBlogTitle}
           >
             <Field
               autoComplete={'off'}
@@ -130,22 +136,28 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 
       }
       case 'post-url': {
-        const postId = nt.content.data ? nt.content.data.toString() : undefined
-        const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId)
-        let currentPostTitle = ''
-        if (currentPost) currentPostTitle = currentPost.title
+        // const postId = nt.content.data ? nt.content.data.toString() : undefined
+        // const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId)
+        // let currentPostTitle: string | undefined
+        // if (currentPost) currentPostTitle = currentPost.title
         const options = posts.map(x => (
           <Option key={x.id.toString()} value={x.id.toString()}>
             {x.title}
           </Option>
         ))
 
+        const handlePostChange = (e: SelectValue) => {
+          // TODO if e is PostId or link or slug
+
+          setFieldValue(`navTabs.${index}.content.data`, new PostId(e.toString()))
+        }
+
         return (
           <AutoComplete
             dataSource={options}
-            onChange={(e: SelectValue) => setFieldValue(`navTabs.${index}.content.data`, new PostId(e.toString()))}
+            onChange={(e: SelectValue) => handlePostChange(e)}
             optionLabelProp={'value'}
-            value={currentPostTitle}
+            // value={currentPostTitle}
           >
             <Field
               autoComplete={'off'}
