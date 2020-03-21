@@ -5,10 +5,10 @@ import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
 import { Button, AutoComplete, Switch } from 'antd';
 import { PostId, BlogId } from 'src/components/types';
-import TagsInput from './TagsInput';
 import SimpleMDEReact from 'react-simplemde-editor';
 import './NavigationEditor.css'
 import Select, { SelectValue } from 'antd/lib/select';
+import EditableTagGroup from 'src/components/utils/EditableTagGroup';
 
 const { Option } = AutoComplete;
 
@@ -149,12 +149,16 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 
       }
       case 'by-tag': {
+        const tags = nt.content.data || []
         return (
           <div className="NETagsWrapper">
-            <TagsInput
-              currentTab={index}
+            <EditableTagGroup
               tagsData={tagsData}
-              {...props}
+              name={`navTabs.${index}.content.data`}
+              tags={tags as string[]}
+              setFieldValue={setFieldValue}
+              touched={touched}
+              errors={errors.navTabs && errors.navTabs[index]?.[name]}
             />
           </div>
         )

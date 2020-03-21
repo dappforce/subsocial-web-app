@@ -1,32 +1,31 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
-import { FormikProps, ErrorMessage } from 'formik';
+import { ErrorMessage } from 'formik';
 import { SelectValue } from 'antd/lib/select';
 import { nonEmptyStr } from '.';
 
 interface OtherProps {
   tagsData?: string[],
-  name?: keyof FormValues,
-  label?: string
+  name: string,
+  label?: string,
+  tags: string[],
+  setFieldValue: (a: string, b: string[]) => void,
+  touched: any,
+  errors: any
 }
 
-type FormValues = {
-  tags: string[]
-}
+const EditableTagGroup = (props: OtherProps) => {
+  const { setFieldValue, tags, tagsData, label, name, touched, errors } = props
 
-const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
-  const { setFieldValue, values, tagsData, label, name, touched, errors } = props
-  const { tags } = values;
-
-  const hasError = name && touched[name] && errors[name];
+  const hasError = touched && errors;
 
   const [ inputVisible, setInputVisible ] = useState(false)
   const [ inputValue, setInputValue ] = useState('')
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter(tag => tag !== removedTag);
-    setFieldValue(name as string, newTags)
+    setFieldValue(name, newTags)
   };
 
   const showInput = () => {
