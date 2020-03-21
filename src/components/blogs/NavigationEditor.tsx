@@ -1,17 +1,22 @@
-import React from 'react'
-import { withFormik, FormikProps, Form, Field, FieldArray } from 'formik';
+import React, { useState, useEffect } from 'react';
+import { Button } from 'semantic-ui-react';
+import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import HeadMeta from '../../utils/HeadMeta';
-import Section from '../../utils/Section';
-import { Button, AutoComplete, Switch } from 'antd';
-import { PostId, BlogId } from 'src/components/types';
+import { Option } from '@polkadot/types';
+import Section from '../utils/Section';
+import { withCalls, withMulti } from '@polkadot/ui-api';
+import { getJsonFromIpfs } from '../utils/OffchainUtils';
+import { queryBlogsToProp } from '../utils/index';
+import { BlogId, Blog, BlogContent, PostId } from '../types';
+import { Loading } from '../utils/utils';
+import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
-import './NavigationEditor.css'
+import { useRouter } from 'next/router';
+import HeadMeta from '../utils/HeadMeta';
+import { AutoComplete, Switch } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
-import EditableTagGroup from 'src/components/utils/EditableTagGroup';
-import ReorderNavTabs from '../reorder-navtabs/ReorderNavTabs';
-
-const { Option } = AutoComplete;
+import EditableTagGroup from '../utils/EditableTagGroup';
+import ReorderNavTabs from '../stories/reorder-navtabs/ReorderNavTabs';
 
 // Shape of form values
 interface PartialPost { id: PostId, title: string }
@@ -51,11 +56,14 @@ export interface FormValues {
   tabsOrder: NavTabForOrder[]
 }
 
-interface OtherProps {
+interface OuterProps {
   tagsData: string[]
   posts: PartialPost[]
   typesOfContent: string[]
   blogs: PartialBlog[]
+  id?: BlogId;
+  struct?: Blog;
+  json?: BlogContent;
 }
 
 interface NavTabForOrder {
@@ -63,7 +71,7 @@ interface NavTabForOrder {
   name: string
 }
 
-const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
+const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const {
     values,
     posts,
@@ -108,9 +116,9 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         // let currentBlogTitle = ''
         // if (currentBlog) currentBlogTitle = currentBlog.title
         const options = blogs.map(x => (
-          <Option key={x.id.toString()} value={x.id.toString()}>
+          <AutoComplete.Option key={x.id.toString()} value={x.id.toString()}>
             {x.title}
-          </Option>
+          </AutoComplete.Option>
         ))
 
         const handleBlogChange = (e: SelectValue) => {
@@ -141,9 +149,9 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         // let currentPostTitle: string | undefined
         // if (currentPost) currentPostTitle = currentPost.title
         const options = posts.map(x => (
-          <Option key={x.id.toString()} value={x.id.toString()}>
+          <AutoComplete.Option key={x.id.toString()} value={x.id.toString()}>
             {x.title}
-          </Option>
+          </AutoComplete.Option>
         ))
 
         const handlePostChange = (e: SelectValue) => {
@@ -247,7 +255,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                         className={'NESelectType'}
                       >
                         {
-                          typesOfContent.map((x) => <Option key={x} value={x} >{x}</Option>)
+                          typesOfContent.map((x) => <AutoComplete.Option key={x} value={x} >{x}</AutoComplete.Option>)
                         }
                       </Field>
                       <div className="NEText">Value:</div>
@@ -308,10 +316,13 @@ const schema = Yup.object().shape({
 export interface NavEditorFormProps {
   tagsData: string[]
   posts: PartialPost[]
-  navTabs: NavTab[]
+  // navTabs: NavTab[]
   typesOfContent: ContentType[]
   blogs: PartialBlog[]
-  tabsOrder: NavTabForOrder[]
+  // tabsOrder: NavTabForOrder[]
+  id?: BlogId;
+  struct?: Blog;
+  json?: BlogContent;
 }
 
 // Wrap our form with the withFormik HoC
@@ -319,7 +330,7 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: props => {
     return {
-      navTabs: props.navTabs,
+      navTabs: props.struct,
       tabsOrder: props.tabsOrder
     };
   },
@@ -331,4 +342,82 @@ const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   }
 })(InnerForm);
 
-export default NavigationEditor
+function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
+  return function (props: OuterProps) {
+    const router = useRouter();
+    const { blogId } = router.query;
+    try {
+      return <Component id={new BlogId(blogId as string)} {...props} />;
+    } catch (err) {
+      return <em>Invalid blog ID: {blogId}</em>;
+    }
+  };
+}
+
+type LoadStructProps = OuterProps & {
+  structOpt: Option<Blog>;
+};
+
+type StructJson = BlogContent | undefined;
+
+type Struct = Blog | undefined;
+
+function LoadStruct (props: LoadStructProps) {
+  const { state: { address: myAddress } } = useMyAccount();
+  const { structOpt } = props;
+  const [ json, setJson ] = useState(undefined as StructJson);
+  const [ struct, setStruct ] = useState(undefined as Struct);
+  const [ trigger, setTrigger ] = useState(false);
+  const jsonIsNone = json === undefined;
+
+  const toggleTrigger = () => {
+    json === undefined && setTrigger(!trigger);
+  };
+
+  useEffect(() => {
+    if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
+
+    setStruct(structOpt.unwrap());
+
+    if (struct === undefined) return toggleTrigger();
+
+    console.log('Loading blog JSON from IPFS');
+    getJsonFromIpfs<BlogContent>(struct.ipfs_hash).then(json => {
+      setJson(json);
+    }).catch(err => console.log(err));
+  }, [ trigger ]);
+
+  if (!myAddress || !structOpt || jsonIsNone) {
+    return <Loading />;
+  }
+
+  if (!struct || !struct.created.account.eq(myAddress)) {
+    return <em>You have no rights to edit this blog</em>;
+  }
+
+  if (structOpt.isNone) {
+    return <em>Blog not found...</em>;
+  }
+
+  return <NavigationEditor {...props} struct={struct} json={json} />;
+}
+
+/*
+export const NewBlog = withMulti(
+  EditForm,
+  withCalls<OuterProps>(
+    ...commonQueries
+  )
+  // , withOnlyMembers
+);
+*/
+
+export const EditNavigation = withMulti(
+  LoadStruct,
+  withIdFromUrl,
+  withCalls<OuterProps>(
+    queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
+  )
+);
+
+export default EditNavigation;
