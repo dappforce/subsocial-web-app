@@ -29,6 +29,7 @@ import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav/SpaceNav'
+import '../utils/styles/wide-content.css'
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -271,11 +272,6 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   return <div className='ViewBlogWrapper'>
-    <SpaceNav
-      {...content}
-      blogId={new BlogId(id)}
-      account={account}
-    />
     <Section className='DfContentPage'>
       <HeadMeta title={name} desc={mdToText(desc)} image={image} />
       <div className='FullProfile'>
@@ -291,6 +287,11 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
       {renderPostPreviews()}
     </Section>
+    <SpaceNav
+      {...content}
+      blogId={new BlogId(id)}
+      account={account}
+    />
   </div>
 };
 

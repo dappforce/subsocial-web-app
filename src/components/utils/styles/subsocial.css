@@ -1271,7 +1271,14 @@ hr {
   color: #fff;
 }
 
+.ViewBlogWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .SpaceNav {
+  margin-left: $space_big;
   max-width: 22rem;
 
   .SNhead {
@@ -1286,7 +1293,7 @@ hr {
 
     .SNavatar {
       margin: auto;
-      
+
       img {
         width: 100%;
         border-radius: 10rem;
