@@ -15,7 +15,7 @@ import HeadMeta from '../utils/HeadMeta';
 import { AutoComplete, Switch } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup';
-import ReorderNavTabs from '../stories/reorder-navtabs/ReorderNavTabs';
+import ReorderNavTabs from '../utils/ReorderNavTabs';
 import { SubmittableResult } from '@polkadot/api';
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import dynamic from 'next/dynamic';
@@ -26,9 +26,9 @@ export interface FormValues {
 }
 
 interface OuterProps {
-  struct?: Blog;
-  json?: BlogContent;
-  id?: BlogId;
+  struct: Blog;
+  json: BlogContent;
+  id: BlogId;
 }
 
 const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
@@ -50,7 +50,13 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   } = values;
 
   const slug = struct?.slug.toString() || ''
-  const tagsData = json?.tags || []
+
+  const {
+    desc,
+    image,
+    tags = [],
+    name
+  } = json
 
   const getMaxId = (): number => {
     if (navTabs.length === 0) return 0
@@ -80,7 +86,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         return (
           <div className="NETagsWrapper">
             <EditableTagGroup
-              tagsData={tagsData}
+              tagsData={tags as string[]}
               name={`navTabs.${index}.content.data`}
               tags={tags as string[]}
               setFieldValue={setFieldValue}
@@ -116,7 +122,11 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
       const json = {
-        navTabs
+        navTabs,
+        name,
+        desc,
+        image,
+        tags
       };
       addJsonToIpfs(json).then(cid => {
         setIpfsCid(cid);
@@ -271,9 +281,9 @@ const schema = Yup.object().shape({
 });
 
 export interface NavEditorFormProps {
-  struct?: Blog;
-  json?: BlogContent;
-  id?: BlogId;
+  struct: Blog;
+  json: BlogContent;
+  id: BlogId;
 }
 
 const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
@@ -354,7 +364,7 @@ function LoadStruct (props: LoadStructProps) {
     return <em>Blog not found...</em>;
   }
 
-  return <NavigationEditor {...props} struct={struct} json={json} />;
+  return <NavigationEditor {...props} struct={struct} json={json as BlogContent} />;
 }
 
 export const EditNavigation = withMulti(

@@ -1158,6 +1158,129 @@ hr {
   right: $space_normal !important;
 }
 
-.EditPostCollapse {
+.NavEditorWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.NavigationEditor {
+  display: flex;
+  flex-direction: column;
+  max-width: 840px;
+  min-width: 600px;
+}
+
+.NavigationEditor .NERow {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 0;
   margin-bottom: $space_big;
+  position: relative;
+  flex-direction: column;
+  border-bottom: 1px solid $color_light_border;
+}
+.NavigationEditor .NERow:last-child {
+  border-bottom: none;
+}
+
+.NavigationEditor .NEText {
+  color: #000;
+  font-style: normal;
+  font-weight: 500;
+  font-size: $font_normal;
+  margin-right: $space_huge;
+  width: 16rem;
+  margin-top: $space_big;
+}
+
+.NavigationEditor .NavigationEditorForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.NavigationEditor .NavigationEditorForm input,
+.NavigationEditor .NavigationEditorForm select {
+  margin-right: $space_huge !important;
+  height: 3rem !important;
+}
+
+.NavigationEditor .NESelectType {
+  width: 50%;
+}
+
+.NavigationEditor .NavigationEditorForm .NEHidden input,
+.NavigationEditor .NavigationEditorForm .NEHidden select {
+  color: $color_muted !important;
+}
+
+.NavigationEditor .NEButtonsWrapper {
+  display: flex;
+  flex-direction: column;
+  margin: $space_huge 0;
+}
+
+.NavigationEditor .NERemoveButton button:hover {
+  background-color: #ff0000;
+  border-color: #d9d9d9;
+}
+.NavigationEditor .NERemoveButton button:hover span {
+  color: #fff;
+}
+
+.NavigationEditor .NEHideButton {
+  margin-bottom: $space_normal;
+}
+.NavigationEditor .NEHideButton button {
+  margin-right: $space_huge;
+}
+
+.NavigationEditor .NEAddTab {
+  background-color: #fff;
+  color: $color_link;
+  display: flex;
+  border-radius: 0.28571429rem;
+  line-height: 1.21428571rem;
+  padding: 0.67857143rem 1rem;
+  max-width: 15.2rem;
+  width: 100%;
+  justify-content: center;
+  border: 1px dashed #d9d9d9;
+  cursor: pointer;
+}
+
+.NavigationEditor .NESubmit span {
+  color: #fff !important;
+}
+
+.NavigationEditor .NESubmit {
+  max-width: 8.5rem;
+  width: 100%;
+}
+
+.NavigationEditor .NETagsWrapper {
+  width: 100%;
+}
+.NavigationEditor .NETagsWrapper input {
+  height: $space_big !important;
+}
+
+.NavigationEditor .NEErrorMessage {
+  position: absolute !important;
+  top: 5.5rem;
+  left: 6rem;
+}
+
+.NavigationEditor .NEAutoCompleteItem {
+  position: absolute;
+}
+
+.RNTListItem {
+  margin-bottom: $space_normal;
+}
+.RNTIcon {
+  transform: rotate(90deg);
+  margin-right: $space_normal;
+}
+.RNTSaveButton span {
+  color: #fff;
 }
