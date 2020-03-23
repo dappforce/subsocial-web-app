@@ -29,7 +29,7 @@
         line-height: $space_huge;
         color: #000;
       }
-  
+
       .SNheadDescription {
         font-size: $font_large;
         font-weight: 500;
@@ -54,4 +54,4 @@
     margin-bottom: $space_huge;
   }
 
-}
+} 
