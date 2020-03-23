@@ -26,7 +26,6 @@ export interface FormValues {
 }
 
 interface OuterProps {
-  tagsData: string[]
   struct?: Blog;
   json?: BlogContent;
   id?: BlogId;
@@ -38,12 +37,12 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     errors,
     touched,
     setFieldValue,
-    tagsData = [ 'asd', 'zxc' ],
     isValid,
     isSubmitting,
     setSubmitting,
     struct,
-    id
+    id,
+    json
   } = props;
 
   const {
@@ -51,6 +50,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   } = values;
 
   const slug = struct?.slug.toString() || ''
+  const tagsData = json?.tags || []
 
   const getMaxId = (): number => {
     if (navTabs.length === 0) return 0
@@ -271,7 +271,6 @@ const schema = Yup.object().shape({
 });
 
 export interface NavEditorFormProps {
-  tagsData: string[];
   struct?: Blog;
   json?: BlogContent;
   id?: BlogId;
