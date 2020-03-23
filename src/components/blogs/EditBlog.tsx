@@ -92,7 +92,8 @@ const InnerForm = (props: FormProps) => {
     name,
     desc,
     image,
-    tags
+    tags,
+    navTabs
   } = values;
 
   const goToView = (id: BlogId) => {
@@ -103,7 +104,7 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
-      const json = { name, desc, image, tags };
+      const json = { name, desc, image, tags, navTabs };
       addJsonToIpfs(json).then(cid => {
         setIpfsCid(cid);
         sendTx();
