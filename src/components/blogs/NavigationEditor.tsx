@@ -2,21 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Option } from '@polkadot/types';
+import { Option, Text } from '@polkadot/types';
 import Section from '../utils/Section';
 import { withCalls, withMulti } from '@polkadot/ui-api';
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { queryBlogsToProp } from '../utils/index';
-import { BlogId, Blog, BlogContent, NavTab } from '../types';
-import { Loading } from '../utils/utils';
+import { BlogId, Blog, BlogContent, NavTab, BlogUpdate, VecAccountId } from '../types';
+import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { AutoComplete, Switch } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import ReorderNavTabs from '../stories/reorder-navtabs/ReorderNavTabs';
+import { SubmittableResult } from '@polkadot/api';
+import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
+import dynamic from 'next/dynamic';
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 export interface FormValues {
   navTabs: NavTab[]
@@ -35,16 +38,23 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     errors,
     touched,
     setFieldValue,
-    tagsData,
+    tagsData = [ 'asd', 'zxc' ],
     isValid,
-    isSubmitting
+    isSubmitting,
+    setSubmitting,
+    struct,
+    id
   } = props;
 
   const {
     navTabs
   } = values;
 
+  const slug = struct?.slug.toString() || ''
+
   const getMaxId = (): number => {
+    if (navTabs.length === 0) return 0
+
     const x = navTabs.reduce((cur, prev) => (cur.id > prev.id ? cur : prev))
     return x.id
   }
@@ -84,10 +94,6 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     }
   }
 
-  const renderReorderNavTabs = () => {
-    return <ReorderNavTabs tabs={navTabs} onChange={(tabs) => handleSaveNavOreder(tabs)} />
-  }
-
   const handleSaveNavOreder = (tabs: NavTab[]) => {
     setFieldValue('navTabs', tabs)
   }
@@ -105,10 +111,64 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     return null
   }
 
+  const [ ipfsCid, setIpfsCid ] = useState('');
+
+  const onSubmit = (sendTx: () => void) => {
+    if (isValid) {
+      const json = {
+        navTabs
+      };
+      addJsonToIpfs(json).then(cid => {
+        setIpfsCid(cid);
+        sendTx();
+      }).catch(err => new Error(err));
+    }
+  };
+
+  const onTxCancelled = () => {
+    removeFromIpfs(ipfsCid).catch(err => new Error(err));
+    setSubmitting(false);
+  };
+
+  const onTxFailed = () => {
+    removeFromIpfs(ipfsCid).catch(err => new Error(err));
+    setSubmitting(false);
+  };
+
+  const onTxSuccess = (_txResult: SubmittableResult) => {
+    setSubmitting(false);
+
+    const _id = id || getNewIdFromEvent<BlogId>(_txResult);
+    console.log('onTxSuccess _id:', _id)
+    _id && goToView(_id);
+  };
+
+  const goToView = (id: BlogId) => {
+    Router.push('/blogs/' + id.toString()).catch(console.log);
+  };
+
+  const buildTxParams = () => {
+    if (!isValid) return [];
+    if (!struct) {
+      return [ slug, ipfsCid ];
+    } else {
+      // TODO update only dirty values.
+      const update = new BlogUpdate({
+        // TODO get updated writers from the form
+        writers: new Option(VecAccountId, (struct.writers)),
+        slug: new Option(Text, slug),
+        ipfs_hash: new Option(Text, ipfsCid)
+      });
+      return [ struct.id, update ];
+    }
+  };
+
+  const title = `Edit Navigation`
+
   return <>
     <HeadMeta title={'Navigation Editor'} />
     <div className='NavEditorWrapper'>
-      <Section className='NavigationEditor' title={'Navigation Editor'}>
+      <Section className='NavigationEditor' title={title}>
         <Form className='ui form DfForm NavigationEditorForm'>
           <FieldArray
             name="navTabs"
@@ -173,13 +233,23 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             )}
           />
 
-          <Button type='primary' htmlType='submit' disabled={!isValid || isSubmitting} className={'NESubmit'}>
-            Save
-          </Button>
+          <TxButton
+            type='submit'
+            size='medium'
+            label={'Update Navigation'}
+            isDisabled={!isValid || isSubmitting}
+            params={buildTxParams()}
+            tx={'blogs.updateBlog'}
+            onClick={onSubmit}
+            txCancelledCb={onTxCancelled}
+            txFailedCb={onTxFailed}
+            txSuccessCb={onTxSuccess}
+          />
+
         </Form>
 
       </Section>
-      {renderReorderNavTabs()}
+      <ReorderNavTabs tabs={navTabs} onChange={(tabs: NavTab[]) => handleSaveNavOreder(tabs)} />
     </div>
   </>
 }
@@ -207,14 +277,12 @@ export interface NavEditorFormProps {
   id?: BlogId;
 }
 
-// Wrap our form with the withFormik HoC
 const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
-  // Transform outer props into form values
   mapPropsToValues: props => {
-    const { struct, json } = props;
-    if (struct && json) {
+    const { json } = props;
+    if (json && json.navTabs) {
       return {
-        navTabs: props.json?.navTabs as NavTab[]
+        navTabs: json.navTabs
       };
     } else {
       return {
@@ -290,11 +358,6 @@ function LoadStruct (props: LoadStructProps) {
   return <NavigationEditor {...props} struct={struct} json={json} />;
 }
 
-export const NewNavigation = withMulti(
-  NavigationEditor
-  // , withOnlyMembers
-);
-
 export const EditNavigation = withMulti(
   LoadStruct,
   withIdFromUrl,
@@ -303,4 +366,4 @@ export const EditNavigation = withMulti(
   )
 );
 
-export default NewNavigation;
+export default EditNavigation;
