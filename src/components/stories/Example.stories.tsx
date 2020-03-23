@@ -10,8 +10,6 @@ import faker from 'faker';
 import './style.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import NavigationEditor, { NavEditorFormProps } from './navigation-editor/NavigationEditor';
-import { PostId, BlogId } from '../types';
 
 const { SubMenu } = Menu;
 
@@ -156,30 +154,4 @@ export const ListForum = () => {
 
 export const Forum = () => {
   return <ViewForum />;
-}
-/*
-export const ReorderNavTabsExample = () => {
-  const navTabs = {
-    tabs: [
-      { id: 1, name: 'first name' },
-      { id: 2, name: 'second name' },
-      { id: 3, name: 'third name' }
-    ]
-  }
-  return <ReorderNavTabs {...navTabs} />
-}
-*/
-export const NavigationEditorExample = () => {
-  const navProps: NavEditorFormProps = {
-    tagsData: [ 'tag1', 'tag2', 'tag3' ],
-    navTabs: [
-      { id: 1, title: 'first_name', type: 'by-tag', description: '', content: { data: [ 'first', 'value' ] }, hidden: false },
-      { id: 2, title: 'second_name', type: 'url', description: '', content: { data: 'http://google.com' }, hidden: true },
-      { id: 3, title: 'third_name', type: 'url', description: '', content: { data: '3' }, hidden: false },
-      { id: 4, title: 'fourth_name', type: 'url', description: '', content: { data: '2' }, hidden: false },
-      { id: 5, title: 'fifth_name', type: 'by-tag', description: '', content: { data: [ 'fifth', 'value' ] }, hidden: false }
-    ]
-  }
-
-  return <NavigationEditor {...navProps} />
 }

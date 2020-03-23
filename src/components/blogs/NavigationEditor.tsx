@@ -286,7 +286,7 @@ export interface NavEditorFormProps {
   id: BlogId;
 }
 
-const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
+export const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   mapPropsToValues: props => {
     const { json } = props;
     if (json && json.navTabs) {
