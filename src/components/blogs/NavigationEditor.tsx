@@ -54,7 +54,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const {
     desc,
     image,
-    tags = [],
+    tags: tagsData = [],
     name
   } = json
 
@@ -86,7 +86,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         return (
           <div className="NETagsWrapper">
             <EditableTagGroup
-              tagsData={tags as string[]}
+              tagsData={tagsData}
               name={`navTabs.${index}.content.data`}
               tags={tags as string[]}
               setFieldValue={setFieldValue}
@@ -126,7 +126,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         name,
         desc,
         image,
-        tags
+        tags: tagsData
       };
       addJsonToIpfs(json).then(cid => {
         setIpfsCid(cid);
