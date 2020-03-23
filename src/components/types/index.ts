@@ -94,11 +94,33 @@ export class OptionBlogId extends Option.with(BlogId) {}
 export class OptionCommentId extends Option.with(CommentId) {}
 export class OptionVecAccountId extends Option.with(VecAccountId) {}
 
+interface FilterByTags {
+  data: string[]
+}
+
+interface Url {
+  data: string
+}
+
+type NavTabContent = FilterByTags | Url
+
+type ContentType = 'by-tag' | 'url'
+
+export interface NavTab {
+  id: number
+  title: string
+  content: NavTabContent
+  description: string
+  hidden: boolean
+  type: ContentType
+}
+
 export type BlogContent = {
   name: string;
   desc: string;
   image: string;
   tags: string[];
+  navTabs?: NavTab[];
 };
 
 export type BlogType = {
