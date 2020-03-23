@@ -116,10 +116,10 @@ export interface NavTab {
 }
 
 export type BlogContent = {
-  name: string;
-  desc: string;
-  image: string;
-  tags: string[];
+  name?: string;
+  desc?: string;
+  image?: string;
+  tags?: string[];
   navTabs?: NavTab[];
 };
 

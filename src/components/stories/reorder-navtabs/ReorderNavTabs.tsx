@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List, Icon } from 'antd';
 import './ReorderNavTabs.css'
-import { NavTab } from '../navigation-editor/NavigationEditor';
+import { NavTab } from 'src/components/types';
 
 // TODO rename
 export interface Props {
@@ -22,6 +22,10 @@ const ReorderNavTabs = (props: Props) => {
 
     return result;
   };
+
+  useEffect(() => {
+    setTabs(initialTabs)
+  }, [ initialTabs ])
 
   const onDragEnd = (result: any) => {
     const { destination, source } = result
