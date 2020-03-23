@@ -7,7 +7,7 @@ import Section from '../utils/Section';
 import { withCalls, withMulti } from '@polkadot/ui-api';
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { queryBlogsToProp } from '../utils/index';
-import { BlogId, Blog, BlogContent, PostId } from '../types';
+import { BlogId, Blog, BlogContent, NavTab } from '../types';
 import { Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -18,88 +18,43 @@ import Select, { SelectValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import ReorderNavTabs from '../stories/reorder-navtabs/ReorderNavTabs';
 
-// Shape of form values
-interface PartialPost { id: PostId, title: string }
-interface PartialBlog { id: BlogId, title: string }
-
-interface FilterByTags {
-  data: string[]
-}
-
-interface SpecificPost {
-  data: string
-}
-
-interface OuterUrl {
-  data: string
-}
-
-interface SpecificBlog {
-  data: string
-}
-
-type NavTabContent = FilterByTags | SpecificPost | OuterUrl | SpecificBlog
-
-type ContentType = 'by-tag' | 'ext-url' | 'post-url' | 'blog-url'
-
-export interface NavTab {
-  id: number
-  title: string
-  content: NavTabContent
-  description: string
-  hidden: boolean
-  type: ContentType
-}
-
 export interface FormValues {
-  navTabs: NavTab[],
-  tabsOrder: NavTabForOrder[]
+  navTabs: NavTab[]
 }
 
 interface OuterProps {
   tagsData: string[]
-  posts: PartialPost[]
-  typesOfContent: string[]
-  blogs: PartialBlog[]
-  id?: BlogId;
   struct?: Blog;
   json?: BlogContent;
-}
-
-interface NavTabForOrder {
-  id: number
-  name: string
+  id?: BlogId;
 }
 
 const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const {
     values,
-    posts,
-    blogs,
     errors,
     touched,
     setFieldValue,
-    typesOfContent,
     tagsData,
     isValid,
     isSubmitting
   } = props;
 
   const {
-    navTabs,
-    tabsOrder
+    navTabs
   } = values;
 
   const getMaxId = (): number => {
     const x = navTabs.reduce((cur, prev) => (cur.id > prev.id ? cur : prev))
     return x.id
   }
+  const typesOfContent = [ 'url', 'by-tag' ]
 
-  const defaultTab = { id: getMaxId() + 1, title: '', type: 'ext-url', description: '', content: { data: '' }, hidden: false }
+  const defaultTab = { id: getMaxId() + 1, title: '', type: 'url', description: '', content: { data: '' }, hidden: false }
 
   const renderValueField = (nt: NavTab, index: number) => {
     switch (nt.type) {
-      case 'ext-url': {
+      case 'url': {
         const url = nt.content.data ? nt.content.data : ''
         return (
           <Field
@@ -109,72 +64,6 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.content.data`, e.currentTarget.value)}
           />
         )
-      }
-      case 'blog-url': {
-        // const blogId = nt.content.data ? nt.content.data.toString() : undefined
-        // const currentBlog: PartialBlog | undefined = blogs.find(x => x.id.toString() === blogId)
-        // let currentBlogTitle = ''
-        // if (currentBlog) currentBlogTitle = currentBlog.title
-        const options = blogs.map(x => (
-          <AutoComplete.Option key={x.id.toString()} value={x.id.toString()}>
-            {x.title}
-          </AutoComplete.Option>
-        ))
-
-        const handleBlogChange = (e: SelectValue) => {
-          // TODO if e is BlogId or link or slug
-
-          setFieldValue(`navTabs.${index}.content.data`, e.toString())
-        }
-
-        return (
-          <AutoComplete
-            dataSource={options}
-            onChange={(e: SelectValue) => handleBlogChange(e)}
-            optionLabelProp={'value'}
-            // value={currentBlogTitle}
-          >
-            <Field
-              autoComplete={'off'}
-              type="text"
-              name={`nt.${index}.content.data`}
-            />
-          </AutoComplete>
-        )
-
-      }
-      case 'post-url': {
-        // const postId = nt.content.data ? nt.content.data.toString() : undefined
-        // const currentPost: PartialPost | undefined = posts.find(x => x.id.toString() === postId)
-        // let currentPostTitle: string | undefined
-        // if (currentPost) currentPostTitle = currentPost.title
-        const options = posts.map(x => (
-          <AutoComplete.Option key={x.id.toString()} value={x.id.toString()}>
-            {x.title}
-          </AutoComplete.Option>
-        ))
-
-        const handlePostChange = (e: SelectValue) => {
-          // TODO if e is PostId or link or slug
-
-          setFieldValue(`navTabs.${index}.content.data`, e.toString())
-        }
-
-        return (
-          <AutoComplete
-            dataSource={options}
-            onChange={(e: SelectValue) => handlePostChange(e)}
-            optionLabelProp={'value'}
-            // value={currentPostTitle}
-          >
-            <Field
-              autoComplete={'off'}
-              type="text"
-              name={`nt.${index}.content.data`}
-            />
-          </AutoComplete>
-        )
-
       }
       case 'by-tag': {
         const tags = nt.content.data || []
@@ -196,13 +85,11 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   }
 
   const renderReorderNavTabs = () => {
-
-    return <ReorderNavTabs tabs={tabsOrder} onChange={(tabs) => handleSaveNavOreder(tabs)} />
+    return <ReorderNavTabs tabs={navTabs} onChange={(tabs) => handleSaveNavOreder(tabs)} />
   }
 
-  const handleSaveNavOreder = (tabs: NavTabForOrder[]) => {
-    console.log('The current order of tabs:', tabs)
-    setFieldValue('tabsOrder', tabs)
+  const handleSaveNavOreder = (tabs: NavTab[]) => {
+    setFieldValue('navTabs', tabs)
   }
 
   const handleTypeChange = (e: SelectValue, index: number) => {
@@ -314,25 +201,26 @@ const schema = Yup.object().shape({
 });
 
 export interface NavEditorFormProps {
-  tagsData: string[]
-  posts: PartialPost[]
-  // navTabs: NavTab[]
-  typesOfContent: ContentType[]
-  blogs: PartialBlog[]
-  // tabsOrder: NavTabForOrder[]
-  id?: BlogId;
+  tagsData: string[];
   struct?: Blog;
   json?: BlogContent;
+  id?: BlogId;
 }
 
 // Wrap our form with the withFormik HoC
 const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: props => {
-    return {
-      navTabs: props.struct,
-      tabsOrder: props.tabsOrder
-    };
+    const { struct, json } = props;
+    if (struct && json) {
+      return {
+        navTabs: props.json?.navTabs as NavTab[]
+      };
+    } else {
+      return {
+        navTabs: []
+      };
+    }
   },
 
   validationSchema: schema,
@@ -402,22 +290,17 @@ function LoadStruct (props: LoadStructProps) {
   return <NavigationEditor {...props} struct={struct} json={json} />;
 }
 
-/*
-export const NewBlog = withMulti(
-  EditForm,
-  withCalls<OuterProps>(
-    ...commonQueries
-  )
+export const NewNavigation = withMulti(
+  NavigationEditor
   // , withOnlyMembers
 );
-*/
 
 export const EditNavigation = withMulti(
   LoadStruct,
   withIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
+    queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' })
   )
 );
 
-export default EditNavigation;
+export default NewNavigation;

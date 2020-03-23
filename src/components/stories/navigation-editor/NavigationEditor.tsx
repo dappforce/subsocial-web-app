@@ -63,7 +63,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 
   const typesOfContent = [ 'url', 'by-tag' ]
 
-  const defaultTab = { id: getMaxId() + 1, title: '', type: 'ext-url', description: '', content: { data: '' }, hidden: false }
+  const defaultTab = { id: getMaxId() + 1, title: '', type: 'url', description: '', content: { data: '' }, hidden: false }
 
   const renderValueField = (nt: NavTab, index: number) => {
     switch (nt.type) {
