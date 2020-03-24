@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
-import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
+import { addJsonToIpfs, getJsonFromIpfs, parseUrl } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text, U32 } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
@@ -101,6 +101,18 @@ const InnerForm = (props: FormProps) => {
     tags,
     canonical
   } = values;
+
+  const url = 'https://www.youtube.com/watch?v=b5AQ5TVckfM'
+
+  useEffect(() => {
+    const parse = async () => {
+      const res = await parseUrl(url)
+      console.log('from effec empty')
+      console.log('res from effect:', res)
+    }
+
+    parse()
+  }, [ url ])
 
   const goToView = (id: PostId) => {
     Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
