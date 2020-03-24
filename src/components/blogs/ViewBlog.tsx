@@ -122,9 +122,6 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
         {isMyBlog && <Menu.Item key='0'>
           <Link href={`/blogs/[id]/edit`} as={`/blogs/${id.toString()}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
-        {isMyBlog && <Menu.Item key='1'>
-          <Link href={`/blogs/[id]/space-navigation/edit`} as={`/blogs/${id.toString()}/space-navigation/edit`}><a className='item'>Edit Navigation</a></Link>
-        </Menu.Item>}
         {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
         </Menu.Item>}
