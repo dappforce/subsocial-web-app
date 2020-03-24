@@ -1121,3 +1121,7 @@ hr {
   left: auto !important;
   right: $space_normal !important;
 }
+
+.EditPostCollapse {
+  margin-bottom: $space_big;
+}

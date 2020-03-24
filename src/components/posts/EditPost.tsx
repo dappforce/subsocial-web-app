@@ -21,6 +21,7 @@ import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { ViewBlog } from '../blogs/ViewBlog';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+const { Panel } = Collapse;
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -97,7 +98,8 @@ const InnerForm = (props: FormProps) => {
     title,
     body,
     image,
-    tags
+    tags,
+    canonical
   } = values;
 
   const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
@@ -110,7 +112,7 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
-      const json = { title, body, image, tags };
+      const json = { title, body, image, tags, canonical };
       addJsonToIpfs(json).then(hash => {
         setIpfsCid(hash);
         sendTx();
@@ -187,6 +189,12 @@ const InnerForm = (props: FormProps) => {
           <LabelledField name='body' label='Description' {...props}>
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
+
+          <Collapse className={'EditPostCollapse'}>
+            <Panel header="Show Advanced Settings" key="1">
+              <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
+            </Panel>
+          </Collapse>
         </>
         : <>
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
@@ -243,7 +251,8 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
         title: '',
         body: '',
         image: '',
-        tags: []
+        tags: [],
+        canonical: ''
       };
     }
   },
