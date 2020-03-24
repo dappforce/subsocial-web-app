@@ -182,7 +182,7 @@ export const AddTeamMember = () => {
 };
 
 export const ReorderNavTabsExample = () => {
-  const navTabs: Props = {
+  const navTabs = {
     tabs: [
       { id: 1, name: 'first name' },
       { id: 2, name: 'second name' },
@@ -190,4 +190,8 @@ export const ReorderNavTabsExample = () => {
     ]
   }
   return <ReorderNavTabs {...navTabs} />
+}
+
+export const ParserExample = () => {
+  return <Parser />
 }
