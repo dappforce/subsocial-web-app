@@ -1,5 +1,5 @@
 import React from 'react'
-import { Menu } from 'antd'
+import { Menu, Icon } from 'antd'
 import { ProfileContent, NavTab, BlogId } from 'src/components/types'
 // import SpacePreview from '../space-preview/SpacePreview'
 import FollowBlogButton from '../../utils/FollowBlogButton'
@@ -7,6 +7,7 @@ import { nonEmptyStr } from '../../utils/index'
 import { DfBgImg } from '../../utils/DfBgImg'
 import { IdentityIcon } from '@polkadot/ui-app'
 import { AccountId } from '@polkadot/types'
+import Router from 'next/router';
 
 type SpaceContent = {
   id: number,
@@ -59,6 +60,10 @@ const SpaceNav = (props: SpaceNavProps) => {
     }
   }
 
+  const goToSpaceNavEdit = () => {
+    Router.push(`/blogs/${blogId.toString()}/space-navigation/edit`).catch(console.log);
+  };
+
   return <div className="SpaceNav">
     <div className="SNhead">
       <div className="SNavatar">
@@ -77,6 +82,10 @@ const SpaceNav = (props: SpaceNavProps) => {
       mode="inline"
       className="SNmenu"
     >
+      <div className='SpaceNavSettings'>
+        <Icon type="setting" onClick={goToSpaceNavEdit} />
+        <div className="spaceEditTooltip">Edit Menu</div>
+      </div>
       { navTabs?.map((x) => renderMenuItem(x)) }
     </Menu>
     {/*

@@ -1346,6 +1346,33 @@ hr {
     box-sizing: border-box;
     border-radius: 2px;
     margin-bottom: $space_huge;
+
+    .SpaceNavSettings {
+      display: flex;
+      justify-content: flex-end;
+      margin: $space_normal $space_normal 0 0;
+      position: relative;
+
+      .spaceEditTooltip {
+        position: absolute;
+        margin: $space_big $space_normal 0 0;
+        width: 70px;
+        border: 1px solid gray;
+        height: $space_big;
+        display: none;
+        align-items: center;
+        justify-content: space-around;
+        border-radius: 4px;
+      }
+    }
+
+    .SpaceNavSettings:hover {
+      .spaceEditTooltip {
+        display: flex;
+      }
+    }
+
+    
   }
 
 } 
