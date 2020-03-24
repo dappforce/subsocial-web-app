@@ -2,18 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import Section from '../utils/Section';
 import { hexToBn } from '@polkadot/util';
-import { Comment } from '@subsocial/types/substrate/interfaces/subsocial';
-import { Option } from '@polkadot/types';
-import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
-import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
+import ViewPostPage from '../posts/ViewPost';
+import { ViewBlogPage } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
-import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
+import { PostData } from '@subsocial/types/dto'
+import { getNewsFeed, getNotifications, substrate, subsocial } from '../utils/SubsocialConnect';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Loader } from 'semantic-ui-react';
 import { NoData, NotAuthorized } from '../utils/DataList';
 import { INFINITY_LIST_PAGE_SIZE } from '../../config/ListData.config';
 import { Loading } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAccount } from '../utils/MyAccountContext';
 import dynamic from 'next/dynamic';
@@ -123,21 +121,20 @@ export const ViewNotifications = () => {
 function ViewActivity (props: ActivityProps) {
   const { activity } = props;
   const { post_id } = activity;
-  const [ data, setData ] = useState([] as PostData[]);
+  const [ data, setData ] = useState<PostData[]>();
   const postId = hexToBn(post_id);
 
   useEffect(() => {
     const loadData = async () => {
-      const api = await getApi();
-      const postData = await loadPostData(api, postId);
-      const postExtData = postData.post ? await loadExtPost(api, postData.post) : {} as PostData;
-      setData([ postData, postExtData ]);
+      const postData = await subsocial.findPost(postId);
+      const postExtData = postData && postData.struct && await subsocial.findPost(postData.struct.id);
+      postData && postExtData && setData([ postData, postExtData ]);
     };
 
     loadData().catch(console.log);
   }, [ false ]);
 
-  return data.length > 0 ? <ViewPostPage postData={data[0]} postExtData={data[1]} variant='preview' withBlogName /> : <Loading/>;
+  return data && data.length > 0 ? <ViewPostPage postData={data[0]} postExtData={data[1]} variant='preview' withBlogName /> : <Loading/>;
 }
 
 export function Notification (props: ActivityProps) {
@@ -163,7 +160,6 @@ export function Notification (props: ActivityProps) {
 
   useEffect(() => {
     const loadActivity = async () => {
-      const api = await getApi();
       switch (event) {
         case 'AccountFollowed': {
           setMessage(Events.AccountFollowed);
@@ -171,16 +167,16 @@ export function Notification (props: ActivityProps) {
         }
         case 'BlogFollowed': {
           const blogId = hexToBn(blog_id);
-          const blogData = await loadBlogData(api, blogId);
+          const blogData = await subsocial.findBlog(blogId)
           setMessage(Events.BlogFollowed);
-          setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
+          blogData && setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'BlogCreated': {
           const blogId = hexToBn(blog_id);
-          const blogData = await loadBlogData(api, blogId);
+          const blogData = await subsocial.findBlog(blogId);
           setMessage(Events.BlogCreated);
-          setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
+          blogData && setSubject(<ViewBlogPage blogData={blogData} nameOnly withLink />);
           break;
         }
         case 'CommentCreated': {
@@ -188,53 +184,48 @@ export function Notification (props: ActivityProps) {
             postId = hexToBn(post_id);
           } else {
             const commentId = hexToBn(comment_id);
-            const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
-            if (commentOpt.isNone) return;
 
-            const comment = commentOpt.unwrap() as Comment;
-            postId = comment.post_id;
-            if (comment.parent_id.isSome) {
-              setMessage(Events.CommentReactionCreated);
-            } else {
-              setMessage(Events.CommentCreated);
+            const comment = await substrate.findComment(commentId);
+            if (comment) {
+              postId = comment.post_id;
+              if (comment.parent_id.isSome) {
+                setMessage(Events.CommentReactionCreated);
+              } else {
+                setMessage(Events.CommentCreated);
+              }
             }
           }
-          const postData = await loadPostData(api, postId);
-          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
-          const { initialContent } = postData;
-          setImage(initialContent ? initialContent.image : '');
+          const postData = await subsocial.findPost(postId);
+          postData && setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          postData && postData.content && setImage(postData.content.image || '');
           break;
         }
         case 'PostShared': {
           postId = hexToBn(post_id);
-          const postData = await loadPostData(api, postId);
+          const postData = await subsocial.findPost(postId);
           setMessage(Events.PostShared);
-          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
-          const { initialContent } = postData;
-          setImage(initialContent ? initialContent.image : '');
+          postData && setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          postData && postData.content && setImage(postData.content.image || '');
           break;
         }
         case 'PostReactionCreated': {
           postId = hexToBn(post_id);
-          const postData = await loadPostData(api, postId);
+          const postData = await subsocial.findPost(postId);
           setMessage(Events.PostReactionCreated);
-          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
-          const { initialContent } = postData;
-          setImage(initialContent ? initialContent.image : '');
+          postData && setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          postData && postData.content && setImage(postData.content.image || '');
           break;
         }
         case 'CommentReactionCreated': {
           const commentId = hexToBn(comment_id);
-          const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
-          if (commentOpt.isNone) return;
-
-          const comment = commentOpt.unwrap() as Comment;
-          postId = comment.post_id;
-          const postData = await loadPostData(api, postId);
+          const comment = await substrate.findComment(commentId);
+          if (comment) {
+            postId = comment.post_id;
+          }
+          const postData = await subsocial.findPost(postId);
           setMessage(Events.CommentReactionCreated);
-          setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
-          const { initialContent } = postData;
-          setImage(initialContent ? initialContent.image : '');
+          postData && setSubject(<ViewPostPage postData={postData} withCreatedBy={false} variant='name only' />);
+          postData && postData.content && setImage(postData.content.image || '');
           break;
         }
       }

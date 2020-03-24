@@ -2,7 +2,7 @@ import React from 'react';
 
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { BlogId, Blog } from '@subsocial/types/substrate/interfaces/subsocial';
-import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
+import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
@@ -12,9 +12,10 @@ import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
-import { getApi } from '../utils/SubstrateApi';
+import { subsocial, substrate } from '../utils/SubsocialConnect';
 import Link from 'next/link';
 import { registry } from '@polkadot/react-api';
+import { BlogData } from '@subsocial/types/dto';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -41,10 +42,8 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
 
 ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
-  const api = await getApi();
-  const followedBlogsData = await api.query.social.blogsFollowedByAccount(new AccountId(registry, address as string)) as unknown as BlogId[];
-  const loadBlogs = followedBlogsData.map(id => loadBlogData(api, id));
-  const blogsData = await Promise.all<BlogData>(loadBlogs);
+  const followedBlogsData = await substrate.socialQuery().blogsFollowedByAccount(new AccountId(registry, address as string)) as unknown as BlogId[];
+  const blogsData = await subsocial.findBlogs(followedBlogsData);
   return {
     blogsData
   };
@@ -64,9 +63,9 @@ export const RenderFollowedList = (props: Props) => {
 
   return <>{totalCount > 0
     ? followedBlogsData.map((item, index) =>
-      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
+      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.struct as Blog).id}`}>
         <a className='DfMenuItem'>
-          <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
+          <div className={currentBlog && item.struct && currentBlog.eq(item.struct.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
               key={index}
               blogData={item}

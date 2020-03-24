@@ -9,7 +9,6 @@ import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { withSocialAccount, summarize } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -22,7 +21,7 @@ import { Pluralize } from '../utils/Plularize';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
-import { ipfs } from '../utils/OffchainUtils';
+import { ipfs, substrate } from '../utils/SubsocialConnect';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
 import { getFirstOrUndefinded } from '@subsocial/api/utils';
@@ -268,8 +267,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
-  const api = await getApi();
-  const socialAccountOpt = await api.query.social.socialAccountById(address) as Option<SocialAccount>;
+  const socialAccountOpt = await substrate.socialQuery().socialAccountById(address) as Option<SocialAccount>;
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;

@@ -4,11 +4,11 @@ import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { Option } from '@polkadot/types';
 import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
-import { api } from '@polkadot/react-api/Api';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
 import { partition } from 'lodash';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
+import { substrate } from '../utils/SubsocialConnect';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -50,7 +50,7 @@ const InnerModalVoters = (props: VotersProps) => {
       if (!reactions) return toggleTrigger();
 
       const apiCalls: Promise<Option<Reaction>>[] = reactions.map(async reactionId =>
-        await api.query.social.reactionById(reactionId) as Option<Reaction>);
+        await substrate.socialQuery().reactionById(reactionId) as Option<Reaction>);
       const loadedReaction = (await Promise.all<Option<Reaction>>(apiCalls)).map(x => x.unwrap() as Reaction);
       isSubscribe && setReactionView(loadedReaction);
     };

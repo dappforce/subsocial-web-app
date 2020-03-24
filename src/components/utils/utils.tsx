@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { Option, GenericAccountId } from '@polkadot/types';
-import { SubmittableResult, ApiPromise } from '@polkadot/api';
-import { ipfs } from './OffchainUtils';
+import { SubmittableResult } from '@polkadot/api';
+import { ipfs, substrate } from './SubsocialConnect';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
@@ -167,10 +167,10 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     : text;
 };
 
-export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BN | undefined> => {
+export const getBlogId = async (idOrSlug: string): Promise<BN | undefined> => {
   if (idOrSlug.startsWith('@')) {
     const slug = idOrSlug.substring(1) // Drop '@'
-    const idOpt = await api.query.social.blogIdBySlug(slug) as Option<BlogId>
+    const idOpt = await substrate.socialQuery().blogIdBySlug(slug) as Option<BlogId>
     return idOpt.unwrapOr(undefined)
   } else {
     return new BN(idOrSlug)

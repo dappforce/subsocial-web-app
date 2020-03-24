@@ -6,7 +6,7 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
-import { ipfs } from '../utils/OffchainUtils';
+import { ipfs, subsocial, substrate } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
@@ -14,7 +14,6 @@ import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import ListData, { NoData } from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
@@ -24,21 +23,16 @@ import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
+import { BlogData } from '@subsocial/types/dto'
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 const SUB_SIZE = 2;
-
-export type BlogData = {
-  blog?: Blog,
-  initialContent?: BlogContent
-};
 
 type Props = {
   preview?: boolean,
@@ -61,9 +55,9 @@ type Props = {
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { blog } = props.blogData;
+  const { struct } = props.blogData;
 
-  if (!blog) return <NoData description={<span>Blog not found</span>} />;
+  if (!struct) return <NoData description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -76,7 +70,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     posts = [],
     imageSize = 36,
     onClick,
-    blogData: { initialContent = {} as BlogContent }
+    blogData
   } = props;
 
   const {
@@ -87,10 +81,12 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     posts_count,
     followers_count: followers,
     edit_history
-  } = blog;
+  } = struct;
+
+  const blog = struct;
 
   const { state: { address } } = useMyAccount();
-  const [ content, setContent ] = useState(initialContent);
+  const [ content, setContent ] = useState(blogData.content as BlogContent);
   const { desc, name, image } = content;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
@@ -282,34 +278,22 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   </Section>;
 };
 
-export const loadBlogData = async (api: ApiPromise, blogId: BN): Promise<BlogData> => {
-  const blogIdOpt = await api.query.social.blogById(blogId) as Option<Blog>;
-  const blog = blogIdOpt.isSome ? blogIdOpt.unwrap() : undefined;
-  const content = blog && await ipfs.findBlog(blog.ipfs_hash.toString());
-  return {
-    blog: blog,
-    initialContent: content
-  };
-};
-
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { req, res, query: { blogId } } = props
   const idOrSlug = blogId as string
-  const api = await getApi()
-  const id = await getBlogId(api, idOrSlug)
+  const id = await getBlogId(idOrSlug)
   if (!id && res && req) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
-
-  const blogData = await loadBlogData(api, id as BlogId)
-  if (!blogData.blog && res && req) {
+  const blogData = id && await subsocial.findBlog(id)
+  if (!blogData?.struct && res && req) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
 
-  const postIds = await api.query.social.postIdsByBlogId(blogId) as unknown as PostId[];
-  const posts = await loadPostDataList(api, postIds.reverse());
+  const postIds = await substrate.socialQuery().postIdsByBlogId(blogId) as unknown as PostId[];
+  const posts = await loadPostDataList(postIds.reverse());
   return {
     blogData,
     posts

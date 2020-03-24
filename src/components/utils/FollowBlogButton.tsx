@@ -4,7 +4,7 @@ import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { isMobile } from 'react-device-detect';
-import { getApi } from './SubstrateApi';
+import { substrate } from './SubsocialConnect';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
@@ -32,8 +32,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   useEffect(() => {
     let isSubscribe = true;
     const load = async () => {
-      const api = await getApi();
-      const _isFollow = await (api.query.social[`blogFollowedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (substrate.socialQuery().blogFollowedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));

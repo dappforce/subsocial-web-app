@@ -8,7 +8,7 @@ import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
-import { ipfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/SubsocialConnect';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
@@ -22,6 +22,7 @@ import { TxCallback } from '../utils/types';
 import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogContent } from '@subsocial/types/offchain';
 import { BlogUpdate } from '@subsocial/types/substrate/classes';
+import U32 from '@polkadot/types/primitive/U32';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -60,13 +61,13 @@ type ValidationProps = {
   slugMaxLen: number;
 };
 
-type OuterProps = ValidationProps & {
+type OuterProps = {
   id?: BN;
   struct?: Blog;
   json?: BlogContent;
-  blogMaxLen: U32;
-  slugMinLen: U32;
-  slugMaxLen: U32;
+  blogMaxLen?: U32;
+  slugMinLen?: U32;
+  slugMaxLen?: U32;
 };
 
 type FormValues = BlogContent & {
@@ -218,10 +219,10 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    blogMaxLen: props.blogMaxLen?.toNumber(),
-    slugMinLen: props.slugMinLen?.toNumber(),
-    slugMaxLen: props.slugMaxLen?.toNumber()
+  validationSchema: (props: OuterProps) => buildSchema({ // TODO fix this hack
+    blogMaxLen: props.blogMaxLen?.toNumber() || 100,
+    slugMinLen: props.slugMinLen?.toNumber() || 5,
+    slugMaxLen: props.slugMaxLen?.toNumber() || 54
   }),
 
   handleSubmit: values => {

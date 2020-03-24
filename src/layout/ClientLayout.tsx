@@ -4,7 +4,7 @@ import settings from '../components/settings';
 import '../components/utils/styles';
 
 import Api from '../components/utils/Api';
-
+import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import Queue from '@polkadot/react-components/Status/Queue';
 import Signer from '@polkadot/react-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
@@ -26,25 +26,27 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
     <Api
       url={url}
     >
-      <BlockAuthors>
-        <Events>
-          <MyAccountProvider>
-            <Signer>
-              <Status
-                queueAction={queueAction}
-                stqueue={stqueue}
-                txqueue={txqueue}
-              />
-              <Navigation>
-                {children}
-              </Navigation>
-            </Signer>
-            <ConnectingOverlay />
-            <AccountsOverlay />
-          </MyAccountProvider>
-          <Connecting />
-        </Events>
-      </BlockAuthors>
+      <SubsocialApiProvider>
+        <BlockAuthors>
+          <Events>
+            <MyAccountProvider>
+              <Signer>
+                <Status
+                  queueAction={queueAction}
+                  stqueue={stqueue}
+                  txqueue={txqueue}
+                />
+                <Navigation>
+                  {children}
+                </Navigation>
+              </Signer>
+              <ConnectingOverlay />
+              <AccountsOverlay />
+            </MyAccountProvider>
+            <Connecting />
+          </Events>
+        </BlockAuthors>
+      </SubsocialApiProvider>
     </Api>
   </Queue>;
 };

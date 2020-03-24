@@ -4,10 +4,11 @@ import { CommentId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api, registry } from '@polkadot/react-api';
+import { registry } from '@polkadot/react-api';
 import { GenericAccountId } from '@polkadot/types';
 import Bool from '@polkadot/types/primitive/Bool';
 import BN from 'bn.js';
+import { useSubsocialApi } from './SubsocialApiContext';
 
 type PropsShareButtonPost = {
   postId: BN
@@ -16,6 +17,7 @@ type PropsShareButtonPost = {
 export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
   const { state: { address: myAddress } } = useMyAccount();
+  const { state: { substrate } } = useSubsocialApi();
 
   const dataForQuery = new Tuple(registry, [ 'AccountId', 'u64' ], [ new GenericAccountId(registry, myAddress), postId ]);
 
@@ -26,7 +28,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
     let isSubscribe = true;
 
     const load = async () => {
-      const _isFollow = await (api.query.social[`postSharedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (substrate.socialQuery().postSharedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -60,6 +62,7 @@ type PropsShareButtonComment = {
 export function ShareButtonComment (props: PropsShareButtonComment) {
   const { commentId } = props;
   const { state: { address: myAddress } } = useMyAccount();
+  const { state: { substrate } } = useSubsocialApi();
 
   const dataForQuery = new Tuple(registry, [ 'AccountId', 'u64' ], [ new GenericAccountId(registry, myAddress), commentId ]);
 
@@ -68,7 +71,7 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
 
   useEffect(() => {
     const load = async () => {
-      const _isFollow = await (api.query.social[`commentSharedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (substrate.socialQuery().commentSharedByAccount(dataForQuery)) as Bool;
       setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));

@@ -4,13 +4,12 @@ import Link from 'next/link';
 
 import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
-import { Option, GenericAccountId as AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
-import { ipfs } from '../utils/OffchainUtils';
+import { ipfs, subsocial } from '../utils/SubsocialConnect';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, summarize } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 // import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
@@ -23,11 +22,10 @@ import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
-import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
-import { Codec } from '@polkadot/types/types';
 import { PostContent } from '@subsocial/types/offchain';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { PostData } from '@subsocial/types/dto';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -41,11 +39,6 @@ type PostType = 'regular' | 'share';
 
 type PostExtContent = PostContent & {
   summary: string;
-};
-
-export type PostData = {
-  post?: Post;
-  initialContent?: PostExtContent;
 };
 
 export type PostDataListItem = {
@@ -80,9 +73,11 @@ type ViewPostPageProps = {
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { post, initialContent = {} as PostExtContent } = props.postData;
+  const { struct, content: initialContent } = props.postData;
 
-  if (!post) return <NoData description={<span>Post not found</span>} />;
+  if (!struct) return <NoData description={<span>Post not found</span>} />;
+
+  const post = struct;
 
   const {
     variant = 'full',
@@ -105,13 +100,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
-  const [ content, setContent ] = useState(initialContent);
+  const [ content, setContent ] = useState(getExtContent(initialContent));
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
 
-  const originalPost = postExtData && postExtData.post;
-  const [ originalContent, setOriginalContent ] = useState(postExtData && postExtData.initialContent);
+  const originalPost = postExtData && postExtData.struct;
+  const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -320,20 +315,20 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { postId }, req, res } = props;
-  const api = await getApi();
-  const postData = await loadPostData(api, postId as string) as PostData;
+  const postData = await subsocial.findPost(new BN(postId as string));
   let statusCode = 200
-  if (!postData.post && req) {
+  if (!postData?.struct && req) {
     // "getInitialProps - res.redirect cause server"
     statusCode = 404
     if (res) res.statusCode = 404
     return { statusCode }
+  } else {
+    const postExtData = postData && postData.struct && await subsocial.findPost(postData.struct.id)
+    return {
+      postData,
+      postExtData
+    };
   }
-  const postExtData = await loadExtPost(api, postData.post as Post);
-  return {
-    postData,
-    postExtData
-  };
 };
 
 export default ViewPostPage;
@@ -341,16 +336,16 @@ export default ViewPostPage;
 const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
-    const [ postExtData, setExtData ] = useState({} as PostData);
-    const [ postData, setPostData ] = useState({} as PostData);
+    const [ postExtData, setExtData ] = useState<PostData>();
+    const [ postData, setPostData ] = useState<PostData>({} as PostData);
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
-        const api = await getApi();
-        const postData = await loadPostData(api, id as PostId);
-        isSubscribe && setPostData(postData);
-        loadExtPost(api, postData.post as Post).then(data => isSubscribe && setExtData(data)).catch(console.log);
+        const postData = id && await subsocial.findPost(id);
+        isSubscribe && postData && setPostData(postData);
+        const postDataExt = postData && postData.struct && await subsocial.findPost(postData.struct.id)
+        isSubscribe && postDataExt && setExtData(postDataExt);
       };
 
       loadPost().catch(console.log);
@@ -376,49 +371,26 @@ export const getTypePost = (post: Post): PostType => {
   }
 };
 
+const getExtContent = (content: PostContent | undefined): PostExtContent => {
+  if (!content) return {} as PostExtContent;
+
+  const summary = summarize(content.body, LIMIT_SUMMARY);
+  return {
+    ...content,
+    summary
+  };
+}
+
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await ipfs.findPost(post.ipfs_hash);
   if (!ipfsContent) return {} as PostExtContent;
 
-  const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
-  return {
-    ...ipfsContent,
-    summary
-  };
+  return getExtContent(ipfsContent);
 };
 
-export const loadPostData = async (api: ApiPromise, postId: BN | string) => {
-  const postOpt = await api.query.social.postById(postId) as Option<Post>;
-  let postData: PostData = {};
-
-  if (postOpt.isSome) {
-    const post = postOpt.unwrap();
-    post.set('score', new BN(post.score.toNumber()) as unknown as Codec);
-    const content = await loadContentFromIpfs(post);
-    postData = { post, initialContent: content };
-
-    // console.log('loadPostData:', postData);
-  }
-
-  return postData;
-};
-
-export const loadExtPost = async (api: ApiPromise, post: Post) => {
-  const { extension } = post;
-  const postData: PostData = {};
-  if (extension.isSharedPost) {
-    const postId = extension.value as PostId;
-    const postData = await loadPostData(api, postId);
-    return postData;
-  }
-
-  return postData;
-};
-
-export const loadPostDataList = async (api: ApiPromise, ids: PostId[]) => {
-  const loadPostsData = ids.map(id => loadPostData(api, id));
-  const postsData = await Promise.all<PostData>(loadPostsData);
-  const loadPostsExtData = postsData.map(item => loadExtPost(api, item.post as Post));
-  const postsExtData = await Promise.all<PostData>(loadPostsExtData);
+export const loadPostDataList = async (ids: PostId[]) => {
+  const postsData = await subsocial.findPosts(ids);
+  const postsExtIds = postsData.map(item => item && item.struct && item.struct.id);
+  const postsExtData = await subsocial.findPosts(postsExtIds as PostId[]);
   return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
 };

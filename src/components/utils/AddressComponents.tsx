@@ -13,7 +13,6 @@ import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { summarize } from './utils';
-import { getApi } from '../utils/SubstrateApi';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
 import Router from 'next/router';
@@ -23,7 +22,7 @@ import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 // import { isBrowser } from 'react-device-detect';
-import { ipfs } from './OffchainUtils';
+import { ipfs } from './SubsocialConnect';
 import { Balance } from '@polkadot/types/interfaces';
 import AccountIndex from '@polkadot/types/generic/AccountIndex';
 import Address from '@polkadot/types/generic/Address';
@@ -31,6 +30,7 @@ import { AccountName } from '@polkadot/react-components';
 import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getFirstOrUndefinded } from '@subsocial/api/utils';
+import { useSubsocialApi } from './SubsocialApiContext';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
@@ -82,7 +82,8 @@ function AddressComponents (props: Props) {
     event,
     count,
     subject } = props;
-
+  const { state: { substrate } } = useSubsocialApi();
+  console.log('SOCIAL', (substrate as any).api._query.social)
   const [ socialAccount, setSocialAccount ] = useState(socialAccountInitial);
   const [ profile, setProfile ] = useState(profileInit);
   const [ profileContent, setProfileContent ] = useState(profileContentInit);
@@ -93,8 +94,7 @@ function AddressComponents (props: Props) {
     let isSubscribe = true;
 
     const UpdateSocialAccount = async () => {
-      const api = await getApi();
-      const socialAccountOpt = await api.query.social.socialAccountById(value) as unknown as Option<SocialAccount>;
+      const socialAccountOpt = await substrate.socialQuery().socialAccountById(value) as unknown as Option<SocialAccount>;
       console.log('Soc.Acc', socialAccountOpt);
       if (socialAccountOpt.isNone) {
         isSubscribe && setSocialAccount(undefined);

@@ -6,11 +6,11 @@ import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountCont
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading, getEnv } from '../components/utils/utils';
-import { getApi } from '../components/utils/SubstrateApi';
-import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
 import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
+import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
+import { BlogData } from '@subsocial/types/dto';
 
 const appsUrl = getEnv('APPS_URL') || 'http://127.0.0.1:3002';
 
@@ -23,11 +23,14 @@ interface MenuItem {
 const InnerMenu = () => {
   const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
+  const { state: { subsocial, substrate } } = useSubsocialApi();
   const isLoggedIn = checkIfLoggedIn();
   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
   const [ loaded, setLoaded ] = useState(false);
   const router = useRouter();
   const { pathname } = router;
+
+  console.log('SUBSTRATE:', substrate);
 
   useEffect(() => {
     if (!myAddress) return;
@@ -36,10 +39,8 @@ const InnerMenu = () => {
 
     const loadBlogsData = async () => {
       setLoaded(false);
-      const api = await getApi();
-      const ids = await api.query.social.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
-      const loadBlogs = ids.map(id => loadBlogData(api, id));
-      const blogsData = await Promise.all<BlogData>(loadBlogs);
+      const ids = await substrate.socialQuery().blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      const blogsData = await subsocial.findBlogs(ids);
       isSubscribe && setFollowedBlogsData(blogsData);
       isSubscribe && setLoaded(true);
     };

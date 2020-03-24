@@ -1,15 +1,14 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
 
-import { withCalls, withMulti, api } from '@polkadot/react-api';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/react-api/types';
-import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 
-import { ipfs } from '../utils/OffchainUtils';
+import { ipfs, subsocial, substrate } from '../utils/SubsocialConnect';
 import { partition, isEmpty } from 'lodash';
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
@@ -21,10 +20,8 @@ import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize, pluralize } from '../utils/Plularize';
 import { Loading, formatUnixDate } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
-import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
 import BN from 'bn.js'
 import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
@@ -59,10 +56,8 @@ export function CommentsTree (props: Props) {
 
     const loadComments = async () => {
       if (!commentsCount) return;
-      const apiCalls: Promise<Option<Comment>>[] = commentIds.map(id =>
-        api.query.social.commentById(id) as Promise<Option<Comment>>);
 
-      const loadedComments = (await Promise.all<Option<Comment>>(apiCalls)).map(x => x.unwrap() as Comment);
+      const loadedComments = await substrate.findComments(commentIds);
 
       if (isSubscribe) {
         setComments(loadedComments);
@@ -164,20 +159,17 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
-      const result = await api.query.social.commentById(id) as Option<Comment>;
-      if (result.isNone) return;
-      const comment = result.unwrap() as Comment;
+      const comment = await substrate.findComment(id);
       if (isSubscribe) {
-        setStruct(comment);
+        comment && setStruct(comment);
       }
     };
     loadComment().catch(console.log);
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
-        const result = await api.query.social.postById(post_id) as Option<Post>;
-        if (result.isNone) return;
-        isSubscribe && setPost(result.unwrap());
+        const post = await substrate.findPost(post_id);
+        isSubscribe && post && setPost(post);
       }
       const content = await ipfs.findPost(post.ipfs_hash);
       if (isSubscribe && content) {
@@ -296,17 +288,14 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
-  const api = await getApi();
-  const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
-  const comment = commentOpt.unwrapOr({} as Comment);
-  const postData = comment && await loadPostData(api, comment.post_id) as PostData;
-  const commentContent = comment && await ipfs.findComment(comment.ipfs_hash);
+  const commentData = await subsocial.findComment(new BN(commentId as string));
+  const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
   return {
-    comment: comment,
-    post: postData.post,
-    postContent: postData.initialContent,
+    comment: commentData?.struct || {} as Comment,
+    post: postData?.struct,
+    postContent: postData?.content,
     commentsWithParentId: [] as Comment[],
-    commentContent,
+    commentContent: commentData?.content,
     isPage: true
   };
 };

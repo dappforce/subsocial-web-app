@@ -2,16 +2,17 @@ import React from 'react';
 
 import { I18nProps } from '@polkadot/react-components/types';
 
-import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
+import { ViewBlogPage } from './ViewBlog';
 import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
-import { getApi } from '../utils/SubstrateApi';
+import { subsocial, substrate } from '../utils/SubsocialConnect';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
+import { BlogData } from '@subsocial/types/dto';
 
 type Props = I18nProps & {
   totalCount: number;
@@ -36,8 +37,7 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
 };
 
 ListBlog.getInitialProps = async (): Promise<any> => {
-  const api = await getApi();
-  const nextBlogId = await api.query.social.nextBlogId() as BlogId;
+  const nextBlogId = await substrate.socialQuery().nextBlogId() as BlogId;
 
   const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
@@ -45,11 +45,11 @@ ListBlog.getInitialProps = async (): Promise<any> => {
   if (totalCount > 0) {
     const firstId = firstBlogId.toNumber();
     const lastId = nextBlogId.toNumber();
-    const loadBlogs: Promise<BlogData>[] = [];
+    const blogIds: BN[] = [];
     for (let i = firstId; i < lastId; i++) {
-      loadBlogs.push(loadBlogData(api, new BN(i)));
+      blogIds.push(new BN(i));
     }
-    blogsData = await Promise.all<BlogData>(loadBlogs);
+    blogsData = await subsocial.findBlogs(blogIds);
   }
 
   return {
@@ -83,9 +83,8 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
 ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
   console.log(props);
-  const api = await getApi();
-  const myBlogIds = await api.query.social.blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
-  const loadBlogs = myBlogIds.map(id => loadBlogData(api, id));
+  const myBlogIds = await substrate.socialQuery().blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
+  const loadBlogs = await subsocial.findBlogs(myBlogIds);
   const blogsData = await Promise.all<BlogData>(loadBlogs);
   console.log(blogsData);
   return {

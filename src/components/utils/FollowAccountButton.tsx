@@ -4,10 +4,11 @@ import { GenericAccountId, bool as Bool } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api, registry } from '@polkadot/react-api';
+import { registry } from '@polkadot/react-api';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import AccountId from '@polkadot/types/generic/AccountId';
+import { substrate } from './SubsocialConnect';
 
 type FollowAccountButtonProps = {
   address: string,
@@ -39,7 +40,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   useEffect(() => {
     let isSubscribe = true;
     const load = async () => {
-      const _isFollow = await (api.query.social[`accountFollowedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (substrate.socialQuery().accountFollowedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));

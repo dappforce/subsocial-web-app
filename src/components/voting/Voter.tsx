@@ -8,7 +8,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, Comment, ReactionId } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';
-import { getApi } from '../utils/SubstrateApi';
+import { substrate } from '../utils/SubsocialConnect';
 import { registry } from '@polkadot/react-api';
 import { ReactionKind } from '@subsocial/types/substrate/classes';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -44,8 +44,7 @@ export const Voter = (props: VoterProps) => {
     let isSubscribe = true;
 
     async function loadStruct<T extends Comment | Post> (_: T) {
-      const api = await getApi();
-      const result = await api.query.social[`${structQuery}ById`](id) as Option<T>;
+      const result = await substrate.socialQuery()[`${structQuery}ById`](id) as Option<T>;
       if (result.isNone) return;
 
       const _struct = result.unwrap();
@@ -54,9 +53,8 @@ export const Voter = (props: VoterProps) => {
     loadStruct(state).catch(err => console.log(err));
 
     async function loadReaction () {
-      const api = await getApi();
-      const reactionId = await api.query.social[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
-      const reactionOpt = await api.query.social.reactionById(reactionId) as Option<Reaction>;
+      const reactionId = await substrate.socialQuery()[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
+      const reactionOpt = await substrate.socialQuery().reactionById(reactionId) as Option<Reaction>;
       if (reactionOpt.isNone) {
         isSubscribe && setReactionState(undefined);
       } else {

@@ -1,0 +1,97 @@
+import React, { useReducer, createContext, useContext, useEffect } from 'react';
+import { SubsocialApi } from '@subsocial/api/fullApi';
+import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
+import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
+import { ipfsUrl, getApi } from './SubsocialConnect';
+import { ApiPromise } from '@polkadot/api';
+import { useApi } from '@polkadot/react-hooks';
+
+export type SubsocialApiState = {
+  subsocial: SubsocialApi,
+  substrate: SubsocialSubstrateApi,
+  ipfs: SubsocialIpfsApi,
+  isReady?: boolean
+}
+
+type SubsocialApiAction = {
+  type: 'init' | 'set'
+  api: ApiPromise
+}
+
+function reducer (state: SubsocialApiState, action: SubsocialApiAction): SubsocialApiState {
+
+  switch (action.type) {
+    case 'init':
+      const subsocial = new SubsocialApi(action.api, ipfsUrl)
+      console.log('Initial subsocial API')
+      return { subsocial, substrate: subsocial.substrate, ipfs: subsocial.ipfs, isReady: true }
+
+    default:
+      throw new Error('No action type provided')
+  }
+}
+
+function functionStub () {
+  throw new Error('Function needs to be set in SubsocialApiProvider')
+}
+
+const initialState = {
+  subsocial: {} as SubsocialApi,
+  substrate: {} as SubsocialSubstrateApi,
+  ipfs: {} as SubsocialIpfsApi,
+  isReady: false
+}
+
+export type SubsocialApiContextProps = {
+  state: SubsocialApiState
+  dispatch: React.Dispatch<SubsocialApiAction>
+  initial: (api: ApiPromise) => void
+}
+
+const contextStub: SubsocialApiContextProps = {
+  state: initialState,
+  dispatch: functionStub,
+  initial: functionStub
+}
+
+export type SubsocialApiProps = {
+  api: ApiPromise
+}
+
+const createSubsocialState = (api: ApiPromise) => {
+  if (!api) return undefined;
+
+  const subsocial = new SubsocialApi(api, ipfsUrl);
+  console.log(subsocial.substrate.socialQuery());
+  return {
+    subsocial,
+    substrate: subsocial.substrate,
+    ipfs: subsocial.ipfs,
+    isReady: true
+  }
+}
+
+export const SubsocialApiContext = createContext<SubsocialApiContextProps>(contextStub)
+
+export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
+  const { api } = useApi()
+  const [ state, dispatch ] = useReducer(reducer, createSubsocialState(api) || initialState)
+  useEffect(() => {
+    if (!state.isReady) {
+      getApi().then(api => dispatch({ type: 'init', api: api }))
+    }
+  }, [ state.isReady ]) // Don't call this effect if `invited` is not changed
+  console.log('Contex', state);
+  const contextValue = {
+    state,
+    dispatch,
+    initial: (api: ApiPromise) => dispatch({ type: 'init', api: api })
+  }
+  return <SubsocialApiContext.Provider value={contextValue}>{props.children}</SubsocialApiContext.Provider>
+}
+
+export function useSubsocialApi () {
+  return useContext(SubsocialApiContext)
+}
+
+export default SubsocialApiProvider

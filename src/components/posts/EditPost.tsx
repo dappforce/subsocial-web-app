@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
-import { ipfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/SubsocialConnect';
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option, Enum } from '@polkadot/types/codec';
@@ -23,6 +23,7 @@ import { TxCallback } from '../utils/types';
 import { PostExtension, RegularPost, PostUpdate } from '@subsocial/types/substrate/classes';
 import { Post, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
+import U32 from '@polkadot/types/primitive/U32';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
@@ -47,7 +48,7 @@ type ValidationProps = {
   postMaxLen: number
 };
 
-type OuterProps = ValidationProps & {
+type OuterProps = {
   blogId?: BN,
   id?: BN,
   extention?: Enum,
@@ -56,7 +57,7 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postMaxLen: U32
+  postMaxLen?: U32
 };
 
 type FormValues = PostContent;
@@ -231,8 +232,8 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    postMaxLen: props.postMaxLen?.toNumber()
+  validationSchema: (props: OuterProps) => buildSchema({ // TODO fix this hack
+    postMaxLen: props.postMaxLen?.toNumber() || 10000
   }),
 
   handleSubmit: values => {
@@ -273,13 +274,14 @@ type LoadStructProps = OuterProps & {
 };
 
 type StructJson = PostContent | undefined;
+type StructPost = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
     const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
-    const [ struct, setStruct ] = useState(undefined as PostStruct);
+    const [ struct, setStruct ] = useState(undefined as StructPost);
     const [ trigger, setTrigger ] = useState(false);
     const jsonIsNone = json === undefined;
 
