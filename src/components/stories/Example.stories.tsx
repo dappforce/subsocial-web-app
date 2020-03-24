@@ -10,7 +10,8 @@ import faker from 'faker';
 import './style.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import ReorderNavTabs, { Values } from './reorder-navtabs/ReorderNavTabs';
+import ReorderNavTabs from './reorder-navtabs/ReorderNavTabs';
+import Parser from './parser/Parser';
 
 const { SubMenu } = Menu;
 
@@ -158,7 +159,7 @@ export const Forum = () => {
 }
 
 export const ReorderNavTabsExample = () => {
-  const navTabs: Values = {
+  const navTabs = {
     tabs: [
       { id: 1, name: 'first name' },
       { id: 2, name: 'second name' },
@@ -166,4 +167,8 @@ export const ReorderNavTabsExample = () => {
     ]
   }
   return <ReorderNavTabs {...navTabs} />
+}
+
+export const ParserExample = () => {
+  return <Parser />
 }
