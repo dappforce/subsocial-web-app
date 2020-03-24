@@ -3274,6 +3274,13 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
+"@subsocial/config@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.1.2.tgz#f57c3c5d40d451416a4850d2ddb6c8b2365bd352"
+  integrity sha512-1+nqXqf92Ssqzpctmkf2xBBVTakp4v2n6c03SDiNxUz1bKUjdusQ+IgfHR5L4pgp1kwUL1UrVAOYcfxwrXEEJw==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-4.2.0.tgz#dadcb6218503532d6884b210e7f3c502caaa44b1"
