@@ -227,6 +227,7 @@ export type PostContent = SharedPostContent & {
   title: string;
   image: string;
   tags: string[];
+  canonical: string;
 };
 
 export type PostType = {
