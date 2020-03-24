@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 
-import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
+import { addJsonToIpfs, getJsonFromIpfs, parseUrl } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text, U32 } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
