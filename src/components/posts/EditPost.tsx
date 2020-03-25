@@ -103,12 +103,16 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const url = 'https://www.youtube.com/watch?v=b5AQ5TVckfM'
+  // const url = 'https://ru.wikipedia.org/wiki/WP'
 
   useEffect(() => {
     const parse = async () => {
-      const res = await parseUrl(url)
-      console.log('from effec empty')
-      console.log('res from effect:', res)
+      try {
+        const res = await parseUrl(url)
+        console.log('res from effect:', res)
+      } catch (err) {
+        console.log('err in effect:', err)
+      }
     }
 
     parse()
