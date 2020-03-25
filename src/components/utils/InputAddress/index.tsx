@@ -43,7 +43,7 @@ export const DfInputAddress = (props: Props) => {
   const DfOnChange = (value: string | null): void => {
     onChange && value && onChange(value);
     value && setValue(value);
-    value && setAccountToContext(value);
+    value && setCurrentAccount(value);
   }
 
   return <InputAddress
