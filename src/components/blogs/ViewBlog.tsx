@@ -6,7 +6,7 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
-import { ipfs, subsocial, substrate } from '../utils/SubsocialConnect';
+import { ipfs } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
@@ -28,6 +28,7 @@ import mdToText from 'markdown-to-txt';
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
 import { BlogData } from '@subsocial/types/dto'
+import { SubsocialApi } from '@subsocial/api/fullApi';
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -280,8 +281,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { req, res, query: { blogId } } = props
+  const subsocial = (props as any).subsocial as SubsocialApi
+  const { substrate } = subsocial;
   const idOrSlug = blogId as string
-  const id = await getBlogId(idOrSlug)
+  const id = await getBlogId(substrate, idOrSlug)
   if (!id && res && req) {
     res.statusCode = 404
     return { statusCode: 404 }
@@ -293,7 +296,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   }
 
   const postIds = await substrate.socialQuery().postIdsByBlogId(blogId) as unknown as PostId[];
-  const posts = await loadPostDataList(postIds.reverse());
+  const posts = await loadPostDataList(subsocial, postIds.reverse());
   return {
     blogData,
     posts

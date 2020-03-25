@@ -3,7 +3,7 @@ import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
-import { ipfs, substrate } from './SubsocialConnect';
+import { ipfs } from './SubsocialConnect';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
@@ -17,6 +17,7 @@ import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/inter
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getFirstOrUndefinded } from '@subsocial/api/utils';
 import { Moment } from '@polkadot/types/interfaces';
+import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 
 type PaginationProps = {
   currentPage?: number;
@@ -167,7 +168,7 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     : text;
 };
 
-export const getBlogId = async (idOrSlug: string): Promise<BN | undefined> => {
+export const getBlogId = async (substrate: SubsocialSubstrateApi, idOrSlug: string): Promise<BN | undefined> => {
   if (idOrSlug.startsWith('@')) {
     const slug = idOrSlug.substring(1) // Drop '@'
     const idOpt = await substrate.socialQuery().blogIdBySlug(slug) as Option<BlogId>

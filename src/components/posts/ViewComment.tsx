@@ -8,7 +8,7 @@ import { ApiProps } from '@polkadot/react-api/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 
-import { ipfs, subsocial, substrate } from '../utils/SubsocialConnect';
+import { ipfs } from '../utils/SubsocialConnect';
 import { partition, isEmpty } from 'lodash';
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
@@ -26,6 +26,8 @@ import dynamic from 'next/dynamic';
 import BN from 'bn.js'
 import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
 import { PostContent, CommentContent } from '@subsocial/types/offchain';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { SubsocialApi } from '@subsocial/api/fullApi';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -46,7 +48,8 @@ export function CommentsTree (props: Props) {
     commentIds = [],
     commentIdForPage
   } = props;
-
+  // eslint-disable-next-line no-undef
+  const { state: { substrate } } = useSubsocialApi()
   const commentsCount = commentIds.length;// post.comments_count.toNumber();
   const [ loaded, setLoaded ] = useState(false);
   const [ comments, setComments ] = useState(new Array<Comment>());
@@ -134,6 +137,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     postContent: initialPostContent = {} as PostContent,
     commentContent = {} as CommentContent
   } = props;
+  const { state: { substrate } } = useSubsocialApi()
   const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
@@ -288,6 +292,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
+  const subsocial = (props as any).subsocial as SubsocialApi
   const commentData = await subsocial.findComment(new BN(commentId as string));
   const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
   return {

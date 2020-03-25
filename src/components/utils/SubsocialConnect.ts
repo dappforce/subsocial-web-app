@@ -6,13 +6,12 @@ import { getEnv } from './utils';
 import { ApiPromise } from '@polkadot/api';
 import { Activity } from '@subsocial/types/offchain';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
-import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
-import { SubsocialApi } from '@subsocial/api/fullApi';
-import BN from 'bn.js';
 
 export const offchainUrl = getEnv('OFFCHAIN_URL') || 'http://localhost:3001';
 export const ipfsUrl = getEnv('IPFS_URL') || '/ip4/127.0.0.1/tcp/5002/http';
 export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944';
+
+export const ipfs = new SubsocialIpfsApi(ipfsUrl)
 
 export const getNewsFeed = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> => {
   const res = await axios.get(`${offchainUrl}/offchain/feed/${myAddress}?offset=${offset}&limit=${limit}`);
@@ -40,14 +39,4 @@ export const getApi = async () => {
     api = await Api.connect(substrateUrl);
     return api;
   }
-}
-
-export let subsocial: SubsocialApi;
-export let substrate: SubsocialSubstrateApi;
-export let ipfs: SubsocialIpfsApi
-
-export const createSubsocialApi = (api: ApiPromise) => {
-  subsocial = new SubsocialApi(api, ipfsUrl);
-  console.log('IPFS', subsocial.findBlog(new BN(1)))
-  return subsocial;
 }

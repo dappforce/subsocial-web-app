@@ -30,8 +30,6 @@ const InnerMenu = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  console.log('SUBSTRATE:', substrate);
-
   useEffect(() => {
     if (!myAddress) return;
 
@@ -39,7 +37,8 @@ const InnerMenu = () => {
 
     const loadBlogsData = async () => {
       setLoaded(false);
-      const ids = await substrate.socialQuery().blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      console.log('SUBSTRATE:', substrate.api);
+      const ids = await substrate.api.query.social.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
       const blogsData = await subsocial.findBlogs(ids);
       isSubscribe && setFollowedBlogsData(blogsData);
       isSubscribe && setLoaded(true);

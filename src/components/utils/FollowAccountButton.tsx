@@ -8,7 +8,7 @@ import { registry } from '@polkadot/react-api';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import AccountId from '@polkadot/types/generic/AccountId';
-import { substrate } from './SubsocialConnect';
+import { useSubsocialApi } from './SubsocialApiContext';
 
 type FollowAccountButtonProps = {
   address: string,
@@ -35,6 +35,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   const accountId = new GenericAccountId(registry, address);
   const dataForQuery = new Tuple(registry, [ AccountId, AccountId ], [ new GenericAccountId(registry, myAddress), accountId ]);
 
+  const { state: { substrate } } = useSubsocialApi()
   const [ isFollow, setIsFollow ] = useState(true);
 
   useEffect(() => {

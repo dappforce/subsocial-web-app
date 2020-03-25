@@ -9,10 +9,10 @@ import { Button } from 'antd';
 import { NextPage } from 'next';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
-import { subsocial, substrate } from '../utils/SubsocialConnect';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { BlogData } from '@subsocial/types/dto';
+import { SubsocialApi } from '@subsocial/api/fullApi';
 
 type Props = I18nProps & {
   totalCount: number;
@@ -36,7 +36,9 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
   );
 };
 
-ListBlog.getInitialProps = async (): Promise<any> => {
+ListBlog.getInitialProps = async (props): Promise<any> => {
+  const subsocial = (props as any).subsocial as SubsocialApi
+  const { substrate } = subsocial;
   const nextBlogId = await substrate.socialQuery().nextBlogId() as BlogId;
 
   const firstBlogId = new BN(1);
@@ -82,6 +84,8 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
 
 ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
+  const subsocial = (props as any).subsocial as SubsocialApi
+  const { substrate } = subsocial;
   console.log(props);
   const myBlogIds = await substrate.socialQuery().blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
   const loadBlogs = await subsocial.findBlogs(myBlogIds);

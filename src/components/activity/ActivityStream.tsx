@@ -6,7 +6,7 @@ import ViewPostPage from '../posts/ViewPost';
 import { ViewBlogPage } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
 import { PostData } from '@subsocial/types/dto'
-import { getNewsFeed, getNotifications, substrate, subsocial } from '../utils/SubsocialConnect';
+import { getNewsFeed, getNotifications } from '../utils/SubsocialConnect';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Loader } from 'semantic-ui-react';
 import { NoData, NotAuthorized } from '../utils/DataList';
@@ -19,6 +19,7 @@ import { DfBgImg } from '../utils/DfBgImg';
 import { isEmptyStr } from '../utils';
 import BN from 'bn.js';
 import { Activity } from '@subsocial/types/offchain';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -119,6 +120,7 @@ export const ViewNotifications = () => {
 };
 
 function ViewActivity (props: ActivityProps) {
+  const { state: { subsocial } } = useSubsocialApi()
   const { activity } = props;
   const { post_id } = activity;
   const [ data, setData ] = useState<PostData[]>();
@@ -138,6 +140,7 @@ function ViewActivity (props: ActivityProps) {
 }
 
 export function Notification (props: ActivityProps) {
+  const { state: { subsocial, substrate } } = useSubsocialApi()
   const { activity } = props;
   const { account, event, date, post_id, comment_id, blog_id, agg_count } = activity;
   const formatDate = moment(date).format('lll');

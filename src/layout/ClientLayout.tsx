@@ -26,27 +26,27 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
     <Api
       url={url}
     >
-      <SubsocialApiProvider>
-        <BlockAuthors>
-          <Events>
-            <MyAccountProvider>
-              <Signer>
-                <Status
-                  queueAction={queueAction}
-                  stqueue={stqueue}
-                  txqueue={txqueue}
-                />
+      <BlockAuthors>
+        <Events>
+          <MyAccountProvider>
+            <Signer>
+              <Status
+                queueAction={queueAction}
+                stqueue={stqueue}
+                txqueue={txqueue}
+              />
+              <SubsocialApiProvider>
                 <Navigation>
                   {children}
                 </Navigation>
-              </Signer>
-              <ConnectingOverlay />
-              <AccountsOverlay />
-            </MyAccountProvider>
-            <Connecting />
-          </Events>
-        </BlockAuthors>
-      </SubsocialApiProvider>
+              </SubsocialApiProvider>
+            </Signer>
+            <ConnectingOverlay />
+            <AccountsOverlay />
+          </MyAccountProvider>
+          <Connecting />
+        </Events>
+      </BlockAuthors>
     </Api>
   </Queue>;
 };

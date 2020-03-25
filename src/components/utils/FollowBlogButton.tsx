@@ -4,11 +4,11 @@ import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { isMobile } from 'react-device-detect';
-import { substrate } from './SubsocialConnect';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
+import { useSubsocialApi } from './SubsocialApiContext';
 
 type FollowBlogButtonProps = {
   blogId: BN,
@@ -22,6 +22,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
 
   const dataForQuery = new Tuple(registry, [ 'AccountId', 'u64' ], [ new GenericAccountId(registry, myAddress), blogId ]);
 
+  const { state: { substrate } } = useSubsocialApi()
   const [ isFollow, setIsFollow ] = useState(false);
 
   const TxSuccess = () => {

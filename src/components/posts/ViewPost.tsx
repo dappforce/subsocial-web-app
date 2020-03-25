@@ -6,7 +6,7 @@ import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
-import { ipfs, subsocial } from '../utils/SubsocialConnect';
+import { ipfs } from '../utils/SubsocialConnect';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, summarize } from '../utils/utils';
@@ -26,6 +26,7 @@ import BN from 'bn.js';
 import { PostContent } from '@subsocial/types/offchain';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
 import { PostData } from '@subsocial/types/dto';
+import { SubsocialApi } from '@subsocial/api/fullApi';
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -315,6 +316,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { postId }, req, res } = props;
+  const subsocial = (props as any).subsocial as SubsocialApi
   const postData = await subsocial.findPost(new BN(postId as string));
   let statusCode = 200
   if (!postData?.struct && req) {
@@ -338,6 +340,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
     const { id } = props;
     const [ postExtData, setExtData ] = useState<PostData>();
     const [ postData, setPostData ] = useState<PostData>({} as PostData);
+    const subsocial = (props as any).subsocial as SubsocialApi
 
     useEffect(() => {
       let isSubscribe = true;
@@ -388,7 +391,7 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   return getExtContent(ipfsContent);
 };
 
-export const loadPostDataList = async (ids: PostId[]) => {
+export const loadPostDataList = async (subsocial: SubsocialApi, ids: PostId[]) => {
   const postsData = await subsocial.findPosts(ids);
   const postsExtIds = postsData.map(item => item && item.struct && item.struct.id);
   const postsExtData = await subsocial.findPosts(postsExtIds as PostId[]);

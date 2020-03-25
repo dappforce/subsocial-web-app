@@ -21,12 +21,13 @@ import { Pluralize } from '../utils/Plularize';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
-import { ipfs, substrate } from '../utils/SubsocialConnect';
+import { ipfs } from '../utils/SubsocialConnect';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
 import { getFirstOrUndefinded } from '@subsocial/api/utils';
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
+import { SubsocialApi } from '@subsocial/api/fullApi';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -267,6 +268,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
+  const { substrate } = (props as any).subsocial as SubsocialApi
   const socialAccountOpt = await substrate.socialQuery().socialAccountById(address) as Option<SocialAccount>;
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;

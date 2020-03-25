@@ -48,11 +48,7 @@ LatestUpdate.getInitialProps = async (props): Promise<any> => {
   console.log('Subsocial', subsocial)
   const nextBlogId = await subsocial.substrate.socialQuery().nextBlogId() as BlogId;
   const nextPostId = await subsocial.substrate.socialQuery().nextPostId() as PostId;
-  console.log('NextPostId', nextBlogId);
-  const blog = await subsocial.substrate.findBlog(new BN(1));
-  console.log('BLOG:', blog);
-  const content = blog && await subsocial.ipfs.findBlog(blog.ipfs_hash.toString());
-  console.log('BLOG:', blog, content);
+
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
     const latestIds = new Array<BN>(initIds).fill(ZERO);
@@ -63,7 +59,7 @@ LatestUpdate.getInitialProps = async (props): Promise<any> => {
   const latestBlogIds = getLastNIds(nextBlogId, FIVE);
   const blogsData = await subsocial.findBlogs(latestBlogIds);
   const latestPostIds = getLastNIds(nextPostId, FIVE);
-  const postsData = await loadPostDataList(latestPostIds as PostId[]);
+  const postsData = await loadPostDataList(subsocial, latestPostIds as PostId[]);
 
   return {
     blogsData,

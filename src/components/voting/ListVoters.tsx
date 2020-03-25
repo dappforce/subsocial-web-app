@@ -8,7 +8,7 @@ import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
 import { partition } from 'lodash';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
-import { substrate } from '../utils/SubsocialConnect';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -33,6 +33,7 @@ function isUpvote (reaction: Reaction): boolean {
 const InnerModalVoters = (props: VotersProps) => {
   const { reactions, open, close, active = ActiveVoters.All } = props;
   const votersCount = reactions ? reactions.length : 0;
+  const { state: { substrate } } = useSubsocialApi()
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
   const [ trigger, setTrigger ] = useState(false);
   const [ upvoters, downvoters ] = partition(reactionView, (x) => isUpvote(x))

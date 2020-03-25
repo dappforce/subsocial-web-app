@@ -8,9 +8,9 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
 import { Post, Reaction, Comment, ReactionId } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';
-import { substrate } from '../utils/SubsocialConnect';
 import { registry } from '@polkadot/react-api';
 import { ReactionKind } from '@subsocial/types/substrate/classes';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const ZERO = new BN(0);
@@ -26,6 +26,7 @@ export const Voter = (props: VoterProps) => {
     type
   } = props;
 
+  const { state: { substrate } } = useSubsocialApi()
   const [ reactionState, setReactionState ] = useState(undefined as (Reaction | undefined));
 
   const { state: { address } } = useMyAccount();
