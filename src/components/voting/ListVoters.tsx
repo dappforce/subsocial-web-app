@@ -6,7 +6,7 @@ import { Option } from '@polkadot/types';
 import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
-import { partition } from 'lodash';
+import partition from 'lodash.partition';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 

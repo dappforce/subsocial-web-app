@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { List, Empty } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
 import Section from './Section';
 import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
 import { MutedSpan } from './MutedText';

@@ -17,7 +17,7 @@ import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';

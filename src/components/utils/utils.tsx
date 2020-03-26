@@ -9,7 +9,7 @@ import { Icon } from 'antd';
 import { NoData } from './DataList';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
-import { truncate } from 'lodash';
+import truncate from 'lodash.truncate';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';

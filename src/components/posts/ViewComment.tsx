@@ -9,7 +9,8 @@ import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 
 import { ipfs } from '../utils/SubsocialConnect';
-import { partition, isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
+import partition from 'lodash.partition'
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';

@@ -23,7 +23,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
 import { ipfs } from '../utils/SubsocialConnect';
 import BN from 'bn.js';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
 import { getFirstOrUndefinded } from '@subsocial/api/utils';
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
