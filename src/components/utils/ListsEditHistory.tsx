@@ -196,7 +196,7 @@ const PostFromHistory = (props: PropsPostFromHistory) => {
     <CreatedBy created={edited} dateLabel='Edited on' accountLabel='Edited by' />
     <div className='DfModal'>
       {content.image && <img src={content.image} className='DfPostImage' /* add onError handler */ />}
-      <DfMd source={content.body} />
+      {/* <DfMd source={content.body} /> */}
       {/* TODO render tags */}
     </div>
   </div>);
