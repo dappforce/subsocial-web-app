@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
-import { DfMd } from '../utils/DfMd';
+// import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
 import Error from 'next/error'
@@ -11,6 +11,8 @@ import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, summarize, getBlogId } from '../utils/utils';
+// import { HeadMeta } from '../utils/HeadMeta';
+import { Loading, formatUnixDate } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
@@ -34,6 +36,7 @@ const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { 
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
 const SUMMARY_MAX_SIZE = 150;
+// const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
 type PostVariant = 'full' | 'preview' | 'name only';
 
@@ -273,9 +276,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderDetails = (content: PostExtContent) => {
-    const { title, body, image } = content;
+    const { title, image } = content;
     return <Section className='DfContentPage'>
-      <HeadMeta title={title} desc={body} image={image} />
+      {/* <HeadMeta title={title} desc={body} image={image} /> */}
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -284,7 +287,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        <DfMd source={body} />
+        {/* <DfMd source={body} /> */}
         {/* TODO render tags */}
       </div>
       <Voter struct={post} type={'Post'}/>
@@ -389,7 +392,8 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = summarize(ipfsContent.body, SUMMARY_MAX_SIZE);
+  // const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
+  const summary = 'temp data'
   return {
     ...ipfsContent,
     summary
