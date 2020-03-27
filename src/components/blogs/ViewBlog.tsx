@@ -8,7 +8,8 @@ import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
 import { ipfs } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
-import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
+import { queryBlogsToProp, ZERO } from '../utils/index';
+import { nonEmptyStr } from '@subsocial/utils'
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';

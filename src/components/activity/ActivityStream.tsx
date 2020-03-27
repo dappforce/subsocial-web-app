@@ -16,7 +16,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAccount } from '../utils/MyAccountContext';
 import dynamic from 'next/dynamic';
 import { DfBgImg } from '../utils/DfBgImg';
-import { isEmptyStr } from '../utils';
+import { isEmptyStr } from '@subsocial/utils';
 import BN from 'bn.js';
 import { Activity } from '@subsocial/types/offchain';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';

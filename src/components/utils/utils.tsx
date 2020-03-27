@@ -8,14 +8,12 @@ import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
 import moment from 'moment-timezone';
-import mdToText from 'markdown-to-txt';
-import truncate from 'lodash.truncate';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { getFirstOrUndefinded } from '@subsocial/api/utils';
+import { getFirstOrUndefinded } from '@subsocial/utils';
 import { Moment } from '@polkadot/types/interfaces';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 
@@ -154,18 +152,6 @@ export const Loading = () => <Icon type='loading' />;
 export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
-};
-
-const DEFAULT_SUMMARY_LENGTH = 300;
-
-export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) => {
-  const text = mdToText(body);
-  return text.length > limit
-    ? truncate(text, {
-      length: limit,
-      separator: /.,:;!?\(\)\[\]\{\} +/
-    })
-    : text;
 };
 
 export const getBlogId = async (substrate: SubsocialSubstrateApi, idOrSlug: string): Promise<BN | undefined> => {

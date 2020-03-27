@@ -7,9 +7,9 @@ import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { ipfs } from '../utils/SubsocialConnect';
-import { nonEmptyStr } from '../utils/index';
+import { nonEmptyStr, summarize } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate, summarize } from '../utils/utils';
+import { Loading, formatUnixDate } from '../utils/utils';
 // import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
