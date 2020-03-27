@@ -256,12 +256,10 @@ interface CodeProps {
   lang?: CodeLang
 }
 
-/*
 interface LinkProps {
-  /** `true` is it's a URL of external site. `false`, if it's a Subsocial URL.
-  // external?: boolean // not sure about this. Maybe we don't need it.
+  /** `true` is it's a URL of external site. `false`, if it's a Subsocial URL. */
+  external?: boolean // not sure about this. Maybe we don't need it.
 }
-*/
 
 type VideoSite = 'youtube' | 'vimeo' | string
 
@@ -281,7 +279,7 @@ interface ImageProps {
 
 export interface TextBlock extends PostBlock, TextProps {}
 export interface CodeBlock extends PostBlock, CodeProps {}
-// export interface LinkBlock extends PostBloсk, LinkProps {}
+export interface LinkBlock extends PostBlock, LinkProps {}
 export interface VideoBlock extends PostBlock, VideoProps {}
 export interface ImageBlock extends PostBlock, ImageProps {}
 
