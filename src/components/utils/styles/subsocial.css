@@ -5,7 +5,7 @@ body,
   background-color: $color_page_bg !important;
 }
 
-/*Used as hack to fixed React base font-size */
+/* Used as a hack to fixed ReactBase font-size */
 .fontSizeNormal {
   font-size: $font_normal !important;
 }
@@ -16,12 +16,7 @@ body,
   min-width: 428px;
   max-width: 728px;
   color: #111;
-
-  .blogMiniPreview {
-    margin: $space_normal 0;
-  }
 }
-
 
 @media (min-width: 1200px) {
   .DfBrand {
@@ -40,7 +35,7 @@ body,
 }
 
 .DfSummary {
-  margin-top: $space_small;
+  margin: $space_small 0;
 }
 
 .DfPostText {
@@ -152,15 +147,6 @@ body,
   }
 }
 
-.DfCountsPreview {
-  margin-top: $space_tiny;
-  font-size: $font_small;
-
-  .MutedText {
-    margin-right: $space_normal;
-  }
-}
-
 .ui--AddressComponents-info div {
   vertical-align: initial;
 }
@@ -178,7 +164,7 @@ body,
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $space_huge;
+  margin-bottom: $space_normal;
 }
 
 .ui.basic.button:not(.disabled) {
@@ -384,12 +370,6 @@ hr {
   }
 }
 
-.DfCountsPreview {
-  a {
-    margin-right: $space_tiny;
-  }
-}
-
 .ui.attached:not(.message)+.ui.attached.segment:not(.top) {
   border: none;
 }
@@ -420,27 +400,21 @@ hr {
   }
 }
 
-
-.DfCountsPreview {
-  margin-top: 0;
-
-  a,
-  span {
-    color: rgba(34, 36, 38, .8) !important;
-    font-size: $font_small
-  }
-}
-
 .DfCountsPreview {
   display: flex;
-  justify-content: flex-start;
-  margin-top: $space_tiny;
+  justify-content: flex-end;
   margin-bottom: $space_tiny;
+  font-size: $font_small;
+
+  .MutedText {
+    margin-right: $space_normal;
+  }
 
   a,
   span {
     color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small;
+    margin-right: $space_normal;
   }
 }
 
@@ -482,10 +456,6 @@ hr {
     i:not(.DfVoter) {
       margin-right: .35rem;
     }
-  }
-
-  .DfCountsPreview {
-    justify-content: flex-end;
   }
 
   .ui.tiny.button.basic.DfAction {
