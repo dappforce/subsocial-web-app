@@ -1,7 +1,5 @@
 import BN from 'bn.js';
 import React from 'react';
-
-import { ApiProps } from '@polkadot/ui-api/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '../types';
@@ -11,9 +9,10 @@ import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewP
 import { NextPage } from 'next';
 import { getApi } from '../utils/SubstrateApi';
 
-const FIVE = new BlogId(5);
 const ZERO = new BlogId(0);
-type Props = ApiProps & {
+const FIVE = new BlogId(5);
+
+type Props = {
   blogsData: BlogData[],
   postsData: PostDataListItem[]
 };
@@ -42,20 +41,22 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
   );
 };
 
-LatestUpdate.getInitialProps = async (): Promise<any> => {
+const getLastNIds = (nextId: BN, size: BN): BN[] => {
+  const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
+  const latestIds = new Array<BN>(initIds).fill(ZERO);
+
+  return latestIds.map((_, index) => nextId.sub(new BN(index + 1)));
+}
+
+LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const api = await getApi();
   const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
   const nextPostId = await api.query.blogs.nextPostId() as PostId;
-  const getLastNIds = (nextId: BN, size: BN): BN[] => {
-    const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
-    const latestIds = new Array<BN>(initIds).fill(ZERO);
-
-    return latestIds.map((_, index) => nextId.sub(new BN(index + 1)));
-  };
 
   const latestBlogIds = getLastNIds(nextBlogId, FIVE);
   const loadBlogs = latestBlogIds.map(id => loadBlogData(api, id as BlogId));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
+
   const latestPostIds = getLastNIds(nextPostId, FIVE);
   const postsData = await loadPostDataList(api, latestPostIds as PostId[]);
 

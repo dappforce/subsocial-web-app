@@ -27,12 +27,13 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
+
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
-const LIMIT_SUMMARY = isMobile ? 75 : 150;
+const SUMMARY_MAX_SIZE = 150;
 
 type PostVariant = 'full' | 'preview' | 'name only';
 
@@ -311,27 +312,34 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       return renderDetails(content);
     }
     default: {
-      return <div>You should not be here!!!</div>;
+      return <div>You should not be here!</div>;
     }
   }
-  return <div>You should not be here!!!</div>;
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { blogId, postId }, req, res } = props;
+  const { query: { blogId, postId }, res } = props;
   const api = await getApi();
+  const idOrSlug = blogId as string
   const blogIdFromUrl = await getBlogId(api, idOrSlug)
   const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
-  if (!postData.post && req && res) {
+  const { post } = postData
+
+  // Post was not found:
+  if (!post && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
 
-  const blogIdFromPost = postData.post?.blog_id
-  if (blogIdFromPost.eq(blogIdFromUrl) && res) {
+  const blogIdFromPost = post!.blog_id
+
+  // If blog id of this post is not equal to blog id/slug from URL,
+  // then redirect to the URL with blog id of this post.
+  if (!blogIdFromPost.eq(blogIdFromUrl) && res) {
     res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
     res.end()
   }
+
   const postExtData = await loadExtPost(api, postData.post as Post);
   return {
     postData,
@@ -381,7 +389,7 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
+  const summary = summarize(ipfsContent.body, SUMMARY_MAX_SIZE);
   return {
     ...ipfsContent,
     summary
