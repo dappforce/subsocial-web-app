@@ -1,0 +1,59 @@
+@import '../../utils/styles/subsocial-vars.css';
+
+.atm_switch_wrapper {
+  display: flex;
+  margin : $space_huge 0 $space_normal;
+}
+
+.atm_switch_label {
+  margin-left: $space_normal;
+}
+
+.atm_submit_button span {
+  color: #fff;
+}
+
+.atm_dates_wrapper {
+  display: flex;
+}
+
+.atm_dates_wrapper .field {
+  margin-right: $space_huge !important;
+}
+
+.atm_dates_wrapper input {
+  padding: 1.286rem !important;
+}
+
+.atm_company_wrapper {
+  position: relative;
+}
+
+.atm_prefix {
+  left    : $space_tiny;
+  display : flex;
+  position: absolute;
+  top     : $space_tiny;
+}
+
+.atm_prefix img {
+  height: $space_huge;
+}
+
+.atm_company_autocomplete {
+  background-color: #fff;
+  position        : absolute;
+  width           : 100%;
+}
+
+.atm_company_autocomplete_item {
+  cursor: pointer;
+}
+
+.atm_company_autocomplete_item img {
+  height: $space_huge;
+}
+
+.atm_company_wrapper.with_prefix input {
+  padding-left: 2.5rem !important;
+}
