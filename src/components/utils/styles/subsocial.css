@@ -1043,6 +1043,10 @@ hr {
   .ant-menu-item:not(:last-child) {
     margin-bottom: 4px;
   }
+
+  .ant-badge {
+    margin-left: $space_mini;
+  }
 }
 
 .ant-layout-sider-children {

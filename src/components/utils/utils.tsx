@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { AccountId, Option } from '@polkadot/types';
-import { SubmittableResult } from '@polkadot/api';
+import { SubmittableResult, ApiPromise } from '@polkadot/api';
 import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
 import { getJsonFromIpfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
@@ -158,3 +158,18 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     })
     : text;
 };
+
+export function getEnv (varName: string): string | undefined {
+  const { env } = typeof window === 'undefined' ? process : window.process;
+  return env[varName]
+}
+        
+export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BlogId | undefined> => {
+  if (idOrSlug.startsWith('@')) {
+    const slug = idOrSlug.substring(1)
+    const idOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
+    return idOpt.unwrapOr(undefined)
+  } else {
+    return new BlogId(idOrSlug)
+  }
+}
