@@ -8,8 +8,10 @@ import ViewForum from './ViewForum';
 import faker from 'faker';
 
 import './style.css';
+import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
+import ReorderNavTabs, { Props } from './reorder-navtabs/ReorderNavTabs';
 
 const { SubMenu } = Menu;
 
@@ -21,7 +23,6 @@ const items = [ { avatar: faker.image.avatar(), name: faker.company.companyName(
   { avatar: faker.image.avatar(), name: faker.company.companyName() },
   { avatar: faker.image.avatar(), name: faker.company.companyName() } ];
 
-const renderMenu = items.map((d) =>
   <Menu.Item key={d.name}>
     <Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
     <span>{d.name}</span>
@@ -88,6 +89,9 @@ type MenuItem = {
   image: string
 };
 
+import AddTeamMemberFormik from "./AddTeamMember/AddTeamMemberFormik";
+import {CompanyData} from "./AddTeamMember/AddTeamMemberFormik";
+
 const MenuItems: MenuItem[] = [
   {
     name: 'All blogs',
@@ -152,6 +156,38 @@ export const ListForum = () => {
   return <ListForumTopics data={[]} />
 };
 
-export const Forum = () => {
-  return (<ViewForum/>);
+export const Forum = () => <ViewForum />
+
+export const AddTeamMember = () => {
+  const companyData:CompanyData = [{
+    name: 'Web3 Foundation',
+    id: 1,
+    img: 'https://storage.googleapis.com/job-listing-logos/2ae39131-4f27-4944-b9f2-cd7a2e4e2bef.png',
+  }]
+
+  const employerTypesData = [
+    'Full-time',
+    'Part-time',
+    'Self-employed',
+    'Freelance',
+    'Contract',
+    'Internship',
+    'Apprenticeship',
+  ]
+
+  return (<AddTeamMemberFormik
+    companyData={companyData}
+    employerTypesData={employerTypesData}
+  />);
+};
+
+export const ReorderNavTabsExample = () => {
+  const navTabs: Props = {
+    tabs: [
+      { id: 1, name: 'first name' },
+      { id: 2, name: 'second name' },
+      { id: 3, name: 'third name' }
+    ]
+  }
+  return <ReorderNavTabs {...navTabs} />
 }

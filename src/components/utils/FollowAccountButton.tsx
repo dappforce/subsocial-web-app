@@ -6,10 +6,11 @@ import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import { api } from '@polkadot/ui-api';
 import { BUTTON_SIZE } from '../../config/Size.config';
+import { Button$Sizes } from '@polkadot/ui-app/Button/types';
 
 type FollowAccountButtonProps = {
   address: string,
-  size?: string
+  size?: Button$Sizes
 };
 
 export function FollowAccountButton (props: FollowAccountButtonProps) {
@@ -51,7 +52,6 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
 
   return <TxButton
     type='submit'
-    compact
     size={size}
     isBasic={isFollow}
 
