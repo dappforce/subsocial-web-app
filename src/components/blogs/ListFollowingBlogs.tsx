@@ -62,12 +62,12 @@ export const RenderFollowedList = (props: Props) => {
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
-    ? followedBlogsData.map((item, index) =>
-      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
+    ? followedBlogsData.map((item) =>
+      <Link key={(item.blog as Blog).id.toString()} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
         <a className='DfMenuItem'>
           <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
-              key={index}
+              key={(item.blog as Blog).id.toString()}
               blogData={item}
               onClick={() => {
                 isMobile && toggle();

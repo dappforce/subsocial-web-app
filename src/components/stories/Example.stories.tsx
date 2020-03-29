@@ -23,8 +23,7 @@ const items = [ { avatar: faker.image.avatar(), name: faker.company.companyName(
   { avatar: faker.image.avatar(), name: faker.company.companyName() },
   { avatar: faker.image.avatar(), name: faker.company.companyName() } ];
 
-const renderMenu = items.map((d, index) =>
-  <Menu.Item key={index}>
+  <Menu.Item key={d.name}>
     <Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
     <span>{d.name}</span>
   </Menu.Item>);
@@ -144,7 +143,7 @@ export const Navigations = () => {
           <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
           <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
         </Menu.Item>
-        {MenuItems.map((item, index) => <Menu.Item key={index}>
+        {MenuItems.map((item) => <Menu.Item key={item.name}>
           <Icon type={item.image} />
           <span>{item.name}</span>
         </Menu.Item>)}
