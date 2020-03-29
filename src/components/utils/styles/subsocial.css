@@ -374,6 +374,24 @@ hr {
   border: none;
 }
 
+.DfCountsPreview {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: $space_tiny;
+  font-size: $font_small;
+
+  .MutedText {
+    margin-right: $space_normal;
+  }
+
+  a,
+  span {
+    color: rgba(34, 36, 38, .8) !important;
+    font-size: $font_small;
+    margin-right: $space_normal;
+  }
+}
+
 .DfPostPreview,
 .DfPost {
   .ui.button {
@@ -394,27 +412,13 @@ hr {
     width: 95%;
   }
 
+  .DfCountsPreview {
+    justify-content: flex-end;
+  }
+
   .ui.button {
     min-width: initial;
     max-height: initial;
-  }
-}
-
-.DfCountsPreview {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: $space_tiny;
-  font-size: $font_small;
-
-  .MutedText {
-    margin-right: $space_normal;
-  }
-
-  a,
-  span {
-    color: rgba(34, 36, 38, .8) !important;
-    font-size: $font_small;
-    margin-right: $space_normal;
   }
 }
 
