@@ -2,7 +2,7 @@
 
 .atm_switch_wrapper {
   display: flex;
-  margin : $space_huge 0 $space_normal;
+  margin: $space_huge 0 $space_normal;
 }
 
 .atm_switch_label {
@@ -30,10 +30,10 @@
 }
 
 .atm_prefix {
-  left    : $space_tiny;
-  display : flex;
+  left: $space_tiny;
+  display: flex;
   position: absolute;
-  top     : $space_tiny;
+  top: $space_tiny;
 }
 
 .atm_prefix img {
@@ -42,8 +42,8 @@
 
 .atm_company_autocomplete {
   background-color: #fff;
-  position        : absolute;
-  width           : 100%;
+  position: absolute;
+  width: 100%;
 }
 
 .atm_company_autocomplete_item {

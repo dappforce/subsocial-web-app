@@ -8,6 +8,7 @@ interface NavTab {
   name: string
 }
 
+// TODO rename
 export interface Props {
   tabs: NavTab[]
 }

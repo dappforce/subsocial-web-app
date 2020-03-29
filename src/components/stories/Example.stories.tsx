@@ -11,7 +11,7 @@ import './style.css';
 import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import ReorderNavTabs, { Values } from './reorder-navtabs/ReorderNavTabs';
+import ReorderNavTabs, { Props } from './reorder-navtabs/ReorderNavTabs';
 
 const { SubMenu } = Menu;
 
@@ -159,7 +159,7 @@ export const ListForum = () => {
 
 export const Forum = () => <ViewForum />
 
-export const AddTeamMemberFormikExample = () => {
+export const AddTeamMember = () => {
   const companyData:CompanyData = [{
     name: 'Web3 Foundation',
     id: 1,
@@ -167,8 +167,13 @@ export const AddTeamMemberFormikExample = () => {
   }]
 
   const employerTypesData = [
-    'qwerty',
-    'asdfgh'
+    'Full-time',
+    'Part-time',
+    'Self-employed',
+    'Freelance',
+    'Contract',
+    'Internship',
+    'Apprenticeship',
   ]
 
   return (<AddTeamMemberFormik
@@ -178,7 +183,7 @@ export const AddTeamMemberFormikExample = () => {
 };
 
 export const ReorderNavTabsExample = () => {
-  const navTabs: Values = {
+  const navTabs: Props = {
     tabs: [
       { id: 1, name: 'first name' },
       { id: 2, name: 'second name' },

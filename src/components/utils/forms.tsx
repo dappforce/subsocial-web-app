@@ -8,6 +8,10 @@ type FormValuesType = {
   [s: string]: string
 };
 
+export type FieldNames<FormValues = FormValuesType> = {
+  [s: string]: keyof FormValues
+}
+
 type LabelledProps<FormValues = FormValuesType> = BareProps & {
   name?: keyof FormValues,
   label?: React.ReactNode,
