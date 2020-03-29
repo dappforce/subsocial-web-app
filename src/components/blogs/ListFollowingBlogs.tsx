@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AccountId } from '@polkadot/types';
-import { BlogId, Blog } from '../types';
+import { BlogId } from '../types';
 import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -62,12 +62,12 @@ export const RenderFollowedList = (props: Props) => {
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
-    ? followedBlogsData.map((item) =>
-      <Link key={(item.blog as Blog).id.toString()} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
+    ? followedBlogsData.map((item) => !item.blog ? null :
+      <Link key={item.blog.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.blog.id}`}>
         <a className='DfMenuItem'>
           <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
-              key={(item.blog as Blog).id.toString()}
+              key={item.blog.id.toString()}
               blogData={item}
               onClick={() => {
                 isMobile && toggle();

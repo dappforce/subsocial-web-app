@@ -21,7 +21,7 @@ const InnerAccountsListModal = (props: Props) => {
   const renderAccounts = () => {
     return accounts && accounts.map((account) =>
       <AddressComponents
-        key={account}
+        key={account.toString()}
         value={account}
         isShort={true}
         isPadded={false}
