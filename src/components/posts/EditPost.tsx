@@ -19,7 +19,6 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Breadcrumb } from 'antd';
 import { ViewBlog } from '../blogs/ViewBlog';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -199,23 +198,33 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>}
     </Form>;
 
-  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : '';
+  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
+
+  const formTitle = () =>
+    <>
+      <a href={`/blogs/${preparedBlogId}`}>
+        <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
+      </a>
+      <span style={{ margin: '0 .75rem' }}>/</span>
+      {sectionTitle}
+    </>
+
+  const editRegularPost = () =>
+    <Section className='EditEntityBox' title={formTitle()}>
+      {form}
+    </Section>
+  
+  const editSharedPost = () =>
+    <div style={{ marginTop: '1rem' }}>{form}</div>
 
   return onlyTxButton
     ? renderTxButton()
     : <>
-      <Breadcrumb>
-        <Breadcrumb.Item>
-          <a href={`/blogs/${preparedBlogId}`}>
-            <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
-          </a>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Edit Post</Breadcrumb.Item>
-      </Breadcrumb>
       <HeadMeta title={sectionTitle}/>
-      <Section className='EditEntityBox' title={sectionTitle}>
-        {form}
-      </Section>
+      {isRegularPost
+        ? editRegularPost()
+        : editSharedPost()
+      }
     </>;
 };
 
