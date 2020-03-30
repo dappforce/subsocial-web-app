@@ -4488,6 +4488,11 @@ accepts@^1.3.5, accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
     mime-types "~2.1.24"
     negotiator "0.6.2"
 
+ace-builds@^1.4.6, ace-builds@^1.4.8:
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.4.8.tgz#d14be41d30294a2a12581f0bcfee4b696481ffdd"
+  integrity sha512-8ZVAxwyCGAxQX8mOp9imSXH0hoSPkGfy8igJy+WO/7axL30saRhKgg1XPACSmxxPA7nfHVwM+ShWXT+vKsNuFg==
+
 acorn-globals@^4.1.0:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-4.3.4.tgz#9fa1926addc11c97308c4e66d7add0d40c3272e7"
@@ -7992,6 +7997,11 @@ diacritics@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/diacritics/-/diacritics-1.3.0.tgz#3efa87323ebb863e6696cebb0082d48ff3d6f7a1"
   integrity sha1-PvqHMj67hj5mls67AILUj/PW96E=
+
+diff-match-patch@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/diff-match-patch/-/diff-match-patch-1.0.4.tgz#6ac4b55237463761c4daf0dc603eb869124744b1"
+  integrity sha512-Uv3SW8bmH9nAtHKaKSanOQmj2DnlH65fUpcrMdfdaOxUG02QQ4YGZ8AE7kKOMisF7UqvOlGKVYWRvezdncW9lg==
 
 diff-sequences@^24.9.0:
   version "24.9.0"
@@ -17028,6 +17038,17 @@ rc-util@4.x, rc-util@^4.0.4, rc-util@^4.1.1, rc-util@^4.13.0, rc-util@^4.15.3, r
     prop-types "^15.5.10"
     react-lifecycles-compat "^3.0.4"
     shallowequal "^1.1.0"
+
+react-ace@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/react-ace/-/react-ace-8.1.0.tgz#6680accb7306a1850e6ef4370a00f0007eadc8b4"
+  integrity sha512-n3rm9gRNZjLGlXJQ587RASOQCPn6WlcV2gjRYwvG3gyVpBf4pY6lh/uI9tDkx2zYdEKJUfnGbTmzEGL5yyDWuw==
+  dependencies:
+    ace-builds "^1.4.6"
+    diff-match-patch "^1.0.4"
+    lodash.get "^4.4.2"
+    lodash.isequal "^4.5.0"
+    prop-types "^15.7.2"
 
 react-beautiful-dnd@^13.0.0:
   version "13.0.0"
