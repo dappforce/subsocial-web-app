@@ -41,15 +41,36 @@
 .EditPostBlockWrapper {
   margin: $space_big 0;
   display: flex;
+  flex-direction: column;
 
   .navigationButtons {
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    margin-left: $space_big;
+    margin: $space_normal;
+    opacity: 0;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+
+    button {
+      font-size: 0.8rem;
+      padding: 0 5px;
+      height: 1.5rem;
+      background-color: white;
+      border-color: gray;
+      border: 1px solid;
+      margin-right: 1rem;
+
+      i {
+        margin-right: 3px;
+      }
+    }
 
     i {
       cursor: pointer;
     }
+  }
+}
+.EditPostBlockWrapper:hover {
+  .navigationButtons {
+    opacity: 1;
   }
 }
