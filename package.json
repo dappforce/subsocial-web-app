@@ -124,7 +124,7 @@
     "moment-timezone": "^0.5.26",
     "@subsocial/api": "^0.1.21",
     "@subsocial/config": "^0.1.2",
-    "@subsocial/utils": "^0.1.13",
+    "@subsocial/utils": "^0.1.14",
     "next": "^9.1.1",
     "query-string": "^6.2.0",
     "react-beautiful-dnd": "^13.0.0",
