@@ -1146,4 +1146,5 @@ hr {
 
 .EditPostCollapse {
   margin-bottom: $space_big;
+  margin-top: $space_big;
 }

@@ -1,6 +1,7 @@
 import { IpfsData, Activity } from '../types';
 import axios from 'axios';
 import { getEnv } from './utils';
+import { SiteMetaContent } from '../posts/EditPost';
 
 const createUrl = (varName: string, defaultUrl: string = 'http://localhost:3001') => (getEnv(varName) || defaultUrl) + '/v1';
 
@@ -36,10 +37,11 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
   return data;
 };
 
-export const parseUrl = async (url: string): Promise<Activity[]> => {
+export const parseUrl = async (url: string): Promise<SiteMetaContent> => {
   const res = await axios.post(`${offchainUrl}/offchain/parser/`, { url });
   const { data } = res;
-  return data;
+
+  return data.siteMeta;
 };
 
 export const clearNotifications = async (myAddress: string): Promise<void> => {
