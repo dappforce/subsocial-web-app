@@ -266,7 +266,6 @@ const InnerForm = (props: FormProps) => {
 
     try {
       const res = await parseUrl(url)
-      console.log('res in parse:', res)
       return res
     } catch (err) {
       console.log('err in parse:', err)
@@ -284,7 +283,7 @@ const InnerForm = (props: FormProps) => {
     }
   }
 
-  const addBlock = (type: PostBlockKind) => {
+  const addBlock = (type: PostBlockKind, afterIndex: number) => {
 
     const defaultBlockValue = {
       id: getNewBlockId(blockValues),
@@ -293,7 +292,20 @@ const InnerForm = (props: FormProps) => {
       data: ''
     }
 
-    setFieldValue('blockValues', [ ...blockValues, defaultBlockValue ])
+    setFieldValue('blockValues', [
+      ...blockValues.slice(0, afterIndex + 1),
+      defaultBlockValue,
+      ...blockValues.slice(afterIndex + 1)
+    ])
+  }
+
+  const removeBlock = (id: number) => {
+    const idx = blockValues.findIndex((x) => x.id === id)
+
+    setFieldValue('blockValues', [
+      ...blockValues.slice(0, idx),
+      ...blockValues.slice(idx + 1)
+    ])
   }
 
   const handleLinkPreviewChange = async (block: BlockValue, value: string) => {
@@ -327,7 +339,7 @@ const InnerForm = (props: FormProps) => {
     setFieldValue(name, value)
   }
 
-  const changeBlockPosition = (n: string, block: BlockValue, index: number) => {
+  const changeBlockPosition = (n: string, index: number) => {
     let newBlocksOrder
 
     if (n === 'down') {
@@ -385,15 +397,35 @@ const InnerForm = (props: FormProps) => {
     return <div className="EditPostBlockWrapper" key={block.id} >
       {res}
       <div className='navigationButtons'>
-        <Icon type="eye-invisible" />
-        { index > 0 && <Icon type="up-circle" onClick={() => changeBlockPosition('up', block, index)} /> }
-        { index < maxBlockId && <Icon type="down-circle" onClick={() => changeBlockPosition('down', block, index)} /> }
+        <Dropdown overlay={() => addMenu(index)}>
+          <Button><Icon type="plus-circle" /> Add block</Button>
+        </Dropdown>
+        <Button onClick={() => removeBlock(block.id)}>
+          <Icon type="delete" />
+          Delete
+        </Button>
+        <Button onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
+          {block.hidden
+            ? <div><Icon type="eye" />Show block</div>
+            : <div><Icon type="eye-invisible" />Hide block</div>
+          }
+        </Button>
+        { index > 0 &&
+          <Button onClick={() => changeBlockPosition('up', index)} >
+            <Icon type="up-circle" /> Move up
+          </Button> }
+        { index < maxBlockId &&
+          <Button onClick={() => changeBlockPosition('down', index)} >
+            <Icon type="down-circle" /> Move down
+          </Button> }
       </div>
     </div>
 
   }
 
   const renderBlockPreview = (x: BlockValue) => {
+    if (x.hidden) return null
+
     let element
 
     switch (x.kind) {
@@ -420,7 +452,7 @@ const InnerForm = (props: FormProps) => {
         break
       }
       default: {
-        element = <div>def</div>
+        element = null
       }
     }
 
@@ -429,15 +461,15 @@ const InnerForm = (props: FormProps) => {
     </div>
   }
 
-  const addMenu = (
+  const addMenu = (index: number = 0) => (
     <Menu >
-      <Menu.Item key="1" onClick={() => addBlock('text')}>
+      <Menu.Item key="1" onClick={() => addBlock('text', index)}>
         Text Block
       </Menu.Item>
-      <Menu.Item key="2" onClick={() => addBlock('link')}>
+      <Menu.Item key="2" onClick={() => addBlock('link', index)}>
         Link
       </Menu.Item>
-      <Menu.Item key="3" onClick={() => addBlock('code')}>
+      <Menu.Item key="3" onClick={() => addBlock('code', index)}>
         Code block
       </Menu.Item>
     </Menu>
@@ -500,6 +532,8 @@ const InnerForm = (props: FormProps) => {
           </div>
           <div className='EditPostPreview'>
             Preview Data
+            Post title: {title}
+            Post image: {image && <img src={image} />}
             {blockValues && blockValues.length !== 0 &&
               blockValues.map((x: BlockValue) => {
                 const res = renderBlockPreview(x)
