@@ -1,0 +1,55 @@
+@import './subsocial-vars.css';
+
+.DfPageContent {
+  max-width: 100%;
+}
+
+.EditEntityBox {
+  max-width: 100%;
+}
+
+.EditPostWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.EditPostForm {
+  width: 50%;
+  margin-right: $space_huge;
+}
+
+.EditPostPreview {
+  width: 50%;
+
+  .EditPostPreviewBlock {
+    display: flex;
+    margin-top: $space_big;
+    flex-direction: column;
+  }
+}
+
+.EditPostAddButton {
+  margin: $space_big 0;
+}
+
+.EditPostLabel {
+  color: black;
+  font-weight: 600;
+  font-size: small;
+}
+
+.EditPostBlockWrapper {
+  margin: $space_big 0;
+  display: flex;
+
+  .navigationButtons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-left: $space_big;
+
+    i {
+      cursor: pointer;
+    }
+  }
+}

@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
-import { Form, withFormik, FormikProps } from 'formik';
+import { Form, withFormik, FormikProps, Field } from 'formik';
 // import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
-
 import { addJsonToIpfs, getJsonFromIpfs, parseUrl } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
-import { Text, U32 } from '@polkadot/types';
+import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue } from '../types';
+import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue, PostBlockKind } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { queryBlogsToProp } from '../utils/index';
+import { queryBlogsToProp, nonEmptyStr, isLink } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
-
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { ViewBlog } from '../blogs/ViewBlog';
+import { Collapse, Dropdown, Menu, Icon } from 'antd';
+import '../utils/styles/full-width-content.css'
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { Panel } = Collapse;
 
@@ -38,18 +38,26 @@ const buildSchema = () => Yup.object().shape({
 
 // ------------------------------------------
 // Contents: save this content in IPFS and save returned CID.hash in cid field of PostBlock objects.
-/*
-type MdTextContent = string
 
-interface SiteMetaContent {
-  url?: string
-  title?: string
+// type MdTextContent = string
+
+export interface SiteMetaContent {
+  og?: {
+    title?: string,
+    description?: string,
+    image: string,
+    url: string
+  },
+  title?: string,
   description?: string
-  image?: string
-  date?: string
-  author?: string
 }
 
+type PreviewData = {
+  id: number,
+  data: SiteMetaContent
+}
+
+/*
 interface VideoPreviewImage {
   url: string
   width?: number
@@ -74,7 +82,7 @@ interface VideoMetaContent {
 */
 type ValidationProps = {
   // postMaxLen: number,
-  postMaxLen: U32
+  // postMaxLen: U32
 };
 
 // type MappedBlocks = TextBlock | CodeBlock | VideoBlock | ImageBlock
@@ -149,6 +157,7 @@ const InnerForm = (props: FormProps) => {
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
+  const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
 
   const onSubmit = async (sendTx: () => void) => {
 
@@ -254,28 +263,187 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
-  const defaultBlockValue = {
-    kind: 'text',
-    hidden: false,
-    data: ''
+  const parse = async (url: string): Promise<SiteMetaContent | undefined> => {
+    if (!nonEmptyStr(url) && !isLink(url)) return
+
+    try {
+      const res = await parseUrl(url)
+      console.log('res in parse:', res)
+      return res
+    } catch (err) {
+      console.log('err in parse:', err)
+      return undefined
+    }
   }
 
-  const addBlock = () => {
+  const getNewBlockId = (arr: any[]) => {
+    const res = Math.max.apply(null, arr.map((o) => o.id))
+
+    if (res >= 0) {
+      return res + 1
+    } else {
+      return 0
+    }
+  }
+
+  const addBlock = (type: PostBlockKind) => {
+
+    const defaultBlockValue = {
+      id: getNewBlockId(blockValues),
+      kind: type,
+      hidden: false,
+      data: ''
+    }
+
     setFieldValue('blockValues', [ ...blockValues, defaultBlockValue ])
   }
 
-  const renderPostBlock = (block: BlockValue, index: number) => {
-    console.log(index)
+  const handleLinkPreviewChange = async (block: BlockValue, value: string) => {
+    const data = await parse(value)
 
-    return (<div>
-      <div>kind: {block.kind}  data: {block.data}</div>
-      <SimpleMDEReact
-        // value={blockValues[index].data}
-        onChange={(data: string) => setFieldValue(`blockValues.${index}.data`, data)}
-        className={`DfMdEditor`}
-      />
-    </div>)
+    if (!data) return
+
+    const idx = linkPreviewData.findIndex((el) => el.id === block.id);
+
+    let newItem = {
+      id: block.id,
+      data: data
+    }
+
+    if (idx !== -1) {
+      const oldItem = linkPreviewData[idx];
+      newItem = { ...oldItem, data };
+    }
+
+    const newParsedData = [
+      ...linkPreviewData.slice(0, idx),
+      newItem,
+      ...linkPreviewData.slice(idx + 1)
+    ];
+
+    setLinkPreviewData(newParsedData)
   }
+
+  const handleLinkChange = (block: BlockValue, name: string, value: string) => {
+    handleLinkPreviewChange(block, value)
+    setFieldValue(name, value)
+  }
+
+  const changeBlockPosition = (n: string, block: BlockValue, index: number) => {
+    let newBlocksOrder
+
+    if (n === 'down') {
+      newBlocksOrder = [
+        ...blockValues
+      ]
+      newBlocksOrder[index] = blockValues[index + 1]
+      newBlocksOrder[index + 1] = blockValues[index]
+    }
+
+    if (n === 'up') {
+      newBlocksOrder = [
+        ...blockValues
+      ]
+      newBlocksOrder[index] = blockValues[index - 1]
+      newBlocksOrder[index - 1] = blockValues[index]
+    }
+
+    setFieldValue('blockValues', newBlocksOrder)
+  }
+
+  const renderPostBlock = (block: BlockValue, index: number) => {
+    let res
+
+    switch (block.kind) {
+      case 'text': {
+        res = <SimpleMDEReact
+          value={block.data}
+          onChange={(data: string) => setFieldValue(`blockValues.${index}.data`, data)}
+          className={`DfMdEditor`}
+        />
+        break
+      }
+      case 'link': {
+        res = <Field
+          type="text"
+          name={`blockValues.${index}.data`}
+          placeholder="Link"
+          value={block.data}
+          onChange={(e: React.FormEvent<HTMLInputElement>) => handleLinkChange(block, `blockValues.${index}.data`, e.currentTarget.value)}
+        />
+        break
+      }
+      case 'code': {
+        res = 'TODO Code input'
+        break
+      }
+      default: {
+        return null
+      }
+    }
+
+    const maxBlockId = Math.max.apply(null, blockValues.map((x) => x.id))
+
+    return <div className="EditPostBlockWrapper" key={block.id} >
+      {res}
+      <div className='navigationButtons'>
+        <Icon type="eye-invisible" />
+        { index > 0 && <Icon type="up-circle" onClick={() => changeBlockPosition('up', block, index)} /> }
+        { index < maxBlockId && <Icon type="down-circle" onClick={() => changeBlockPosition('down', block, index)} /> }
+      </div>
+    </div>
+
+  }
+
+  const renderBlockPreview = (x: BlockValue) => {
+    let element
+
+    switch (x.kind) {
+      case 'link': {
+        if (!isLink(x.data)) {
+          element = <div>{x.data}</div>
+          break
+        }
+
+        if (!linkPreviewData[x.id]) break
+
+        const { data } = linkPreviewData.find((y) => y.id === x.id) as PreviewData
+        const { title, description } = data
+
+        element = <div>
+          <p>Title: {title}</p>
+          <p>Description: {description}</p>
+        </div>
+
+        break
+      }
+      case 'text': {
+        element = <div>{x.data}</div>
+        break
+      }
+      default: {
+        element = <div>def</div>
+      }
+    }
+
+    return <div key={x.id} className={'EditPostPreviewBlock'}>
+      {element}
+    </div>
+  }
+
+  const addMenu = (
+    <Menu >
+      <Menu.Item key="1" onClick={() => addBlock('text')}>
+        Text Block
+      </Menu.Item>
+      <Menu.Item key="2" onClick={() => addBlock('link')}>
+        Link
+      </Menu.Item>
+      <Menu.Item key="3" onClick={() => addBlock('code')}>
+        Code block
+      </Menu.Item>
+    </Menu>
+  );
 
   const form =
     <Form className='ui form DfForm EditEntityForm'>
@@ -288,12 +456,21 @@ const InnerForm = (props: FormProps) => {
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
 
-          {values.blockValues && values.blockValues.length > 0 && (
-            values.blockValues.map((block: BlockValue, index: number) => (
+          <div className='EditPostLabel'>
+            Post Content:
+          </div>
+
+          {blockValues && blockValues.length > 0 && (
+            blockValues.map((block: BlockValue, index: number) => (
               renderPostBlock(block, index)
             ))
           )}
-          <div onClick={addBlock}>Add</div>
+
+          <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
+            <Button>
+              Add block
+            </Button>
+          </Dropdown>
 
           <Collapse className={'EditPostCollapse'}>
             <Panel header="Show Advanced Settings" key="1">
@@ -335,10 +512,22 @@ const InnerForm = (props: FormProps) => {
     ? renderTxButton()
     : <>
       <HeadMeta title={sectionTitle}/>
-      {isRegularPost
-        ? editRegularPost()
-        : editSharedPost()
-      }
+      <Section className='EditEntityBox' title={sectionTitle}>
+        <div className='EditPostWrapper'>
+          <div className='EditPostForm'>
+            {form}
+          </div>
+          <div className='EditPostPreview'>
+            Preview Data
+            {blockValues && blockValues.length !== 0 &&
+              blockValues.map((x: BlockValue) => {
+                const res = renderBlockPreview(x)
+                return res
+              })
+            }
+          </div>
+        </div>
+      </Section>
     </>;
 };
 
@@ -347,8 +536,9 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
-    const blockValues = mappedBlocks.map((x) => {
+    const blockValues = mappedBlocks.map((x, i) => {
       return {
+        id: i,
         kind: x.kind,
         hidden: x.hidden,
         data: ''
@@ -477,22 +667,15 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   };
 }
 
-export const InnerFormWithValidation = withMulti(
-  InnerEditPost,
-  withCalls<OuterProps>(
-    queryBlogsToProp('postMaxLen', { propName: 'postMaxLen' })
-  )
-);
-
 export const NewPost = withMulti(
-  InnerFormWithValidation,
+  InnerEditPost,
   withBlogIdFromUrl
 );
 
-export const NewSharePost = InnerFormWithValidation;
+export const NewSharePost = InnerEditPost;
 
 export const EditPost = withMulti<OuterProps>(
-  InnerFormWithValidation,
+  InnerEditPost,
   withIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })

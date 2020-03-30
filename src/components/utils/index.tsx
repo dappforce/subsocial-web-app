@@ -21,6 +21,17 @@ export function bnToStr (bn?: BN, dflt: string = ''): string {
   return bn ? bn.toString() : dflt;
 }
 
+export const isLink = (s: string) => {
+  const URL_REGEXP = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi;
+  const regex = new RegExp(URL_REGEXP);
+
+  if (s.match(regex)) {
+    return true
+  } else {
+    return false
+  }
+}
+
 // String, Numbers, Object
 // --------------------------------------
 

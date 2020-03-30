@@ -233,6 +233,7 @@ export interface PostBlock {
 }
 
 export type BlockValue = {
+  id: number
   kind: PostBlockKind
   hidden?: boolean
   data: string

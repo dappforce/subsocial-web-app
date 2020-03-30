@@ -11,7 +11,7 @@ import './style.css';
 import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import ReorderNavTabs, { Props } from './reorder-navtabs/ReorderNavTabs';
+import ReorderNavTabs from './reorder-navtabs/ReorderNavTabs';
 
 const { SubMenu } = Menu;
 
@@ -190,8 +190,4 @@ export const ReorderNavTabsExample = () => {
     ]
   }
   return <ReorderNavTabs {...navTabs} />
-}
-
-export const ParserExample = () => {
-  return <Parser />
 }
