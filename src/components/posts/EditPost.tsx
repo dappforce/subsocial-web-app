@@ -19,6 +19,11 @@ import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { Collapse, Dropdown, Menu, Icon } from 'antd';
 import '../utils/styles/full-width-content.css'
+import { DfMd } from '../utils/DfMd';
+import AceEditor from 'react-ace';
+// import 'ace-builds/src-noconflict/mode-java';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/theme-github';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { Panel } = Collapse;
@@ -264,10 +269,11 @@ const InnerForm = (props: FormProps) => {
   );
 
   const parse = async (url: string): Promise<SiteMetaContent | undefined> => {
-    if (!nonEmptyStr(url) && !isLink(url)) return
+    if (!nonEmptyStr(url) || !isLink(url)) return
 
     try {
       const res = await parseUrl(url)
+      console.log('res from parser', res)
       return res
     } catch (err) {
       console.log('err in parse:', err)
@@ -386,7 +392,17 @@ const InnerForm = (props: FormProps) => {
         break
       }
       case 'code': {
-        res = 'TODO Code input'
+        res = <div className='EditPostAceEditor'>
+          <AceEditor
+            mode={'javascript'}
+            theme="github"
+            onChange={(value: string) => setFieldValue(`blockValues.${index}.data`, value)}
+            value={block.data}
+            name="ace-editor"
+            editorProps={{ $blockScrolling: true }}
+            height='200px'
+          />
+        </div>
         break
       }
       default: {
@@ -400,24 +416,24 @@ const InnerForm = (props: FormProps) => {
       {res}
       <div className='navigationButtons'>
         <Dropdown overlay={() => addMenu(index)}>
-          <Button><Icon type="plus-circle" /> Add block</Button>
+          <Button type="button"><Icon type="plus-circle" /> Add block</Button>
         </Dropdown>
-        <Button onClick={() => removeBlock(block.id)}>
+        <Button type="button" onClick={() => removeBlock(block.id)}>
           <Icon type="delete" />
           Delete
         </Button>
-        <Button onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
+        <Button type="button" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
           {block.hidden
             ? <div><Icon type="eye" />Show block</div>
             : <div><Icon type="eye-invisible" />Hide block</div>
           }
         </Button>
         { index > 0 &&
-          <Button onClick={() => changeBlockPosition('up', index)} >
+          <Button type="button" onClick={() => changeBlockPosition('up', index)} >
             <Icon type="up-circle" /> Move up
           </Button> }
         { index < maxBlockId &&
-          <Button onClick={() => changeBlockPosition('down', index)} >
+          <Button type="button" onClick={() => changeBlockPosition('down', index)} >
             <Icon type="down-circle" /> Move down
           </Button> }
       </div>
@@ -437,20 +453,35 @@ const InnerForm = (props: FormProps) => {
           break
         }
 
-        if (!linkPreviewData[x.id]) break
+        const previewData = linkPreviewData.find((y) => y.id === x.id)
 
-        const { data } = linkPreviewData.find((y) => y.id === x.id) as PreviewData
-        const { title, description } = data
+        if (!previewData) break
+
+        const { data: { og } } = previewData
 
         element = <div>
-          <p>Title: {title}</p>
-          <p>Description: {description}</p>
+          <p><b>{og?.title}</b></p>
+          <p>{og?.description}</p>
+          <img src={og?.image} className='DfPostImage' />
+          <p>{og?.url}</p>
         </div>
 
         break
       }
       case 'text': {
-        element = <div>{x.data}</div>
+        element = <DfMd source={x.data} />
+        break
+      }
+      case 'code': {
+        element = <AceEditor
+          mode={'javascript'}
+          theme="github"
+          value={x.data}
+          name="ace-editor-readonly"
+          readOnly={true}
+          editorProps={{ $blockScrolling: true }}
+          height='200px'
+        />
         break
       }
       default: {
@@ -464,7 +495,7 @@ const InnerForm = (props: FormProps) => {
   }
 
   const addMenu = (index: number = 0) => (
-    <Menu >
+    <Menu className='AddBlockDropdownMenu'>
       <Menu.Item key="1" onClick={() => addBlock('text', index)}>
         Text Block
       </Menu.Item>
@@ -493,15 +524,13 @@ const InnerForm = (props: FormProps) => {
           </div>
 
           {blockValues && blockValues.length > 0 && (
-            blockValues.map((block: BlockValue, index: number) => (
-              renderPostBlock(block, index)
-            ))
+            blockValues.map((block: BlockValue, index: number) => renderPostBlock(block, index))
           )}
 
           <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
-            <Button>
-              Add block
-            </Button>
+            <div className='defaultAddBlockButton'>
+              <Icon type="plus-circle" />Add block
+            </div>
           </Dropdown>
 
           <Collapse className={'EditPostCollapse'}>
@@ -550,14 +579,13 @@ const InnerForm = (props: FormProps) => {
             {form}
           </div>
           <div className='EditPostPreview'>
-            Preview Data
-            Post title: {title}
-            Post image: {image && <img src={image} />}
+            <div>Preview Data:</div>
+            <div className='DfMd'>
+              <h1>{title}</h1>
+              {image && <img className='DfPostImage' src={image} />}
+            </div>
             {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValue) => {
-                const res = renderBlockPreview(x)
-                return res
-              })
+              blockValues.map((x: BlockValue) => renderBlockPreview(x))
             }
           </div>
         </div>
