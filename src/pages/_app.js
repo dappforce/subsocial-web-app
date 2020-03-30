@@ -24,9 +24,7 @@ MyApp.getInitialProps = async (appContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const api = await getApi()
   const subsocial = new SubsocialApi(api, ipfsUrl);
-  console.log('SOCIAL', subsocial.substrate.socialQuery());
   appContext.ctx.subsocial = subsocial;
-  console.log('getInitialProps', appContext);
   const appProps = await App.getInitialProps(appContext);
 
   return { ...appProps }

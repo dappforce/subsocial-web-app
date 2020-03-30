@@ -28,7 +28,13 @@ const nextConfig = {
 };
 
 module.exports = withPlugins([withImages, withCSS({
-  webpack (config) {
+  webpack (config, { isServer }) {
+
+    if (!isServer) {
+      config.node = {
+        fs: 'empty'
+      }
+    }
 
     config.plugins = config.plugins || []
     
