@@ -7,7 +7,7 @@ import { QueueConsumer } from '@polkadot/ui-app/Status/Context';
 import { withApi } from '@polkadot/ui-api';
 import { assert } from '@polkadot/util';
 import { withMyAccount, MyAccountProps } from './MyAccount';
-import { useStorybookContext } from '../stories/StorybookContext';
+import { useStorybookContext } from './StorybookContext';
 import { Button$Sizes } from '@polkadot/ui-app/Button/types';
 import { isClientSide } from './index';
 import { SemanticShorthandItem, IconProps } from 'semantic-ui-react'
@@ -132,7 +132,7 @@ const SubstrateTxButton = withApi(withMyAccount(TxButton))
 function ResolvedButton (props: BasicButtonProps) {
   const { isStorybook = false } = useStorybookContext()
 
-  return isStorybook 
+  return isStorybook
     ? <MockTxButton {...props} />
     : <SubstrateTxButton {...props} />
 }
