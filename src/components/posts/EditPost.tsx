@@ -454,13 +454,17 @@ const InnerForm = (props: FormProps) => {
 
         const { data: { og } } = previewData
 
+        if (!og) {
+          element = <div>{x.data}</div>
+          break
+        }
+
         element = <div>
           <p><b>{og?.title}</b></p>
           <p>{og?.description}</p>
           <img src={og?.image} className='DfPostImage' />
           <p>{og?.url}</p>
         </div>
-
         break
       }
       case 'text': {
