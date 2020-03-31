@@ -177,6 +177,11 @@ const InnerForm = (props: FormProps) => {
   const [ inputFocus, setInputFocus ] = useState<{id: number, focus: boolean}[]>([])
   const [ aceModes, setAceModes ] = useState<{id: number, mode: string }[]>([])
   const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
+  const VIMEO_REGEX = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+  const YOUTUBE_REGEXP = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const TWITTER_REGEXP = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w-]*\/)*([\w-]*)/;
+
+  console.log('embedData:', embedData)
 
   const onSubmit = async (sendTx: () => void) => {
 
@@ -339,6 +344,20 @@ const InnerForm = (props: FormProps) => {
   }
 
   const handleLinkPreviewChange = async (block: BlockValue, value: string) => {
+
+    if (value.match(TWITTER_REGEXP)) {
+
+      const match = value.match(TWITTER_REGEXP);
+      if (match && match[1]) {
+        console.log('match[1]', match[1])
+        setEmbedData([
+          ...embedData,
+          { id: block.id, data: match[1], type: 'twitter' }
+        ])
+      }
+
+    }
+
     const data = await parse(value)
 
     if (!data) return
@@ -365,10 +384,9 @@ const InnerForm = (props: FormProps) => {
   }
 
   const handleLinkChange = (block: BlockValue, name: string, value: string) => {
-    handleLinkPreviewChange(block, value)
     const newArray = embedData.filter((x) => x.id !== block.id)
-
     setEmbedData(newArray)
+    handleLinkPreviewChange(block, value)
     setFieldValue(name, value)
   }
 
@@ -491,10 +509,6 @@ const InnerForm = (props: FormProps) => {
     const handleEmbed = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, url: string, id: number) => {
       if (!nonEmptyStr(url) || !isLink(url)) return
 
-      const VIMEO_REGEX = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
-      const YOUTUBE_REGEXP = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-      const TWITTER_REGEXP = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w-]*\/)*([\w-]*)/;
-
       let data
       const newArray = [ ...embedData ]
       let type = ''
@@ -516,16 +530,6 @@ const InnerForm = (props: FormProps) => {
           console.log('match[3]', match[3])
           data = match[3]
           type = 'vimeo'
-        }
-      }
-
-      if (url.match(TWITTER_REGEXP)) {
-        e.preventDefault()
-        const match = url.match(TWITTER_REGEXP);
-        if (match && match[3]) {
-          console.log('match', match)
-          // data = match[3]
-          type = 'twitter'
         }
       }
 
@@ -562,6 +566,7 @@ const InnerForm = (props: FormProps) => {
           />
         }
         case 'twitter': {
+          console.log('twitter works')
           return <Tweet tweetId={embedData?.data}/>
         }
         case 'default': {
@@ -585,11 +590,12 @@ const InnerForm = (props: FormProps) => {
         if (!previewData) break
 
         const { data: { og } } = previewData
-
+        /*
         if (!og) {
           element = <div>{x.data}</div>
           break
         }
+        */
         const currentEmbed = embedData.find((y) => y.id === x.id)
         console.log('currentEmbed', currentEmbed)
         element = <div>
@@ -600,7 +606,7 @@ const InnerForm = (props: FormProps) => {
               href={og?.url}
               target='_blank'
               rel='noopener noreferrer'
-              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleEmbed(e, og?.url, x.id)}
+              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleEmbed(e, og?.url as string, x.id)}
             >
               {currentEmbed
                 ? renderEmbed(currentEmbed)
