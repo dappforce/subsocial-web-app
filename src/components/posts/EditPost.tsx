@@ -20,10 +20,15 @@ import HeadMeta from '../utils/HeadMeta';
 import { Collapse, Dropdown, Menu, Icon } from 'antd';
 import '../utils/styles/full-width-content.css'
 import { DfMd } from '../utils/DfMd';
+import { Tweet } from 'react-twitter-widgets'
 import AceEditor from 'react-ace';
-// import 'ace-builds/src-noconflict/mode-java';
-import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-github';
+React.lazy(() => import('ace-builds/src-noconflict/mode-javascript'))
+React.lazy(() => import('ace-builds/src-noconflict/mode-typescript'))
+React.lazy(() => import('ace-builds/src-noconflict/mode-scss'))
+React.lazy(() => import('ace-builds/src-noconflict/mode-rust'))
+React.lazy(() => import('ace-builds/src-noconflict/mode-powershell'))
+React.lazy(() => import('ace-builds/src-noconflict/mode-html'))
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { Panel } = Collapse;
@@ -60,6 +65,12 @@ export interface SiteMetaContent {
 type PreviewData = {
   id: number,
   data: SiteMetaContent
+}
+
+type EmbedData = {
+  id: number,
+  data: string,
+  type: string
 }
 
 /*
@@ -162,6 +173,8 @@ const InnerForm = (props: FormProps) => {
   const [ ipfsHash, setIpfsCid ] = useState('');
   const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
   const [ inputFocus, setInputFocus ] = useState<{id: number, focus: boolean}[]>([])
+  const [ aceModes, setAceModes ] = useState<{id: number, mode: string }[]>([])
+  const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
 
   const onSubmit = async (sendTx: () => void) => {
 
@@ -351,6 +364,9 @@ const InnerForm = (props: FormProps) => {
 
   const handleLinkChange = (block: BlockValue, name: string, value: string) => {
     handleLinkPreviewChange(block, value)
+    const newArray = embedData.filter((x) => x.id !== block.id)
+
+    setEmbedData(newArray)
     setFieldValue(name, value)
   }
 
@@ -409,15 +425,22 @@ const InnerForm = (props: FormProps) => {
         break
       }
       case 'code': {
+        const currentMode = aceModes.find((x) => x.id === block.id)
         res = <div className='EditPostAceEditor'>
+          <Dropdown overlay={() => modesMenu(block.id)} className={''}>
+            <div className=''>
+              Language: {currentMode?.mode || 'javascript'}
+            </div>
+          </Dropdown>
           <AceEditor
-            mode={'javascript'}
+            mode={currentMode?.mode || 'javascript'}
             theme="github"
             onChange={(value: string) => setFieldValue(`blockValues.${index}.data`, value)}
             value={block.data}
             name="ace-editor"
             editorProps={{ $blockScrolling: true }}
             height='200px'
+            width='480px'
             onFocus={() => handleFocus(true, block.id)}
             onBlur={() => handleFocus(false, block.id)}
           />
@@ -463,6 +486,89 @@ const InnerForm = (props: FormProps) => {
   const renderBlockPreview = (x: BlockValue) => {
     if (x.hidden) return null
 
+    const handleEmbed = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, url: string, id: number) => {
+      if (!nonEmptyStr(url) || !isLink(url)) return
+
+      const VIMEO_REGEX = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+      const YOUTUBE_REGEXP = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const TWITTER_REGEXP = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w-]*\/)*([\w-]*)/;
+
+      let data
+      const newArray = [ ...embedData ]
+      let type = ''
+
+      if (url.match(YOUTUBE_REGEXP)) {
+        e.preventDefault()
+        const match = url.match(YOUTUBE_REGEXP);
+        if (match && match[2]) {
+          console.log('match[2]', match[2])
+          data = match[2]
+          type = 'youtube'
+        }
+      }
+
+      if (url.match(VIMEO_REGEX)) {
+        e.preventDefault()
+        const match = url.match(VIMEO_REGEX);
+        if (match && match[3]) {
+          console.log('match[3]', match[3])
+          data = match[3]
+          type = 'vimeo'
+        }
+      }
+
+      if (url.match(TWITTER_REGEXP)) {
+        e.preventDefault()
+        const match = url.match(TWITTER_REGEXP);
+        if (match && match[3]) {
+          console.log('match', match)
+          // data = match[3]
+          type = 'twitter'
+        }
+      }
+
+      if (!data) return
+
+      const idx = embedData.findIndex((x) => x.id === id)
+      if (idx === -1) {
+        newArray.push({ id, data, type })
+      } else {
+        newArray[idx].data = data
+      }
+
+      setEmbedData(newArray)
+    }
+
+    const renderEmbed = (embedData: EmbedData) => {
+      switch (embedData.type) {
+        case 'youtube': {
+          return <iframe src={`https://www.youtube.com/embed/${embedData?.data}`}
+            frameBorder='0'
+            allow='autoplay; encrypted-media'
+            allowFullScreen
+            width='480px'
+            height='300px'
+            title={`video${embedData?.data}`}
+          />
+        }
+        case 'vimeo': {
+          return <iframe src={`https://player.vimeo.com/video/${embedData?.data}?autoplay=1&loop=1&autopause=0`}
+            width="480"
+            height="300"
+            allow="autoplay; fullscreen"
+            frameBorder={0}
+          />
+        }
+        case 'twitter': {
+          return <Tweet tweetId={embedData?.data}/>
+        }
+        case 'default': {
+          return <div>default embed</div>
+        }
+      }
+      return null
+    }
+
     let element
 
     switch (x.kind) {
@@ -482,12 +588,23 @@ const InnerForm = (props: FormProps) => {
           element = <div>{x.data}</div>
           break
         }
-
+        const currentEmbed = embedData.find((y) => y.id === x.id)
+        console.log('currentEmbed', currentEmbed)
         element = <div>
-          <p><b>{og?.title}</b></p>
-          <p>{og?.description}</p>
-          <img src={og?.image} className='DfPostImage' />
-          <p>{og?.url}</p>
+          <div>
+            <p><b>{og?.title}</b></p>
+            <p>{og?.description}</p>
+            <a
+              href={og?.url}
+              target='_blank'
+              rel='noopener noreferrer'
+              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleEmbed(e, og?.url, x.id)}
+            >
+              {currentEmbed
+                ? renderEmbed(currentEmbed)
+                : <img src={og?.image} className='DfPostImage' />}
+            </a>
+          </div>
         </div>
         break
       }
@@ -496,14 +613,16 @@ const InnerForm = (props: FormProps) => {
         break
       }
       case 'code': {
+        const currentMode = aceModes.find((y) => y.id === x.id)
         element = <AceEditor
-          mode={'javascript'}
+          mode={currentMode?.mode || 'javascript'}
           theme="github"
           value={x.data}
           name="ace-editor-readonly"
           readOnly={true}
           editorProps={{ $blockScrolling: true }}
           height='200px'
+          width='480px'
         />
         break
       }
@@ -527,6 +646,41 @@ const InnerForm = (props: FormProps) => {
       </Menu.Item>
       <Menu.Item key="3" onClick={() => addBlock('code', index)}>
         Code block
+      </Menu.Item>
+    </Menu>
+  );
+
+  const handleAceMode = (mode: string, id: number) => {
+    const idx = aceModes.findIndex((x) => x.id === id)
+    const newArray = [ ...aceModes ]
+    if (idx === -1) {
+      newArray.push({ id, mode })
+    } else {
+      newArray[idx].mode = mode
+    }
+
+    setAceModes(newArray)
+  }
+
+  const modesMenu = (id: number) => (
+    <Menu className=''>
+      <Menu.Item key="1" onClick={() => handleAceMode('javascript', id)} >
+        JavaScript
+      </Menu.Item>
+      <Menu.Item key="2" onClick={() => handleAceMode('typescript', id)} >
+        TypeScript
+      </Menu.Item>
+      <Menu.Item key="3" onClick={() => handleAceMode('html', id)} >
+        HTML
+      </Menu.Item>
+      <Menu.Item key="4" onClick={() => handleAceMode('scss', id)} >
+        CSS
+      </Menu.Item>
+      <Menu.Item key="5" onClick={() => handleAceMode('rust', id)} >
+        Rust
+      </Menu.Item>
+      <Menu.Item key="6" onClick={() => handleAceMode('powershell', id)} >
+        Powershell
       </Menu.Item>
     </Menu>
   );

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Dropdown, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { PostId, PostExtension, SharedPost, BlogId } from '../types';
-import { NewSharePost } from './EditPost';
+import { PostId, BlogId } from '../types';
+// import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
 import { ViewBlog } from '../blogs/ViewBlog';
 import Link from 'next/link';
@@ -23,8 +23,8 @@ const InnerShareModal = (props: Props) => {
 
   if (!blogIds) return <Loading />;
 
-  const [ blogId, setBlogId ] = useState(blogIds[0]);
-  const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
+  // const [ blogId, setBlogId ] = useState(blogIds[0]);
+  // const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
     if (blogIds.length === 0) {
@@ -40,7 +40,7 @@ const InnerShareModal = (props: Props) => {
     }));
 
     const saveBlog = (event: any, data: any) => {
-      setBlogId(data);
+      // setBlogId(data);
     };
     return (<div className='DfShareModal'>
       <Dropdown
@@ -52,11 +52,13 @@ const InnerShareModal = (props: Props) => {
         onChange={saveBlog}
         defaultValue={blogs[0].value}
       />
+      {/*
       <NewSharePost
         blogId={blogId}
         extention={extension}
         withButtons={false}
       />
+      */}
       <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
     </div>
     );
@@ -75,11 +77,13 @@ const InnerShareModal = (props: Props) => {
       </Modal.Content>
       <Modal.Actions>
         <Button size='medium' onClick={close}>Cancel</Button>
+        {/*
         <NewSharePost
           blogId={blogId}
           extention={extension}
           onlyTxButton
         />
+        */}
       </Modal.Actions>
     </Modal>
   );
