@@ -12,7 +12,15 @@ const varsToExport = [
   'IPFS_URL'
 ]
 
-const vals = varsToExport.map(varName => `${varName}: '${process.env[varName]}'`).join(',\n  ')
+function getSerializedVal(varName) {
+  const val = process.env[varName]
+  return typeof val === 'string' ? `'${val}'` : val
+}
+
+const vals = varsToExport
+  .map(varName => `${varName}: ${getSerializedVal(varName)}`)
+  .join(',\n  ')
+
 writeFileSync(`${__dirname}/public/env.js`,
   `// WARN: This is a generated file. Do not modify!
 
@@ -22,6 +30,5 @@ if (!window.process.ENV) window.process.ENV = {};
 window.process.env = {
   ${vals}
 };
-`,
-  'utf8'
+`, 'utf8'
 )
