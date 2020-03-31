@@ -94,3 +94,10 @@
 .AddBlockDropdownMenu {
   max-width: 100px;
 }
+
+.EditPostAceEditor {
+  .aceModeButton {
+    width: 200px;
+    margin-bottom: 5px;
+  }
+}
