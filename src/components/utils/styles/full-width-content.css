@@ -57,7 +57,7 @@
 
   .navigationButtons {
     display: flex;
-    margin: $space_normal;
+    margin: 0.5rem;
     opacity: 0;
     -webkit-transition: opacity 0.5s;
     transition: opacity 0.5s;
