@@ -52,7 +52,7 @@
   margin: $space_big 0;
   display: flex;
   flex-direction: column;
-
+  padding: 2px;
   
 
   .navigationButtons {
@@ -81,7 +81,11 @@
     }
   }
 }
+.EditPostBlockWrapper.inputFocus,
 .EditPostBlockWrapper:hover {
+  background-color: beige;
+  border-radius: 4px;
+
   .navigationButtons {
     opacity: 1;
   }

@@ -161,6 +161,7 @@ const InnerForm = (props: FormProps) => {
 
   const [ ipfsHash, setIpfsCid ] = useState('');
   const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
+  const [ inputFocus, setInputFocus ] = useState<{id: number, focus: boolean}[]>([])
 
   const onSubmit = async (sendTx: () => void) => {
 
@@ -367,12 +368,31 @@ const InnerForm = (props: FormProps) => {
   const renderPostBlock = (block: BlockValue, index: number) => {
     let res
 
+    const handleFocus = (focus: boolean, id: number) => {
+      const idx = inputFocus.findIndex((x) => x.id === id)
+      const newArray = [ ...inputFocus ]
+
+      if (idx === -1) {
+        newArray.push({
+          id, focus
+        })
+      } else {
+        newArray[idx].focus = focus
+      }
+
+      setInputFocus(newArray)
+    }
+
     switch (block.kind) {
       case 'text': {
         res = <SimpleMDEReact
           value={block.data}
           onChange={(data: string) => setFieldValue(`blockValues.${index}.data`, data)}
           className={`DfMdEditor`}
+          events={{
+            blur: () => handleFocus(false, block.id),
+            focus: () => handleFocus(true, block.id)
+          }}
         />
         break
       }
@@ -382,6 +402,8 @@ const InnerForm = (props: FormProps) => {
           name={`blockValues.${index}.data`}
           placeholder="Link"
           value={block.data}
+          onFocus={() => handleFocus(true, block.id)}
+          onBlur={() => handleFocus(false, block.id)}
           onChange={(e: React.FormEvent<HTMLInputElement>) => handleLinkChange(block, `blockValues.${index}.data`, e.currentTarget.value)}
         />
         break
@@ -396,6 +418,8 @@ const InnerForm = (props: FormProps) => {
             name="ace-editor"
             editorProps={{ $blockScrolling: true }}
             height='200px'
+            onFocus={() => handleFocus(true, block.id)}
+            onBlur={() => handleFocus(false, block.id)}
           />
         </div>
         break
@@ -407,7 +431,7 @@ const InnerForm = (props: FormProps) => {
 
     const maxBlockId = Math.max.apply(null, blockValues.map((x) => x.id))
 
-    return <div className="EditPostBlockWrapper" key={block.id} >
+    return <div className={inputFocus[block.id] && inputFocus[block.id].focus ? 'EditPostBlockWrapper inputFocus' : 'EditPostBlockWrapper'} key={block.id} >
       {res}
       <div className='navigationButtons'>
         <Dropdown overlay={() => addMenu(index)}>
