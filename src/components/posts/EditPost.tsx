@@ -289,13 +289,21 @@ const InnerForm = (props: FormProps) => {
     }
   }
 
-  const addBlock = (type: PostBlockKind, afterIndex: number) => {
+  const addBlock = (type: PostBlockKind, afterIndex: number | undefined) => {
 
     const defaultBlockValue = {
       id: getNewBlockId(blockValues),
       kind: type,
       hidden: false,
       data: ''
+    }
+
+    if (afterIndex === undefined) {
+      setFieldValue('blockValues', [
+        ...blockValues,
+        defaultBlockValue
+      ])
+      return
     }
 
     setFieldValue('blockValues', [
@@ -345,24 +353,13 @@ const InnerForm = (props: FormProps) => {
     setFieldValue(name, value)
   }
 
-  const changeBlockPosition = (n: string, index: number) => {
-    let newBlocksOrder
+  const changeBlockPosition = (order: number, index: number) => {
 
-    if (n === 'down') {
-      newBlocksOrder = [
-        ...blockValues
-      ]
-      newBlocksOrder[index] = blockValues[index + 1]
-      newBlocksOrder[index + 1] = blockValues[index]
-    }
-
-    if (n === 'up') {
-      newBlocksOrder = [
-        ...blockValues
-      ]
-      newBlocksOrder[index] = blockValues[index - 1]
-      newBlocksOrder[index - 1] = blockValues[index]
-    }
+    const newBlocksOrder = [
+      ...blockValues
+    ]
+    newBlocksOrder[index] = blockValues[index + order]
+    newBlocksOrder[index + order] = blockValues[index]
 
     setFieldValue('blockValues', newBlocksOrder)
   }
@@ -427,11 +424,11 @@ const InnerForm = (props: FormProps) => {
           }
         </Button>
         { index > 0 &&
-          <Button type="button" onClick={() => changeBlockPosition('up', index)} >
+          <Button type="button" onClick={() => changeBlockPosition(-1, index)} >
             <Icon type="up-circle" /> Move up
           </Button> }
         { index < maxBlockId &&
-          <Button type="button" onClick={() => changeBlockPosition('down', index)} >
+          <Button type="button" onClick={() => changeBlockPosition(1, index)} >
             <Icon type="down-circle" /> Move down
           </Button> }
       </div>
@@ -492,7 +489,7 @@ const InnerForm = (props: FormProps) => {
     </div>
   }
 
-  const addMenu = (index: number = 0) => (
+  const addMenu = (index: number | undefined) => (
     <Menu className='AddBlockDropdownMenu'>
       <Menu.Item key="1" onClick={() => addBlock('text', index)}>
         Text Block
