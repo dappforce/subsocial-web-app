@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, withFormik, FormikProps, Field } from 'formik';
-// import * as Yup from 'yup';
+import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
@@ -33,7 +33,6 @@ import 'brace/theme/github'
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { Panel } = Collapse;
 
-/*
 const buildSchema = () => Yup.object().shape({
   title: Yup.string()
     // .min(p.minTitleLen, `Title is too short. Minimum length is ${p.minTitleLen} chars.`)
@@ -44,7 +43,6 @@ const buildSchema = () => Yup.object().shape({
     .url('Image must be a valid URL.')
     // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
 });
-*/
 
 // ------------------------------------------
 // Contents: save this content in IPFS and save returned CID.hash in cid field of PostBlock objects.
@@ -444,8 +442,8 @@ const InnerForm = (props: FormProps) => {
       case 'code': {
         const currentMode = aceModes.find((x) => x.id === block.id)
         res = <div className='EditPostAceEditor'>
-          <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeButton'}>
-            <div className=''>
+          <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeSelect'}>
+            <div className='aceModeButton'>
               Language: {currentMode?.mode || 'javascript'}
             </div>
           </Dropdown>
@@ -590,8 +588,6 @@ const InnerForm = (props: FormProps) => {
 
         element = <div>
           <div>
-            <p><b>{og?.title}</b></p>
-            <p>{og?.description}</p>
             <a
               href={og?.url}
               target='_blank'
@@ -600,7 +596,11 @@ const InnerForm = (props: FormProps) => {
             >
               {currentEmbed
                 ? renderEmbed(currentEmbed)
-                : <img src={og?.image} className='DfPostImage' />}
+                : <div>
+                  <img src={og?.image} className='DfPostImage' />
+                  <p><b>{og?.title}</b></p>
+                  <p>{og?.description}</p>
+                </div>}
             </a>
           </div>
         </div>
@@ -803,11 +803,8 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
     }
   },
 
-  /*
-  validationSchema: (props: OuterProps) => buildSchema({
-    postMaxLen: props.postMaxLen
-  }),
-  */
+  validationSchema: () => buildSchema(),
+
   handleSubmit: values => {
     // do submitting things
     console.log('formik values', values)

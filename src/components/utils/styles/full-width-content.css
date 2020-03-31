@@ -98,6 +98,10 @@
 .EditPostAceEditor {
   .aceModeButton {
     width: 200px;
+    cursor: pointer;
+  }
+  .aceModeSelect {
+    width: 200px;
     margin-bottom: 5px;
   }
 }
