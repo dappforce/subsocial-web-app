@@ -21,14 +21,14 @@ import { Collapse, Dropdown, Menu, Icon } from 'antd';
 import '../utils/styles/full-width-content.css'
 import { DfMd } from '../utils/DfMd';
 import { Tweet } from 'react-twitter-widgets'
-import AceEditor from 'react-ace';
-import 'ace-builds/src-noconflict/theme-github';
-React.lazy(() => import('ace-builds/src-noconflict/mode-javascript'))
-React.lazy(() => import('ace-builds/src-noconflict/mode-typescript'))
-React.lazy(() => import('ace-builds/src-noconflict/mode-scss'))
-React.lazy(() => import('ace-builds/src-noconflict/mode-rust'))
-React.lazy(() => import('ace-builds/src-noconflict/mode-powershell'))
-React.lazy(() => import('ace-builds/src-noconflict/mode-html'))
+import AceEditor from 'react-ace'
+import 'brace/mode/javascript'
+import 'brace/mode/typescript'
+import 'brace/mode/scss'
+import 'brace/mode/html'
+import 'brace/mode/powershell'
+import 'brace/mode/rust'
+import 'brace/theme/github'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { Panel } = Collapse;
@@ -178,8 +178,6 @@ const InnerForm = (props: FormProps) => {
   const VIMEO_REGEX = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
   const YOUTUBE_REGEXP = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const TWITTER_REGEXP = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w-]*\/)*([\w-]*)/;
-
-  console.log('embedData:', embedData)
 
   const onSubmit = async (sendTx: () => void) => {
 
@@ -347,7 +345,6 @@ const InnerForm = (props: FormProps) => {
 
       const match = value.match(TWITTER_REGEXP);
       if (match && match[1]) {
-        console.log('match[1]', match[1])
         setEmbedData([
           ...embedData,
           { id: block.id, data: match[1], type: 'twitter' }
@@ -445,7 +442,7 @@ const InnerForm = (props: FormProps) => {
       case 'code': {
         const currentMode = aceModes.find((x) => x.id === block.id)
         res = <div className='EditPostAceEditor'>
-          <Dropdown overlay={() => modesMenu(block.id)} className={''}>
+          <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeButton'}>
             <div className=''>
               Language: {currentMode?.mode || 'javascript'}
             </div>
@@ -458,7 +455,7 @@ const InnerForm = (props: FormProps) => {
             name="ace-editor"
             editorProps={{ $blockScrolling: true }}
             height='200px'
-            width='480px'
+            width='100%'
             onFocus={() => handleFocus(true, block.id)}
             onBlur={() => handleFocus(false, block.id)}
           />
@@ -515,7 +512,6 @@ const InnerForm = (props: FormProps) => {
         e.preventDefault()
         const match = url.match(YOUTUBE_REGEXP);
         if (match && match[2]) {
-          console.log('match[2]', match[2])
           data = match[2]
           type = 'youtube'
         }
@@ -525,7 +521,6 @@ const InnerForm = (props: FormProps) => {
         e.preventDefault()
         const match = url.match(VIMEO_REGEX);
         if (match && match[3]) {
-          console.log('match[3]', match[3])
           data = match[3]
           type = 'vimeo'
         }
@@ -588,14 +583,9 @@ const InnerForm = (props: FormProps) => {
         if (!previewData) break
 
         const { data: { og } } = previewData
-        /*
-        if (!og) {
-          element = <div>{x.data}</div>
-          break
-        }
-        */
+
         const currentEmbed = embedData.find((y) => y.id === x.id)
-        console.log('currentEmbed', currentEmbed)
+
         element = <div>
           <div>
             <p><b>{og?.title}</b></p>
@@ -764,14 +754,17 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
-    const blockValues = mappedBlocks.map((x, i) => {
-      return {
-        id: i,
-        kind: x.kind,
-        hidden: x.hidden,
-        data: ''
-      }
-    })
+    let blockValues: BlockValue[] = []
+    if (mappedBlocks && mappedBlocks.length !== 0) {
+      blockValues = mappedBlocks.map((x, i) => {
+        return {
+          id: i,
+          kind: x.kind,
+          hidden: x.hidden,
+          data: ''
+        }
+      })
+    }
 
     if (struct && json) {
       return {
