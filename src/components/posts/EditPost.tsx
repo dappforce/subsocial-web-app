@@ -24,8 +24,11 @@ import { PostExtension, RegularPost, PostUpdate } from '@subsocial/types/substra
 import { Post, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import U32 from '@polkadot/types/primitive/U32';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+import { newLogger } from '@subsocial/utils'
 
+const log = newLogger('Edit post')
+
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
@@ -87,7 +90,6 @@ const InnerForm = (props: FormProps) => {
     closeModal
   } = props;
 
-  // console.log(extention.value);
   const isRegularPost = extention.value.isEmpty; // TODO maybe fix after run UI
 
   const renderResetButton = () => (
@@ -108,7 +110,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: BN) => {
-    Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
+    Router.push(`/blogs/${blogId}/posts/${id}`).catch(err => log.error(`Error while route: ${err}`));
   };
 
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
@@ -296,11 +298,9 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       if (struct === undefined) return toggleTrigger();
 
-      console.log('Loading post JSON from IPFS');
-
       ipfs.findPost(struct.ipfs_hash).then(json => {
         setJson(json);
-      }).catch(err => console.log(err));
+      }).catch(err => log.error(`Error in find post from IPFS: ${err}`));
     }, [ trigger ]);
 
     if (!myAddress || !structOpt || jsonIsNone) {

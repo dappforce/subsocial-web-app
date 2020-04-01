@@ -24,7 +24,11 @@ import { Profile, SocialAccount, IpfsHash } from '@subsocial/types/substrate/int
 import { ProfileContent } from '@subsocial/types/offchain';
 import { ProfileUpdate } from '@subsocial/types/substrate/classes';
 import U32 from '@polkadot/types/primitive/U32';
+import { newLogger } from '@subsocial/utils';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
+
+const log = newLogger('Edit profile')
 
 // TODO get next settings from Substrate:
 const USERNAME_REGEX = /^[A-Za-z0-9-]+$/;
@@ -131,7 +135,7 @@ const InnerForm = (props: FormProps) => {
 
   const goToView = () => {
     if (myAddress) {
-      Router.push(`/profile/${myAddress}`).catch(console.log);
+      Router.push(`/profile/${myAddress}`).catch(err => log.error(`Error while route: ${err}`));
     }
   };
 

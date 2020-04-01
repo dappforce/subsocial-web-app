@@ -5,6 +5,9 @@ import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { ipfsUrl, getApi } from './SubsocialConnect';
 import { ApiPromise } from '@polkadot/api';
 import { useApi } from '@polkadot/react-hooks';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('Subsocial api context')
 
 export type SubsocialApiState = {
   subsocial: SubsocialApi,
@@ -23,7 +26,7 @@ function reducer (state: SubsocialApiState, action: SubsocialApiAction): Subsoci
   switch (action.type) {
     case 'init':
       const subsocial = new SubsocialApi(action.api, ipfsUrl)
-      console.log('Initial subsocial API')
+      log.info('Initial subsocial API')
       return { subsocial, substrate: subsocial.substrate, ipfs: subsocial.ipfs, isReady: true }
 
     default:
@@ -32,7 +35,7 @@ function reducer (state: SubsocialApiState, action: SubsocialApiAction): Subsoci
 }
 
 function functionStub () {
-  throw new Error('Function needs to be set in SubsocialApiProvider')
+  throw new Error ('Function needs to be set in SubsocialApiProvider')
 }
 
 const initialState = {
@@ -62,7 +65,6 @@ const createSubsocialState = (api: ApiPromise) => {
   if (!api) return undefined;
 
   const subsocial = new SubsocialApi(api, ipfsUrl);
-  console.log(subsocial.substrate.socialQuery());
   return {
     subsocial,
     substrate: subsocial.substrate,
@@ -81,7 +83,7 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
       getApi().then(api => dispatch({ type: 'init', api: api }))
     }
   }, [ state.isReady ]) // Don't call this effect if `invited` is not changed
-  console.log('Contex', state);
+  log.debug('Contex:', state);
   const contextValue = {
     state,
     dispatch,

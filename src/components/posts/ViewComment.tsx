@@ -29,6 +29,9 @@ import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces'
 import { PostContent, CommentContent } from '@subsocial/types/offchain';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { SubsocialApi } from '@subsocial/api/fullApi';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('View comment')
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -69,7 +72,7 @@ export function CommentsTree (props: Props) {
       }
     };
 
-    loadComments().catch(err => console.log(err));
+    loadComments().catch(err => log.error(`Error in load comments: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ commentsCount ]);// TODO change dependense on post.comments_counts or CommentCreated, CommentUpdated with current postId
@@ -161,7 +164,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
     ipfs.findComment(struct.ipfs_hash).then(json => {
       isSubscribe && json && setContent(json);
-    }).catch(err => console.log(err));
+    }).catch(err => log.error(`Error in find comment from IPFS: ${err}`));
 
     const loadComment = async () => {
       const comment = await substrate.findComment(id);
@@ -169,7 +172,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         comment && setStruct(comment);
       }
     };
-    loadComment().catch(console.log);
+    loadComment().catch(err => log.error(`Error in load comment: ${err}`));
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
@@ -181,7 +184,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         setPostContent(content);
       }
     };
-    loadPostContent().catch(console.log);
+    loadPostContent().catch(err => log.error(`Error in load post content: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ doReloadComment ]);

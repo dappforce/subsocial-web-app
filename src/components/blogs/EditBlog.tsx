@@ -23,6 +23,9 @@ import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogContent } from '@subsocial/types/offchain';
 import { BlogUpdate } from '@subsocial/types/substrate/classes';
 import U32 from '@polkadot/types/primitive/U32';
+import { newLogger } from '@subsocial/utils'
+
+const log = newLogger('Edit blog')
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -103,7 +106,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: BN) => {
-    Router.push('/blogs/' + id.toString()).catch(console.log);
+    Router.push('/blogs/' + id.toString()).catch(err => log.error(`Error while router: ${err}`));
   };
 
   const [ ipfsCid, setIpfsCid ] = useState('');
@@ -269,10 +272,9 @@ function LoadStruct (props: LoadStructProps) {
 
     if (struct === undefined) return toggleTrigger();
 
-    console.log('Loading blog JSON from IPFS');
     ipfs.findBlog(struct.ipfs_hash).then(json => {
       setJson(json);
-    }).catch(err => console.log(err));
+    }).catch(err => log.error(`Error in find blog from ipfs: ${err}`));
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

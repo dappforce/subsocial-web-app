@@ -9,6 +9,9 @@ import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import { useSubsocialApi } from './SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('FollowBlogButton')
 
 type FollowBlogButtonProps = {
   blogId: BN,
@@ -36,7 +39,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
       const _isFollow = await (substrate.socialQuery().blogFollowedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error(`Error in check isFollow: ${err}`));
 
     return () => { isSubscribe = false; };
   });

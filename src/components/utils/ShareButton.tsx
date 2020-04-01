@@ -9,6 +9,9 @@ import { GenericAccountId } from '@polkadot/types';
 import Bool from '@polkadot/types/primitive/Bool';
 import BN from 'bn.js';
 import { useSubsocialApi } from './SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('ShareButton')
 
 type PropsShareButtonPost = {
   postId: BN
@@ -31,7 +34,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
       const _isFollow = await (substrate.socialQuery().postSharedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error(`Error in share post check isFollow: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ postId ]);
@@ -74,7 +77,7 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
       const _isFollow = await (substrate.socialQuery().commentSharedByAccount(dataForQuery)) as Bool;
       setIsFollow(_isFollow.valueOf());
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error(`Error in share comment check isFollow: ${err}`));
   }, [ commentId ]);
 
   const buildTxParams = () => {

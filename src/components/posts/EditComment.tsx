@@ -25,7 +25,11 @@ import { TxCallback } from '../utils/types';
 import { CommentContent } from '@subsocial/types/offchain';
 import { CommentUpdate } from '@subsocial/types/substrate/classes';
 import U32 from '@polkadot/types/primitive/U32';
+
+const log = newLogger('Edit comment')
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+import { newLogger } from '@subsocial/utils';
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
@@ -90,17 +94,11 @@ const InnerForm = (props: FormProps) => {
       const cid = await ipfs.saveComment(json);
       setIpfsCid(cid);
       sendTx();
-      // window.onunload = async (e) => {
-      //   e.preventDefault();
-      //   await removeFromIpfs(cid).catch(err => console.log(err));
-      //   return false;
-      // };// Attention!!! Old code!
-      // TODO unpin, when close tab
     }
   };
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => console.log(err));
+    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => log.error(`Error in remove from IPFS: ${err}`));
     setSubmitting(false);
   };
 
@@ -130,7 +128,7 @@ const InnerForm = (props: FormProps) => {
         });
       return [ struct.id, update ];
     } else {
-      console.log('Nothing to update in a comment');
+      log.error('Nothing to update in a comment');
       return [];
     }
   };
@@ -237,12 +235,10 @@ function LoadStruct (props: LoadStructProps) {
 
     if (struct === undefined) return toggleTrigger();
 
-    console.log('Loading comment JSON from IPFS');
-
     ipfs.findComment(struct.ipfs_hash).then(json => {
       const content = json;
       setJson(content);
-    }).catch(err => console.log(err));
+    }).catch(err => log.error(`Error in find blog from IPFS: ${err}`));
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

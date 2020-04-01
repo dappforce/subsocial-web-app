@@ -21,6 +21,9 @@ import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import { SemanticShorthandItem, IconProps } from 'semantic-ui-react'
 import { Index } from '@polkadot/types/interfaces';
 import { useMyAccount } from './MyAccountContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('TxButton')
 
 interface InjectedProps {
   queueExtrinsic: QueueTxExtrinsicAdd;
@@ -180,10 +183,8 @@ const mockSendTx = () => {
   const msg = 'Cannot send a Substrate tx in a mock mode'
   if (isClientSide()) {
     window.alert(`WARN: ${msg}`)
-  } else if (typeof console.warn === 'function') {
-    console.warn(msg)
   } else {
-    console.log(`WARN: ${msg}`)
+    log.warn(msg)
   }
 }
 

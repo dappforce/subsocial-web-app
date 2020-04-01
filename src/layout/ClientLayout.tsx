@@ -20,7 +20,6 @@ import { getEnv } from '../components/utils/utils';
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = getEnv('SUBSTRATE_URL') || settings.apiUrl || undefined;
   const { queueAction, stqueue, txqueue } = useContext(StatusContext);
-  console.log(url);
 
   return <Queue>
     <Api

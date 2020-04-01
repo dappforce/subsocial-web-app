@@ -12,7 +12,7 @@ import toShortAddress from '@polkadot/react-components/util/toShortAddress';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { summarize, nonEmptyStr, getFirstOrUndefinded } from '@subsocial/utils';
+import { summarize, nonEmptyStr, getFirstOrUndefinded, newLogger } from '@subsocial/utils';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
 import Router from 'next/router';
@@ -30,6 +30,9 @@ import { AccountName } from '@polkadot/react-components';
 import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { useSubsocialApi } from './SubsocialApiContext';
+
+const log = newLogger('AddressComponents')
+
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
@@ -120,7 +123,7 @@ function AddressComponents (props: Props) {
       isSubscribe && profileContent && setProfileContent(profileContent);
     };
 
-    UpdateSocialAccount().catch(console.log);
+    UpdateSocialAccount().catch(err => log.error(`Error in update social account: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ value ]);

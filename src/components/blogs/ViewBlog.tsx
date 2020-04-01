@@ -9,7 +9,7 @@ import Error from 'next/error'
 import { ipfs } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { queryBlogsToProp, ZERO } from '../utils/index';
-import { nonEmptyStr } from '@subsocial/utils'
+import { nonEmptyStr, newLogger } from '@subsocial/utils'
 import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -30,6 +30,8 @@ import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
 import { BlogData } from '@subsocial/types/dto'
 import { SubsocialApi } from '@subsocial/api/fullApi';
+
+const log = newLogger('View blog')
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -100,7 +102,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     ipfs.findBlog(ipfs_hash).then(json => {
       const content = json;
       if (isSubscribe && content) setContent(content);
-    }).catch(err => console.log(err));
+    }).catch(err => log.error(`Error in find blog from IPFS: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ false ]);

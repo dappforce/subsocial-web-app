@@ -11,6 +11,9 @@ import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('SideMenu')
 
 const appsUrl = getEnv('APPS_URL') || 'http://127.0.0.1:3002';
 
@@ -37,21 +40,20 @@ const InnerMenu = () => {
 
     const loadBlogsData = async () => {
       setLoaded(false);
-      console.log('SUBSTRATE:', substrate.api);
       const ids = await substrate.api.query.social.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
       const blogsData = await subsocial.findBlogs(ids);
       isSubscribe && setFollowedBlogsData(blogsData);
       isSubscribe && setLoaded(true);
     };
 
-    loadBlogsData().catch(console.log);
+    loadBlogsData().catch(err => log.error(`Error load blogs data: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ trigerFollowed, myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();
-    Router.push(page[0], page[1]).catch(console.log);
+    Router.push(page[0], page[1]).catch(err => log.error(`Error while route: ${err}`));
   };
 
   const DefaultMenu: MenuItem[] = [

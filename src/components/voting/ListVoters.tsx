@@ -9,8 +9,12 @@ import dynamic from 'next/dynamic';
 import partition from 'lodash.partition';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('List voters')
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
+
 
 type VotersProps = {
   id: CommentId | PostId,
@@ -55,7 +59,7 @@ const InnerModalVoters = (props: VotersProps) => {
       const loadedReaction = (await Promise.all<Option<Reaction>>(apiCalls)).map(x => x.unwrap() as Reaction);
       isSubscribe && setReactionView(loadedReaction);
     };
-    loadVoters().catch(err => console.log(err));
+    loadVoters().catch(err => log.error(`Error in load voters: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ trigger ]);

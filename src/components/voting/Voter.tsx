@@ -11,7 +11,10 @@ import BN from 'bn.js';
 import { registry } from '@polkadot/react-api';
 import { ReactionKind } from '@subsocial/types/substrate/classes';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
+const log = newLogger('Voter')
 
 const ZERO = new BN(0);
 
@@ -51,7 +54,7 @@ export const Voter = (props: VoterProps) => {
       const _struct = result.unwrap();
       if (isSubscribe) setState(_struct);
     }
-    loadStruct(state).catch(err => console.log(err));
+    loadStruct(state).catch(err => log.error(`Error load struct: ${err}`));
 
     async function loadReaction () {
       const reactionId = await substrate.socialQuery()[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
@@ -66,7 +69,7 @@ export const Voter = (props: VoterProps) => {
         }
       }
     }
-    loadReaction().catch(console.log);
+    loadReaction().catch(err => log.error(`Error load reaction: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ updateTrigger, address ]);

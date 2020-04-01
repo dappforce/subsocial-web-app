@@ -9,6 +9,9 @@ import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { useSubsocialApi } from './SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('FollowAccountButton')
 
 type FollowAccountButtonProps = {
   address: string,
@@ -44,7 +47,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
       const _isFollow = await (substrate.socialQuery().accountFollowedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error(`Error in check isFollow: ${err}`));
 
     return () => { isSubscribe = false; };
   });

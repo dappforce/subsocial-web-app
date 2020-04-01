@@ -7,7 +7,7 @@ import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { ipfs } from '../utils/SubsocialConnect';
-import { nonEmptyStr, summarize } from '@subsocial/utils';
+import { nonEmptyStr, summarize, newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate } from '../utils/utils';
 // import { PostHistoryModal } from '../utils/ListsEditHistory';
@@ -27,6 +27,9 @@ import { PostContent } from '@subsocial/types/offchain';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
 import { PostData } from '@subsocial/types/dto';
 import { SubsocialApi } from '@subsocial/api/fullApi';
+
+const log = newLogger('View post')
+
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -113,8 +116,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(console.log);
-    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(console.log);
+    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error(`Error in load content from IPFS: ${err}`));
+    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error(`Error in load content for share post from IPFS: ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -351,7 +354,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
         isSubscribe && postDataExt && setExtData(postDataExt);
       };
 
-      loadPost().catch(console.log);
+      loadPost().catch(err => log.error(`Error in load post data: ${err}`));
 
       return () => { isSubscribe = false; };
     }, [ false ]);
@@ -366,7 +369,6 @@ export const ViewPost = withLoadedData(ViewPostPage);
 
 export const getTypePost = (post: Post): PostType => {
   const { extension } = post;
-  console.log('Shared', typeof extension.value);
   if (extension.isSharedPost) {
     return 'share';
   } else {

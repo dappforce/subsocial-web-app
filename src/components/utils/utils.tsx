@@ -13,7 +13,7 @@ import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { getFirstOrUndefinded } from '@subsocial/utils';
+import { getFirstOrUndefinded, newLogger } from '@subsocial/utils';
 import { Moment } from '@polkadot/types/interfaces';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 
@@ -103,6 +103,7 @@ type LoadSocialAccount = PropsWithSocialAccount & {
 };
 
 export function withSocialAccount<P extends LoadSocialAccount> (Component: React.ComponentType<P>) {
+  const log = newLogger('Social account HOC')
   return function (props: P) {
     const { socialAccountOpt, requireProfile = false } = props;
 
@@ -130,7 +131,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
         isSubscribe && content && setProfileContent(content);
       }
 
-      loadContent().catch(console.log);
+      loadContent().catch(err => log.error(`Error in load profile content: ${err}`));
 
       return () => { isSubscribe = false; };
     }, [ false ]);

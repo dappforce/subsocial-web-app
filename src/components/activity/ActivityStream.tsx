@@ -20,6 +20,9 @@ import { isEmptyStr } from '@subsocial/utils';
 import BN from 'bn.js';
 import { Activity } from '@subsocial/types/offchain';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { newLogger } from '@subsocial/utils'
+
+const log = newLogger('Activity stream')
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -45,7 +48,7 @@ export const ViewNewsFeed = () => {
   const getNewsArray = async (actualOffset: number = offset) => {
     const isFirstPage = actualOffset === 0;
     const data = await getNewsFeed(myAddress, actualOffset, INFINITY_LIST_PAGE_SIZE);
-    console.log('Data', actualOffset, data);
+    log.debug(`News feed with offset ${actualOffset} and data: ${data}`);
     if (data.length < INFINITY_LIST_PAGE_SIZE) setHasMore(false);
     setItems(isFirstPage ? data : items.concat(data));
     setOffset(actualOffset + INFINITY_LIST_PAGE_SIZE);
@@ -133,7 +136,7 @@ function ViewActivity (props: ActivityProps) {
       postData && postExtData && setData([ postData, postExtData ]);
     };
 
-    loadData().catch(console.log);
+    loadData().catch(err => log.error(`Error in feed render: ${err}`));
   }, [ false ]);
 
   return data && data.length > 0 ? <ViewPostPage postData={data[0]} postExtData={data[1]} variant='preview' withBlogName /> : <Loading/>;

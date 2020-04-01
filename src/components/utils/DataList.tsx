@@ -6,6 +6,9 @@ import Section from './Section';
 import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
 import { MutedSpan } from './MutedText';
 import LogInButton from './LogIn';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('Data list')
 
 type Props = {
   className?: string,
@@ -62,7 +65,7 @@ export default (props: Props) => {
           Router.push({
             pathname: router.pathname,
             query: routerQuery
-          }).catch(console.log);
+          }).catch(err => log.error(`Error while route: ${err}`));
         },
         pageSize: pageSize,
         showSizeChanger: total > 0,
@@ -73,7 +76,7 @@ export default (props: Props) => {
           Router.push({
             pathname: router.pathname,
             query: routerQuery
-          }).catch(console.log);
+          }).catch(err => log.error(`Error while route: ${err}`));
         },
         pageSizeOptions: itemsSelect
       }}

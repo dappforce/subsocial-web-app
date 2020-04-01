@@ -1,11 +1,14 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import store from 'store';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('AccountContext')
 
 export const MY_ADDRESS = 'df.myAddress';
 
 export function readMyAddress (): string | undefined {
   const myAddress: string | undefined = store.get(MY_ADDRESS);
-  console.log('Read my address from the local storage:', myAddress);
+  log.info('Read my address from the local storage:', myAddress);
   return myAddress;
 }
 
@@ -21,7 +24,7 @@ type MyAccountAction = {
 
 function reducer (state: MyAccountState, action: MyAccountAction): MyAccountState {
   function forget () {
-    console.log('Forget my address');
+    log.info('Forget my address');
     store.remove(MY_ADDRESS);
     return { ...state, address: undefined };
   }
@@ -31,14 +34,14 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
   switch (action.type) {
     case 'reload':
       address = readMyAddress();
-      console.log('Reload my address:', address);
+      log.info('Reload my address:', address);
       return { ...state, address, inited: true };
 
     case 'set':
       address = action.address;
       if (address !== state.address) {
         if (address) {
-          console.log('Set my new address:', address);
+          log.info('Set my new address:', address);
           store.set(MY_ADDRESS, address);
           return { ...state, address, inited: true };
         } else {
@@ -61,7 +64,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 }
 
 function functionStub () {
-  throw new Error('Function needs to be set in MyAccountProvider');
+  log.error('Function needs to be set in MyAccountProvider');
 }
 
 const initialState = {

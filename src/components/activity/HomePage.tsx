@@ -45,7 +45,6 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 
 LatestUpdate.getInitialProps = async (props): Promise<any> => {
   const subsocial = (props as any).subsocial as SubsocialApi
-  console.log('Subsocial', subsocial)
   const nextBlogId = await subsocial.substrate.socialQuery().nextBlogId() as BlogId;
   const nextPostId = await subsocial.substrate.socialQuery().nextPostId() as PostId;
 

@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List, Icon, Button } from 'antd';
 import './ReorderNavTabs.css'
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('Reorder nav tabs')
 
 interface NavTab {
   id: number
@@ -51,8 +54,8 @@ const ReorderNavTabs = (props: Props) => {
   }
 
   const handleSave = () => {
-    console.warn('Save operation is not implemented yet')
-    console.log('The current order of tabs:', tabs)
+    log.warn('Save operation is not implemented yet')
+    log.debug(`The current order of tabs: ${tabs}`)
   }
 
   return <>
