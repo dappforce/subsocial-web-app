@@ -44,11 +44,6 @@ const buildSchema = () => Yup.object().shape({
     // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
 });
 
-// ------------------------------------------
-// Contents: save this content in IPFS and save returned CID.hash in cid field of PostBlock objects.
-
-// type MdTextContent = string
-
 export interface SiteMetaContent {
   og?: {
     title?: string,
@@ -71,35 +66,10 @@ type EmbedData = {
   type: string
 }
 
-/*
-interface VideoPreviewImage {
-  url: string
-  width?: number
-  height?: number
-}
-
-interface VideoAuthor {
-  id: string
-  url: string
-  name: string
-}
-
-interface VideoMetaContent {
-  id?: string
-  url?: string
-  title?: string
-  description?: string
-  date?: string
-  image?: VideoPreviewImage
-  author?: VideoAuthor
-}
-*/
 type ValidationProps = {
   // postMaxLen: number,
   // postMaxLen: U32
 };
-
-// type MappedBlocks = TextBlock | CodeBlock | VideoBlock | ImageBlock
 
 type BlockValues = {
   blockValues: BlockValue[]
@@ -173,54 +143,57 @@ const InnerForm = (props: FormProps) => {
   const [ ipfsHash, setIpfsCid ] = useState('');
   const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
   const [ inputFocus, setInputFocus ] = useState<{id: number, focus: boolean}[]>([])
-  const [ aceModes, setAceModes ] = useState<{id: number, mode: string }[]>([])
   const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
+
+  const langs = [ 'javascript', 'typescript', 'html', 'scss', 'rust', 'powershell' ]
+
+  useEffect(() => {
+    // first load of Preview
+    for (const x of blockValues) {
+      if (x.kind === 'link') handleLinkPreviewChange(x, x.data)
+    }
+  }, [])
+
   const VIMEO_REGEX = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
   const YOUTUBE_REGEXP = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const TWITTER_REGEXP = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w-]*\/)*([\w-]*)/;
 
-  const onSubmit = async (sendTx: () => void) => {
+  const mapValuesToBlocks = async () => {
 
-    const mapValuesToBlocks = async () => {
+    const processArray = async (array: BlockValue[]) => {
+      const res = []
 
-      const tempValues: PostBlock[] = []
+      for (const item of array) {
+        const hash = await addJsonToIpfs(item)
 
-      if (values.blockValues && values.blockValues.length > 0) {
-        values.blockValues.map(async (x) => {
-
-          try {
-            const hash = await addJsonToIpfs(x)
-            console.log('hash', hash)
-            tempValues.push({
-              kind: x.kind,
-              hidden: x.hidden,
-              cid: hash
-            })
-          } catch (err) {
-            console.log(err)
-          }
-
+        res.push({
+          kind: item.kind,
+          hidden: item.hidden,
+          cid: hash
         })
       }
-      return tempValues
-
+      return res
     }
+
+    if (values.blockValues && values.blockValues.length > 0) {
+      const tempValues = await processArray(values.blockValues)
+      return tempValues as PostBlock[]
+    }
+
+    return [] as PostBlock[]
+  }
+
+  const onSubmit = async (sendTx: () => void) => {
 
     const blocks = await mapValuesToBlocks()
 
-    console.log('currentValues blocks', blocks)
-
     if (isValid || !isRegularPost) {
-      console.log('currentValues from main blocks', blocks)
       const json = { title, blocks, image, tags, canonical };
 
-      console.log('main json record', json)
-
-      const hash = await addJsonToIpfs(json)
-
-      setIpfsCid(hash);
-      console.log('hash main', hash)
-      sendTx();
+      addJsonToIpfs(json).then((hash: string) => {
+        setIpfsCid(hash);
+        sendTx();
+      })
     }
 
   };
@@ -308,7 +281,7 @@ const InnerForm = (props: FormProps) => {
 
   const addBlock = (type: PostBlockKind, afterIndex: number | undefined) => {
 
-    const defaultBlockValue = {
+    const defaultBlockValue: BlockValue = {
       id: getNewBlockId(blockValues),
       kind: type,
       hidden: false,
@@ -440,15 +413,14 @@ const InnerForm = (props: FormProps) => {
         break
       }
       case 'code': {
-        const currentMode = aceModes.find((x) => x.id === block.id)
         res = <div className='EditPostAceEditor'>
           <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeSelect'}>
             <div className='aceModeButton'>
-              Language: {currentMode?.mode || 'javascript'}
+              Language: {block.lang || 'javascript'}
             </div>
           </Dropdown>
           <AceEditor
-            mode={currentMode?.mode || 'javascript'}
+            mode={block.lang || 'javascript'}
             theme="github"
             onChange={(value: string) => setFieldValue(`blockValues.${index}.data`, value)}
             value={block.data}
@@ -611,9 +583,8 @@ const InnerForm = (props: FormProps) => {
         break
       }
       case 'code': {
-        const currentMode = aceModes.find((y) => y.id === x.id)
         element = <AceEditor
-          mode={currentMode?.mode || 'javascript'}
+          mode={x.lang || 'javascript'}
           theme="github"
           value={x.data}
           name="ace-editor-readonly"
@@ -649,37 +620,17 @@ const InnerForm = (props: FormProps) => {
   );
 
   const handleAceMode = (mode: string, id: number) => {
-    const idx = aceModes.findIndex((x) => x.id === id)
-    const newArray = [ ...aceModes ]
-    if (idx === -1) {
-      newArray.push({ id, mode })
-    } else {
-      newArray[idx].mode = mode
-    }
-
-    setAceModes(newArray)
+    const bvIdx = blockValues.findIndex((x) => x.id === id)
+    setFieldValue(`blockValues.${bvIdx}.lang`, mode)
   }
 
   const modesMenu = (id: number) => (
     <Menu className=''>
-      <Menu.Item key="1" onClick={() => handleAceMode('javascript', id)} >
-        JavaScript
-      </Menu.Item>
-      <Menu.Item key="2" onClick={() => handleAceMode('typescript', id)} >
-        TypeScript
-      </Menu.Item>
-      <Menu.Item key="3" onClick={() => handleAceMode('html', id)} >
-        HTML
-      </Menu.Item>
-      <Menu.Item key="4" onClick={() => handleAceMode('scss', id)} >
-        CSS
-      </Menu.Item>
-      <Menu.Item key="5" onClick={() => handleAceMode('rust', id)} >
-        Rust
-      </Menu.Item>
-      <Menu.Item key="6" onClick={() => handleAceMode('powershell', id)} >
-        Powershell
-      </Menu.Item>
+      {langs.map((x) => (
+        <Menu.Item key={x} onClick={() => handleAceMode(x, id)} >
+          {x.charAt(0).toUpperCase() + x.slice(1)}
+        </Menu.Item>
+      ))}
     </Menu>
   );
 
@@ -770,7 +721,6 @@ const InnerForm = (props: FormProps) => {
 
 export const InnerEditPost = withFormik<OuterProps, FormValues>({
 
-  // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
     let blockValues: BlockValue[] = []
@@ -780,22 +730,22 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
           id: i,
           kind: x.kind,
           hidden: x.hidden,
-          data: ''
+          lang: x.lang,
+          data: x.data
         }
       })
     }
 
-    if (struct && json) {
+    if (struct && json && mappedBlocks) {
       return {
         ...json,
-        // blocks: mappedBlocks,
         blockValues
       };
     } else {
       return {
         title: '',
-        blockValues: [],
         blocks: [],
+        blockValues: [],
         image: '',
         tags: [],
         canonical: ''
@@ -806,7 +756,6 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
   validationSchema: () => buildSchema(),
 
   handleSubmit: values => {
-    // do submitting things
     console.log('formik values', values)
   }
 })(InnerForm);
@@ -853,7 +802,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     const [ json, setJson ] = useState(undefined as StructJson);
     const [ struct, setStruct ] = useState(undefined as Struct);
     const [ trigger, setTrigger ] = useState(false);
-    const [ mappedBlocks, setMappedBlocks ] = useState([] as BlockValue[])
+    const [ mappedBlocks, setMappedBlocks ] = useState(undefined as unknown as BlockValue[])
     const jsonIsNone = json === undefined;
 
     const toggleTrigger = () => {
@@ -870,22 +819,30 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       console.log('Loading post JSON from IPFS');
 
       getJsonFromIpfs<PostContent>(struct.ipfs_hash).then(json => {
-        console.log('main json', json)
-        console.log('json.blocks && json.blocks.length > 0', json.blocks && json.blocks.length > 0)
+
         if (json.blocks && json.blocks.length > 0) {
 
-          const tempBlocks: any[] = json.blocks.map(async (x: PostBlock) => {
-            const res = await getJsonFromIpfs<BlockValue>(x.cid)
-            return res
+          const processArray = async (arr: PostBlock[]) => {
+            const temp: BlockValue[] = []
+            for (const item of arr) {
+              const res = await getJsonFromIpfs<BlockValue>(item.cid)
+              temp.push(res)
+            }
+            return temp
+          }
+
+          processArray(json.blocks as PostBlock[]).then((tempBlocks) => {
+            setMappedBlocks(tempBlocks)
           })
 
-          setMappedBlocks(tempBlocks)
+          if (mappedBlocks === undefined) return toggleTrigger();
+
         }
         setJson(json);
       }).catch(err => console.log(err));
     }, [ trigger ]);
 
-    if (!myAddress || !structOpt || jsonIsNone) {
+    if (!myAddress || !structOpt || jsonIsNone || !mappedBlocks) {
       return <Loading />;
     }
 
@@ -896,9 +853,6 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     if (!struct || !struct.created.account.eq(myAddress)) {
       return <em>You have no rights to edit this post</em>;
     }
-
-    console.log('struct from get data', struct)
-    console.log('mappedBlocks', mappedBlocks)
 
     return <Component {...props} struct={struct} json={json} mappedBlocks={mappedBlocks} />;
   };

@@ -222,7 +222,7 @@ export class BlogUpdate extends Struct {
 // ------------------------------------------
 // Post blocks
 
-export type PostBlockKind = 'text' | 'code' | 'link' | 'video' | 'image' | 'twitter'
+export type PostBlockKind = 'text' | 'code' | 'link' | 'image'
 
 export interface PostBlock {
   kind: PostBlockKind
@@ -235,77 +235,12 @@ export interface PostBlock {
 export type BlockValue = {
   id: number
   kind: PostBlockKind
+  lang?: string
   hidden?: boolean
   data: string
 }
 
-type TextFormat = 'md' | 'html' | 'plain'
-
-interface TextProps extends PostBlock {
-  /**
-   * Optional format of content. Defaults to `md`.
-   * Possible values: md, html, plain.
-   */
-  format?: TextFormat
-}
-
-/** Could be any string. Examples: js, rust, java, c. */
-type CodeLang = string
-
-interface CodeProps {
-  /** Optional programming language that should be used to highlight a syntax of this code block. */
-  lang?: CodeLang
-}
-
-interface LinkProps {
-  /** `true` is it's a URL of external site. `false`, if it's a Subsocial URL. */
-  external?: boolean // not sure about this. Maybe we don't need it.
-}
-
-type VideoSite = 'youtube' | 'vimeo' | string
-
-interface VideoProps {
-  site: VideoSite
-}
-
-type ImageFormat = 'jpeg' | 'png' | 'gif' | 'bmp' | 'webp' | string
-
-interface ImageProps {
-  /** Image format. Possible values: jpeg, png, gif, etc. */
-  format?: ImageFormat
-
-  /** A title that should be displayed below the image. */
-  title?: string
-}
-
-export interface TextBlock extends PostBlock, TextProps {}
-export interface CodeBlock extends PostBlock, CodeProps {}
-export interface LinkBlock extends PostBlock, LinkProps {}
-export interface VideoBlock extends PostBlock, VideoProps {}
-export interface ImageBlock extends PostBlock, ImageProps {}
-
-// ------------------------------------------
-// Utility methods
-
-export function newTextBlock (cid: string, props: TextProps): TextBlock {
-  return { cid, kind: 'text', ...props }
-}
-/*
-export function newLinkBlock (cid: string, props: LinkProps): LinkBlock {
-  return { cid, kind: 'link', ...props }
-}
-*/
-export function newVideoBlock (cid: string, props: VideoProps): VideoBlock {
-  return { cid, kind: 'video', ...props }
-}
-
-export function newImageBlock (cid: string, props: ImageProps): ImageBlock {
-  return { cid, kind: 'image', ...props }
-}
-
-export function newCodeBlock (cid: string, props: CodeProps): CodeBlock {
-  return { cid, kind: 'code', ...props }
-}
+// type ImageFormat = 'jpeg' | 'png' | 'gif' | 'bmp' | 'webp' | string
 
 // ----------------------------------------------------
 // end post blocks
