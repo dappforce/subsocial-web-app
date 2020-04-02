@@ -919,7 +919,7 @@ hr {
   padding: 0 $space_normal;
   border-bottom: 1px solid $color_light_border;
   position: fixed;
-  z-index: 2;
+  z-index: 5;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1122,7 +1122,140 @@ hr {
   right: $space_normal !important;
 }
 
-.EditPostCollapse {
-  margin-bottom: $space_big;
-  margin-top: $space_big;
+.EditEntityBox {
+  max-width: 100%;
+}
+
+.EditPostWrapper {
+  display: flex;
+  justify-content: space-between;
+
+  .ace_editor {
+    font-size: $font_normal;
+  }
+}
+
+.EditPostForm {
+  width: 50%;
+  margin-right: $space_huge;
+
+  .miniButton {
+    font-size: 0.8rem;
+    padding: 0 5px;
+    height: 1.5rem;
+    background-color: white;
+    border-color: $color_light_border;
+    border: 1px solid;
+    margin-right: 1rem;
+
+    i {
+      margin-right: 3px;
+    }
+  }
+
+  .AdvancedWrapper {
+    margin-bottom: $space_huge;
+
+    a {
+      display: block;
+      border-top: 1px solid $color_light_border;
+      padding-top: 1rem;
+    }
+  }
+}
+
+.EditPostPreview {
+  width: 50%;
+
+  .EditPostPreviewBlock {
+    display: flex;
+    margin-top: $space_big;
+    flex-direction: column;
+    position: relative;
+
+    .previewImgWrapper.youtube:before {
+      content: url(../../../../public/play_youtube.png);
+      position: absolute;
+      top: 100px;
+      left: 220px;
+    }
+
+    .previewDescription {
+      color: #111;
+    }
+
+  }
+}
+
+.EditPostAddButton {
+  margin: $space_big 0;
+
+  &.defaultAddBlockButton {
+    padding: 0 5px;
+    margin-right: 1rem;
+    cursor: pointer;
+
+    i {
+      margin-right: 3px;
+    }
+  }
+}
+
+.EditPostLabel {
+  color: rgba(0,0,0,.87);
+  font-weight: 600;
+  font-size: small;
+}
+
+.EditPostBlockWrapper {
+  margin: $space_tiny 0;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  
+  .DfMdEditor {
+    i {
+      color: $color_light_border;
+    }
+  }
+
+  .navigationButtons {
+    display: flex;
+    margin: $space_tiny;
+    margin-left: 0;
+    opacity: 0;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+  }
+
+}
+.EditPostBlockWrapper.inputFocus,
+.EditPostBlockWrapper:hover {
+  background-color: beige;
+  border-radius: 4px;
+
+  .DfMdEditor {
+    i:not(.separator) {
+      color: black;
+    }
+  }
+
+  .navigationButtons {
+    opacity: 1;
+  }
+}
+
+.AddBlockDropdownMenu {
+  max-width: 200px;
+}
+
+.EditPostAceEditor {
+  a {
+    display: inline-block;
+    margin-bottom: $space_tiny;
+  }
+  .aceModeSelect {
+    width: 150px;
+    margin-bottom: 5px;
+  }
 }

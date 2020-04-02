@@ -232,12 +232,37 @@ export interface PostBlock {
   cid: string
 }
 
-export type BlockValue = {
+export interface BlockValue {
   id: number
   kind: PostBlockKind
-  lang?: string
   hidden?: boolean
   data: string
+}
+
+export interface CodeBlockValue extends BlockValue {
+  lang: string
+}
+
+export interface SiteMetaContent {
+  og?: {
+    title?: string,
+    description?: string,
+    image: string,
+    url: string
+  },
+  title?: string,
+  description?: string
+}
+
+export type PreviewData = {
+  id: number,
+  data: SiteMetaContent
+}
+
+export type EmbedData = {
+  id: number,
+  data: string,
+  type: string
 }
 
 // type ImageFormat = 'jpeg' | 'png' | 'gif' | 'bmp' | 'webp' | string

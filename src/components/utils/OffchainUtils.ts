@@ -1,7 +1,6 @@
-import { IpfsData, Activity } from '../types';
+import { IpfsData, Activity, SiteMetaContent } from '../types';
 import axios from 'axios';
 import { getEnv } from './utils';
-import { SiteMetaContent } from '../posts/EditPost';
 
 const createUrl = (varName: string, defaultUrl: string = 'http://localhost:3001') => (getEnv(varName) || defaultUrl) + '/v1';
 

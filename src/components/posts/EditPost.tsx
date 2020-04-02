@@ -9,18 +9,16 @@ import { addJsonToIpfs, getJsonFromIpfs, parseUrl } from '../utils/OffchainUtils
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue, PostBlockKind } from '../types';
+import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue, PostBlockKind, CodeBlockValue, PreviewData, EmbedData, SiteMetaContent } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { queryBlogsToProp, nonEmptyStr, isLink } from '../utils/index';
+import { queryBlogsToProp, nonEmptyStr, isLink, TWITTER_REGEXP } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Collapse, Dropdown, Menu, Icon } from 'antd';
+import { Dropdown, Menu, Icon /* Upload, message */ } from 'antd';
 import '../utils/styles/full-width-content.css'
-import { DfMd } from '../utils/DfMd';
-import { Tweet } from 'react-twitter-widgets'
 import AceEditor from 'react-ace'
 import 'brace/mode/javascript'
 import 'brace/mode/typescript'
@@ -29,50 +27,24 @@ import 'brace/mode/html'
 import 'brace/mode/powershell'
 import 'brace/mode/rust'
 import 'brace/theme/github'
+import BlockPreview from './BlockPreview';
+// import { UploadChangeParam } from 'antd/lib/upload';
+// import { UploadFile } from 'antd/lib/upload/interface';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-const { Panel } = Collapse;
 
 const buildSchema = () => Yup.object().shape({
   title: Yup.string()
-    // .min(p.minTitleLen, `Title is too short. Minimum length is ${p.minTitleLen} chars.`)
-    // .max(p.maxTitleLen, `Title is too long. Maximum length is ${p.maxTitleLen} chars.`)
     .required('Post title is required'),
 
   image: Yup.string()
     .url('Image must be a valid URL.')
-    // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
 });
 
-export interface SiteMetaContent {
-  og?: {
-    title?: string,
-    description?: string,
-    image: string,
-    url: string
-  },
-  title?: string,
-  description?: string
-}
-
-type PreviewData = {
-  id: number,
-  data: SiteMetaContent
-}
-
-type EmbedData = {
-  id: number,
-  data: string,
-  type: string
-}
-
-type ValidationProps = {
-  // postMaxLen: number,
-  // postMaxLen: U32
-};
+type ValidationProps = {};
 
 type BlockValues = {
-  blockValues: BlockValue[]
+  blockValues: Array<BlockValue | CodeBlockValue>
 }
 
 type OuterProps = ValidationProps & {
@@ -81,7 +53,7 @@ type OuterProps = ValidationProps & {
   extention?: PostExtension,
   struct?: Post
   json?: PostContent,
-  mappedBlocks: BlockValue[]
+  mappedBlocks: Array<BlockValue | CodeBlockValue>
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
@@ -144,23 +116,32 @@ const InnerForm = (props: FormProps) => {
   const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
   const [ inputFocus, setInputFocus ] = useState<{id: number, focus: boolean}[]>([])
   const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
+  // const [ imageBlocks, setImageBlocks ] = useState<{id: number, cid: string}[]>([])
+  const [ firstload, setFirstload ] = useState(false)
+  const [ isAdvanced, setIsAdvanced ] = useState(false)
 
   const langs = [ 'javascript', 'typescript', 'html', 'scss', 'rust', 'powershell' ]
 
   useEffect(() => {
-    // first load of Preview
-    for (const x of blockValues) {
-      if (x.kind === 'link') handleLinkPreviewChange(x, x.data)
+    const firstLoad = async () => {
+      const res: PreviewData[] = []
+      for (const x of blockValues) {
+        if (x.kind === 'link') {
+          const data = await parse(x.data)
+          if (!data) return
+          res.push({ id: x.id, data })
+        }
+      }
+      setLinkPreviewData(res)
+      setFirstload(true)
     }
-  }, [])
 
-  const VIMEO_REGEX = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
-  const YOUTUBE_REGEXP = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const TWITTER_REGEXP = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w-]*\/)*([\w-]*)/;
+    if (!firstload) firstLoad()
+  }, [])
 
   const mapValuesToBlocks = async () => {
 
-    const processArray = async (array: BlockValue[]) => {
+    const processArray = async (array: Array<BlockValue | CodeBlockValue>) => {
       const res = []
 
       for (const item of array) {
@@ -279,7 +260,7 @@ const InnerForm = (props: FormProps) => {
     }
   }
 
-  const addBlock = (type: PostBlockKind, afterIndex: number | undefined) => {
+  const addBlock = (type: PostBlockKind, afterIndex?: number) => {
 
     const defaultBlockValue: BlockValue = {
       id: getNewBlockId(blockValues),
@@ -330,23 +311,18 @@ const InnerForm = (props: FormProps) => {
 
     if (!data) return
 
+    const newParsedData = [ ...linkPreviewData ]
+
     const idx = linkPreviewData.findIndex((el) => el.id === block.id);
 
-    let newItem = {
-      id: block.id,
-      data: data
-    }
-
     if (idx !== -1) {
-      const oldItem = linkPreviewData[idx];
-      newItem = { ...oldItem, data };
+      newParsedData[idx].data = data
+    } else {
+      newParsedData.push({
+        id: block.id,
+        data
+      })
     }
-
-    const newParsedData = [
-      ...linkPreviewData.slice(0, idx),
-      newItem,
-      ...linkPreviewData.slice(idx + 1)
-    ];
 
     setLinkPreviewData(newParsedData)
   }
@@ -357,35 +333,74 @@ const InnerForm = (props: FormProps) => {
     handleLinkPreviewChange(block, value)
     setFieldValue(name, value)
   }
+  /*
+  const loadImageToIpfs = (imgName: string, data: string, block: BlockValue, index: number) => {
+    const update = { ...block, imgName, data }
+    addJsonToIpfs(update).then((hash: string) => {
+      const newArray = [ ...imageBlocks ]
+      const idx = newArray.findIndex((x) => x.id === block.id)
+      if (idx === -1) {
+        newArray.push({ id: block.id, cid: hash })
+      } else {
+        newArray[idx].cid = hash
+      }
+
+      setImageBlocks(newArray)
+      setFieldValue(`blockValues.${index}`, update)
+    })
+  }
+
+  console.log(imageBlocks)
+  */
 
   const changeBlockPosition = (order: number, index: number) => {
 
-    const newBlocksOrder = [
-      ...blockValues
-    ]
+    const newBlocksOrder = [ ...blockValues ]
     newBlocksOrder[index] = blockValues[index + order]
     newBlocksOrder[index + order] = blockValues[index]
 
     setFieldValue('blockValues', newBlocksOrder)
   }
 
-  const renderPostBlock = (block: BlockValue, index: number) => {
+  const handleFocus = (focus: boolean, id: number) => {
+    const idx = inputFocus.findIndex((x) => x.id === id)
+    const newArray = [ ...inputFocus ]
+
+    if (idx === -1) {
+      newArray.push({
+        id, focus
+      })
+    } else {
+      newArray[idx].focus = focus
+    }
+
+    setInputFocus(newArray)
+  }
+
+  const renderPostBlock = (block: BlockValue | CodeBlockValue, index: number) => {
     let res
 
-    const handleFocus = (focus: boolean, id: number) => {
-      const idx = inputFocus.findIndex((x) => x.id === id)
-      const newArray = [ ...inputFocus ]
+    /*
+    const handleImage = (info: UploadChangeParam<UploadFile<any>>) => {
+      // TODO: if image file size > some_number
 
-      if (idx === -1) {
-        newArray.push({
-          id, focus
-        })
-      } else {
-        newArray[idx].focus = focus
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
       }
+      if (info.file.status === 'done') {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          console.log('File content:', event.target?.result);
+          loadImageToIpfs(info.file.name, event.target?.result as string, block, index)
+        };
+        reader.readAsText(info.file.originFileObj as Blob)
 
-      setInputFocus(newArray)
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
     }
+    */
 
     switch (block.kind) {
       case 'text': {
@@ -413,14 +428,15 @@ const InnerForm = (props: FormProps) => {
         break
       }
       case 'code': {
+        const { lang } = block as CodeBlockValue
         res = <div className='EditPostAceEditor'>
           <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeSelect'}>
-            <div className='aceModeButton'>
-              Language: {block.lang || 'javascript'}
-            </div>
+            <a href='#' onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => e.preventDefault()}>
+              <Icon type="down" /> Language: {lang || 'javascript'}
+            </a>
           </Dropdown>
           <AceEditor
-            mode={block.lang || 'javascript'}
+            mode={lang || 'javascript'}
             theme="github"
             onChange={(value: string) => setFieldValue(`blockValues.${index}.data`, value)}
             value={block.data}
@@ -434,6 +450,19 @@ const InnerForm = (props: FormProps) => {
         </div>
         break
       }
+      /*
+      case 'image': {
+        res = <Upload
+          name='file'
+          onChange={(info: UploadChangeParam<UploadFile<any>>) => handleImage(info)}
+        >
+          <Button>
+            <Icon type="upload" /> Click to Upload
+          </Button>
+        </Upload>
+        break
+      }
+      */
       default: {
         return null
       }
@@ -445,24 +474,24 @@ const InnerForm = (props: FormProps) => {
       {res}
       <div className='navigationButtons'>
         <Dropdown overlay={() => addMenu(index)}>
-          <Button type="button"><Icon type="plus-circle" /> Add block</Button>
+          <Button type="button" className={'miniButton'}><Icon type="plus-circle" /> Add block</Button>
         </Dropdown>
-        <Button type="button" onClick={() => removeBlock(block.id)}>
+        <Button type="button" onClick={() => removeBlock(block.id)} className={'miniButton'}>
           <Icon type="delete" />
           Delete
         </Button>
-        <Button type="button" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
+        <Button className={'miniButton'} type="button" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
           {block.hidden
             ? <div><Icon type="eye" />Show block</div>
             : <div><Icon type="eye-invisible" />Hide block</div>
           }
         </Button>
         { index > 0 &&
-          <Button type="button" onClick={() => changeBlockPosition(-1, index)} >
+          <Button className={'miniButton'} type="button" onClick={() => changeBlockPosition(-1, index)} >
             <Icon type="up-circle" /> Move up
           </Button> }
         { index < maxBlockId &&
-          <Button type="button" onClick={() => changeBlockPosition(1, index)} >
+          <Button className={'miniButton'} type="button" onClick={() => changeBlockPosition(1, index)} >
             <Icon type="down-circle" /> Move down
           </Button> }
       </div>
@@ -470,142 +499,7 @@ const InnerForm = (props: FormProps) => {
 
   }
 
-  const renderBlockPreview = (x: BlockValue) => {
-    if (x.hidden) return null
-
-    const handleEmbed = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, url: string, id: number) => {
-      if (!nonEmptyStr(url) || !isLink(url)) return
-
-      let data
-      const newArray = [ ...embedData ]
-      let type = ''
-
-      if (url.match(YOUTUBE_REGEXP)) {
-        e.preventDefault()
-        const match = url.match(YOUTUBE_REGEXP);
-        if (match && match[2]) {
-          data = match[2]
-          type = 'youtube'
-        }
-      }
-
-      if (url.match(VIMEO_REGEX)) {
-        e.preventDefault()
-        const match = url.match(VIMEO_REGEX);
-        if (match && match[3]) {
-          data = match[3]
-          type = 'vimeo'
-        }
-      }
-
-      if (!data) return
-
-      const idx = embedData.findIndex((x) => x.id === id)
-      if (idx === -1) {
-        newArray.push({ id, data, type })
-      } else {
-        newArray[idx].data = data
-      }
-
-      setEmbedData(newArray)
-    }
-
-    const renderEmbed = (embedData: EmbedData) => {
-      switch (embedData.type) {
-        case 'youtube': {
-          return <iframe src={`https://www.youtube.com/embed/${embedData?.data}`}
-            frameBorder='0'
-            allow='autoplay; encrypted-media'
-            allowFullScreen
-            width='480px'
-            height='300px'
-            title={`video${embedData?.data}`}
-          />
-        }
-        case 'vimeo': {
-          return <iframe src={`https://player.vimeo.com/video/${embedData?.data}?autoplay=1&loop=1&autopause=0`}
-            width="480"
-            height="300"
-            allow="autoplay; fullscreen"
-            frameBorder={0}
-          />
-        }
-        case 'twitter': {
-          console.log('twitter works')
-          return <Tweet tweetId={embedData?.data}/>
-        }
-        case 'default': {
-          return <div>default embed</div>
-        }
-      }
-      return null
-    }
-
-    let element
-
-    switch (x.kind) {
-      case 'link': {
-        if (!isLink(x.data)) {
-          element = <div>{x.data}</div>
-          break
-        }
-
-        const previewData = linkPreviewData.find((y) => y.id === x.id)
-
-        if (!previewData) break
-
-        const { data: { og } } = previewData
-
-        const currentEmbed = embedData.find((y) => y.id === x.id)
-
-        element = <div>
-          <div>
-            <a
-              href={og?.url}
-              target='_blank'
-              rel='noopener noreferrer'
-              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleEmbed(e, og?.url as string, x.id)}
-            >
-              {currentEmbed
-                ? renderEmbed(currentEmbed)
-                : <div>
-                  <img src={og?.image} className='DfPostImage' />
-                  <p><b>{og?.title}</b></p>
-                  <p>{og?.description}</p>
-                </div>}
-            </a>
-          </div>
-        </div>
-        break
-      }
-      case 'text': {
-        element = <DfMd source={x.data} />
-        break
-      }
-      case 'code': {
-        element = <AceEditor
-          mode={x.lang || 'javascript'}
-          theme="github"
-          value={x.data}
-          name="ace-editor-readonly"
-          readOnly={true}
-          editorProps={{ $blockScrolling: true }}
-          height='200px'
-          width='480px'
-        />
-        break
-      }
-      default: {
-        element = null
-      }
-    }
-
-    return <div key={x.id} className={'EditPostPreviewBlock'}>
-      {element}
-    </div>
-  }
-
-  const addMenu = (index: number | undefined) => (
+  const addMenu = (index?: number) => (
     <Menu className='AddBlockDropdownMenu'>
       <Menu.Item key="1" onClick={() => addBlock('text', index)}>
         Text Block
@@ -619,11 +513,6 @@ const InnerForm = (props: FormProps) => {
     </Menu>
   );
 
-  const handleAceMode = (mode: string, id: number) => {
-    const bvIdx = blockValues.findIndex((x) => x.id === id)
-    setFieldValue(`blockValues.${bvIdx}.lang`, mode)
-  }
-
   const modesMenu = (id: number) => (
     <Menu className=''>
       {langs.map((x) => (
@@ -633,6 +522,16 @@ const InnerForm = (props: FormProps) => {
       ))}
     </Menu>
   );
+
+  const handleAceMode = (mode: string, id: number) => {
+    const bvIdx = blockValues.findIndex((x) => x.id === id)
+    setFieldValue(`blockValues.${bvIdx}.lang`, mode)
+  }
+
+  const handleAdvanced = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault()
+    setIsAdvanced(!isAdvanced)
+  }
 
   const form =
     <Form className='ui form DfForm EditEntityForm'>
@@ -649,21 +548,24 @@ const InnerForm = (props: FormProps) => {
             Post Content:
           </div>
 
-          {blockValues && blockValues.length > 0 && (
-            blockValues.map((block: BlockValue, index: number) => renderPostBlock(block, index))
-          )}
-
           <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
-            <div className='defaultAddBlockButton'>
-              <Icon type="plus-circle" />Add block
-            </div>
+            <Button type="button" className={'miniButton'}><Icon type="plus-circle" /> Add block</Button>
           </Dropdown>
 
-          <Collapse className={'EditPostCollapse'}>
-            <Panel header="Show Advanced Settings" key="1">
+          {blockValues && blockValues.length > 0
+            ? blockValues.map((block: BlockValue, index: number) => renderPostBlock(block, index))
+            : addBlock('text')
+          }
+
+          <div className='AdvancedWrapper'>
+            <a href="#" onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleAdvanced(e)} >
+              { isAdvanced ? <Icon type="up" /> : <Icon type="down" /> } Show Advanced Settings
+            </a>
+            {isAdvanced && <div>
               <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
-            </Panel>
-          </Collapse>
+            </div>}
+          </div>
+
         </>
         : <>
           What should be here?
@@ -711,7 +613,13 @@ const InnerForm = (props: FormProps) => {
               {image && <img className='DfPostImage' src={image} />}
             </div>
             {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValue) => renderBlockPreview(x))
+              blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
+                key={x.id}
+                block={x}
+                embedData={embedData}
+                setEmbedData={setEmbedData}
+                linkPreviewData={linkPreviewData}
+              />)
             }
           </div>
         </div>
@@ -723,15 +631,12 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
 
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
-    let blockValues: BlockValue[] = []
+    let blockValues: Array<BlockValue | CodeBlockValue> = []
     if (mappedBlocks && mappedBlocks.length !== 0) {
       blockValues = mappedBlocks.map((x, i) => {
         return {
-          id: i,
-          kind: x.kind,
-          hidden: x.hidden,
-          lang: x.lang,
-          data: x.data
+          ...x,
+          id: i
         }
       })
     }
@@ -825,7 +730,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
           const processArray = async (arr: PostBlock[]) => {
             const temp: BlockValue[] = []
             for (const item of arr) {
-              const res = await getJsonFromIpfs<BlockValue>(item.cid)
+              const res = await getJsonFromIpfs<BlockValue | CodeBlockValue>(item.cid)
               temp.push(res)
             }
             return temp
