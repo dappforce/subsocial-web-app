@@ -28,6 +28,7 @@ import 'brace/mode/powershell'
 import 'brace/mode/rust'
 import 'brace/theme/github'
 import BlockPreview from './BlockPreview';
+import { ViewBlog } from '../blogs/ViewBlog';
 // import { UploadChangeParam } from 'antd/lib/upload';
 // import { UploadFile } from 'antd/lib/upload/interface';
 
@@ -128,7 +129,7 @@ const InnerForm = (props: FormProps) => {
       for (const x of blockValues) {
         if (x.kind === 'link') {
           const data = await parse(x.data)
-          if (!data) return
+          if (!data) continue
           res.push({ id: x.id, data })
         }
       }
@@ -363,8 +364,8 @@ const InnerForm = (props: FormProps) => {
   }
 
   const handleFocus = (focus: boolean, id: number) => {
-    const idx = inputFocus.findIndex((x) => x.id === id)
     const newArray = [ ...inputFocus ]
+    const idx = newArray.findIndex((x) => x.id === id)
 
     if (idx === -1) {
       newArray.push({
@@ -470,7 +471,9 @@ const InnerForm = (props: FormProps) => {
 
     const maxBlockId = Math.max.apply(null, blockValues.map((x) => x.id))
 
-    return <div className={inputFocus[block.id] && inputFocus[block.id].focus ? 'EditPostBlockWrapper inputFocus' : 'EditPostBlockWrapper'} key={block.id} >
+    const currentFocus = inputFocus.find((z) => z.id === block.id)
+
+    return <div className={currentFocus?.focus ? 'EditPostBlockWrapper inputFocus' : 'EditPostBlockWrapper'} key={block.id} >
       {res}
       <div className='navigationButtons'>
         <Dropdown overlay={() => addMenu(index)}>
@@ -589,9 +592,30 @@ const InnerForm = (props: FormProps) => {
       {sectionTitle}
     </>
 
+
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={formTitle()}>
-      {form}
+      <div className='EditPostWrapper'>
+        <div className='EditPostForm'>
+          {form}
+        </div>
+        <div className='EditPostPreview'>
+          <div>Preview Data:</div>
+          <div className='DfMd'>
+            <h1>{title}</h1>
+            {image && <img className='DfPostImage' src={image} />}
+          </div>
+          {blockValues && blockValues.length !== 0 &&
+            blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
+              key={x.id}
+              block={x}
+              embedData={embedData}
+              setEmbedData={setEmbedData}
+              linkPreviewData={linkPreviewData}
+            />)
+          }
+        </div>
+      </div>
     </Section>
   
   const editSharedPost = () =>
@@ -601,29 +625,10 @@ const InnerForm = (props: FormProps) => {
     ? renderTxButton()
     : <>
       <HeadMeta title={sectionTitle}/>
-      <Section className='EditEntityBox' title={sectionTitle}>
-        <div className='EditPostWrapper'>
-          <div className='EditPostForm'>
-            {form}
-          </div>
-          <div className='EditPostPreview'>
-            <div>Preview Data:</div>
-            <div className='DfMd'>
-              <h1>{title}</h1>
-              {image && <img className='DfPostImage' src={image} />}
-            </div>
-            {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
-                key={x.id}
-                block={x}
-                embedData={embedData}
-                setEmbedData={setEmbedData}
-                linkPreviewData={linkPreviewData}
-              />)
-            }
-          </div>
-        </div>
-      </Section>
+      {isRegularPost
+        ? editRegularPost()
+        : editSharedPost()
+      }
     </>;
 };
 

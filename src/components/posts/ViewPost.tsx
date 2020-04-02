@@ -9,10 +9,8 @@ import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
-import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate, summarize, getBlogId } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 // import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
@@ -35,7 +33,7 @@ const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
-const SUMMARY_MAX_SIZE = 150;
+// const SUMMARY_MAX_SIZE = 150;
 // const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
 type PostVariant = 'full' | 'preview' | 'name only';
