@@ -46,14 +46,14 @@ const InnerMenu = () => {
       isSubscribe && setLoaded(true);
     };
 
-    loadBlogsData().catch(err => log.error(`Error load blogs data: ${err}`));
+    loadBlogsData().catch(err => log.error('Error load blogs data:', err));
 
     return () => { isSubscribe = false; };
   }, [ trigerFollowed, myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();
-    Router.push(page[0], page[1]).catch(err => log.error(`Error while route: ${err}`));
+    Router.push(page[0], page[1]).catch(err => log.error('Error while route:', err));
   };
 
   const DefaultMenu: MenuItem[] = [

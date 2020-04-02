@@ -106,7 +106,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: BN) => {
-    Router.push('/blogs/' + id.toString()).catch(err => log.error(`Error while router: ${err}`));
+    Router.push('/blogs/' + id.toString()).catch(err => log.error('Error while router:', err));
   };
 
   const [ ipfsCid, setIpfsCid ] = useState('');
@@ -274,7 +274,7 @@ function LoadStruct (props: LoadStructProps) {
 
     ipfs.findBlog(struct.ipfs_hash).then(json => {
       setJson(json);
-    }).catch(err => log.error(`Error in find blog from ipfs: ${err}`));
+    }).catch(err => log.error('Failed to find blog from ipfs:', err));
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

@@ -72,7 +72,7 @@ export function CommentsTree (props: Props) {
       }
     };
 
-    loadComments().catch(err => log.error(`Error in load comments: ${err}`));
+    loadComments().catch(err => log.error('Failed to load comments:', err));
 
     return () => { isSubscribe = false; };
   }, [ commentsCount ]);// TODO change dependense on post.comments_counts or CommentCreated, CommentUpdated with current postId
@@ -164,7 +164,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
     ipfs.findComment(struct.ipfs_hash).then(json => {
       isSubscribe && json && setContent(json);
-    }).catch(err => log.error(`Error in find comment from IPFS: ${err}`));
+    }).catch(err => log.error('Failed to find comment from IPFS:', err));
 
     const loadComment = async () => {
       const comment = await substrate.findComment(id);
@@ -172,7 +172,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         comment && setStruct(comment);
       }
     };
-    loadComment().catch(err => log.error(`Error in load comment: ${err}`));
+    loadComment().catch(err => log.error('Failed to load comment:', err));
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
@@ -184,7 +184,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         setPostContent(content);
       }
     };
-    loadPostContent().catch(err => log.error(`Error in load post content: ${err}`));
+    loadPostContent().catch(err => log.error('Failed to load post content:', err));
 
     return () => { isSubscribe = false; };
   }, [ doReloadComment ]);

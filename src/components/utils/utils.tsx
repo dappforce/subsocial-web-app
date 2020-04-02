@@ -131,7 +131,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
         isSubscribe && content && setProfileContent(content);
       }
 
-      loadContent().catch(err => log.error(`Error in load profile content: ${err}`));
+      loadContent().catch(err => log.error('Failed to load profile content:', err));
 
       return () => { isSubscribe = false; };
     }, [ false ]);

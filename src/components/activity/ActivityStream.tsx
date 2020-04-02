@@ -136,7 +136,7 @@ function ViewActivity (props: ActivityProps) {
       postData && postExtData && setData([ postData, postExtData ]);
     };
 
-    loadData().catch(err => log.error(`Error in feed render: ${err}`));
+    loadData().catch(err => log.error('Failed to feed render:', err));
   }, [ false ]);
 
   return data && data.length > 0 ? <ViewPostPage postData={data[0]} postExtData={data[1]} variant='preview' withBlogName /> : <Loading/>;

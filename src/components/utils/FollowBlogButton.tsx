@@ -39,7 +39,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
       const _isFollow = await (substrate.socialQuery().blogFollowedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
-    load().catch(err => log.error(`Error in check isFollow: ${err}`));
+    load().catch(err => log.error('Failed to check isFollow:', err));
 
     return () => { isSubscribe = false; };
   });

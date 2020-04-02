@@ -102,7 +102,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     ipfs.findBlog(ipfs_hash).then(json => {
       const content = json;
       if (isSubscribe && content) setContent(content);
-    }).catch(err => log.error(`Error in find blog from IPFS: ${err}`));
+    }).catch(err => log.error('Failed to find blog from IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);

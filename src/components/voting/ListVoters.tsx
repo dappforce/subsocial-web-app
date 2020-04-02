@@ -59,7 +59,7 @@ const InnerModalVoters = (props: VotersProps) => {
       const loadedReaction = (await Promise.all<Option<Reaction>>(apiCalls)).map(x => x.unwrap() as Reaction);
       isSubscribe && setReactionView(loadedReaction);
     };
-    loadVoters().catch(err => log.error(`Error in load voters: ${err}`));
+    loadVoters().catch(err => log.error('Failed to load voters:', err));
 
     return () => { isSubscribe = false; };
   }, [ trigger ]);

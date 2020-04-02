@@ -54,7 +54,7 @@ export const Voter = (props: VoterProps) => {
       const _struct = result.unwrap();
       if (isSubscribe) setState(_struct);
     }
-    loadStruct(state).catch(err => log.error(`Error load struct: ${err}`));
+    loadStruct(state).catch(err => log.error('Error load struct:', err));
 
     async function loadReaction () {
       const reactionId = await substrate.socialQuery()[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
@@ -69,7 +69,7 @@ export const Voter = (props: VoterProps) => {
         }
       }
     }
-    loadReaction().catch(err => log.error(`Error load reaction: ${err}`));
+    loadReaction().catch(err => log.error('Error load reaction:', err));
 
     return () => { isSubscribe = false; };
   }, [ updateTrigger, address ]);

@@ -1100,7 +1100,7 @@ hr {
   display: -moz-inline-box;
 }
 
-/* Fix syntax error in Markdown editor */
+/* Fix syntax Failed to Markdown editor */
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
   background: none !important;
 }

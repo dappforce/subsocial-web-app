@@ -6,7 +6,7 @@ export const registerSubsocialTypes = (): void => {
   try {
     registry.register(types);
   } catch (err) {
-    log.error(`Failed to register custom types of blogs module: ${err}`);
+    log.error('Failed to register custom types of blogs module:', err);
   }
 };
 

@@ -110,7 +110,7 @@ const InnerForm = (props: FormProps) => {
   } = values;
 
   const goToView = (id: BN) => {
-    Router.push(`/blogs/${blogId}/posts/${id}`).catch(err => log.error(`Error while route: ${err}`));
+    Router.push(`/blogs/${blogId}/posts/${id}`).catch(err => log.error('Error while route:', err));
   };
 
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
@@ -300,7 +300,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       ipfs.findPost(struct.ipfs_hash).then(json => {
         setJson(json);
-      }).catch(err => log.error(`Error in find post from IPFS: ${err}`));
+      }).catch(err => log.error('Failed to find post from IPFS:', err));
     }, [ trigger ]);
 
     if (!myAddress || !structOpt || jsonIsNone) {

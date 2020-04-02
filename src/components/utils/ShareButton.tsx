@@ -34,7 +34,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
       const _isFollow = await (substrate.socialQuery().postSharedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
-    load().catch(err => log.error(`Error in share post check isFollow: ${err}`));
+    load().catch(err => log.error('Failed to share post check isFollow:', err));
 
     return () => { isSubscribe = false; };
   }, [ postId ]);
@@ -77,7 +77,7 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
       const _isFollow = await (substrate.socialQuery().commentSharedByAccount(dataForQuery)) as Bool;
       setIsFollow(_isFollow.valueOf());
     };
-    load().catch(err => log.error(`Error in share comment check isFollow: ${err}`));
+    load().catch(err => log.error('Failed to share comment check isFollow:', err));
   }, [ commentId ]);
 
   const buildTxParams = () => {

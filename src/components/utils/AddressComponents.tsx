@@ -123,7 +123,7 @@ function AddressComponents (props: Props) {
       isSubscribe && profileContent && setProfileContent(profileContent);
     };
 
-    UpdateSocialAccount().catch(err => log.error(`Error in update social account: ${err}`));
+    UpdateSocialAccount().catch(err => log.error('Failed to update social account:', err));
 
     return () => { isSubscribe = false; };
   }, [ value ]);

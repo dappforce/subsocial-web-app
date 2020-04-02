@@ -116,8 +116,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error(`Error in load content from IPFS: ${err}`));
-    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error(`Error in load content for share post from IPFS: ${err}`));
+    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error('Failed to load content from IPFS:', err));
+    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error('Failed to load content for share post from IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -354,7 +354,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
         isSubscribe && postDataExt && setExtData(postDataExt);
       };
 
-      loadPost().catch(err => log.error(`Error in load post data: ${err}`));
+      loadPost().catch(err => log.error('Failed to load post data:', err));
 
       return () => { isSubscribe = false; };
     }, [ false ]);

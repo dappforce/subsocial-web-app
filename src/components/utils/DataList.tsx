@@ -65,7 +65,7 @@ export default (props: Props) => {
           Router.push({
             pathname: router.pathname,
             query: routerQuery
-          }).catch(err => log.error(`Error while route: ${err}`));
+          }).catch(err => log.error('Error while route:', err));
         },
         pageSize: pageSize,
         showSizeChanger: total > 0,
@@ -76,7 +76,7 @@ export default (props: Props) => {
           Router.push({
             pathname: router.pathname,
             query: routerQuery
-          }).catch(err => log.error(`Error while route: ${err}`));
+          }).catch(err => log.error('Error while route:', err));
         },
         pageSizeOptions: itemsSelect
       }}

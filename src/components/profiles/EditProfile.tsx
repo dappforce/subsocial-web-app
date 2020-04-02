@@ -135,7 +135,7 @@ const InnerForm = (props: FormProps) => {
 
   const goToView = () => {
     if (myAddress) {
-      Router.push(`/profile/${myAddress}`).catch(err => log.error(`Error while route: ${err}`));
+      Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
     }
   };
 
