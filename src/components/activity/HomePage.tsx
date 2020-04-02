@@ -11,6 +11,9 @@ import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewP
 import { NextPage } from 'next';
 import { BlogData } from '@subsocial/types/dto';
 import { SubsocialApi } from '@subsocial/api/fullApi';
+import { newLogger } from '@subsocial/utils'
+
+const log = newLogger('HomePage')
 
 const FIVE = new BN(5);
 const ZERO = new BN(0);
@@ -47,7 +50,7 @@ LatestUpdate.getInitialProps = async (props): Promise<any> => {
   const subsocial = (props as any).subsocial as SubsocialApi
   const nextBlogId = await subsocial.substrate.socialQuery().nextBlogId() as BlogId;
   const nextPostId = await subsocial.substrate.socialQuery().nextPostId() as PostId;
-
+  log.warn('Subsocial', subsocial, nextBlogId);
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
     const latestIds = new Array<BN>(initIds).fill(ZERO);

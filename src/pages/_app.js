@@ -2,6 +2,8 @@ import React from 'react'
 import App from 'next/app';
 import Head from 'next/head';
 import MainPage from '../layout/MainPage'
+//import dynamic from 'next/dynamic'
+//const SidebarCollapsedProvider = dynamic(() => import('../components/utils/SideBarCollapsedContext'), { ssr: false })
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext';
 import { getApi, ipfsUrl } from '../components/utils/SubsocialConnect';
 import { SubsocialApi } from '@subsocial/api/fullApi';

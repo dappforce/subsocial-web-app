@@ -8,7 +8,8 @@ const varsToExport = [
   'ELASTIC_URL',
   'OFFCHAIN_URL',
   'APPS_URL',
-  'IPFS_URL'
+  'IPFS_URL',
+  'LOG_LEVEL'
 ]
 
 const vals = varsToExport.map(varName => `${varName}: '${process.env[varName]}'`).join(',\n  ')
