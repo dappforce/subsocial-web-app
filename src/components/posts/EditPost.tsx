@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import EditableTagGroup from '../utils/EditableTagGroup'
 import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text, U32 } from '@polkadot/types';
@@ -21,7 +22,7 @@ import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const { Panel } = Collapse;
+const MAX_TAGS_PER_POST = 10
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -35,8 +36,14 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
     .required('Post body is required'),
 
   image: Yup.string()
-    .url('Image must be a valid URL.')
     // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
+    .url('Image must be a valid URL.'),
+
+  tags: Yup.array()
+    .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`),
+
+  canonical: Yup.string()
+    .url('Canonical must be a valid URL.')
 });
 
 type ValidationProps = {
@@ -142,6 +149,10 @@ const InnerForm = (props: FormProps) => {
     _id && isRegularPost && goToView(_id);
   };
 
+  const handleAdvancedSettings = () => {
+    setShowAdvaced(!showAdvanced)
+  }
+
   const buildTxParams = () => {
     if (isValid || !isRegularPost) {
       if (!struct) {
@@ -209,16 +220,21 @@ const InnerForm = (props: FormProps) => {
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
+          <EditableTagGroup name='tags' label='Tags' tagsData={tagsData} {...props}/>
 
           <LabelledField name='body' label='Description' {...props}>
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
 
-          <Collapse className={'EditPostCollapse'}>
-            <Panel header="Show Advanced Settings" key="1">
+          <div className="EPadvanced">
+            <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
+              {!showAdvanced ? 'Show' : 'Hide'} Advanced Settings
+              <Icon type={showAdvanced ? 'up' : 'down'} />
+            </div>
+            {showAdvanced &&
               <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
-            </Panel>
-          </Collapse>
+            }
+          </div>
         </>
         : <>
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
