@@ -7,7 +7,7 @@ import { Option } from '@polkadot/types';
 import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
 import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
-import { getNewsFeed, getNotifications } from '../utils/OffchainUtils';
+import { getNewsFeed, getNotifications, clearNotifications } from '../utils/OffchainUtils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Loader } from 'semantic-ui-react';
 import { NoData, NotAuthorized } from '../utils/DataList';
@@ -53,8 +53,8 @@ export const ViewNewsFeed = () => {
   };
 
   const totalCount = items && items.length;
-  const NewsFeedArray = items.map((item, id) =>
-    <ViewActivity key={id} activity={item} />);
+  const NewsFeedArray = items.map((item) =>
+    <ViewActivity key={item.id} activity={item} />);
   return (<>
     <HeadMeta title='Feed' />
     <Section title={`News Feed (${totalCount})`}>{
@@ -85,6 +85,7 @@ export const ViewNotifications = () => {
     if (!myAddress) return;
 
     getNotificationsArray(0).catch(err => new Error(err));
+    clearNotifications(myAddress)
   }, [ myAddress ]);
 
   if (!myAddress) return <NotAuthorized/>;
@@ -98,8 +99,8 @@ export const ViewNotifications = () => {
   };
 
   const totalCount = items && items.length;
-  const NotificationsArray = items.map((item, id) =>
-    <Notification key={id} activity={item} />);
+  const NotificationsArray = items.map((item) =>
+    <Notification key={item.id} activity={item} />);
   return (<>
     <HeadMeta title='Notifications' />
     <Section title={`Notifications (${totalCount})`}>

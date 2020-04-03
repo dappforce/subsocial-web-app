@@ -13,7 +13,7 @@ import { getApi } from '../utils/SubstrateApi';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 
-type Props = I18nProps & {
+type Props = {
   totalCount: number;
   blogsData: BlogData[];
 };
@@ -28,20 +28,21 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
         dataSource={blogsData}
         renderItem={(item, index) =>
           <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
-        noDataDesc='Blogs not created yet'
+        noDataDesc='There are no blogs yet'
         noDataExt={<Button href='/blogs/new'>Create blog</Button>}
       />
     </div>
   );
 };
 
-ListBlog.getInitialProps = async (): Promise<any> => {
+ListBlog.getInitialProps = async (): Promise<Props> => {
   const api = await getApi();
   const nextBlogId = await api.query.social.nextBlogId() as BlogId;
 
   const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
+
   if (totalCount > 0) {
     const firstId = firstBlogId.toNumber();
     const lastId = nextBlogId.toNumber();
@@ -80,14 +81,12 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
   );
 };
 
-ListMyBlogs.getInitialProps = async (props): Promise<any> => {
+ListMyBlogs.getInitialProps = async (props): Promise<MyBlogProps> => {
   const { query: { address } } = props;
-  console.log(props);
   const api = await getApi();
   const myBlogIds = await api.query.social.blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
   const loadBlogs = myBlogIds.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
-  console.log(blogsData);
   return {
     blogsData
   }

@@ -193,7 +193,7 @@ const InnerForm = (props: FormProps) => {
   );
 };
 
-const EditForm = withFormik<OuterProps, FormValues>({
+export const EditForm = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {

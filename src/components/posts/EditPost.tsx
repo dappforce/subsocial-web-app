@@ -35,7 +35,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
   body: Yup.string()
     // .min(p.minTextLen, `Your post is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.postMaxLen, `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
+    .max(p.postMaxLen.toNumber(), `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
     .required('Post body is required'),
 
   image: Yup.string()
@@ -44,7 +44,8 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 });
 
 type ValidationProps = {
-  postMaxLen: number
+  // postMaxLen: number,
+  postMaxLen: U32
 };
 
 type OuterProps = ValidationProps & {
@@ -56,7 +57,6 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postMaxLen: number
 };
 
 type FormValues = PostContent;
@@ -106,8 +106,10 @@ const InnerForm = (props: FormProps) => {
     tags
   } = values;
 
-  const goToView = (id: BN) => {
-    Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
+  const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
+
+  const goToView = (id: PostId) => {
+    Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
@@ -199,15 +201,33 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>}
     </Form>;
 
-  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : '';
+  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
+
+  const formTitle = () =>
+    <>
+      <a href={`/blogs/${preparedBlogId}`}>
+        <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
+      </a>
+      <span style={{ margin: '0 .75rem' }}>/</span>
+      {sectionTitle}
+    </>
+
+  const editRegularPost = () =>
+    <Section className='EditEntityBox' title={formTitle()}>
+      {form}
+    </Section>
+  
+  const editSharedPost = () =>
+    <div style={{ marginTop: '1rem' }}>{form}</div>
 
   return onlyTxButton
     ? renderTxButton()
     : <>
       <HeadMeta title={sectionTitle}/>
-      <Section className='EditEntityBox' title={sectionTitle}>
-        {form}
-      </Section>
+      {isRegularPost
+        ? editRegularPost()
+        : editSharedPost()
+      }
     </>;
 };
 

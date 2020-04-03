@@ -6,8 +6,12 @@ services:
       context: ..
       dockerfile: ./docker/Dockerfile
     image: dappforce/subsocial-ui:latest
-    container_name: subsocial_ui
+    container_name: subsocial-web-ui
     network_mode: "host"
-    ports:
-      - "3000:3000"
     restart: on-failure
+
+  nginx:
+    build: ./nginx
+    container_name: subsocial-nginx-proxy
+    image: dappforce/subsocial-proxy:latest
+    network_mode: "host"

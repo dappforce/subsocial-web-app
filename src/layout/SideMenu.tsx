@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
@@ -11,6 +11,7 @@ import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
 import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import Link from 'next/link';
+import { useNotifCounter } from '../components/utils/NotifCounter';
 
 const appsUrl = getEnv('APPS_URL') || 'http://127.0.0.1:3002';
 
@@ -23,6 +24,7 @@ interface MenuItem {
 const InnerMenu = () => {
   const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
+  const { unreadCount } = useNotifCounter()
   const isLoggedIn = checkIfLoggedIn();
   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
   const [ loaded, setLoaded ] = useState(false);
@@ -98,6 +100,11 @@ const InnerMenu = () => {
 
   const MenuItems = isLoggedIn ? AuthorizedMenu : DefaultMenu;
 
+  const renderBadge = () => {
+    if (!unreadCount || unreadCount <= 0) return null
+    return <Badge count={unreadCount} className="site-badge-count-4" />
+  }
+
   return (
     <Menu
       selectedKeys={[ pathname ]}
@@ -111,6 +118,7 @@ const InnerMenu = () => {
             <a>
               <Icon type={item.image} />
               <span>{item.name}</span>
+              {item.name === 'Notifications' ? renderBadge() : null}
             </a>
           </Link>
         </Menu.Item>)}

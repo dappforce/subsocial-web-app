@@ -39,7 +39,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   );
 };
 
-ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
+ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProps> => {
   const { query: { address } } = props;
   const api = await getApi();
   const followedBlogsData = await api.query.social.blogsFollowedByAccount(new AccountId(registry, address as string)) as unknown as BlogId[];
@@ -63,12 +63,12 @@ export const RenderFollowedList = (props: Props) => {
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
-    ? followedBlogsData.map((item, index) =>
-      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
+    ? followedBlogsData.map((item) => !item.blog ? null :
+      <Link key={item.blog.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.blog.id}`}>
         <a className='DfMenuItem'>
           <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
-              key={index}
+              key={item.blog.id.toString()}
               blogData={item}
               onClick={() => {
                 isMobile && toggle();

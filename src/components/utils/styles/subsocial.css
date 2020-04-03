@@ -5,7 +5,7 @@ body,
   background-color: $color_page_bg !important;
 }
 
-/*Used as hack to fixed React base font-size */
+/* Used as a hack to fixed ReactBase font-size */
 .fontSizeNormal {
   font-size: $font_normal !important;
 }
@@ -45,7 +45,7 @@ body,
 }
 
 .DfSummary {
-  margin-top: $space_small;
+  margin: $space_small 0;
 }
 
 .DfPostText {
@@ -157,15 +157,6 @@ body,
   }
 }
 
-.DfCountsPreview {
-  margin-top: $space_tiny;
-  font-size: $font_small;
-
-  .MutedText {
-    margin-right: $space_normal;
-  }
-}
-
 .ui--AddressComponents-info div {
   vertical-align: initial;
 }
@@ -183,7 +174,7 @@ body,
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $space_huge;
+  margin-bottom: $space_normal;
 }
 
 .ui.basic.button:not(.disabled) {
@@ -390,14 +381,26 @@ hr {
   }
 }
 
-.DfCountsPreview {
-  a {
-    margin-right: $space_tiny;
-  }
-}
-
 .ui.attached:not(.message)+.ui.attached.segment:not(.top) {
   border: none;
+}
+
+.DfCountsPreview {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: $space_tiny;
+  font-size: $font_small;
+
+  .MutedText {
+    margin-right: $space_normal;
+  }
+
+  a,
+  span {
+    color: rgba(34, 36, 38, .8) !important;
+    font-size: $font_small;
+    margin-right: $space_normal;
+  }
 }
 
 .DfPostPreview,
@@ -420,33 +423,13 @@ hr {
     width: 95%;
   }
 
+  .DfCountsPreview {
+    justify-content: flex-end;
+  }
+
   .ui.button {
     min-width: initial;
     max-height: initial;
-  }
-}
-
-
-.DfCountsPreview {
-  margin-top: 0;
-
-  a,
-  span {
-    color: rgba(34, 36, 38, .8) !important;
-    font-size: $font_small
-  }
-}
-
-.DfCountsPreview {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: $space_tiny;
-  margin-bottom: $space_tiny;
-
-  a,
-  span {
-    color: rgba(34, 36, 38, .8) !important;
-    font-size: $font_small;
   }
 }
 
@@ -488,10 +471,6 @@ hr {
     i:not(.DfVoter) {
       margin-right: .35rem;
     }
-  }
-
-  .DfCountsPreview {
-    justify-content: flex-end;
   }
 
   .ui.tiny.button.basic.DfAction {
@@ -1052,6 +1031,10 @@ hr {
 
   .ant-menu-item:not(:last-child) {
     margin-bottom: 4px;
+  }
+
+  .ant-badge {
+    margin-left: $space_mini;
   }
 }
 
