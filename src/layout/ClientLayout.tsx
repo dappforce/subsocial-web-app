@@ -30,18 +30,20 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
       <BlockAuthors>
         <Events>
           <MyAccountProvider>
-            <Signer>
-              <Status
-                queueAction={queueAction}
-                stqueue={stqueue}
-                txqueue={txqueue}
-              />
-              <Navigation>
-                {children}
-              </Navigation>
-            </Signer>
-            <ConnectingOverlay />
-            <AccountsOverlay />
+            <NotifCounterProvider>
+              <Signer>
+                <Status
+                  queueAction={queueAction}
+                  stqueue={stqueue}
+                  txqueue={txqueue}
+                />
+                <Navigation>
+                  {children}
+                </Navigation>
+              </Signer>
+              <ConnectingOverlay />
+              <AccountsOverlay />
+            </NotifCounterProvider>
           </MyAccountProvider>
           <Connecting />
         </Events>

@@ -322,7 +322,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const api = await getApi();
   const idOrSlug = blogId as string
   const blogIdFromUrl = await getBlogId(api, idOrSlug)
-  const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
+  const postData = await loadPostData(api, new BN(postId as string)) as PostData;
   const { post } = postData
 
   // Post was not found:
@@ -391,7 +391,7 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await ipfs.findPost(post.ipfs_hash);
   if (!ipfsContent) return {} as PostExtContent;
 
-  const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
+  const summary = summarize(ipfsContent.body, SUMMARY_MAX_SIZE);
   return {
     ...ipfsContent,
     summary

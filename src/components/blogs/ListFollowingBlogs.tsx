@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { BlogId, Blog } from '@subsocial/types/substrate/interfaces/subsocial';
+import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';

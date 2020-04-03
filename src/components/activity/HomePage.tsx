@@ -1,7 +1,6 @@
 import BN from 'bn.js';
 import React from 'react';
 
-import { ApiProps } from '@polkadot/react-api/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { BlogId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
@@ -11,8 +10,8 @@ import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewP
 import { NextPage } from 'next';
 import { getApi } from '../utils/SubstrateApi';
 
-const ZERO = new BlogId(0);
-const FIVE = new BlogId(5);
+const ZERO = new BN(0);
+const FIVE = new BN(5);
 
 type Props = {
   blogsData: BlogData[],
@@ -54,9 +53,6 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const api = await getApi();
   const nextBlogId = await api.query.social.nextBlogId() as BlogId;
   const nextPostId = await api.query.social.nextPostId() as PostId;
-  const getLastNIds = (nextId: BN, size: BN): BN[] => {
-    const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
-    const latestIds = new Array<BN>(initIds).fill(ZERO);
 
   const latestBlogIds = getLastNIds(nextBlogId, FIVE);
   const loadBlogs = latestBlogIds.map(id => loadBlogData(api, id as BlogId));

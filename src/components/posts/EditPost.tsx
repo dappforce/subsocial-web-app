@@ -23,6 +23,7 @@ import { TxCallback } from '../utils/types';
 import { PostExtension, RegularPost, PostUpdate } from '@subsocial/types/substrate/classes';
 import { Post, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
+import { ViewBlog } from '../blogs/ViewBlog';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
@@ -35,7 +36,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
   body: Yup.string()
     // .min(p.minTextLen, `Your post is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.postMaxLen.toNumber(), `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
+    .max(p.postMaxLen, `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
     .required('Post body is required'),
 
   image: Yup.string()
@@ -45,7 +46,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
 type ValidationProps = {
   // postMaxLen: number,
-  postMaxLen: U32
+  postMaxLen: number
 };
 
 type OuterProps = ValidationProps & {
@@ -108,7 +109,7 @@ const InnerForm = (props: FormProps) => {
 
   const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
 
-  const goToView = (id: PostId) => {
+  const goToView = (id: BN) => {
     Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 

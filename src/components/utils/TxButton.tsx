@@ -14,7 +14,7 @@ import { assert, isFunction, isUndefined } from '@polkadot/util';
 
 import Button from '@polkadot/react-components/Button';
 import { QueueConsumer } from '@polkadot/react-components/Status/Context';
-import { useStorybookContext } from '../stories/StorybookContext';
+import { useStorybookContext } from './StorybookContext';
 import { MyAccountProps } from './MyAccount';
 import { isClientSide } from '.';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
