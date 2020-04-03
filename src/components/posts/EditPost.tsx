@@ -20,7 +20,10 @@ import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { Collapse } from 'antd';
+import { ViewBlog } from '../blogs/ViewBlog';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
 const { Panel } = Collapse;
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
@@ -102,8 +105,10 @@ const InnerForm = (props: FormProps) => {
     canonical
   } = values;
 
+  const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
+
   const goToView = (id: PostId) => {
-    Router.push(`/blogs/${blogId}/posts/${id}`).catch(console.log);
+    Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
@@ -204,15 +209,33 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>}
     </Form>;
 
-  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : '';
+  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
+
+  const formTitle = () =>
+    <>
+      <a href={`/blogs/${preparedBlogId}`}>
+        <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
+      </a>
+      <span style={{ margin: '0 .75rem' }}>/</span>
+      {sectionTitle}
+    </>
+
+  const editRegularPost = () =>
+    <Section className='EditEntityBox' title={formTitle()}>
+      {form}
+    </Section>
+  
+  const editSharedPost = () =>
+    <div style={{ marginTop: '1rem' }}>{form}</div>
 
   return onlyTxButton
     ? renderTxButton()
     : <>
       <HeadMeta title={sectionTitle}/>
-      <Section className='EditEntityBox' title={sectionTitle}>
-        {form}
-      </Section>
+      {isRegularPost
+        ? editRegularPost()
+        : editSharedPost()
+      }
     </>;
 };
 

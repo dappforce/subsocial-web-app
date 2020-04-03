@@ -93,6 +93,7 @@
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-console": "^1.2.1",
     "@storybook/react": "^5.2.5",
+    "@subsocial/config": "^0.1.2",
     "@types/faker": "^4.1.7",
     "@types/file-saver": "^2.0.0",
     "@types/moment-timezone": "^0.5.12",

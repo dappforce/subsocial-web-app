@@ -1,0 +1,36 @@
+@import '../../utils/styles/subsocial-vars.css';
+
+.SpacePreview {
+  .SPHead {
+    color: $color_muted;
+    font-weight: 500;
+    font-size: $font_normal;
+    line-height: $space_big;
+    text-transform: uppercase;
+    margin: 0 $space_normal $space_tiny;
+  }
+
+  .SPitems {
+    background-color: #fff;
+    border: 1px solid $color_light_border;
+    box-sizing: border-box;
+    border-radius: 2px;
+    margin-bottom: $space_huge;
+    padding: $space_normal $space_big;
+
+    .SPitem {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $space_normal;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .SPbutton.unfollowed span {
+    color: #fff;
+  }
+}

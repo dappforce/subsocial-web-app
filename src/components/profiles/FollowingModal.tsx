@@ -18,8 +18,8 @@ const InnerFollowingModal = (props: Props) => {
   const [ open, setOpen ] = useState(false);
 
   const renderFollowing = () => {
-    return following && following.map((account, index) =>
-      <div key={index} className='DfModal'>
+    return following && following.map((account) =>
+      <div key={account.toString()} className='DfModal'>
         <AddressComponents
           value={account}
           isShort={true}

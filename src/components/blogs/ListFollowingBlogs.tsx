@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AccountId } from '@polkadot/types';
-import { BlogId, Blog } from '../types';
+import { BlogId } from '../types';
 import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -38,7 +38,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   );
 };
 
-ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
+ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProps> => {
   const { query: { address } } = props;
   const api = await getApi();
   const followedBlogsData = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string)) as unknown as BlogId[];
@@ -62,12 +62,12 @@ export const RenderFollowedList = (props: Props) => {
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
-    ? followedBlogsData.map((item, index) =>
-      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.blog as Blog).id}`}>
+    ? followedBlogsData.map((item) => !item.blog ? null :
+      <Link key={item.blog.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.blog.id}`}>
         <a className='DfMenuItem'>
           <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
-              key={index}
+              key={item.blog.id.toString()}
               blogData={item}
               onClick={() => {
                 isMobile && toggle();

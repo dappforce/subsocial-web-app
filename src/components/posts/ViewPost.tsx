@@ -10,7 +10,7 @@ import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate, summarize } from '../utils/utils';
+import { Loading, formatUnixDate, summarize, getBlogId } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
@@ -27,12 +27,13 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
+
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
-const LIMIT_SUMMARY = isMobile ? 75 : 150;
+const SUMMARY_MAX_SIZE = 150;
 
 type PostVariant = 'full' | 'preview' | 'name only';
 
@@ -169,6 +170,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { blog_id, created: { account, time } } = post;
     return <>
       <AddressComponents
+        withFollowButton={true}
         value={account}
         isShort={true}
         isPadded={false}
@@ -184,6 +186,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       />
     </>;
   };
+
+  const renderBlogPreview = (post: Post) => {
+    if (isEmpty(post)) return null
+
+    const { blog_id } = post
+
+    return <ViewBlog id={blog_id} miniPreview withFollowButton />
+  }
 
   const renderContent = (post: Post, content: PostExtContent) => {
     if (!post || !content) return null;
@@ -280,11 +290,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <RenderDropDownMenu account={created.account}/>
       </div>
       {<StatsPanel id={post.id}/>}
-      {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
         {/* TODO render tags */}
+        {withCreatedBy && renderPostCreator(post)}
+        {renderBlogPreview(post)}
       </div>
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
@@ -311,23 +322,34 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       return renderDetails(content);
     }
     default: {
-      return <div>You should not be here!!!</div>;
+      return <div>You should not be here!</div>;
     }
   }
-  return <div>You should not be here!!!</div>;
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { postId }, req, res } = props;
+  const { query: { blogId, postId }, res } = props;
   const api = await getApi();
+  const idOrSlug = blogId as string
+  const blogIdFromUrl = await getBlogId(api, idOrSlug)
   const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
-  let statusCode = 200
-  if (!postData.post && req) {
-    // "getInitialProps - res.redirect cause server"
-    statusCode = 404
-    if (res) res.statusCode = 404
-    return { statusCode }
+  const { post } = postData
+
+  // Post was not found:
+  if (!post && res) {
+    res.statusCode = 404
+    return { statusCode: 404 }
   }
+
+  const blogIdFromPost = post!.blog_id
+
+  // If blog id of this post is not equal to blog id/slug from URL,
+  // then redirect to the URL with blog id of this post.
+  if (!blogIdFromPost.eq(blogIdFromUrl) && res) {
+    res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
+    res.end()
+  }
+
   const postExtData = await loadExtPost(api, postData.post as Post);
   return {
     postData,
@@ -377,7 +399,7 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
+  const summary = summarize(ipfsContent.body, SUMMARY_MAX_SIZE);
   return {
     ...ipfsContent,
     summary

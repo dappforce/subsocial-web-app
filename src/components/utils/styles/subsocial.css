@@ -5,7 +5,7 @@ body,
   background-color: $color_page_bg !important;
 }
 
-/*Used as hack to fixed React base font-size */
+/* Used as a hack to fixed ReactBase font-size */
 .fontSizeNormal {
   font-size: $font_normal !important;
 }
@@ -17,7 +17,6 @@ body,
   max-width: 728px;
   color: #111;
 }
-
 
 @media (min-width: 1200px) {
   .DfBrand {
@@ -36,7 +35,7 @@ body,
 }
 
 .DfSummary {
-  margin-top: $space_small;
+  margin: $space_small 0;
 }
 
 .DfPostText {
@@ -102,9 +101,13 @@ body,
   font-weight: bold;
 }
 
+.DfProfileTitle {
+  margin-bottom: $space_normal;
+}
+
 .ProfileDetails {
   display: flex !important;
-
+  margin-bottom: $space_big;
   .content {
     padding: 0 $space_small;
   }
@@ -148,15 +151,6 @@ body,
   }
 }
 
-.DfCountsPreview {
-  margin-top: $space_tiny;
-  font-size: $font_small;
-
-  .MutedText {
-    margin-right: $space_normal;
-  }
-}
-
 .ui--AddressComponents-info div {
   vertical-align: initial;
 }
@@ -174,7 +168,7 @@ body,
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $space_huge;
+  margin-bottom: $space_normal;
 }
 
 .ui.basic.button:not(.disabled) {
@@ -261,9 +255,6 @@ form.ui.form.DfForm.EditEntityForm {
     max-width: 100%;
   }
 
-  &.DfSection {
-    margin-top: $space_normal;
-  }
 }
 
 .DfCommentContent {
@@ -336,7 +327,7 @@ hr {
 
 .DfSocialLinks {
   margin-top: $space_small;
-  font-size: $font_normal;
+  font-size: $font_big;
 
   a {
     margin-right: $space_small;
@@ -380,14 +371,26 @@ hr {
   }
 }
 
-.DfCountsPreview {
-  a {
-    margin-right: $space_tiny;
-  }
-}
-
 .ui.attached:not(.message)+.ui.attached.segment:not(.top) {
   border: none;
+}
+
+.DfCountsPreview {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: $space_tiny;
+  font-size: $font_small;
+
+  .MutedText {
+    margin-right: $space_normal;
+  }
+
+  a,
+  span {
+    color: rgba(34, 36, 38, .8) !important;
+    font-size: $font_small;
+    margin-right: $space_normal;
+  }
 }
 
 .DfPostPreview,
@@ -410,33 +413,13 @@ hr {
     width: 95%;
   }
 
+  .DfCountsPreview {
+    justify-content: flex-end;
+  }
+
   .ui.button {
     min-width: initial;
     max-height: initial;
-  }
-}
-
-
-.DfCountsPreview {
-  margin-top: 0;
-
-  a,
-  span {
-    color: rgba(34, 36, 38, .8) !important;
-    font-size: $font_small
-  }
-}
-
-.DfCountsPreview {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: $space_tiny;
-  margin-bottom: $space_tiny;
-
-  a,
-  span {
-    color: rgba(34, 36, 38, .8) !important;
-    font-size: $font_small;
   }
 }
 
@@ -478,10 +461,6 @@ hr {
     i:not(.DfVoter) {
       margin-right: .35rem;
     }
-  }
-
-  .DfCountsPreview {
-    justify-content: flex-end;
   }
 
   .ui.tiny.button.basic.DfAction {
@@ -623,9 +602,14 @@ hr {
 
 .ui.modal .scrolling.content {
   text-align: left;
+  .ReactionsItem {
+    margin: $space_normal 0;
+  }
 }
 
 .ui--AddressComponents {
+  width: 70%;
+  
   .ui--IdentityIcon {
     margin-left: 0;
     margin-right: $space_small;
@@ -633,6 +617,10 @@ hr {
 
   .AddressComponents.follow {
     float: right;
+
+    .button {
+      margin: 0;
+    }
   }
 
   .ui--AddressComponents-info {
@@ -726,6 +714,12 @@ hr {
 
 .DfSection {
   margin-bottom: $space_normal;
+
+  .viewblog-minipreview {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+  }
 
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
@@ -1100,7 +1094,7 @@ hr {
 }
 
 .DfCreator {
-  font-size: $space_normal;
+  font-size: $font_normal;
   margin-top: $space_normal;
 
   i {
@@ -1115,7 +1109,7 @@ hr {
 }
 
 .DfStatItem {
-  font-size: $space_normal;
+  font-size: $font_normal;
   display: inline;
   margin-right: $space_tiny;
 }

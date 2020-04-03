@@ -8,9 +8,10 @@ import ViewForum from './ViewForum';
 import faker from 'faker';
 
 import './style.css';
+import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import ReorderNavTabs, { Values } from './reorder-navtabs/ReorderNavTabs';
+import ReorderNavTabs, { Props } from './reorder-navtabs/ReorderNavTabs';
 
 const { SubMenu } = Menu;
 
@@ -22,8 +23,7 @@ const items = [ { avatar: faker.image.avatar(), name: faker.company.companyName(
   { avatar: faker.image.avatar(), name: faker.company.companyName() },
   { avatar: faker.image.avatar(), name: faker.company.companyName() } ];
 
-const renderMenu = items.map((d, index) =>
-  <Menu.Item key={index}>
+  <Menu.Item key={d.name}>
     <Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
     <span>{d.name}</span>
   </Menu.Item>);
@@ -89,6 +89,9 @@ type MenuItem = {
   image: string
 };
 
+import AddTeamMemberFormik from "./AddTeamMember/AddTeamMemberFormik";
+import {CompanyData} from "./AddTeamMember/AddTeamMemberFormik";
+
 const MenuItems: MenuItem[] = [
   {
     name: 'All blogs',
@@ -140,7 +143,7 @@ export const Navigations = () => {
           <Avatar style={{ marginRight: '.5rem' }} src={substrateLogo} />
           <span style={{ fontSize: '1.5rem' }}>Subsocial</span>
         </Menu.Item>
-        {MenuItems.map((item, index) => <Menu.Item key={index}>
+        {MenuItems.map((item) => <Menu.Item key={item.name}>
           <Icon type={item.image} />
           <span>{item.name}</span>
         </Menu.Item>)}
@@ -153,12 +156,33 @@ export const ListForum = () => {
   return <ListForumTopics data={[]} />
 };
 
-export const Forum = () => {
-  return <ViewForum />;
-}
+export const Forum = () => <ViewForum />
+
+export const AddTeamMember = () => {
+  const companyData:CompanyData = [{
+    name: 'Web3 Foundation',
+    id: 1,
+    img: 'https://storage.googleapis.com/job-listing-logos/2ae39131-4f27-4944-b9f2-cd7a2e4e2bef.png',
+  }]
+
+  const employerTypesData = [
+    'Full-time',
+    'Part-time',
+    'Self-employed',
+    'Freelance',
+    'Contract',
+    'Internship',
+    'Apprenticeship',
+  ]
+
+  return (<AddTeamMemberFormik
+    companyData={companyData}
+    employerTypesData={employerTypesData}
+  />);
+};
 
 export const ReorderNavTabsExample = () => {
-  const navTabs: Values = {
+  const navTabs: Props = {
     tabs: [
       { id: 1, name: 'first name' },
       { id: 2, name: 'second name' },
