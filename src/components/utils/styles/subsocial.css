@@ -16,6 +16,10 @@ body,
   min-width: 428px;
   max-width: 728px;
   color: #111;
+
+  .DfTags {
+    margin: $space_normal 0;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -168,7 +172,23 @@ body,
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $space_normal;
+  margin-bottom: $space_huge;
+
+  .EPadvanced {
+    margin-bottom: $space_normal;
+    padding-bottom: $space_normal;
+
+    .EPadvacedTitle {
+      cursor: pointer;
+      font-size: $font_normal;
+      font-weight: 700;
+    }
+  }
+
+  .ETGtag{ 
+    background: '#fff';
+    border-style: dashed; 
+  }
 }
 
 .ui.basic.button:not(.disabled) {

@@ -22,7 +22,8 @@ const mockJson: PostContent = {
   title: 'Example post',
   image: '',
   body: 'Description',
-  tags: [ '' ]
+  tags: [ 'qwe', 'asd', 'zxc' ],
+  canonical: '/qwe'
 }
 
 export const NewPost = () =>
