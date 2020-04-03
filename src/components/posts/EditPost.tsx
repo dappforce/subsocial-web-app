@@ -88,7 +88,7 @@ const InnerForm = (props: FormProps) => {
     onlyTxButton = false,
     withButtons = true,
     closeModal,
-    tagsData = [ 'qwe', 'asd', 'zxc' ]
+    tagsData = []
   } = props;
 
   const isRegularPost = extention.value instanceof RegularPost;
