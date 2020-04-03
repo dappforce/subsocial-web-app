@@ -6,7 +6,7 @@ import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostContent } from '../types';
+import { PostId, Post, CommentId, PostContent, CodeBlockValue, BlockValue } from '../types';
 import { nonEmptyStr } from '../utils/index';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 // import { HeadMeta } from '../utils/HeadMeta';
@@ -41,6 +41,7 @@ type PostType = 'regular' | 'share';
 
 type PostExtContent = PostContent & {
   summary: string;
+  postBlocks: BlockValue
 };
 
 export type PostData = {
@@ -412,10 +413,18 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
+  const postBlocks: BlockValue[] = []
+  if (ipfsContent.blocks && ipfsContent.blocks.length > 0) {
+    for (const block of ipfsContent.blocks) {
+      const blockValue = await getJsonFromIpfs<BlockValue | CodeBlockValue>(block.cid)
+      postBlocks.push(blockValue)
+    }
+  }
   // const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
   const summary = 'temp data'
   return {
     ...ipfsContent,
+    postBlocks,
     summary
   };
 };
