@@ -101,9 +101,13 @@ body,
   font-weight: bold;
 }
 
+.DfProfileTitle {
+  margin-bottom: $space_normal;
+}
+
 .ProfileDetails {
   display: flex !important;
-
+  margin-bottom: $space_big;
   .content {
     padding: 0 $space_small;
   }
@@ -251,9 +255,6 @@ form.ui.form.DfForm.EditEntityForm {
     max-width: 100%;
   }
 
-  &.DfSection {
-    margin-top: $space_normal;
-  }
 }
 
 .DfCommentContent {
@@ -326,7 +327,7 @@ hr {
 
 .DfSocialLinks {
   margin-top: $space_small;
-  font-size: $font_normal;
+  font-size: $font_big;
 
   a {
     margin-right: $space_small;
@@ -601,6 +602,9 @@ hr {
 
 .ui.modal .scrolling.content {
   text-align: left;
+  .ReactionsItem {
+    margin: $space_normal 0;
+  }
 }
 
 .ui--AddressComponents {
@@ -1078,7 +1082,7 @@ hr {
 }
 
 .DfCreator {
-  font-size: $space_normal;
+  font-size: $font_normal;
   margin-top: $space_normal;
 
   i {
@@ -1093,7 +1097,7 @@ hr {
 }
 
 .DfStatItem {
-  font-size: $space_normal;
+  font-size: $font_normal;
   display: inline;
   margin-right: $space_tiny;
 }
