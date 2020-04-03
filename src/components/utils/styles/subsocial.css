@@ -608,6 +608,8 @@ hr {
 }
 
 .ui--AddressComponents {
+  width: 70%;
+  
   .ui--IdentityIcon {
     margin-left: 0;
     margin-right: $space_small;
@@ -615,6 +617,10 @@ hr {
 
   .AddressComponents.follow {
     float: right;
+
+    .button {
+      margin: 0;
+    }
   }
 
   .ui--AddressComponents-info {
@@ -708,6 +714,12 @@ hr {
 
 .DfSection {
   margin-bottom: $space_normal;
+
+  .viewblog-minipreview {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+  }
 
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;

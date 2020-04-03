@@ -155,14 +155,17 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   const renderMiniPreview = () => (
-    <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
-      {hasImage
-        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
-        : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
-      }
-      <div className='content'>
-        <div className='handle'>{name}</div>
+    <div className={'viewblog-minipreview'}>
+      <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+        {hasImage
+          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+          : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
+        }
+        <div className='content'>
+          <div className='handle'>{name}</div>
+        </div>
       </div>
+      {withFollowButton && <FollowBlogButton blogId={id} />}
     </div>
   );
 
