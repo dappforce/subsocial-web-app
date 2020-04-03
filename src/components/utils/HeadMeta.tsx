@@ -1,12 +1,14 @@
 import React from 'react';
 import Head from 'next/head';
-import { isEmptyStr } from '.';
+import { isEmptyStr, nonEmptyStr, nonEmptyArr } from '.';
 import { summarize } from './utils';
 
 type HeadMetaProps = {
   title: string,
   desc?: string,
-  image?: string
+  image?: string,
+  canonical?: string,
+  tags?: string[]
 };
 
 // Google typically displays the first 50–60 characters of a title tag.
@@ -30,11 +32,13 @@ export const createTitle = (title: string) => {
 };
 
 export function HeadMeta (props: HeadMetaProps) {
-  const { title, desc = DEFAULT_DESC, image = 'public/subsocial-logo.png' } = props;
+  const { title, desc = DEFAULT_DESC, image = 'public/subsocial-logo.png', canonical, tags } = props;
   const summary = summarize(desc, MAX_DESC_LEN);
   return <div>
     <Head>
       <title>{createTitle(title)}</title>
+      {nonEmptyStr(canonical) && <link rel="canonical" href={canonical} />}
+      {nonEmptyArr(tags) && <meta name="keywords" content={tags?.join(', ')} />}
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={image} />
       <meta property='og:title' content={title} />
