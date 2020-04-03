@@ -15,11 +15,11 @@ import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
-
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Icon } from 'antd';
+import SelectBlogPreview from '../utils/SelectBlogPreview'
+import { LabeledValue } from 'antd/lib/select';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const MAX_TAGS_PER_POST = 10
@@ -60,7 +60,9 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  tagsData?: string[]
+  postMaxLen: U32,
+  myAddress?: string,
+  blogIds?: BlogId[]
 };
 
 type FormValues = PostContent;
@@ -88,7 +90,7 @@ const InnerForm = (props: FormProps) => {
     onlyTxButton = false,
     withButtons = true,
     closeModal,
-    tagsData = []
+    blogIds
   } = props;
 
   const isRegularPost = extention.value instanceof RegularPost;
@@ -111,14 +113,15 @@ const InnerForm = (props: FormProps) => {
     canonical
   } = values;
 
-  const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
-
+  const initialBlogId: BlogId = struct?.blog_id || blogId as BlogId
   const goToView = (id: PostId) => {
     Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
   const [ ipfsHash, setIpfsCid ] = useState('');
-  const [ showAdvanced, setShowAdvaced ] = useState(false)
+  const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
+
+  const preparedBlogId = currentBlogId?.toString()
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
@@ -158,7 +161,7 @@ const InnerForm = (props: FormProps) => {
         // TODO update only dirty values.
         const update = new PostUpdate({
           // TODO setting new blog_id will move the post to another blog.
-          blog_id: new Option(BlogId, null),
+          blog_id: new Option(BlogId, currentBlogId),
           ipfs_hash: new Option(Text, ipfsHash)
         });
         return [ struct.id, update ];
@@ -189,11 +192,28 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
+  const handleBlogSelect = (value: string|number|LabeledValue) => {
+    if (!value) return;
+
+    setCurrentBlogId(new BlogId(value as string))
+  };
+
+  const renderBlogsPreviewDropdown = () => {
+    if (!blogIds) return;
+
+    return <SelectBlogPreview
+      blogIds={blogIds}
+      onSelect={handleBlogSelect}
+      imageSize={24}
+      defaultValue={currentBlogId.toString()} />
+  }
+
   const form =
     <Form className='ui form DfForm EditEntityForm'>
 
       {isRegularPost
         ? <>
+          {renderBlogsPreviewDropdown()}
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
@@ -359,7 +379,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>You have no rights to edit this post</em>;
     }
 
-    return <Component {...props} struct={struct} json={json} />;
+    return <Component {...props} struct={struct} json={json} myAddress={myAddress} />;
   };
 }
 
@@ -383,5 +403,8 @@ export const EditPost = withMulti<OuterProps>(
   withCalls<OuterProps>(
     queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
-  LoadStruct
+  LoadStruct,
+  withCalls<OuterProps>(
+    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+  )
 );
