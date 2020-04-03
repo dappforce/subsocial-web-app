@@ -149,7 +149,7 @@ const BlockPreview = (props: Props) => {
         readOnly={true}
         editorProps={{ $blockScrolling: true }}
         height='200px'
-        width='480px'
+        width='100%'
       />
       break
     }

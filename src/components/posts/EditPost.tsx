@@ -17,7 +17,8 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Dropdown, Menu, Icon /* Upload, message */ } from 'antd';
+import { Dropdown, Menu, Icon, /* Upload, message */ 
+Tabs} from 'antd';
 import '../utils/styles/full-width-content.css'
 import AceEditor from 'react-ace'
 import 'brace/mode/javascript'
@@ -29,10 +30,12 @@ import 'brace/mode/rust'
 import 'brace/theme/github'
 import BlockPreview from './BlockPreview';
 import { ViewBlog } from '../blogs/ViewBlog';
+import { isMobile } from 'react-device-detect';
 // import { UploadChangeParam } from 'antd/lib/upload';
 // import { UploadFile } from 'antd/lib/upload/interface';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+const { TabPane } = Tabs;
 
 const buildSchema = () => Yup.object().shape({
   title: Yup.string()
@@ -595,28 +598,57 @@ const InnerForm = (props: FormProps) => {
 
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={formTitle()}>
-      <div className='EditPostWrapper'>
-        <div className='EditPostForm'>
-          {form}
-        </div>
-        <div className='EditPostPreview'>
-          <div>Preview Data:</div>
-          <div className='DfMd'>
-            <h1>{title}</h1>
-            {image && <img className='DfPostImage' src={image} />}
+      { isMobile
+      ? renderWithTabs()
+      : <div className='EditPostWrapper'>
+          <div className='EditPostForm'>
+            {form}
           </div>
-          {blockValues && blockValues.length !== 0 &&
-            blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
-              key={x.id}
-              block={x}
-              embedData={embedData}
-              setEmbedData={setEmbedData}
-              linkPreviewData={linkPreviewData}
-            />)
-          }
+          <div className='EditPostPreview'>
+            <div>Preview Data:</div>
+            <div className='DfMd'>
+              <h1>{title}</h1>
+              {image && <img className='DfPostImage' src={image} />}
+            </div>
+            {blockValues && blockValues.length !== 0 &&
+              blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
+                key={x.id}
+                block={x}
+                embedData={embedData}
+                setEmbedData={setEmbedData}
+                linkPreviewData={linkPreviewData}
+              />)
+            }
+          </div>
         </div>
-      </div>
+      }
     </Section>
+
+  const renderWithTabs = () =>
+      <Tabs type="card">
+        <TabPane tab="Edit" key="1">
+          <div className='EditPostForm withTabs'>
+            {form}
+          </div>
+        </TabPane>
+        <TabPane tab="Preview" key="2">
+        <div className='EditPostPreview withTabs'>
+            <div className='DfMd'>
+              <h1>{title}</h1>
+              {image && <img className='DfPostImage' src={image} />}
+            </div>
+            {blockValues && blockValues.length !== 0 &&
+              blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
+                key={x.id}
+                block={x}
+                embedData={embedData}
+                setEmbedData={setEmbedData}
+                linkPreviewData={linkPreviewData}
+              />)
+            }
+          </div>
+        </TabPane>
+      </Tabs>
   
   const editSharedPost = () =>
     <div style={{ marginTop: '1rem' }}>{form}</div>

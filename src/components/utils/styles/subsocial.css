@@ -16,6 +16,10 @@ body,
   min-width: 428px;
   max-width: 728px;
   color: #111;
+
+  .ant-tabs-nav-wrap {
+    display: flex;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -919,7 +923,7 @@ hr {
   padding: 0 $space_normal;
   border-bottom: 1px solid $color_light_border;
   position: fixed;
-  z-index: 5;
+  z-index: 7;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1139,6 +1143,11 @@ hr {
   width: 50%;
   margin-right: $space_huge;
 
+  &.withTabs {
+    width: 100%;
+    text-align: left;
+  }
+
   .miniButton {
     font-size: 0.8rem;
     padding: 0 5px;
@@ -1167,6 +1176,11 @@ hr {
 .EditPostPreview {
   width: 50%;
 
+  &.withTabs {
+    width: 100%;
+    text-align: left;
+  }
+
   .EditPostPreviewBlock {
     display: flex;
     margin-top: $space_big;
@@ -1176,8 +1190,8 @@ hr {
     .previewImgWrapper.youtube:before {
       content: url(../../../../public/play_youtube.png);
       position: absolute;
-      top: 100px;
-      left: 220px;
+      top: calc(50% - 96px);
+      left: calc(50% - 48px);
     }
 
     .previewDescription {
