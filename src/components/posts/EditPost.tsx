@@ -56,7 +56,7 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postMaxLen: U32
+  postMaxLen: number
 };
 
 type FormValues = PostContent;
@@ -232,7 +232,7 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
   },
 
   validationSchema: (props: OuterProps) => buildSchema({
-    postMaxLen: props.postMaxLen?.toNumber()
+    postMaxLen: props.postMaxLen
   }),
 
   handleSubmit: values => {
@@ -261,7 +261,7 @@ function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component blogId={new BN(blogId as string)} />;
+      return <Component blogId={new BN(blogId as string)} postMaxLen={1000} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }
@@ -279,7 +279,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
-    const [ struct, setStruct ] = useState(undefined as PostStruct);
+    const [ struct, setStruct ] = useState<Post>();
     const [ trigger, setTrigger ] = useState(false);
     const jsonIsNone = json === undefined;
 

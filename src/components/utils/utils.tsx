@@ -15,7 +15,7 @@ import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { getFirstOrUndefinded } from '@subsocial/api/utils';
+import { getFirstOrUndefinded } from '@subsocial/utils';
 import { Moment } from '@polkadot/types/interfaces';
 
 type PaginationProps = {

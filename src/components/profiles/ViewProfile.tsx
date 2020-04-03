@@ -25,7 +25,7 @@ import { NextPage } from 'next';
 import { ipfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
-import { getFirstOrUndefinded } from '@subsocial/api/utils';
+import { getFirstOrUndefinded } from '@subsocial/utils';
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });

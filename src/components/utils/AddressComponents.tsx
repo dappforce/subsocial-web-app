@@ -30,7 +30,7 @@ import Address from '@polkadot/types/generic/Address';
 import { AccountName } from '@polkadot/react-components';
 import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { getFirstOrUndefinded } from '@subsocial/api/utils';
+import { getFirstOrUndefinded } from '@subsocial/utils';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
