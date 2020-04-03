@@ -55,7 +55,7 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { blogIds } = props
 
-    if (!blogIds) return <NoData description={<span>Blogs not found</span>} />
+    if (!blogIds) return <NoData description={<span>No blogs found</span>} />
 
     const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>()
 
@@ -66,12 +66,12 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
 
         const api = await getApi();
 
-        console.log('blogIds from getInitialProps Select', blogIds)
+        // console.log('blogIds from getInitialProps Select', blogIds)
 
         const loadBlogs = blogIds.map(id => loadBlogData(api, id as BlogId));
         const blogsData = await Promise.all<BlogData>(loadBlogs);
 
-        console.log('blogsData from Select Effect:', blogsData)
+        // console.log('blogsData from Select Effect:', blogsData)
 
         setCurrentBlogsData(blogsData)
       }
@@ -91,7 +91,7 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
       }
     })
 
-    if (!preparedBlogsData) return <NoData description={<span>Blogs not found</span>} />
+    if (!preparedBlogsData) return <NoData description={<span>No blogs found</span>} />
 
     return <Component preparedBlogsData={preparedBlogsData} {...props} />
   }

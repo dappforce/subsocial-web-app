@@ -193,7 +193,6 @@ const InnerForm = (props: FormProps) => {
   );
 
   const handleBlogSelect = (value: string|number|LabeledValue) => {
-    console.log('value', value)
     if (!value) return;
 
     setCurrentBlogId(new BlogId(value as string))
