@@ -14,6 +14,8 @@ interface OtherProps {
   hasError?: boolean
 }
 
+const VISIBLE_TAG_CHARS = 20
+
 const EditableTagGroup = (props: OtherProps) => {
   const { setFieldValue, tags, tagsData, label, name, hasError } = props
 
@@ -48,10 +50,10 @@ const EditableTagGroup = (props: OtherProps) => {
       <label htmlFor={name as string}>{nonEmptyStr(label) && label + ':'}</label>
       <div className='ui--Labelled-content'>
         {tags.map((tag) => {
-          const isLongTag = tag.length > 20;
+          const isLongTag = tag.length > VISIBLE_TAG_CHARS;
           const tagElem = (
             <Tag key={tag} closable={true} onClose={() => handleClose(tag)}>
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              {isLongTag ? `${tag.slice(0, VISIBLE_TAG_CHARS)}...` : tag}
             </Tag>
           );
           return isLongTag ? (
