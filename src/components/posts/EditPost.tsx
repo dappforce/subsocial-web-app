@@ -19,12 +19,10 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Collapse } from 'antd';
-import { ViewBlog } from '../blogs/ViewBlog';
-
+import { Icon } from 'antd';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const { Panel } = Collapse;
+const MAX_TAGS_PER_POST = 10
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
   title: Yup.string()
@@ -62,6 +60,7 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
+  tagsData?: string[]
 };
 
 type FormValues = PostContent;
@@ -89,7 +88,7 @@ const InnerForm = (props: FormProps) => {
     onlyTxButton = false,
     withButtons = true,
     closeModal,
-    tagsData = [ 'qwe', 'asd', 'zxc' ]
+    tagsData = []
   } = props;
 
   const isRegularPost = extention.value instanceof RegularPost;
@@ -206,11 +205,15 @@ const InnerForm = (props: FormProps) => {
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
 
-          <Collapse className={'EditPostCollapse'}>
-            <Panel header="Show Advanced Settings" key="1">
+          <div className="EPadvanced">
+            <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
+              {!showAdvanced ? 'Show' : 'Hide'} Advanced Settings
+              <Icon type={showAdvanced ? 'up' : 'down'} />
+            </div>
+            {showAdvanced &&
               <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
-            </Panel>
-          </Collapse>
+            }
+          </div>
         </>
         : <>
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
