@@ -13,7 +13,22 @@ import { Options as QueryOptions } from '@polkadot/ui-api/with/types';
 // Parse URLs
 // --------------------------------------
 
+export const parse = async (url: string): Promise<SiteMetaContent | undefined> => {
+  if (!nonEmptyStr(url) || !isLink(url)) return
+
+  try {
+    const res = await parseUrl(url)
+    console.log('res from parser', res)
+    return res
+  } catch (err) {
+    console.log('err in parse:', err)
+    return undefined
+  }
+}
+
 import queryString from 'query-string';
+import { SiteMetaContent } from '../types';
+import { parseUrl } from './OffchainUtils';
 
 export const ZERO = new BN(0);
 

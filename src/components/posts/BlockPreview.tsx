@@ -82,7 +82,6 @@ const BlockPreview = (props: Props) => {
         />
       }
       case 'twitter': {
-        console.log('twitter works')
         return <Tweet tweetId={embedData?.data}/>
       }
       case 'default': {
@@ -141,6 +140,11 @@ const BlockPreview = (props: Props) => {
     }
     case 'code': {
       const { lang } = x as CodeBlockValue
+      if (typeof window === 'undefined') {
+        element = <pre>{x.data}</pre>
+        break
+      }
+
       element = <AceEditor
         mode={lang || 'javascript'}
         theme="github"
@@ -151,6 +155,7 @@ const BlockPreview = (props: Props) => {
         height='200px'
         width='100%'
       />
+
       break
     }
     default: {

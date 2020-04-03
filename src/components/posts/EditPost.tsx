@@ -5,14 +5,14 @@ import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { addJsonToIpfs, getJsonFromIpfs, parseUrl } from '../utils/OffchainUtils';
+import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue, PostBlockKind, CodeBlockValue, PreviewData, EmbedData, SiteMetaContent } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { queryBlogsToProp, nonEmptyStr, isLink, TWITTER_REGEXP } from '../utils/index';
+import { queryBlogsToProp, TWITTER_REGEXP, parse } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
@@ -255,19 +255,6 @@ const InnerForm = (props: FormProps) => {
       txSuccessCb={onTxSuccess}
     />
   );
-
-  const parse = async (url: string): Promise<SiteMetaContent | undefined> => {
-    if (!nonEmptyStr(url) || !isLink(url)) return
-
-    try {
-      const res = await parseUrl(url)
-      console.log('res from parser', res)
-      return res
-    } catch (err) {
-      console.log('err in parse:', err)
-      return undefined
-    }
-  }
 
   const getNewBlockId = (arr: any[]) => {
     const res = Math.max.apply(null, arr.map((o) => o.id))

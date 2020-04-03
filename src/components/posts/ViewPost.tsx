@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-// import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostContent, CodeBlockValue, BlockValue } from '../types';
-import { nonEmptyStr } from '../utils/index';
+import { PostId, Post, CommentId, PostContent, CodeBlockValue, BlockValue, EmbedData, PreviewData } from '../types';
+import { nonEmptyStr, parse } from '../utils/index';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
-// import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
@@ -26,7 +24,9 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
+import HeadMeta from '../utils/HeadMeta';
 
+const BlockPreview = dynamic(() => import('./BlockPreview'), { ssr: false });
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -41,7 +41,7 @@ type PostType = 'regular' | 'share';
 
 type PostExtContent = PostContent & {
   summary: string;
-  postBlocks: BlockValue
+  blockValues: Array<BlockValue | CodeBlockValue>
 };
 
 export type PostData = {
@@ -108,6 +108,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
+  const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
+  const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
 
   const originalPost = postExtData && postExtData.post;
   const [ originalContent, setOriginalContent ] = useState(postExtData && postExtData.initialContent);
@@ -121,6 +123,22 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     return () => { isSubscribe = false; };
   }, [ false ]);
+
+  useEffect(() => {
+    const firstLoad = async () => {
+      const res: PreviewData[] = []
+      for (const x of content.blockValues) {
+        if (x.kind === 'link') {
+          const data = await parse(x.data)
+          if (!data) continue
+          res.push({ id: x.id, data })
+        }
+      }
+      setLinkPreviewData(res)
+    }
+
+    firstLoad()
+  }, [ content ])
 
   type DropdownProps = {
     account: string | AccountId;
@@ -296,9 +314,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderDetails = (content: PostExtContent) => {
-    const { title, /* body, */ image, /* canonical, tags */ } = content;
+    const { title, image, canonical, tags, blockValues } = content;
     return <Section className='DfContentPage'>
-      {/* <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} /> */}
+      {<HeadMeta title={title} desc={''} image={image} canonical={canonical} tags={tags} /> }
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -308,8 +326,18 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        {/* <DfMd source={body} /> */}
-        {/* TODO render tags */}
+        {blockValues && blockValues.length > 0 &&
+          blockValues.map((x: BlockValue | CodeBlockValue) => {
+            return <BlockPreview
+              key={x.id}
+              block={x}
+              embedData={embedData}
+              setEmbedData={setEmbedData}
+              linkPreviewData={linkPreviewData}
+            />
+          })
+        }
+        {renderTags(content)}
       </div>
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
@@ -413,18 +441,18 @@ export const getTypePost = (post: Post): PostType => {
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const postBlocks: BlockValue[] = []
+  const blockValues = []
   if (ipfsContent.blocks && ipfsContent.blocks.length > 0) {
     for (const block of ipfsContent.blocks) {
       const blockValue = await getJsonFromIpfs<BlockValue | CodeBlockValue>(block.cid)
-      postBlocks.push(blockValue)
+      blockValues.push(blockValue)
     }
   }
   // const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
   const summary = 'temp data'
   return {
     ...ipfsContent,
-    postBlocks,
+    blockValues,
     summary
   };
 };
