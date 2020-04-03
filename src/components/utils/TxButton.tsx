@@ -76,7 +76,6 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
       <Button
         className={className}
         tooltip={tooltip}
-        icon={icon as string}
         isBasic={isBasic}
         isDisabled={isSending || isDisabled || needsAccount}
         isLoading={isSending}

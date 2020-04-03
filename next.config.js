@@ -1,3 +1,5 @@
+/* eslint-disable node/no-deprecated-api */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const withCSS = require('@zeit/next-css');
 const withImages = require('next-images');
 const withPlugins = require('next-compose-plugins');
@@ -9,15 +11,17 @@ require('dotenv').config();
 
 // fix: prevents error when .css files are required by node
 if (typeof require !== 'undefined') {
-  require.extensions['.css'] = (file) => {};
-  require.extensions['.svg'] = (file) => {};
-  require.extensions['.gif'] = (file) => {};
-  require.extensions['.png'] = (file) => {};
+  require.extensions['.css'] = () => {};
+  require.extensions['.svg'] = () => {};
+  require.extensions['.gif'] = () => {};
+  require.extensions['.png'] = () => {};
 }
 
 const nextConfig = {
+  exportTrailingSlash: true,
+  assetPrefix: './',
   target: 'server',
-  webpack: (config, { dev }) => {
+  webpack: (config) => {
     config.module.rules.push({
       test: /\.(raw)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
       use: 'raw-loader'
@@ -27,19 +31,25 @@ const nextConfig = {
   }
 };
 
-module.exports = withPlugins([withImages, withCSS({
-  webpack (config) {
+module.exports = withPlugins([ withImages, withCSS({
+  webpack (config, { isServer }) {
+
+    if (!isServer) {
+      config.node = {
+        fs: 'empty'
+      }
+    }
 
     config.plugins = config.plugins || []
-    
+
     config.plugins = [
       ...config.plugins,
 
       // Read the .env file
       new Dotenv({
         path: path.join(__dirname, '.env'),
-        systemvars: true, // Required by Docker
-      }),
+        systemvars: true // Required by Docker
+      })
     ]
 
     config.module.rules.push({
@@ -76,5 +86,4 @@ module.exports = withPlugins([withImages, withCSS({
       ]
     })
     return config
-  }})], nextConfig);
-
+  } }) ], nextConfig);

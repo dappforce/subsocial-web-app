@@ -24,6 +24,7 @@ import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { CommentContent } from '@subsocial/types/offchain';
 import { CommentUpdate } from '@subsocial/types/substrate/classes';
+import U32 from '@polkadot/types/primitive/U32';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
@@ -216,7 +217,6 @@ type LoadStructProps = OuterProps & {
 };
 
 type StructJson = CommentContent | undefined;
-
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
