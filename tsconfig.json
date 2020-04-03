@@ -1,7 +1,7 @@
 {
   "extends": "./node_modules/@polkadot/dev/config/tsconfig",
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "preserve",
     "skipLibCheck": true,
     "baseUrl": ".",
     "lib": [
