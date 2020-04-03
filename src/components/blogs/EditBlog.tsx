@@ -38,8 +38,8 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
   slug: Yup.string()
     .required('Slug is required')
     .matches(SLUG_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(p.slugMinLen, `Slug is too short. Minimum length is ${p.slugMinLen} chars.`)
-    .max(p.slugMaxLen, `Slug is too long. Maximum length is ${p.slugMaxLen} chars.`),
+    .min(p.slugMinLen || NAME_MIN_LEN, `Slug is too short. Minimum length is ${p.slugMinLen} chars.`)
+    .max(p.slugMaxLen || NAME_MAX_LEN, `Slug is too long. Maximum length is ${p.slugMaxLen} chars.`),
 
   name: Yup.string()
     .required('Name is required')
@@ -51,22 +51,19 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
     .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
 
   desc: Yup.string()
-    .max(p.blogMaxLen, `Description is too long. Maximum length is ${p.blogMaxLen} chars.`)
+    .max(p.blogMaxLen || URL_MAX_LEN, `Description is too long. Maximum length is ${p.blogMaxLen} chars.`)
 });
 
 type ValidationProps = {
-  blogMaxLen: number;
-  slugMinLen: number;
-  slugMaxLen: number;
+  blogMaxLen?: number;
+  slugMinLen?: number;
+  slugMaxLen?: number;
 };
 
 type OuterProps = ValidationProps & {
   id?: BN;
   struct?: Blog;
   json?: BlogContent;
-  blogMaxLen: U32;
-  slugMinLen: U32;
-  slugMaxLen: U32;
 };
 
 type FormValues = BlogContent & {
@@ -219,9 +216,9 @@ const EditForm = withFormik<OuterProps, FormValues>({
   },
 
   validationSchema: (props: OuterProps) => buildSchema({
-    blogMaxLen: props.blogMaxLen?.toNumber(),
-    slugMinLen: props.slugMinLen?.toNumber(),
-    slugMaxLen: props.slugMaxLen?.toNumber()
+    blogMaxLen: props.blogMaxLen,
+    slugMinLen: props.slugMinLen,
+    slugMaxLen: props.slugMaxLen
   }),
 
   handleSubmit: values => {
@@ -234,7 +231,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component id={new BN(blogId as string)} />;
+      return <Component id={new BN(blogId as string)}/>;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }

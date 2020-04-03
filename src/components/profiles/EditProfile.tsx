@@ -86,8 +86,6 @@ export type OuterProps = MyAccountProps & ValidationProps & {
   ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   requireProfile?: boolean,
-  usernameMinLen: U32,
-  usernameMaxLen: U32
 };
 
 type FormValues = ProfileContent & {
@@ -317,8 +315,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
   },
 
   validationSchema: (props: OuterProps) => buildSchema({
-    usernameMinLen: props.usernameMinLen.toNumber(),
-    usernameMaxLen: props.usernameMaxLen.toNumber()
+    usernameMinLen: props.usernameMinLen,
+    usernameMaxLen: props.usernameMaxLen
   }),
 
   handleSubmit: values => {
