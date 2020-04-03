@@ -31,18 +31,26 @@ import 'brace/theme/github'
 import BlockPreview from './BlockPreview';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { isMobile } from 'react-device-detect';
+import SelectBlogPreview from '../utils/SelectBlogPreview'
+import { LabeledValue } from 'antd/lib/select';
+import EditableTagGroup from '../utils/EditableTagGroup'
 // import { UploadChangeParam } from 'antd/lib/upload';
 // import { UploadFile } from 'antd/lib/upload/interface';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
 
+const MAX_TAGS_PER_POST = 10
+
 const buildSchema = () => Yup.object().shape({
   title: Yup.string()
     .required('Post title is required'),
-
+  tags: Yup.array()
+    .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`),
   image: Yup.string()
-    .url('Image must be a valid URL.')
+    .url('Image must be a valid URL.'),
+  canonical: Yup.string()
+    .url('Canonical must be a valid URL.')
 });
 
 type ValidationProps = {};
@@ -61,6 +69,9 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
+  myAddress?: string,
+  blogIds?: BlogId[],
+  tagsData?: string[]
 };
 
 type FormValues = PostContent & BlockValues;
@@ -87,7 +98,9 @@ const InnerForm = (props: FormProps) => {
     resetForm,
     onlyTxButton = false,
     withButtons = true,
-    closeModal
+    closeModal,
+    blogIds,
+    tagsData = [ 'qwe', 'asd', 'zxc' ]
   } = props;
 
   const isRegularPost = extention.value instanceof RegularPost;
@@ -110,6 +123,7 @@ const InnerForm = (props: FormProps) => {
     canonical
   } = values;
 
+  const initialBlogId: BlogId = struct?.blog_id || blogId as BlogId
   const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
 
   const goToView = (id: PostId) => {
@@ -123,6 +137,7 @@ const InnerForm = (props: FormProps) => {
   // const [ imageBlocks, setImageBlocks ] = useState<{id: number, cid: string}[]>([])
   const [ firstload, setFirstload ] = useState(false)
   const [ isAdvanced, setIsAdvanced ] = useState(false)
+  const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
 
   const langs = [ 'javascript', 'typescript', 'html', 'scss', 'rust', 'powershell' ]
 
@@ -210,7 +225,7 @@ const InnerForm = (props: FormProps) => {
         // TODO update only dirty values.
         const update = new PostUpdate({
           // TODO setting new blog_id will move the post to another blog.
-          blog_id: new Option(BlogId, null),
+          blog_id: new Option(BlogId, currentBlogId),
           ipfs_hash: new Option(Text, ipfsHash)
         });
         return [ struct.id, update ];
@@ -275,8 +290,8 @@ const InnerForm = (props: FormProps) => {
 
     if (afterIndex === undefined) {
       setFieldValue('blockValues', [
-        ...blockValues,
-        defaultBlockValue
+        defaultBlockValue,
+        ...blockValues
       ])
       return
     }
@@ -539,11 +554,29 @@ const InnerForm = (props: FormProps) => {
     setIsAdvanced(!isAdvanced)
   }
 
+  const handleBlogSelect = (value: string|number|LabeledValue) => {
+    if (!value) return;
+
+    setCurrentBlogId(new BlogId(value as string))
+  };
+
+  const renderBlogsPreviewDropdown = () => {
+    if (!blogIds) return;
+
+    return <SelectBlogPreview
+      blogIds={blogIds}
+      onSelect={handleBlogSelect}
+      imageSize={24}
+      defaultValue={currentBlogId.toString()} />
+  }
+
   const form =
     <Form className='ui form DfForm EditEntityForm'>
 
       {isRegularPost
         ? <>
+          {renderBlogsPreviewDropdown()}
+
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
@@ -569,6 +602,7 @@ const InnerForm = (props: FormProps) => {
             </a>
             {isAdvanced && <div>
               <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
+              <EditableTagGroup name='tags' tags={tags} label='Tags' tagsData={tagsData} setFieldValue={setFieldValue} />
             </div>}
           </div>
 
@@ -796,7 +830,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>You have no rights to edit this post</em>;
     }
 
-    return <Component {...props} struct={struct} json={json} mappedBlocks={mappedBlocks} />;
+    return <Component {...props} struct={struct} json={json} mappedBlocks={mappedBlocks} myAddress={myAddress} />;
   };
 }
 
@@ -813,5 +847,8 @@ export const EditPost = withMulti<OuterProps>(
   withCalls<OuterProps>(
     queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
-  LoadStruct
+  LoadStruct,
+  withCalls<OuterProps>(
+    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+  )
 );

@@ -17,6 +17,14 @@ body,
   max-width: 728px;
   color: #111;
 
+  .DfTags {
+    margin: $space_normal 0;
+  }
+
+  .blogMiniPreview {
+    margin: $space_normal 0;
+  }
+
   .ant-tabs-nav-wrap {
     display: flex;
   }
@@ -169,6 +177,22 @@ body,
 
 form.ui.form.DfForm.EditEntityForm {
   margin-bottom: $space_normal;
+
+  .EPadvanced {
+    margin-bottom: $space_normal;
+    padding-bottom: $space_normal;
+
+    .EPadvacedTitle {
+      cursor: pointer;
+      font-size: $font_normal;
+      font-weight: 700;
+    }
+  }
+
+  .ETGtag { 
+    background: '#fff';
+    border-style: dashed; 
+  }
 }
 
 .ui.basic.button:not(.disabled) {
@@ -1124,10 +1148,6 @@ hr {
 .TopMenuAccountPopover {
   left: auto !important;
   right: $space_normal !important;
-}
-
-.EditEntityBox {
-  max-width: 100%;
 }
 
 .EditPostWrapper {
