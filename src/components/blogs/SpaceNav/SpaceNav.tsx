@@ -1,6 +1,6 @@
 import React from 'react'
 import { Menu, Icon } from 'antd'
-import { ProfileContent, NavTab, BlogId } from 'src/components/types'
+import { NavTab, BlogId } from 'src/components/types'
 // import SpacePreview from '../space-preview/SpacePreview'
 import FollowBlogButton from '../../utils/FollowBlogButton'
 import { nonEmptyStr } from '../../utils/index'
@@ -17,7 +17,6 @@ type SpaceContent = {
 
 export interface SpaceNavProps {
   blogId: BlogId,
-  ProfileContent?: ProfileContent,
   navTabs?: NavTab[],
   spaces?: {
     teamMembers?: SpaceContent[]
@@ -47,12 +46,12 @@ const SpaceNav = (props: SpaceNavProps) => {
   const renderMenuItem = (nt: NavTab) => {
     switch (nt.type) {
       case 'by-tag': {
-        const data = nt.content.data as string[]
-        const tags = data.join('+')
-        return <Menu.Item key={nt.id}><a href={`/tags/${tags}`}>{nt.title}</a></Menu.Item>
+        const tags = nt.content.data as string[]
+        return <Menu.Item key={nt.id}><a href={`/tags/${tags.join(',')}`}>{nt.title}</a></Menu.Item>
       }
       case 'url': {
-        return <Menu.Item key={nt.id}><a href={nt.content.data as string}>{nt.title}</a></Menu.Item>
+        const url = nt.content.data as string
+        return <Menu.Item key={nt.id}><a href={url}>{nt.title}</a></Menu.Item>
       }
       default: {
         return undefined
@@ -78,10 +77,7 @@ const SpaceNav = (props: SpaceNavProps) => {
       </div>
       <FollowBlogButton blogId={blogId} />
     </div>
-    <Menu
-      mode="inline"
-      className="SNmenu"
-    >
+    <Menu mode="inline" className="SNmenu">
       <div className='SpaceNavSettings'>
         <Icon type="setting" onClick={goToSpaceNavEdit} />
         <div className="spaceEditTooltip">Edit Menu</div>

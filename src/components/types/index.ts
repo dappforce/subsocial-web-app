@@ -108,11 +108,11 @@ type ContentType = 'by-tag' | 'url'
 
 export interface NavTab {
   id: number
-  title: string
+  type: ContentType
   content: NavTabContent
+  title: string
   description: string
   hidden: boolean
-  type: ContentType
 }
 
 export type BlogContent = {

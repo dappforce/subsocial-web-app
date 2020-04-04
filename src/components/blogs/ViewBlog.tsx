@@ -291,11 +291,11 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       <div className='DfSpacedButtons'>
         <FollowBlogButton blogId={id} />
         <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
-          <Pluralize count={followers} singularText='Follower'/>
+          <Pluralize count={followers} singularText='Follower' />
         </div>
       </div>
 
-      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
+      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
       {renderPostPreviews()}
     </Section>
     <SpaceNav

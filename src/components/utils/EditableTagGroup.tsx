@@ -5,7 +5,7 @@ import { ErrorMessage } from 'formik';
 import { SelectValue } from 'antd/lib/select';
 import { nonEmptyStr } from '.';
 
-interface OtherProps {
+type Props {
   tagsData?: string[],
   name: string,
   label?: string,
