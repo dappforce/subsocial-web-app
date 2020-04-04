@@ -5,7 +5,7 @@ import { NavTab } from 'src/components/types';
 
 export interface Props {
   tabs: NavTab[],
-  onChange: (a: NavTab[]) => void
+  onChange: (tabs: NavTab[]) => void
 }
 
 const ReorderNavTabs = (props: Props) => {

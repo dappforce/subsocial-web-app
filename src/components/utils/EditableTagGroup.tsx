@@ -16,7 +16,7 @@ type Props {
 
 const VISIBLE_TAG_CHARS = 20
 
-const EditableTagGroup = (props: OtherProps) => {
+const EditableTagGroup = (props: Props) => {
   const { setFieldValue, tags, tagsData, label, name, hasError } = props
 
   const [ inputVisible, setInputVisible ] = useState(false)

@@ -1208,9 +1208,11 @@ hr {
   width: 50%;
 }
 
-.NavigationEditor .NavigationEditorForm .NEHidden input,
-.NavigationEditor .NavigationEditorForm .NEHidden select {
-  color: $color_muted !important;
+.NavigationEditor .NavigationEditorForm .NEHidden {
+  input,
+  select {
+    color: $color_muted !important;
+  }
 }
 
 .NavigationEditor .NEButtonsWrapper {
@@ -1222,16 +1224,18 @@ hr {
 .NavigationEditor .NERemoveButton button:hover {
   background-color: #ff0000;
   border-color: #d9d9d9;
-}
-.NavigationEditor .NERemoveButton button:hover span {
-  color: #fff;
+  
+  span {
+    color: #fff;
+  }
 }
 
 .NavigationEditor .NEHideButton {
   margin-bottom: $space_normal;
-}
-.NavigationEditor .NEHideButton button {
-  margin-right: $space_huge;
+  
+  button {
+    margin-right: $space_huge;
+  }
 }
 
 .NavigationEditor .NEAddTab {
@@ -1248,20 +1252,21 @@ hr {
   cursor: pointer;
 }
 
-.NavigationEditor .NESubmit span {
-  color: #fff !important;
-}
-
 .NavigationEditor .NESubmit {
   max-width: 8.5rem;
   width: 100%;
+  
+  span {
+    color: #fff !important;
+  }
 }
 
 .NavigationEditor .NETagsWrapper {
   width: 100%;
-}
-.NavigationEditor .NETagsWrapper input {
-  height: $space_big !important;
+
+  input {
+    height: $space_big !important;
+  }
 }
 
 .NavigationEditor .NEErrorMessage {
@@ -1336,7 +1341,7 @@ hr {
       margin: auto;
 
       &.unfollowed span {
-        color: #FFF;
+        color: #fff;
       }
     }
   }
@@ -1371,8 +1376,5 @@ hr {
         display: flex;
       }
     }
-
-    
   }
-
 } 
