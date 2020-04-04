@@ -245,8 +245,8 @@ const Component: NextPage<Props> = (props: Props) => {
     return renderPreview();
   }
 
-  const noFollowers = !followers.eq(ZERO);
-  const noFollowing = !following.eq(ZERO);
+  const noFollowers = followers.eq(ZERO);
+  const noFollowing = following.eq(ZERO);
 
   return <>
     <HeadMeta title={getName()} desc={about} image={avatar} />
