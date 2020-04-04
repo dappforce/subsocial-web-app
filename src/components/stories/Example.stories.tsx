@@ -11,8 +11,6 @@ import './style.css';
 import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import NavigationEditor, { NavEditorFormProps } from './navigation-editor/NavigationEditor';
-import { PostId, BlogId } from '../types';
 
 const { SubMenu } = Menu;
 
@@ -157,64 +155,6 @@ export const ListForum = () => {
   return <ListForumTopics data={[]} />
 };
 
-export const Forum = () => <ViewForum />
-
-export const AddTeamMember = () => {
-  const companyData:CompanyData = [{
-    name: 'Web3 Foundation',
-    id: 1,
-    img: 'https://storage.googleapis.com/job-listing-logos/2ae39131-4f27-4944-b9f2-cd7a2e4e2bef.png',
-  }]
-
-  const employerTypesData = [
-    'Full-time',
-    'Part-time',
-    'Self-employed',
-    'Freelance',
-    'Contract',
-    'Internship',
-    'Apprenticeship',
-  ]
-
-  return (<AddTeamMemberFormik
-    companyData={companyData}
-    employerTypesData={employerTypesData}
-  />);
-};
-
-export const ReorderNavTabsExample = () => {
-  const navTabs: Props = {
-    tabs: [
-      { id: 1, name: 'first name' },
-      { id: 2, name: 'second name' },
-      { id: 3, name: 'third name' }
-    ]
-  }
-  return <ReorderNavTabs {...navTabs} />
-}
-
-export const NavigationEditorExample = () => {
-  const navProps: NavEditorFormProps = {
-    tagsData: [ 'tag1', 'tag2', 'tag3' ],
-    posts: [
-      { id: new PostId('3'), title: 'Post title (id: 3)' },
-      { id: new PostId('4'), title: 'Post title (id: 4)' }
-    ],
-    blogs: [
-      { id: new BlogId('2'), title: 'Blog title (id: 2)' },
-      { id: new BlogId('3'), title: 'Blog title (id: 3)' }
-    ],
-    navTabs: [
-      { id: 1, title: 'first_name', type: 'by-tag', description: '', content: { data: [ 'first', 'value' ] }, hidden: false },
-      { id: 2, title: 'second_name', type: 'ext-url', description: '', content: { data: 'http://google.com' }, hidden: true },
-      { id: 3, title: 'third_name', type: 'post-url', description: '', content: { data: new PostId('3') }, hidden: false },
-      { id: 4, title: 'fourth_name', type: 'blog-url', description: '', content: { data: new BlogId('2') }, hidden: false },
-      { id: 5, title: 'fifth_name', type: 'by-tag', description: '', content: { data: [ 'fifth', 'value' ] }, hidden: false }
-    ],
-    typesOfContent: [
-      'by-tag', 'ext-url', 'post-url', 'blog-url'
-    ]
-  }
-
-  return <NavigationEditor {...navProps} />
+export const Forum = () => {
+  return <ViewForum />;
 }

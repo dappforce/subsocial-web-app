@@ -1,32 +1,30 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
-import { FormikProps, ErrorMessage } from 'formik';
+import { ErrorMessage } from 'formik';
 import { SelectValue } from 'antd/lib/select';
 import { nonEmptyStr } from '.';
 
-interface OtherProps {
+type Props {
   tagsData?: string[],
-  name?: keyof FormValues,
-  label?: string
+  name: string,
+  label?: string,
+  tags: string[],
+  setFieldValue: (a: string, b: string[]) => void,
+  hasError?: boolean
 }
 
-type FormValues = {
-  tags: string[]
-}
+const VISIBLE_TAG_CHARS = 20
 
-const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
-  const { setFieldValue, values, tagsData, label, name, touched, errors } = props
-  const { tags } = values;
-
-  const hasError = name && touched[name] && errors[name];
+const EditableTagGroup = (props: Props) => {
+  const { setFieldValue, tags, tagsData, label, name, hasError } = props
 
   const [ inputVisible, setInputVisible ] = useState(false)
   const [ inputValue, setInputValue ] = useState('')
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter(tag => tag !== removedTag);
-    setFieldValue(name as string, newTags)
+    setFieldValue(name, newTags)
   };
 
   const showInput = () => {
@@ -52,10 +50,10 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
       <label htmlFor={name as string}>{nonEmptyStr(label) && label + ':'}</label>
       <div className='ui--Labelled-content'>
         {tags.map((tag) => {
-          const isLongTag = tag.length > 20;
+          const isLongTag = tag.length > VISIBLE_TAG_CHARS;
           const tagElem = (
             <Tag key={tag} closable={true} onClose={() => handleClose(tag)}>
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              {isLongTag ? `${tag.slice(0, VISIBLE_TAG_CHARS)}...` : tag}
             </Tag>
           );
           return isLongTag ? (

@@ -1,23 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { List, Icon, Button } from 'antd';
-import './ReorderNavTabs.css'
+import { List, Icon } from 'antd';
+import { NavTab } from 'src/components/types';
 
-interface NavTab {
-  id: number
-  name: string
-}
-
-// TODO rename
 export interface Props {
-  tabs: NavTab[]
+  tabs: NavTab[],
+  onChange: (tabs: NavTab[]) => void
 }
 
 const ReorderNavTabs = (props: Props) => {
-  const initialTabs = props.tabs
+  const { onChange, tabs: initialTabs } = props
 
   const [ tabs, setTabs ] = useState(initialTabs)
-  const [ isNewOrder, setIsNewOrder ] = useState(false)
 
   const reorder = (list: NavTab[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
@@ -26,6 +20,10 @@ const ReorderNavTabs = (props: Props) => {
 
     return result;
   };
+
+  useEffect(() => {
+    setTabs(initialTabs)
+  }, [ initialTabs ])
 
   const onDragEnd = (result: any) => {
     const { destination, source } = result
@@ -48,12 +46,7 @@ const ReorderNavTabs = (props: Props) => {
 
     setTabs(newTabs)
 
-    setIsNewOrder(newTabs.find((tab, i) => tab.id !== initialTabs[i].id) !== undefined)
-  }
-
-  const handleSave = () => {
-    console.warn('Save operation is not implemented yet')
-    console.log('The current order of tabs:', tabs)
+    onChange(newTabs)
   }
 
   return <>
@@ -73,7 +66,7 @@ const ReorderNavTabs = (props: Props) => {
                     >
                       <List.Item>
                         <Icon type="pause" className={'RNTIcon'}/>
-                        <List.Item.Meta title={tab.name} />
+                        <List.Item.Meta title={tab.title} />
                       </List.Item>
                     </div>
                   )}
@@ -85,8 +78,6 @@ const ReorderNavTabs = (props: Props) => {
         )}
       </Droppable>
     </DragDropContext>
-
-    <Button type="primary" disabled={!isNewOrder} onClick={handleSave} className={'RNTSaveButton'}>Save</Button>
   </>
 }
 

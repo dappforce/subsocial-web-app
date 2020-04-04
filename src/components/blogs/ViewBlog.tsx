@@ -28,6 +28,8 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
+import SpaceNav from './SpaceNav/SpaceNav'
+import '../utils/styles/wide-content.css'
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -280,21 +282,28 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </MutedDiv>
   );
 
-  return <Section className='DfContentPage'>
-    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-    <div className='FullProfile'>
-      {renderPreview()}
-    </div>
-    <div className='DfSpacedButtons'>
-      <FollowBlogButton blogId={id} />
-      <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
-        <Pluralize count={followers} singularText='Follower'/>
+  return <div className='ViewBlogWrapper'>
+    <Section className='DfContentPage'>
+      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
+      <div className='FullProfile'>
+        {renderPreview()}
       </div>
-    </div>
+      <div className='DfSpacedButtons'>
+        <FollowBlogButton blogId={id} />
+        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
+          <Pluralize count={followers} singularText='Follower' />
+        </div>
+      </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
-    {renderPostPreviews()}
-  </Section>;
+      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
+      {renderPostPreviews()}
+    </Section>
+    <SpaceNav
+      {...content}
+      blogId={new BlogId(id)}
+      account={account}
+    />
+  </div>
 };
 
 export const loadBlogData = async (api: ApiPromise, blogId: BlogId): Promise<BlogData> => {
