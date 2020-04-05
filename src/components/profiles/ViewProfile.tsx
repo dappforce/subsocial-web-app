@@ -74,22 +74,25 @@ const Component: NextPage<Props> = (props: Props) => {
     fullname,
     avatar,
     email,
-    personal_site,
+    personalSite,
     about,
     facebook,
     twitter,
     linkedIn,
+    medium,
     github,
     instagram
   } = ProfileContent;
 
+  // TODO fix copypasta of social links. Implement via array.
   const hasEmail = email && nonEmptyStr(email);
-  const hasPersonalSite = personal_site && nonEmptyStr(personal_site);
+  const hasPersonalSite = personalSite && nonEmptyStr(personalSite);
   const hasAvatar = avatar && nonEmptyStr(avatar);
   const hasFacebookLink = facebook && nonEmptyStr(facebook);
   const hasTwitterLink = twitter && nonEmptyStr(twitter);
   const hasLinkedInLink = linkedIn && nonEmptyStr(linkedIn);
-  const hasGithubLink = github && nonEmptyStr(github);
+  const hasMediumLink = medium && nonEmptyStr(medium);
+  const hasGitHubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
@@ -177,57 +180,44 @@ const Component: NextPage<Props> = (props: Props) => {
               <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>
               <div className='DfSocialLinks'>
                 {hasEmail &&
-                  <a
-                    href={`mailto:${email}`}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={`mailto:${email}`}>
                     <Icon type='mail' />
                   </a>
                 }
+
+                {/* TODO fix copypasta of social links. Implement via array. */}
+
                 {hasPersonalSite &&
-                  <a
-                    href={personal_site}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={personalSite}>
                     <Icon type='global' />
                   </a>
                 }
                 {hasFacebookLink &&
-                  <a
-                    href={facebook}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={facebook}>
                     <Icon type='facebook' />
                   </a>
                 }
                 {hasTwitterLink &&
-                  <a
-                    href={twitter}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={twitter}>
                     <Icon type='twitter' />
                   </a>}
                 {hasLinkedInLink &&
-                  <a
-                    href={linkedIn}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={linkedIn}>
                     <Icon type='linkedin' />
                   </a>
                 }
-                {hasGithubLink &&
-                  <a
-                    href={github}
-                    target='_blank'
-                  >
+                {hasMediumLink &&
+                  <a target='_blank' href={linkedIn}>
+                    <Icon type='medium' />
+                  </a>
+                }
+                {hasGitHubLink &&
+                  <a target='_blank' href={github}>
                     <Icon type='github' />
                   </a>
                 }
                 {hasInstagramLink &&
-                  <a
-                    href={instagram}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={instagram}>
                     <Icon type='instagram' />
                   </a>
                 }

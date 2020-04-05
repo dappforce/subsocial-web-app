@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
-
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
@@ -18,20 +16,9 @@ import { PostId, CommentId, Comment, CommentUpdate, CommentContent } from '../ty
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
 import { NoData } from '../utils/DataList';
+import { ValidationProps, buildValidationSchema } from './CommentValidation';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-
-  body: Yup.string()
-    // .min(p.minTextLen, `Your comment is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.commentMaxLen, `Your comment is too long. Maximum length is ${p.commentMaxLen} chars.`)
-    .required('Comment body is required')
-});
-
-type ValidationProps = {
-  commentMaxLen: number
-  // maxTextLen: number
-};
 
 type OuterProps = ValidationProps & {
   postId: PostId,
@@ -201,9 +188,7 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    commentMaxLen: props.commentMaxLen?.toNumber()
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things

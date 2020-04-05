@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
@@ -22,42 +21,14 @@ import { ViewBlog } from '../blogs/ViewBlog';
 import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
 import { Icon } from 'antd';
+import { ValidationProps, buildValidationSchema } from './PostValidation';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-
-const MAX_TAGS_PER_POST = 10
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-  title: Yup.string()
-    // .min(p.minTitleLen, `Title is too short. Minimum length is ${p.minTitleLen} chars.`)
-    // .max(p.maxTitleLen, `Title is too long. Maximum length is ${p.maxTitleLen} chars.`)
-    .required('Post title is required'),
-
-  body: Yup.string()
-    // .min(p.minTextLen, `Your post is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.postMaxLen.toNumber(), `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
-    .required('Post body is required'),
-
-  image: Yup.string()
-    // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
-    .url('Image must be a valid URL.'),
-
-  tags: Yup.array()
-    .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`),
-
-  canonical: Yup.string()
-    .url('Canonical must be a valid URL.')
-});
-
-type ValidationProps = {
-  // postMaxLen: number,
-  postMaxLen: U32
-};
 
 type OuterProps = ValidationProps & {
   blogId?: BlogId,
   id?: PostId,
-  extention?: PostExtension,
+  extention?: PostExtension, // TODO fix typo in a word: extention -> extension
   struct?: Post
   json?: PostContent,
   onlyTxButton?: boolean,
@@ -300,9 +271,7 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    postMaxLen: props.postMaxLen
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things

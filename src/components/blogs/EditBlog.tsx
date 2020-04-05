@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
-
-import { Option, Text, U32 } from '@polkadot/types';
+import { Option, Text } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -21,43 +19,9 @@ import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
+import { ValidationProps, buildValidationSchema } from './BlogValidation';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-
-// TODO get next settings from Substrate:
-const SLUG_REGEX = /^[A-Za-z0-9_-]+$/;
-
-const URL_MAX_LEN = 2000;
-
-const NAME_MIN_LEN = 3;
-const NAME_MAX_LEN = 100;
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-
-  slug: Yup.string()
-    .required('Slug is required')
-    .matches(SLUG_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(p.slugMinLen.toNumber(), `Slug is too short. Minimum length is ${p.slugMinLen.toNumber()} chars.`)
-    .max(p.slugMaxLen.toNumber(), `Slug is too long. Maximum length is ${p.slugMaxLen.toNumber()} chars.`),
-
-  name: Yup.string()
-    .required('Name is required')
-    .min(NAME_MIN_LEN, `Name is too short. Minimum length is ${NAME_MIN_LEN} chars.`)
-    .max(NAME_MAX_LEN, `Name is too long. Maximum length is ${NAME_MAX_LEN} chars.`),
-
-  image: Yup.string()
-    .url('Image must be a valid URL.')
-    .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
-
-  desc: Yup.string()
-    .max(p.blogMaxLen.toNumber(), `Description is too long. Maximum length is ${p.blogMaxLen.toNumber()} chars.`)
-});
-
-type ValidationProps = {
-  blogMaxLen: U32;
-  slugMinLen: U32;
-  slugMaxLen: U32;
-};
 
 type OuterProps = ValidationProps & {
   id?: BlogId;
@@ -221,11 +185,7 @@ export const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    blogMaxLen: props.blogMaxLen,
-    slugMinLen: props.slugMinLen,
-    slugMaxLen: props.slugMaxLen
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things
@@ -240,6 +200,7 @@ type StructJson = BlogContent | undefined;
 
 type Struct = Blog | undefined;
 
+// TODO refactor copypasta. See the same function in NavigationEditor
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { structOpt } = props;

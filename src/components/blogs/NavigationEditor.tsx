@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
-import * as Yup from 'yup';
 import { Option, Text } from '@polkadot/types';
 import Section from '../utils/Section';
 import { withCalls, withMulti } from '@polkadot/ui-api';
@@ -20,6 +19,7 @@ import { SubmittableResult } from '@polkadot/api';
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import dynamic from 'next/dynamic';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
+import { validationSchema } from './NavValidation';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -266,22 +266,6 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   </>
 }
 
-// Validation
-const TITLE_MIN_LEN = 2;
-const TITLE_MAX_LEN = 50;
-
-const schema = Yup.object().shape({
-  navTabs: Yup.array()
-    .of(
-      Yup.object().shape({
-        title: Yup.string()
-          .min(TITLE_MIN_LEN, `Title is too short. Min length is ${TITLE_MIN_LEN} chars.`)
-          .max(TITLE_MAX_LEN, `Title is too long. Max length is ${TITLE_MAX_LEN} chars.`)
-          .required('This field is required')
-      })
-    )
-});
-
 export interface NavEditorFormProps {
   struct: Blog;
   json: BlogContent;
@@ -302,7 +286,7 @@ export const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
     }
   },
 
-  validationSchema: schema,
+  validationSchema,
 
   handleSubmit: values => {
     console.log(values)
@@ -317,6 +301,7 @@ type StructJson = BlogContent | undefined;
 
 type Struct = Blog | undefined;
 
+// TODO refactor copypasta. See the same function in EditBlog
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { structOpt } = props;

@@ -597,11 +597,12 @@ export type ProfileContent = {
   fullname: string;
   avatar: string;
   email: string;
-  personal_site: string;
+  personalSite: string;
   about: string;
   facebook: string;
   twitter: string;
   linkedIn: string;
+  medium: string;
   github: string;
   instagram: string;
 };

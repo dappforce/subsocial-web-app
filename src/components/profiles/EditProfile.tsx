@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
-
 import { Option, Text, AccountId, U32 } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
@@ -19,62 +17,9 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+import { ValidationProps, buildValidationSchema } from './ProfileValidation';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-
-// TODO get next settings from Substrate:
-const USERNAME_REGEX = /^[A-Za-z0-9-]+$/;
-
-const URL_MAX_LEN = 2000;
-
-const FULLNAME_MIN_LEN = 2;
-const FULLNAME_MAX_LEN = 100;
-
-const ABOUT_MAX_LEN = 1000;
-
-function urlValidation (name: string) {
-  return Yup.string()
-    .url(`${name} URL is not valid.`)
-    .max(URL_MAX_LEN, `${name} URL is too long. Maximum length is ${URL_MAX_LEN} chars.`);
-}
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-  username: Yup.string()
-    .required('Username is required')
-    .matches(USERNAME_REGEX, 'Username can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(p.usernameMinLen, `Username is too short. Minimum length is ${p.usernameMinLen} chars.`)
-    .max(p.usernameMaxLen, `Username is too long. Maximum length is ${p.usernameMaxLen} chars.`),
-
-  fullname: Yup.string()
-    .min(FULLNAME_MIN_LEN, `Full name is too short. Minimum length is ${FULLNAME_MIN_LEN} chars.`)
-    .max(FULLNAME_MAX_LEN, `Full name is too long. Maximum length is ${FULLNAME_MAX_LEN} chars.`),
-
-  avatar: Yup.string()
-    .url('Avatar must be a valid URL.')
-    .max(URL_MAX_LEN, `Avatar URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
-
-  email: Yup.string()
-    .email('Enter correct email address'),
-
-  personal_site: urlValidation('Personal site'),
-
-  about: Yup.string()
-    .max(ABOUT_MAX_LEN, `Text is too long. Maximum length is ${ABOUT_MAX_LEN} chars.`),
-
-  facebook: urlValidation('Facebook'),
-
-  twitter: urlValidation('Twitter'),
-
-  linkedIn: urlValidation('LinkedIn'),
-
-  github: urlValidation('GitHub'),
-
-  instagram: urlValidation('Instagram')
-});
-
-type ValidationProps = {
-  usernameMinLen: number,
-  usernameMaxLen: number
-};
 
 export type OuterProps = MyAccountProps & ValidationProps & {
   myAddress?: AccountId,
@@ -115,11 +60,12 @@ const InnerForm = (props: FormProps) => {
     fullname,
     avatar,
     email,
-    personal_site,
+    personalSite,
     about,
     facebook,
     twitter,
     linkedIn,
+    medium,
     github,
     instagram
   } = values;
@@ -134,7 +80,19 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
-      const json = { fullname, avatar, email, personal_site, about, facebook, twitter, linkedIn, github, instagram };
+      const json = {
+        fullname,
+        avatar,
+        email,
+        personalSite,
+        about,
+        facebook,
+        twitter,
+        linkedIn,
+        medium,
+        github,
+        instagram
+      };
       addJsonToIpfs(json).then(cid => {
         setIpfsCid(cid);
         sendTx();
@@ -210,7 +168,7 @@ const InnerForm = (props: FormProps) => {
         />
 
         <LabelledText
-          name='personal_site'
+          name='personalSite'
           label='Personal site'
           placeholder='Address for personal site'
           {...props}
@@ -233,6 +191,13 @@ const InnerForm = (props: FormProps) => {
         <LabelledText
           name='linkedIn'
           label='LinkedIn profile'
+          placeholder={shouldBeValidUrlText}
+          {...props}
+        />
+
+        <LabelledText
+          name='medium'
+          label='Medium profile'
           placeholder={shouldBeValidUrlText}
           {...props}
         />
@@ -305,21 +270,19 @@ const EditForm = withFormik<OuterProps, FormValues>({
         fullname: '',
         avatar: '',
         about: '',
+        email: '',
+        personalSite: '',
         facebook: '',
         twitter: '',
         linkedIn: '',
+        medium: '',
         github: '',
-        instagram: '',
-        email: '',
-        personal_site: ''
+        instagram: ''
       };
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    usernameMinLen: props.usernameMinLen.toNumber(),
-    usernameMaxLen: props.usernameMaxLen.toNumber()
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things
