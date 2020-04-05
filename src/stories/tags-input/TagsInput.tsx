@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
 import { FormikProps } from 'formik';
-import { FormValues } from '../../blogs/NavigationEditor'
+import { FormValues } from '../../components/blogs/NavigationEditor'
 import { SelectValue } from 'antd/lib/select';
 
 // TODO check: do we need this CSS import? looks like a duplicate

@@ -1,8 +1,8 @@
 import React from 'react';
-import '../utils/styles/subsocial.css';
+import '../components/utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
-import { NavigationEditor } from '../blogs/NavigationEditor';
-import { BlogId, Blog, BlogContent } from '../types';
+import { NavigationEditor } from '../components/blogs/NavigationEditor';
+import { BlogId, Blog, BlogContent } from '../components/types';
 
 export default {
   title: 'Blogs | Navigation Editor',

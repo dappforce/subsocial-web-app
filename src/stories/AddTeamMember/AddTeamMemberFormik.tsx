@@ -5,10 +5,10 @@ import SimpleMDEReact from 'react-simplemde-editor';
 import moment from 'moment-timezone';
 import { Moment } from 'moment-timezone/moment-timezone';
 
-import * as DfForms from '../../utils/forms';
-import { FieldNames } from '../../utils/forms';
-import HeadMeta from '../../utils/HeadMeta';
-import Section from '../../utils/Section';
+import * as DfForms from '../../components/utils/forms';
+import { FieldNames } from '../../components/utils/forms';
+import HeadMeta from '../../components/utils/HeadMeta';
+import Section from '../../components/utils/Section';
 
 import './addTeamMember.css';
 import { buildValidationSchema } from './validation';
@@ -138,12 +138,12 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           </div>
         </LabelledField>
-        
+
         {/* TODO replace with Ant D. autocomplete */}
         {companyAutocomplete.map((x) => (
-          <div 
-            className={'atm_company_autocomplete'} 
-            key={`${x.id}`} 
+          <div
+            className={'atm_company_autocomplete'}
+            key={`${x.id}`}
             onClick={() => handleAutocomplete(x)}
           >
             <div className={'atm_company_autocomplete_item'}>

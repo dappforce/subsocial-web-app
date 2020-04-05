@@ -1,4 +1,4 @@
-@import '../../utils/styles/subsocial-vars.css';
+@import '../../components/utils/styles/subsocial-vars.css';
 
 .atm_switch_wrapper {
   display: flex;

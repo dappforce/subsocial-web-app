@@ -1,9 +1,8 @@
-
 import React from 'react';
-import '../utils/styles/subsocial.css';
+import '../components/utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
-import { InnerEditPost } from '../posts/EditPost';
-import { BlogId, Post, PostId, PostContent } from '../types';
+import { InnerEditPost } from '../components/posts/EditPost';
+import { BlogId, Post, PostId, PostContent } from '../components/types';
 import { U32 } from '@polkadot/types';
 
 export default {

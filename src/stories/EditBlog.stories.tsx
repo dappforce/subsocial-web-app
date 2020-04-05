@@ -1,8 +1,8 @@
 import React from 'react';
-import '../utils/styles/subsocial.css';
+import '../components/utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
-import { EditForm } from '../blogs/EditBlog';
-import { BlogId, Blog, BlogContent } from '../types';
+import { EditForm } from '../components/blogs/EditBlog';
+import { BlogId, Blog, BlogContent } from '../components/types';
 import { U32 } from '@polkadot/types';
 
 export default {
