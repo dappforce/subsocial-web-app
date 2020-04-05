@@ -54,7 +54,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const {
     desc,
     image,
-    tags: tagsData = [],
+    tags: blogTags = [],
     name
   } = json
 
@@ -82,13 +82,13 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         )
       }
       case 'by-tag': {
-        const tags = nt.content.data || []
+        const tags = nt.content.data as string[] || []
         return (
           <div className="NETagsWrapper">
             <EditableTagGroup
-              tagsData={tagsData}
               name={`navTabs.${index}.content.data`}
-              tags={tags as string[]}
+              tags={tags}
+              tagSuggestions={blogTags}
               setFieldValue={setFieldValue}
             />
           </div>
@@ -100,7 +100,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     }
   }
 
-  const handleSaveNavOreder = (tabs: NavTab[]) => {
+  const handleSaveNavOrder = (tabs: NavTab[]) => {
     setFieldValue('navTabs', tabs)
   }
 
@@ -126,7 +126,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         name,
         desc,
         image,
-        tags: tagsData
+        tags: blogTags
       };
       addJsonToIpfs(json).then(cid => {
         setIpfsCid(cid);
@@ -259,7 +259,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         </Form>
 
       </Section>
-      <ReorderNavTabs tabs={navTabs} onChange={(tabs: NavTab[]) => handleSaveNavOreder(tabs)} />
+      <ReorderNavTabs tabs={navTabs} onChange={(tabs: NavTab[]) => handleSaveNavOrder(tabs)} />
     </div>
   </>
 }

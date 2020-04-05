@@ -18,8 +18,11 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
+import { ViewBlog } from '../blogs/ViewBlog';
 import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
+import { Icon } from 'antd';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const MAX_TAGS_PER_POST = 10
@@ -120,6 +123,7 @@ const InnerForm = (props: FormProps) => {
 
   const [ ipfsHash, setIpfsCid ] = useState('');
   const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
+  const [ showAdvanced, setShowAdvaced ] = useState(false)
 
   const preparedBlogId = currentBlogId?.toString()
 
@@ -192,7 +196,7 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
-  const handleBlogSelect = (value: string|number|LabeledValue) => {
+  const handleBlogSelect = (value: string | number | LabeledValue) => {
     if (!value) return;
 
     setCurrentBlogId(new BlogId(value as string))
@@ -219,7 +223,7 @@ const InnerForm = (props: FormProps) => {
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
-          <EditableTagGroup name='tags' label='Tags' tagsData={tagsData} {...props}/>
+          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
           <LabelledField name='body' label='Description' {...props}>
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
@@ -231,7 +235,7 @@ const InnerForm = (props: FormProps) => {
               <Icon type={showAdvanced ? 'up' : 'down'} />
             </div>
             {showAdvanced &&
-              <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
+              <LabelledText name='canonical' label='Canonical URL' placeholder={`Set a canonical URL of your post`} {...props} />
             }
           </div>
         </>
@@ -260,7 +264,7 @@ const InnerForm = (props: FormProps) => {
     <Section className='EditEntityBox' title={formTitle()}>
       {form}
     </Section>
-  
+
   const editSharedPost = () =>
     <div style={{ marginTop: '1rem' }}>{form}</div>
 
@@ -342,7 +346,7 @@ type Struct = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
-    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
+    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because usless
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
     const [ struct, setStruct ] = useState(undefined as Struct);

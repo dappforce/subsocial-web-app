@@ -162,7 +162,7 @@ const InnerForm = (props: FormProps) => {
           <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
         </LabelledField>
 
-        <EditableTagGroup name='tags' label='Tags' tagsData={tags} {...props}/>
+        <EditableTagGroup name='tags' label='Tags' tags={tags} {...props}/>
 
         <LabelledField {...props}>
           <TxButton

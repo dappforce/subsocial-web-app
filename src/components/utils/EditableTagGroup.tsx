@@ -3,13 +3,13 @@ import 'antd/dist/antd.css';
 import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
 import { ErrorMessage } from 'formik';
 import { SelectValue } from 'antd/lib/select';
-import { nonEmptyStr } from '.';
+import { nonEmptyStr } from './index';
 
-type Props {
-  tagsData?: string[],
+type Props = {
   name: string,
   label?: string,
-  tags: string[],
+  tags?: string[],
+  tagSuggestions?: string[],
   setFieldValue: (a: string, b: string[]) => void,
   hasError?: boolean
 }
@@ -17,7 +17,7 @@ type Props {
 const VISIBLE_TAG_CHARS = 20
 
 const EditableTagGroup = (props: Props) => {
-  const { setFieldValue, tags, tagsData, label, name, hasError } = props
+  const { setFieldValue, tags = [], tagSuggestions = [], label, name, hasError } = props
 
   const [ inputVisible, setInputVisible ] = useState(false)
   const [ inputValue, setInputValue ] = useState('')
@@ -37,17 +37,16 @@ const EditableTagGroup = (props: Props) => {
   };
 
   const handleInputConfirm = () => {
-    let newTags = [ '' ]
-    if (inputValue && tags.indexOf(inputValue) === -1) {
-      newTags = [ ...tags, inputValue ];
-      setFieldValue(name as string, newTags)
+    if (nonEmptyStr(inputValue) && tags.indexOf(inputValue) < 0) {
+      const newTags = [ ...tags, inputValue ];
+      setFieldValue(name, newTags)
       setInputVisible(false)
     }
   };
 
   return (
     <div className={`ui--Labelled field ${hasError ? 'error' : ''}`}>
-      <label htmlFor={name as string}>{nonEmptyStr(label) && label + ':'}</label>
+      <label htmlFor={name}>{nonEmptyStr(label) && label + ':'}</label>
       <div className='ui--Labelled-content'>
         {tags.map((tag) => {
           const isLongTag = tag.length > VISIBLE_TAG_CHARS;
@@ -72,7 +71,7 @@ const EditableTagGroup = (props: Props) => {
             onChange={handleInputChange}
             onBlur={handleInputConfirm}
             value={inputValue}
-            dataSource={tagsData}
+            dataSource={tagSuggestions}
             filterOption={(inputValue, option) =>
               option.props.children?.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
             }
@@ -85,7 +84,7 @@ const EditableTagGroup = (props: Props) => {
             <Icon type="plus" /> New Tag
           </Tag>
         )}
-        {name && <ErrorMessage name={name as string} component='div' className='ui pointing red label' />}
+        {name && <ErrorMessage name={name} component='div' className='ui pointing red label' />}
       </div>
     </div>
   );

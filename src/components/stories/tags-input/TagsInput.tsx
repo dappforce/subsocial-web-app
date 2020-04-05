@@ -1,10 +1,11 @@
-
 import React, { useState } from 'react';
-import 'antd/dist/antd.css';
 import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
 import { FormikProps } from 'formik';
-import { FormValues } from '../navigation-editor/NavigationEditor'
+import { FormValues } from '../../blogs/NavigationEditor'
 import { SelectValue } from 'antd/lib/select';
+
+// TODO check: do we need this CSS import? looks like a duplicate
+import 'antd/dist/antd.css';
 
 interface OtherProps {
   tagsData: string[]
@@ -14,9 +15,7 @@ interface OtherProps {
 const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
   const { setFieldValue, values, currentTab, tagsData } = props
   const { navTabs } = values;
-  const data = navTabs[currentTab].content.data as string[]
-
-  const tags: string[] = data ? data : []
+  const tags: string[] = navTabs[currentTab].content.data as string[] | []
 
   const [inputVisible, setInputVisible] = useState(false)
   const [inputValue, setInputValue] = useState('')
@@ -48,18 +47,14 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
     <div>
       {tags.map((tag, index) => {
         const isLongTag = tag.length > 20;
-        const tagElem = (
+        const tagElem =
           <Tag key={tag} closable={index !== 0} onClose={() => handleClose(tag)}>
             {isLongTag ? `${tag.slice(0, 20)}...` : tag}
           </Tag>
-        );
-        return isLongTag ? (
-          <Tooltip title={tag} key={tag}>
-            {tagElem}
-          </Tooltip>
-        ) : (
-            tagElem
-          );
+
+        return isLongTag
+          ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip>
+          : tagElem
       })}
       {inputVisible && (
         <AutoComplete
@@ -77,7 +72,7 @@ const EditableTagGroup = (props: OtherProps & FormikProps<FormValues>) => {
           <Input onPressEnter={handleInputConfirm} />
         </AutoComplete>
       )}
-      
+
       {!inputVisible && (
         <Tag onClick={showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
           <Icon type="plus" /> New Tag
