@@ -346,7 +346,7 @@ type Struct = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
-    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because usless
+    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because useless
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
     const [ struct, setStruct ] = useState(undefined as Struct);

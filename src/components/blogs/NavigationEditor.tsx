@@ -10,7 +10,7 @@ import { BlogId, Blog, BlogContent, NavTab, BlogUpdate, VecAccountId } from '../
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { AutoComplete, Switch } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
@@ -19,6 +19,8 @@ import ReorderNavTabs from '../utils/ReorderNavTabs';
 import { SubmittableResult } from '@polkadot/api';
 import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import dynamic from 'next/dynamic';
+import { withBlogIdFromUrl } from './withBlogIdFromUrl';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 export interface FormValues {
@@ -173,12 +175,12 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     }
   };
 
-  const title = `Edit Navigation`
+  const pageTitle = `Edit blog navigation`
 
   return <>
-    <HeadMeta title={'Navigation Editor'} />
+    <HeadMeta title={pageTitle} />
     <div className='NavEditorWrapper'>
-      <Section className='NavigationEditor' title={title}>
+      <Section className='NavigationEditor' title={pageTitle}>
         <Form className='ui form DfForm NavigationEditorForm'>
           <FieldArray
             name="navTabs"
@@ -222,7 +224,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                       <div className="NEButtonsWrapper">
                         <div className="NEHideButton">
                           <Switch onChange={() => setFieldValue(`navTabs.${index}.hidden`, !nt.hidden)} />
-                          Don&apos;t show this tab in blog navigation
+                          Don't show this tab in blog navigation
                         </div>
                         <div className="NERemoveButton">
                           <Button type="default" onClick={() => arrayHelpers.remove(index)}>Delete tab</Button>
@@ -307,18 +309,6 @@ export const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
   }
 })(InnerForm);
 
-function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
-    const router = useRouter();
-    const { blogId } = router.query;
-    try {
-      return <Component id={new BlogId(blogId as string)} {...props} />;
-    } catch (err) {
-      return <em>Invalid blog ID: {blogId}</em>;
-    }
-  };
-}
-
 type LoadStructProps = OuterProps & {
   structOpt: Option<Blog>;
 };
@@ -369,7 +359,7 @@ function LoadStruct (props: LoadStructProps) {
 
 export const EditNavigation = withMulti(
   LoadStruct,
-  withIdFromUrl,
+  withBlogIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' })
   )

@@ -17,9 +17,11 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 
 import SimpleMDEReact from 'react-simplemde-editor';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import EditableTagGroup from '../utils/EditableTagGroup';
+import { withBlogIdFromUrl } from './withBlogIdFromUrl';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
@@ -230,18 +232,6 @@ export const EditForm = withFormik<OuterProps, FormValues>({
   }
 })(InnerForm);
 
-function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
-    const router = useRouter();
-    const { blogId } = router.query;
-    try {
-      return <Component id={new BlogId(blogId as string)} {...props} />;
-    } catch (err) {
-      return <em>Invalid blog ID: {blogId}</em>;
-    }
-  };
-}
-
 type LoadStructProps = OuterProps & {
   structOpt: Option<Blog>;
 };
@@ -306,7 +296,7 @@ export const NewBlog = withMulti(
 
 export const EditBlog = withMulti(
   LoadStruct,
-  withIdFromUrl,
+  withBlogIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
     ...commonQueries
