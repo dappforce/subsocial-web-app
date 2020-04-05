@@ -111,7 +111,7 @@ body,
 
 .ProfileDetails {
   display: flex !important;
-  margin-bottom: $space_big;
+
   .content {
     padding: 0 $space_small;
   }
@@ -355,10 +355,12 @@ hr {
 }
 
 .Profile--actions {
+  margin-top: $space_big;
   margin-left: 4rem;
 
   button {
     background-color: $color_page_bg;
+    margin-right: $space_normal;
   }
 }
 
