@@ -1301,12 +1301,12 @@ hr {
 
 .SpaceNav {
   margin-left: $space_big;
-  max-width: 22rem;
+  width: 300px;
 
   .SNhead {
     display: flex;
     flex-direction: column;
-    padding: $space_huge;
+    padding: $space_big;
     background-color: #fff;
     border: 1px solid $color_light_border;
     box-sizing: border-box;
@@ -1322,22 +1322,17 @@ hr {
       }
     }
 
-    .SNheadText {
+    .SNheadTitle {
+      color: #000;
+      font-weight: 500;
+      font-size: $font_big;
+      line-height: $space_huge;
       margin: $space_normal 0;
+    }
 
-      .SNheadTitle {
-        font-weight: 500;
-        font-size: $font_big;
-        line-height: $space_huge;
-        color: #000;
-      }
-
-      .SNheadDescription {
-        font-size: $font_large;
-        font-weight: 500;
-        line-height: $space_huge;
-        color: rgba(0, 0, 0, 0.74);
-      }
+    .SNheadDescription {
+      font-weight: 500;
+      margin-top: $space_normal;
     }
 
     .SNheadButton {
@@ -1354,30 +1349,15 @@ hr {
     box-sizing: border-box;
     border-radius: 2px;
     margin-bottom: $space_huge;
+  }
 
-    .SpaceNavSettings {
-      display: flex;
-      justify-content: flex-end;
-      margin: $space_normal $space_normal 0 0;
-      position: relative;
+  .SpaceNavSettings {
+    display: flex;
+    justify-content: end;
+    margin: $space_tiny;
 
-      .spaceEditTooltip {
-        position: absolute;
-        margin: $space_big $space_normal 0 0;
-        width: 70px;
-        border: 1px solid gray;
-        height: $space_big;
-        display: none;
-        align-items: center;
-        justify-content: space-around;
-        border-radius: 4px;
-      }
-    }
-
-    .SpaceNavSettings:hover {
-      .spaceEditTooltip {
-        display: flex;
-      }
+    a:hover {
+      text-decoration: underline;
     }
   }
 }

@@ -28,7 +28,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
-import SpaceNav from './SpaceNav/SpaceNav'
+import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
@@ -301,7 +301,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     <SpaceNav
       {...content}
       blogId={new BlogId(id)}
-      account={account}
+      creator={account}
     />
   </div>
 };
