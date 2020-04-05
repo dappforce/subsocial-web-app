@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import moment from 'moment-timezone';
-import { minLenError, maxLenError } from '../../components/utils/forms/validation';
+import { minLenError, maxLenError } from '../../utils/forms/validation';
 
 const TITLE_MIN_LEN = 2;
 const TITLE_MAX_LEN = 50;

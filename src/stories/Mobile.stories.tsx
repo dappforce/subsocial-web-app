@@ -4,4 +4,4 @@ import './mobile.css';
 export default {
   title: 'Mobile',
   decorators: [ withKnobs ]
-};
+}

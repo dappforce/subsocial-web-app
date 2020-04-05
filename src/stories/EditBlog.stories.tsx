@@ -2,36 +2,15 @@ import React from 'react';
 import '../components/utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { EditForm } from '../components/blogs/EditBlog';
-import { BlogId, Blog, BlogContent } from '../components/types';
-import { U32 } from '@polkadot/types';
+import { mockBlogId, mockBlogStruct, mockBlogJson, mockBlogValidation } from './mocks/BlogMocks';
 
 export default {
-  title: 'EditBlog',
+  title: 'Blogs | Edit',
   decorators: [ withStorybookContext ]
-};
-
-const mockBlogId = new BlogId(99);
-
-const mockStruct = {
-  id: mockBlogId,
-  slug: 'Test_slug'
-} as unknown as Blog
-
-const mockJson: BlogContent = {
-  name: 'Test name',
-  desc: 'Test description',
-  image: 'https://media.makeameme.org/created/cat-ni-nigga.jpg',
-  tags: [ 'tag1', 'tag2', 'tag3' ]
 }
 
-const validations = {
-  blogMaxLen: new U32(500),
-  slugMinLen: new U32(5),
-  slugMaxLen: new U32(50)
-}
+export const _NewBlog = () =>
+  <EditForm {...mockBlogValidation} />
 
-export const NewBlog = () =>
-  <EditForm {...validations} />
-
-export const EditBlog = () =>
-  <EditForm id={mockBlogId} struct={mockStruct} json={mockJson} {...validations} />
+export const _EditBlog = () =>
+  <EditForm id={mockBlogId} struct={mockBlogStruct} json={mockBlogJson} {...mockBlogValidation} />
