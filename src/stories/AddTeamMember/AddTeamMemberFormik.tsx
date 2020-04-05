@@ -35,8 +35,8 @@ interface FormValues {
   location: string
   startDate: Moment
   endDate: Moment
+  showEndDate: boolean
   description: string
-  switchField: boolean // TODO rename
 }
 
 const fields: FieldNames<FormValues> = {
@@ -46,8 +46,8 @@ const fields: FieldNames<FormValues> = {
   location: 'location',
   startDate: 'startDate',
   endDate: 'endDate',
-  description: 'description',
-  switchField: 'switchField',
+  showEndDate: 'showEndDate',
+  description: 'description'
 }
 
 const LabelledField = DfForms.LabelledField<FormValues>();
@@ -67,7 +67,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     company,
     startDate,
     endDate,
-    switchField
+    showEndDate
   } = values;
 
   const [ companyLogo, setCompanyLogo ] = useState<string>();
@@ -93,15 +93,15 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     }
   };
 
-  const handleAutocomplete = (data: Company) => {
+  const handleCompanyAutocomplete = (data: Company) => {
     setFieldValue(fields.company, data.name);
 
     setCompanyAutocomplete([]);
     setCompanyLogo(data.img);
   };
 
-  const handleSwitch = () => {
-    setFieldValue(fields.switchField, !switchField);
+  const toggleShowEndDate = () => {
+    setFieldValue(fields.showEndDate, !showEndDate);
   };
 
   const disabledStartEndDate = (current: Moment | null) => {
@@ -144,7 +144,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           <div
             className={'atm_company_autocomplete'}
             key={`${x.id}`}
-            onClick={() => handleAutocomplete(x)}
+            onClick={() => handleCompanyAutocomplete(x)}
           >
             <div className={'atm_company_autocomplete_item'}>
               <img src={x.img} />
@@ -157,7 +157,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           placeholder='Ex: Berlin, Germany' {...props} />
 
         <div className={'atm_switch_wrapper'}>
-          <Switch onChange={handleSwitch} checked={switchField} />
+          <Switch onChange={toggleShowEndDate} checked={showEndDate} />
           <div className={'atm_switch_label'}>I am currently working in this role.</div>
         </div>
 
@@ -172,7 +172,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           </LabelledField>
 
           <LabelledField name={fields.endDate} label='End Date' {...props}>
-          {switchField === true
+          {showEndDate
             ? <div>Present</div>
             : <DatePicker name={fields.endDate}
                 value={endDate}
@@ -219,7 +219,7 @@ const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
       location: '',
       startDate: moment(new Date()).add(-1, 'days'),
       endDate: moment(),
-      switchField: true
+      showEndDate: true
     };
   },
 
