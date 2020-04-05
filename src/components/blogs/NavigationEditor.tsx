@@ -161,19 +161,14 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   };
 
   const buildTxParams = () => {
-    if (!isValid) return [];
-    if (!struct) {
-      return [ slug, ipfsCid ];
-    } else {
-      // TODO update only dirty values.
-      const update = new BlogUpdate({
-        // TODO get updated writers from the form
-        writers: new Option(VecAccountId, (struct.writers)),
-        slug: new Option(Text, slug),
-        ipfs_hash: new Option(Text, ipfsCid)
-      });
-      return [ struct.id, update ];
-    }
+    if (!isValid || !struct) return [];
+
+    const update = new BlogUpdate({
+      writers: new Option(VecAccountId, null),
+      slug: new Option(Text, null),
+      ipfs_hash: new Option(Text, ipfsCid)
+    });
+    return [ struct.id, update ];
   };
 
   const pageTitle = `Edit blog navigation`
@@ -271,7 +266,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         </Form>
       </Section>
 
-      <Affix offsetTop={16}>
+      <Affix offsetTop={80}>
         <div style={{ marginLeft: '2rem', minWidth: '300px' }}>
           <Alert type="info" showIcon closable message="Drag-n-drop tabs to reorder them." style={{ marginBottom: '1rem' }} />
           <ReorderNavTabs tabs={navTabs} onChange={(tabs: NavTab[]) => handleSaveNavOrder(tabs)} />
