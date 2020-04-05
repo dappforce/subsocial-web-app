@@ -52,8 +52,6 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     navTabs
   } = values;
 
-  const slug = struct?.slug.toString() || ''
-
   const {
     desc,
     image,
