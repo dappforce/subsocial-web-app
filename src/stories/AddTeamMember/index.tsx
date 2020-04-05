@@ -10,7 +10,7 @@ import { FieldNames } from '../../components/utils/forms';
 import HeadMeta from '../../components/utils/HeadMeta';
 import Section from '../../components/utils/Section';
 
-import './addTeamMember.css';
+import './index.css';
 import { buildValidationSchema } from './validation';
 
 type Company = {
@@ -207,7 +207,7 @@ interface MyFormProps {
 }
 
 // Wrap our form with the withFormik HoC
-const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
+const Index = withFormik<MyFormProps, FormValues>({
 
   // Transform outer props into form values
   mapPropsToValues: () => {
@@ -230,4 +230,4 @@ const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
   },
 })(InnerForm);
 
-export default AddTeamMemberFormik;
+export default Index;
