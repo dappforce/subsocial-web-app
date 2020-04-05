@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import moment from 'moment-timezone';
-// import { minLenError, maxLenError } from '../utils/forms/validation';
+import { minLenError, maxLenError } from '../../components/utils/forms/validation';
 
 const TITLE_MIN_LEN = 2;
 const TITLE_MAX_LEN = 50;
@@ -9,24 +9,24 @@ const COMPANY_MIN_LEN = 2;
 const COMPANY_MAX_LEN = 50;
 
 const LOCATION_MIN_LEN = 2;
-const LOCATION_MAX_LEN = 50;
+const LOCATION_MAX_LEN = 100;
 
-const DESCRIPTION_MAX_LEN = 5000;
+const DESCRIPTION_MAX_LEN = 2000;
 
 export const buildValidationSchema = () => Yup.object().shape({
   title: Yup.string()
-    .required('Title is required')
-    .min(TITLE_MIN_LEN, `Title is too short. Minimum length is ${TITLE_MIN_LEN} chars.`)
-    .max(TITLE_MAX_LEN, `Title is too long. Maximum length is ${TITLE_MAX_LEN} chars.`),
+    .required('Job title is required')
+    .min(TITLE_MIN_LEN, minLenError('Job title', TITLE_MIN_LEN))
+    .max(TITLE_MAX_LEN, maxLenError('Job title', TITLE_MAX_LEN)),
 
   company: Yup.string()
     .required('Company name is required')
-    .min(COMPANY_MIN_LEN, `Company name is too short. Minimum length is ${COMPANY_MIN_LEN} chars.`)
-    .max(COMPANY_MAX_LEN, `Company name is too long. Maximum length is ${COMPANY_MAX_LEN} chars.`),
+    .min(COMPANY_MIN_LEN, minLenError('Company name', COMPANY_MIN_LEN))
+    .max(COMPANY_MAX_LEN, maxLenError('Company name', COMPANY_MAX_LEN)),
 
   location: Yup.string()
-    .min(LOCATION_MIN_LEN, `Location is too short. Minimum length is ${LOCATION_MIN_LEN} chars.`)
-    .max(LOCATION_MAX_LEN, `Location is too long. Maximum length is ${LOCATION_MAX_LEN} chars.`),
+    .min(LOCATION_MIN_LEN, minLenError('Location name', LOCATION_MIN_LEN))
+    .max(LOCATION_MAX_LEN, maxLenError('Location name', LOCATION_MAX_LEN)),
 
   startDate: Yup.object().test(
     'startDate',
@@ -41,5 +41,5 @@ export const buildValidationSchema = () => Yup.object().shape({
   ),
 
   description: Yup.string()
-    .max(DESCRIPTION_MAX_LEN, `Description is too long. Maximum length is ${DESCRIPTION_MAX_LEN} chars.`),
+    .max(DESCRIPTION_MAX_LEN, maxLenError('Description', DESCRIPTION_MAX_LEN))
 })
