@@ -1353,7 +1353,7 @@ hr {
 
   .SpaceNavSettings {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin: $space_tiny;
 
     a:hover {
