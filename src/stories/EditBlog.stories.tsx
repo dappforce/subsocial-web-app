@@ -1,5 +1,4 @@
 import React from 'react';
-import '../components/utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { EditForm } from '../components/blogs/EditBlog';
 import { mockBlogId, mockBlogStruct, mockBlogJson, mockBlogValidation } from './mocks/BlogMocks';

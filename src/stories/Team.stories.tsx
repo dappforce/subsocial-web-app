@@ -1,5 +1,4 @@
 import React from 'react';
-import '../components/utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
 import { EditTeamMember } from '../components/spaces/EditTeamMember';
 import { suggestedCompanies, suggestedEmployerTypes } from './mocks/TeamMocks';
