@@ -256,7 +256,7 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json as CommentContent} />;
 }
 
-const commonQueries = [
+const commonSubstrateQueries = [
   queryBlogsToProp('commentMaxLen', { propName: 'commentMaxLen' })
 ]
 
@@ -264,13 +264,13 @@ export const EditComment = withMulti<LoadStructProps>(
   LoadStruct,
   withCalls<OuterProps>(
     queryBlogsToProp('commentById', { paramName: 'id', propName: 'structOpt' }),
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );
 
 export const NewComment = withMulti<OuterProps>(
   EditForm,
   withCalls<OuterProps>(
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );

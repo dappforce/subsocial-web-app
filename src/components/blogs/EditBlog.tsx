@@ -280,7 +280,7 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json} />;
 }
 
-const commonQueries = [
+const commonSubstrateQueries = [
   queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
   queryBlogsToProp('slugMinLen', { propName: 'slugMinLen' }),
   queryBlogsToProp('slugMaxLen', { propName: 'slugMaxLen' })
@@ -289,9 +289,8 @@ const commonQueries = [
 export const NewBlog = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    ...commonQueries
+    ...commonSubstrateQueries
   )
-  // , withOnlyMembers
 );
 
 export const EditBlog = withMulti(
@@ -299,7 +298,7 @@ export const EditBlog = withMulti(
   withBlogIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );
 
