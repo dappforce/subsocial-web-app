@@ -190,21 +190,17 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                   values.navTabs.map((nt, index) => (
                     <div className={`NERow ${(nt.hidden ? 'NEHidden' : '')}`} key={nt.id}>
 
-                      <div className="NEText">Name:</div>
+                      <div className="NEText">Tab name:</div>
                       <Field
                         type="text"
                         name={`nt.${index}.title`}
-                        placeholder="Tab Name"
+                        placeholder="Tab name"
+                        style={{ maxWidth: '30rem' }}
                         value={nt.title}
                         onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`navTabs.${index}.title`, e.currentTarget.value)}
                       />
                       {renderError(index, 'title')}
-                      <div className="NEText">Description:</div>
-                      <Field
-                        component={SimpleMDEReact}
-                        name={`navTabs.${index}.description`} value={nt.description}
-                        onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)}
-                        className={`DfMdEditor NETextEditor`} />
+
                       <div className="NEText">Type of content:</div>
                       <Field
                         component={Select}
@@ -217,10 +213,19 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                           typesOfContent.map((x) => <AutoComplete.Option key={x} value={x} >{x}</AutoComplete.Option>)
                         }
                       </Field>
+
                       <div className="NEText">Value:</div>
                       {
                         renderValueField(nt, index)
                       }
+
+                      <div className="NEText">Description:</div>
+                      <Field
+                        component={SimpleMDEReact}
+                        name={`navTabs.${index}.description`} value={nt.description}
+                        onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)}
+                        className={`DfMdEditor NETextEditor`} />
+
                       <div className="NEButtonsWrapper">
                         <div className="NEHideButton">
                           <Switch onChange={() => setFieldValue(`navTabs.${index}.hidden`, !nt.hidden)} />
@@ -230,6 +235,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                           <Button type="default" onClick={() => arrayHelpers.remove(index)}>Delete tab</Button>
                         </div>
                       </div>
+
                     </div>
                   ))
                 )}
