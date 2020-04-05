@@ -11,7 +11,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { AutoComplete, Switch } from 'antd';
+import { AutoComplete, Switch, Affix, Alert } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import ReorderNavTabs from '../utils/ReorderNavTabs';
@@ -20,6 +20,7 @@ import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/Offchai
 import dynamic from 'next/dynamic';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { validationSchema } from './NavValidation';
+import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -177,10 +178,13 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
 
   const pageTitle = `Edit blog navigation`
 
+  const sectionTitle =
+    <BloggedSectionTitle blogId={struct.id} title={pageTitle} />
+
   return <>
     <HeadMeta title={pageTitle} />
     <div className='NavEditorWrapper'>
-      <Section className='NavigationEditor' title={pageTitle}>
+      <Section className='NavigationEditor' title={sectionTitle}>
         <Form className='ui form DfForm NavigationEditorForm'>
           <FieldArray
             name="navTabs"
@@ -265,9 +269,14 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
           />
 
         </Form>
-
       </Section>
-      <ReorderNavTabs tabs={navTabs} onChange={(tabs: NavTab[]) => handleSaveNavOrder(tabs)} />
+
+      <Affix offsetTop={16}>
+        <div style={{ marginLeft: '2rem', minWidth: '300px' }}>
+          <Alert type="info" showIcon closable message="Drag-n-drop tabs to reorder them." style={{ marginBottom: '1rem' }} />
+          <ReorderNavTabs tabs={navTabs} onChange={(tabs: NavTab[]) => handleSaveNavOrder(tabs)} />
+        </div>
+      </Affix>
     </div>
   </>
 }

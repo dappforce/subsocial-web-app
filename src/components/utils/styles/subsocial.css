@@ -185,9 +185,9 @@ form.ui.form.DfForm.EditEntityForm {
     }
   }
 
-  .ETGtag{ 
+  .ETGtag{
     background: '#fff';
-    border-style: dashed; 
+    border-style: dashed;
   }
 }
 
@@ -629,7 +629,7 @@ hr {
 
 .ui--AddressComponents {
   width: 70%;
-  
+
   .ui--IdentityIcon {
     margin-left: 0;
     margin-right: $space_small;
@@ -1224,7 +1224,7 @@ hr {
 .NavigationEditor .NERemoveButton button:hover {
   background-color: #ff0000;
   border-color: #d9d9d9;
-  
+
   span {
     color: #fff;
   }
@@ -1232,7 +1232,7 @@ hr {
 
 .NavigationEditor .NEHideButton {
   margin-bottom: $space_normal;
-  
+
   button {
     margin-right: $space_huge;
   }
@@ -1255,7 +1255,7 @@ hr {
 .NavigationEditor .NESubmit {
   max-width: 8.5rem;
   width: 100%;
-  
+
   span {
     color: #fff !important;
   }
@@ -1280,11 +1280,21 @@ hr {
 }
 
 .RNTListItem {
-  margin-bottom: $space_normal;
+  padding: 0 $space_normal;
+
+  &:hover {
+     background-color: #eee;
+     border-radius: 5px;
+  }
+
+  .ant-list-item-meta-title {
+    font-weight: bold !important;
+  }
 }
 .RNTIcon {
   transform: rotate(90deg);
   margin-right: $space_normal;
+  color: #ccc;
 }
 .RNTSaveButton span {
   color: #fff;
@@ -1377,4 +1387,4 @@ hr {
       }
     }
   }
-} 
+}

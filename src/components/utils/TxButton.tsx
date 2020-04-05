@@ -132,7 +132,7 @@ function MockTxButton (props: BasicButtonProps) {
 const SubstrateTxButton = withApi(withMyAccount(TxButton))
 
 function ResolvedButton (props: BasicButtonProps) {
-  const { isStorybook = false } = useStorybookContext()
+  const { isStorybook } = useStorybookContext()
 
   return isStorybook
     ? <MockTxButton {...props} />

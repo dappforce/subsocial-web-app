@@ -17,11 +17,11 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { ViewBlog } from '../blogs/ViewBlog';
 import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
 import { Icon } from 'antd';
 import { ValidationProps, buildValidationSchema } from './PostValidation';
+import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -94,7 +94,7 @@ const InnerForm = (props: FormProps) => {
 
   const [ ipfsHash, setIpfsCid ] = useState('');
   const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
-  const [ showAdvanced, setShowAdvaced ] = useState(false)
+  const [ showAdvanced, setShowAdvanced ] = useState(false)
 
   const preparedBlogId = currentBlogId?.toString()
 
@@ -125,7 +125,7 @@ const InnerForm = (props: FormProps) => {
   };
 
   const handleAdvancedSettings = () => {
-    setShowAdvaced(!showAdvanced)
+    setShowAdvanced(!showAdvanced)
   }
 
   const buildTxParams = () => {
@@ -220,19 +220,13 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>}
     </Form>;
 
-  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
+  const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
 
-  const formTitle = () =>
-    <>
-      <a href={`/blogs/${preparedBlogId}`}>
-        <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
-      </a>
-      <span style={{ margin: '0 .75rem' }}>/</span>
-      {sectionTitle}
-    </>
+  const sectionTitle =
+    <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
 
   const editRegularPost = () =>
-    <Section className='EditEntityBox' title={formTitle()}>
+    <Section className='EditEntityBox' title={sectionTitle}>
       {form}
     </Section>
 
@@ -242,7 +236,7 @@ const InnerForm = (props: FormProps) => {
   return onlyTxButton
     ? renderTxButton()
     : <>
-      <HeadMeta title={sectionTitle}/>
+      <HeadMeta title={pageTitle}/>
       {isRegularPost
         ? editRegularPost()
         : editSharedPost()
