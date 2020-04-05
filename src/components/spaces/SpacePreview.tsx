@@ -1,11 +1,11 @@
 import React from 'react'
 import { Icon } from 'antd'
-import './SpacePreview.css'
+import { BlogId } from 'src/components/types'
 
-type SpaceContent = {
-  id: number,
+export type SpaceContent = {
+  id: BlogId,
   title: string,
-  isFollowed: boolean
+  isFollowing: boolean
 }
 
 export interface SpacePreviewProps {
@@ -20,14 +20,12 @@ const SpacePreview = (props: SpacePreviewProps) => {
   return <div className="SpacePreview">
     <div className="SPHead">{name}</div>
     <div className="SPitems">
-      {
-        spaces.map((x) => (
-          <div className="SPitem" key={x.id.toString()}>
-            <div className="SPitemText"><Icon type={iconType} /> {x.title}</div>
-            {/* <FollowBlogButton blogId={blogId} /> */}
-          </div>
-        ))
-      }
+      {spaces.map((x) => (
+        <div className="SPitem" key={x.id.toString()}>
+          <div className="SPitemText"><Icon type={iconType} /> {x.title}</div>
+          {/* <FollowBlogButton blogId={blogId} /> */}
+        </div>
+      ))}
     </div>
   </div>
 }
