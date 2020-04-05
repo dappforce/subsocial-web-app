@@ -184,7 +184,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   return <>
     <HeadMeta title={pageTitle} />
     <div className='NavEditorWrapper'>
-      <Section className='NavigationEditor' title={sectionTitle}>
+      <Section className='EditEntityBox NavigationEditor' title={sectionTitle}>
         <Form className='ui form DfForm NavigationEditorForm'>
           <FieldArray
             name="navTabs"

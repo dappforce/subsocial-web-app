@@ -1163,13 +1163,6 @@ hr {
   justify-content: space-between;
 }
 
-.NavigationEditor {
-  display: flex;
-  flex-direction: column;
-  max-width: 840px;
-  min-width: 600px;
-}
-
 .NavigationEditor .NERow {
   display: flex;
   justify-content: space-between;
