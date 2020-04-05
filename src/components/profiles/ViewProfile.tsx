@@ -252,7 +252,7 @@ const Component: NextPage<Props> = (props: Props) => {
       <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>
-          <FollowAccountButton address={address} size={BUTTON_SIZE}/>
+          <FollowAccountButton address={address} />
           <Button onClick={() => setFollowersOpen(true)} disabled={followers.eq(ZERO)}><Pluralize count={followers.toString()} singularText='Follower'/></Button>
           <Button onClick={() => setFollowingOpen(true)} disabled={following.eq(ZERO)}>{following.toString()} Following </Button>
         </div>

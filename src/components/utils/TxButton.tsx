@@ -11,6 +11,7 @@ import { useStorybookContext } from './StorybookContext';
 import { Button$Sizes } from '@polkadot/ui-app/Button/types';
 import { isClientSide } from './index';
 import { SemanticShorthandItem, IconProps } from 'semantic-ui-react'
+import { BUTTON_SIZE } from '../../config/Size.config'
 
 type InjectedProps = {
   queueExtrinsic: QueueTx$ExtrinsicAdd;
@@ -45,7 +46,7 @@ type Props = BareProps & ApiProps & MyAccountProps & PartialQueueTx$Extrinsic & 
 
 class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
   render () {
-    const { myAddress, accountId, isBasic, isPrimary = isBasic !== true, isDisabled, label, icon = '', onClick } = this.props;
+    const { myAddress, accountId, isBasic, isPrimary = isBasic !== true, isDisabled, label, icon = '', size = BUTTON_SIZE, onClick } = this.props;
     const origin = accountId || myAddress;
 
     return (
@@ -56,6 +57,7 @@ class TxButtonInner extends React.PureComponent<Props & InjectedProps> {
         isPrimary={isPrimary}
         label={label}
         icon={icon as string}
+        size={size}
         onClick={() => {
           if (onClick) onClick(this.send);
           else this.send();

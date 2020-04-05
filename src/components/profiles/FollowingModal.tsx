@@ -4,7 +4,6 @@ import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { AccountId } from '@polkadot/types';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
-import { BUTTON_SIZE } from '../../config/Size.config';
 import dynamic from 'next/dynamic';
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -48,7 +47,7 @@ const InnerFollowingModal = (props: Props) => {
         {renderFollowing()}
       </Modal.Content>
       <Modal.Actions>
-        <Button content='Close'size={BUTTON_SIZE} onClick={() => setOpen(false)} />
+        <Button content='Close' onClick={() => setOpen(false)} />
       </Modal.Actions>
     </Modal>
   );

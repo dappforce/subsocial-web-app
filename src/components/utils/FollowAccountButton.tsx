@@ -54,7 +54,6 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     type='submit'
     size={size}
     isBasic={isFollow}
-
     label={isFollow
       ? 'Unfollow'
       : 'Follow'}
