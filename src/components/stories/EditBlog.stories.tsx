@@ -14,7 +14,7 @@ const mockBlogId = new BlogId(99);
 
 const mockStruct = {
   id: mockBlogId,
-  slug: 'Test_slug'
+  handle: 'Test_handle'
 } as unknown as Blog
 
 const mockJson: BlogContent = {
@@ -26,8 +26,8 @@ const mockJson: BlogContent = {
 
 const validations = {
   blogMaxLen: new U32(500),
-  slugMinLen: new U32(5),
-  slugMaxLen: new U32(50)
+  handleMinLen: new U32(5),
+  handleMaxLen: new U32(50)
 }
 
 export const NewBlog = () =>

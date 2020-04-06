@@ -167,13 +167,13 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     : text;
 };
 
-export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BN | undefined> => {
-  if (idOrSlug.startsWith('@')) {
-    const slug = idOrSlug.substring(1) // Drop '@'
-    const idOpt = await api.query.social.blogIdBySlug(slug) as Option<BlogId>
+export const getBlogId = async (api: ApiPromise, idOrHandle: string): Promise<BN | undefined> => {
+  if (idOrHandle.startsWith('@')) {
+    const handle = idOrHandle.substring(1) // Drop '@'
+    const idOpt = await api.query.social.blogIdByHandle(handle) as Option<BlogId>
     return idOpt.unwrapOr(undefined)
   } else {
-    return new BN(idOrSlug)
+    return new BN(idOrHandle)
   }
 }
 

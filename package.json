@@ -95,8 +95,8 @@
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-console": "^1.2.1",
     "@storybook/react": "^5.2.5",
-    "@subsocial/api": "^0.1.22-beta2",
-    "@subsocial/types": "^0.1.15",
+    "@subsocial/api": "^0.1.22-beta3",
+    "@subsocial/types": "^0.1.20-beta1",
     "@subsocial/utils": "^0.1.16",
     "@svgr/webpack": "^5.2.0",
     "@types/faker": "^4.1.7",
@@ -130,8 +130,6 @@
     "store": "^2.0.12",
     "strip-markdown": "^3.0.3",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
-    "url-loader": "^3.0.0",
-    "uuid": "^3.3.2",
-    "yargs": "^13.2.0"
+    "url-loader": "^3.0.0"
   }
 }

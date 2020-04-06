@@ -59,7 +59,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
   email: Yup.string()
     .email('Enter correct email address'),
 
-  personal_site: urlValidation('Personal site'),
+  personalSite: urlValidation('Personal site'),
 
   about: Yup.string()
     .max(ABOUT_MAX_LEN, `Text is too long. Maximum length is ${ABOUT_MAX_LEN} chars.`),
@@ -117,11 +117,12 @@ const InnerForm = (props: FormProps) => {
     fullname,
     avatar,
     email,
-    personal_site,
+    personalSite,
     about,
     facebook,
     twitter,
     linkedIn,
+    medium,
     github,
     instagram
   } = values;
@@ -136,7 +137,7 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
-      const json = { fullname, avatar, email, personal_site, about, facebook, twitter, linkedIn, github, instagram };
+      const json = { fullname, avatar, email, personalSite, about, facebook, twitter, linkedIn, medium, github, instagram };
       ipfs.saveContent(json).then(cid => {
         setIpfsCid(cid);
         sendTx();
@@ -208,7 +209,7 @@ const InnerForm = (props: FormProps) => {
         />
 
         <LabelledText
-          name='personal_site'
+          name='personalSite'
           label='Personal site'
           placeholder='Address for personal site'
           {...props}
@@ -231,6 +232,13 @@ const InnerForm = (props: FormProps) => {
         <LabelledText
           name='linkedIn'
           label='LinkedIn profile'
+          placeholder={shouldBeValidUrlText}
+          {...props}
+        />
+
+        <LabelledText
+          name='medium'
+          label='Medium profile'
           placeholder={shouldBeValidUrlText}
           {...props}
         />
@@ -307,9 +315,10 @@ const EditForm = withFormik<OuterProps, FormValues>({
         twitter: '',
         linkedIn: '',
         github: '',
+        medium: '',
         instagram: '',
         email: '',
-        personal_site: ''
+        personalSite: ''
       };
     }
   },

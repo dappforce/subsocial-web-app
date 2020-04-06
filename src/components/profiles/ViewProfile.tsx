@@ -76,9 +76,10 @@ const Component: NextPage<Props> = (props: Props) => {
     fullname,
     avatar,
     email,
-    personal_site,
+    personalSite,
     about,
     facebook,
+    medium,
     twitter,
     linkedIn,
     github,
@@ -86,10 +87,11 @@ const Component: NextPage<Props> = (props: Props) => {
   } = ProfileContent;
 
   const hasEmail = email && nonEmptyStr(email);
-  const hasPersonalSite = personal_site && nonEmptyStr(personal_site);
+  const hasPersonalSite = personalSite && nonEmptyStr(personalSite);
   const hasAvatar = avatar && nonEmptyStr(avatar);
   const hasFacebookLink = facebook && nonEmptyStr(facebook);
   const hasTwitterLink = twitter && nonEmptyStr(twitter);
+  const hasMediumLink = medium && nonEmptyStr(medium);
   const hasLinkedInLink = linkedIn && nonEmptyStr(linkedIn);
   const hasGithubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
@@ -185,7 +187,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 }
                 {hasPersonalSite &&
                   <a
-                    href={personal_site}
+                    href={personalSite}
                     target='_blank'
                   >
                     <Icon type='global' />
@@ -199,6 +201,7 @@ const Component: NextPage<Props> = (props: Props) => {
                     <Icon type='facebook' />
                   </a>
                 }
+                
                 {hasTwitterLink &&
                   <a
                     href={twitter}
@@ -206,6 +209,11 @@ const Component: NextPage<Props> = (props: Props) => {
                   >
                     <Icon type='twitter' />
                   </a>}
+                {hasMediumLink &&
+                  <a target='_blank' href={linkedIn}>
+                    <Icon type='medium' />
+                  </a>
+                }
                 {hasLinkedInLink &&
                   <a
                     href={linkedIn}

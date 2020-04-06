@@ -294,9 +294,9 @@ export const loadBlogData = async (api: ApiPromise, blogId: BN): Promise<BlogDat
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { res, query: { blogId } } = props
-  const idOrSlug = blogId as string
+  const idOrHandle = blogId as string
   const api = await getApi()
-  const id = await getBlogId(api, idOrSlug)
+  const id = await getBlogId(api, idOrHandle)
   if (!id && res) {
     res.statusCode = 404
     return { statusCode: 404 }

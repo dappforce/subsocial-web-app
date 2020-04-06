@@ -320,8 +320,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId, postId }, res } = props;
   const api = await getApi();
-  const idOrSlug = blogId as string
-  const blogIdFromUrl = await getBlogId(api, idOrSlug)
+  const idOrHandle = blogId as string
+  const blogIdFromUrl = await getBlogId(api, idOrHandle)
   const postData = await loadPostData(api, new BN(postId as string)) as PostData;
   const { post } = postData
 
@@ -333,7 +333,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
 
   const blogIdFromPost = post!.blog_id
 
-  // If blog id of this post is not equal to blog id/slug from URL,
+  // If blog id of this post is not equal to blog id/handle from URL,
   // then redirect to the URL with blog id of this post.
   if (!blogIdFromPost.eq(blogIdFromUrl) && res) {
     res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
