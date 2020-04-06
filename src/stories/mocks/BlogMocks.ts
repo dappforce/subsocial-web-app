@@ -1,12 +1,17 @@
-import { BlogId, Blog, BlogContent } from '../../components/types';
-import { mockNavTabs } from './NavTabsMocks';
-import { U32 } from '@polkadot/types';
 
-export const mockBlogId = new BlogId(99);
+import { mockNavTabs } from './NavTabsMocks';
+import U32 from '@polkadot/types/primitive/U32';
+import { registry } from '@polkadot/react-api';
+import BN from 'bn.js';
+import { Blog } from '@subsocial/types/substrate/interfaces';
+import { BlogContent } from '@subsocial/types/offchain';
+import { Option } from '@polkadot/types'
+
+export const mockBlogId = new BN(99);
 
 export const mockBlogStruct: Blog = {
   id: mockBlogId,
-  slug: 'alice_in_chains'
+  handle: new Option(registry, 'Text', 'alice_in_chains')
 } as unknown as Blog
 
 export const mockBlogJson: BlogContent = {
@@ -18,7 +23,7 @@ export const mockBlogJson: BlogContent = {
 }
 
 export const mockBlogValidation = {
-  slugMinLen: new U32(5),
-  slugMaxLen: new U32(50),
-  blogMaxLen: new U32(500)
+  slugMinLen: new U32(registry, 5),
+  slugMaxLen: new U32(registry, 50),
+  blogMaxLen: 500
 }

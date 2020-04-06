@@ -79,7 +79,6 @@ const Component: NextPage<Props> = (props: Props) => {
     personalSite,
     about,
     facebook,
-    medium,
     twitter,
     linkedIn,
     medium,
@@ -93,7 +92,6 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasAvatar = avatar && nonEmptyStr(avatar);
   const hasFacebookLink = facebook && nonEmptyStr(facebook);
   const hasTwitterLink = twitter && nonEmptyStr(twitter);
-  const hasMediumLink = medium && nonEmptyStr(medium);
   const hasLinkedInLink = linkedIn && nonEmptyStr(linkedIn);
   const hasMediumLink = medium && nonEmptyStr(medium);
   const hasGitHubLink = github && nonEmptyStr(github);

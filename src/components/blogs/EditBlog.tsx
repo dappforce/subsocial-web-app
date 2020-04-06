@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
 
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
@@ -21,48 +20,13 @@ import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogContent } from '@subsocial/types/offchain';
-import { BlogUpdate } from '@subsocial/types/substrate/classes';
+import { BlogUpdate, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes';
 
 import EditableTagGroup from '../utils/EditableTagGroup';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './BlogValidation';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-
-// TODO get next settings from Substrate:
-const SLUG_REGEX = /^[A-Za-z0-9_-]+$/;
-
-const URL_MAX_LEN = 2000;
-
-const NAME_MIN_LEN = 3;
-const NAME_MAX_LEN = 100;
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-
-  slug: Yup.string()
-    .required('Slug is required')
-    .matches(SLUG_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(p.slugMinLen.toNumber(), `Slug is too short. Minimum length is ${p.slugMinLen.toNumber()} chars.`)
-    .max(p.slugMaxLen.toNumber(), `Slug is too long. Maximum length is ${p.slugMaxLen.toNumber()} chars.`),
-
-  name: Yup.string()
-    .required('Name is required')
-    .min(NAME_MIN_LEN, `Name is too short. Minimum length is ${NAME_MIN_LEN} chars.`)
-    .max(NAME_MAX_LEN, `Name is too long. Maximum length is ${NAME_MAX_LEN} chars.`),
-
-  image: Yup.string()
-    .url('Image must be a valid URL.')
-    .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
-
-  desc: Yup.string()
-    .max(p.blogMaxLen.toNumber(), `Description is too long. Maximum length is ${p.blogMaxLen.toNumber()} chars.`)
-});
-
-type ValidationProps = {
-  blogMaxLen: U32;
-  slugMinLen: U32;
-  slugMaxLen: U32;
-};
 
 type OuterProps = ValidationProps & {
   id?: BN;
@@ -111,7 +75,7 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
-      const json = { name, desc, image, tags };
+      const json = { name, desc, image, tags, navTabs };
       ipfs.saveBlog(json).then(cid => {
         cid && setIpfsCid(cid.toString());
         sendTx();
@@ -135,13 +99,13 @@ const InnerForm = (props: FormProps) => {
   const buildTxParams = () => {
     if (!isValid) return [];
     if (!struct) {
-      return [ new Option(registry, 'Text', handle), ipfsCid ];
+      return [ new OptionText(handle), ipfsCid ];
     } else {
       // TODO update only dirty values.
       const update = new BlogUpdate({
         writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
-        handle: new Option(registry, 'Text', handle),
-        ipfs_hash: new Option(registry, 'Text', ipfsCid)
+        handle: new OptionOptionText(handle),
+        ipfs_hash: new OptionText(ipfsCid)
       });
       return [ struct.id, update ];
     }
@@ -204,7 +168,7 @@ export const EditForm = withFormik<OuterProps, FormValues>({
   mapPropsToValues: (props): FormValues => {
     const { struct, json } = props;
     if (struct && json) {
-      const handle = struct.handle.toString();
+      const handle = struct.handle.unwrapOr('').toString();
       return {
         handle,
         ...json
@@ -226,18 +190,6 @@ export const EditForm = withFormik<OuterProps, FormValues>({
     // do submitting things
   }
 })(InnerForm);
-
-function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
-    const router = useRouter();
-    const { blogId } = router.query;
-    try {
-      return <Component id={new BlogId(blogId as string)} {...props} />;
-    } catch (err) {
-      return <em>Invalid blog ID: {blogId}</em>;
-    }
-  };
-}
 
 type LoadStructProps = OuterProps & {
   structOpt: Option<Blog>;

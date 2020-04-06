@@ -3542,17 +3542,24 @@
     ipfs-http-client "^42.0.0"
     it-all "^1.0.1"
 
-"@subsocial/api@^0.1.22-beta3":
-  version "0.1.22-beta3"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.1.22-beta3.tgz#910f2f86f7676dee96e27379f954c39d456b622a"
-  integrity sha512-X7ww3ruIEL5rbfOjrnXGyD1+GC0xjQe1OLDdQ4eMNSsJvsfHs8SLoI71bHaC5r1iX1klJKp2aeC0RN9Fklz9wQ==
+"@subsocial/api@^0.1.22-beta4":
+  version "0.1.22-beta4"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.1.22-beta4.tgz#dd34d0676e0df3fd9712460580e6ab6f98605485"
+  integrity sha512-csuMJfgyov5LCim/bhdn28CApxlHqrFIIse5aYOD2ct44wuplxI28re8ZaspW2/H0yDyTSMeQBG87LzTT9K1Yg==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.4.0-beta.46"
     "@subsocial/api" "^0.1.21"
-    "@subsocial/types" "^0.1.20-beta"
+    "@subsocial/types" "^0.1.20-beta4"
     "@subsocial/utils" "^0.1.16"
     ipfs-http-client "^33.1.0"
+
+"@subsocial/types@0.1.20-beta8":
+  version "0.1.20-beta8"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta8.tgz#440ebff4167793123f3ec12779ef84c32bd7c49e"
+  integrity sha512-rD2H59j5oqRX7CmzGszzDG2Zn3jQtgZ75uuo/aDO3BMdv2C9EQc3mu9yP04BVmI3Ra3PwwFuXXzLYWPBPycWVA==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
 
 "@subsocial/types@^0.1.15":
   version "0.1.18"
@@ -3561,17 +3568,10 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/types@^0.1.20-beta":
-  version "0.1.20-beta"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta.tgz#e601f5ec189192b22b4deb233f88808c768d0d77"
-  integrity sha512-vYkkr3dCrLSSAollTR9nxTIWE9+DikM90ea5Db2Azaillcbl8LM4inwGcRymEtQ0/nsWmkqzVCcXHTPRxhH4FA==
-  dependencies:
-    "@babel/runtime" "^7.8.4"
-
-"@subsocial/types@^0.1.20-beta1":
-  version "0.1.20-beta1"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta1.tgz#6879d41552c476e42db7454da20cf658616db570"
-  integrity sha512-qSbMWU/drisrZ8YS/AB9KkiXfQFMdrDIYLvfIPdf/VFBxY9KIJKwRrndgBB8NZyrlrcLC9uISaLxuKfSGhwslQ==
+"@subsocial/types@^0.1.20-beta4":
+  version "0.1.20-beta4"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta4.tgz#f09e4a672d1f3b987c4979a8daedc0d9412eb9be"
+  integrity sha512-djtXY0gpsimEYK6dYCcQbKT2MPpR9huadud3nl7zSbX1slXQbbZeni9sDYYzVwO8N7WyDhVNjb212T1mAZOqxA==
   dependencies:
     "@babel/runtime" "^7.8.4"
 

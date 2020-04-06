@@ -1,16 +1,17 @@
 import React from 'react'
 import Link from 'next/link'
 import { Menu, Icon } from 'antd'
-import { NavTab, BlogId } from 'src/components/types'
 import FollowBlogButton from '../utils/FollowBlogButton'
 import { nonEmptyStr } from '../utils/index'
 import { DfBgImg } from '../utils/DfBgImg'
-import { IdentityIcon } from '@polkadot/ui-app'
-import { AccountId } from '@polkadot/types'
 import { SpaceContent } from '../spaces/SpacePreview'
+import BN from 'bn.js'
+import AccountId from '@polkadot/types/generic/AccountId'
+import { NavTab } from '@subsocial/types/offchain'
+import { IdentityIcon } from '@polkadot/react-components'
 
 export interface SpaceNavProps {
-  blogId: BlogId,
+  blogId: BN,
   creator: AccountId,
   name: string,
   desc?: string,

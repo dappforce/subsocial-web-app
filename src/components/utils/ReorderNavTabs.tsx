@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List, Icon } from 'antd';
-import { NavTab } from 'src/components/types';
+import { NavTab } from '@subsocial/types/offchain';
 
 export interface Props {
   tabs: NavTab[],

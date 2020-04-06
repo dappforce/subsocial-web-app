@@ -1,15 +1,19 @@
-import { U32 } from '@polkadot/types';
-import { Post, PostContent, PostId } from '../../components/types';
-import { mockBlogId } from './BlogMocks';
 
-export const mockPostId = new PostId(34)
+import { mockBlogId } from './BlogMocks';
+import U32 from '@polkadot/types/primitive/U32';
+import { registry } from '@polkadot/react-api';
+import { Post } from '@subsocial/types/substrate/interfaces';
+import { PostContent } from '@subsocial/types/offchain';
+import BN from 'bn.js'
+
+export const mockPostId = new BN(34)
 
 export const mockPostValidation = {
-  postMaxLen: new U32(2000)
+  postMaxLen: new U32(registry, 2000)
 }
 
 export const mockPostStruct = {
-  id: new PostId(34),
+  id: new BN(34),
   blog_id: mockBlogId
 } as unknown as Post
 

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
-import { Option, Text } from '@polkadot/types';
+import { Option, Null } from '@polkadot/types';
 import Section from '../utils/Section';
-import { withCalls, withMulti } from '@polkadot/ui-api';
 import { queryBlogsToProp } from '../utils/index';
-import { BlogId, Blog, BlogContent, NavTab, BlogUpdate, VecAccountId } from '../types';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -16,11 +14,16 @@ import Select, { SelectValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import ReorderNavTabs from '../utils/ReorderNavTabs';
 import { SubmittableResult } from '@polkadot/api';
-import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
 import dynamic from 'next/dynamic';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { validationSchema } from './NavValidation';
 import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
+import { Blog } from '@subsocial/types/substrate/interfaces';
+import { BlogContent, NavTab } from '@subsocial/types/offchain';
+import { BlogUpdate, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes';
+import { withMulti, withCalls, registry } from '@polkadot/react-api';
+import { ipfs } from '../utils/OffchainUtils';
+import BN from 'bn.js'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -31,7 +34,7 @@ export interface FormValues {
 interface OuterProps {
   struct: Blog;
   json: BlogContent;
-  id: BlogId;
+  id: BN;
 }
 
 const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
@@ -129,32 +132,27 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         image,
         tags: blogTags
       };
-      addJsonToIpfs(json).then(cid => {
-        setIpfsCid(cid);
+      ipfs.saveBlog(json).then(cid => {
+        cid && setIpfsCid(cid.toString());
         sendTx();
       }).catch(err => new Error(err));
     }
   };
 
-  const onTxCancelled = () => {
-    removeFromIpfs(ipfsCid).catch(err => new Error(err));
-    setSubmitting(false);
-  };
-
   const onTxFailed = () => {
-    removeFromIpfs(ipfsCid).catch(err => new Error(err));
+    ipfs.removeContent(ipfsCid).catch(err => new Error(err));
     setSubmitting(false);
   };
 
   const onTxSuccess = (_txResult: SubmittableResult) => {
     setSubmitting(false);
 
-    const _id = id || getNewIdFromEvent<BlogId>(_txResult);
+    const _id = id || getNewIdFromEvent(_txResult);
     console.log('onTxSuccess _id:', _id)
     _id && goToView(_id);
   };
 
-  const goToView = (id: BlogId) => {
+  const goToView = (id: BN) => {
     Router.push('/blogs/' + id.toString()).catch(console.log);
   };
 
@@ -162,9 +160,9 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     if (!isValid || !struct) return [];
 
     const update = new BlogUpdate({
-      writers: new Option(VecAccountId, null),
-      slug: new Option(Text, null),
-      ipfs_hash: new Option(Text, ipfsCid)
+      writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
+      handle: new OptionOptionText(null),
+      ipfs_hash: new OptionText(ipfsCid)
     });
     return [ struct.id, update ];
   };
@@ -256,9 +254,8 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             params={buildTxParams()}
             tx={'blogs.updateBlog'}
             onClick={onSubmit}
-            txCancelledCb={onTxCancelled}
-            txFailedCb={onTxFailed}
-            txSuccessCb={onTxSuccess}
+            onFailed={onTxFailed}
+            onSuccess={onTxSuccess}
           />
 
         </Form>
@@ -277,7 +274,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
 export interface NavEditorFormProps {
   struct: Blog;
   json: BlogContent;
-  id: BlogId;
+  id: BN;
 }
 
 export const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
@@ -330,7 +327,7 @@ function LoadStruct (props: LoadStructProps) {
     if (struct === undefined) return toggleTrigger();
 
     console.log('Loading blog JSON from IPFS');
-    getJsonFromIpfs<BlogContent>(struct.ipfs_hash).then(json => {
+    ipfs.findBlog(struct.ipfs_hash).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

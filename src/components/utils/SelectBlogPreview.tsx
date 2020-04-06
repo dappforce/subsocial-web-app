@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { BlogId, BlogContent } from '../types';
 import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
 import { NoData } from './DataList';
 import { getApi } from './SubstrateApi';
 import { loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { DfBgImg } from './DfBgImg';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
 import { nonEmptyStr } from './index'
+import BN from 'bn.js'
+import { IdentityIcon } from '@polkadot/react-components';
+import { BlogId } from '@subsocial/types/substrate/interfaces';
+import { BlogContent } from '@subsocial/types/offchain';
 
 type Props = {
   imageSize?: number,
-  blogIds: BlogId[],
+  blogIds: BN[],
   onSelect?: (value: string | number | LabeledValue) => void,
   defaultValue?: string,
   preparedBlogsData?: {

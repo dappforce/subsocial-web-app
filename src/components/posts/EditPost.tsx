@@ -20,11 +20,16 @@ import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
-import { PostExtension, RegularPost, PostUpdate } from '@subsocial/types/substrate/classes';
-import { Post, IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
+import { Post, IpfsHash, BlogId } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
-import { ViewBlog } from '../blogs/ViewBlog';
+import { ValidationProps, buildValidationSchema } from './PostValidation';
+import { LabeledValue } from 'antd/lib/select';
+import SelectBlogPreview from '../utils/SelectBlogPreview';
+import { Icon } from 'antd';
+import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
 
 type OuterProps = ValidationProps & {
   blogId?: BN,
@@ -35,10 +40,11 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postMaxLen: U32,
   myAddress?: string,
   blogIds?: BlogId[]
 };
+
+const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
 
 type FormValues = PostContent;
 
@@ -89,17 +95,17 @@ const InnerForm = (props: FormProps) => {
     canonical
   } = values;
 
-  const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
+  const initialBlogId = struct?.blog_id || blogId
 
   const goToView = (id: BN) => {
     Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
-  const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
+  const [ currentBlogId, setCurrentBlogId ] = useState(initialBlogId)
   const [ showAdvanced, setShowAdvanced ] = useState(false)
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
 
-  const preparedBlogId = currentBlogId?.toString()
+  const preparedBlogId = currentBlogId
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
@@ -170,7 +176,7 @@ const InnerForm = (props: FormProps) => {
   const handleBlogSelect = (value: string | number | LabeledValue) => {
     if (!value) return;
 
-    setCurrentBlogId(new BlogId(value as string))
+    setCurrentBlogId(new BN(value as string))
   };
 
   const renderBlogsPreviewDropdown = () => {
@@ -180,7 +186,7 @@ const InnerForm = (props: FormProps) => {
       blogIds={blogIds}
       onSelect={handleBlogSelect}
       imageSize={24}
-      defaultValue={currentBlogId.toString()} />
+      defaultValue={currentBlogId?.toString()} />
   }
 
   const form =
@@ -222,8 +228,7 @@ const InnerForm = (props: FormProps) => {
 
   const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
 
-  const sectionTitle =
-    <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
+  const sectionTitle = currentBlogId && <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
 
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={sectionTitle}>
@@ -267,7 +272,7 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
 
   validationSchema: buildValidationSchema,
 
-  handleSubmit: values => {
+  handleSubmit: () => {
     // do submitting things
   }
 })(InnerForm);
@@ -289,7 +294,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
 }
 
 function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
+  return function () {
     const router = useRouter();
     const { blogId } = router.query;
     try {

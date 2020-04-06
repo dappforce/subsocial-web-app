@@ -299,7 +299,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </Section>
     <SpaceNav
       {...content}
-      blogId={new BlogId(id)}
+      blogId={new BN(id)}
       creator={account}
     />
   </div>

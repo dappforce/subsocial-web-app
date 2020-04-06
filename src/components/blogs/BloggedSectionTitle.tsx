@@ -1,10 +1,10 @@
 import React from 'react';
 import { ViewBlog } from './ViewBlog';
-import { BlogId } from '../types';
 import { useStorybookContext } from '../utils/StorybookContext';
+import BN from 'bn.js';
 
 type Props = {
-  blogId: BlogId
+  blogId: BN
   title: JSX.Element | string
 }
 

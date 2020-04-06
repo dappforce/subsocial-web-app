@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-import { U32 } from '@polkadot/types';
 import { minLenError, maxLenError, urlValidation } from '../utils/forms/validation';
+import U32 from '@polkadot/types/primitive/U32';
 
 const USERNAME_REGEX = /^[A-Za-z0-9_]+$/;
 
@@ -8,6 +8,7 @@ const FULLNAME_MIN_LEN = 2;
 const FULLNAME_MAX_LEN = 100;
 
 const ABOUT_MAX_LEN = 1000;
+
 
 export type ValidationProps = {
   usernameMinLen: U32

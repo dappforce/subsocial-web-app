@@ -25,61 +25,6 @@ import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-// TODO get next settings from Substrate:
-const USERNAME_REGEX = /^[A-Za-z0-9-]+$/;
-
-const URL_MAX_LEN = 2000;
-
-const FULLNAME_MIN_LEN = 2;
-const FULLNAME_MAX_LEN = 100;
-
-const ABOUT_MAX_LEN = 1000;
-
-function urlValidation (name: string) {
-  return Yup.string()
-    .url(`${name} URL is not valid.`)
-    .max(URL_MAX_LEN, `${name} URL is too long. Maximum length is ${URL_MAX_LEN} chars.`);
-}
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-  username: Yup.string()
-    .required('Username is required')
-    .matches(USERNAME_REGEX, 'Username can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(p.usernameMinLen, `Username is too short. Minimum length is ${p.usernameMinLen} chars.`)
-    .max(p.usernameMaxLen, `Username is too long. Maximum length is ${p.usernameMaxLen} chars.`),
-
-  fullname: Yup.string()
-    .min(FULLNAME_MIN_LEN, `Full name is too short. Minimum length is ${FULLNAME_MIN_LEN} chars.`)
-    .max(FULLNAME_MAX_LEN, `Full name is too long. Maximum length is ${FULLNAME_MAX_LEN} chars.`),
-
-  avatar: Yup.string()
-    .url('Avatar must be a valid URL.')
-    .max(URL_MAX_LEN, `Avatar URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
-
-  email: Yup.string()
-    .email('Enter correct email address'),
-
-  personal_site: urlValidation('Personal site'),
-
-  about: Yup.string()
-    .max(ABOUT_MAX_LEN, `Text is too long. Maximum length is ${ABOUT_MAX_LEN} chars.`),
-
-  facebook: urlValidation('Facebook'),
-
-  twitter: urlValidation('Twitter'),
-
-  linkedIn: urlValidation('LinkedIn'),
-
-  github: urlValidation('GitHub'),
-
-  instagram: urlValidation('Instagram')
-});
-
-type ValidationProps = {
-  usernameMinLen: number,
-  usernameMaxLen: number
-};
-
 export type OuterProps = MyAccountProps & ValidationProps & {
   myAddress?: AccountId,
   profile?: Profile,

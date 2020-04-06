@@ -1,9 +1,9 @@
 import React from 'react'
 import { Icon } from 'antd'
-import { BlogId } from 'src/components/types'
+import BN from 'bn.js'
 
 export type SpaceContent = {
-  id: BlogId,
+  blogId: BN,
   title: string,
   isFollowing: boolean
 }
@@ -21,13 +21,14 @@ const SpacePreview = (props: SpacePreviewProps) => {
     <div className="SPHead">{name}</div>
     <div className="SPitems">
       {spaces.map((x) => (
-        <div className="SPitem" key={x.id.toString()}>
+        <div className="SPitem" key={x.blogId.toString()}>
           <div className="SPitemText"><Icon type={iconType} /> {x.title}</div>
           {/* <FollowBlogButton blogId={blogId} /> */}
         </div>
       ))}
     </div>
   </div>
+  
 }
 
 export default SpacePreview

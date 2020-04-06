@@ -4,7 +4,6 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
 import Link from 'next/link';
@@ -18,7 +17,7 @@ type Props = MyAccountProps & {
   postId: BN,
   open: boolean,
   close: () => void,
-  blogIds?: BlogId[]
+  blogIds?: BN[]
 };
 
 const InnerShareModal = (props: Props) => {
@@ -37,7 +36,7 @@ const InnerShareModal = (props: Props) => {
     }
 
     const saveBlog = (value: string | number | LabeledValue) => {
-      setBlogId(new BlogId(value as string));
+      setBlogId(new BN(value as string));
     };
     return (<div className='DfShareModal'>
       <SelectBlogPreview
