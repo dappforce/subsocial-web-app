@@ -54,7 +54,7 @@ export const ViewNewsFeed = () => {
     <ViewActivity key={item.id} activity={item} />);
   return (<>
     <HeadMeta title='Feed' />
-    <Section title={`News Feed (${totalCount})`}>{
+    <Section title={`News Feed (${totalCount})`} className={'bookPage'}>{
       totalCount === 0
         ? <NoData description='Your feed is empty'/>
         : <InfiniteScroll
@@ -100,7 +100,7 @@ export const ViewNotifications = () => {
     <Notification key={item.id} activity={item} />);
   return (<>
     <HeadMeta title='Notifications' />
-    <Section title={`Notifications (${totalCount})`}>
+    <Section title={`Notifications (${totalCount})`} className='bookPage'>
       {totalCount === 0
         ? <NoData description='No notifications for you'/>
         : <InfiniteScroll

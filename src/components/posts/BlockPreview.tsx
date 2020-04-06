@@ -1,6 +1,6 @@
 import React from 'react'
 import { BlockValue, CodeBlockValue, EmbedData, PreviewData } from '../types'
-import { nonEmptyStr, isLink, YOUTUBE_REGEXP, VIMEO_REGEX } from '../utils'
+import { nonEmptyStr, isLink, YOUTUBE_REGEXP, VIMEO_REGEX, TWITTER_REGEXP, DOMAIN_REGEXP } from '../utils'
 import { Tweet } from 'react-twitter-widgets'
 import { DfMd } from '../utils/DfMd'
 import AceEditor from 'react-ace'
@@ -82,7 +82,9 @@ const BlockPreview = (props: Props) => {
         />
       }
       case 'twitter': {
-        return <Tweet tweetId={embedData?.data}/>
+        return <Tweet options={{
+          width: '100%'
+        }} tweetId={embedData?.data}/>
       }
       case 'default': {
         return <div>default embed</div>
@@ -100,34 +102,46 @@ const BlockPreview = (props: Props) => {
         break
       }
 
-      const previewData = linkPreviewData.find((y) => y.id === x.id)
-
-      if (!previewData) break
-
-      const { data: { og } } = previewData
+      if (x.data.match(TWITTER_REGEXP)) {
+        const match = x.data.match(TWITTER_REGEXP);
+        if (match && match[1]) {
+          element = renderEmbed({ id: x.id, data: match[1], type: 'twitter' })
+        }
+        break
+      }
 
       const currentEmbed = embedData.find((y) => y.id === x.id)
+      const previewData = linkPreviewData.find((y) => y.id === x.id)
 
-      let match = ''
+      let match = undefined
+
+      if (!previewData) break
+      const { data: { og } } = previewData
+      if (!og || !og.url) break
       if (og?.url.match(YOUTUBE_REGEXP)) match = 'youtube'
       if (og?.url.match(VIMEO_REGEX)) match = 'vimeo'
+
+      const domain = x.data.match(DOMAIN_REGEXP)
 
       element = <div>
         <div>
           <a
-            href={og?.url}
+            href={x.data}
             target='_blank'
             rel='noopener noreferrer'
-            onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleEmbed(e, og?.url as string, x.id)}
+            onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleEmbed(e, x.data as string, x.id)}
           >
             {currentEmbed
               ? renderEmbed(currentEmbed)
-              : <div>
+              : <div className={'previewLinkWrapper'}>
                 <div className={`previewImgWrapper ${match}`}>
-                  <img src={og?.image} className='DfPostImage' />
+                  <img src={og?.image} className='DfPostImage linkImage' />
                 </div>
-                <p><b>{og?.title}</b></p>
-                <p className='previewDescription'>{og?.description}</p>
+                <div className={'underPicture'}>
+                  <p><b>{og?.title}</b></p>
+                  <p className='previewDescription'>{og?.description}</p>
+                  <p className='previewLinkAfterDescription'>{domain}</p>
+                </div>
               </div>}
           </a>
         </div>
@@ -136,6 +150,10 @@ const BlockPreview = (props: Props) => {
     }
     case 'text': {
       element = <DfMd source={x.data} />
+      break
+    }
+    case 'image': {
+      element = <img className='DfPostImage' src={x.data} />
       break
     }
     case 'code': {
@@ -163,7 +181,7 @@ const BlockPreview = (props: Props) => {
     }
   }
 
-  return <div key={x.id} className={'EditPostPreviewBlock'}>
+  return <div key={x.id} >
     {element}
   </div>
 }

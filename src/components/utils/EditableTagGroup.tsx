@@ -46,7 +46,7 @@ const EditableTagGroup = (props: OtherProps) => {
   return (
     <div className={`ui--Labelled field ${hasError ? 'error' : ''}`}>
       <label htmlFor={name as string}>{nonEmptyStr(label) && label + ':'}</label>
-      <div className='ui--Labelled-content'>
+      <div className='ui--Labelled-content DfTags'>
         {tags.map((tag) => {
           const isLongTag = tag.length > 20;
           const tagElem = (

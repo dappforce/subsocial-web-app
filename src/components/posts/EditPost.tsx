@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
-import { Form, withFormik, FormikProps, Field } from 'formik';
+import { Form, withFormik, FormikProps, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -9,17 +9,15 @@ import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue, PostBlockKind, CodeBlockValue, PreviewData, EmbedData, SiteMetaContent } from '../types';
+import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue, PostBlockKind, CodeBlockValue, PreviewData, EmbedData } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { queryBlogsToProp, TWITTER_REGEXP, parse } from '../utils/index';
+import { queryBlogsToProp, parse } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Dropdown, Menu, Icon, /* Upload, message */ 
-Tabs} from 'antd';
-import '../utils/styles/full-width-content.css'
+import { Dropdown, Menu, Icon, /* Upload, message */ Tabs, Button as AntButton} from 'antd';
 import AceEditor from 'react-ace'
 import 'brace/mode/javascript'
 import 'brace/mode/typescript'
@@ -41,16 +39,27 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
 
 const MAX_TAGS_PER_POST = 10
+const MIN_TEXT_BLOCK_LENGTH = 20
 
 const buildSchema = () => Yup.object().shape({
   title: Yup.string()
     .required('Post title is required'),
   tags: Yup.array()
     .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`),
-  image: Yup.string()
-    .url('Image must be a valid URL.'),
   canonical: Yup.string()
-    .url('Canonical must be a valid URL.')
+    .url('Canonical must be a valid URL.'),
+  blockValues: Yup.array().of(
+    Yup.object({
+      kind: Yup.string(),
+      data: Yup.string()
+        .when('kind', {
+          is: (val) => val == 'text',
+          then: Yup.string().min(MIN_TEXT_BLOCK_LENGTH, `Text must be at least ${MIN_TEXT_BLOCK_LENGTH} characters`),
+          otherwise: Yup.string(),
+        }),
+    })
+  )
+  
 });
 
 type ValidationProps = {};
@@ -92,6 +101,7 @@ const InnerForm = (props: FormProps) => {
     dirty,
     isValid,
     // errors,
+    // touched,
     setFieldValue,
     isSubmitting,
     setSubmitting,
@@ -139,7 +149,14 @@ const InnerForm = (props: FormProps) => {
   const [ isAdvanced, setIsAdvanced ] = useState(false)
   const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
 
-  const langs = [ 'javascript', 'typescript', 'html', 'scss', 'rust', 'powershell' ]
+  const langs = [
+    { name: 'javascript', pretty: 'JavaScript' },
+    { name: 'typescript', pretty: 'TypeScript' },
+    { name: 'html', pretty: 'HTML' },
+    { name: 'scss', pretty: 'CSS/SCSS' },
+    { name: 'rust', pretty: 'Rust' },
+    { name: 'powershell', pretty: 'PowerShell' }
+  ]
 
   useEffect(() => {
     const firstLoad = async () => {
@@ -301,18 +318,6 @@ const InnerForm = (props: FormProps) => {
 
   const handleLinkPreviewChange = async (block: BlockValue, value: string) => {
 
-    if (value.match(TWITTER_REGEXP)) {
-
-      const match = value.match(TWITTER_REGEXP);
-      if (match && match[1]) {
-        setEmbedData([
-          ...embedData,
-          { id: block.id, data: match[1], type: 'twitter' }
-        ])
-      }
-
-    }
-
     const data = await parse(value)
 
     if (!data) return
@@ -334,8 +339,6 @@ const InnerForm = (props: FormProps) => {
   }
 
   const handleLinkChange = (block: BlockValue, name: string, value: string) => {
-    const newArray = embedData.filter((x) => x.id !== block.id)
-    setEmbedData(newArray)
     handleLinkPreviewChange(block, value)
     setFieldValue(name, value)
   }
@@ -433,12 +436,25 @@ const InnerForm = (props: FormProps) => {
         />
         break
       }
+      case 'image': {
+        res = <Field
+          type="text"
+          name={`blockValues.${index}.data`}
+          placeholder="Image link"
+          value={block.data}
+          onFocus={() => handleFocus(true, block.id)}
+          onBlur={() => handleFocus(false, block.id)}
+          onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
+        />
+        break
+      }
       case 'code': {
         const { lang } = block as CodeBlockValue
+        const pretty = langs.find((x) => x.name === lang)?.pretty
         res = <div className='EditPostAceEditor'>
           <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeSelect'}>
             <a href='#' onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => e.preventDefault()}>
-              <Icon type="down" /> Language: {lang || 'javascript'}
+              <Icon type="down" /> Syntax: {pretty || 'JavaScript'}
             </a>
           </Dropdown>
           <AceEditor
@@ -478,30 +494,32 @@ const InnerForm = (props: FormProps) => {
 
     const currentFocus = inputFocus.find((z) => z.id === block.id)
 
-    return <div className={currentFocus?.focus ? 'EditPostBlockWrapper inputFocus' : 'EditPostBlockWrapper'} key={block.id} >
+    return <div className={`EditPostBlockWrapper ${currentFocus?.focus ? 'inputFocus' : ''} ${isMobile ? 'mobileBlock' : ''}`} key={block.id} >
       {res}
+      <ErrorMessage name={`blockValues.${index}.data`} component='div' className='ui pointing red label' />
+ 
       <div className='navigationButtons'>
         <Dropdown overlay={() => addMenu(index)}>
-          <Button type="button" className={'miniButton'}><Icon type="plus-circle" /> Add block</Button>
+          <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
         </Dropdown>
-        <Button type="button" onClick={() => removeBlock(block.id)} className={'miniButton'}>
+        <AntButton type="default" size="small" onClick={() => removeBlock(block.id)} className={'smallAntButton'}>
           <Icon type="delete" />
           Delete
-        </Button>
-        <Button className={'miniButton'} type="button" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
+        </AntButton>
+        <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
           {block.hidden
-            ? <div><Icon type="eye" />Show block</div>
-            : <div><Icon type="eye-invisible" />Hide block</div>
+            ? <div><Icon type="eye" /> Show block</div>
+            : <div><Icon type="eye-invisible" /> Hide block</div>
           }
-        </Button>
+        </AntButton>
         { index > 0 &&
-          <Button className={'miniButton'} type="button" onClick={() => changeBlockPosition(-1, index)} >
+          <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(-1, index)} >
             <Icon type="up-circle" /> Move up
-          </Button> }
+          </AntButton> }
         { index < maxBlockId &&
-          <Button className={'miniButton'} type="button" onClick={() => changeBlockPosition(1, index)} >
+          <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(1, index)} >
             <Icon type="down-circle" /> Move down
-          </Button> }
+          </AntButton> }
       </div>
     </div>
 
@@ -515,7 +533,10 @@ const InnerForm = (props: FormProps) => {
       <Menu.Item key="2" onClick={() => addBlock('link', index)}>
         Link
       </Menu.Item>
-      <Menu.Item key="3" onClick={() => addBlock('code', index)}>
+      <Menu.Item key="3" onClick={() => addBlock('image', index)}>
+        Image
+      </Menu.Item>
+      <Menu.Item key="4" onClick={() => addBlock('code', index)}>
         Code block
       </Menu.Item>
     </Menu>
@@ -524,8 +545,8 @@ const InnerForm = (props: FormProps) => {
   const modesMenu = (id: number) => (
     <Menu className=''>
       {langs.map((x) => (
-        <Menu.Item key={x} onClick={() => handleAceMode(x, id)} >
-          {x.charAt(0).toUpperCase() + x.slice(1)}
+        <Menu.Item key={x.name} onClick={() => handleAceMode(x.name, id)} >
+          {x.pretty}
         </Menu.Item>
       ))}
     </Menu>
@@ -562,20 +583,18 @@ const InnerForm = (props: FormProps) => {
 
       {isRegularPost
         ? <>
+          <div className='EditPostLabel'>
+            Post in blog:
+          </div>
+
           {renderBlogsPreviewDropdown()}
 
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
-          <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
-
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
 
-          <div className='EditPostLabel'>
-            Post Content:
-          </div>
-
           <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
-            <Button type="button" className={'miniButton'}><Icon type="plus-circle" /> Add block</Button>
+            <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
           </Dropdown>
 
           {blockValues && blockValues.length > 0
@@ -629,16 +648,14 @@ const InnerForm = (props: FormProps) => {
             <div>Preview Data:</div>
             <div className='DfMd'>
               <h1>{title}</h1>
-              {image && <img className='DfPostImage' src={image} />}
             </div>
             {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
-                key={x.id}
+              blockValues.map((x: BlockValue | CodeBlockValue) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
                 block={x}
                 embedData={embedData}
                 setEmbedData={setEmbedData}
                 linkPreviewData={linkPreviewData}
-              />)
+              /></div>)
             }
           </div>
         </div>
@@ -656,7 +673,6 @@ const InnerForm = (props: FormProps) => {
         <div className='EditPostPreview withTabs'>
             <div className='DfMd'>
               <h1>{title}</h1>
-              {image && <img className='DfPostImage' src={image} />}
             </div>
             {blockValues && blockValues.length !== 0 &&
               blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview

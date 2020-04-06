@@ -14,11 +14,22 @@ body,
   padding: $space_big;
   overflow-wrap: break-word;
   min-width: 428px;
-  max-width: 728px;
   color: #111;
+
+  .viewPostBlock {
+    margin-bottom: $space_normal;
+  }
+
+  .bookPage {
+    max-width: 728px;
+  }
 
   .DfTags {
     margin: $space_normal 0;
+
+    span {
+      font-size: $font_normal;
+    }
   }
 
   .blogMiniPreview {
@@ -148,7 +159,7 @@ body,
 
 .EditEntityBox {
   width: 100%;
-  max-width: 600px;
+  /* max-width: 600px; */
 
   .EditEntityForm {
     width: 100%;
@@ -1168,18 +1179,9 @@ hr {
     text-align: left;
   }
 
-  .miniButton {
-    font-size: 0.8rem;
-    padding: 0 5px;
-    height: 1.5rem;
-    background-color: white;
-    border-color: $color_light_border;
-    border: 1px solid;
-    margin-right: 1rem;
-
-    i {
-      margin-right: 3px;
-    }
+  .smallAntButton {
+    height: $space_big;
+    margin-right: 3px;
   }
 
   .AdvancedWrapper {
@@ -1189,6 +1191,7 @@ hr {
       display: block;
       border-top: 1px solid $color_light_border;
       padding-top: 1rem;
+      color: $color_menu_font;
     }
   }
 }
@@ -1205,19 +1208,33 @@ hr {
     display: flex;
     margin-top: $space_big;
     flex-direction: column;
-    position: relative;
+  }
+}
 
-    .previewImgWrapper.youtube:before {
+.previewLinkWrapper {
+  border: 1px solid $color_light_border;
+  border-radius: 10px;
+  position: relative;
+
+  .previewImgWrapper {
+    .linkImage {
+      border-radius: 10px 10px 0 0;
+    }
+    
+    &.youtube:before {
       content: url(../../../../public/play_youtube.png);
       position: absolute;
       top: calc(50% - 96px);
       left: calc(50% - 48px);
     }
+  }
 
-    .previewDescription {
-      color: #111;
-    }
+  .underPicture {
+    padding: 0 $space_normal $space_normal $space_normal;
+  }
 
+  .previewDescription {
+    color: #111;
   }
 }
 
@@ -1262,9 +1279,15 @@ hr {
     transition: opacity 0.5s;
   }
 
+  &.mobileBlock {
+    .navigationButtons {
+      opacity: 0.85;
+    }
+  }
+
 }
 .EditPostBlockWrapper.inputFocus,
-.EditPostBlockWrapper:hover {
+.EditPostBlockWrapper:not(.mobileBlock):hover {
   background-color: beige;
   border-radius: 4px;
 
@@ -1291,5 +1314,22 @@ hr {
   .aceModeSelect {
     width: 150px;
     margin-bottom: 5px;
+    color: $color_menu_font;
   }
 }
+
+/*
+.markdown-body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
+}
+
+@media (max-width: 767px) {
+  .markdown-body {
+    padding: 15px;
+  }
+}
+*/

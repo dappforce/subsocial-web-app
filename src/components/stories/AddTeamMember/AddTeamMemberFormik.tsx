@@ -112,7 +112,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 
   return <>
     <HeadMeta title={'Add Team Member'} />
-    <Section className='EditEntityBox' title={'Add Team Member'}>
+    <Section className='EditEntityBox bookPage' title={'Add Team Member'}>
       <Form className='ui form DfForm EditEntityForm'>
         <LabelledText name={fields.title} label='Title' placeholder='Your title' {...props} />
 

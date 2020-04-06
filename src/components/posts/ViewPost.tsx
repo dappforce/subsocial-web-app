@@ -314,9 +314,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderDetails = (content: PostExtContent) => {
-    const { title, image, canonical, tags, blockValues } = content;
-    return <Section className='DfContentPage'>
-      {<HeadMeta title={title} desc={''} image={image} canonical={canonical} tags={tags} /> }
+    const { title, canonical, tags, blockValues } = content;
+    return <Section className='DfContentPage bookPage'>
+      {<HeadMeta title={title} desc={''} image={''} canonical={canonical} tags={tags} /> }
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -325,16 +325,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       {renderBlogMiniPreview(post)}
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
-        {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         {blockValues && blockValues.length > 0 &&
           blockValues.map((x: BlockValue | CodeBlockValue) => {
-            return <BlockPreview
-              key={x.id}
+            return <div key={x.id} className={'viewPostBlock'}><BlockPreview
               block={x}
               embedData={embedData}
               setEmbedData={setEmbedData}
               linkPreviewData={linkPreviewData}
-            />
+            /></div>
           })
         }
         {renderTags(content)}
