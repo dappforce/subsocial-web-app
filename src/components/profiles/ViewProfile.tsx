@@ -82,10 +82,12 @@ const Component: NextPage<Props> = (props: Props) => {
     medium,
     twitter,
     linkedIn,
+    medium,
     github,
     instagram
   } = ProfileContent;
 
+  // TODO fix copypasta of social links. Implement via array.
   const hasEmail = email && nonEmptyStr(email);
   const hasPersonalSite = personalSite && nonEmptyStr(personalSite);
   const hasAvatar = avatar && nonEmptyStr(avatar);
@@ -93,7 +95,8 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasTwitterLink = twitter && nonEmptyStr(twitter);
   const hasMediumLink = medium && nonEmptyStr(medium);
   const hasLinkedInLink = linkedIn && nonEmptyStr(linkedIn);
-  const hasGithubLink = github && nonEmptyStr(github);
+  const hasMediumLink = medium && nonEmptyStr(medium);
+  const hasGitHubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
@@ -178,13 +181,13 @@ const Component: NextPage<Props> = (props: Props) => {
               <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>
               <div className='DfSocialLinks'>
                 {hasEmail &&
-                  <a
-                    href={`mailto:${email}`}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={`mailto:${email}`}>
                     <Icon type='mail' />
                   </a>
                 }
+
+                {/* TODO fix copypasta of social links. Implement via array. */}
+
                 {hasPersonalSite &&
                   <a
                     href={personalSite}
@@ -194,19 +197,13 @@ const Component: NextPage<Props> = (props: Props) => {
                   </a>
                 }
                 {hasFacebookLink &&
-                  <a
-                    href={facebook}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={facebook}>
                     <Icon type='facebook' />
                   </a>
                 }
                 
                 {hasTwitterLink &&
-                  <a
-                    href={twitter}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={twitter}>
                     <Icon type='twitter' />
                   </a>}
                 {hasMediumLink &&
@@ -215,26 +212,22 @@ const Component: NextPage<Props> = (props: Props) => {
                   </a>
                 }
                 {hasLinkedInLink &&
-                  <a
-                    href={linkedIn}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={linkedIn}>
                     <Icon type='linkedin' />
                   </a>
                 }
-                {hasGithubLink &&
-                  <a
-                    href={github}
-                    target='_blank'
-                  >
+                {hasMediumLink &&
+                  <a target='_blank' href={linkedIn}>
+                    <Icon type='medium' />
+                  </a>
+                }
+                {hasGitHubLink &&
+                  <a target='_blank' href={github}>
                     <Icon type='github' />
                   </a>
                 }
                 {hasInstagramLink &&
-                  <a
-                    href={instagram}
-                    target='_blank'
-                  >
+                  <a target='_blank' href={instagram}>
                     <Icon type='instagram' />
                   </a>
                 }

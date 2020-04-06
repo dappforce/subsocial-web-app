@@ -15,13 +15,17 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import SimpleMDEReact from 'react-simplemde-editor';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogContent } from '@subsocial/types/offchain';
 import { BlogUpdate } from '@subsocial/types/substrate/classes';
+
+import EditableTagGroup from '../utils/EditableTagGroup';
+import { withBlogIdFromUrl } from './withBlogIdFromUrl';
+import { ValidationProps, buildValidationSchema } from './BlogValidation';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -35,11 +39,11 @@ const NAME_MAX_LEN = 100;
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
-  handle: Yup.string()
-    .required('Handle is required')
-    .matches(SLUG_REGEX, 'Handle can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(p.handleMinLen || NAME_MIN_LEN, `Handle is too short. Minimum length is ${p.handleMinLen} chars.`)
-    .max(p.handleMaxLen || NAME_MAX_LEN, `Handle is too long. Maximum length is ${p.handleMaxLen} chars.`),
+  slug: Yup.string()
+    .required('Slug is required')
+    .matches(SLUG_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
+    .min(p.slugMinLen.toNumber(), `Slug is too short. Minimum length is ${p.slugMinLen.toNumber()} chars.`)
+    .max(p.slugMaxLen.toNumber(), `Slug is too long. Maximum length is ${p.slugMaxLen.toNumber()} chars.`),
 
   name: Yup.string()
     .required('Name is required')
@@ -51,13 +55,13 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
     .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
 
   desc: Yup.string()
-    .max(p.blogMaxLen || URL_MAX_LEN, `Description is too long. Maximum length is ${p.blogMaxLen} chars.`)
+    .max(p.blogMaxLen.toNumber(), `Description is too long. Maximum length is ${p.blogMaxLen.toNumber()} chars.`)
 });
 
 type ValidationProps = {
-  blogMaxLen?: number;
-  handleMinLen?: number;
-  handleMaxLen?: number;
+  blogMaxLen: U32;
+  slugMinLen: U32;
+  slugMaxLen: U32;
 };
 
 type OuterProps = ValidationProps & {
@@ -95,7 +99,8 @@ const InnerForm = (props: FormProps) => {
     name,
     desc,
     image,
-    tags
+    tags,
+    navTabs
   } = values;
 
   const goToView = (id: BN) => {
@@ -159,7 +164,7 @@ const InnerForm = (props: FormProps) => {
           <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
         </LabelledField>
 
-        {/* TODO tags */}
+        <EditableTagGroup name='tags' label='Tags' tags={tags} {...props}/>
 
         <LabelledField {...props}>
           <TxButton
@@ -215,11 +220,7 @@ export const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    blogMaxLen: props.blogMaxLen,
-    handleMinLen: props.handleMinLen,
-    handleMaxLen: props.handleMaxLen
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things
@@ -231,7 +232,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component id={new BN(blogId as string)}/>;
+      return <Component id={new BlogId(blogId as string)} {...props} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }
@@ -246,6 +247,7 @@ type StructJson = BlogContent | undefined;
 
 type Struct = Blog | undefined;
 
+// TODO refactor copypasta. See the same function in NavigationEditor
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { structOpt } = props;
@@ -286,7 +288,7 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json} />;
 }
 
-const commonQueries = [
+const commonSubstrateQueries = [
   queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
   queryBlogsToProp('handleMinLen', { propName: 'handleMinLen' }),
   queryBlogsToProp('handleMaxLen', { propName: 'handleMaxLen' })
@@ -295,17 +297,16 @@ const commonQueries = [
 export const NewBlog = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    ...commonQueries
+    ...commonSubstrateQueries
   )
-  // , withOnlyMembers
 );
 
 export const EditBlog = withMulti(
   LoadStruct,
-  withIdFromUrl,
+  withBlogIdFromUrl,
   withCalls<OuterProps>(
     queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );
 

@@ -87,6 +87,7 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
         }
         label={label}
         icon={icon as string}
+        size={size}
         onClick={() => {
           if (typeof onClick === 'function') onClick(this.send);
           else this.send();

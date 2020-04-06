@@ -3,7 +3,6 @@ import { GenericAccountId, bool as Bool } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { isMobile } from 'react-device-detect';
 import { getApi } from './SubstrateApi';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import { registry } from '@polkadot/react-api';
@@ -16,7 +15,7 @@ type FollowBlogButtonProps = {
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
-  const { blogId, size = isMobile ? 'tiny' : 'small' } = props;
+  const { blogId } = props;
   const { state: { address: myAddress } } = useMyAccount();
   const { reloadFollowed } = useSidebarCollapsed();
 

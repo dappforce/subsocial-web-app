@@ -56,7 +56,7 @@
   }
 
   .DfDescription {
-    font-size: $space_normal;
+    font-size: $font_normal;
   }
 }
 
@@ -86,7 +86,7 @@
 
     button.ui.tiny.primary,
     button.ui.tiny.basic {
-      padding: .6rem .6rem 1.2rem .6rem;
+      padding: $space_tiny;
       font-size: $font_tiny;
     }
   }
@@ -120,7 +120,7 @@
     }
 
     .ui--AddressComponents-info {
-      min-width: 100%;
+      max-width: 11rem;
     }
 
     .ui.attached.tabular.menu {
@@ -151,7 +151,7 @@
     }
 
     .DfDescription {
-      font-size: $space_normal;
+      font-size: $font_normal;
     }
   }
 
@@ -199,10 +199,15 @@
     }
   }
 
-  .ProfileDetails .content {
-    padding-left: 0;
-    padding-right: .5rem;
+  .ProfileDetails {
+    max-width: 18rem;
+    .content {
+      padding-left: 0;
+      padding-right: .5rem;
+    }
   }
+
+  
 
   .DfContent,
   .content {
@@ -227,7 +232,7 @@
   .DfPostPreview {
     &h2 {
       margin-top: 0;
-      font-size: $space_large;
+      font-size: $font_large;
     }
     &.ui.segment {
       padding-bottom: 0 !important;

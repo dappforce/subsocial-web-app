@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
-
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
@@ -23,6 +21,8 @@ import { TxCallback } from '../utils/types';
 import { Profile, SocialAccount, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { ProfileUpdate } from '@subsocial/types/substrate/classes';
+import { ValidationProps, buildValidationSchema } from './ProfileValidation';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 // TODO get next settings from Substrate:
@@ -59,7 +59,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
   email: Yup.string()
     .email('Enter correct email address'),
 
-  personalSite: urlValidation('Personal site'),
+  personal_site: urlValidation('Personal site'),
 
   about: Yup.string()
     .max(ABOUT_MAX_LEN, `Text is too long. Maximum length is ${ABOUT_MAX_LEN} chars.`),
@@ -137,7 +137,19 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
-      const json = { fullname, avatar, email, personalSite, about, facebook, twitter, linkedIn, medium, github, instagram };
+      const json = {
+        fullname,
+        avatar,
+        email,
+        personalSite,
+        about,
+        facebook,
+        twitter,
+        linkedIn,
+        medium,
+        github,
+        instagram
+      };
       ipfs.saveContent(json).then(cid => {
         setIpfsCid(cid);
         sendTx();
@@ -311,22 +323,19 @@ const EditForm = withFormik<OuterProps, FormValues>({
         fullname: '',
         avatar: '',
         about: '',
+        email: '',
+        personalSite: '',
         facebook: '',
         twitter: '',
         linkedIn: '',
-        github: '',
         medium: '',
-        instagram: '',
-        email: '',
-        personalSite: ''
+        github: '',
+        instagram: ''
       };
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    usernameMinLen: props.usernameMinLen,
-    usernameMaxLen: props.usernameMaxLen
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things

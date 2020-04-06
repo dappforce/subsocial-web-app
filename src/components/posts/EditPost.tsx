@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
+import EditableTagGroup from '../utils/EditableTagGroup'
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
 import { ipfs } from '../utils/OffchainUtils';
@@ -26,29 +26,6 @@ import { PostContent } from '@subsocial/types/offchain';
 import { ViewBlog } from '../blogs/ViewBlog';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-  title: Yup.string()
-    // .min(p.minTitleLen, `Title is too short. Minimum length is ${p.minTitleLen} chars.`)
-    // .max(p.maxTitleLen, `Title is too long. Maximum length is ${p.maxTitleLen} chars.`)
-    .required('Post title is required'),
-
-  body: Yup.string()
-    // .min(p.minTextLen, `Your post is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.postMaxLen, `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
-    .required('Post body is required'),
-
-  image: Yup.string()
-    .url('Image must be a valid URL.')
-    // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
-});
-
-type ValidationProps = {
-  // postMaxLen: number,
-  postMaxLen: number
-};
-
 type OuterProps = ValidationProps & {
   blogId?: BN,
   id?: BN,
@@ -58,6 +35,9 @@ type OuterProps = ValidationProps & {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
+  postMaxLen: U32,
+  myAddress?: string,
+  blogIds?: BlogId[]
 };
 
 type FormValues = PostContent;
@@ -84,7 +64,8 @@ const InnerForm = (props: FormProps) => {
     resetForm,
     onlyTxButton = false,
     withButtons = true,
-    closeModal
+    closeModal,
+    blogIds
   } = props;
 
   // console.log(extention.value);
@@ -104,7 +85,8 @@ const InnerForm = (props: FormProps) => {
     title,
     body,
     image,
-    tags
+    tags,
+    canonical
   } = values;
 
   const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
@@ -113,11 +95,15 @@ const InnerForm = (props: FormProps) => {
     Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
+  const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
+  const [ showAdvanced, setShowAdvanced ] = useState(false)
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
+
+  const preparedBlogId = currentBlogId?.toString()
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
-      const json = { title, body, image, tags };
+      const json = { title, body, image, tags, canonical };
       ipfs.savePost(json).then(hash => {
         setIpfsCid(hash);
         sendTx();
@@ -137,6 +123,10 @@ const InnerForm = (props: FormProps) => {
     const _id = id || getNewIdFromEvent(_txResult);
     _id && isRegularPost && goToView(_id);
   };
+
+  const handleAdvancedSettings = () => {
+    setShowAdvanced(!showAdvanced)
+  }
 
   const buildTxParams = () => {
     if (isValid || !isRegularPost) {
@@ -177,20 +167,48 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
+  const handleBlogSelect = (value: string | number | LabeledValue) => {
+    if (!value) return;
+
+    setCurrentBlogId(new BlogId(value as string))
+  };
+
+  const renderBlogsPreviewDropdown = () => {
+    if (!blogIds) return;
+
+    return <SelectBlogPreview
+      blogIds={blogIds}
+      onSelect={handleBlogSelect}
+      imageSize={24}
+      defaultValue={currentBlogId.toString()} />
+  }
+
   const form =
     <Form className='ui form DfForm EditEntityForm'>
 
       {isRegularPost
         ? <>
+          {renderBlogsPreviewDropdown()}
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
+          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
           <LabelledField name='body' label='Description' {...props}>
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
+
+          <div className="EPadvanced">
+            <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
+              {!showAdvanced ? 'Show' : 'Hide'} Advanced Settings
+              <Icon type={showAdvanced ? 'up' : 'down'} />
+            </div>
+            {showAdvanced &&
+              <LabelledText name='canonical' label='Canonical URL' placeholder={`Set a canonical URL of your post`} {...props} />
+            }
+          </div>
         </>
         : <>
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
@@ -202,29 +220,23 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>}
     </Form>;
 
-  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
+  const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
 
-  const formTitle = () =>
-    <>
-      <a href={`/blogs/${preparedBlogId}`}>
-        <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
-      </a>
-      <span style={{ margin: '0 .75rem' }}>/</span>
-      {sectionTitle}
-    </>
+  const sectionTitle =
+    <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
 
   const editRegularPost = () =>
-    <Section className='EditEntityBox' title={formTitle()}>
+    <Section className='EditEntityBox' title={sectionTitle}>
       {form}
     </Section>
-  
+
   const editSharedPost = () =>
     <div style={{ marginTop: '1rem' }}>{form}</div>
 
   return onlyTxButton
     ? renderTxButton()
     : <>
-      <HeadMeta title={sectionTitle}/>
+      <HeadMeta title={pageTitle}/>
       {isRegularPost
         ? editRegularPost()
         : editSharedPost()
@@ -247,14 +259,13 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
         title: '',
         body: '',
         image: '',
-        tags: []
+        tags: [],
+        canonical: ''
       };
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    postMaxLen: props.postMaxLen
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things
@@ -297,7 +308,7 @@ type StructJson = PostContent | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
-    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
+    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because useless
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
     const [ struct, setStruct ] = useState<Post>();
@@ -334,7 +345,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>You have no rights to edit this post</em>;
     }
 
-    return <Component {...props} struct={struct} json={json} />;
+    return <Component {...props} struct={struct} json={json} myAddress={myAddress} />;
   };
 }
 
@@ -358,5 +369,8 @@ export const EditPost = withMulti<OuterProps>(
   withCalls<OuterProps>(
     queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
-  LoadStruct
+  LoadStruct,
+  withCalls<OuterProps>(
+    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+  )
 );

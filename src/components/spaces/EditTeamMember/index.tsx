@@ -10,21 +10,18 @@ import { FieldNames } from '../../utils/forms';
 import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
 
-import './addTeamMember.css';
+import './index.css';
 import { buildValidationSchema } from './validation';
 
-type Company = {
-  id: number,
-  name: string,
+export type Company = {
+  id: number
+  name: string
   img: string
-};
+}
 
-// TODO rename
-export type CompanyData = Company[];
-
-interface OtherProps {
-  companyData: CompanyData;
-  employerTypesData: string[];
+type OuterProps = {
+  suggestedEmployerTypes?: string[]
+  suggestedCompanies?: Company[]
 }
 
 // Shape of form values
@@ -35,31 +32,33 @@ interface FormValues {
   location: string
   startDate: Moment
   endDate: Moment
+  showEndDate: boolean
   description: string
-  switchField: boolean // TODO rename
 }
 
-const fields: FieldNames<FormValues> = {
+type FormProps = OuterProps & FormikProps<FormValues>
+
+const Fields: FieldNames<FormValues> = {
   title: 'title',
   employmentType: 'employmentType',
   company: 'company',
   location: 'location',
   startDate: 'startDate',
   endDate: 'endDate',
-  description: 'description',
-  switchField: 'switchField',
+  showEndDate: 'showEndDate',
+  description: 'description'
 }
 
 const LabelledField = DfForms.LabelledField<FormValues>();
 const LabelledText = DfForms.LabelledText<FormValues>();
 
-const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
+const InnerForm = (props: FormProps) => {
   const {
     values,
     errors,
     setFieldValue,
-    companyData,
-    employerTypesData
+    suggestedEmployerTypes = [],
+    suggestedCompanies = []
   } = props;
 
   const {
@@ -67,25 +66,25 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     company,
     startDate,
     endDate,
-    switchField
+    showEndDate
   } = values;
 
   const [ companyLogo, setCompanyLogo ] = useState<string>();
-  const [ companyAutocomplete, setCompanyAutocomplete ] = useState<CompanyData>([]);
+  const [ companyAutocomplete, setCompanyAutocomplete ] = useState<Company[]>([]);
 
-  const handleCompanyChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleCompanyChange = (event: React.FormEvent<HTMLInputElement>) => {
 
-    if (!e.currentTarget.value) {
+    if (!event.currentTarget.value) {
       setCompanyAutocomplete([]);
     }
 
-    setFieldValue(fields.company, e.currentTarget.value);
+    setFieldValue(Fields.company, event.currentTarget.value);
     setCompanyLogo(undefined);
 
     if (company) {
       company.toLowerCase();
 
-      const results = companyData.filter(function (item) {
+      const results = suggestedCompanies.filter(function (item) {
         return item.name.toLowerCase().includes(company);
       });
 
@@ -93,15 +92,15 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     }
   };
 
-  const handleAutocomplete = (data: Company) => {
-    setFieldValue(fields.company, data.name);
+  const handleCompanyAutocomplete = (company: Company) => {
+    setFieldValue(Fields.company, company.name);
 
     setCompanyAutocomplete([]);
-    setCompanyLogo(data.img);
+    setCompanyLogo(company.img);
   };
 
-  const handleSwitch = () => {
-    setFieldValue(fields.switchField, !switchField);
+  const toggleShowEndDate = () => {
+    setFieldValue(Fields.showEndDate, !showEndDate);
   };
 
   const disabledStartEndDate = (current: Moment | null) => {
@@ -110,24 +109,26 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
     return moment().diff(current, 'days') <= 0;
   };
 
-  return <>
-    <HeadMeta title={'Add Team Member'} />
-    <Section className='EditEntityBox' title={'Add Team Member'}>
-      <Form className='ui form DfForm EditEntityForm'>
-        <LabelledText name={fields.title} label='Title' placeholder='Your title' {...props} />
+  const pageTitle = 'Edit team member'
 
-        <LabelledField name={fields.employmentType} label='Employment Type' {...props}>
-          <Field component='select' name={fields.employmentType}>
+  return <>
+    <HeadMeta title={pageTitle} />
+    <Section className='EditEntityBox' title={pageTitle}>
+      <Form className='ui form DfForm EditEntityForm'>
+        <LabelledText name={Fields.title} label='Title' placeholder='Your title' {...props} />
+
+        <LabelledField name={Fields.employmentType} label='Employment Type' {...props}>
+          <Field component='select' name={Fields.employmentType}>
             <option value=''>-</option>
             {
-              employerTypesData.map((x) => <option key={x} value={x}>{x}</option>)
+              suggestedEmployerTypes.map((x) => <option key={x} value={x}>{x}</option>)
             }
           </Field>
         </LabelledField>
 
-        <LabelledField name={fields.company} label='Company' {...props}>
+        <LabelledField name={Fields.company} label='Company' {...props}>
           <div className={`atm_company_wrapper ${companyLogo && 'with_prefix'}`}>
-            <Field name={fields.company}
+            <Field name={Fields.company}
               type={'text'}
               value={company}
               onChange={handleCompanyChange}
@@ -138,13 +139,13 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           </div>
         </LabelledField>
-        
+
         {/* TODO replace with Ant D. autocomplete */}
         {companyAutocomplete.map((x) => (
-          <div 
-            className={'atm_company_autocomplete'} 
-            key={`${x.id}`} 
-            onClick={() => handleAutocomplete(x)}
+          <div
+            className={'atm_company_autocomplete'}
+            key={`${x.id}`}
+            onClick={() => handleCompanyAutocomplete(x)}
           >
             <div className={'atm_company_autocomplete_item'}>
               <img src={x.img} />
@@ -153,42 +154,42 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           </div>
         ))}
 
-        <LabelledText name={fields.location} label='Location'
+        <LabelledText name={Fields.location} label='Location'
           placeholder='Ex: Berlin, Germany' {...props} />
 
         <div className={'atm_switch_wrapper'}>
-          <Switch onChange={handleSwitch} checked={switchField} />
+          <Switch onChange={toggleShowEndDate} checked={showEndDate} />
           <div className={'atm_switch_label'}>I am currently working in this role.</div>
         </div>
 
         <div className={'atm_dates_wrapper'}>
 
-          <LabelledField name={fields.startDate} label='Start Date' {...props}>
-            <DatePicker name={fields.startDate}
+          <LabelledField name={Fields.startDate} label='Start Date' {...props}>
+            <DatePicker name={Fields.startDate}
               value={startDate}
-              onChange={(date) => setFieldValue(fields.startDate, date)}
+              onChange={(date) => setFieldValue(Fields.startDate, date)}
               disabledDate={disabledStartEndDate}
             />
           </LabelledField>
 
-          <LabelledField name={fields.endDate} label='End Date' {...props}>
-          {switchField === true
+          <LabelledField name={Fields.endDate} label='End Date' {...props}>
+          {showEndDate
             ? <div>Present</div>
-            : <DatePicker name={fields.endDate}
+            : <DatePicker name={Fields.endDate}
                 value={endDate}
-                onChange={(date) => setFieldValue(fields.endDate, date)}
+                onChange={(date) => setFieldValue(Fields.endDate, date)}
                 disabledDate={disabledStartEndDate}
               />
           }
           </LabelledField>
         </div>
 
-        <LabelledField name={fields.description} label='Description' {...props}>
+        <LabelledField name={Fields.description} label='Description' {...props}>
           <Field component={SimpleMDEReact}
-            name={fields.description}
+            name={Fields.description}
             value={description}
-            onChange={(data: string) => setFieldValue(fields.description, data)}
-            className={`DfMdEditor ${errors[fields.description] && 'error'}`} />
+            onChange={(data: string) => setFieldValue(Fields.description, data)}
+            className={`DfMdEditor ${errors[Fields.description] && 'error'}`} />
         </LabelledField>
 
         {/* TODO replace with TxButton */}
@@ -200,14 +201,8 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   </>;
 };
 
-// The type of props MyForm receives
-interface MyFormProps {
-  companyData: CompanyData,
-  employerTypesData: string[]
-}
-
-// Wrap our form with the withFormik HoC
-const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
+// Wrap our form with the with Formik HoC
+export const EditTeamMember = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
   mapPropsToValues: () => {
@@ -219,7 +214,7 @@ const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
       location: '',
       startDate: moment(new Date()).add(-1, 'days'),
       endDate: moment(),
-      switchField: true
+      showEndDate: true
     };
   },
 
@@ -227,7 +222,7 @@ const AddTeamMemberFormik = withFormik<MyFormProps, FormValues>({
 
   handleSubmit: () => {
     // console.log(values)
-  },
+  }
 })(InnerForm);
 
-export default AddTeamMemberFormik;
+export default EditTeamMember;

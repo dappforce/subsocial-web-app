@@ -27,6 +27,8 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
+import SpaceNav from './SpaceNav'
+import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
 
@@ -111,6 +113,16 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const hasImage = image && nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
+  const renderTags = (content: BlogContent) => {
+    if (!content) return null;
+
+    const { tags } = content;
+
+    return <div className='DfTags'>
+      { tags.map((x) => <Tag key={x}>{x}</Tag>) }
+    </div>
+  }
+
   const renderDropDownMenu = () => {
     const showDropdown = isMyBlog || edit_history.length > 0;
 
@@ -154,14 +166,17 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   const renderMiniPreview = () => (
-    <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
-      {hasImage
-        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
-        : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
-      }
-      <div className='content'>
-        <div className='handle'>{name}</div>
+    <div className={'viewblog-minipreview'}>
+      <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+        {hasImage
+          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+          : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
+        }
+        <div className='content'>
+          <div className='handle'>{name}</div>
+        </div>
       </div>
+      {withFollowButton && <FollowBlogButton blogId={id} />}
     </div>
   );
 
@@ -183,6 +198,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           </div>
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}
+          {renderTags(content)}
         </div>
       </div>
       {withFollowButton && <FollowBlogButton blogId={id} />}
@@ -265,21 +281,28 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </MutedDiv>
   );
 
-  return <Section className='DfContentPage'>
-    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-    <div className='FullProfile'>
-      {renderPreview()}
-    </div>
-    <div className='DfSpacedButtons'>
-      <FollowBlogButton blogId={id} />
-      <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
-        <Pluralize count={followers} singularText='Follower'/>
+  return <div className='ViewBlogWrapper'>
+    <Section className='DfContentPage'>
+      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
+      <div className='FullProfile'>
+        {renderPreview()}
       </div>
-    </div>
+      <div className='DfSpacedButtons'>
+        <FollowBlogButton blogId={id} />
+        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
+          <Pluralize count={followers} singularText='Follower' />
+        </div>
+      </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
-    {renderPostPreviews()}
-  </Section>;
+      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
+      {renderPostPreviews()}
+    </Section>
+    <SpaceNav
+      {...content}
+      blogId={new BlogId(id)}
+      creator={account}
+    />
+  </div>
 };
 
 export const loadBlogData = async (api: ApiPromise, blogId: BN): Promise<BlogData> => {
