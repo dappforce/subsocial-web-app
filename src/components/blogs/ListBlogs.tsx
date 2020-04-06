@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { I18nProps } from '@polkadot/react-components/types';
-
 import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
 import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import ListData from '../utils/DataList';

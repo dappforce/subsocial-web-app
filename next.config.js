@@ -18,8 +18,6 @@ if (typeof require !== 'undefined') {
 }
 
 const nextConfig = {
-  exportTrailingSlash: true,
-  assetPrefix: './',
   target: 'server',
   webpack: (config) => {
     config.module.rules.push({
