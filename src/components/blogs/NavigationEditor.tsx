@@ -205,7 +205,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                         className={'NESelectType'}
                       >
                         {
-                          typesOfContent.map((x) => <AutoComplete.Option key={x} value={x} >{x}</AutoComplete.Option>)
+                          typesOfContent.map((x) => <AutoComplete.Option key={x} value={x}>{x}</AutoComplete.Option>)
                         }
                       </Field>
 
