@@ -210,9 +210,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                       </Field>
 
                       <div className="NEText">Value:</div>
-                      {
-                        renderValueField(nt, index)
-                      }
+                      {renderValueField(nt, index)}
 
                       <div className="NEText">Description:</div>
                       <Field
