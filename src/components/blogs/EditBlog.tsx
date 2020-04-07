@@ -122,7 +122,7 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledText name='name' label='Blog name' placeholder='Name of your blog.' {...props} />
 
-        <LabelledText name='handle' label='URL handle' placeholder={`You can use a-z, 0-9, dashes and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
+        <LabelledText name='handle' label='URL handle' placeholder={`You can use a-z, 0-9 and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
 
         <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
 
