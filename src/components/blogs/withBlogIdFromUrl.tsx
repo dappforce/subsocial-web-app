@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { BlogId } from '@subsocial/types/substrate/interfaces';
 import BN from 'bn.js'
+import { getApi } from '../utils/SubstrateApi';
+import { getBlogId } from '../utils/utils';
 
 export function withBlogIdFromUrl<Props = { id: BlogId }>
   (Component: React.ComponentType<Props>) {
@@ -9,10 +11,23 @@ export function withBlogIdFromUrl<Props = { id: BlogId }>
   return function (props: Props) {
     const router = useRouter();
     const { blogId } = router.query;
+    const idOrHandle = blogId as string
     try {
-      return <Component id={new BN(blogId as string)} {...props} />;
+    const [ id, setId ] = useState<BN>()
+
+    useEffect(() => {
+      const getId = async () => {
+        const api = await getApi()
+        const id = await getBlogId(api, idOrHandle)
+        id && setId(id)
+      }
+      
+      getId().catch(err => console.error(err))
+    }, [ false ])
+
+      return <Component id={id} {...props} />;
     } catch (err) {
-      return <em>Invalid blog ID: {blogId}</em>;
+      return <em>Invalid blog ID or handle: {idOrHandle}</em>;
     }
   };
 }

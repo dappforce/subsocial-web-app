@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
-import { Option, Null } from '@polkadot/types';
+import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import { queryBlogsToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
