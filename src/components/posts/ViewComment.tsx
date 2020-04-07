@@ -1,7 +1,7 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
 
-import { withCalls, withMulti, api } from '@polkadot/react-api';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/react-api/types';
@@ -59,6 +59,7 @@ export function CommentsTree (props: Props) {
 
     const loadComments = async () => {
       if (!commentsCount) return;
+      const api = await getApi()
       const apiCalls: Promise<Option<Comment>>[] = commentIds.map(id =>
         api.query.social.commentById(id) as Promise<Option<Comment>>);
 
@@ -164,6 +165,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
+      const api = await getApi()
       const result = await api.query.social.commentById(id) as Option<Comment>;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
@@ -175,6 +177,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
+        const api = await getApi()
         const result = await api.query.social.postById(post_id) as Option<Post>;
         if (result.isNone) return;
         isSubscribe && setPost(result.unwrap());
