@@ -116,7 +116,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const renderError = (index: number, name: keyof NavTab) => {
     if (touched &&
       errors.navTabs && errors.navTabs[index]?.[name]) {
-      return <div className='ui pointing red label NEErrorMessage' >{errors.navTabs[index]?.[name]} </div>
+      return <div className='ui pointing red label NEErrorMessage'>{errors.navTabs[index]?.[name]}</div>
     }
     return null
   }

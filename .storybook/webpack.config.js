@@ -2,7 +2,6 @@ const path = require('path')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 module.exports = ({ config, isServer }) => {
 
-
 if (!isServer) {
   config.node = {
     fs: 'empty'

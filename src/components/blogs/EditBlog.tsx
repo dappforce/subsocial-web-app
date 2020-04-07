@@ -77,8 +77,10 @@ const InnerForm = (props: FormProps) => {
     if (isValid) {
       const json = { name, desc, image, tags, navTabs };
       ipfs.saveBlog(json).then(cid => {
-        cid && setIpfsCid(cid.toString());
-        sendTx();
+        if (cid) {
+          setIpfsCid(cid.toString());
+          sendTx();
+        }
       }).catch(err => new Error(err));
     }
   };

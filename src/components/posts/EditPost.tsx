@@ -111,8 +111,10 @@ const InnerForm = (props: FormProps) => {
     if (isValid || !isRegularPost) {
       const json = { title, body, image, tags, canonical };
       ipfs.savePost(json).then(hash => {
-        setIpfsCid(hash);
-        sendTx();
+        if (hash) {
+          setIpfsCid(hash);
+          sendTx();
+        }
       }).catch(err => new Error(err));
     }
   };
@@ -212,7 +214,7 @@ const InnerForm = (props: FormProps) => {
               <Icon type={showAdvanced ? 'up' : 'down'} />
             </div>
             {showAdvanced &&
-              <LabelledText name='canonical' label='Canonical URL' placeholder={`Set a canonical URL of your post`} {...props} />
+              <LabelledText name='canonical' label='Original post URL' placeholder={`Set a URL of original post`} {...props} />
             }
           </div>
         </>

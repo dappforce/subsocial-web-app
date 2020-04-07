@@ -75,8 +75,10 @@ const InnerForm = (props: FormProps) => {
     if (isValid) {
       const json = { body };
       const cid = await ipfs.saveComment(json);
-      setIpfsCid(cid);
-      sendTx();
+      if (cid) {
+        setIpfsCid(cid);
+        sendTx();
+      }
       // window.onunload = async (e) => {
       //   e.preventDefault();
       //   await removeFromIpfs(cid).catch(err => console.log(err));
