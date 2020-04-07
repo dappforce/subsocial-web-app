@@ -11,6 +11,7 @@ import 'brace/mode/html'
 import 'brace/mode/powershell'
 import 'brace/mode/rust'
 import 'brace/theme/github'
+import { tempParser } from '../utils/parser'
 
 type Props = {
   block: BlockValue | CodeBlockValue
@@ -102,6 +103,10 @@ const BlockPreview = (props: Props) => {
         break
       }
 
+      tempParser(x.data).then((data) => {
+        console.log('new parser res:', data)
+      })
+
       if (x.data.match(TWITTER_REGEXP)) {
         const match = x.data.match(TWITTER_REGEXP);
         if (match && match[1]) {
@@ -113,7 +118,7 @@ const BlockPreview = (props: Props) => {
       const currentEmbed = embedData.find((y) => y.id === x.id)
       const previewData = linkPreviewData.find((y) => y.id === x.id)
 
-      let match = undefined
+      let match
 
       if (!previewData) break
       const { data: { og } } = previewData
