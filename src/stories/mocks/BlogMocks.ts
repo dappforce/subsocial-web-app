@@ -23,7 +23,7 @@ export const mockBlogJson: BlogContent = {
 }
 
 export const mockBlogValidation = {
-  slugMinLen: new U32(registry, 5),
-  slugMaxLen: new U32(registry, 50),
+  handleMinLen: new U32(registry, 5),
+  handleMaxLen: new U32(registry, 50),
   blogMaxLen: 500
 }
