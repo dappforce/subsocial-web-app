@@ -133,8 +133,10 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         tags: blogTags
       };
       ipfs.saveBlog(json).then(cid => {
-        cid && setIpfsCid(cid.toString());
-        sendTx();
+        if (cid) {
+          setIpfsCid(cid.toString());
+          sendTx();
+        }
       }).catch(err => new Error(err));
     }
   };
