@@ -226,7 +226,7 @@ function LoadStruct (props: LoadStructProps) {
 
     console.log('Loading comment JSON from IPFS');
 
-    ipfs.findComment(struct.ipfs_hash).then(json => {
+    ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
       const content = json;
       setJson(content);
     }).catch(err => console.log(err));

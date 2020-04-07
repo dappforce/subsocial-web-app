@@ -335,7 +335,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       console.log('Loading post JSON from IPFS');
 
-      ipfs.findPost(struct.ipfs_hash).then(json => {
+      ipfs.findPost(struct.ipfs_hash.toString()).then(json => {
         setJson(json);
       }).catch(err => console.log(err));
     }, [ trigger ]);

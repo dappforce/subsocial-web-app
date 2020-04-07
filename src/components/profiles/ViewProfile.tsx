@@ -25,7 +25,7 @@ import { NextPage } from 'next';
 import { ipfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
 import { isEmpty } from 'lodash';
-import { getFirstOrUndefinded } from '@subsocial/utils';
+
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
@@ -272,7 +272,7 @@ Component.getInitialProps = async (props): Promise<Props> => {
   const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
-  const content = profile && getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+  const content = profile && await ipfs.getContent<ProfileContent>(profile.ipfs_hash.toString())
   return {
     id: new AccountId(registry, address as string),
     socialAccount: socialAccount,

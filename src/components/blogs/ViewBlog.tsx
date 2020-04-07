@@ -101,7 +101,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    ipfs.findBlog(ipfs_hash).then(json => {
+    ipfs.findBlog(ipfs_hash.toString()).then(json => {
       const content = json;
       if (isSubscribe && content) setContent(content);
     }).catch(err => console.log(err));
