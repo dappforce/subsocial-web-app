@@ -134,7 +134,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
       };
       ipfs.saveBlog(json).then(cid => {
         if (cid) {
-          console.log('Nav editor', cid)
+          console.log('Nav editor IPFS CID:', cid)
           setIpfsCid(cid.toString());
           sendTx();
         }
