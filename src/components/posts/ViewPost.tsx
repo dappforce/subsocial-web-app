@@ -453,7 +453,7 @@ export const loadExtPost = async (api: ApiPromise, post: Post) => {
 export const loadPostDataList = async (api: ApiPromise, ids: PostId[]) => {
   const loadPostsData = ids.map(id => loadPostData(api, id));
   const postsData = await Promise.all<PostData>(loadPostsData);
-  console.log(postsData);
+  // console.log(postsData);
   const loadPostsExtData = postsData.map(item => loadExtPost(api, item.post as Post));
   const postsExtData = await Promise.all<PostData>(loadPostsExtData);
   return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
