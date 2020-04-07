@@ -11,7 +11,6 @@ import 'brace/mode/html'
 import 'brace/mode/powershell'
 import 'brace/mode/rust'
 import 'brace/theme/github'
-import { tempParser } from '../utils/parser'
 
 type Props = {
   block: BlockValue | CodeBlockValue
@@ -102,10 +101,6 @@ const BlockPreview = (props: Props) => {
         element = <div>{x.data}</div>
         break
       }
-
-      tempParser(x.data).then((data) => {
-        console.log('new parser res:', data)
-      })
 
       if (x.data.match(TWITTER_REGEXP)) {
         const match = x.data.match(TWITTER_REGEXP);

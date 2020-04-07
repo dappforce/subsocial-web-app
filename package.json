@@ -114,7 +114,6 @@
     "faker": "^4.1.0",
     "file-saver": "^2.0.0",
     "formik": "^1.5.0",
-    "jquery": "^3.4.1",
     "markdown-to-txt": "^1.0.1",
     "moment-timezone": "^0.5.26",
     "next": "^9.1.1",
