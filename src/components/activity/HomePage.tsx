@@ -60,7 +60,7 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
 
   const latestPostIds = getLastNIds(nextPostId, FIVE);
   const postsData = await loadPostDataList(api, latestPostIds as PostId[]);
-
+  console.log(postsData)
   return {
     blogsData,
     postsData

@@ -20,7 +20,7 @@ import { validationSchema } from './NavValidation';
 import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
 import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogContent, NavTab } from '@subsocial/types/offchain';
-import { BlogUpdate, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes';
+import { BlogUpdate, OptionText } from '@subsocial/types/substrate/classes';
 import { withMulti, withCalls, registry } from '@polkadot/react-api';
 import { ipfs } from '../utils/OffchainUtils';
 import BN from 'bn.js'
@@ -134,6 +134,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
       };
       ipfs.saveBlog(json).then(cid => {
         if (cid) {
+          console.log('Nav editor', cid)
           setIpfsCid(cid.toString());
           sendTx();
         }
@@ -163,7 +164,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
 
     const update = new BlogUpdate({
       writers: new Option(registry, 'Vec<AccountId>', []),
-      handle: new OptionOptionText(null),
+      handle: new Option(registry, 'Option<Text>', new Option(registry, 'Text', null)),
       ipfs_hash: new OptionText(ipfsCid)
     });
     return [ struct.id, update ];
@@ -247,12 +248,12 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
           />
 
           <TxButton
-            type='submit'
+            type='button'
             size='medium'
             label={'Update Navigation'}
             isDisabled={!isValid || isSubmitting}
             params={buildTxParams()}
-            tx={'blogs.updateBlog'}
+            tx={'social.updateBlog'}
             onClick={onSubmit}
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
@@ -327,7 +328,7 @@ function LoadStruct (props: LoadStructProps) {
     if (struct === undefined) return toggleTrigger();
 
     console.log('Loading blog JSON from IPFS');
-    ipfs.findBlog(struct.ipfs_hash).then(json => {
+    ipfs.findBlog(struct.ipfs_hash.toString()).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

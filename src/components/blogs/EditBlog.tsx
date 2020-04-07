@@ -221,8 +221,9 @@ function LoadStruct (props: LoadStructProps) {
 
     if (struct === undefined) return toggleTrigger();
 
-    console.log('Loading blog JSON from IPFS');
-    ipfs.findBlog(struct.ipfs_hash).then(json => {
+    console.log('Loading blog JSON from IPFS by hash:', struct.ipfs_hash.toString());
+    ipfs.findBlog(struct.ipfs_hash.toString()).then(json => {
+      console.log(json)
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

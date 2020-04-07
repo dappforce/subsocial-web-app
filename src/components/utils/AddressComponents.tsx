@@ -30,7 +30,6 @@ import Address from '@polkadot/types/generic/Address';
 import { AccountName } from '@polkadot/react-components';
 import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { getFirstOrUndefinded } from '@subsocial/utils';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
@@ -117,7 +116,7 @@ function AddressComponents (props: Props) {
       const profile = profileOpt.unwrap() as Profile;
       isSubscribe && setProfile(profile);
 
-      const profileContent = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+      const profileContent = await ipfs.getContent<ProfileContent>(profile.ipfs_hash.toString())
       isSubscribe && profileContent && setProfileContent(profileContent);
     };
 

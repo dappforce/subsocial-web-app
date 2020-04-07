@@ -159,7 +159,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   useEffect(() => {
     let isSubscribe = true;
 
-    ipfs.findComment(struct.ipfs_hash).then(json => {
+    ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
       isSubscribe && json && setContent(json);
     }).catch(err => console.log(err));
 
@@ -179,7 +179,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         if (result.isNone) return;
         isSubscribe && setPost(result.unwrap());
       }
-      const content = await ipfs.findPost(post.ipfs_hash);
+      const content = await ipfs.findPost(post.ipfs_hash.toString());
       if (isSubscribe && content) {
         setPostContent(content);
       }
@@ -300,7 +300,7 @@ ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
   const comment = commentOpt.unwrapOr({} as Comment);
   const postData = comment && await loadPostData(api, comment.post_id) as PostData;
-  const commentContent = comment && await ipfs.findComment(comment.ipfs_hash);
+  const commentContent = comment && await ipfs.findComment(comment.ipfs_hash.toString());
   return {
     comment: comment,
     post: postData.post,

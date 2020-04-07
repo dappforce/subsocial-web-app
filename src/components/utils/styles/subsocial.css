@@ -19,6 +19,7 @@ body,
 
   .DfTags {
     margin: $space_normal 0;
+    text-align: end;
   }
 }
 

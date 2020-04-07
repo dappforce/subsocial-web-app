@@ -256,8 +256,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {renderContent(post, content)}
         </div>
-        {withStats && <StatsPanel id={post.id}/>}
         {renderTags(content)}
+        {withStats && <StatsPanel id={post.id}/>}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
@@ -413,7 +413,8 @@ export const getTypePost = (post: Post): PostType => {
 };
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent | undefined> => {
-  const ipfsContent = await ipfs.findPost(post.ipfs_hash);
+  console.log('Post cid = ', post.ipfs_hash.toString())
+  const ipfsContent = await ipfs.findPost(post.ipfs_hash.toString());
   if (!ipfsContent) return undefined;
 
   const summary = summarize(ipfsContent.body, SUMMARY_MAX_SIZE);

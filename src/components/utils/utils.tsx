@@ -15,7 +15,7 @@ import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { getFirstOrUndefinded } from '@subsocial/utils';
+
 import { Moment } from '@polkadot/types/interfaces';
 
 type PaginationProps = {
@@ -127,7 +127,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
 
       let isSubscribe = true;
       const loadContent = async () => {
-        const content = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+        const content = await ipfs.getContent<ProfileContent>(profile.ipfs_hash.toString())
         isSubscribe && content && setProfileContent(content);
       }
 
