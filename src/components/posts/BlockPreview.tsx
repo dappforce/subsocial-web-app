@@ -1,6 +1,6 @@
 import React from 'react'
 import { BlockValue, CodeBlockValue, EmbedData, PreviewData } from '../types'
-import { nonEmptyStr, isLink, YOUTUBE_REGEXP, VIMEO_REGEX, TWITTER_REGEXP, DOMAIN_REGEXP } from '../utils'
+import { nonEmptyStr, isLink, YOUTUBE_REGEXP, VIMEO_REGEX, TWITTER_REGEXP, DOMAIN_REGEXP, GIST_REGEXP } from '../utils'
 import { Tweet } from 'react-twitter-widgets'
 import { DfMd } from '../utils/DfMd'
 import AceEditor from 'react-ace'
@@ -11,6 +11,7 @@ import 'brace/mode/html'
 import 'brace/mode/powershell'
 import 'brace/mode/rust'
 import 'brace/theme/github'
+import Gist from 'react-gist'
 
 type Props = {
   block: BlockValue | CodeBlockValue
@@ -100,6 +101,18 @@ const BlockPreview = (props: Props) => {
       if (!isLink(x.data)) {
         element = <div>{x.data}</div>
         break
+      }
+
+      if (x.data.match(GIST_REGEXP)) {
+        const match = x.data.match(GIST_REGEXP)
+
+        if (match && match[0]) {
+          const res = match[0].split('/')
+          console.log('splitted res:', res)
+          const file = match[5] || ''
+          element = <div className='gistEmbedWrapper'><Gist id={res[4]} file={file} /></div>
+          break
+        }
       }
 
       if (x.data.match(TWITTER_REGEXP)) {
