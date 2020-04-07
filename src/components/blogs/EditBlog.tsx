@@ -77,8 +77,10 @@ const InnerForm = (props: FormProps) => {
     if (isValid) {
       const json = { name, desc, image, tags, navTabs };
       ipfs.saveBlog(json).then(cid => {
-        cid && setIpfsCid(cid.toString());
-        sendTx();
+        if (cid) {
+          setIpfsCid(cid.toString());
+          sendTx();
+        }
       }).catch(err => new Error(err));
     }
   };
@@ -120,7 +122,7 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledText name='name' label='Blog name' placeholder='Name of your blog.' {...props} />
 
-        <LabelledText name='handle' label='URL handle' placeholder={`You can use a-z, 0-9, dashes and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
+        <LabelledText name='handle' label='URL handle' placeholder={`You can use a-z, 0-9 and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
 
         <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
 

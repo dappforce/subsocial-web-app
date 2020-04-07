@@ -116,7 +116,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const renderError = (index: number, name: keyof NavTab) => {
     if (touched &&
       errors.navTabs && errors.navTabs[index]?.[name]) {
-      return <div className='ui pointing red label NEErrorMessage' >{errors.navTabs[index]?.[name]} </div>
+      return <div className='ui pointing red label NEErrorMessage'>{errors.navTabs[index]?.[name]}</div>
     }
     return null
   }
@@ -133,8 +133,10 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
         tags: blogTags
       };
       ipfs.saveBlog(json).then(cid => {
-        cid && setIpfsCid(cid.toString());
-        sendTx();
+        if (cid) {
+          setIpfsCid(cid.toString());
+          sendTx();
+        }
       }).catch(err => new Error(err));
     }
   };
@@ -160,7 +162,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     if (!isValid || !struct) return [];
 
     const update = new BlogUpdate({
-      writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
+      writers: new Option(registry, 'Vec<AccountId>', []),
       handle: new OptionOptionText(null),
       ipfs_hash: new OptionText(ipfsCid)
     });
@@ -205,14 +207,12 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                         className={'NESelectType'}
                       >
                         {
-                          typesOfContent.map((x) => <AutoComplete.Option key={x} value={x} >{x}</AutoComplete.Option>)
+                          typesOfContent.map((x) => <AutoComplete.Option key={x} value={x}>{x}</AutoComplete.Option>)
                         }
                       </Field>
 
                       <div className="NEText">Value:</div>
-                      {
-                        renderValueField(nt, index)
-                      }
+                      {renderValueField(nt, index)}
 
                       <div className="NEText">Description:</div>
                       <Field

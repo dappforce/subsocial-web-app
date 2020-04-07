@@ -8,8 +8,8 @@ export const validationSchema = Yup.object().shape({
   navTabs: Yup.array().of(
     Yup.object().shape({
       title: Yup.string()
-        .min(TITLE_MIN_LEN, minLenError('Title', TITLE_MIN_LEN))
-        .max(TITLE_MAX_LEN, maxLenError('Title', TITLE_MAX_LEN))
+        .min(TITLE_MIN_LEN, minLenError('Tab title', TITLE_MIN_LEN))
+        .max(TITLE_MAX_LEN, maxLenError('Tab title', TITLE_MAX_LEN))
         .required('Tab title is a required field')
     })
   )
