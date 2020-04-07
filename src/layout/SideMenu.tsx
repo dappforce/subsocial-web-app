@@ -8,7 +8,7 @@ import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext
 import { Loading, getEnv } from '../components/utils/utils';
 import { getApi } from '../components/utils/SubstrateApi';
 import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
-import { BlogId } from '../components/types';
+import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import Link from 'next/link';
 import { useNotifCounter } from '../components/utils/NotifCounter';
@@ -39,7 +39,7 @@ const InnerMenu = () => {
     const loadBlogsData = async () => {
       setLoaded(false);
       const api = await getApi();
-      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      const ids = await api.query.social.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
       const loadBlogs = ids.map(id => loadBlogData(api, id));
       const blogsData = await Promise.all<BlogData>(loadBlogs);
       isSubscribe && setFollowedBlogsData(blogsData);

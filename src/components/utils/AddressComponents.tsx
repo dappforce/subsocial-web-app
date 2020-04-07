@@ -1,20 +1,19 @@
 
-import { BareProps } from '@polkadot/ui-app/types';
+import { BareProps } from '@polkadot/react-components/types';
 
 import BN from 'bn.js';
 import React, { useState, useEffect, FunctionComponent } from 'react';
-import { AccountId, AccountIndex, Address, Balance, Option } from '@polkadot/types';
-import { withMulti } from '@polkadot/ui-api';
+import { GenericAccountId as AccountId, Option } from '@polkadot/types';
+import { withMulti } from '@polkadot/react-api';
 import InputAddress from './InputAddress';
-import classes from '@polkadot/ui-app/util/classes';
-import toShortAddress from '@polkadot/ui-app/util/toShortAddress';
-import BalanceDisplay from '@polkadot/ui-app/Balance';
-import IdentityIcon from '@polkadot/ui-app/IdentityIcon';
-import { findNameByAddress, nonEmptyStr, ZERO } from './index';
+import classes from '@polkadot/react-components/util/classes';
+import toShortAddress from '@polkadot/react-components/util/toShortAddress';
+// import BalanceDisplay from '@polkadot/react-components/Balance';
+import IdentityIcon from '@polkadot/react-components/IdentityIcon';
+import { nonEmptyStr, ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
 import { summarize } from './utils';
 import { getApi } from '../utils/SubstrateApi';
-import { SocialAccount, Profile, ProfileContent } from '../types';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
 import Router from 'next/router';
@@ -23,8 +22,15 @@ import { Pluralize } from './Plularize';
 import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
-import { isBrowser } from 'react-device-detect';
-import { getJsonFromIpfs } from './OffchainUtils';
+// import { isBrowser } from 'react-device-detect';
+import { ipfs } from './OffchainUtils';
+import { Balance } from '@polkadot/types/interfaces';
+import AccountIndex from '@polkadot/types/generic/AccountIndex';
+import Address from '@polkadot/types/generic/Address';
+import { AccountName } from '@polkadot/react-components';
+import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
+import { ProfileContent } from '@subsocial/types/offchain';
+import { getFirstOrUndefinded } from '@subsocial/utils';
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
@@ -41,7 +47,6 @@ export type Props = MyAccountProps & BareProps & {
   isShort?: boolean,
   session_validators?: Array<AccountId>,
   value?: AccountId | AccountIndex | Address | string,
-  name?: string,
   size?: number,
   withAddress?: boolean,
   withBalance?: boolean,
@@ -70,7 +75,6 @@ function AddressComponents (props: Props) {
     profile: profileInit = {} as Profile,
     profileContent: profileContentInit = {} as ProfileContent,
     withFollowButton,
-    withBalance = true,
     asActivity = false,
     withName = false,
     variant = 'preview',
@@ -90,7 +94,7 @@ function AddressComponents (props: Props) {
 
     const UpdateSocialAccount = async () => {
       const api = await getApi();
-      const socialAccountOpt = await api.query.blogs.socialAccountById(value) as unknown as Option<SocialAccount>;
+      const socialAccountOpt = await api.query.social.socialAccountById(value) as unknown as Option<SocialAccount>;
       console.log('Soc.Acc', socialAccountOpt);
       if (socialAccountOpt.isNone) {
         isSubscribe && setSocialAccount(undefined);
@@ -113,8 +117,8 @@ function AddressComponents (props: Props) {
       const profile = profileOpt.unwrap() as Profile;
       isSubscribe && setProfile(profile);
 
-      const profileContent = await getJsonFromIpfs<ProfileContent>(profile.ipfs_hash);
-      isSubscribe && setProfileContent(profileContent);
+      const profileContent = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+      isSubscribe && profileContent && setProfileContent(profileContent);
     };
 
     UpdateSocialAccount().catch(console.log);
@@ -158,9 +162,11 @@ function AddressComponents (props: Props) {
   const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
   const isMyProfile: boolean = address === myAddress;
 
-  const RenderFollowButton = () => (!isMyProfile)
-    ? <div className='AddressComponents follow'><FollowAccountButton address={address} /></div>
-    : null;
+  const RenderFollowButton = () => (
+    !isMyProfile
+      ? <div className='AddressComponents follow'><FollowAccountButton address={address} /></div>
+      : null
+  )
 
   const AuthorPreview = () => {
     return <div
@@ -186,7 +192,7 @@ function AddressComponents (props: Props) {
           </Popover>
           {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
-          {withName && <RenderName address={address} name={name} />}
+          {withName && <AccountName value={address} />}
           {asActivity
             ? <RenderPreviewForActivity />
             : <RenderPreviewForAddress />
@@ -201,7 +207,7 @@ function AddressComponents (props: Props) {
   function RenderPreviewForAddress () {
     return <>
       <div className='Df--AddressComponents-details'>
-        {withBalance && <RenderBalance address={address} />}
+        {/* {withBalance && <RenderBalance address={address} />} */}
         {' · '}
         {extraDetails}
       </div>
@@ -221,7 +227,7 @@ function AddressComponents (props: Props) {
       </div>
       <div className='addressInfo'>
         <RenderAddress asLink={false} />
-        <RenderBalance address={address} />
+        {/* <RenderBalance address={address} /> */}
       </div>
       <Icon type='caret-down' />
     </Popover>;
@@ -350,33 +356,19 @@ const RenderAvatar: FunctionComponent<ImageProps> = ({ size, avatar, address, st
     />;
 };
 
-type NameProps = {
-  address: string,
-  name: string
-};
+// type BalanceProps = {
+//   address: string
+// };
 
-const RenderName: FunctionComponent<NameProps> = ({ address, name }) => {
-  const nameAccount = name || findNameByAddress(address);
-  return (nonEmptyStr(nameAccount)
-    ? <div className={'ui--AddressSummary-name'} >
-      Name: <b style={{ textTransform: 'uppercase' }}>{nameAccount}</b>
-    </div> : null
-  );
-};
-
-type BalanceProps = {
-  address: string
-};
-
-const RenderBalance: FunctionComponent<BalanceProps> = ({ address }) => {
-  return (
-    <BalanceDisplay
-      label={isBrowser ? 'Balance: ' : ''}
-      className='ui--AddressSummary-balance'
-      params={address}
-    />
-  );
-};
+// const RenderBalance: FunctionComponent<BalanceProps> = ({ address }) => {
+//   return (
+//     <BalanceDisplay
+//       label={isBrowser ? 'Balance: ' : ''}
+//       className='ui--AddressSummary-balance'
+//       params={address}
+//     />
+//   );
+// };
 
 export default withMulti(
   AddressComponents,

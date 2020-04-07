@@ -1,12 +1,15 @@
 import React from 'react';
+
 import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
-import { BlogId } from '../types';
+import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
-import { AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/SubstrateApi';
+import { registry } from '@polkadot/react-api';
+import BN from 'bn.js';
 
 type Props = {
   totalCount: number;
@@ -32,9 +35,9 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
 
 ListBlog.getInitialProps = async (): Promise<Props> => {
   const api = await getApi();
-  const nextBlogId = await api.query.blogs.nextBlogId() as BlogId;
+  const nextBlogId = await api.query.social.nextBlogId() as BlogId;
 
-  const firstBlogId = new BlogId(1);
+  const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
 
@@ -43,7 +46,7 @@ ListBlog.getInitialProps = async (): Promise<Props> => {
     const lastId = nextBlogId.toNumber();
     const loadBlogs: Promise<BlogData>[] = [];
     for (let i = firstId; i < lastId; i++) {
-      loadBlogs.push(loadBlogData(api, new BlogId(i)));
+      loadBlogs.push(loadBlogData(api, new BN(i)));
     }
     blogsData = await Promise.all<BlogData>(loadBlogs);
   }
@@ -79,7 +82,7 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
 ListMyBlogs.getInitialProps = async (props): Promise<MyBlogProps> => {
   const { query: { address } } = props;
   const api = await getApi();
-  const myBlogIds = await api.query.blogs.blogIdsByOwner(new AccountId(address as string)) as unknown as BlogId[];
+  const myBlogIds = await api.query.social.blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
   const loadBlogs = myBlogIds.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
   return {

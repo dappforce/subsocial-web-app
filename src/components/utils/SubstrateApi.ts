@@ -1,48 +1,47 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { registerSubsocialTypes } from '../types';
-import { api as polkadotApi } from '@polkadot/ui-api';
+import { api as polkadotApi } from '@polkadot/react-api';
+import { types } from '@subsocial/types/substrate/preparedTypes'
+import { getEnv } from './utils';
 
 let api: ApiPromise | undefined
 
 export { api };
-export class SubstrateApi {
+export class DfApi {
 
-  protected api!: ApiPromise;
+  protected static api: ApiPromise;
 
-  protected connected: boolean = false;
+  protected static connected: boolean = false;
 
-  public connect = async (): Promise<ApiPromise> => {
-    const rpcEndpoint = process.env.SUBSTRATE_URL || `ws://127.0.0.1:9944/`;
+  public static connect = async (): Promise<ApiPromise> => {
+    const rpcEndpoint = getEnv('SUBSTRATE_URL') || `ws://127.0.0.1:9944/`;
     const provider = new WsProvider(rpcEndpoint);
-
-    // Register types before creating the API:
-    registerSubsocialTypes();
 
     // Create the API and wait until ready:
     console.log(`Connecting to Substrate API at ${rpcEndpoint}`);
-    this.api = await ApiPromise.create(provider);
-    this.connected = true
+    DfApi.api = await ApiPromise.create({ provider, types });
+    DfApi.connected = true
 
-    return this.api
+    return DfApi.api
   }
 
-  public disconnect = () => {
-    const { api, connected } = this;
-    if (api && api.isReady && connected) {
+  public static disconnect = () => {
+    const { api: localApi, connected } = DfApi;
+    if (api && localApi && localApi.isReady && connected) {
       try {
-        api.disconnect();
+        localApi.disconnect();
         console.log(`Disconnected from Substrate API.`);
       } catch (err) {
         console.log('Failed to disconnect from Substrate. Error:', err)
       } finally {
-        this.connected = false
+        api = undefined;
+        DfApi.connected = false
       }
     }
   }
 
   /** Retrieve the chain & node information via RPC calls and log into console.  */
-  protected logChainInfo = async () => {
-    const system = this.api.rpc.system;
+  protected static logChainInfo = async () => {
+    const system = DfApi.api.rpc.system;
 
     const [ chain, nodeName, nodeVersion ] = await Promise.all(
       [ system.chain(), system.name(), system.version() ]);
@@ -51,8 +50,8 @@ export class SubstrateApi {
   }
 }
 
-export const Api = new SubstrateApi();
-export default Api;
+export const Api = DfApi;
+export default DfApi;
 
 const MAX_CONN_TIME_SECS = 10
 
@@ -64,11 +63,10 @@ export const getApi = async () => {
     console.log('Get Substrate API: SSR api');
     return api;
   } else {
-    console.log('Get Substrate API: Api.connect()');
-    api = await Api.connect();
+    console.log('Get Substrate API: DfApi.setup()');
+    api = await DfApi.connect();
     setTimeout(() => {
-      console.log(`Disconecting from Substrate API after ${MAX_CONN_TIME_SECS} secs`)
-      Api.disconnect()
+      DfApi.disconnect()
     }, MAX_CONN_TIME_SECS * 1000);
     return api;
   }

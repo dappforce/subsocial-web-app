@@ -1,23 +1,21 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti, api } from '@polkadot/react-api';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { ApiProps } from '@polkadot/ui-api/types';
-import { api } from '@polkadot/ui-api';
+import { ApiProps } from '@polkadot/react-api/types';
 import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import { partition, isEmpty } from 'lodash';
-import { PostId, CommentId, Comment, OptionComment, CommentContent, PostContent, Post } from '../types';
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
-import { CommentHistoryModal } from '../utils/ListsEditHistory';
+// import { CommentHistoryModal } from '../utils/ListsEditHistory';
 import { DfMd } from '../utils/DfMd';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
@@ -28,11 +26,14 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
+import BN from 'bn.js'
+import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
+import { PostContent, CommentContent } from '@subsocial/types/offchain';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type Props = ApiProps & {
-  postId: PostId;
+  postId: BN;
   commentIds?: CommentId[];
   commentIdForPage?: CommentId;
 };
@@ -58,10 +59,10 @@ export function CommentsTree (props: Props) {
 
     const loadComments = async () => {
       if (!commentsCount) return;
-      const apiCalls: Promise<OptionComment>[] = commentIds.map(id =>
-        api.query.blogs.commentById(id) as Promise<OptionComment>);
+      const apiCalls: Promise<Option<Comment>>[] = commentIds.map(id =>
+        api.query.social.commentById(id) as Promise<Option<Comment>>);
 
-      const loadedComments = (await Promise.all<OptionComment>(apiCalls)).map(x => x.unwrap() as Comment);
+      const loadedComments = (await Promise.all<Option<Comment>>(apiCalls)).map(x => x.unwrap() as Comment);
 
       if (isSubscribe) {
         setComments(loadedComments);
@@ -120,26 +121,6 @@ export default withMulti(
   )
 );
 
-// export function withIdsFromUrl (Component: React.ComponentType<Props>) {
-//   return function (props: Props) {
-//     const router = useRouter();
-//     const { postId, commentId } = router.query;
-//     try {
-//       return <Component postId={new PostId(postId as string)} commentIdForPage={new CommentId(commentId as string)} {...props}/>;
-//     } catch (err) {
-//       return <em>Invalid url</em>;
-//     }
-//   };
-// }
-
-// export const CommentPage = withMulti(
-//   CommentsTree,
-//   withIdsFromUrl,
-//   withCalls<Props>(
-//     queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
-//   )
-// );
-
 type ViewCommentProps = {
   comment: Comment;
   commentsWithParentId: Comment[];
@@ -178,12 +159,12 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   useEffect(() => {
     let isSubscribe = true;
 
-    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
-      isSubscribe && setContent(json);
+    ipfs.findComment(struct.ipfs_hash).then(json => {
+      isSubscribe && json && setContent(json);
     }).catch(err => console.log(err));
 
     const loadComment = async () => {
-      const result = await api.query.blogs.commentById(id) as OptionComment;
+      const result = await api.query.social.commentById(id) as Option<Comment>;
       if (result.isNone) return;
       const comment = result.unwrap() as Comment;
       if (isSubscribe) {
@@ -194,12 +175,12 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
-        const result = await api.query.blogs.postById(post_id) as Option<Post>;
+        const result = await api.query.social.postById(post_id) as Option<Post>;
         if (result.isNone) return;
         isSubscribe && setPost(result.unwrap());
       }
-      const content = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-      if (isSubscribe) {
+      const content = await ipfs.findPost(post.ipfs_hash);
+      if (isSubscribe && content) {
         setPostContent(content);
       }
     };
@@ -211,8 +192,9 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   const isMyStruct = myAddress === account.toString();
 
   const RenderDropDownMenu = () => {
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
+    // const [ open, setOpen ] = useState(false);
+    // const close = () => setOpen(false);
+    // console.log(open, close());
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -220,9 +202,9 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         {(isMyStruct || showEditForm) && <Menu.Item key='0'>
           <div onClick={() => setShowEditForm(true)} >Edit</div>
         </Menu.Item>}
-        {edit_history.length > 0 && <Menu.Item key='1'>
+        {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>}
+        </Menu.Item>} */}
       </Menu>
     );
 
@@ -230,7 +212,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     <Dropdown overlay={menu} placement='bottomRight'>
       <Icon type='ellipsis' />
     </Dropdown>}
-    {open && <CommentHistoryModal id={id} open={open} close={close} />}
+    {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
 
@@ -315,10 +297,10 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
   const api = await getApi();
-  const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
+  const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
   const comment = commentOpt.unwrapOr({} as Comment);
   const postData = comment && await loadPostData(api, comment.post_id) as PostData;
-  const commentContent = comment && await getJsonFromIpfs<CommentContent>(comment.ipfs_hash);
+  const commentContent = comment && await ipfs.findComment(comment.ipfs_hash);
   return {
     comment: comment,
     post: postData.post,

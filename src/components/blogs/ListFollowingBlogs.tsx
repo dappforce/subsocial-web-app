@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { AccountId } from '@polkadot/types';
-import { BlogId } from '../types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
+import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -14,6 +14,7 @@ import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import { getApi } from '../utils/SubstrateApi';
 import Link from 'next/link';
+import { registry } from '@polkadot/react-api';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -41,7 +42,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
 ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProps> => {
   const { query: { address } } = props;
   const api = await getApi();
-  const followedBlogsData = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string)) as unknown as BlogId[];
+  const followedBlogsData = await api.query.social.blogsFollowedByAccount(new AccountId(registry, address as string)) as unknown as BlogId[];
   const loadBlogs = followedBlogsData.map(id => loadBlogData(api, id));
   const blogsData = await Promise.all<BlogData>(loadBlogs);
   return {

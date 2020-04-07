@@ -1,7 +1,7 @@
 {
   "extends": "./node_modules/@polkadot/dev/config/tsconfig",
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "preserve",
     "skipLibCheck": true,
     "baseUrl": ".",
     "lib": [
@@ -21,7 +21,9 @@
     "./node_modules/@types"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.stories.tsx",
+    "**/*.stories.ts"
   ],
   "include": [
     "next-env.d.ts",

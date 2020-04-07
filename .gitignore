@@ -1,4 +1,6 @@
+# Code editors
 .idea
+*.code-workspace
 
 # Logs
 logs
@@ -63,4 +65,4 @@ public/env.js
 # next.js build output
 .next
 out
-/public/env.js
+

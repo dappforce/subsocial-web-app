@@ -16,7 +16,21 @@ body,
   min-width: 428px;
   max-width: 728px;
   color: #111;
+
+  .DfTags {
+    margin: $space_normal 0;
+  }
 }
+
+.gAsmwL .ui.search.selection.dropdown > .text {
+  margin-left: 0;
+  .ui--KeyPair {
+    margin-left: 14.5%;
+    width: 85.5%;
+  }
+}
+
+
 
 @media (min-width: 1200px) {
   .DfBrand {
@@ -101,6 +115,10 @@ body,
   font-weight: bold;
 }
 
+.DfProfileTitle {
+  margin-bottom: $space_normal;
+}
+
 .ProfileDetails {
   display: flex !important;
 
@@ -164,7 +182,23 @@ body,
 }
 
 form.ui.form.DfForm.EditEntityForm {
-  margin-bottom: $space_normal;
+  margin-bottom: $space_huge;
+
+  .EPadvanced {
+    margin-bottom: $space_normal;
+    padding-bottom: $space_normal;
+
+    .EPadvacedTitle {
+      cursor: pointer;
+      font-size: $font_normal;
+      font-weight: 700;
+    }
+  }
+
+  .ETGtag{
+    background: '#fff';
+    border-style: dashed;
+  }
 }
 
 .ui.basic.button:not(.disabled) {
@@ -251,9 +285,6 @@ form.ui.form.DfForm.EditEntityForm {
     max-width: 100%;
   }
 
-  &.DfSection {
-    margin-top: $space_normal;
-  }
 }
 
 .DfCommentContent {
@@ -299,8 +330,8 @@ hr {
 .disable:hover {
   margin-right: $space_tiny;
   color: $color_muted;
-  text-decoration: none;
-  cursor: default;
+  text-decoration: none !important;
+  cursor: default !important;
 }
 
 .DfActivityStreamItem {
@@ -326,7 +357,7 @@ hr {
 
 .DfSocialLinks {
   margin-top: $space_small;
-  font-size: $font_normal;
+  font-size: $font_big;
 
   a {
     margin-right: $space_small;
@@ -334,10 +365,13 @@ hr {
 }
 
 .Profile--actions {
+  margin-top: $space_big;
   margin-left: 4rem;
+  margin-bottom: 2rem;
 
   button {
     background-color: $color_page_bg;
+    margin-right: $space_normal;
   }
 }
 
@@ -601,9 +635,14 @@ hr {
 
 .ui.modal .scrolling.content {
   text-align: left;
+  .ReactionsItem {
+    margin: $space_normal 0;
+  }
 }
 
 .ui--AddressComponents {
+  width: 70%;
+
   .ui--IdentityIcon {
     margin-left: 0;
     margin-right: $space_small;
@@ -611,6 +650,10 @@ hr {
 
   .AddressComponents.follow {
     float: right;
+
+    .button {
+      margin: 0;
+    }
   }
 
   .ui--AddressComponents-info {
@@ -704,6 +747,12 @@ hr {
 
 .DfSection {
   margin-bottom: $space_normal;
+
+  .viewblog-minipreview {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+  }
 
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
@@ -1078,7 +1127,7 @@ hr {
 }
 
 .DfCreator {
-  font-size: $space_normal;
+  font-size: $font_normal;
   margin-top: $space_normal;
 
   i {
@@ -1093,7 +1142,7 @@ hr {
 }
 
 .DfStatItem {
-  font-size: $space_normal;
+  font-size: $font_normal;
   display: inline;
   margin-right: $space_tiny;
 }
@@ -1120,4 +1169,208 @@ hr {
 .TopMenuAccountPopover {
   left: auto !important;
   right: $space_normal !important;
+}
+
+.NavEditorWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.NavigationEditor .NERow {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 0;
+  margin-bottom: $space_big;
+  position: relative;
+  flex-direction: column;
+  border-bottom: 1px solid $color_light_border;
+}
+.NavigationEditor .NERow:last-child {
+  border-bottom: none;
+}
+
+.NavigationEditor .NEText {
+  color: #000;
+  font-style: normal;
+  font-weight: 500;
+  font-size: $font_normal;
+  margin-right: $space_huge;
+  width: 16rem;
+  margin-top: $space_big;
+}
+
+.NavigationEditor .NavigationEditorForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.NavigationEditor .NavigationEditorForm input,
+.NavigationEditor .NavigationEditorForm select {
+  margin-right: $space_huge !important;
+  height: 3rem !important;
+}
+
+.NavigationEditor .NESelectType {
+  width: 50%;
+}
+
+.NavigationEditor .NavigationEditorForm .NEHidden {
+  input,
+  select {
+    color: $color_muted !important;
+  }
+}
+
+.NavigationEditor .NEButtonsWrapper {
+  display: flex;
+  flex-direction: column;
+  margin: $space_huge 0;
+}
+
+.NavigationEditor .NERemoveButton button:hover {
+  background-color: #ff0000;
+  border-color: #d9d9d9;
+
+  span {
+    color: #fff;
+  }
+}
+
+.NavigationEditor .NEHideButton {
+  margin-bottom: $space_normal;
+
+  button {
+    margin-right: $space_huge;
+  }
+}
+
+.NavigationEditor .NEAddTab {
+  background-color: #fff;
+  color: $color_link;
+  display: flex;
+  border-radius: 0.28571429rem;
+  line-height: 1.21428571rem;
+  padding: 0.67857143rem 1rem;
+  max-width: 15.2rem;
+  width: 100%;
+  justify-content: center;
+  border: 1px dashed #d9d9d9;
+  cursor: pointer;
+}
+
+.NavigationEditor .NESubmit {
+  max-width: 8.5rem;
+  width: 100%;
+
+  span {
+    color: #fff !important;
+  }
+}
+
+.NavigationEditor .NETagsWrapper {
+  width: 100%;
+
+  input {
+    height: $space_big !important;
+  }
+}
+
+.NavigationEditor .NEErrorMessage {
+  position: absolute !important;
+  top: 5.5rem;
+  left: 6rem;
+}
+
+.NavigationEditor .NEAutoCompleteItem {
+  position: absolute;
+}
+
+.RNTListItem {
+  padding: 0 $space_normal;
+
+  &:hover {
+     background-color: #eee;
+     border-radius: 5px;
+  }
+
+  .ant-list-item-meta-title {
+    font-weight: bold !important;
+  }
+}
+.RNTIcon {
+  transform: rotate(90deg);
+  margin-right: $space_normal;
+  color: #ccc;
+}
+.RNTSaveButton span {
+  color: #fff;
+}
+
+.ViewBlogWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.SpaceNav {
+  margin-left: $space_big;
+  width: 300px;
+
+  .SNhead {
+    display: flex;
+    flex-direction: column;
+    padding: $space_big;
+    background-color: #fff;
+    border: 1px solid $color_light_border;
+    box-sizing: border-box;
+    border-radius: 2px;
+    margin-bottom: $space_huge;
+
+    .SNavatar {
+      margin: auto;
+
+      img {
+        width: 100%;
+        border-radius: 10rem;
+      }
+    }
+
+    .SNheadTitle {
+      color: #000;
+      font-weight: 500;
+      font-size: $font_big;
+      line-height: $space_huge;
+      margin: $space_normal 0;
+    }
+
+    .SNheadDescription {
+      font-weight: 500;
+      margin-top: $space_normal;
+    }
+
+    .SNheadButton {
+      margin: auto;
+
+      &.unfollowed span {
+        color: #fff;
+      }
+    }
+  }
+
+  .SNmenu {
+    border: 1px solid $color_light_border;
+    box-sizing: border-box;
+    border-radius: 2px;
+    margin-bottom: $space_huge;
+  }
+
+  .SpaceNavSettings {
+    display: flex;
+    justify-content: flex-end;
+    margin: $space_tiny;
+
+    a:hover {
+      text-decoration: underline;
+    }
+  }
 }

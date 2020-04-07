@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Option } from '@polkadot/types';
 
-import { PostId, Post } from '../types';
+import { PostId, Post } from '@subsocial/types/substrate/interfaces/subsocial';
 import { MutedSpan } from '../utils/MutedText';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import { Pluralize } from '../utils/Plularize';
 import BN from 'bn.js';
-import { withCalls, withMulti } from '@polkadot/ui-api';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils';
 
 type StatsProps = {

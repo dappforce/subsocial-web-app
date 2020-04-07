@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
-import { AccountId, Option } from '@polkadot/types';
+import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult, ApiPromise } from '@polkadot/api';
-import { CommentId, PostId, BlogId, Profile, ProfileContent, SocialAccount } from '../types';
-import { getJsonFromIpfs } from './OffchainUtils';
+import { ipfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 import { truncate } from 'lodash';
+import AccountId from '@polkadot/types/generic/AccountId';
+import { registry } from '@polkadot/react-api';
+import BN from 'bn.js';
+import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/interfaces';
+import { ProfileContent } from '@subsocial/types/offchain';
+import { getFirstOrUndefinded } from '@subsocial/utils';
+import { Moment } from '@polkadot/types/interfaces';
 
 type PaginationProps = {
   currentPage?: number;
@@ -34,18 +40,18 @@ export const Pagination = (p: PaginationProps) => {
   );
 };
 
-export function getNewIdFromEvent<IdType extends BlogId | PostId | CommentId> (
+export function getNewIdFromEvent (
   _txResult: SubmittableResult
-): IdType | undefined {
-  let id: IdType | undefined;
+): BN | undefined {
+  let id: BN | undefined;
 
   _txResult.events.find(event => {
     const {
       event: { data, method }
     } = event;
     if (method.indexOf(`Created`) >= 0) {
-      const [ , /* owner */ newId ] = data.toArray();
-      id = newId as IdType;
+      const [ /* owner */, newId ] = data.toArray();
+      id = newId as unknown as BN;
       return true;
     }
     return false;
@@ -79,7 +85,7 @@ export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
     const router = useRouter();
     const { address } = router.query;
     try {
-      return <Component id={new AccountId(address as string)} {...props}/>;
+      return <Component id={new GenericAccountId(registry, address as string)} {...props}/>;
     } catch (err) {
       return <em>Invalid address: {address}</em>;
     }
@@ -120,11 +126,12 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
       if (!ipfsHash) return;
 
       let isSubscribe = true;
-      getJsonFromIpfs<ProfileContent>(ipfsHash)
-        .then(json => {
-          isSubscribe && setProfileContent(json);
-        })
-        .catch(err => console.log(err));
+      const loadContent = async () => {
+        const content = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+        isSubscribe && content && setProfileContent(content);
+      }
+
+      loadContent().catch(console.log);
 
       return () => { isSubscribe = false; };
     }, [ false ]);
@@ -143,8 +150,9 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 
 export const Loading = () => <Icon type='loading' />;
 
-export const formatUnixDate = (seconds: number, format: string = 'lll') => {
-  return moment(new Date(seconds * 1000)).format(format);
+export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
+  const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
+  return moment(new Date(seconds)).format(format);
 };
 
 const DEFAULT_SUMMARY_LENGTH = 300;
@@ -159,17 +167,17 @@ export const summarize = (body: string, limit: number = DEFAULT_SUMMARY_LENGTH) 
     : text;
 };
 
+export const getBlogId = async (api: ApiPromise, idOrHandle: string): Promise<BN | undefined> => {
+  if (idOrHandle.startsWith('@')) {
+    const handle = idOrHandle.substring(1) // Drop '@'
+    const idOpt = await api.query.social.blogIdByHandle(handle) as Option<BlogId>
+    return idOpt.unwrapOr(undefined)
+  } else {
+    return new BN(idOrHandle)
+  }
+}
+
 export function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process;
   return env[varName]
-}
-        
-export const getBlogId = async (api: ApiPromise, idOrSlug: string): Promise<BlogId | undefined> => {
-  if (idOrSlug.startsWith('@')) {
-    const slug = idOrSlug.substring(1)
-    const idOpt = await api.query.blogs.blogIdBySlug(slug) as Option<BlogId>
-    return idOpt.unwrapOr(undefined)
-  } else {
-    return new BlogId(idOrSlug)
-  }
 }

@@ -1,14 +1,9 @@
 /* eslint-disable no-mixed-operators */
 import BN from 'bn.js';
 
-// Keyring stuff:
-// --------------------------------------
-
-import keyring from '@polkadot/ui-keyring';
-
 // Substrate/Polkadot API utils
 // --------------------------------------
-import { Options as QueryOptions } from '@polkadot/ui-api/with/types';
+import { Options as QueryOptions } from '@polkadot/react-api/hoc/types';
 
 // Parse URLs
 // --------------------------------------
@@ -60,19 +55,6 @@ export const parseNumStr = (num: string): number | undefined => {
 export const nonEmptyArr = (x: any): boolean =>
   Array.isArray(x) && x.length > 0;
 
-export function findNameByAddress (address: string): string | undefined {
-  try {
-    return keyring.getAccount(address).getMeta().name;
-  } catch (error) {
-    try {
-      return keyring.getAddress(address).getMeta().name;
-    } catch (error) {
-      // ok, we don't have account or address
-      return undefined;
-    }
-  }
-}
-
 /** Example of apiQuery: 'query.councilElection.round' */
 export function queryToProp (
   apiQuery: string,
@@ -97,7 +79,7 @@ export function queryToProp (
 }
 
 export const queryBlogsToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
-  return queryToProp(`query.blogs.${storageItem}`, paramNameOrOpts);
+  return queryToProp(`query.social.${storageItem}`, paramNameOrOpts);
 };
 
 export function getUrlParam (location: Location, paramName: string, deflt: string | undefined = undefined): string | undefined {

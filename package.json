@@ -6,20 +6,18 @@
     "yarn": "^1.10.1"
   },
   "homepage": ".",
-  "workspaces": [
-    "src/*"
-  ],
   "resolutions": {
-    "@polkadot/api": "^0.77.0-beta.4",
-    "@polkadot/ui-app": "^0.32.0-beta.6",
-    "@polkadot/keyring": "^0.76.1",
-    "@polkadot/types": "^0.77.0-beta.4",
-    "@polkadot/util": "^0.76.1",
-    "@polkadot/util-crypto": "^0.76.1",
-    "@types/react-router": "4.4.5",
+    "@polkadot/api": "^1.4.0-beta.46",
+    "@polkadot/api-contract": "^1.4.0-beta.46",
+    "@polkadot/keyring": "^2.5.1",
+    "@polkadot/typegen": "^1.4.0-beta.46",
+    "@polkadot/types": "^1.4.0-beta.46",
+    "@polkadot/util": "^2.5.1",
+    "@polkadot/util-crypto": "^2.5.1",
     "babel-core": "^7.0.0-bridge.0",
-    "rxjs": "^6.4.0",
-    "typescript": "^3.4.3"
+    "typescript": "^3.8.2",
+    "@types/react-router": "4.4.5",
+    "rxjs": "^6.4.0"
   },
   "scripts": {
     "check": "yarn lint",
@@ -28,7 +26,7 @@
     "postinstall": "polkadot-dev-yarn-only",
     "test": "echo \"skipping tests\"",
     "dev": "node export-env.js && next -p 3003",
-    "build": "next build",
+    "build": "./before-build-hack.sh && next build",
     "export": "next export",
     "start": "node export-env.js && next start -p 3003",
     "storybook": "start-storybook -s ./public -p 3002"
@@ -37,15 +35,20 @@
     "@appbaseio/reactivesearch": "^3.0.3",
     "@babel/core": "^7.4.3",
     "@babel/runtime": "^7.4.3",
-    "@polkadot/api": "^0.77.0-beta.4",
+    "@polkadot/api": "^1.4.0-beta.46",
+    "@polkadot/api-contract": "^1.4.0-beta.46",
+    "@polkadot/app-contracts": "0.40.0-beta.19",
     "@polkadot/dev-react": "^0.30.0-beta.1",
-    "@polkadot/ts": "^0.1.56",
-    "@polkadot/types": "^0.77.0-beta.4",
-    "@polkadot/ui-api": "^0.32.0-beta.6",
-    "@polkadot/ui-app": "^0.32.0-beta.6",
-    "@polkadot/ui-assets": "^0.38.0-beta.2",
-    "@polkadot/ui-params": "^0.32.0-beta.6",
-    "@polkadot/ui-signer": "^0.32.0-beta.6",
+    "@polkadot/extension-dapp": "^0.22.0-beta.5",
+    "@polkadot/react-api": "0.40.0-beta.49",
+    "@polkadot/react-components": "0.40.0-beta.49",
+    "@polkadot/react-hooks": "0.40.0-beta.49",
+    "@polkadot/react-params": "0.40.0-beta.49",
+    "@polkadot/react-signer": "0.40.0-beta.49",
+    "@polkadot/ts": "^0.2.3",
+    "@polkadot/typegen": "^1.4.0-beta.46",
+    "@polkadot/types": "1.4.0-beta.46",
+    "@polkadot/ui-assets": "^0.52.0-beta.3",
     "@storybook/addon-knobs": "^5.2.5",
     "@storybook/addon-storysource": "^5.2.5",
     "@types/jest": "^24.0.16",
@@ -88,12 +91,14 @@
     "yup": "^0.26.10"
   },
   "dependencies": {
-    "@polkadot/ui-assets": "^0.38.0-beta.2",
-    "@polkadot/ui-signer": "^0.32.0-beta.6",
+    "@polkadot/jsonrpc": "^1.7.1",
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-console": "^1.2.1",
     "@storybook/react": "^5.2.5",
-    "@subsocial/config": "^0.1.2",
+    "@subsocial/api": "^0.1.22-beta4",
+    "@subsocial/types": "0.1.20-beta8",
+    "@subsocial/utils": "^0.1.16",
+    "@svgr/webpack": "^5.2.0",
     "@types/faker": "^4.1.7",
     "@types/file-saver": "^2.0.0",
     "@types/moment-timezone": "^0.5.12",
@@ -125,7 +130,6 @@
     "store": "^2.0.12",
     "strip-markdown": "^3.0.3",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
-    "uuid": "^3.3.2",
-    "yargs": "^13.2.0"
+    "url-loader": "^3.0.0"
   }
 }

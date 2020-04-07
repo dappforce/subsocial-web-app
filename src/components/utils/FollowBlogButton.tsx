@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { AccountId, Bool } from '@polkadot/types';
-import { BlogId } from '../types';
+import { GenericAccountId, bool as Bool } from '@polkadot/types';
 import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { isMobile } from 'react-device-detect';
 import { getApi } from './SubstrateApi';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
-import { Button$Sizes } from '@polkadot/ui-app/Button/types';
+import { registry } from '@polkadot/react-api';
+import BN from 'bn.js';
+import { Button$Sizes } from '@polkadot/react-components/Button/types';
 
 type FollowBlogButtonProps = {
-  blogId: BlogId,
+  blogId: BN,
   size?: Button$Sizes
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
-  const { blogId, size = isMobile ? 'tiny' : 'small' } = props;
+  const { blogId, size } = props;
   const { state: { address: myAddress } } = useMyAccount();
   const { reloadFollowed } = useSidebarCollapsed();
 
-  const dataForQuery = new Tuple([ AccountId, BlogId ], [ new AccountId(myAddress), blogId ]);
+  const dataForQuery = new Tuple(registry, [ 'AccountId', 'u64' ], [ new GenericAccountId(registry, myAddress), blogId ]);
 
   const [ isFollow, setIsFollow ] = useState(false);
 
@@ -32,7 +32,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     let isSubscribe = true;
     const load = async () => {
       const api = await getApi();
-      const _isFollow = await (api.query.blogs[`blogFollowedByAccount`](dataForQuery)) as Bool;
+      const _isFollow = await (api.query.social.blogFollowedByAccount(dataForQuery)) as Bool;
       isSubscribe && setIsFollow(_isFollow.valueOf());
     };
     load().catch(err => console.log(err));
@@ -45,9 +45,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   };
 
   return <TxButton
-    type='submit'
-    compact
-    size={size}
+    size = {size}
     isBasic={isFollow}
     label={isFollow
       ? 'Unfollow'
@@ -55,10 +53,9 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     }
     params={buildTxParams()}
     tx={isFollow
-      ? `blogs.unfollowBlog`
-      : `blogs.followBlog`
-    }
-    txSuccessCb={TxSuccess}
+      ? `social.unfollowBlog`
+      : `social.followBlog`}
+    onSuccess={TxSuccess}
   />;
 }
 

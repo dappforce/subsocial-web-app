@@ -1,42 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
-
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../utils/forms';
-import { Text, U32 } from '@polkadot/types';
+
+import { createType } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
-import { addJsonToIpfs, getJsonFromIpfs, removeFromIpfs } from '../utils/OffchainUtils';
+import { ipfs } from '../utils/OffchainUtils';
 import { queryBlogsToProp } from '../utils/index';
-import { PostId, CommentId, Comment, CommentUpdate, CommentContent } from '../types';
+import BN from 'bn.js';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
 import { NoData } from '../utils/DataList';
+import { ValidationProps, buildValidationSchema } from './CommentValidation';
+
+import { Comment, IpfsHash } from '@subsocial/types/substrate/interfaces/subsocial'
+import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxCallback } from '../utils/types';
+import { CommentContent } from '@subsocial/types/offchain';
+import { CommentUpdate } from '@subsocial/types/substrate/classes';
+import U32 from '@polkadot/types/primitive/U32';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-
-  body: Yup.string()
-    // .min(p.minTextLen, `Your comment is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.commentMaxLen, `Your comment is too long. Maximum length is ${p.commentMaxLen} chars.`)
-    .required('Comment body is required')
-});
-
-type ValidationProps = {
-  commentMaxLen: number
-  // maxTextLen: number
-};
-
 type OuterProps = ValidationProps & {
-  postId: PostId,
-  parentId?: CommentId,
-  id?: CommentId,
+  postId: BN,
+  parentId?: BN,
+  id?: BN,
   struct?: Comment,
   onSuccess: () => void,
   autoFocus: boolean,
@@ -75,14 +69,16 @@ const InnerForm = (props: FormProps) => {
     body
   } = values;
 
-  const [ ipfsCid, setIpfsCid ] = useState('');
+  const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = async (sendTx: () => void) => {
     if (isValid) {
       const json = { body };
-      const cid = await addJsonToIpfs(json).catch(err => console.log(err)) as string;
-      setIpfsCid(cid);
-      sendTx();
+      const cid = await ipfs.saveComment(json);
+      if (cid) {
+        setIpfsCid(cid);
+        sendTx();
+      }
       // window.onunload = async (e) => {
       //   e.preventDefault();
       //   await removeFromIpfs(cid).catch(err => console.log(err));
@@ -92,19 +88,14 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const onTxCancelled = () => {
-    removeFromIpfs(ipfsCid).catch(err => console.log(err));
-    setSubmitting(false);
-  };
-
-  const onTxFailed = (_txResult: SubmittableResult) => {
-    removeFromIpfs(ipfsCid).catch(err => console.log(err));
+  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => console.log(err));
     setSubmitting(false);
   };
 
   const isNewRoot = !hasParent && !struct;
 
-  const onTxSuccess = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
     setSubmitting(false);
 
     if (isNewRoot) {
@@ -119,12 +110,13 @@ const InnerForm = (props: FormProps) => {
     if (!isValid) return [];
 
     if (!struct) {
-      const parentCommentId = new Option(CommentId, parentId);
+      const parentCommentId = createType(registry, 'Option<u64>', parentId);// new Option(registry, CommentId, parentId);
       return [ postId, parentCommentId, ipfsCid ];
     } else if (dirty) {
-      const update = new CommentUpdate({
-        ipfs_hash: new Text(ipfsCid)
-      });
+      const update = new CommentUpdate(
+        {
+          ipfs_hash: createType(registry, 'Text', ipfsCid)
+        });
       return [ struct.id, update ];
     } else {
       console.log('Nothing to update in a comment');
@@ -164,13 +156,12 @@ const InnerForm = (props: FormProps) => {
             isDisabled={!dirty || isSubmitting}
             params={buildTxParams()}
             tx={struct
-              ? 'blogs.updateComment'
-              : 'blogs.createComment'
+              ? 'social.updateComment'
+              : 'social.createComment'
             }
             onClick={onSubmit}
-            txCancelledCb={onTxCancelled}
-            txFailedCb={onTxFailed}
-            txSuccessCb={onTxSuccess}
+            onFailed={onTxFailed}
+            onSuccess={onTxSuccess}
           />
           {!isNewRoot && <Button
             type='button'
@@ -201,9 +192,7 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    commentMaxLen: props.commentMaxLen?.toNumber()
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things
@@ -216,13 +205,11 @@ type LoadStructProps = OuterProps & {
 
 type StructJson = CommentContent | undefined;
 
-type Struct = Comment | undefined;
-
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { structOpt } = props;
-  const [ json, setJson ] = useState(undefined as StructJson);
-  const [ struct, setStruct ] = useState(undefined as Struct);
+  const [ json, setJson ] = useState<StructJson>();
+  const [ struct, setStruct ] = useState<Comment>();
   const [ trigger, setTrigger ] = useState(false);
   const jsonIsNone = json === undefined;
 
@@ -239,7 +226,7 @@ function LoadStruct (props: LoadStructProps) {
 
     console.log('Loading comment JSON from IPFS');
 
-    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
+    ipfs.findComment(struct.ipfs_hash).then(json => {
       const content = json;
       setJson(content);
     }).catch(err => console.log(err));
@@ -256,7 +243,7 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json as CommentContent} />;
 }
 
-const commonQueries = [
+const commonSubstrateQueries = [
   queryBlogsToProp('commentMaxLen', { propName: 'commentMaxLen' })
 ]
 
@@ -264,13 +251,13 @@ export const EditComment = withMulti<LoadStructProps>(
   LoadStruct,
   withCalls<OuterProps>(
     queryBlogsToProp('commentById', { paramName: 'id', propName: 'structOpt' }),
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );
 
 export const NewComment = withMulti<OuterProps>(
   EditForm,
   withCalls<OuterProps>(
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );
