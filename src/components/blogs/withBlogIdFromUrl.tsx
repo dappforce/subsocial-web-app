@@ -13,17 +13,17 @@ export function withBlogIdFromUrl<Props = { id: BlogId }>
     const { blogId } = router.query;
     const idOrHandle = blogId as string
     try {
-    const [ id, setId ] = useState<BN>()
+      const [ id, setId ] = useState<BN>()
 
-    useEffect(() => {
-      const getId = async () => {
-        const api = await getApi()
-        const id = await getBlogId(api, idOrHandle)
-        id && setId(id)
-      }
-      
-      getId().catch(err => console.error(err))
-    }, [ false ])
+      useEffect(() => {
+        const getId = async () => {
+          const api = await getApi()
+          const id = await getBlogId(api, idOrHandle)
+          id && setId(id)
+        }
+        
+        getId().catch(err => console.error(err))
+      }, [ false ])
 
       return <Component id={id} {...props} />;
     } catch (err) {
