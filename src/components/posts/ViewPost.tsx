@@ -80,7 +80,7 @@ type ViewPostPageProps = {
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { post, initialContent = {} as PostExtContent } = props.postData;
+  const { post, initialContent } = props.postData;
 
   if (!post) return <NoData description={<span>Post not found</span>} />;
 
@@ -154,7 +154,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>);
   };
 
-  const renderNameOnly = (title: string, id: PostId) => {
+  const renderNameOnly = (title: string | undefined, id: PostId) => {
     if (!title || !id) return null;
     return withLink
       ? <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
@@ -195,7 +195,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     return <ViewBlog id={blog_id} miniPreview withFollowButton />
   }
 
-  const renderContent = (post: Post, content: PostExtContent) => {
+  const renderContent = (post: Post, content: PostExtContent | undefined) => {
     if (!post || !content) return null;
 
     const { title, summary, image } = content;
@@ -212,7 +212,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </div>;
   };
 
-  const renderTags = (content: PostExtContent) => {
+  const renderTags = (content: PostExtContent | undefined) => {
     if (!content) return null;
 
     const { tags } = content;
@@ -273,7 +273,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {renderPostCreator(post)}
           <RenderDropDownMenu account={created.account}/>
         </div>
-        <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
+        <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
         {/* TODO add body */}
         <Segment className='DfPostPreview'>
           <div className='DfInfo'>
@@ -293,7 +293,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderDetails = (content: PostExtContent) => {
+  const renderDetails = (content?: PostExtContent) => {
+    if (!content) return null;
     const { title, body, image, canonical, tags } = content;
     return <Section className='DfContentPage'>
       <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
@@ -319,7 +320,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   switch (variant) {
     case 'name only': {
-      return renderNameOnly(content.title, id);
+      return renderNameOnly(content?.title, id);
     }
     case 'preview': {
       switch (type) {
@@ -411,9 +412,9 @@ export const getTypePost = (post: Post): PostType => {
   }
 };
 
-const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
+const loadContentFromIpfs = async (post: Post): Promise<PostExtContent | undefined> => {
   const ipfsContent = await ipfs.findPost(post.ipfs_hash);
-  if (!ipfsContent) return {} as PostExtContent;
+  if (!ipfsContent) return undefined;
 
   const summary = summarize(ipfsContent.body, SUMMARY_MAX_SIZE);
   return {
@@ -425,7 +426,6 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
 export const loadPostData = async (api: ApiPromise, postId: BN | string) => {
   const postOpt = await api.query.social.postById(postId) as Option<Post>;
   let postData: PostData = {};
-
   if (postOpt.isSome) {
     const post = postOpt.unwrap();
     post.set('score', new BN(post.score.toNumber()) as unknown as Codec);
@@ -453,6 +453,7 @@ export const loadExtPost = async (api: ApiPromise, post: Post) => {
 export const loadPostDataList = async (api: ApiPromise, ids: PostId[]) => {
   const loadPostsData = ids.map(id => loadPostData(api, id));
   const postsData = await Promise.all<PostData>(loadPostsData);
+  console.log(postsData);
   const loadPostsExtData = postsData.map(item => loadExtPost(api, item.post as Post));
   const postsExtData = await Promise.all<PostData>(loadPostsExtData);
   return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
