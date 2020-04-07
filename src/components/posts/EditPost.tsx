@@ -14,26 +14,16 @@ import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp, parse } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
-import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { Dropdown, Menu, Icon, /* Upload, message */ Tabs, Button as AntButton} from 'antd';
-import AceEditor from 'react-ace'
-import 'brace/mode/javascript'
-import 'brace/mode/typescript'
-import 'brace/mode/scss'
-import 'brace/mode/html'
-import 'brace/mode/powershell'
-import 'brace/mode/rust'
-import 'brace/theme/github'
+import { Dropdown, Menu, Icon, Tabs, Button as AntButton} from 'antd';
 import BlockPreview from './BlockPreview';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { isMobile } from 'react-device-detect';
 import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup'
-// import { UploadChangeParam } from 'antd/lib/upload';
-// import { UploadFile } from 'antd/lib/upload/interface';
+import PostBlockFormik from './PostBlockFormik';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
@@ -53,13 +43,12 @@ const buildSchema = () => Yup.object().shape({
       kind: Yup.string(),
       data: Yup.string()
         .when('kind', {
-          is: (val) => val == 'text',
+          is: (val) => val === 'text',
           then: Yup.string().min(MIN_TEXT_BLOCK_LENGTH, `Text must be at least ${MIN_TEXT_BLOCK_LENGTH} characters`),
-          otherwise: Yup.string(),
-        }),
+          otherwise: Yup.string()
+        })
     })
   )
-  
 });
 
 type ValidationProps = {};
@@ -142,21 +131,10 @@ const InnerForm = (props: FormProps) => {
 
   const [ ipfsHash, setIpfsCid ] = useState('');
   const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
-  const [ inputFocus, setInputFocus ] = useState<{id: number, focus: boolean}[]>([])
   const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
-  // const [ imageBlocks, setImageBlocks ] = useState<{id: number, cid: string}[]>([])
   const [ firstload, setFirstload ] = useState(false)
   const [ isAdvanced, setIsAdvanced ] = useState(false)
   const [ currentBlogId, setCurrentBlogId ] = useState<BlogId>(initialBlogId)
-
-  const langs = [
-    { name: 'javascript', pretty: 'JavaScript' },
-    { name: 'typescript', pretty: 'TypeScript' },
-    { name: 'html', pretty: 'HTML' },
-    { name: 'scss', pretty: 'CSS/SCSS' },
-    { name: 'rust', pretty: 'Rust' },
-    { name: 'powershell', pretty: 'PowerShell' }
-  ]
 
   useEffect(() => {
     const firstLoad = async () => {
@@ -307,15 +285,6 @@ const InnerForm = (props: FormProps) => {
     ])
   }
 
-  const removeBlock = (id: number) => {
-    const idx = blockValues.findIndex((x) => x.id === id)
-
-    setFieldValue('blockValues', [
-      ...blockValues.slice(0, idx),
-      ...blockValues.slice(idx + 1)
-    ])
-  }
-
   const handleLinkPreviewChange = async (block: BlockValue, value: string) => {
 
     const data = await parse(value)
@@ -342,188 +311,6 @@ const InnerForm = (props: FormProps) => {
     handleLinkPreviewChange(block, value)
     setFieldValue(name, value)
   }
-  /*
-  const loadImageToIpfs = (imgName: string, data: string, block: BlockValue, index: number) => {
-    const update = { ...block, imgName, data }
-    addJsonToIpfs(update).then((hash: string) => {
-      const newArray = [ ...imageBlocks ]
-      const idx = newArray.findIndex((x) => x.id === block.id)
-      if (idx === -1) {
-        newArray.push({ id: block.id, cid: hash })
-      } else {
-        newArray[idx].cid = hash
-      }
-
-      setImageBlocks(newArray)
-      setFieldValue(`blockValues.${index}`, update)
-    })
-  }
-
-  console.log(imageBlocks)
-  */
-
-  const changeBlockPosition = (order: number, index: number) => {
-
-    const newBlocksOrder = [ ...blockValues ]
-    newBlocksOrder[index] = blockValues[index + order]
-    newBlocksOrder[index + order] = blockValues[index]
-
-    setFieldValue('blockValues', newBlocksOrder)
-  }
-
-  const handleFocus = (focus: boolean, id: number) => {
-    const newArray = [ ...inputFocus ]
-    const idx = newArray.findIndex((x) => x.id === id)
-
-    if (idx === -1) {
-      newArray.push({
-        id, focus
-      })
-    } else {
-      newArray[idx].focus = focus
-    }
-
-    setInputFocus(newArray)
-  }
-
-  const renderPostBlock = (block: BlockValue | CodeBlockValue, index: number) => {
-    let res
-
-    /*
-    const handleImage = (info: UploadChangeParam<UploadFile<any>>) => {
-      // TODO: if image file size > some_number
-
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          console.log('File content:', event.target?.result);
-          loadImageToIpfs(info.file.name, event.target?.result as string, block, index)
-        };
-        reader.readAsText(info.file.originFileObj as Blob)
-
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    }
-    */
-
-    switch (block.kind) {
-      case 'text': {
-        res = <SimpleMDEReact
-          value={block.data}
-          onChange={(data: string) => setFieldValue(`blockValues.${index}.data`, data)}
-          className={`DfMdEditor`}
-          events={{
-            blur: () => handleFocus(false, block.id),
-            focus: () => handleFocus(true, block.id)
-          }}
-        />
-        break
-      }
-      case 'link': {
-        res = <Field
-          type="text"
-          name={`blockValues.${index}.data`}
-          placeholder="Link"
-          value={block.data}
-          onFocus={() => handleFocus(true, block.id)}
-          onBlur={() => handleFocus(false, block.id)}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => handleLinkChange(block, `blockValues.${index}.data`, e.currentTarget.value)}
-        />
-        break
-      }
-      case 'image': {
-        res = <Field
-          type="text"
-          name={`blockValues.${index}.data`}
-          placeholder="Image link"
-          value={block.data}
-          onFocus={() => handleFocus(true, block.id)}
-          onBlur={() => handleFocus(false, block.id)}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
-        />
-        break
-      }
-      case 'code': {
-        const { lang } = block as CodeBlockValue
-        const pretty = langs.find((x) => x.name === lang)?.pretty
-        res = <div className='EditPostAceEditor'>
-          <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeSelect'}>
-            <a href='#' onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => e.preventDefault()}>
-              <Icon type="down" /> Syntax: {pretty || 'JavaScript'}
-            </a>
-          </Dropdown>
-          <AceEditor
-            mode={lang || 'javascript'}
-            theme="github"
-            onChange={(value: string) => setFieldValue(`blockValues.${index}.data`, value)}
-            value={block.data}
-            name="ace-editor"
-            editorProps={{ $blockScrolling: true }}
-            height='200px'
-            width='100%'
-            onFocus={() => handleFocus(true, block.id)}
-            onBlur={() => handleFocus(false, block.id)}
-          />
-        </div>
-        break
-      }
-      /*
-      case 'image': {
-        res = <Upload
-          name='file'
-          onChange={(info: UploadChangeParam<UploadFile<any>>) => handleImage(info)}
-        >
-          <Button>
-            <Icon type="upload" /> Click to Upload
-          </Button>
-        </Upload>
-        break
-      }
-      */
-      default: {
-        return null
-      }
-    }
-
-    const maxBlockId = Math.max.apply(null, blockValues.map((x) => x.id))
-
-    const currentFocus = inputFocus.find((z) => z.id === block.id)
-
-    return <div className={`EditPostBlockWrapper ${currentFocus?.focus ? 'inputFocus' : ''} ${isMobile ? 'mobileBlock' : ''}`} key={block.id} >
-      {res}
-      <ErrorMessage name={`blockValues.${index}.data`} component='div' className='ui pointing red label' />
- 
-      <div className='navigationButtons'>
-        <Dropdown overlay={() => addMenu(index)}>
-          <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
-        </Dropdown>
-        <AntButton type="default" size="small" onClick={() => removeBlock(block.id)} className={'smallAntButton'}>
-          <Icon type="delete" />
-          Delete
-        </AntButton>
-        <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
-          {block.hidden
-            ? <div><Icon type="eye" /> Show block</div>
-            : <div><Icon type="eye-invisible" /> Hide block</div>
-          }
-        </AntButton>
-        { index > 0 &&
-          <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(-1, index)} >
-            <Icon type="up-circle" /> Move up
-          </AntButton> }
-        { index < maxBlockId &&
-          <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(1, index)} >
-            <Icon type="down-circle" /> Move down
-          </AntButton> }
-      </div>
-    </div>
-
-  }
 
   const addMenu = (index?: number) => (
     <Menu className='AddBlockDropdownMenu'>
@@ -541,21 +328,6 @@ const InnerForm = (props: FormProps) => {
       </Menu.Item>
     </Menu>
   );
-
-  const modesMenu = (id: number) => (
-    <Menu className=''>
-      {langs.map((x) => (
-        <Menu.Item key={x.name} onClick={() => handleAceMode(x.name, id)} >
-          {x.pretty}
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
-
-  const handleAceMode = (mode: string, id: number) => {
-    const bvIdx = blockValues.findIndex((x) => x.id === id)
-    setFieldValue(`blockValues.${bvIdx}.lang`, mode)
-  }
 
   const handleAdvanced = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
@@ -598,7 +370,14 @@ const InnerForm = (props: FormProps) => {
           </Dropdown>
 
           {blockValues && blockValues.length > 0
-            ? blockValues.map((block: BlockValue, index: number) => renderPostBlock(block, index))
+            ? blockValues.map((block: BlockValue, index: number) => <PostBlockFormik
+              block={block}
+              index={index}
+              setFieldValue={setFieldValue}
+              handleLinkChange={handleLinkChange}
+              blockValues={blockValues}
+              addMenu={addMenu}
+            />)
             : addBlock('text')
           }
 
@@ -614,13 +393,19 @@ const InnerForm = (props: FormProps) => {
 
         </>
         : <>
-          { renderPostBlock({
+          <PostBlockFormik
+            block={{
               id: getNewBlockId(blockValues),
               kind: 'text',
               hidden: false,
               data: ''
-            }, blockValues.length || 0)
-          }
+            }}
+            index={blockValues.length || 0}
+            setFieldValue={setFieldValue}
+            handleLinkChange={handleLinkChange}
+            blockValues={blockValues}
+            addMenu={addMenu}
+          />
         </>
       }
       {withButtons && <LabelledField {...props}>
@@ -639,7 +424,6 @@ const InnerForm = (props: FormProps) => {
       <span style={{ margin: '0 .75rem' }}>/</span>
       {sectionTitle}
     </>
-
 
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={formTitle()}>
@@ -668,7 +452,7 @@ const InnerForm = (props: FormProps) => {
     </Section>
 
   const renderWithTabs = () =>
-      <Tabs type="card">
+    <Tabs type="card">
         <TabPane tab="Edit" key="1">
           <div className='EditPostForm withTabs'>
             {form}
@@ -691,7 +475,7 @@ const InnerForm = (props: FormProps) => {
           </div>
         </TabPane>
       </Tabs>
-  
+
   const editSharedPost = () =>
     <div style={{ marginTop: '1rem' }}>{form}</div>
 
