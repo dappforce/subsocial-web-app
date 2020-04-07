@@ -74,7 +74,7 @@ type OuterProps = ValidationProps & {
   extention?: PostExtension,
   struct?: Post
   json?: PostContent,
-  mappedBlocks: Array<BlockValue | CodeBlockValue>
+  mappedBlocks?: Array<BlockValue | CodeBlockValue>
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
@@ -614,8 +614,13 @@ const InnerForm = (props: FormProps) => {
 
         </>
         : <>
-          What should be here?
-          { /* <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/> */}
+          { renderPostBlock({
+              id: getNewBlockId(blockValues),
+              kind: 'text',
+              hidden: false,
+              data: ''
+            }, blockValues.length || 0)
+          }
         </>
       }
       {withButtons && <LabelledField {...props}>

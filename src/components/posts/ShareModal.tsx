@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { PostId, BlogId } from '../types';
-// import { NewSharePost } from './EditPost';
+import { PostId, BlogId, SharedPost, PostExtension } from '../types';
 import { ViewPost } from './ViewPost';
-// import { ViewBlog } from '../blogs/ViewBlog';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
-// import { LabeledValue } from 'antd/lib/select';
+import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
+import dynamic from 'next/dynamic';
+
+const NewSharePost = dynamic(() => import('./EditPost').then((mod: any) => mod.NewSharePost), { ssr: false });
 
 type Props = MyAccountProps & {
   postId: PostId,
@@ -25,8 +26,8 @@ const InnerShareModal = (props: Props) => {
 
   if (!blogIds) return <Loading />;
 
-  // const [ blogId, setBlogId ] = useState(blogIds[0]);
-  // const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
+  const [ blogId, setBlogId ] = useState(blogIds[0]);
+  const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
     if (blogIds.length === 0) {
@@ -35,25 +36,23 @@ const InnerShareModal = (props: Props) => {
       );
     }
 
-    /*
     const saveBlog = (value: string | number | LabeledValue) => {
       setBlogId(new BlogId(value as string));
     };
-    */
 
     return (<div className='DfShareModal'>
       <SelectBlogPreview
         blogIds={blogIds}
-        // onSelect={saveBlog}
+        onSelect={saveBlog}
         imageSize={24}
         defaultValue={blogIds[0].toString()} />
-      {/*
+      {
       <NewSharePost
         blogId={blogId}
         extention={extension}
         withButtons={false}
       />
-      */}
+      }
       <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
     </div>
     );
@@ -72,13 +71,13 @@ const InnerShareModal = (props: Props) => {
       </Modal.Content>
       <Modal.Actions>
         <Button size='medium' onClick={close}>Cancel</Button>
-        {/*
+        {
         <NewSharePost
           blogId={blogId}
           extention={extension}
           onlyTxButton
         />
-        */}
+        }
       </Modal.Actions>
     </Modal>
   );

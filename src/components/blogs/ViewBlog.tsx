@@ -266,7 +266,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </MutedDiv>
   );
 
-  return <Section className='DfContentPage'>
+  return <Section className='DfContentPage bookPage'>
     <HeadMeta title={name} desc={mdToText(desc)} image={image} />
     <div className='FullProfile'>
       {renderPreview()}

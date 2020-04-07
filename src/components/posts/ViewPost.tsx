@@ -7,7 +7,7 @@ import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
 import { PostId, Post, CommentId, PostContent, CodeBlockValue, BlockValue, EmbedData, PreviewData } from '../types';
 import { nonEmptyStr, parse } from '../utils/index';
-import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId, summarize } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
@@ -33,7 +33,7 @@ const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { 
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
 // const SUMMARY_MAX_SIZE = 150;
-// const LIMIT_SUMMARY = isMobile ? 75 : 150;
+const LIMIT_SUMMARY = isMobile ? 75 : 150;
 
 type PostVariant = 'full' | 'preview' | 'name only';
 
@@ -41,7 +41,8 @@ type PostType = 'regular' | 'share';
 
 type PostExtContent = PostContent & {
   summary: string;
-  blockValues: Array<BlockValue | CodeBlockValue>
+  blockValues: Array<BlockValue | CodeBlockValue>;
+  previewImg: string | undefined;
 };
 
 export type PostData = {
@@ -218,8 +219,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderContent = (post: Post, content: PostExtContent) => {
     if (!post || !content) return null;
 
-    const { title, summary, image } = content;
-    const hasImage = nonEmptyStr(image);
+    const { title, summary, previewImg } = content;
+    const hasImage = nonEmptyStr(previewImg);
 
     return <div className='DfContent'>
       <div className='DfPostText'>
@@ -228,7 +229,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {summary}
         </div>
       </div>
-      {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
+      {hasImage && previewImg && <DfBgImg src={previewImg} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
 
@@ -314,9 +315,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderDetails = (content: PostExtContent) => {
-    const { title, canonical, tags, blockValues } = content;
+    const { title, canonical, tags, blockValues, previewImg, summary } = content;
     return <Section className='DfContentPage bookPage'>
-      {<HeadMeta title={title} desc={''} image={''} canonical={canonical} tags={tags} /> }
+      {<HeadMeta title={title} desc={summary} image={previewImg} canonical={canonical} tags={tags} /> }
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -446,12 +447,14 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
       blockValues.push(blockValue)
     }
   }
-  // const summary = summarize(ipfsContent.body, LIMIT_SUMMARY);
-  const summary = 'temp data'
+  const firstText = blockValues.find((x) => x.kind === 'text')?.data
+  const previewImg = blockValues.find((x) => x.kind === 'image')?.data
+  const summary = summarize(firstText as string, LIMIT_SUMMARY);
   return {
     ...ipfsContent,
     blockValues,
-    summary
+    summary,
+    previewImg
   };
 };
 

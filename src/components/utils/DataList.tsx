@@ -90,7 +90,7 @@ export default (props: Props) => {
 
   const SectionOfList = (props: any): JSX.Element => (
     title
-      ? <Section title={<div className='DfTitle--List'>{title}</div>}>{props.children}</Section>
+      ? <Section className={'bookPage'} title={<div className='DfTitle--List'>{title}</div>}>{props.children}</Section>
       : props.children
   );
 
