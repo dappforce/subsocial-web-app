@@ -160,7 +160,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     if (!isValid || !struct) return [];
 
     const update = new BlogUpdate({
-      writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
+      writers: new Option(registry, 'Vec<AccountId>', []),
       handle: new OptionOptionText(null),
       ipfs_hash: new OptionText(ipfsCid)
     });
