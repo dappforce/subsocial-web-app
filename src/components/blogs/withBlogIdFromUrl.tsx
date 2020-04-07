@@ -25,7 +25,7 @@ export function withBlogIdFromUrl<Props = { id: BlogId }>
         getId().catch(err => console.error(err))
       }, [ false ])
 
-      return <Component id={id} {...props} />;
+      return !id ? null : <Component id={id} {...props} />;
     } catch (err) {
       return <em>Invalid blog ID or handle: {idOrHandle}</em>;
     }
