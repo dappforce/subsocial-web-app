@@ -1259,7 +1259,7 @@ hr {
 }
 
 .EditPostBlockWrapper {
-  margin: $space_tiny 0;
+  margin: $space_normal 0;
   display: flex;
   flex-direction: column;
   padding: 5px;
@@ -1352,4 +1352,8 @@ hr {
   max-height: 200px;
   word-wrap: normal;
   white-space: pre;
+}
+
+.previewWarning {
+  
 }

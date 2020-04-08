@@ -172,18 +172,15 @@ const PostBlockFormik = (props: Props) => {
 
   const currentFocus = inputFocus.find((z) => z.id === block.id)
 
-  const [ useOnPreview, setUseOnPreview ] = useState(blockValues.find((x) => x.kind === 'image' && x.useOnPreview === true)?.id)
+  let tempArray = 0
+  blockValues.find((x) => {
+    if (x.useOnPreview) tempArray++
+  })
+  const isPlaceForPreview = tempArray < 3
 
-  const handleUseOnPreview = (index: number, id: number) => {
-    if (id === useOnPreview) {
-      setUseOnPreview(undefined)
-      setFieldValue(`blockValues.${index}.useOnPreview`, false)
-    } else {
-      const idx = blockValues.findIndex((x) => x.id === useOnPreview)
-      if (idx !== -1) setFieldValue(`blockValues.${idx}.useOnPreview`, false)
-      setUseOnPreview(id)
-      setFieldValue(`blockValues.${index}.useOnPreview`, true)
-    }
+  const handleUseOnPreview = (index: number, isPlaceForPreview: boolean) => {
+    if (!isPlaceForPreview && !blockValues[index].useOnPreview) return
+    setFieldValue(`blockValues.${index}.useOnPreview`, !blockValues[index].useOnPreview)
   }
 
   return <div className={`EditPostBlockWrapper ${currentFocus?.focus ? 'inputFocus' : ''} ${isMobile ? 'mobileBlock' : ''}`} key={block.id} >
@@ -194,12 +191,11 @@ const PostBlockFormik = (props: Props) => {
       <Dropdown overlay={() => addMenu(index)}>
         <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
       </Dropdown>
-      {block.kind === 'image' &&
-      <AntButton type="default" size="small" onClick={() => handleUseOnPreview(index, block.id)} className={'smallAntButton'}>
-        {useOnPreview === block.id ? <Icon type="check-circle" /> : <Icon type="crown" />}
+      <AntButton type="default" size="small" onClick={() => handleUseOnPreview(index, isPlaceForPreview)} className={'smallAntButton'}>
+        {block.useOnPreview ? <Icon type="check-circle" /> : <Icon type="crown" />}
         Use in preview
+        {!isPlaceForPreview && <div className="previewWarning">There should be no more than 3 previews</div>}
       </AntButton>
-      }
       { index > 0 &&
         <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(-1, index)} >
           <Icon type="up-circle" /> Up

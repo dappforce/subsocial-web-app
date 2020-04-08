@@ -267,6 +267,7 @@ const InnerForm = (props: FormProps) => {
       id: getNewBlockId(blockValues),
       kind: type,
       hidden: false,
+      useOnPreview: false,
       data: ''
     }
 
@@ -451,28 +452,28 @@ const InnerForm = (props: FormProps) => {
 
   const renderWithTabs = () =>
     <Tabs type="card">
-        <TabPane tab="Edit" key="1">
-          <div className='EditPostForm withTabs'>
-            {form}
-          </div>
-        </TabPane>
-        <TabPane tab="Preview" key="2">
+      <TabPane tab="Edit" key="1">
+        <div className='EditPostForm withTabs'>
+          {form}
+        </div>
+      </TabPane>
+      <TabPane tab="Preview" key="2">
         <div className='EditPostPreview withTabs'>
-            <div className='DfMd'>
-              <h1>{title}</h1>
-            </div>
-            {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValue) => <BlockPreview
-                key={x.id}
-                block={x}
-                embedData={embedData}
-                setEmbedData={setEmbedData}
-                linkPreviewData={linkPreviewData}
-              />)
-            }
+          <div className='DfMd'>
+            <h1>{title}</h1>
           </div>
-        </TabPane>
-      </Tabs>
+          {blockValues && blockValues.length !== 0 &&
+            blockValues.map((x: BlockValue) => <BlockPreview
+              key={x.id}
+              block={x}
+              embedData={embedData}
+              setEmbedData={setEmbedData}
+              linkPreviewData={linkPreviewData}
+            />)
+          }
+        </div>
+      </TabPane>
+    </Tabs>
 
   const editSharedPost = () =>
     <div style={{ marginTop: '1rem' }}>{form}</div>

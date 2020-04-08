@@ -232,21 +232,18 @@ export interface PostBlock {
   cid: string
 }
 
-export type BlockValueKind = BlockValue | CodeBlockValue | ImageBlockValue
+export type BlockValueKind = BlockValue | CodeBlockValue
 
 export interface BlockValue {
   id: number
   kind: PostBlockKind
   hidden?: boolean
+  useOnPreview: boolean
   data: string
 }
 
 export interface CodeBlockValue extends BlockValue {
   lang: string
-}
-
-export interface ImageBlockValue extends BlockValue {
-  useOnPreview: boolean
 }
 
 export interface SiteMetaContent {
