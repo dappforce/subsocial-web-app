@@ -5,7 +5,7 @@ import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostContent, CodeBlockValue, BlockValue, EmbedData, PreviewData } from '../types';
+import { PostId, Post, CommentId, PostContent, CodeBlockValue, BlockValueKind, EmbedData, PreviewData } from '../types';
 import { nonEmptyStr, parse } from '../utils/index';
 import { Loading, formatUnixDate, getBlogId, summarize } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
@@ -41,7 +41,7 @@ type PostType = 'regular' | 'share';
 
 type PostExtContent = PostContent & {
   summary: string;
-  blockValues: Array<BlockValue | CodeBlockValue>;
+  blockValues: BlockValueKind[];
   previewImg: string | undefined;
 };
 
@@ -327,7 +327,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
         {blockValues && blockValues.length > 0 &&
-          blockValues.map((x: BlockValue | CodeBlockValue) => {
+          blockValues.map((x: BlockValueKind) => {
             return <div key={x.id} className={'viewPostBlock'}><BlockPreview
               block={x}
               embedData={embedData}
@@ -443,12 +443,12 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
   const blockValues = []
   if (ipfsContent.blocks && ipfsContent.blocks.length > 0) {
     for (const block of ipfsContent.blocks) {
-      const blockValue = await getJsonFromIpfs<BlockValue | CodeBlockValue>(block.cid)
+      const blockValue = await getJsonFromIpfs<BlockValueKind>(block.cid)
       blockValues.push(blockValue)
     }
   }
   const firstText = blockValues.find((x) => x.kind === 'text')?.data
-  const previewImg = blockValues.find((x) => x.kind === 'image')?.data
+  const previewImg = blockValues.find((x) => x.kind === 'image' && x.useOnPreview)?.data
   const summary = summarize(firstText as string, LIMIT_SUMMARY);
   return {
     ...ipfsContent,

@@ -17,7 +17,7 @@ body,
   color: #111;
 
   .viewPostBlock {
-    margin-bottom: $space_normal;
+    margin-bottom: $space_huge;
   }
 
   .bookPage {
@@ -1164,10 +1164,6 @@ hr {
 .EditPostWrapper {
   display: flex;
   justify-content: space-between;
-
-  .ace_editor {
-    font-size: $font_normal;
-  }
 }
 
 .EditPostForm {
@@ -1236,6 +1232,10 @@ hr {
   .previewDescription {
     color: #111;
   }
+
+  .previewLinkAfterDescription {
+    color: #111;
+  }
 }
 
 .EditPostAddButton {
@@ -1263,6 +1263,7 @@ hr {
   display: flex;
   flex-direction: column;
   padding: 5px;
+  position: relative;
   
   .DfMdEditor {
     i {
@@ -1277,6 +1278,14 @@ hr {
     opacity: 0;
     -webkit-transition: opacity 0.5s;
     transition: opacity 0.5s;
+    position: absolute;
+    bottom: -37px;
+    background-color: inherit;
+    width: 100%;
+    left: 0;
+    padding: 5px;
+    border-radius: 0px 0px 4px 4px;
+    z-index: 1;
   }
 
   &.mobileBlock {
@@ -1289,7 +1298,10 @@ hr {
 .EditPostBlockWrapper.inputFocus,
 .EditPostBlockWrapper:not(.mobileBlock):hover {
   background-color: beige;
-  border-radius: 4px;
+  border-radius: 4px 4px 0px 0px;
+  -webkit-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
 
   .DfMdEditor {
     i:not(.separator) {
@@ -1299,6 +1311,9 @@ hr {
 
   .navigationButtons {
     opacity: 1;
+    -webkit-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
+    box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
   }
 }
 
@@ -1326,4 +1341,15 @@ hr {
 .twitter-tweet {
   display: flex !important;
   justify-content: center !important;
+}
+
+.aceEditor {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #333;
+  font-size: $font_normal;
+  max-height: 200px;
+  word-wrap: normal;
+  white-space: pre;
 }

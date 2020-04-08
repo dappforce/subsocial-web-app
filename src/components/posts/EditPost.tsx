@@ -9,7 +9,7 @@ import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValue, PostBlockKind, CodeBlockValue, PreviewData, EmbedData } from '../types';
+import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData } from '../types';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { queryBlogsToProp, parse } from '../utils/index';
@@ -54,7 +54,7 @@ const buildSchema = () => Yup.object().shape({
 type ValidationProps = {};
 
 type BlockValues = {
-  blockValues: Array<BlockValue | CodeBlockValue>
+  blockValues: BlockValueKind[]
 }
 
 type OuterProps = ValidationProps & {
@@ -63,7 +63,7 @@ type OuterProps = ValidationProps & {
   extention?: PostExtension,
   struct?: Post
   json?: PostContent,
-  mappedBlocks?: Array<BlockValue | CodeBlockValue>
+  mappedBlocks?: BlockValueKind[]
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
@@ -155,7 +155,7 @@ const InnerForm = (props: FormProps) => {
 
   const mapValuesToBlocks = async () => {
 
-    const processArray = async (array: Array<BlockValue | CodeBlockValue>) => {
+    const processArray = async (array: BlockValueKind[]) => {
       const res = []
 
       for (const item of array) {
@@ -263,7 +263,7 @@ const InnerForm = (props: FormProps) => {
 
   const addBlock = (type: PostBlockKind, afterIndex?: number) => {
 
-    const defaultBlockValue: BlockValue = {
+    const defaultBlockValue: BlockValueKind = {
       id: getNewBlockId(blockValues),
       kind: type,
       hidden: false,
@@ -285,7 +285,7 @@ const InnerForm = (props: FormProps) => {
     ])
   }
 
-  const handleLinkPreviewChange = async (block: BlockValue, value: string) => {
+  const handleLinkPreviewChange = async (block: BlockValueKind, value: string) => {
 
     const data = await parse(value)
 
@@ -307,25 +307,24 @@ const InnerForm = (props: FormProps) => {
     setLinkPreviewData(newParsedData)
   }
 
-  const handleLinkChange = (block: BlockValue, name: string, value: string) => {
+  const handleLinkChange = (block: BlockValueKind, name: string, value: string) => {
     handleLinkPreviewChange(block, value)
     setFieldValue(name, value)
   }
 
+  const blockNames = [
+    { name: 'text', pretty: 'Text Block' },
+    { name: 'link', pretty: 'Link' },
+    { name: 'image', pretty: 'Image' },
+    { name: 'video', pretty: 'Video' },
+    { name: 'code', pretty: 'Code Block' }
+  ]
+
   const addMenu = (index?: number) => (
     <Menu className='AddBlockDropdownMenu'>
-      <Menu.Item key="1" onClick={() => addBlock('text', index)}>
-        Text Block
-      </Menu.Item>
-      <Menu.Item key="2" onClick={() => addBlock('link', index)}>
-        Link
-      </Menu.Item>
-      <Menu.Item key="3" onClick={() => addBlock('image', index)}>
-        Image
-      </Menu.Item>
-      <Menu.Item key="4" onClick={() => addBlock('code', index)}>
-        Code block
-      </Menu.Item>
+      {blockNames.map((x) => <Menu.Item key={x.name} onClick={() => addBlock(x.name as PostBlockKind, index)}>
+        {x.pretty}
+      </Menu.Item>)}
     </Menu>
   );
 
@@ -370,7 +369,7 @@ const InnerForm = (props: FormProps) => {
           </Dropdown>
 
           {blockValues && blockValues.length > 0
-            ? blockValues.map((block: BlockValue, index: number) => <PostBlockFormik
+            ? blockValues.map((block: BlockValueKind, index: number) => <PostBlockFormik
               block={block}
               index={index}
               setFieldValue={setFieldValue}
@@ -428,18 +427,17 @@ const InnerForm = (props: FormProps) => {
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={formTitle()}>
       { isMobile
-      ? renderWithTabs()
-      : <div className='EditPostWrapper'>
+        ? renderWithTabs()
+        : <div className='EditPostWrapper'>
           <div className='EditPostForm'>
             {form}
           </div>
           <div className='EditPostPreview'>
-            <div>Preview Data:</div>
-            <div className='DfMd'>
+            <div>
               <h1>{title}</h1>
             </div>
             {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValue | CodeBlockValue) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
+              blockValues.map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
                 block={x}
                 embedData={embedData}
                 setEmbedData={setEmbedData}
@@ -464,7 +462,7 @@ const InnerForm = (props: FormProps) => {
               <h1>{title}</h1>
             </div>
             {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValue | CodeBlockValue) => <BlockPreview
+              blockValues.map((x: BlockValue) => <BlockPreview
                 key={x.id}
                 block={x}
                 embedData={embedData}
@@ -494,7 +492,7 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
 
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
-    let blockValues: Array<BlockValue | CodeBlockValue> = []
+    let blockValues: BlockValueKind[] = []
     if (mappedBlocks && mappedBlocks.length !== 0) {
       blockValues = mappedBlocks.map((x, i) => {
         return {
@@ -570,7 +568,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     const [ json, setJson ] = useState(undefined as StructJson);
     const [ struct, setStruct ] = useState(undefined as Struct);
     const [ trigger, setTrigger ] = useState(false);
-    const [ mappedBlocks, setMappedBlocks ] = useState(undefined as unknown as BlockValue[])
+    const [ mappedBlocks, setMappedBlocks ] = useState(undefined as unknown as BlockValueKind[])
     const jsonIsNone = json === undefined;
 
     const toggleTrigger = () => {
@@ -591,9 +589,9 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
         if (json.blocks && json.blocks.length > 0) {
 
           const processArray = async (arr: PostBlock[]) => {
-            const temp: BlockValue[] = []
+            const temp: BlockValueKind[] = []
             for (const item of arr) {
-              const res = await getJsonFromIpfs<BlockValue | CodeBlockValue>(item.cid)
+              const res = await getJsonFromIpfs<BlockValueKind>(item.cid)
               temp.push(res)
             }
             return temp

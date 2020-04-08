@@ -1,5 +1,5 @@
 import React from 'react'
-import { BlockValue, CodeBlockValue, EmbedData, PreviewData } from '../types'
+import { BlockValueKind, CodeBlockValue, EmbedData, PreviewData } from '../types'
 import { nonEmptyStr, isLink, YOUTUBE_REGEXP, VIMEO_REGEX, TWITTER_REGEXP, DOMAIN_REGEXP, GIST_REGEXP } from '../utils'
 import { Tweet } from 'react-twitter-widgets'
 import { DfMd } from '../utils/DfMd'
@@ -12,9 +12,10 @@ import 'brace/mode/powershell'
 import 'brace/mode/rust'
 import 'brace/theme/github'
 import Gist from 'react-gist'
+import { Icon } from 'antd'
 
 type Props = {
-  block: BlockValue | CodeBlockValue
+  block: BlockValueKind
   embedData: EmbedData[]
   setEmbedData: React.Dispatch<React.SetStateAction<EmbedData[]>>
   linkPreviewData: PreviewData[]
@@ -70,14 +71,14 @@ const BlockPreview = (props: Props) => {
           allow='autoplay; encrypted-media'
           allowFullScreen
           width='100%'
-          height='350px'
+          height='450px'
           title={`video${embedData?.data}`}
         />
       }
       case 'vimeo': {
         return <iframe src={`https://player.vimeo.com/video/${embedData?.data}?autoplay=1&loop=1&autopause=0`}
           width="100%"
-          height="350"
+          height="450"
           allow="autoplay; fullscreen"
           frameBorder={0}
         />
@@ -97,7 +98,7 @@ const BlockPreview = (props: Props) => {
   let element
 
   switch (x.kind) {
-    case 'link': {
+    case 'link' || 'video': {
       if (!isLink(x.data)) {
         element = <div>{x.data}</div>
         break
@@ -152,7 +153,7 @@ const BlockPreview = (props: Props) => {
                 <div className={'underPicture'}>
                   <p><b>{og?.title}</b></p>
                   <p className='previewDescription'>{og?.description}</p>
-                  <p className='previewLinkAfterDescription'>{domain}</p>
+                  <p className='previewLinkAfterDescription'><Icon type="link" /> {domain}</p>
                 </div>
               </div>}
           </a>
@@ -182,8 +183,10 @@ const BlockPreview = (props: Props) => {
         name="ace-editor-readonly"
         readOnly={true}
         editorProps={{ $blockScrolling: true }}
-        height='200px'
         width='100%'
+        className={'aceEditor'}
+        minLines={1}
+        maxLines={9}
       />
 
       break

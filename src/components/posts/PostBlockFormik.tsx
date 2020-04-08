@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BlockValue, CodeBlockValue } from '../types'
+import { BlockValueKind } from '../types'
 import SimpleMDEReact from 'react-simplemde-editor'
 import { Field, ErrorMessage } from 'formik'
 import { Dropdown, Menu, Icon, Button as AntButton } from 'antd'
@@ -14,11 +14,11 @@ import 'brace/theme/github'
 import { isMobile } from 'react-device-detect'
 
 type Props = {
-  block: BlockValue | CodeBlockValue
+  block: BlockValueKind
   index: number
   setFieldValue: (field: string, value: any) => void
-  handleLinkChange: (block: BlockValue, name: string, value: string) => void
-  blockValues: BlockValue[] | CodeBlockValue[]
+  handleLinkChange: (block: BlockValueKind, name: string, value: string) => void
+  blockValues: BlockValueKind[]
   addMenu: (index?: number) => JSX.Element
 }
 
@@ -91,7 +91,7 @@ const PostBlockFormik = (props: Props) => {
       res = <SimpleMDEReact
         value={block.data}
         onChange={(data: string) => setFieldValue(`blockValues.${index}.data`, data)}
-        className={`DfMdEditor`}
+        className={`markdown-body`}
         events={{
           blur: () => handleFocus(false, block.id),
           focus: () => handleFocus(true, block.id)
@@ -123,8 +123,20 @@ const PostBlockFormik = (props: Props) => {
       />
       break
     }
+    case 'video': {
+      res = <Field
+        type="text"
+        name={`blockValues.${index}.data`}
+        placeholder="Video link"
+        value={block.data}
+        onFocus={() => handleFocus(true, block.id)}
+        onBlur={() => handleFocus(false, block.id)}
+        onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
+      />
+      break
+    }
     case 'code': {
-      const { lang } = block as CodeBlockValue
+      const { lang } = block as BlockValueKind
       const pretty = langs.find((x) => x.name === lang)?.pretty
       res = <div className='EditPostAceEditor'>
         <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeSelect'}>
@@ -139,8 +151,10 @@ const PostBlockFormik = (props: Props) => {
           value={block.data}
           name="ace-editor"
           editorProps={{ $blockScrolling: true }}
-          height='200px'
+          className={'aceEditor'}
           width='100%'
+          minLines={1}
+          maxLines={9}
           onFocus={() => handleFocus(true, block.id)}
           onBlur={() => handleFocus(false, block.id)}
         />
@@ -158,6 +172,20 @@ const PostBlockFormik = (props: Props) => {
 
   const currentFocus = inputFocus.find((z) => z.id === block.id)
 
+  const [ useOnPreview, setUseOnPreview ] = useState(blockValues.find((x) => x.kind === 'image' && x.useOnPreview === true)?.id)
+
+  const handleUseOnPreview = (index: number, id: number) => {
+    if (id === useOnPreview) {
+      setUseOnPreview(undefined)
+      setFieldValue(`blockValues.${index}.useOnPreview`, false)
+    } else {
+      const idx = blockValues.findIndex((x) => x.id === useOnPreview)
+      if (idx !== -1) setFieldValue(`blockValues.${idx}.useOnPreview`, false)
+      setUseOnPreview(id)
+      setFieldValue(`blockValues.${index}.useOnPreview`, true)
+    }
+  }
+
   return <div className={`EditPostBlockWrapper ${currentFocus?.focus ? 'inputFocus' : ''} ${isMobile ? 'mobileBlock' : ''}`} key={block.id} >
     {res}
     <ErrorMessage name={`blockValues.${index}.data`} component='div' className='ui pointing red label' />
@@ -166,24 +194,30 @@ const PostBlockFormik = (props: Props) => {
       <Dropdown overlay={() => addMenu(index)}>
         <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
       </Dropdown>
+      {block.kind === 'image' &&
+      <AntButton type="default" size="small" onClick={() => handleUseOnPreview(index, block.id)} className={'smallAntButton'}>
+        {useOnPreview === block.id ? <Icon type="check-circle" /> : <Icon type="crown" />}
+        Use in preview
+      </AntButton>
+      }
+      { index > 0 &&
+        <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(-1, index)} >
+          <Icon type="up-circle" /> Up
+        </AntButton> }
+      { index < maxBlockId &&
+        <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(1, index)} >
+          <Icon type="down-circle" /> Down
+        </AntButton> }
+      <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
+        {block.hidden
+          ? <div><Icon type="eye" /> Show</div>
+          : <div><Icon type="eye-invisible" /> Hide</div>
+        }
+      </AntButton>
       <AntButton type="default" size="small" onClick={() => removeBlock(block.id)} className={'smallAntButton'}>
         <Icon type="delete" />
         Delete
       </AntButton>
-      <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
-        {block.hidden
-          ? <div><Icon type="eye" /> Show block</div>
-          : <div><Icon type="eye-invisible" /> Hide block</div>
-        }
-      </AntButton>
-      { index > 0 &&
-        <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(-1, index)} >
-          <Icon type="up-circle" /> Move up
-        </AntButton> }
-      { index < maxBlockId &&
-        <AntButton className={'smallAntButton'} size="small" type="default" onClick={() => changeBlockPosition(1, index)} >
-          <Icon type="down-circle" /> Move down
-        </AntButton> }
     </div>
   </div>
 

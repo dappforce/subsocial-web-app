@@ -222,7 +222,7 @@ export class BlogUpdate extends Struct {
 // ------------------------------------------
 // Post blocks
 
-export type PostBlockKind = 'text' | 'code' | 'link' | 'image'
+export type PostBlockKind = 'text' | 'code' | 'link' | 'image' | 'video'
 
 export interface PostBlock {
   kind: PostBlockKind
@@ -231,6 +231,8 @@ export interface PostBlock {
   /** CID aka IPFS hash */
   cid: string
 }
+
+export type BlockValueKind = BlockValue | CodeBlockValue | ImageBlockValue
 
 export interface BlockValue {
   id: number
@@ -241,6 +243,10 @@ export interface BlockValue {
 
 export interface CodeBlockValue extends BlockValue {
   lang: string
+}
+
+export interface ImageBlockValue extends BlockValue {
+  useOnPreview: boolean
 }
 
 export interface SiteMetaContent {

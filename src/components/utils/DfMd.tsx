@@ -7,5 +7,5 @@ interface Props {
 }
 
 export const DfMd = (props: Props) => {
-  return <ReactMarkdown className='DfMd markdown-body' source={props.source} linkTarget='_blank' />
+  return <ReactMarkdown className='markdown-body' source={props.source} linkTarget='_blank' />
 }

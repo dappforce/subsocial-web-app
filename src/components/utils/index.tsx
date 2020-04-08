@@ -10,6 +10,10 @@ import keyring from '@polkadot/ui-keyring';
 // --------------------------------------
 import { Options as QueryOptions } from '@polkadot/ui-api/with/types';
 
+import queryString from 'query-string';
+import { SiteMetaContent } from '../types';
+import { parseUrl } from './OffchainUtils';
+
 // Parse URLs
 // --------------------------------------
 
@@ -25,10 +29,6 @@ export const parse = async (url: string): Promise<SiteMetaContent | undefined> =
     return undefined
   }
 }
-
-import queryString from 'query-string';
-import { SiteMetaContent } from '../types';
-import { parseUrl } from './OffchainUtils';
 
 export const ZERO = new BN(0);
 
