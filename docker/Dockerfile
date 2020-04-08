@@ -20,6 +20,6 @@ RUN NODE_ENV=production yarn build
 
 FROM node:10.13-slim
 
-COPY --from=builder /app .kf
+COPY --from=builder /app .
 
 CMD bash -c "yarn start"
