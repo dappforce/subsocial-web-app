@@ -1320,5 +1320,10 @@ hr {
 
 .gistEmbedWrapper {
   max-height: 300px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+
+.twitter-tweet {
+  display: flex !important;
+  justify-content: center !important;
 }

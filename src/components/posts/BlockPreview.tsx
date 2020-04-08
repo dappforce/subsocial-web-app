@@ -69,15 +69,15 @@ const BlockPreview = (props: Props) => {
           frameBorder='0'
           allow='autoplay; encrypted-media'
           allowFullScreen
-          width='480px'
-          height='300px'
+          width='100%'
+          height='350px'
           title={`video${embedData?.data}`}
         />
       }
       case 'vimeo': {
         return <iframe src={`https://player.vimeo.com/video/${embedData?.data}?autoplay=1&loop=1&autopause=0`}
-          width="480"
-          height="300"
+          width="100%"
+          height="350"
           allow="autoplay; fullscreen"
           frameBorder={0}
         />
