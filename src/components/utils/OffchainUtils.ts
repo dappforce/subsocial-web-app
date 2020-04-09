@@ -9,7 +9,7 @@ export const ipfs = new SubsocialIpfsApi({ connect: ipfsUrl, offchainUrl });
 export const offchainWs = getEnv('OFFCHAIN_WS')
 
 function getOffchainUrl (subUrl: string): string {
-  return `${offchainUrl}/v1/offchain/${subUrl}`
+  return `${offchainUrl}/v1/offchain${subUrl}`
 }
 
 export const getNewsFeed = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> => {
