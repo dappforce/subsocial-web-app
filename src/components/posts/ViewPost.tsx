@@ -413,7 +413,6 @@ export const getTypePost = (post: Post): PostType => {
 };
 
 const loadContentFromIpfs = async (post: Post): Promise<PostExtContent | undefined> => {
-  console.log('Post cid = ', post.ipfs_hash.toString())
   const ipfsContent = await ipfs.findPost(post.ipfs_hash.toString());
   if (!ipfsContent) return undefined;
 
