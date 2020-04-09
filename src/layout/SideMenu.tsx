@@ -5,7 +5,7 @@ import Router, { useRouter } from 'next/router';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { Loading, getEnv } from '../components/utils/utils';
+import { Loading } from '../components/utils/utils';
 import { getApi } from '../components/utils/SubstrateApi';
 import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
 import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
@@ -13,7 +13,10 @@ import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import Link from 'next/link';
 import { useNotifCounter } from '../components/utils/NotifCounter';
 
-const appsUrl = getEnv('APPS_URL') || 'http://127.0.0.1:3002';
+// const url = typeof window !== 'undefined' && { hostname: window.location.hostname
+// const appsUrl = `http://${hostname}/bc`
+// console.log('Apps url', appsUrl) 
+// TODO delete if will work simple redirect to /bc
 
 interface MenuItem {
   name: string;
@@ -124,7 +127,7 @@ const InnerMenu = () => {
         </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
-        <a href={appsUrl}>
+        <a href='/bc'>
           <Icon type='exception' />
           <span>Advanced</span>
         </a>
