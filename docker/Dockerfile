@@ -16,6 +16,8 @@ COPY . .
 
 RUN yarn
 RUN ./fix-polkadot-libs.sh
+
+COPY localhost.env .env
 RUN NODE_ENV=production yarn build
 
 FROM node:10.13-slim
