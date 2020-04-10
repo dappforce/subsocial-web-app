@@ -1,14 +1,14 @@
 import React from 'react';
 import { NextPage } from 'next';
-import { Button } from 'antd';
 import BN from 'bn.js';
 
 import { BlogId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { getApi } from '../utils/SubstrateApi';
 import { HeadMeta } from '../utils/HeadMeta';
-import ListData from '../utils/DataList';
-import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
-import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
+import { BlogData, loadBlogData } from '../blogs/ViewBlog';
+import { loadPostDataList, PostDataListItem } from '../posts/ViewPost';
+import { LatestBlogs } from './LatestBlogs';
+import { LatestPosts } from './LatestPosts';
 
 const ZERO = new BN(0);
 const FIVE = new BN(5);
@@ -23,30 +23,23 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta title='Subsocial latest updates' desc='Subsocial home page with latest updates' />
-      <ListData
-        title={`Latest blogs`}
-        dataSource={blogsData}
-        renderItem={(item, index) =>
-          <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
-        noDataDesc='No latest updates yet'
-        noDataExt={<Button href='/blogs/new'>Create blog</Button>}
+      <HeadMeta
+        title='Subsocial latest updates'
+        desc='Subsocial home page with latest updates'
       />
-      {postsData.length > 0 && <ListData
-        title={`Latest posts`}
-        dataSource={postsData}
-        renderItem={(item, index) =>
-          <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData} />}
-      />}
+      <LatestBlogs {...props} blogsData={blogsData} />
+      <LatestPosts {...props} postsData={postsData} />
+      {/* TODO Show latest comments */}
     </div>
   );
 }
 
 const getLastNIds = (nextId: BN, size: BN): BN[] => {
-  const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
-  const latestIds = new Array<BN>(initIds).fill(ZERO);
-
-  return latestIds.map((_, index) => nextId.sub(new BN(index + 1)));
+  const idsCount = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
+  return new Array<BN>(idsCount)
+    .fill(ZERO)
+    .map((_, index) =>
+      nextId.sub(new BN(index + 1)))
 }
 
 LatestUpdate.getInitialProps = async (): Promise<Props> => {
