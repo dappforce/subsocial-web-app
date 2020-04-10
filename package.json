@@ -52,6 +52,7 @@
     "@polkadot/ui-assets": "^0.52.0-beta.3",
     "@storybook/addon-knobs": "^5.2.5",
     "@storybook/addon-storysource": "^5.2.5",
+    "@subsocial/config": "0.1.2",
     "@types/jest": "^24.0.16",
     "@types/lodash": "^4.14.138",
     "@types/react-infinite-scroll-component": "^4.2.4",

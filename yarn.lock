@@ -3556,6 +3556,13 @@
     axios "^0.19.2"
     ipfs-http-client "^33.1.0"
 
+"@subsocial/config@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.1.2.tgz#f57c3c5d40d451416a4850d2ddb6c8b2365bd352"
+  integrity sha512-1+nqXqf92Ssqzpctmkf2xBBVTakp4v2n6c03SDiNxUz1bKUjdusQ+IgfHR5L4pgp1kwUL1UrVAOYcfxwrXEEJw==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+
 "@subsocial/types@0.1.20-beta12":
   version "0.1.20-beta12"
   resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta12.tgz#26d08a84dea44bba346309889cf236912e8abec2"
