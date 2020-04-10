@@ -7,7 +7,7 @@ import { BlogContent } from '@subsocial/types/offchain'
 import { AccountId, BlockNumber, Moment } from '@subsocial/types/substrate/interfaces/runtime'
 import { Blog, BlogId, IpfsHash, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { BlogData } from '../../components/blogs/ViewBlog'
-import {mockAccountAlice, mockAccountBob} from './AccountMocks'
+import { mockAccountAlice, mockAccountBob } from './AccountMocks'
 import { Vec } from '@polkadot/types/codec';
 import { BlogHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types';
 
