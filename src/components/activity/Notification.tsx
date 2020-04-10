@@ -1,21 +1,12 @@
-
-import React, { useState, useEffect } from 'react';
-import Section from '../utils/Section';
+import React, { useEffect, useState } from 'react';
 import { hexToBn } from '@polkadot/util';
 import { Comment } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Option } from '@polkadot/types';
-import ViewPostPage, { PostData, loadPostData, loadExtPost } from '../posts/ViewPost';
-import { ViewBlogPage, loadBlogData } from '../blogs/ViewBlog';
+import ViewPostPage, { loadPostData } from '../posts/ViewPost';
+import { loadBlogData, ViewBlogPage } from '../blogs/ViewBlog';
 import moment from 'moment-timezone';
-import { getNewsFeed, getNotifications, clearNotifications } from '../utils/OffchainUtils';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Loader } from 'semantic-ui-react';
-import { NoData, NotAuthorized } from '../utils/DataList';
-import { INFINITY_LIST_PAGE_SIZE } from '../../config/ListData.config';
 import { Loading } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
-import { HeadMeta } from '../utils/HeadMeta';
-import { useMyAccount } from '../utils/MyAccountContext';
 import dynamic from 'next/dynamic';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmptyStr } from '../utils';
@@ -24,124 +15,11 @@ import { Activity } from '@subsocial/types/offchain';
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
-type ActivityProps = {
-  activity: Activity;
-};
-
-export const ViewNewsFeed = () => {
-  const { state: { address: myAddress } } = useMyAccount();
-
-  const [ items, setItems ] = useState([] as Activity[]);
-  const [ offset, setOffset ] = useState(0);
-  const [ hasMore, setHasMore ] = useState(true);
-
-  useEffect(() => {
-    if (!myAddress) return;
-
-    getNewsArray(0).catch(err => new Error(err));
-  }, [ myAddress ]);
-
-  if (!myAddress) return <NotAuthorized/>;
-
-  const getNewsArray = async (actualOffset: number = offset) => {
-    const isFirstPage = actualOffset === 0;
-    const data = await getNewsFeed(myAddress, actualOffset, INFINITY_LIST_PAGE_SIZE);
-    console.log('Data', actualOffset, data);
-    if (data.length < INFINITY_LIST_PAGE_SIZE) setHasMore(false);
-    setItems(isFirstPage ? data : items.concat(data));
-    setOffset(actualOffset + INFINITY_LIST_PAGE_SIZE);
-  };
-
-  const totalCount = items && items.length;
-  const NewsFeedArray = items.map((item) =>
-    <ViewActivity key={item.id} activity={item} />);
-  return (<>
-    <HeadMeta title='Feed' />
-    <Section title={`News Feed (${totalCount})`}>{
-      totalCount === 0
-        ? <NoData description='Your feed is empty'/>
-        : <InfiniteScroll
-          dataLength={totalCount}
-          next={getNewsArray}
-          hasMore={hasMore}
-            // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
-          loader={<Loader active inline='centered' />}
-        >
-          {NewsFeedArray}
-        </InfiniteScroll>
-    }</Section>
-  </>
-  );
-};
-
-export const ViewNotifications = () => {
-  const { state: { address: myAddress } } = useMyAccount();
-
-  const [ items, setItems ] = useState([] as Activity[]);
-  const [ hasMore, setHasMore ] = useState(true);
-  const [ offset, setOffset ] = useState(0);
-
-  useEffect(() => {
-    if (!myAddress) return;
-
-    getNotificationsArray(0).catch(err => new Error(err));
-    clearNotifications(myAddress)
-  }, [ myAddress ]);
-
-  if (!myAddress) return <NotAuthorized/>;
-
-  const getNotificationsArray = async (actualOffset: number = offset) => {
-    const isFirstPage = actualOffset === 0;
-    const data = await getNotifications(myAddress, actualOffset, INFINITY_LIST_PAGE_SIZE);
-    if (data.length < INFINITY_LIST_PAGE_SIZE) setHasMore(false);
-    setItems(isFirstPage ? data : items.concat(data));
-    setOffset(actualOffset + INFINITY_LIST_PAGE_SIZE);
-  };
-
-  const totalCount = items && items.length;
-  const NotificationsArray = items.map((item) =>
-    <Notification key={item.id} activity={item} />);
-  return (<>
-    <HeadMeta title='Notifications' />
-    <Section title={`Notifications (${totalCount})`}>
-      {totalCount === 0
-        ? <NoData description='No notifications for you'/>
-        : <InfiniteScroll
-          dataLength={totalCount}
-          next={getNotificationsArray}
-          hasMore={hasMore}
-            // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
-          loader={<Loader active inline='centered' />}
-        >
-          {NotificationsArray}
-        </InfiniteScroll>
-      }
-    </Section>
-  </>
-  );
-};
-
-function ViewActivity (props: ActivityProps) {
-  const { activity } = props;
-  const { post_id } = activity;
-  const [ data, setData ] = useState([] as PostData[]);
-  const postId = hexToBn(post_id);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const api = await getApi();
-      const postData = await loadPostData(api, postId);
-      const postExtData = postData.post ? await loadExtPost(api, postData.post) : {} as PostData;
-      setData([ postData, postExtData ]);
-    };
-
-    loadData().catch(console.log);
-  }, [ false ]);
-
-  return data.length > 0 ? <ViewPostPage postData={data[0]} postExtData={data[1]} variant='preview' withBlogName /> : <Loading/>;
+type Props = {
+  activity: Activity
 }
 
-export function Notification (props: ActivityProps) {
+export function Notification (props: Props) {
   const { activity } = props;
   const { account, event, date, post_id, comment_id, blog_id, agg_count } = activity;
   const formatDate = moment(date).format('lll');
@@ -153,9 +31,9 @@ export function Notification (props: ActivityProps) {
 
   enum Events {
     AccountFollowed = 'followed your account',
-    PostShared = 'shared yout post',
+    PostShared = 'shared your post',
     BlogFollowed = 'followed your blog',
-    BlogCreated = 'created blog',
+    BlogCreated = 'created a new blog',
     CommentCreated = 'commented on your post',
     CommentReply = 'replied to your comment',
     PostReactionCreated = 'reacted to your post',
@@ -240,12 +118,13 @@ export function Notification (props: ActivityProps) {
         }
       }
       setLoading(false);
-    };
+    }
+
     loadActivity().catch(err => new Error(err));
   }, [ postId > new BN(0), message ]);
 
   return loading
-    ? <Loading/>
+    ? <Loading />
     : <div className='DfNotificationItem'>
       <AddressComponents
         value={account}
@@ -258,6 +137,10 @@ export function Notification (props: ActivityProps) {
         count={agg_count}
         asActivity
       />
-      {isEmptyStr(image) && <DfBgImg width={80} height={60} src={image}/>}
-    </div>;
+      {isEmptyStr(image) &&
+        <DfBgImg width={80} height={60} src={image}/>
+      }
+    </div>
 }
+
+export default Notification

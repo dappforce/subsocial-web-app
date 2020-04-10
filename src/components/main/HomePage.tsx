@@ -1,22 +1,22 @@
-import BN from 'bn.js';
 import React from 'react';
-
-import { HeadMeta } from '../utils/HeadMeta';
-import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
-import { BlogId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
-import ListData from '../utils/DataList';
-import { Button } from 'antd';
-import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { NextPage } from 'next';
+import { Button } from 'antd';
+import BN from 'bn.js';
+
+import { BlogId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { getApi } from '../utils/SubstrateApi';
+import { HeadMeta } from '../utils/HeadMeta';
+import ListData from '../utils/DataList';
+import { ViewBlogPage, loadBlogData, BlogData } from '../blogs/ViewBlog';
+import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 
 const ZERO = new BN(0);
 const FIVE = new BN(5);
 
 type Props = {
-  blogsData: BlogData[],
+  blogsData: BlogData[]
   postsData: PostDataListItem[]
-};
+}
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {
   const { blogsData, postsData } = props;
@@ -40,7 +40,7 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
       />}
     </div>
   );
-};
+}
 
 const getLastNIds = (nextId: BN, size: BN): BN[] => {
   const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
@@ -61,10 +61,11 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const latestPostIds = getLastNIds(nextPostId, FIVE);
   const postsData = await loadPostDataList(api, latestPostIds as PostId[]);
   console.log('Loaded posts on the home page:', postsData)
+
   return {
     blogsData,
     postsData
-  };
-};
+  }
+}
 
 export default LatestUpdate;

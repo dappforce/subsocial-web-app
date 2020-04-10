@@ -3,7 +3,7 @@ import { List, Empty } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
 import Section from './Section';
-import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
 import { MutedSpan } from './MutedText';
 import LogInButton from './LogIn';
 
@@ -23,7 +23,7 @@ export default (props: Props) => {
   const router = useRouter();
   const routerQuery = router.query;
 
-  const [ currentPage, setCurrentPage ] = useState(DEFAULT_CURENT_PAGE);
+  const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default (props: Props) => {
 
     if (isEmpty(routerQuery) && isSubscribe) {
       setPageSize(DEFAULT_PAGE_SIZE);
-      setCurrentPage(DEFAULT_CURENT_PAGE);
+      setCurrentPage(DEFAULT_FIRST_PAGE);
     } else {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);
@@ -45,16 +45,16 @@ export default (props: Props) => {
 
   const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
   const isEmptyData = dataSource.length === 0;
-  const hidePaggination = isEmptyData || dataSource.length <= pageSize;
+  const hidePagination = isEmptyData || dataSource.length <= pageSize;
 
   const RenderList = () => (
     <List
       className={'DfDataList ' + className}
       itemLayout='vertical'
       size='large'
-      pagination={!hidePaggination && {
+      pagination={!hidePagination && {
         current: currentPage,
-        defaultCurrent: DEFAULT_CURENT_PAGE,
+        defaultCurrent: DEFAULT_FIRST_PAGE,
         onChange: page => {
           setCurrentPage(page);
           routerQuery.page = page.toString();

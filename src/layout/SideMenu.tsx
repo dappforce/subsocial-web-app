@@ -15,7 +15,7 @@ import { useNotifCounter } from '../components/utils/NotifCounter';
 
 // const url = typeof window !== 'undefined' && { hostname: window.location.hostname
 // const appsUrl = `http://${hostname}/bc`
-// console.log('Apps url', appsUrl) 
+// console.log('Apps url', appsUrl)
 // TODO delete if will work simple redirect to /bc
 
 interface MenuItem {
@@ -29,7 +29,7 @@ const InnerMenu = () => {
   const { state: { address: myAddress } } = useMyAccount();
   const { unreadCount } = useNotifCounter()
   const isLoggedIn = checkIfLoggedIn();
-  const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
+  const [ followedBlogsData, setFollowedBlogsData ] = useState<BlogData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
   const router = useRouter();
   const { pathname } = router;
