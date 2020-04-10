@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
-import ViewPostPage, {loadExtPost, loadPostData, PostData} from '../posts/ViewPost';
-import {getApi} from '../utils/SubstrateApi';
-import {Loading} from '../utils/utils';
+import ViewPostPage, { loadExtPost, loadPostData, PostData } from '../posts/ViewPost';
+import { getApi } from '../utils/SubstrateApi';
+import { Loading } from '../utils/utils';
 
 type Props = {
   postId: BN

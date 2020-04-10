@@ -9,7 +9,7 @@ import { NoData, NotAuthorized } from '../utils/DataList';
 import { getNewsFeed } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
-import PostPreview from './PostPreview';
+import PostPreview from '../posts/PostPreview';
 
 export const MyFeed = () => {
   const { state: { address: myAddress } } = useMyAccount();
