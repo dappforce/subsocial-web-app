@@ -24,13 +24,14 @@
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "clean": "polkadot-dev-clean-build",
     "postinstall": "polkadot-dev-yarn-only",
-    "test": "yarn export-env && echo \"skipping tests\"",
-    "dev": "yarn export-env && next -p 3003",
-    "build": "./before-build-hack.sh && yarn export-env && next build",
+    "test": "yarn patch && echo \"skipping tests\"",
+    "dev": "yarn patch && next -p 3003",
+    "build": "yarn patch && next build",
     "export": "next export",
     "export-env": "node export-env.js",
-    "start": "./fix-polkadot-libs.sh && yarn export-env && next start -p 3003",
-    "storybook": "yarn export-env && start-storybook -s ./public -p 3002"
+    "patch": "./patch.sh",
+    "start": "yarn patch && next start -p 3003",
+    "storybook": "yarn patch && start-storybook -s ./public -p 3002"
   },
   "devDependencies": {
     "@appbaseio/reactivesearch": "^3.0.3",

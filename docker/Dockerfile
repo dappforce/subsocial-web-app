@@ -15,7 +15,6 @@ WORKDIR /app
 COPY . .
 
 RUN yarn
-RUN ./fix-polkadot-libs.sh
 
 COPY localhost.env .env
 RUN NODE_ENV=production yarn build
