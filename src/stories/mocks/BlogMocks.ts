@@ -23,7 +23,7 @@ type NewBlogProps = {
   score?: number
 }
 
-let _id = 0
+let _id = 10
 const nextId = (): BlogId => new BN(++_id) as BlogId
 
 function newBlogStructMock ({
@@ -55,7 +55,7 @@ function newBlogStructMock ({
   } as Blog
 }
 
-export const mockBlogId = new BN(99);
+export const mockBlogId = nextId()
 
 export const mockBlogStruct = newBlogStructMock({
   account: mockAccountAlice,

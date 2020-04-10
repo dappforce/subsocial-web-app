@@ -1,12 +1,14 @@
-
 import { mockBlogId } from './BlogMocks';
 import U32 from '@polkadot/types/primitive/U32';
 import { registry } from '@polkadot/react-api';
-import { Post } from '@subsocial/types/substrate/interfaces';
+import { BlogId, Post } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import BN from 'bn.js'
 
-export const mockPostId = new BN(34)
+let _id = 200
+const nextId = (): BlogId => new BN(++_id) as BlogId
+
+export const mockPostId = nextId()
 
 export const mockPostValidation = {
   postMaxLen: new U32(registry, 2000)
