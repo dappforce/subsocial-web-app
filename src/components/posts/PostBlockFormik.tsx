@@ -2,7 +2,7 @@ import React from 'react'
 import { BlockValueKind, CodeBlockValue } from '../types'
 import SimpleMDEReact from 'react-simplemde-editor'
 import { Field, ErrorMessage } from 'formik'
-import { Dropdown, Menu, Icon, Button as AntButton } from 'antd'
+import { Dropdown, Menu, Icon } from 'antd'
 import AceEditor from 'react-ace'
 import 'brace/mode/javascript'
 import 'brace/mode/typescript'
@@ -20,7 +20,7 @@ type Props = {
   setFieldValue: (field: string, value: any) => void
   handleLinkChange: (block: BlockValueKind, name: string, value: string) => void
   blockValues: BlockValueKind[]
-  addMenu: (index?: number, onlyItems?: boolean, pos?: string) => JSX.Element
+  addMenu: (index?: number, onlyItems?: boolean, pos?: string) => JSX.Element[] | JSX.Element
 }
 
 const PostBlockFormik = (props: Props) => {

@@ -5,7 +5,7 @@ import { BlogId, Score, PostId, VecPostHistoryRecord, RegularPost, PostExtension
 import BN from 'bn.js';
 import ViewPostPage, { ViewPostPageProps } from '../posts/ViewPost';
 import { AccountId, BlockNumber, U16, Moment } from '@polkadot/types';
-//import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 // const ViewPostPage = dynamic(() => import('../posts/ViewPost'), { ssr: false });
 
 export default {

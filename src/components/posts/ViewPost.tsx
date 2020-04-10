@@ -5,8 +5,8 @@ import { Segment } from 'semantic-ui-react';
 import { Option, AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostContent, CodeBlockValue, BlockValueKind, EmbedData, PreviewData } from '../types';
-import { nonEmptyStr, parse } from '../utils/index';
+import { PostId, Post, CommentId, PostContent, BlockValueKind, EmbedData, PreviewData } from '../types';
+import { parse } from '../utils/index';
 import { Loading, formatUnixDate, getBlogId, summarize } from '../utils/utils';
 import { getApi } from '../utils/SubstrateApi';
 import { PostHistoryModal } from '../utils/ListsEditHistory';
@@ -15,7 +15,6 @@ import { ShareModal } from './ShareModal';
 import { NoData } from '../utils/DataList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
-import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown, Tag } from 'antd';
@@ -42,7 +41,6 @@ type PostType = 'regular' | 'share';
 type PostExtContent = PostContent & {
   summary: string;
   blockValues: BlockValueKind[];
-  // previewImg: string | undefined;
 };
 
 export type PostData = {
@@ -102,9 +100,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     ipfs_hash,
     edit_history
   } = post;
-
-  console.log('postData', props.postData)
-  console.log('postExtData', postExtData)
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
