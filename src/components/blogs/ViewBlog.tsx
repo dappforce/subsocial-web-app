@@ -197,9 +197,9 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           <div className='description'>
             <DfMd source={desc} />
           </div>
+          {renderTags(content)}
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}
-          {renderTags(content)}
         </div>
       </div>
       {withFollowButton && <FollowBlogButton blogId={id} />}
