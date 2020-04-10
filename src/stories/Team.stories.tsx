@@ -1,11 +1,9 @@
 import React from 'react';
-import { withStorybookContext } from './withStorybookContext';
 import { EditTeamMember } from '../components/spaces/EditTeamMember';
 import { suggestedCompanies, suggestedEmployerTypes } from './mocks/TeamMocks';
 
 export default {
-  title: 'Spaces | Team',
-  decorators: [ withStorybookContext ]
+  title: 'Spaces | Team'
 }
 
 export const _EditTeamMember = () => {

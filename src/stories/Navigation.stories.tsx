@@ -1,5 +1,4 @@
 import React from 'react';
-import { withStorybookContext } from './withStorybookContext';
 import { SpaceNav, SpaceNavProps } from '../components/blogs/SpaceNav';
 import { NavigationEditor } from '../components/blogs/NavigationEditor';
 import { mockBlogId, mockBlogStruct, mockBlogJson } from './mocks/BlogMocks';
@@ -7,8 +6,7 @@ import { mockAccountAlice } from './mocks/AccountMocks';
 import { mockNavTabs } from './mocks/NavTabsMocks';
 
 export default {
-  title: 'Blogs | Navigation',
-  decorators: [ withStorybookContext ]
+  title: 'Blogs | Navigation'
 }
 
 const { name, desc, image } = mockBlogJson
