@@ -47,11 +47,10 @@ const InnerShareModal = (props: Props) => {
         imageSize={24}
         defaultValue={blogIds[0].toString()} />
       {
-      <NewSharePost
-        blogId={blogId}
-        extention={extension}
-        withButtons={false}
-      />
+        <NewSharePost
+          blogId={blogId}
+          extention={extension}
+        />
       }
       <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
     </div>
@@ -72,11 +71,11 @@ const InnerShareModal = (props: Props) => {
       <Modal.Actions>
         <Button size='medium' onClick={close}>Cancel</Button>
         {
-        <NewSharePost
-          blogId={blogId}
-          extention={extension}
-          onlyTxButton
-        />
+          <NewSharePost
+            blogId={blogId}
+            extention={extension}
+            onlyTxButton
+          />
         }
       </Modal.Actions>
     </Modal>

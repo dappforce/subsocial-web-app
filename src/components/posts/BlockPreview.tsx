@@ -13,6 +13,7 @@ import 'brace/mode/rust'
 import 'brace/theme/github'
 import Gist from 'react-gist'
 import { Icon } from 'antd'
+import './BlockPreview.css'
 
 type Props = {
   block: BlockValueKind
@@ -151,7 +152,7 @@ const BlockPreview = (props: Props) => {
                   <img src={og?.image} className='DfPostImage linkImage' />
                 </div>
                 <div className={'underPicture'}>
-                  <p><b>{og?.title}</b></p>
+                  <p className='previewLinkTitle'><b>{og?.title}</b></p>
                   <p className='previewDescription'>{og?.description}</p>
                   <p className='previewLinkAfterDescription'><Icon type="link" /> {domain}</p>
                 </div>

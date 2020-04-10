@@ -1,0 +1,212 @@
+@import '../utils/styles/subsocial-vars.css';
+
+.EditPostWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.AddBlockDropdownMenu {
+  max-width: 200px;
+}
+
+.EditPostAceEditor {
+  a {
+    display: inline-block;
+    margin-bottom: $space_tiny;
+  }
+  .aceModeSelect {
+    width: 150px;
+    margin-bottom: 5px;
+    color: $color_menu_font;
+  }
+}
+
+.twitter-tweet {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.miniPreviewWrapper {
+  .miniPreviewBlock {
+    margin-bottom: $space_normal;
+  }
+}
+
+.DfShareModal {
+  .navigationButtons {
+    display: none;
+  }
+}
+
+.selectBlogPreview {
+  width: 200px !important;
+}
+
+.mobileTabs {
+  margin-top: $space_normal;
+
+  .selectBlogPreview {
+    width: 100% !important;
+  }
+}
+
+.mobileButtonsMenu {
+  position: relative;
+  width: 200px;
+
+  .addBlockPlusIcon {
+    position: absolute;
+    z-index: 1;
+    &.addBefore {
+      top: 12px;
+      left: 12px;
+    }
+    &.addAfter {
+      left: 12px;
+      top: 44px;
+    }
+  }
+
+  .ant-dropdown-menu-submenu-title {
+    padding-left: 30px !important;
+  }
+}
+
+.EditPostLabel {
+  color: rgba(0,0,0,.87);
+  font-weight: 600;
+  font-size: small;
+}
+
+.EditPostBlockWrapper {
+  margin: $space_normal 0;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  position: relative;
+
+  .editPostCrown {
+    position: absolute;
+    color: $color_link;
+    right: -20px;
+  }
+
+  .buttonsForMobile {
+    .menuDotsIcon {
+      -moz-transform: rotate(90deg);
+      -ms-transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      -o-transform: rotate(90deg);
+      transform: rotate(90deg);
+      margin-right: $space_tiny;
+    }
+  }
+
+  display: flex;
+  flex-direction: row;
+
+  .markdown-body {
+    width: 100%;
+  }
+
+  .EditPostAceEditor {
+    width: 100%;
+  }
+
+  &.mobileBlock .editPostCrown {
+    right: 5px;
+    top: 5px;
+  }
+}
+
+.EditPostAddButton {
+  margin: $space_big 0;
+
+  &.defaultAddBlockButton {
+    padding: 0 5px;
+    margin-right: 1rem;
+    cursor: pointer;
+
+    i {
+      margin-right: 3px;
+    }
+  }
+}
+
+.EditEntityForm {
+  width: 100%;
+}
+
+.EditPostForm {
+  width: 50%;
+  margin-right: $space_huge;
+
+  &.withTabs {
+    width: 100%;
+    text-align: left;
+
+    .EditPostPreviewBlock {
+      margin-bottom: $space_normal;
+    }
+  }
+
+  .smallAntButton {
+    height: $space_big;
+    margin-right: 3px;
+    position: relative;
+
+    &.off {
+      border-color: $color_light_border;
+      span, i {
+        color: $color_menu_font;
+      }
+    }
+
+    &.on {
+      border-color: $color_link;
+      span, i {
+        color: $color_link;
+      }
+    }
+
+    .previewWarning {
+      position: absolute;
+      background-color: white;
+      padding: 3px;
+      border-radius: 5px;
+      border: 1px solid $color_light_border;
+      color: $color_menu_font;
+      opacity: 0;
+    }
+
+    &:hover .previewWarning {
+      opacity: 1;
+    }
+  }
+
+  .AdvancedWrapper {
+    margin-bottom: $space_huge;
+
+    a {
+      display: block;
+      border-top: 1px solid $color_light_border;
+      padding-top: 1rem;
+      color: $color_menu_font;
+    }
+  }
+}
+
+.EditPostPreview {
+  width: 50%;
+
+  &.withTabs {
+    width: 100%;
+    text-align: left;
+  }
+
+  .EditPostPreviewBlock {
+    display: flex;
+    margin-top: $space_big;
+    flex-direction: column;
+  }
+}

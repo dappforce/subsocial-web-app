@@ -19,20 +19,21 @@ type Props = {
     image: string,
     hasImage: boolean,
     id: string | undefined
-  }[] | undefined
+  }[] | undefined,
+  className?: string
 };
 
 const SUB_SIZE = 2;
 
 const SelectBlogPreview = (props: Props) => {
-  const { preparedBlogsData, imageSize = 36, onSelect, defaultValue } = props
+  const { preparedBlogsData, imageSize = 36, onSelect, defaultValue, className } = props
 
   if (!preparedBlogsData) return <NoData description={<span>Blogs not found</span>} />;
 
   return <Select
-    style={{ width: 200 }}
     onSelect={onSelect}
     defaultValue={defaultValue}
+    className={className && className}
   >
     { preparedBlogsData.map((x) => (
       <Select.Option value={x.id} key={x.id}>

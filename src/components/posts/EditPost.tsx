@@ -24,12 +24,14 @@ import SelectBlogPreview from '../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup'
 import PostBlockFormik from './PostBlockFormik';
+import './EditPost.css'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
 
 const MAX_TAGS_PER_POST = 10
 const MIN_TEXT_BLOCK_LENGTH = 20
+const MIN_BLOCKS = 1
 
 const buildSchema = () => Yup.object().shape({
   title: Yup.string()
@@ -38,17 +40,19 @@ const buildSchema = () => Yup.object().shape({
     .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`),
   canonical: Yup.string()
     .url('Canonical must be a valid URL.'),
-  blockValues: Yup.array().of(
-    Yup.object({
-      kind: Yup.string(),
-      data: Yup.string()
-        .when('kind', {
-          is: (val) => val === 'text',
-          then: Yup.string().min(MIN_TEXT_BLOCK_LENGTH, `Text must be at least ${MIN_TEXT_BLOCK_LENGTH} characters`),
-          otherwise: Yup.string()
-        })
-    })
-  )
+  blockValues: Yup.array()
+    .of(
+      Yup.object({
+        kind: Yup.string(),
+        data: Yup.string()
+          .when('kind', {
+            is: (val) => val === 'text',
+            then: Yup.string().min(MIN_TEXT_BLOCK_LENGTH, `Text must be at least ${MIN_TEXT_BLOCK_LENGTH} characters`),
+            otherwise: Yup.string()
+          })
+      })
+    )
+    .min(MIN_BLOCKS, `Post should have at least ${MIN_BLOCKS} block`)
 });
 
 type ValidationProps = {};
@@ -170,8 +174,8 @@ const InnerForm = (props: FormProps) => {
       return res
     }
 
-    if (values.blockValues && values.blockValues.length > 0) {
-      const tempValues = await processArray(values.blockValues)
+    if (blockValues && blockValues.length > 0) {
+      const tempValues = await processArray(blockValues)
       return tempValues as PostBlock[]
     }
 
@@ -184,7 +188,6 @@ const InnerForm = (props: FormProps) => {
 
     if (isValid || !isRegularPost) {
       const json = { title, blocks, image, tags, canonical };
-
       addJsonToIpfs(json).then((hash: string) => {
         setIpfsCid(hash);
         sendTx();
@@ -261,7 +264,7 @@ const InnerForm = (props: FormProps) => {
     }
   }
 
-  const addBlock = (type: PostBlockKind, afterIndex?: number) => {
+  const addBlock = (type: PostBlockKind, index?: number, pos?: string) => {
 
     const defaultBlockValue: BlockValueKind = {
       id: getNewBlockId(blockValues),
@@ -271,18 +274,31 @@ const InnerForm = (props: FormProps) => {
       data: ''
     }
 
-    if (afterIndex === undefined) {
-      setFieldValue('blockValues', [
-        defaultBlockValue,
-        ...blockValues
-      ])
+    if (index === undefined) {
+      let newArray: BlockValueKind[] = []
+      if (pos === 'after') {
+        newArray = [
+          ...blockValues,
+          defaultBlockValue
+        ]
+      } else {
+        newArray = [
+          defaultBlockValue,
+          ...blockValues
+        ]
+      }
+
+      setFieldValue('blockValues', newArray)
       return
     }
 
+    let value = index + 1
+    if (pos === 'before') value = index
+
     setFieldValue('blockValues', [
-      ...blockValues.slice(0, afterIndex + 1),
+      ...blockValues.slice(0, value),
       defaultBlockValue,
-      ...blockValues.slice(afterIndex + 1)
+      ...blockValues.slice(value)
     ])
   }
 
@@ -321,13 +337,18 @@ const InnerForm = (props: FormProps) => {
     { name: 'code', pretty: 'Code Block' }
   ]
 
-  const addMenu = (index?: number) => (
-    <Menu className='AddBlockDropdownMenu'>
-      {blockNames.map((x) => <Menu.Item key={x.name} onClick={() => addBlock(x.name as PostBlockKind, index)}>
+  const addMenu = (index?: number, onlyItems?: boolean, pos?: string) => {
+    if (onlyItems) {
+      return blockNames.map((x) => <Menu.Item key={x.name} onClick={() => addBlock(x.name as PostBlockKind, index, pos)}>
+        {x.pretty}
+      </Menu.Item>)
+    }
+    return <Menu className='AddBlockDropdownMenu'>
+      {blockNames.map((x) => <Menu.Item key={x.name} onClick={() => addBlock(x.name as PostBlockKind, index, pos)}>
         {x.pretty}
       </Menu.Item>)}
     </Menu>
-  );
+  };
 
   const handleAdvanced = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
@@ -344,6 +365,7 @@ const InnerForm = (props: FormProps) => {
     if (!blogIds) return;
 
     return <SelectBlogPreview
+      className={'selectBlogPreview'}
       blogIds={blogIds}
       onSelect={handleBlogSelect}
       imageSize={24}
@@ -381,6 +403,12 @@ const InnerForm = (props: FormProps) => {
             : addBlock('text')
           }
 
+          { blockValues && blockValues.length > 0 &&
+            <Dropdown overlay={() => addMenu(blockValues.length + 1, false, 'after')} className={'EditPostAddButton'}>
+              <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
+            </Dropdown>
+          }
+
           <div className='AdvancedWrapper'>
             <a href="#" onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleAdvanced(e)} >
               { isAdvanced ? <Icon type="up" /> : <Icon type="down" /> } Show Advanced Settings
@@ -393,19 +421,17 @@ const InnerForm = (props: FormProps) => {
 
         </>
         : <>
-          <PostBlockFormik
-            block={{
-              id: getNewBlockId(blockValues),
-              kind: 'text',
-              hidden: false,
-              data: ''
-            }}
-            index={blockValues.length || 0}
-            setFieldValue={setFieldValue}
-            handleLinkChange={handleLinkChange}
-            blockValues={blockValues}
-            addMenu={addMenu}
-          />
+          {blockValues && blockValues.length > 0
+            ? blockValues.map((block: BlockValueKind, index: number) => <PostBlockFormik
+              block={block}
+              index={index}
+              setFieldValue={setFieldValue}
+              handleLinkChange={handleLinkChange}
+              blockValues={blockValues}
+              addMenu={addMenu}
+            />)
+            : addBlock('text')
+          }
         </>
       }
       {withButtons && <LabelledField {...props}>
@@ -428,48 +454,80 @@ const InnerForm = (props: FormProps) => {
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={formTitle()}>
       { isMobile
-        ? renderWithTabs()
+        ? renderForMobile()
         : <div className='EditPostWrapper'>
           <div className='EditPostForm'>
             {form}
           </div>
           <div className='EditPostPreview'>
-            <div>
-              <h1>{title}</h1>
-            </div>
-            {blockValues && blockValues.length !== 0 &&
-              blockValues.map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
-                block={x}
-                embedData={embedData}
-                setEmbedData={setEmbedData}
-                linkPreviewData={linkPreviewData}
-              /></div>)
-            }
+            <Tabs type="card">
+              <TabPane tab="Full Preview" key="1">
+                <div>
+                  <h1>{title}</h1>
+                </div>
+                {blockValues && blockValues.length !== 0 &&
+                  blockValues.map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
+                    block={x}
+                    embedData={embedData}
+                    setEmbedData={setEmbedData}
+                    linkPreviewData={linkPreviewData}
+                  /></div>)
+                }
+              </TabPane>
+              <TabPane tab="Short Preview" key="2">
+                <div>
+                  <h1>{title}</h1>
+                </div>
+                {blockValues && blockValues.length !== 0 &&
+                  blockValues.filter((x) => x.useOnPreview).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
+                    block={x}
+                    embedData={embedData}
+                    setEmbedData={setEmbedData}
+                    linkPreviewData={linkPreviewData}
+                  /></div>)
+                }
+              </TabPane>
+            </Tabs>
           </div>
         </div>
       }
     </Section>
 
-  const renderWithTabs = () =>
-    <Tabs type="card">
-      <TabPane tab="Edit" key="1">
+  const renderForMobile = () =>
+    <Tabs type="card" className="mobileTabs">
+      <TabPane tab="Editor" key="1">
         <div className='EditPostForm withTabs'>
           {form}
         </div>
       </TabPane>
-      <TabPane tab="Preview" key="2">
+      <TabPane tab="Full Preview" key="2">
         <div className='EditPostPreview withTabs'>
           <div className='DfMd'>
             <h1>{title}</h1>
           </div>
           {blockValues && blockValues.length !== 0 &&
-            blockValues.map((x: BlockValue) => <BlockPreview
+            blockValues.map((x: BlockValue) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
               key={x.id}
               block={x}
               embedData={embedData}
               setEmbedData={setEmbedData}
               linkPreviewData={linkPreviewData}
-            />)
+            /></div>)
+          }
+        </div>
+      </TabPane>
+      <TabPane tab="Short Preview" key="3">
+        <div className='EditPostPreview withTabs'>
+          <div>
+            <h1>{title}</h1>
+          </div>
+          {blockValues && blockValues.length !== 0 &&
+            blockValues.filter((x) => x.useOnPreview).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
+              block={x}
+              embedData={embedData}
+              setEmbedData={setEmbedData}
+              linkPreviewData={linkPreviewData}
+            /></div>)
           }
         </div>
       </TabPane>

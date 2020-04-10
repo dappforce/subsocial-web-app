@@ -67,6 +67,7 @@ body,
 
 .DfPostName {
   margin-right: $space_tiny;
+  font-size: 32px;
 }
 
 .DfPostImage {
@@ -160,10 +161,6 @@ body,
 .EditEntityBox {
   width: 100%;
   /* max-width: 600px; */
-
-  .EditEntityForm {
-    width: 100%;
-  }
 
   .editor-statusbar {
     display: none;
@@ -535,6 +532,7 @@ hr {
   .ui.segment.DfPostPreview {
     text-align: left;
   }
+
 }
 
 .DfGreyLink {
@@ -1161,199 +1159,27 @@ hr {
   right: $space_normal !important;
 }
 
-.EditPostWrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-.EditPostForm {
-  width: 50%;
-  margin-right: $space_huge;
-
-  &.withTabs {
-    width: 100%;
-    text-align: left;
+.markdown-body {
+  i {
+    color: $color_light_border;
   }
 
-  .smallAntButton {
-    height: $space_big;
-    margin-right: 3px;
-  }
-
-  .AdvancedWrapper {
-    margin-bottom: $space_huge;
-
-    a {
-      display: block;
-      border-top: 1px solid $color_light_border;
-      padding-top: 1rem;
-      color: $color_menu_font;
-    }
-  }
-}
-
-.EditPostPreview {
-  width: 50%;
-
-  &.withTabs {
-    width: 100%;
-    text-align: left;
-  }
-
-  .EditPostPreviewBlock {
-    display: flex;
-    margin-top: $space_big;
-    flex-direction: column;
-  }
-}
-
-.previewLinkWrapper {
-  border: 1px solid $color_light_border;
-  border-radius: 10px;
-  position: relative;
-
-  .previewImgWrapper {
-    .linkImage {
-      border-radius: 10px 10px 0 0;
-    }
-    
-    &.youtube:before {
-      content: url(../../../../public/play_youtube.png);
-      position: absolute;
-      top: calc(50% - 96px);
-      left: calc(50% - 48px);
-    }
-  }
-
-  .underPicture {
-    padding: 0 $space_normal $space_normal $space_normal;
-  }
-
-  .previewDescription {
-    color: #111;
-  }
-
-  .previewLinkAfterDescription {
-    color: #111;
-  }
-}
-
-.EditPostAddButton {
-  margin: $space_big 0;
-
-  &.defaultAddBlockButton {
-    padding: 0 5px;
-    margin-right: 1rem;
-    cursor: pointer;
-
-    i {
-      margin-right: 3px;
-    }
-  }
-}
-
-.EditPostLabel {
-  color: rgba(0,0,0,.87);
-  font-weight: 600;
-  font-size: small;
-}
-
-.EditPostBlockWrapper {
-  margin: $space_normal 0;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  position: relative;
-  
-  .DfMdEditor {
-    i {
-      color: $color_light_border;
-    }
-  }
-
-  .navigationButtons {
-    display: flex;
-    margin: $space_tiny;
-    margin-left: 0;
-    opacity: 0;
-    -webkit-transition: opacity 0.5s;
-    transition: opacity 0.5s;
-    position: absolute;
-    bottom: -37px;
-    background-color: inherit;
-    width: 100%;
-    left: 0;
-    padding: 5px;
-    border-radius: 0px 0px 4px 4px;
-    z-index: 1;
-  }
-
-  &.mobileBlock {
-    .navigationButtons {
-      opacity: 0.85;
-    }
-  }
-
-}
-.EditPostBlockWrapper.inputFocus,
-.EditPostBlockWrapper:not(.mobileBlock):hover {
-  background-color: beige;
-  border-radius: 4px 4px 0px 0px;
-  -webkit-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
-  -moz-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
-  box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
-
-  .DfMdEditor {
+  &:hover,
+  &:focus-within {
     i:not(.separator) {
       color: black;
     }
   }
+}
 
-  .navigationButtons {
-    opacity: 1;
-    -webkit-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
-    -moz-box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
-    box-shadow: 0px 10px 9px 0px rgba(0,0,0,0.3);
+.commentsEditor {
+  &.DfMdEditor {
+    i {
+      color: $color_light_border;
+    }
+
+    &:hover i:not(.separator) {
+      color: black;
+    }
   }
-}
-
-.AddBlockDropdownMenu {
-  max-width: 200px;
-}
-
-.EditPostAceEditor {
-  a {
-    display: inline-block;
-    margin-bottom: $space_tiny;
-  }
-  .aceModeSelect {
-    width: 150px;
-    margin-bottom: 5px;
-    color: $color_menu_font;
-  }
-}
-
-.gistEmbedWrapper {
-  max-height: 300px;
-  overflow-y: scroll;
-}
-
-.twitter-tweet {
-  display: flex !important;
-  justify-content: center !important;
-}
-
-.aceEditor {
-  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
-  font-weight: 400;
-  line-height: 1.4;
-  color: #333;
-  font-size: $font_normal;
-  max-height: 200px;
-  word-wrap: normal;
-  white-space: pre;
-}
-
-.previewWarning {
-  
 }

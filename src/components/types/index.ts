@@ -282,6 +282,7 @@ export type PostContent = SharedPostContent & {
   image: string;
   tags: string[];
   canonical: string;
+  // previewsCids?: string[] TODO think about it real talk
 };
 
 export type PostType = {

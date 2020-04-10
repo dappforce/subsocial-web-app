@@ -11,7 +11,6 @@ import './style.css';
 import '../utils/styles/subsocial.css';
 
 import substrateLogo from '@polkadot/ui-assets/notext-parity-substrate-white.svg';
-import ReorderNavTabs from './reorder-navtabs/ReorderNavTabs';
 
 const { SubMenu } = Menu;
 
@@ -23,10 +22,12 @@ const items = [ { avatar: faker.image.avatar(), name: faker.company.companyName(
   { avatar: faker.image.avatar(), name: faker.company.companyName() },
   { avatar: faker.image.avatar(), name: faker.company.companyName() } ];
 
+/*
   <Menu.Item key={d.name}>
     <Avatar style={{ marginRight: '.5rem' }} src={d.avatar} />
     <span>{d.name}</span>
   </Menu.Item>);
+*/
 
 class App extends React.Component {
   state = {
@@ -64,7 +65,7 @@ class App extends React.Component {
               </span>
             }
           >
-            {renderMenu}
+            {/* renderMenu */}
           </SubMenu>
         </Menu>
       </div>
@@ -180,14 +181,3 @@ export const AddTeamMember = () => {
     employerTypesData={employerTypesData}
   />);
 };
-
-export const ReorderNavTabsExample = () => {
-  const navTabs = {
-    tabs: [
-      { id: 1, name: 'first name' },
-      { id: 2, name: 'second name' },
-      { id: 3, name: 'third name' }
-    ]
-  }
-  return <ReorderNavTabs {...navTabs} />
-}

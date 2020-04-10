@@ -42,7 +42,7 @@ type PostType = 'regular' | 'share';
 type PostExtContent = PostContent & {
   summary: string;
   blockValues: BlockValueKind[];
-  previewImg: string | undefined;
+  // previewImg: string | undefined;
 };
 
 export type PostData = {
@@ -66,7 +66,7 @@ type ViewPostProps = {
   commentIds?: CommentId[];
 };
 
-type ViewPostPageProps = {
+export type ViewPostPageProps = {
   variant: PostVariant;
   withLink?: boolean;
   withCreatedBy?: boolean;
@@ -102,6 +102,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     ipfs_hash,
     edit_history
   } = post;
+
+  console.log('postData', props.postData)
+  console.log('postExtData', postExtData)
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
@@ -219,17 +222,34 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderContent = (post: Post, content: PostExtContent) => {
     if (!post || !content) return null;
 
-    const { title, summary, previewImg } = content;
-    const hasImage = nonEmptyStr(previewImg);
+    const { title, blockValues, summary } = content;
+    const previewBlocks = blockValues.filter((x) => x.useOnPreview === true)
+    const hasPreviews = previewBlocks && previewBlocks.length !== 0
+    const imageBlock = blockValues.find((x) => x.kind === 'image')
 
-    return <div className='DfContent'>
+    return <div className='miniPreviewWrapper'>
       <div className='DfPostText'>
         {renderNameOnly(title || summary, post.id)}
         <div className='DfSummary'>
-          {summary}
+          {!hasPreviews && summary}
         </div>
       </div>
-      {hasImage && previewImg && <DfBgImg src={previewImg} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
+      <div>
+        {hasPreviews
+          ? previewBlocks.map((x) => <div className='miniPreviewBlock'><BlockPreview
+            block={x}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          /></div>)
+          : imageBlock && <div className='miniPreviewBlock'><BlockPreview
+            block={imageBlock}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          /></div>
+        }
+      </div>
     </div>;
   };
 
@@ -288,6 +308,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderSharedPreview = () => {
     if (!originalPost || !originalContent) return <></>;
     const account = originalPost.created.account;
+    console.log('content.blockValues', content.blockValues)
+    console.log('content', content)
     return <>
       <Segment className={`DfPostPreview`}>
         <div className='DfRow'>
@@ -295,7 +317,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <RenderDropDownMenu account={created.account}/>
         </div>
         <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
-        {/* TODO add body */}
+        {content.blockValues.length !== 0 &&
+          <BlockPreview
+            block={content.blockValues[0]}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          />
+        }
         <Segment className='DfPostPreview'>
           <div className='DfInfo'>
             <div className='DfRow'>
@@ -315,9 +344,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderDetails = (content: PostExtContent) => {
-    const { title, canonical, tags, blockValues, previewImg, summary } = content;
+    const { title, canonical, tags, blockValues, summary } = content;
     return <Section className='DfContentPage bookPage'>
-      {<HeadMeta title={title} desc={summary} image={previewImg} canonical={canonical} tags={tags} /> }
+      {<HeadMeta title={title} desc={summary} image={''} canonical={canonical} tags={tags} /> }
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -447,14 +476,17 @@ const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
       blockValues.push(blockValue)
     }
   }
-  const firstText = blockValues.find((x) => x.kind === 'text')?.data
-  const previewImg = blockValues.find((x) => x.kind === 'image' && x.useOnPreview)?.data
+
+  const previewBlocks = blockValues.filter((x) => x.useOnPreview !== true)
+  const firstText = previewBlocks.find((x) => x.kind === 'text')?.data || blockValues.find((x) => x.kind === 'text')?.data
   const summary = summarize(firstText as string, LIMIT_SUMMARY);
+
+  console.log('blockValues in loadContentFromIpfs', blockValues)
+
   return {
     ...ipfsContent,
     blockValues,
-    summary,
-    previewImg
+    summary
   };
 };
 
