@@ -84,7 +84,7 @@ export const mockBlogJson: BlogContent = {
 export const mockBlogJsonBob: BlogContent = {
   name: 'The Best Blog You Can Ever Find on the Internet',
   desc: 'In 2000 I set up a dot com web site called "the very best site ever" and on it carried pictures and descriptions of our worldwide holidays and our lives closer to home. However, I have learned that the webhosts have "lost" it. Time has moved on and it is being replaced by this blog!',
-  image: 'https://1.bp.blogspot.com/-JGn_YzUSXZI/Xl0sWyutEJI/AAAAAAAAU2M/QS54o3oDNJs5dMiYPnOUCXRT6UkyeFsVgCLcBGAsYHQ/s320/200113%2B%252839%2529.jpg',
+  image: '',
   tags: [],
   navTabs: mockNavTabs
 }
