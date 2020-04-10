@@ -10,7 +10,7 @@ import React from 'react';
 // import Link from 'next/link';
 // import { getJsonFromIpfs } from './OffchainUtils';
 // import { withRequireProfile, withSocialAccount, Loading } from './utils';
-// import { NoData } from './DataList';
+// import { NoData } from './EmptyList';
 // import { DfBgImg } from './DfBgImg';
 // import dynamic from 'next/dynamic';
 // import { AccountId } from '@polkadot/types/interfaces';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
-import { NoData } from './DataList';
+import NoData from './EmptyList';
 import { getApi } from './SubstrateApi';
 import { loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { DfBgImg } from './DfBgImg';

@@ -16,7 +16,7 @@ import BN from 'bn.js';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
-import { NoData } from '../utils/DataList';
+import NoData from '../utils/EmptyList';
 import { ValidationProps, buildValidationSchema } from './CommentValidation';
 
 import { Comment, IpfsHash } from '@subsocial/types/substrate/interfaces/subsocial'

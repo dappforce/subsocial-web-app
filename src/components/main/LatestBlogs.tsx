@@ -17,7 +17,7 @@ export const LatestBlogs = (props: Props) => {
     dataSource={blogs}
     noDataDesc='No blogs created yet'
     noDataExt={<Button href='/blogs/new'>Create blog</Button>}
-    renderItem={(item: BlogData) =>
+    renderItem={(item) =>
       <ViewBlogPage
         {...props}
         key={(item.blog as Blog).id.toString()}

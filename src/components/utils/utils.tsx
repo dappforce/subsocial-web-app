@@ -6,7 +6,7 @@ import { SubmittableResult, ApiPromise } from '@polkadot/api';
 import { ipfs } from './OffchainUtils';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
-import { NoData } from './DataList';
+import { NoData } from './EmptyList';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 import { truncate } from 'lodash';

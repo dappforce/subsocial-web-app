@@ -14,7 +14,7 @@ import { getApi } from '../utils/SubstrateApi';
 // import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
-import { NoData } from '../utils/DataList';
+import NoData from '../utils/EmptyList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
