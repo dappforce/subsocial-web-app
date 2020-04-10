@@ -95,13 +95,17 @@ export const mockBlogValidation = {
   blogMaxLen: 500
 }
 
+export const mockBlogDataAlice = {
+  blog: mockBlogStruct,
+  initialContent: mockBlogJson
+}
+
+export const mockBlogDataBob = {
+  blog: mockBlogStructBob,
+  initialContent: mockBlogJsonBob
+}
+
 export const mockBlogsData: BlogData[] = [
-  {
-    blog: mockBlogStruct,
-    initialContent: mockBlogJson
-  },
-  {
-    blog: mockBlogStructBob,
-    initialContent: mockBlogJsonBob
-  }
+  mockBlogDataAlice,
+  mockBlogDataBob
 ]
