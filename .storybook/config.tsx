@@ -24,7 +24,7 @@ addDecorator(story => (
 addDecorator(withStorybookContext)
 
 addDecorator(story => (
-  <div className='StorybookRoot'>
+  <div className='DfPageContent'>
     {story()}
   </div>
 ))
