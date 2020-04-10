@@ -3,16 +3,13 @@ import React from 'react';
 import { I18nProps } from '@polkadot/react-components/types';
 
 import { ViewBlogPage } from './ViewBlog';
-import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
-import { GenericAccountId as AccountId } from '@polkadot/types';
 import { HeadMeta } from '../utils/HeadMeta';
-import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { BlogData } from '@subsocial/types/dto';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 type Props = I18nProps & {
   totalCount: number;
@@ -37,9 +34,9 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
 };
 
 ListBlog.getInitialProps = async (props): Promise<any> => {
-  const subsocial = (props as any).subsocial as SubsocialApi
+  const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
-  const nextBlogId = await substrate.socialQuery().nextBlogId() as BlogId;
+  const nextBlogId = await substrate.nextBlogId()
 
   const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
@@ -84,9 +81,9 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
 
 ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
-  const subsocial = (props as any).subsocial as SubsocialApi
+  const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
-  const myBlogIds = await substrate.socialQuery().blogIdsByOwner(new AccountId(registry, address as string)) as unknown as BlogId[];
+  const myBlogIds = await substrate.blogIdsByOwner(address as string)
   const loadBlogs = await subsocial.findBlogs(myBlogIds);
   const blogsData = await Promise.all<BlogData>(loadBlogs);
   return {

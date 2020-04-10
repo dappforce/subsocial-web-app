@@ -6,11 +6,12 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
-import { ipfs } from '../utils/SubsocialConnect';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';
 import { queryBlogsToProp, ZERO } from '../utils/index';
 import { nonEmptyStr, newLogger } from '@subsocial/utils'
-import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
+import { ViewPostPage } from '../posts/ViewPost';
+import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils' 
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
@@ -29,7 +30,7 @@ import mdToText from 'markdown-to-txt';
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
 import { BlogData } from '@subsocial/types/dto'
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 const log = newLogger('View blog')
 
@@ -90,6 +91,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const blog = struct;
 
   const { state: { address } } = useMyAccount();
+  const { state: { ipfs } } = useSubsocialApi()
   const [ content, setContent ] = useState(blogData.content as BlogContent);
   const { desc, name, image } = content;
 
@@ -99,10 +101,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    ipfs.findBlog(ipfs_hash).then(json => {
+    ipfs.findBlog(ipfs_hash).then((json) => {
       const content = json;
       if (isSubscribe && content) setContent(content);
-    }).catch(err => log.error('Failed to find blog from IPFS:', err));
+    }).catch((err) => log.error('Failed to find blog from IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -284,10 +286,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { req, res, query: { blogId } } = props
-  const subsocial = (props as any).subsocial as SubsocialApi
+  const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
-  const idOrSlug = blogId as string
-  const id = await getBlogId(substrate, idOrSlug)
+  const idOrHandle = blogId as string
+  const id = await getBlogId(substrate, idOrHandle)
   if (!id && res && req) {
     res.statusCode = 404
     return { statusCode: 404 }
@@ -298,7 +300,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const postIds = await substrate.socialQuery().postIdsByBlogId(blogId) as unknown as PostId[];
+  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) as unknown as PostId[];
   const posts = await loadPostDataList(subsocial, postIds.reverse());
   return {
     blogData,

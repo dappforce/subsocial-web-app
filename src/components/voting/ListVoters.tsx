@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
-import { Option } from '@polkadot/types';
 import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
@@ -54,9 +53,7 @@ const InnerModalVoters = (props: VotersProps) => {
     const loadVoters = async () => {
       if (!reactions) return toggleTrigger();
 
-      const apiCalls: Promise<Option<Reaction>>[] = reactions.map(async reactionId =>
-        await substrate.socialQuery().reactionById(reactionId) as Option<Reaction>);
-      const loadedReaction = (await Promise.all<Option<Reaction>>(apiCalls)).map(x => x.unwrap() as Reaction);
+      const loadedReaction = await substrate.findReactions(reactions)
       isSubscribe && setReactionView(loadedReaction);
     };
     loadVoters().catch(err => log.error('Failed to load voters:', err));

@@ -7,8 +7,6 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/react-api/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
-
-import { ipfs } from '../utils/SubsocialConnect';
 import isEmpty from 'lodash.isempty';
 import partition from 'lodash.partition'
 import { NewComment } from './EditComment';
@@ -28,8 +26,8 @@ import BN from 'bn.js'
 import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
 import { PostContent, CommentContent } from '@subsocial/types/offchain';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { SubsocialApi } from '@subsocial/api/fullApi';
 import { newLogger } from '@subsocial/utils';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 const log = newLogger('View comment')
 
@@ -141,7 +139,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     postContent: initialPostContent = {} as PostContent,
     commentContent = {} as CommentContent
   } = props;
-  const { state: { substrate } } = useSubsocialApi()
+  const { state: { substrate, ipfs  } } = useSubsocialApi()
   const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
@@ -296,7 +294,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
-  const subsocial = (props as any).subsocial as SubsocialApi
+  const subsocial = await getSubsocialApi()
   const commentData = await subsocial.findComment(new BN(commentId as string));
   const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
   return {

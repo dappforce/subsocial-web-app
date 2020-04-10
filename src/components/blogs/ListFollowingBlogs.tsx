@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { GenericAccountId as AccountId } from '@polkadot/types';
-import { BlogId, Blog } from '@subsocial/types/substrate/interfaces/subsocial';
+import { Blog } from '@subsocial/types/substrate/interfaces/subsocial';
 import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -13,9 +12,8 @@ import { isMobile } from 'react-device-detect';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import Link from 'next/link';
-import { registry } from '@polkadot/react-api';
 import { BlogData } from '@subsocial/types/dto';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -42,9 +40,9 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
 
 ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
-  const subsocial = (props as any).subsocial as SubsocialApi
+  const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
-  const followedBlogsData = await substrate.socialQuery().blogsFollowedByAccount(new AccountId(registry, address as string)) as unknown as BlogId[];
+  const followedBlogsData = await substrate.blogsFollowedByAccount(address as string)
   const blogsData = await subsocial.findBlogs(followedBlogsData);
   return {
     blogsData

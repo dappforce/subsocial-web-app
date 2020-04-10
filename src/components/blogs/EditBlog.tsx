@@ -8,7 +8,6 @@ import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
-import { ipfs } from '../utils/SubsocialConnect';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
@@ -24,6 +23,7 @@ import { BlogContent } from '@subsocial/types/offchain';
 import { BlogUpdate } from '@subsocial/types/substrate/classes';
 import U32 from '@polkadot/types/primitive/U32';
 import { newLogger } from '@subsocial/utils'
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const log = newLogger('Edit blog')
 
@@ -39,11 +39,11 @@ const NAME_MAX_LEN = 100;
 
 const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
-  slug: Yup.string()
-    .required('Slug is required')
-    .matches(SLUG_REGEX, 'Slug can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
-    .min(p.slugMinLen, `Slug is too short. Minimum length is ${p.slugMinLen} chars.`)
-    .max(p.slugMaxLen, `Slug is too long. Maximum length is ${p.slugMaxLen} chars.`),
+  handle: Yup.string()
+    .required('Handle is required')
+    .matches(SLUG_REGEX, 'Handle can have only letters (a-z, A-Z), numbers (0-9), underscores (_) and dashes (-).')
+    .min(p.handleMinLen, `Handle is too short. Minimum length is ${p.handleMinLen} chars.`)
+    .max(p.handleMaxLen, `Handle is too long. Maximum length is ${p.handleMaxLen} chars.`),
 
   name: Yup.string()
     .required('Name is required')
@@ -60,8 +60,8 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
 
 type ValidationProps = {
   blogMaxLen: number;
-  slugMinLen: number;
-  slugMaxLen: number;
+  handleMinLen: number;
+  handleMaxLen: number;
 };
 
 type OuterProps = {
@@ -69,12 +69,12 @@ type OuterProps = {
   struct?: Blog;
   json?: BlogContent;
   blogMaxLen?: U32;
-  slugMinLen?: U32;
-  slugMaxLen?: U32;
+  handleMinLen?: U32;
+  handleMaxLen?: U32;
 };
 
 type FormValues = BlogContent & {
-  slug: string;
+  handle: string;
 };
 
 type FormProps = OuterProps & FormikProps<FormValues>;
@@ -98,12 +98,14 @@ const InnerForm = (props: FormProps) => {
   } = props;
 
   const {
-    slug,
+    handle,
     name,
     desc,
     image,
     tags
   } = values;
+  console.log('I am Edit Blog')
+  const { state: { ipfs } } = useSubsocialApi()
 
   const goToView = (id: BN) => {
     Router.push('/blogs/' + id.toString()).catch(err => log.error('Error while router:', err));
@@ -137,12 +139,12 @@ const InnerForm = (props: FormProps) => {
   const buildTxParams = () => {
     if (!isValid) return [];
     if (!struct) {
-      return [ slug, ipfsCid ];
+      return [ handle, ipfsCid ];
     } else {
       // TODO update only dirty values.
       const update = new BlogUpdate({
         writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
-        slug: new Option(registry, 'Text', slug),
+        handle: new Option(registry, 'Text', handle),
         ipfs_hash: new Option(registry, 'Text', ipfsCid)
       });
       return [ struct.id, update ];
@@ -158,7 +160,7 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledText name='name' label='Blog name' placeholder='Name of your blog.' {...props} />
 
-        <LabelledText name='slug' label='URL slug' placeholder={`You can use a-z, 0-9, dashes and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
+        <LabelledText name='handle' label='URL handle' placeholder={`You can use a-z, 0-9, dashes and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
 
         <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
 
@@ -206,14 +208,14 @@ const EditForm = withFormik<OuterProps, FormValues>({
   mapPropsToValues: (props): FormValues => {
     const { struct, json } = props;
     if (struct && json) {
-      const slug = struct.slug.toString();
+      const handle = struct.handle.toString();
       return {
-        slug,
+        handle,
         ...json
       };
     } else {
       return {
-        slug: '',
+        handle: '',
         name: '',
         desc: '',
         image: '',
@@ -224,8 +226,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
 
   validationSchema: (props: OuterProps) => buildSchema({ // TODO fix this hack
     blogMaxLen: props.blogMaxLen?.toNumber() || 100,
-    slugMinLen: props.slugMinLen?.toNumber() || 5,
-    slugMaxLen: props.slugMaxLen?.toNumber() || 54
+    handleMinLen: props.handleMinLen?.toNumber() || 5,
+    handleMaxLen: props.handleMaxLen?.toNumber() || 54
   }),
 
   handleSubmit: values => {
@@ -255,6 +257,7 @@ type Struct = Blog | undefined;
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
+  const { state: { ipfs } } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState(undefined as StructJson);
   const [ struct, setStruct ] = useState(undefined as Struct);
@@ -294,8 +297,8 @@ function LoadStruct (props: LoadStructProps) {
 
 const commonQueries = [
   queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
-  queryBlogsToProp('slugMinLen', { propName: 'slugMinLen' }),
-  queryBlogsToProp('slugMaxLen', { propName: 'slugMaxLen' })
+  queryBlogsToProp('handleMinLen', { propName: 'handleMinLen' }),
+  queryBlogsToProp('handleMaxLen', { propName: 'handleMaxLen' })
 ]
 
 export const NewBlog = withMulti(

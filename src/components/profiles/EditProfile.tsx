@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
-import { ipfs } from '../utils/SubsocialConnect';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { queryBlogsToProp } from '../utils/index';
@@ -64,7 +64,7 @@ const buildSchema = (p: ValidationProps) => Yup.object().shape({
   email: Yup.string()
     .email('Enter correct email address'),
 
-  personal_site: urlValidation('Personal site'),
+  personalSite: urlValidation('Personal site'),
 
   about: Yup.string()
     .max(ABOUT_MAX_LEN, `Text is too long. Maximum length is ${ABOUT_MAX_LEN} chars.`),
@@ -124,9 +124,10 @@ const InnerForm = (props: FormProps) => {
     fullname,
     avatar,
     email,
-    personal_site,
+    personalSite,
     about,
     facebook,
+    medium,
     twitter,
     linkedIn,
     github,
@@ -138,12 +139,12 @@ const InnerForm = (props: FormProps) => {
       Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
     }
   };
-
+  const { state: { ipfs } } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
-      const json = { fullname, avatar, email, personal_site, about, facebook, twitter, linkedIn, github, instagram };
+      const json = { fullname, avatar, email, personalSite, about, facebook, twitter, medium, linkedIn, github, instagram };
       ipfs.saveContent(json).then(cid => {
         setIpfsCid(cid);
         sendTx();
@@ -215,7 +216,7 @@ const InnerForm = (props: FormProps) => {
         />
 
         <LabelledText
-          name='personal_site'
+          name='personalSite'
           label='Personal site'
           placeholder='Address for personal site'
           {...props}
@@ -316,7 +317,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
         github: '',
         instagram: '',
         email: '',
-        personal_site: ''
+        personalSite: '',
+        medium: ''
       };
     }
   },

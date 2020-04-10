@@ -3,7 +3,6 @@ import { Pagination as SuiPagination } from 'semantic-ui-react';
 
 import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
-import { ipfs } from './SubsocialConnect';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import { NoData } from './DataList';
@@ -11,11 +10,12 @@ import moment from 'moment-timezone';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
-import { Profile, SocialAccount, BlogId } from '@subsocial/types/substrate/interfaces';
+import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { getFirstOrUndefinded, newLogger } from '@subsocial/utils';
+import { newLogger } from '@subsocial/utils';
 import { Moment } from '@polkadot/types/interfaces';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
+import { useSubsocialApi } from './SubsocialApiContext';
 
 type PaginationProps = {
   currentPage?: number;
@@ -120,6 +120,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
     const profile = profileOpt.unwrap() as Profile;
 
     const ipfsHash = profile.ipfs_hash;
+    const { state: { ipfs } } = useSubsocialApi()
     const [ ProfileContent, setProfileContent ] = useState(undefined as (ProfileContent | undefined));
 
     useEffect(() => {
@@ -127,7 +128,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
 
       let isSubscribe = true;
       const loadContent = async () => {
-        const content = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+        const content = await ipfs.getContent<ProfileContent>(profile.ipfs_hash)
         isSubscribe && content && setProfileContent(content);
       }
 
@@ -155,13 +156,13 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
   return moment(new Date(seconds)).format(format);
 };
 
-export const getBlogId = async (substrate: SubsocialSubstrateApi, idOrSlug: string): Promise<BN | undefined> => {
-  if (idOrSlug.startsWith('@')) {
-    const slug = idOrSlug.substring(1) // Drop '@'
-    const idOpt = await substrate.socialQuery().blogIdBySlug(slug) as Option<BlogId>
-    return idOpt.unwrapOr(undefined)
+export const getBlogId = async (substrate: SubsocialSubstrateApi, idOrHandle: string): Promise<BN | undefined> => {
+  if (idOrHandle.startsWith('@')) {
+    const handle = idOrHandle.substring(1) // Drop '@'
+    const id = await substrate.getIdByHandle(handle)
+    return id
   } else {
-    return new BN(idOrSlug)
+    return new BN(idOrHandle)
   }
 }
 

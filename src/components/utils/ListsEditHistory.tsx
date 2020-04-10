@@ -27,11 +27,11 @@ export default <></>;
 // function fillHistory<T extends (BlogHistoryRecord | ProfileHistoryRecord)[]> (historyLast: T) {
 //   if (historyLast[0] === undefined) return;
 
-//   const stringForSlugOrUsername = /* historyLast[0] instanceof ProfileHistoryRecord ? 'username' : */ 'slug'; // TODO fix after run;
+//   const stringForHandleOrUsername = /* historyLast[0] instanceof ProfileHistoryRecord ? 'username' : */ 'handle'; // TODO fix after run;
 
 //   const history = [ ...historyLast ];
 //   let ipfsHash = history[0].old_data.ipfs_hash;
-//   let slug = history[0].old_data.get(stringForSlugOrUsername) as OptionText;
+//   let handle = history[0].old_data.get(stringForHandleOrUsername) as OptionText;
 
 //   if (ipfsHash.isNone) {
 //     for (let i = 1; i < history.length; i++) {
@@ -42,11 +42,11 @@ export default <></>;
 //     }
 //   }
 
-//   if (slug.isNone) {
+//   if (handle.isNone) {
 //     for (let i = 1; i < history.length; i++) {
-//       const _slug = history[i].old_data.get(stringForSlugOrUsername) as OptionText;
-//       if (_slug.isSome) {
-//         slug = _slug;
+//       const _handle = history[i].old_data.get(stringForHandleOrUsername) as OptionText;
+//       if (_handle.isSome) {
+//         handle = _handle;
 //         break;
 //       }
 //     }
@@ -58,11 +58,11 @@ export default <></>;
 //     } else {
 //       ipfsHash = record.old_data.ipfs_hash;
 //     }
-//     const _slug = record.old_data.get(stringForSlugOrUsername) as OptionText;
-//     if (_slug.isNone) {
-//       record.old_data.set(stringForSlugOrUsername, slug);
+//     const _handle = record.old_data.get(stringForHandleOrUsername) as OptionText;
+//     if (_handle.isNone) {
+//       record.old_data.set(stringForHandleOrUsername, handle);
 //     } else {
-//       slug = _slug;
+//       handle = _handle;
 //     }
 //     return record;
 //   }).reverse() as T;
@@ -262,26 +262,26 @@ export default <></>;
 //   history: BlogHistoryRecord,
 //   current_data: {
 //     ipfs_hash: string,
-//     slug: string
+//     handle: string
 //   }
 // };
 
 // const BlogFromHistory = (props: PropsBlogFromHistory) => {
 //   const { history: { old_data, edited }, current_data } = props;
-//   const { ipfs_hash, slug } = old_data;
+//   const { ipfs_hash, handle } = old_data;
 //   const [ content, setContent ] = useState({} as BlogContent);
 //   const [ ipfsHash, setIpfsHash ] = useState('');
-//   const [ _slug, setSlug ] = useState('');
+//   const [ _handle, setHandle ] = useState('');
 
 //   useEffect(() => {
 //     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
-//     slug.isNone ? setSlug(current_data.slug) : setSlug(slug.unwrap().toString());
+//     handle.isNone ? setHandle(current_data.handle) : setHandle(handle.unwrap().toString());
 //     const loadData = async () => {
 //       const data = await getJsonFromIpfs<BlogContent>(ipfsHash);
 //       setContent(data);
 //     };
 //     loadData().catch(err => new Error(err));
-//   }, [ ipfsHash, _slug ]);
+//   }, [ ipfsHash, _handle ]);
 
 //   return (<div className='DfModal'>
 //     <div className='ui massive relaxed middle aligned list FullProfile'>
@@ -294,7 +294,7 @@ export default <></>;
 //           <div className='header DfHistoryTitle'>
 //             <Link href='#'><a className='handle'>{content.name}</a></Link>
 //           </div>
-//           <div className='DfDescription'>{`slug: ${_slug}`}</div>
+//           <div className='DfDescription'>{`handle: ${_handle}`}</div>
 //           <div className='DfDescription'>
 //             <DfMd source={content.desc} />
 //           </div>
@@ -320,7 +320,7 @@ export default <></>;
 //     return history && history.map((x, index) => <BlogFromHistory
 //       history={x}
 //       key={index}
-//       current_data={{ ipfs_hash: blog.ipfs_hash, slug: blog.slug.toString() }}
+//       current_data={{ ipfs_hash: blog.ipfs_hash, handle: blog.handle.toString() }}
 //     />);
 //   };
 

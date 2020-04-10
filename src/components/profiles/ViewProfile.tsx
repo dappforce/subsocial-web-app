@@ -4,11 +4,11 @@ import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
-import { GenericAccountId as AccountId, Option } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { queryBlogsToProp, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { nonEmptyStr, isEmptyStr, summarize, getFirstOrUndefinded } from '@subsocial/utils'
+import { nonEmptyStr, isEmptyStr, summarize } from '@subsocial/utils'
 import { withSocialAccount } from '../utils/utils';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
@@ -22,12 +22,11 @@ import { Pluralize } from '../utils/Plularize';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
-import { ipfs } from '../utils/SubsocialConnect';
 import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -76,7 +75,7 @@ const Component: NextPage<Props> = (props: Props) => {
     fullname,
     avatar,
     email,
-    personal_site,
+    personalSite,
     about,
     facebook,
     twitter,
@@ -86,7 +85,7 @@ const Component: NextPage<Props> = (props: Props) => {
   } = ProfileContent;
 
   const hasEmail = email && nonEmptyStr(email);
-  const hasPersonalSite = personal_site && nonEmptyStr(personal_site);
+  const hasPersonalSite = personalSite && nonEmptyStr(personalSite);
   const hasAvatar = avatar && nonEmptyStr(avatar);
   const hasFacebookLink = facebook && nonEmptyStr(facebook);
   const hasTwitterLink = twitter && nonEmptyStr(twitter);
@@ -185,7 +184,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 }
                 {hasPersonalSite &&
                   <a
-                    href={personal_site}
+                    href={personalSite}
                     target='_blank'
                   >
                     <Icon type='global' />
@@ -268,12 +267,11 @@ const Component: NextPage<Props> = (props: Props) => {
 
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
-  const { substrate } = (props as any).subsocial as SubsocialApi
-  const socialAccountOpt = await substrate.socialQuery().socialAccountById(address) as Option<SocialAccount>;
-  const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
+  const { substrate, ipfs } = await getSubsocialApi()
+  const socialAccount = await substrate.findSocialAccount(address as string)
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
-  const content = profile && getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+  const content = profile && await ipfs.getContent<ProfileContent>(profile.ipfs_hash)
   return {
     id: new AccountId(registry, address as string),
     socialAccount: socialAccount,

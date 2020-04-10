@@ -12,7 +12,7 @@ import toShortAddress from '@polkadot/react-components/util/toShortAddress';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { summarize, nonEmptyStr, getFirstOrUndefinded, newLogger } from '@subsocial/utils';
+import { summarize, nonEmptyStr, newLogger } from '@subsocial/utils';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
 import Router from 'next/router';
@@ -22,10 +22,7 @@ import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 // import { isBrowser } from 'react-device-detect';
-import { ipfs } from './SubsocialConnect';
 import { Balance } from '@polkadot/types/interfaces';
-import AccountIndex from '@polkadot/types/generic/AccountIndex';
-import Address from '@polkadot/types/generic/Address';
 import { AccountName } from '@polkadot/react-components';
 import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
@@ -48,7 +45,7 @@ export type Props = MyAccountProps & BareProps & {
   extraDetails?: React.ReactNode,
   isShort?: boolean,
   session_validators?: Array<AccountId>,
-  value?: AccountId | AccountIndex | Address | string,
+  value?: AccountId | string,
   size?: number,
   withAddress?: boolean,
   withBalance?: boolean,
@@ -84,8 +81,8 @@ function AddressComponents (props: Props) {
     event,
     count,
     subject } = props;
-  const { state: { substrate } } = useSubsocialApi();
-  console.log('SOCIAL', (substrate as any).api._query.social)
+  const { state: { substrate, ipfs } } = useSubsocialApi();
+  console.log('SOCIAL', substrate)
   const [ socialAccount, setSocialAccount ] = useState(socialAccountInitial);
   const [ profile, setProfile ] = useState(profileInit);
   const [ profileContent, setProfileContent ] = useState(profileContentInit);
@@ -96,16 +93,16 @@ function AddressComponents (props: Props) {
     let isSubscribe = true;
 
     const UpdateSocialAccount = async () => {
-      const socialAccountOpt = await substrate.socialQuery().socialAccountById(value) as unknown as Option<SocialAccount>;
-      console.log('Soc.Acc', socialAccountOpt);
-      if (socialAccountOpt.isNone) {
+      const socialAccount = await substrate.findSocialAccount(value)
+      console.log('Soc.Acc', socialAccount);
+
+      if (!socialAccount) {
         isSubscribe && setSocialAccount(undefined);
         isSubscribe && setProfile({} as Profile);
         isSubscribe && setProfileContent({} as ProfileContent);
         return;
       }
 
-      const socialAccount = socialAccountOpt.unwrap();
       isSubscribe && setSocialAccount(socialAccount);
 
       const profileOpt = socialAccount.profile;
@@ -119,7 +116,7 @@ function AddressComponents (props: Props) {
       const profile = profileOpt.unwrap() as Profile;
       isSubscribe && setProfile(profile);
 
-      const profileContent = getFirstOrUndefinded(await ipfs.getContentArray<ProfileContent>([ profile.ipfs_hash ]));
+      const profileContent = await ipfs.getContent<ProfileContent>(profile.ipfs_hash)
       isSubscribe && profileContent && setProfileContent(profileContent);
     };
 

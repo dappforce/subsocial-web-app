@@ -6,8 +6,7 @@ import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
-import { ipfs } from '../utils/SubsocialConnect';
-import { nonEmptyStr, summarize, newLogger } from '@subsocial/utils';
+import { nonEmptyStr, newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate } from '../utils/utils';
 // import { PostHistoryModal } from '../utils/ListsEditHistory';
@@ -23,10 +22,11 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
-import { PostContent } from '@subsocial/types/offchain';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
-import { PostData } from '@subsocial/types/dto';
 import { SubsocialApi } from '@subsocial/api/fullApi';
+import { PostData } from '@subsocial/types/dto';
+import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 const log = newLogger('View post')
 
@@ -35,20 +35,7 @@ const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
-const LIMIT_SUMMARY = isMobile ? 75 : 150;
-
 type PostVariant = 'full' | 'preview' | 'name only';
-
-type PostType = 'regular' | 'share';
-
-type PostExtContent = PostContent & {
-  summary: string;
-};
-
-export type PostDataListItem = {
-  postData: PostData;
-  postExtData: PostData;
-};
 
 type ViewPostProps = {
   variant: PostVariant;
@@ -319,7 +306,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { postId }, req, res } = props;
-  const subsocial = (props as any).subsocial as SubsocialApi
+  const subsocial = await getSubsocialApi()
   const postData = await subsocial.findPost(new BN(postId as string));
   let statusCode = 200
   if (!postData?.struct && req) {
@@ -342,7 +329,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
     const [ postExtData, setExtData ] = useState<PostData>();
-    const [ postData, setPostData ] = useState<PostData>({} as PostData);
+    const [ postData, setPostData ] = useState<PostData>();
     const subsocial = (props as any).subsocial as SubsocialApi
 
     useEffect(() => {
@@ -361,41 +348,8 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
 
     if (isEmpty(postData)) return <Loading/>;
 
-    return <Component postData={postData} postExtData={postExtData} {...props}/>;
+    return postData ? <Component postData={postData} postExtData={postExtData} {...props}/> : null;
   };
 };
 
 export const ViewPost = withLoadedData(ViewPostPage);
-
-export const getTypePost = (post: Post): PostType => {
-  const { extension } = post;
-  if (extension.isSharedPost) {
-    return 'share';
-  } else {
-    return 'regular';
-  }
-};
-
-const getExtContent = (content: PostContent | undefined): PostExtContent => {
-  if (!content) return {} as PostExtContent;
-
-  const summary = summarize(content.body, LIMIT_SUMMARY);
-  return {
-    ...content,
-    summary
-  };
-}
-
-const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
-  const ipfsContent = await ipfs.findPost(post.ipfs_hash);
-  if (!ipfsContent) return {} as PostExtContent;
-
-  return getExtContent(ipfsContent);
-};
-
-export const loadPostDataList = async (subsocial: SubsocialApi, ids: PostId[]) => {
-  const postsData = await subsocial.findPosts(ids);
-  const postsExtIds = postsData.map(item => item && item.struct && item.struct.id);
-  const postsExtData = await subsocial.findPosts(postsExtIds as PostId[]);
-  return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
-};

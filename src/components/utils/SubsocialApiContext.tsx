@@ -2,7 +2,7 @@ import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import { SubsocialApi } from '@subsocial/api/fullApi';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
-import { ipfsUrl, getApi } from './SubsocialConnect';
+import { ipfsUrl, getApi, offchainUrl } from './SubsocialConnect';
 import { ApiPromise } from '@polkadot/api';
 import { useApi } from '@polkadot/react-hooks';
 import { newLogger } from '@subsocial/utils';
@@ -25,7 +25,7 @@ function reducer (state: SubsocialApiState, action: SubsocialApiAction): Subsoci
 
   switch (action.type) {
     case 'init':
-      const subsocial = new SubsocialApi(action.api, ipfsUrl)
+      const subsocial = new SubsocialApi({ substrateApi: action.api, ipfsApi: ipfsUrl, offchainUrl })
       log.info('Initial subsocial API')
       return { subsocial, substrate: subsocial.substrate, ipfs: subsocial.ipfs, isReady: true }
 
@@ -64,7 +64,7 @@ export type SubsocialApiProps = {
 const createSubsocialState = (api: ApiPromise) => {
   if (!api) return undefined;
 
-  const subsocial = new SubsocialApi(api, ipfsUrl);
+  const subsocial = new SubsocialApi({ substrateApi: api, ipfsApi: ipfsUrl, offchainUrl });
   return {
     subsocial,
     substrate: subsocial.substrate,

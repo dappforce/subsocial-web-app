@@ -6,7 +6,6 @@ import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountCont
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading, getEnv } from '../components/utils/utils';
-import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
@@ -40,7 +39,7 @@ const InnerMenu = () => {
 
     const loadBlogsData = async () => {
       setLoaded(false);
-      const ids = await substrate.api.query.social.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
+      const ids = await substrate.blogsFollowedByAccount(myAddress)
       const blogsData = await subsocial.findBlogs(ids);
       isSubscribe && setFollowedBlogsData(blogsData);
       isSubscribe && setLoaded(true);

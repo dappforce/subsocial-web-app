@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
-import { ipfs } from '../utils/SubsocialConnect';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option, Enum } from '@polkadot/types/codec';
@@ -106,6 +106,7 @@ const InnerForm = (props: FormProps) => {
     title,
     body,
     image,
+    canonical,
     tags
   } = values;
 
@@ -113,11 +114,12 @@ const InnerForm = (props: FormProps) => {
     Router.push(`/blogs/${blogId}/posts/${id}`).catch(err => log.error('Error while route:', err));
   };
 
+  const { state: { ipfs } } = useSubsocialApi()
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
-      const json = { title, body, image, tags };
+      const json = { title, body, image, canonical, tags };
       ipfs.savePost(json).then(hash => {
         setIpfsCid(hash);
         sendTx();
@@ -229,6 +231,7 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
         title: '',
         body: '',
         image: '',
+        canonical: '',
         tags: []
       };
     }
@@ -281,6 +284,7 @@ type StructPost = Post | undefined;
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
     const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
+    const { state: { ipfs } } = useSubsocialApi()
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
     const [ struct, setStruct ] = useState(undefined as StructPost);

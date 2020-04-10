@@ -4,16 +4,16 @@ import React from 'react';
 import { ApiProps } from '@polkadot/react-api/types';
 import { HeadMeta } from '../utils/HeadMeta';
 import { ViewBlogPage } from '../blogs/ViewBlog';
-import { BlogId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
+import { PostId, BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
-import { ViewPostPage, loadPostDataList, PostDataListItem } from '../posts/ViewPost';
+import { ViewPostPage } from '../posts/ViewPost';
+import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils' 
 import { NextPage } from 'next';
 import { BlogData } from '@subsocial/types/dto';
-import { SubsocialApi } from '@subsocial/api/fullApi';
-import { newLogger } from '@subsocial/utils'
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
-const log = newLogger('HomePage')
+// const log = newLogger('HomePage')
 
 const FIVE = new BN(5);
 const ZERO = new BN(0);
@@ -46,11 +46,11 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
   );
 };
 
-LatestUpdate.getInitialProps = async (props): Promise<any> => {
-  const subsocial = (props as any).subsocial as SubsocialApi
-  const nextBlogId = await subsocial.substrate.socialQuery().nextBlogId() as BlogId;
-  const nextPostId = await subsocial.substrate.socialQuery().nextPostId() as PostId;
-  log.warn('Subsocial', subsocial, nextBlogId);
+LatestUpdate.getInitialProps = async (): Promise<any> => {
+  const subsocial = await getSubsocialApi()
+  const nextBlogId = await subsocial.substrate.nextBlogId() as BlogId
+  const nextPostId = await subsocial.substrate.nextPostId() as PostId
+  console.log('Subsocial', subsocial, nextBlogId);
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
     const latestIds = new Array<BN>(initIds).fill(ZERO);

@@ -12,7 +12,7 @@ import { createType } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
-import { ipfs } from '../utils/SubsocialConnect';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { queryBlogsToProp } from '../utils/index';
 import BN from 'bn.js';
 
@@ -86,6 +86,7 @@ const InnerForm = (props: FormProps) => {
     body
   } = values;
 
+  const { state: { ipfs } } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = async (sendTx: () => void) => {
@@ -218,6 +219,7 @@ type StructJson = CommentContent | undefined;
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
+  const { state: { ipfs } } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<StructJson>();
   const [ struct, setStruct ] = useState<Comment>();
