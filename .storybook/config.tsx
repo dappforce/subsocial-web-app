@@ -8,7 +8,6 @@ import { mockNextRouter } from '../src/stories/mockNextRouter';
 import { withStorybookContext } from '../src/stories/withStorybookContext';
 
 import '../src/components/utils/styles';
-import './style.css';
 
 // Mock React router:
 addDecorator(StoryRouter());
