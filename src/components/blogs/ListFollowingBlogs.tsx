@@ -42,7 +42,7 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
   const { query: { address } } = props;
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
-  const followedBlogsData = await substrate.blogsFollowedByAccount(address as string)
+  const followedBlogsData = await substrate.blogIdsFollowedByAccount(address as string)
   const blogsData = await subsocial.findBlogs(followedBlogsData);
   return {
     blogsData

@@ -84,8 +84,7 @@ ListMyBlogs.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const myBlogIds = await substrate.blogIdsByOwner(address as string)
-  const loadBlogs = await subsocial.findBlogs(myBlogIds);
-  const blogsData = await Promise.all<BlogData>(loadBlogs);
+  const blogsData = await subsocial.findBlogs(myBlogIds);
   return {
     blogsData
   }

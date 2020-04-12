@@ -159,7 +159,7 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
 export const getBlogId = async (substrate: SubsocialSubstrateApi, idOrHandle: string): Promise<BN | undefined> => {
   if (idOrHandle.startsWith('@')) {
     const handle = idOrHandle.substring(1) // Drop '@'
-    const id = await substrate.getIdByHandle(handle)
+    const id = await substrate.getBlogIdByHandle(handle)
     return id
   } else {
     return new BN(idOrHandle)

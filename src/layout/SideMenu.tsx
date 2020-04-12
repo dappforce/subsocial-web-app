@@ -39,7 +39,7 @@ const InnerMenu = () => {
 
     const loadBlogsData = async () => {
       setLoaded(false);
-      const ids = await substrate.blogsFollowedByAccount(myAddress)
+      const ids = await substrate.blogIdsFollowedByAccount(myAddress)
       const blogsData = await subsocial.findBlogs(ids);
       isSubscribe && setFollowedBlogsData(blogsData);
       isSubscribe && setLoaded(true);

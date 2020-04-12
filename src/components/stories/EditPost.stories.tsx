@@ -23,6 +23,7 @@ const mockJson: PostContent = {
   title: 'Example post',
   image: '',
   body: 'Description',
+  canonical: 'http://origina.com',
   tags: [ '' ]
 }
 
