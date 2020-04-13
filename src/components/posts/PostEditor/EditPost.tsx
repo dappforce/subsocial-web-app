@@ -438,8 +438,7 @@ const InnerForm = (props: FormProps) => {
       </TabPane>
     </Tabs>
 
-  const editSharedPost = () =>
-    <div style={{ marginTop: '1rem' }}>{form}</div>
+  const editSharedPost = () => <div style={{ marginTop: '1rem' }}>{form}</div>
 
   return onlyTxButton
     ? renderTxButton()
@@ -456,14 +455,9 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
     let blockValues: BlockValueKind[] = []
-    if (mappedBlocks && mappedBlocks.length !== 0) {
-      blockValues = mappedBlocks.map((x, i) => ({ ...x, id: i }))
-    }
-    if (struct && json && mappedBlocks) {
-      return { ...json, blockValues };
-    } else {
-      return { title: '', blocks: [], blockValues: [], image: '', tags: [], canonical: '' };
-    }
+    if (mappedBlocks && mappedBlocks.length !== 0) blockValues = mappedBlocks.map((x, i) => ({ ...x, id: i }))
+    if (struct && json && mappedBlocks) return { ...json, blockValues };
+    return { title: '', blocks: [], blockValues: [], image: '', tags: [], canonical: '' };
   },
   validationSchema: () => buildSchema(),
   handleSubmit: values => { console.log('formik values', values) }
