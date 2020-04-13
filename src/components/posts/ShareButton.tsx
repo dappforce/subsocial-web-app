@@ -5,14 +5,12 @@ type Network = 'facebook' | 'twitter' | 'linkedin'
 
 type Props = {
   network: Network
-  path: string
   text?: string
 }
 
 const ShareButton = (props: Props) => {
-  const { network, path, text = '' } = props
-  const HOSTNAME = 'http://testnet.subsocial.network/'
-  const url = `${HOSTNAME}${path}`
+  const { network, text = '' } = props
+  const url = window.location
 
   const makeLink = () => {
     switch (network) {

@@ -27,9 +27,8 @@ import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
-import ShareButton from './ShareButton';
-import Router from 'next/router';
 
+const ShareButton = dynamic(() => import('./ShareButton'), { ssr: false });
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -291,9 +290,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       </div>
       <Voter struct={post} type={'Post'}/>
       <div className='SharePostButtons'>
-        <ShareButton network='facebook' path={Router.asPath} />
-        <ShareButton network='twitter' path={Router.asPath} text={title} />
-        <ShareButton network='linkedin' path={Router.asPath} text={title} />
+        <ShareButton network='facebook' />
+        <ShareButton network='twitter' text={title} />
+        <ShareButton network='linkedin' text={title} />
       </div>
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
