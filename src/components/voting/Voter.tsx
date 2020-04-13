@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
-import { AccountId, Option } from '@polkadot/types';
-import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { CommentVoters, PostVoters } from './ListVoters';
-import { Post, Reaction, CommentId, PostId, ReactionKind, Comment, ReactionId } from '../types';
-import { Icon } from 'antd';
+import { Post, Reaction, Comment } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';
-import { getApi } from '../utils/SubstrateApi';
+import { ReactionKind } from '@subsocial/types/substrate/classes';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
+const log = newLogger('Voter')
 
 const ZERO = new BN(0);
 
@@ -25,6 +26,7 @@ export const Voter = (props: VoterProps) => {
     type
   } = props;
 
+  const { substrate } = useSubsocialApi()
   const [ reactionState, setReactionState ] = useState(undefined as (Reaction | undefined));
 
   const { state: { address } } = useMyAccount();
@@ -35,39 +37,32 @@ export const Voter = (props: VoterProps) => {
   const [ updateTrigger, setUpdateTrigger ] = useState(true);
   const { id } = state;
   const isComment = type === 'Comment';
-  const Id = isComment ? CommentId : PostId;
-  const structQuery = type.toLowerCase();
-
-  const dataForQuery = new Tuple([ AccountId, Id ], [ new AccountId(address), id ]);
 
   useEffect(() => {
     let isSubscribe = true;
 
     async function loadStruct<T extends Comment | Post> (_: T) {
-      const api = await getApi();
-      const result = await api.query.blogs[`${structQuery}ById`](id) as Option<T>;
-      if (result.isNone) return;
-
-      const _struct = result.unwrap();
-      if (isSubscribe) setState(_struct);
+      const _struct = isComment
+        ? await substrate.findComment(id)
+        : await substrate.findPost(id)
+      if (isSubscribe && _struct) setState(_struct);
     }
-    loadStruct(state).catch(err => console.log(err));
+    loadStruct(state).catch(err => log.error('Failed to load a post or comment. Error:', err));
 
     async function loadReaction () {
-      const api = await getApi();
-      const reactionId = await api.query.blogs[`${structQuery}ReactionIdByAccount`](dataForQuery) as ReactionId;
-      const reactionOpt = await api.query.blogs.reactionById(reactionId) as Option<Reaction>;
-      if (reactionOpt.isNone) {
-        isSubscribe && setReactionState(undefined);
-      } else {
-        const reaction = reactionOpt.unwrap() as Reaction;
-        if (isSubscribe) {
-          setReactionState(reaction);
-          setReactionKind(reaction.kind.toString());
-        }
-      }
+      if (!address) return
+
+      const reactionId = isComment 
+        ? await substrate.getCommentReactionIdByAccount(address, id)
+        : await substrate.getPostReactionIdByAccount(address, id)
+      const reaction = await substrate.findReaction(reactionId)
+      if (isSubscribe) {
+        setReactionState(reaction);
+        reaction && setReactionKind(reaction.kind.toString());
+      } 
     }
-    loadReaction().catch(console.log);
+
+    loadReaction().catch(err => log.error('Failed to load a reaction. Error:', err));
 
     return () => { isSubscribe = false; };
   }, [ updateTrigger, address ]);
@@ -86,11 +81,13 @@ export const Voter = (props: VoterProps) => {
     let countColor = '';
 
     const calcVotingPercentage = () => {
-      const { reactions_count, upvotes_count } = state;
-      const totalCount = new BN(reactions_count);
+      const { downvotes_count, upvotes_count } = state;
+      const upvotesCount = new BN(upvotes_count);
+      const downvotesCount = new BN(downvotes_count);
+      const totalCount = upvotesCount.add(downvotesCount);
       if (totalCount.eq(ZERO)) return 0;
 
-      const per = upvotes_count.toNumber() / totalCount.toNumber() * 100;
+      const per = upvotesCount.toNumber() / totalCount.toNumber() * 100;
       const ceilPer = Math.ceil(per);
 
       if (per >= 50) {
@@ -109,22 +106,20 @@ export const Voter = (props: VoterProps) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
-      const icon = isUpvote ? '' : 'dis';
+      const icon = `thumbs ${isUpvote ? 'up' : 'down'} outline`;
 
       return (<TxButton
         type='submit'
-        compact
+        icon={icon}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
-        txSuccessCb={() => setUpdateTrigger(!updateTrigger)}
+        onSuccess={() => setUpdateTrigger(!updateTrigger)}
         tx={!reactionState
-          ? `blogs.create${type}Reaction`
+          ? `social.create${type}Reaction`
           : (reactionKind !== `${reactionName}`)
-            ? `blogs.update${type}Reaction`
-            : `blogs.delete${type}Reaction`}
-      >
-        <Icon type={`${icon}like`}/>
-      </TxButton>);
+            ? `social.update${type}Reaction`
+            : `social.delete${type}Reaction`}
+      />);
     };
 
     const count = calcVotingPercentage();

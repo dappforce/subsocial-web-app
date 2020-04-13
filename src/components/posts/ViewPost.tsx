@@ -4,54 +4,39 @@ import Link from 'next/link';
 
 import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
-import { Option, AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { PostId, Post, CommentId, PostContent } from '../types';
-import { nonEmptyStr } from '../utils/index';
+import { nonEmptyStr, newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate, summarize, getBlogId } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
-import { PostHistoryModal } from '../utils/ListsEditHistory';
+import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
+// import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
-import { NoData } from '../utils/DataList';
+import NoData from '../utils/EmptyList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
-import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
-import { Codec } from '@polkadot/types/types';
+import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { SubsocialApi } from '@subsocial/api/fullApi';
+import { PostData } from '@subsocial/types/dto';
+import { PostType, loadContentFromIpfs, getExtContent, PostExtContent, loadSharedPostExt } from './LoadPostUtils'
+import { getSubsocialApi } from '../utils/SubsocialConnect';
+import ViewTags from '../utils/ViewTags';
+
+const log = newLogger('View post')
 
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
-const SUMMARY_MAX_SIZE = 150;
-
 type PostVariant = 'full' | 'preview' | 'name only';
-
-type PostType = 'regular' | 'share';
-
-type PostExtContent = PostContent & {
-  summary: string;
-};
-
-export type PostData = {
-  post?: Post;
-  initialContent?: PostExtContent;
-};
-
-export type PostDataListItem = {
-  postData: PostData;
-  postExtData: PostData;
-};
 
 type ViewPostProps = {
   variant: PostVariant;
@@ -60,8 +45,8 @@ type ViewPostProps = {
   withStats?: boolean;
   withActions?: boolean;
   withBlogName?: boolean;
-  id?: PostId;
-  commentIds?: CommentId[];
+  id?: BN;
+  commentIds?: BN[];
 };
 
 type ViewPostPageProps = {
@@ -73,15 +58,18 @@ type ViewPostPageProps = {
   withBlogName?: boolean;
   postData: PostData;
   postExtData?: PostData;
-  commentIds?: CommentId[];
+  commentIds?: BN[];
   statusCode?: number
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
-  const { post, initialContent = {} as PostExtContent } = props.postData;
 
-  if (!post) return <NoData description={<span>Post not found</span>} />;
+  const { struct, content: initialContent } = props.postData;
+
+  if (!struct) return <NoData description={<span>Post not found</span>} />;
+
+  const post = struct;
 
   const {
     variant = 'full',
@@ -102,21 +90,22 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   } = post;
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
+  // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
-  const [ content, setContent ] = useState(initialContent);
+  const [ content, setContent ] = useState(getExtContent(initialContent));
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
 
-  const originalPost = postExtData && postExtData.post;
-  const [ originalContent, setOriginalContent ] = useState(postExtData && postExtData.initialContent);
+  const originalPost = postExtData && postExtData.struct;
+  const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
 
   useEffect(() => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(console.log);
-    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(console.log);
+    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error('Failed to load a post content from IPFS:', err));
+    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error('Failed to load content of a shared post from IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -127,11 +116,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const RenderDropDownMenu = (props: DropdownProps) => {
     const { state: { address } } = useMyAccount();
-
     const isMyStruct = address === props.account;
-
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -139,9 +124,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         {isMyStruct && <Menu.Item key='0'>
           <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
-        {edit_history.length > 0 && <Menu.Item key='1'>
+        {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>}
+        </Menu.Item>} */}
       </Menu>
     );
 
@@ -150,11 +135,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <Dropdown overlay={menu} placement='bottomRight'>
         <Icon type='ellipsis' />
       </Dropdown>}
-      {open && <PostHistoryModal id={id} open={open} close={close} />}
+      {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
 
-  const renderNameOnly = (title: string, id: PostId) => {
+  const renderNameOnly = (title: string | undefined, id: PostId) => {
     if (!title || !id) return null;
     return withLink
       ? <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
@@ -170,6 +155,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { blog_id, created: { account, time } } = post;
     return <>
       <AddressComponents
+        withFollowButton={true}
         value={account}
         isShort={true}
         isPadded={false}
@@ -186,7 +172,15 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderContent = (post: Post, content: PostExtContent) => {
+  const renderBlogPreview = (post: Post) => {
+    if (isEmpty(post)) return null
+
+    const { blog_id } = post
+
+    return <ViewBlog id={blog_id} miniPreview withFollowButton />
+  }
+
+  const renderContent = (post: Post, content: PostExtContent | undefined) => {
     if (!post || !content) return null;
 
     const { title, summary, image } = content;
@@ -237,6 +231,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {renderContent(post, content)}
         </div>
+        <ViewTags tags={content?.tags} />
         {withStats && <StatsPanel id={post.id}/>}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
@@ -253,8 +248,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {renderPostCreator(post)}
           <RenderDropDownMenu account={created.account}/>
         </div>
-        <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
-        {/* TODO add body */}
+        <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
         <Segment className='DfPostPreview'>
           <div className='DfInfo'>
             <div className='DfRow'>
@@ -272,10 +266,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderDetails = (content: PostExtContent) => {
-    const { title, body, image } = content;
+  const renderDetails = (content?: PostExtContent) => {
+    if (!content) return null;
+    const { title, body, image, canonical, tags } = content;
     return <Section className='DfContentPage'>
-      <HeadMeta title={title} desc={body} image={image} />
+      <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -286,7 +281,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
         {/* TODO render tags */}
+        {withCreatedBy && renderPostCreator(post)}
+        {renderBlogPreview(post)}
       </div>
+      <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
@@ -295,7 +293,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   switch (variant) {
     case 'name only': {
-      return renderNameOnly(content.title, id);
+      return renderNameOnly(content?.title, id);
     }
     case 'preview': {
       switch (type) {
@@ -319,28 +317,28 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId, postId }, res } = props;
-  const api = await getApi();
-  const idOrSlug = blogId as string
-  const blogIdFromUrl = await getBlogId(api, idOrSlug)
-  const postData = await loadPostData(api, new PostId(postId as string)) as PostData;
-  const { post } = postData
+  const subsocial = await getSubsocialApi()
+  const idOrHandle = blogId as string
+  const blogIdFromUrl = await getBlogId(idOrHandle)
+  const postData = await subsocial.findPost(new BN(postId as string))
 
   // Post was not found:
-  if (!post && res) {
+  if (!postData?.struct && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
 
-  const blogIdFromPost = post!.blog_id
+  const blogIdFromPost = postData?.struct?.blog_id
 
-  // If blog id of this post is not equal to blog id/slug from URL,
+  // If blog id of this post is not equal to blog id/handle from URL,
   // then redirect to the URL with blog id of this post.
-  if (!blogIdFromPost.eq(blogIdFromUrl) && res) {
+  if (blogIdFromPost && !blogIdFromPost.eq(blogIdFromUrl) && res) {
     res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
     res.end()
   }
 
-  const postExtData = await loadExtPost(api, postData.post as Post);
+  const postExtData = await loadSharedPostExt(postData)
+
   return {
     postData,
     postExtData
@@ -352,83 +350,28 @@ export default ViewPostPage;
 const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
-    const [ postExtData, setExtData ] = useState({} as PostData);
-    const [ postData, setPostData ] = useState({} as PostData);
+    const [ postExtData, setExtData ] = useState<PostData>();
+    const [ postData, setPostData ] = useState<PostData>();
+    const subsocial = (props as any).subsocial as SubsocialApi
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
-        const api = await getApi();
-        const postData = await loadPostData(api, id as PostId);
-        isSubscribe && setPostData(postData);
-        loadExtPost(api, postData.post as Post).then(data => isSubscribe && setExtData(data)).catch(console.log);
+        const postData = id && await subsocial.findPost(id);
+        isSubscribe && postData && setPostData(postData);
+        const postDataExt = postData && postData.struct && await subsocial.findPost(postData.struct.id)
+        isSubscribe && postDataExt && setExtData(postDataExt);
       };
 
-      loadPost().catch(console.log);
+      loadPost().catch(err => log.error('Failed to load post data:', err));
 
       return () => { isSubscribe = false; };
     }, [ false ]);
 
     if (isEmpty(postData)) return <Loading/>;
 
-    return <Component postData={postData} postExtData={postExtData} {...props}/>;
+    return postData ? <Component postData={postData} postExtData={postExtData} {...props}/> : null;
   };
 };
 
 export const ViewPost = withLoadedData(ViewPostPage);
-
-export const getTypePost = (post: Post): PostType => {
-  const { isSharedPost, extension } = post;
-  console.log('Shared', typeof extension.value);
-  if (isSharedPost) {
-    return 'share';
-  } else {
-    return 'regular';
-  }
-};
-
-const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
-  const ipfsContent = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-  const summary = summarize(ipfsContent.body, SUMMARY_MAX_SIZE);
-  return {
-    ...ipfsContent,
-    summary
-  };
-};
-
-export const loadPostData = async (api: ApiPromise, postId: PostId) => {
-  const postOpt = await api.query.blogs.postById(postId) as Option<Post>;
-  let postData: PostData = {};
-
-  if (postOpt.isSome) {
-    const post = postOpt.unwrap();
-    post.set('score', new BN(post.score.toNumber()) as unknown as Codec);
-    const content = await loadContentFromIpfs(post);
-    postData = { post, initialContent: content };
-
-    // console.log('loadPostData:', postData);
-  }
-
-  return postData;
-};
-
-export const loadExtPost = async (api: ApiPromise, post: Post) => {
-  const { isSharedPost, extension } = post;
-  const postData: PostData = {};
-
-  if (isSharedPost) {
-    const postId = extension.value as PostId;
-    const postData = await loadPostData(api, postId);
-    return postData;
-  }
-
-  return postData;
-};
-
-export const loadPostDataList = async (api: ApiPromise, ids: PostId[]) => {
-  const loadPostsData = ids.map(id => loadPostData(api, id));
-  const postsData = await Promise.all<PostData>(loadPostsData);
-  const loadPostsExtData = postsData.map(item => loadExtPost(api, item.post as Post));
-  const postsExtData = await Promise.all<PostData>(loadPostsExtData);
-  return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
-};

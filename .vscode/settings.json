@@ -20,5 +20,6 @@
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": false
-    }
+    },
+    "explorerExclude.backup": null
 }

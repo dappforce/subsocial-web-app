@@ -1,38 +1,40 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { ApiProps } from '@polkadot/ui-api/types';
-import { api } from '@polkadot/ui-api';
-import { Option } from '@polkadot/types';
+import { ApiProps } from '@polkadot/react-api/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
-
-import { getJsonFromIpfs } from '../utils/OffchainUtils';
-import { partition, isEmpty } from 'lodash';
-import { PostId, CommentId, Comment, OptionComment, CommentContent, PostContent, Post } from '../types';
+import isEmpty from 'lodash.isempty';
+import partition from 'lodash.partition'
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
-import { CommentHistoryModal } from '../utils/ListsEditHistory';
+// import { CommentHistoryModal } from '../utils/ListsEditHistory';
 import { DfMd } from '../utils/DfMd';
 import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize, pluralize } from '../utils/Plularize';
 import { Loading, formatUnixDate } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
-import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
+import BN from 'bn.js'
+import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
+import { PostContent, CommentContent } from '@subsocial/types/offchain';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
+
+const log = newLogger('View comment')
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type Props = ApiProps & {
-  postId: PostId;
+  postId: BN;
   commentIds?: CommentId[];
   commentIdForPage?: CommentId;
 };
@@ -48,7 +50,8 @@ export function CommentsTree (props: Props) {
     commentIds = [],
     commentIdForPage
   } = props;
-
+  // eslint-disable-next-line no-undef
+  const { substrate } = useSubsocialApi()
   const commentsCount = commentIds.length;// post.comments_count.toNumber();
   const [ loaded, setLoaded ] = useState(false);
   const [ comments, setComments ] = useState(new Array<Comment>());
@@ -58,10 +61,8 @@ export function CommentsTree (props: Props) {
 
     const loadComments = async () => {
       if (!commentsCount) return;
-      const apiCalls: Promise<OptionComment>[] = commentIds.map(id =>
-        api.query.blogs.commentById(id) as Promise<OptionComment>);
 
-      const loadedComments = (await Promise.all<OptionComment>(apiCalls)).map(x => x.unwrap() as Comment);
+      const loadedComments = await substrate.findComments(commentIds);
 
       if (isSubscribe) {
         setComments(loadedComments);
@@ -69,10 +70,10 @@ export function CommentsTree (props: Props) {
       }
     };
 
-    loadComments().catch(err => console.log(err));
+    loadComments().catch(err => log.error('Failed to load comments:', err));
 
     return () => { isSubscribe = false; };
-  }, [ commentsCount ]);// TODO change dependense on post.comments_counts or CommentCreated, CommentUpdated with current postId
+  }, [ commentsCount ]);// TODO change dependency to post.comments_counts or CommentCreated, CommentUpdated with the current postId
 
   const isPage = !!commentIdForPage;
 
@@ -120,26 +121,6 @@ export default withMulti(
   )
 );
 
-// export function withIdsFromUrl (Component: React.ComponentType<Props>) {
-//   return function (props: Props) {
-//     const router = useRouter();
-//     const { postId, commentId } = router.query;
-//     try {
-//       return <Component postId={new PostId(postId as string)} commentIdForPage={new CommentId(commentId as string)} {...props}/>;
-//     } catch (err) {
-//       return <em>Invalid url</em>;
-//     }
-//   };
-// }
-
-// export const CommentPage = withMulti(
-//   CommentsTree,
-//   withIdsFromUrl,
-//   withCalls<Props>(
-//     queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
-//   )
-// );
-
 type ViewCommentProps = {
   comment: Comment;
   commentsWithParentId: Comment[];
@@ -158,6 +139,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     postContent: initialPostContent = {} as PostContent,
     commentContent = {} as CommentContent
   } = props;
+  const { substrate, ipfs } = useSubsocialApi()
   const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
@@ -178,32 +160,29 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   useEffect(() => {
     let isSubscribe = true;
 
-    getJsonFromIpfs<CommentContent>(struct.ipfs_hash).then(json => {
-      isSubscribe && setContent(json);
-    }).catch(err => console.log(err));
+    ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
+      isSubscribe && json && setContent(json);
+    }).catch(err => log.error('Failed to find a comment in IPFS:', err));
 
     const loadComment = async () => {
-      const result = await api.query.blogs.commentById(id) as OptionComment;
-      if (result.isNone) return;
-      const comment = result.unwrap() as Comment;
+      const comment = await substrate.findComment(id);
       if (isSubscribe) {
-        setStruct(comment);
+        comment && setStruct(comment);
       }
     };
-    loadComment().catch(console.log);
+    loadComment().catch(err => log.error('Failed to load comment:', err));
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
-        const result = await api.query.blogs.postById(post_id) as Option<Post>;
-        if (result.isNone) return;
-        isSubscribe && setPost(result.unwrap());
+        const post = await substrate.findPost(post_id);
+        isSubscribe && post && setPost(post);
       }
-      const content = await getJsonFromIpfs<PostContent>(post.ipfs_hash);
-      if (isSubscribe) {
+      const content = await ipfs.findPost(post.ipfs_hash.toString());
+      if (isSubscribe && content) {
         setPostContent(content);
       }
     };
-    loadPostContent().catch(console.log);
+    loadPostContent().catch(err => log.error('Failed to load post content:', err));
 
     return () => { isSubscribe = false; };
   }, [ doReloadComment ]);
@@ -211,8 +190,9 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   const isMyStruct = myAddress === account.toString();
 
   const RenderDropDownMenu = () => {
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
+    // const [ open, setOpen ] = useState(false);
+    // const close = () => setOpen(false);
+    // console.log(open, close());
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -220,9 +200,9 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         {(isMyStruct || showEditForm) && <Menu.Item key='0'>
           <div onClick={() => setShowEditForm(true)} >Edit</div>
         </Menu.Item>}
-        {edit_history.length > 0 && <Menu.Item key='1'>
+        {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>}
+        </Menu.Item>} */}
       </Menu>
     );
 
@@ -230,7 +210,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     <Dropdown overlay={menu} placement='bottomRight'>
       <Icon type='ellipsis' />
     </Dropdown>}
-    {open && <CommentHistoryModal id={id} open={open} close={close} />}
+    {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
 
@@ -314,17 +294,15 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
-  const api = await getApi();
-  const commentOpt = await api.query.blogs.commentById(commentId) as Option<Comment>;
-  const comment = commentOpt.unwrapOr({} as Comment);
-  const postData = comment && await loadPostData(api, comment.post_id) as PostData;
-  const commentContent = comment && await getJsonFromIpfs<CommentContent>(comment.ipfs_hash);
+  const subsocial = await getSubsocialApi()
+  const commentData = await subsocial.findComment(new BN(commentId as string));
+  const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
   return {
-    comment: comment,
-    post: postData.post,
-    postContent: postData.initialContent,
+    post: postData?.struct,
+    postContent: postData?.content,
+    comment: commentData?.struct || {} as Comment,
+    commentContent: commentData?.content,
     commentsWithParentId: [] as Comment[],
-    commentContent,
     isPage: true
   };
 };

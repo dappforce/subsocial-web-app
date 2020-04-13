@@ -1,8 +1,5 @@
 import React from 'react';
-
-import { AccountId } from '@polkadot/types';
-import { BlogId } from '../types';
-import { ViewBlogPage, loadBlogData, BlogData } from './ViewBlog';
+import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
@@ -12,8 +9,9 @@ import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
-import { getApi } from '../utils/SubstrateApi';
 import Link from 'next/link';
+import { BlogData } from '@subsocial/types/dto';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -40,10 +38,10 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
 
 ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProps> => {
   const { query: { address } } = props;
-  const api = await getApi();
-  const followedBlogsData = await api.query.blogs.blogsFollowedByAccount(new AccountId(address as string)) as unknown as BlogId[];
-  const loadBlogs = followedBlogsData.map(id => loadBlogData(api, id));
-  const blogsData = await Promise.all<BlogData>(loadBlogs);
+  const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial;
+  const followedBlogIds = await substrate.blogIdsFollowedByAccount(address as string)
+  const blogsData = await subsocial.findBlogs(followedBlogIds);
   return {
     blogsData
   };
@@ -62,12 +60,12 @@ export const RenderFollowedList = (props: Props) => {
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
-    ? followedBlogsData.map((item) => !item.blog ? null :
-      <Link key={item.blog.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.blog.id}`}>
+    ? followedBlogsData.map((item) => !item.struct ? null :
+      <Link key={item.struct.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.struct.id}`}>
         <a className='DfMenuItem'>
-          <div className={currentBlog && item.blog && currentBlog.eq(item.blog.id) ? 'DfSelectedBlog' : ''} >
+          <div className={currentBlog && item.struct && currentBlog.eq(item.struct.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
-              key={item.blog.id.toString()}
+              key={item.struct.id.toString()}
               blogData={item}
               onClick={() => {
                 isMobile && toggle();

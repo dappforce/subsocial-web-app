@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 
-import { AccountId, Bool } from '@polkadot/types';
-
-import { BlogId, PostId, CommentId } from '../types';
-import { Tuple } from '@polkadot/types/codec';
+import { CommentId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api } from '@polkadot/ui-api';
+import BN from 'bn.js';
+import { useSubsocialApi } from './SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('ShareButton')
 
 type PropsShareButtonPost = {
-  postId: PostId
+  postId: BN
 };
 
 export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
   const { state: { address: myAddress } } = useMyAccount();
+  const { substrate } = useSubsocialApi();
 
-  const dataForQuery = new Tuple([ AccountId, BlogId ], [ new AccountId(myAddress), postId ]);
+  if (!myAddress) return null;
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
@@ -25,10 +27,10 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
     let isSubscribe = true;
 
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`postSharedByAccount`](dataForQuery)) as Bool;
-      isSubscribe && setIsFollow(_isFollow.valueOf());
+      const _isFollow = await substrate.isPostSharedByAccount(myAddress, postId)
+      isSubscribe && setIsFollow(_isFollow);
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error(`Failed to check if the current account shared a post with id ${postId.toString()}. Error:`, err));
 
     return () => { isSubscribe = false; };
   }, [ postId ]);
@@ -39,7 +41,6 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
 
   return <TxButton
     type='submit'
-    compact
     isBasic={true}
     isPrimary={false}
     label={isFollow
@@ -47,9 +48,9 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
       : 'Share post'}
     params={buildTxParams()}
     tx={isFollow
-      ? `blogs.unsharePost`
-      : `blogs.sharePost`}
-    txSuccessCb={() => setTriggerReload(!triggerReload) }
+      ? `social.unsharePost`
+      : `social.sharePost`}
+    onSuccess={() => setTriggerReload(!triggerReload) }
   />;
 }
 
@@ -60,18 +61,20 @@ type PropsShareButtonComment = {
 export function ShareButtonComment (props: PropsShareButtonComment) {
   const { commentId } = props;
   const { state: { address: myAddress } } = useMyAccount();
+  const { substrate } = useSubsocialApi();
 
-  const dataForQuery = new Tuple([ AccountId, BlogId ], [ new AccountId(myAddress), commentId ]);
+  if (!myAddress) return;
 
   const [ isFollow, setIsFollow ] = useState(false);
   const [ triggerReload, setTriggerReload ] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      const _isFollow = await (api.query.blogs[`commentSharedByAccount`](dataForQuery)) as Bool;
-      setIsFollow(_isFollow.valueOf());
+      const _isFollow = await substrate.isCommentSharedByAccount(myAddress, commentId)
+      setIsFollow(_isFollow);
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error(`Failed to check if the current account shared a comment with id ${commentId.toString()}. Error:`
+, err));
   }, [ commentId ]);
 
   const buildTxParams = () => {
@@ -80,7 +83,6 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
 
   return <TxButton
     type='submit'
-    compact
     size='tiny'
     isBasic={true}
     isPrimary={false}
@@ -89,8 +91,8 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
       : 'Share post'}
     params={buildTxParams()}
     tx={isFollow
-      ? `blogs.unshareComment`
-      : `blogs.shareComment`}
-    txSuccessCb={() => setTriggerReload(!triggerReload) }
+      ? `social.unshareComment`
+      : `social.shareComment`}
+    onSuccess={() => setTriggerReload(!triggerReload) }
   />;
 }

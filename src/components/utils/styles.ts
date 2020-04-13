@@ -14,6 +14,5 @@ import './styles/rx.css';
 import './styles/components.css';
 import './styles/subsocial.css';
 import './styles/subsocial-mobile.css';
-import '../ui-signer/index.css';
 
 import 'easymde/dist/easymde.min.css';

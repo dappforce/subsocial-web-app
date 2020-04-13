@@ -5,15 +5,15 @@ import Router, { useRouter } from 'next/router';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { Loading, getEnv } from '../components/utils/utils';
-import { getApi } from '../components/utils/SubstrateApi';
-import { loadBlogData, BlogData } from '../components/blogs/ViewBlog';
-import { BlogId } from '../components/types';
+import { Loading } from '../components/utils/utils';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
+import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
+import { BlogData } from '@subsocial/types/dto';
+import { newLogger } from '@subsocial/utils';
 import { useNotifCounter } from '../components/utils/NotifCounter';
 
-const appsUrl = getEnv('APPS_URL') || 'http://127.0.0.1:3002';
+const log = newLogger('SideMenu')
 
 interface MenuItem {
   name: string;
@@ -22,11 +22,12 @@ interface MenuItem {
 }
 
 const InnerMenu = () => {
-  const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
+  const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
+  const { subsocial, substrate } = useSubsocialApi();
   const { unreadCount } = useNotifCounter()
   const isLoggedIn = checkIfLoggedIn();
-  const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
+  const [ followedBlogsData, setFollowedBlogsData ] = useState<BlogData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
   const router = useRouter();
   const { pathname } = router;
@@ -38,22 +39,22 @@ const InnerMenu = () => {
 
     const loadBlogsData = async () => {
       setLoaded(false);
-      const api = await getApi();
-      const ids = await api.query.blogs.blogsFollowedByAccount(myAddress) as unknown as BlogId[];
-      const loadBlogs = ids.map(id => loadBlogData(api, id));
-      const blogsData = await Promise.all<BlogData>(loadBlogs);
-      isSubscribe && setFollowedBlogsData(blogsData);
-      isSubscribe && setLoaded(true);
+      const ids = await substrate.blogIdsFollowedByAccount(myAddress)
+      const blogsData = await subsocial.findBlogs(ids);
+      if (isSubscribe) {
+        setFollowedBlogsData(blogsData);
+        setLoaded(true);
+      }
     };
 
-    loadBlogsData().catch(console.log);
+    loadBlogsData().catch(err => log.error('Failed to load blogs data:', err));
 
     return () => { isSubscribe = false; };
-  }, [ trigerFollowed, myAddress ]);
+  }, [ triggerFollowed, myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();
-    Router.push(page[0], page[1]).catch(console.log);
+    Router.push(page[0], page[1]).catch(err => log.error('Failed to navigate to selected blog:', err));
   };
 
   const DefaultMenu: MenuItem[] = [
@@ -124,7 +125,7 @@ const InnerMenu = () => {
         </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
-        <a href={appsUrl}>
+        <a href='/bc'>
           <Icon type='exception' />
           <span>Advanced</span>
         </a>

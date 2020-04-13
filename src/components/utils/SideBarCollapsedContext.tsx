@@ -1,19 +1,21 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react'
 import store from 'store'
 import { isMobile } from 'react-device-detect'
+import { newLogger } from '@subsocial/utils';
+const log = newLogger('Sidebar collapsed context')
 
 export const SIDEBAR_COLLAPSED = 'df.colapsed'
 
 type SidebarCollapsedState = {
   inited: boolean
   collapsed?: boolean
-  trigerFollowed?: boolean
+  triggerFollowed?: boolean
 }
 
 type SidebarCollapsedAction = {
   type: 'reload' | 'set' | 'forget' | 'forgetExact'
   collapsed?: boolean
-  trigerFollowed?: boolean
+  triggerFollowed?: boolean
 }
 
 function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction): SidebarCollapsedState {
@@ -22,16 +24,16 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
   switch (action.type) {
     case 'reload':
       collapsed = isMobile
-      console.log('Reload collapsed:', collapsed)
-      return { ...state, collapsed, trigerFollowed: !state.trigerFollowed, inited: true }
+      log.debug('Reload collapsed:', collapsed)
+      return { ...state, collapsed, triggerFollowed: !state.triggerFollowed, inited: true }
 
     case 'set':
       collapsed = action.collapsed
-      const trigerFollowed = action.trigerFollowed ? action.trigerFollowed : state.trigerFollowed
+      const triggerFollowed = action.triggerFollowed ? action.triggerFollowed : state.triggerFollowed
       if (collapsed !== state.collapsed) {
-        console.log('Set new collapsed:', collapsed)
+        log.debug('Set new collapsed:', collapsed)
         store.set(SIDEBAR_COLLAPSED, collapsed)
-        return { ...state, collapsed, trigerFollowed: trigerFollowed, inited: true }
+        return { ...state, collapsed, triggerFollowed: triggerFollowed, inited: true }
       }
       return state
 
@@ -47,7 +49,7 @@ function functionStub () {
 const initialState = {
   inited: false,
   collapsed: undefined,
-  trigerFollowed: false
+  triggerFollowed: false
 }
 
 export type SidebarCollapsedContextProps = {

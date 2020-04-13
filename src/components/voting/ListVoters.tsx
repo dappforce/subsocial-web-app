@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
-import { Option } from '@polkadot/types';
-import { ReactionId, Reaction, CommentId, PostId } from '../types';
-import { api } from '@polkadot/ui-api/Api';
+import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
 import dynamic from 'next/dynamic';
-import { partition } from 'lodash';
+import partition from 'lodash.partition';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('List voters')
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
+
 
 type VotersProps = {
   id: CommentId | PostId,
@@ -33,6 +36,7 @@ function isUpvote (reaction: Reaction): boolean {
 const InnerModalVoters = (props: VotersProps) => {
   const { reactions, open, close, active = ActiveVoters.All } = props;
   const votersCount = reactions ? reactions.length : 0;
+  const { substrate } = useSubsocialApi()
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
   const [ trigger, setTrigger ] = useState(false);
   const [ upvoters, downvoters ] = partition(reactionView, (x) => isUpvote(x))
@@ -49,12 +53,10 @@ const InnerModalVoters = (props: VotersProps) => {
     const loadVoters = async () => {
       if (!reactions) return toggleTrigger();
 
-      const apiCalls: Promise<Option<Reaction>>[] = reactions.map(async reactionId =>
-        await api.query.blogs.reactionById(reactionId) as Option<Reaction>);
-      const loadedReaction = (await Promise.all<Option<Reaction>>(apiCalls)).map(x => x.unwrap() as Reaction);
+      const loadedReaction = await substrate.findReactions(reactions)
       isSubscribe && setReactionView(loadedReaction);
     };
-    loadVoters().catch(err => console.log(err));
+    loadVoters().catch(err => log.error('Failed to load voters:', err));
 
     return () => { isSubscribe = false; };
   }, [ trigger ]);
@@ -63,7 +65,7 @@ const InnerModalVoters = (props: VotersProps) => {
 
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
-      return <div key={reaction.id.toNumber()} style={{ textAlign: 'left', margin: '1rem' }}>
+      return <div key={reaction.id.toNumber()} className="ReactionsItem" >
         <AddressComponents
           value={reaction.created.account}
           isPadded={false}

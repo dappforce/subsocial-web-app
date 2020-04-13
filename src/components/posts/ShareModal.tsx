@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/ui-api/with';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import { queryBlogsToProp } from '../utils/index';
-import { Modal, Dropdown, Button } from 'semantic-ui-react';
+import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { PostId, PostExtension, SharedPost, BlogId } from '../types';
 import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
-import { ViewBlog } from '../blogs/ViewBlog';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
+import { LabeledValue } from 'antd/lib/select';
+import SelectBlogPreview from '../utils/SelectBlogPreview';
+import BN from 'bn.js';
+import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
 
 type Props = MyAccountProps & {
-  postId: PostId,
+  postId: BN,
   open: boolean,
   close: () => void,
-  blogIds?: BlogId[]
+  blogIds?: BN[]
 };
 
 const InnerShareModal = (props: Props) => {
@@ -24,7 +26,7 @@ const InnerShareModal = (props: Props) => {
   if (!blogIds) return <Loading />;
 
   const [ blogId, setBlogId ] = useState(blogIds[0]);
-  const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
+  const extension = new PostExtension({ SharedPost: postId as SharedPost });
 
   const renderShareView = () => {
     if (blogIds.length === 0) {
@@ -33,25 +35,15 @@ const InnerShareModal = (props: Props) => {
       );
     }
 
-    const blogs = blogIds.map(id => ({
-      key: id.toNumber(),
-      text: <div><ViewBlog id={id} dropdownPreview imageSize={26}/></div>,
-      value: id.toNumber()
-    }));
-
-    const saveBlog = (event: any, data: any) => {
-      setBlogId(data);
+    const saveBlog = (value: string | number | LabeledValue) => {
+      setBlogId(new BN(value as string));
     };
     return (<div className='DfShareModal'>
-      <Dropdown
-        placeholder='Select blog...'
-        selection
-        search
-        size='tiny'
-        options={blogs}
-        onChange={saveBlog}
-        defaultValue={blogs[0].value}
-      />
+      <SelectBlogPreview
+        blogIds={blogIds}
+        onSelect={saveBlog}
+        imageSize={24}
+        defaultValue={blogIds[0].toString()} />
       <NewSharePost
         blogId={blogId}
         extention={extension}

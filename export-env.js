@@ -9,7 +9,8 @@ const varsToExport = [
   'OFFCHAIN_URL',
   'OFFCHAIN_WS',
   'APPS_URL',
-  'IPFS_URL'
+  'IPFS_URL',
+  'LOG_LEVEL'
 ]
 
 function getSerializedVal(varName) {
@@ -21,7 +22,11 @@ const vals = varsToExport
   .map(varName => `${varName}: ${getSerializedVal(varName)}`)
   .join(',\n  ')
 
-writeFileSync(`${__dirname}/public/env.js`,
+const jsFile = `${__dirname}/public/env.js`
+
+console.log(`Export .env to ${jsFile}`)
+
+writeFileSync(jsFile,
   `// WARN: This is a generated file. Do not modify!
 
 if (!window.process) window.process = {};

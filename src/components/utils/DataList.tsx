@@ -1,29 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { List, Empty } from 'antd';
+import React, { useEffect, useState } from 'react';
 import Router, { useRouter } from 'next/router';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
+import { List } from 'antd';
+import { PaginationConfig } from 'antd/lib/pagination';
 import Section from './Section';
-import { DEFAULT_CURENT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, MAX_PAGE_SIZE } from '../../config/ListData.config';
-import { MutedSpan } from './MutedText';
-import LogInButton from './LogIn';
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
+import NoData from './EmptyList';
+// import { newLogger } from '@subsocial/utils';
+// TODO use logger
+// const log = newLogger('Data list')
 
-type Props = {
+type Props<T extends any> = {
   className?: string,
-  dataSource: any[],
-  renderItem: (item: any, index: number) => JSX.Element,
+  dataSource: T[], // TODO add generic type
+  renderItem: (item: T, index: number) => JSX.Element,
   title?: React.ReactNode,
   noDataDesc?: React.ReactNode | string,
   noDataExt?: React.ReactNode
-};
+}
 
-export default (props: Props) => {
+// TODO rename to DataList
+export function ListData<T extends any> (props: Props<T>) {
   const { dataSource, renderItem, className, title, noDataDesc = 'no data', noDataExt } = props;
   const total = dataSource.length;
 
   const router = useRouter();
   const routerQuery = router.query;
 
-  const [ currentPage, setCurrentPage ] = useState(DEFAULT_CURENT_PAGE);
+  const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
@@ -31,98 +35,75 @@ export default (props: Props) => {
 
     if (isEmpty(routerQuery) && isSubscribe) {
       setPageSize(DEFAULT_PAGE_SIZE);
-      setCurrentPage(DEFAULT_CURENT_PAGE);
+      setCurrentPage(DEFAULT_FIRST_PAGE);
     } else {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);
 
-      isSubscribe && setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
-      isSubscribe && setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
+      if (isSubscribe) {
+        setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
+        setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
+      }
     }
 
     return () => { isSubscribe = false; };
   }, [ false ]);
 
-  const itemsSelect = PAGE_SIZE_OPTIONS.map(x => x.toString());
-  const isEmptyData = dataSource.length === 0;
-  const hidePaggination = isEmptyData || dataSource.length <= pageSize;
+  const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
+  const hasNoData = total === 0;
+  const noPagination = hasNoData || total <= pageSize;
 
-  const RenderList = () => (
-    <List
+  const paginationConfig = (): PaginationConfig | undefined => {
+    if (noPagination) return undefined
+
+    return {
+      current: currentPage,
+      defaultCurrent: DEFAULT_FIRST_PAGE,
+      onChange: page => {
+        setCurrentPage(page);
+        routerQuery.page = page.toString();
+
+        Router.push({
+          pathname: router.pathname,
+          query: routerQuery
+        }).catch(console.log);
+      },
+      pageSize,
+      pageSizeOptions,
+      showSizeChanger: total > 0,
+      onShowSizeChange: (_, size: number) => {
+        setPageSize(size);
+        routerQuery.size = size.toString();
+
+        Router.push({
+          pathname: router.pathname,
+          query: routerQuery
+        }).catch(console.log);
+      }
+    }
+  }
+
+  const list = hasNoData
+    ? <NoData description={noDataDesc}>{noDataExt}</NoData>
+    : <List
       className={'DfDataList ' + className}
       itemLayout='vertical'
       size='large'
-      pagination={!hidePaggination && {
-        current: currentPage,
-        defaultCurrent: DEFAULT_CURENT_PAGE,
-        onChange: page => {
-          setCurrentPage(page);
-          routerQuery.page = page.toString();
-
-          Router.push({
-            pathname: router.pathname,
-            query: routerQuery
-          }).catch(console.log);
-        },
-        pageSize: pageSize,
-        showSizeChanger: total > 0,
-        onShowSizeChange: (_, size: number) => {
-          setPageSize(size);
-          routerQuery.size = size.toString();
-
-          Router.push({
-            pathname: router.pathname,
-            query: routerQuery
-          }).catch(console.log);
-        },
-        pageSizeOptions: itemsSelect
-      }}
+      pagination={paginationConfig()}
       dataSource={dataSource}
-      renderItem={(item, index) => (
-        <List.Item
-          key={index}
-        >
+      renderItem={(item, index) =>
+        <List.Item key={index}>
           {renderItem(item, index)}
         </List.Item>
-      )}
+      }
     />
-  );
 
-  const SectionOfList = (props: any): JSX.Element => (
-    title
-      ? <Section title={<div className='DfTitle--List'>{title}</div>}>{props.children}</Section>
-      : props.children
-  );
+  const renderTitle = () =>
+    <div className='DfTitle--List'>{title}</div>
 
-  return <SectionOfList>
-    {isEmptyData ? <NoData description={noDataDesc}>{noDataExt}</NoData> : <RenderList/>}
-  </SectionOfList>;
-};
+  return !title
+    ? list
+    : <Section title={renderTitle()}>{list}</Section>
+}
 
-type EmptyProps = {
-  image?: string
-  description?: React.ReactNode | string,
-  children?: React.ReactNode
-};
-
-export const NoData = (props: EmptyProps) => (
-  <Empty
-    className='DfEmpty'
-    image={props.image}
-    description={
-      <MutedSpan>
-        {props.description}
-      </MutedSpan>
-    }
-  >
-    {props.children}
-  </Empty>
-);
-
-export const NotAuthorized = () => {
-  return <NoData
-    description='Only logged in users can access this page'
-  >
-    <LogInButton/>
-  </NoData>;
-};
+export default ListData
