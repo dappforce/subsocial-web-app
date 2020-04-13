@@ -32,6 +32,7 @@ import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
+import ViewTags from '../utils/ViewTags';
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -94,7 +95,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const { state: { address } } = useMyAccount();
   const [ content, setContent ] = useState(initialContent);
-  const { desc, name, image } = content;
+  const { desc, name, image, tags } = content;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
 
@@ -113,16 +114,6 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
-
-  const renderTags = (content: BlogContent) => {
-    if (!content) return null;
-
-    const { tags } = content;
-
-    return <div className='DfTags'>
-      { tags.map((x) => <Tag key={x}>{x}</Tag>) }
-    </div>
-  }
 
   const renderDropDownMenu = () => {
     const showDropdown = isMyBlog || edit_history.length > 0;
@@ -197,7 +188,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           <div className='description'>
             <DfMd source={desc} />
           </div>
-          {renderTags(content)}
+          <ViewTags tags={tags} />
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}
         </div>

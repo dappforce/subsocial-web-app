@@ -20,7 +20,7 @@ import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import { isEmpty } from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { Icon, Menu, Dropdown, Tag } from 'antd';
+import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import { ApiPromise } from '@polkadot/api';
@@ -28,6 +28,8 @@ import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
 import { PostContent } from '@subsocial/types/offchain';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import ViewTags from '../utils/ViewTags';
+
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -129,9 +131,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const RenderDropDownMenu = (props: DropdownProps) => {
     const { state: { address } } = useMyAccount();
-
     const isMyStruct = address === props.account;
-
     const showDropdown = isMyStruct || edit_history.length > 0;
 
     const menu = (
@@ -212,16 +212,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </div>;
   };
 
-  const renderTags = (content: PostExtContent | undefined) => {
-    if (!content) return null;
-
-    const { tags } = content;
-
-    return <div className='DfTags'>
-      { tags.map((x) => <Tag key={x}>{x}</Tag>) }
-    </div>
-  }
-
   const RenderActionsPanel = () => {
     const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
@@ -256,7 +246,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {renderContent(post, content)}
         </div>
-        {renderTags(content)}
+        <ViewTags tags={content?.tags} />
         {withStats && <StatsPanel id={post.id}/>}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
@@ -274,7 +264,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <RenderDropDownMenu account={created.account}/>
         </div>
         <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
-        {/* TODO add body */}
         <Segment className='DfPostPreview'>
           <div className='DfInfo'>
             <div className='DfRow'>
@@ -285,7 +274,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
-        {renderTags(content)}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
@@ -311,7 +299,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         {withCreatedBy && renderPostCreator(post)}
         {renderBlogPreview(post)}
       </div>
-      {renderTags(content)}
+      <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
