@@ -1,4 +1,4 @@
 import dynamic from 'next/dynamic';
-const Feeds = dynamic(() => import('../components/activity/ListFeeds'), { ssr: false });
+const MyFeed = dynamic(() => import('../components/activity/MyFeed'), { ssr: false });
 
-export default Feeds;
+export default MyFeed;

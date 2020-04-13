@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
-
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
@@ -18,7 +16,9 @@ import BN from 'bn.js';
 
 import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
-import { NoData } from '../utils/DataList';
+import NoData from '../utils/EmptyList';
+import { ValidationProps, buildValidationSchema } from './CommentValidation';
+
 import { Comment, IpfsHash } from '@subsocial/types/substrate/interfaces/subsocial'
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
@@ -30,19 +30,6 @@ const log = newLogger('Edit comment')
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 import { newLogger } from '@subsocial/utils';
-
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-
-  body: Yup.string()
-    // .min(p.minTextLen, `Your comment is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.commentMaxLen, `Your comment is too long. Maximum length is ${p.commentMaxLen} chars.`)
-    .required('Comment body is required')
-});
-
-type ValidationProps = {
-  commentMaxLen: number
-  // maxTextLen: number
-};
 
 type OuterProps = ValidationProps & {
   postId: BN,
@@ -93,8 +80,16 @@ const InnerForm = (props: FormProps) => {
     if (isValid) {
       const json = { body };
       const cid = await ipfs.saveComment(json);
-      setIpfsCid(cid);
-      sendTx();
+      if (cid) {
+        setIpfsCid(cid);
+        sendTx();
+      }
+      // window.onunload = async (e) => {
+      //   e.preventDefault();
+      //   await removeFromIpfs(cid).catch(err => console.log(err));
+      //   return false;
+      // };// Attention!!! Old code!
+      // TODO unpin, when close tab
     }
   };
 
@@ -202,9 +197,7 @@ const EditForm = withFormik<OuterProps, FormValues>({
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({
-    commentMaxLen: props.commentMaxLen?.toNumber()
-  }),
+  validationSchema: buildValidationSchema,
 
   handleSubmit: values => {
     // do submitting things
@@ -254,7 +247,7 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json as CommentContent} />;
 }
 
-const commonQueries = [
+const commonSubstrateQueries = [
   queryBlogsToProp('commentMaxLen', { propName: 'commentMaxLen' })
 ]
 
@@ -262,13 +255,13 @@ export const EditComment = withMulti<LoadStructProps>(
   LoadStruct,
   withCalls<OuterProps>(
     queryBlogsToProp('commentById', { paramName: 'id', propName: 'structOpt' }),
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );
 
 export const NewComment = withMulti<OuterProps>(
   EditForm,
   withCalls<OuterProps>(
-    ...commonQueries
+    ...commonSubstrateQueries
   )
 );

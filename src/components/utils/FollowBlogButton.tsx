@@ -16,7 +16,7 @@ type FollowBlogButtonProps = {
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
-  const { blogId, size = isMobile ? 'tiny' : 'small' } = props;
+  const { blogId, size } = props;
   const { state: { address: myAddress } } = useMyAccount();
   const { reloadFollowed } = useSidebarCollapsed();
 

@@ -1,6 +1,4 @@
 import React from 'react';
-
-import { Blog } from '@subsocial/types/substrate/interfaces/subsocial';
 import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -38,7 +36,7 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   );
 };
 
-ListFollowingBlogsPage.getInitialProps = async (props): Promise<any> => {
+ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProps> => {
   const { query: { address } } = props;
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
@@ -62,12 +60,12 @@ export const RenderFollowedList = (props: Props) => {
   const { toggle } = useSidebarCollapsed();
 
   return <>{totalCount > 0
-    ? followedBlogsData.map((item, index) =>
-      <Link key={index} href='/blogs/[blogId]' as={`/blogs/${(item.struct as Blog).id}`}>
+    ? followedBlogsData.map((item) => !item.struct ? null :
+      <Link key={item.struct.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.struct.id}`}>
         <a className='DfMenuItem'>
           <div className={currentBlog && item.struct && currentBlog.eq(item.struct.id) ? 'DfSelectedBlog' : ''} >
             <ViewBlogPage
-              key={index}
+              key={item.struct.id.toString()}
               blogData={item}
               onClick={() => {
                 isMobile && toggle();

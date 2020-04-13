@@ -162,9 +162,11 @@ function AddressComponents (props: Props) {
   const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
   const isMyProfile: boolean = address === myAddress;
 
-  const RenderFollowButton = () => (!isMyProfile)
-    ? <div className='AddressComponents follow'><FollowAccountButton address={address} /></div>
-    : null;
+  const RenderFollowButton = () => (
+    !isMyProfile
+      ? <div className='AddressComponents follow'><FollowAccountButton address={address} /></div>
+      : null
+  )
 
   const AuthorPreview = () => {
     return <div

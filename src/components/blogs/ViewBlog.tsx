@@ -17,7 +17,8 @@ import { BlogFollowersModal } from '../profiles/AccountsListModal';
 import { Segment } from 'semantic-ui-react';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
-import ListData, { NoData } from '../utils/DataList';
+import NoData from '../utils/EmptyList';
+import ListData from '../utils/DataList';
 import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
@@ -27,6 +28,8 @@ import { NextPage } from 'next';
 import { useMyAccount } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
+import SpaceNav from './SpaceNav'
+import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
 import { BlogData } from '@subsocial/types/dto'
@@ -113,6 +116,16 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const hasImage = image && nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
+  const renderTags = (content: BlogContent) => {
+    if (!content) return null;
+
+    const { tags } = content;
+
+    return <div className='DfTags'>
+      { tags.map((x) => <Tag key={x}>{x}</Tag>) }
+    </div>
+  }
+
   const renderDropDownMenu = () => {
     const showDropdown = isMyBlog || edit_history.length > 0;
 
@@ -156,14 +169,17 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   const renderMiniPreview = () => (
-    <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
-      {hasImage
-        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
-        : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
-      }
-      <div className='content'>
-        <div className='handle'>{name}</div>
+    <div className={'viewblog-minipreview'}>
+      <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+        {hasImage
+          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+          : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
+        }
+        <div className='content'>
+          <div className='handle'>{name}</div>
+        </div>
       </div>
+      {withFollowButton && <FollowBlogButton blogId={id} />}
     </div>
   );
 
@@ -183,6 +199,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           <div className='description'>
             <DfMd source={desc} />
           </div>
+          {renderTags(content)}
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}
         </div>
@@ -267,35 +284,43 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </MutedDiv>
   );
 
-  return <Section className='DfContentPage'>
-    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-    <div className='FullProfile'>
-      {renderPreview()}
-    </div>
-    <div className='DfSpacedButtons'>
-      <FollowBlogButton blogId={id} />
-      <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
-        <Pluralize count={followers} singularText='Follower'/>
+  return <div className='ViewBlogWrapper'>
+    <Section className='DfContentPage'>
+      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
+      <div className='FullProfile'>
+        {renderPreview()}
       </div>
-    </div>
+      <div className='DfSpacedButtons'>
+        <FollowBlogButton blogId={id} />
+        <div onClick={() => setFollowersOpen(true)} className={'DfStatItem DfGreyLink ' + (!followers && 'disable')}>
+          <Pluralize count={followers} singularText='Follower' />
+        </div>
+      </div>
 
-    {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower'/>} />}
-    {renderPostPreviews()}
-  </Section>;
+      {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
+      {renderPostPreviews()}
+    </Section>
+    <SpaceNav
+      {...content}
+      blogId={new BN(id)}
+      creator={account}
+    />
+  </div>
 };
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const { req, res, query: { blogId } } = props
+  const { res, query: { blogId } } = props
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const idOrHandle = blogId as string
-  const id = await getBlogId(substrate, idOrHandle)
-  if (!id && res && req) {
+  const id = await getBlogId(substrate, idOrHandle) // TODO refactor 
+  if (!id && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
+
   const blogData = id && await subsocial.findBlog(id)
-  if (!blogData?.struct && res && req) {
+  if (!blogData?.struct && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
+import EditableTagGroup from '../utils/EditableTagGroup'
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
@@ -20,38 +20,24 @@ import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
-import { PostExtension, RegularPost, PostUpdate } from '@subsocial/types/substrate/classes';
-import { Post, IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
+import { Post, IpfsHash, BlogId } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import U32 from '@polkadot/types/primitive/U32';
 import { newLogger } from '@subsocial/utils'
 
 const log = newLogger('Edit post')
 
+import { ValidationProps, buildValidationSchema } from './PostValidation';
+import { LabeledValue } from 'antd/lib/select';
+import SelectBlogPreview from '../utils/SelectBlogPreview';
+import { Icon } from 'antd';
+import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
 const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
 
-const buildSchema = (p: ValidationProps) => Yup.object().shape({
-  title: Yup.string()
-    // .min(p.minTitleLen, `Title is too short. Minimum length is ${p.minTitleLen} chars.`)
-    // .max(p.maxTitleLen, `Title is too long. Maximum length is ${p.maxTitleLen} chars.`)
-    .required('Post title is required'),
-
-  body: Yup.string()
-    // .min(p.minTextLen, `Your post is too short. Minimum length is ${p.minTextLen} chars.`)
-    .max(p.postMaxLen, `Your post description is too long. Maximum length is ${p.postMaxLen} chars.`)
-    .required('Post body is required'),
-
-  image: Yup.string()
-    .url('Image must be a valid URL.')
-    // .max(URL_MAX_LEN, `Image URL is too long. Maximum length is ${URL_MAX_LEN} chars.`),
-});
-
-type ValidationProps = {
-  postMaxLen: number
-};
-
-type OuterProps = {
+type OuterProps = ValidationProps & {
   blogId?: BN,
   id?: BN,
   extention?: Enum,
@@ -60,8 +46,11 @@ type OuterProps = {
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
-  postMaxLen?: U32
+  myAddress?: string,
+  blogIds?: BlogId[]
 };
+
+const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
 
 type FormValues = PostContent;
 
@@ -87,7 +76,8 @@ const InnerForm = (props: FormProps) => {
     resetForm,
     onlyTxButton = false,
     withButtons = true,
-    closeModal
+    closeModal,
+    blogIds
   } = props;
 
   const isRegularPost = extention.value.isEmpty; // TODO maybe fix after run UI
@@ -106,23 +96,28 @@ const InnerForm = (props: FormProps) => {
     title,
     body,
     image,
-    canonical,
-    tags
+    tags,
+    canonical
   } = values;
 
+  const initialBlogId = struct?.blog_id || blogId
+
   const goToView = (id: BN) => {
-    Router.push(`/blogs/${blogId}/posts/${id}`).catch(err => log.error('Error while route:', err));
+    Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
   };
 
-  const { ipfs } = useSubsocialApi()
+  const [ currentBlogId, setCurrentBlogId ] = useState(initialBlogId)
+  const [ showAdvanced, setShowAdvanced ] = useState(false)
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
-      const json = { title, body, image, canonical, tags };
+      const json = { title, body, image, tags, canonical };
       ipfs.savePost(json).then(hash => {
-        setIpfsCid(hash);
-        sendTx();
+        if (hash) {
+          setIpfsCid(hash);
+          sendTx();
+        }
       }).catch(err => new Error(err));
     }
   };
@@ -139,6 +134,10 @@ const InnerForm = (props: FormProps) => {
     const _id = id || getNewIdFromEvent(_txResult);
     _id && isRegularPost && goToView(_id);
   };
+
+  const handleAdvancedSettings = () => {
+    setShowAdvanced(!showAdvanced)
+  }
 
   const buildTxParams = () => {
     if (isValid || !isRegularPost) {
@@ -179,20 +178,48 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
+  const handleBlogSelect = (value: string | number | LabeledValue) => {
+    if (!value) return;
+
+    setCurrentBlogId(new BN(value as string))
+  };
+
+  const renderBlogsPreviewDropdown = () => {
+    if (!blogIds) return;
+
+    return <SelectBlogPreview
+      blogIds={blogIds}
+      onSelect={handleBlogSelect}
+      imageSize={24}
+      defaultValue={currentBlogId?.toString()} />
+  }
+
   const form =
     <Form className='ui form DfForm EditEntityForm'>
 
       {isRegularPost
         ? <>
+          {renderBlogsPreviewDropdown()}
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
+          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
           <LabelledField name='body' label='Description' {...props}>
             <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
+
+          <div className="EPadvanced">
+            <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
+              {!showAdvanced ? 'Show' : 'Hide'} Advanced Settings
+              <Icon type={showAdvanced ? 'up' : 'down'} />
+            </div>
+            {showAdvanced &&
+              <LabelledText name='canonical' label='Original post URL' placeholder={`Set a URL of original post`} {...props} />
+            }
+          </div>
         </>
         : <>
           <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
@@ -204,15 +231,26 @@ const InnerForm = (props: FormProps) => {
       </LabelledField>}
     </Form>;
 
-  const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : '';
+  const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
+
+  const sectionTitle = currentBlogId && <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
+
+  const editRegularPost = () =>
+    <Section className='EditEntityBox' title={sectionTitle}>
+      {form}
+    </Section>
+
+  const editSharedPost = () =>
+    <div style={{ marginTop: '1rem' }}>{form}</div>
 
   return onlyTxButton
     ? renderTxButton()
     : <>
-      <HeadMeta title={sectionTitle}/>
-      <Section className='EditEntityBox' title={sectionTitle}>
-        {form}
-      </Section>
+      <HeadMeta title={pageTitle}/>
+      {isRegularPost
+        ? editRegularPost()
+        : editSharedPost()
+      }
     </>;
 };
 
@@ -231,17 +269,15 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
         title: '',
         body: '',
         image: '',
-        canonical: '',
-        tags: []
+        tags: [],
+        canonical: ''
       };
     }
   },
 
-  validationSchema: (props: OuterProps) => buildSchema({ // TODO fix this hack
-    postMaxLen: props.postMaxLen?.toNumber() || 10000
-  }),
+  validationSchema: buildValidationSchema,
 
-  handleSubmit: values => {
+  handleSubmit: () => {
     // do submitting things
   }
 })(InnerForm);
@@ -263,11 +299,11 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
 }
 
 function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
+  return function () {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component blogId={new BN(blogId as string)} />;
+      return <Component blogId={new BN(blogId as string)} postMaxLen={1000} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }
@@ -283,11 +319,11 @@ type StructPost = Post | undefined;
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
-    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
+    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because useless
     const { ipfs } = useSubsocialApi()
     const { structOpt } = props;
-    const [ json, setJson ] = useState(undefined as StructJson);
-    const [ struct, setStruct ] = useState(undefined as StructPost);
+    const [ json, setJson ] = useState<StructJson>();
+    const [ struct, setStruct ] = useState<Post>();
     const [ trigger, setTrigger ] = useState(false);
     const jsonIsNone = json === undefined;
 
@@ -319,7 +355,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       return <em>You have no rights to edit this post</em>;
     }
 
-    return <Component {...props} struct={struct} json={json} />;
+    return <Component {...props} struct={struct} json={json} myAddress={myAddress} />;
   };
 }
 
@@ -343,5 +379,8 @@ export const EditPost = withMulti<OuterProps>(
   withCalls<OuterProps>(
     queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
-  LoadStruct
+  LoadStruct,
+  withCalls<OuterProps>(
+    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+  )
 );

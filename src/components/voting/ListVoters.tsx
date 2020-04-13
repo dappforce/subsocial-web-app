@@ -65,7 +65,7 @@ const InnerModalVoters = (props: VotersProps) => {
 
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
-      return <div key={reaction.id.toNumber()} style={{ textAlign: 'left', margin: '1rem' }}>
+      return <div key={reaction.id.toNumber()} className="ReactionsItem" >
         <AddressComponents
           value={reaction.created.account}
           isPadded={false}

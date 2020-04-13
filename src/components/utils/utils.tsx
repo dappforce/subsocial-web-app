@@ -5,7 +5,7 @@ import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
 import { useRouter } from 'next/router';
 import { Icon } from 'antd';
-import { NoData } from './DataList';
+import { NoData } from './EmptyList';
 import moment from 'moment-timezone';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { registry } from '@polkadot/react-api';
@@ -107,7 +107,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
   return function (props: P) {
     const { socialAccountOpt, requireProfile = false } = props;
 
-    if (socialAccountOpt === undefined) return <Loading />;
+    if (!socialAccountOpt) return <Loading />;
     else if (socialAccountOpt.isNone && requireProfile) return <NoData description={<span>You have not created profile yet</span>} />;
     else if (socialAccountOpt.isNone) return <Component {...props} />;
 
@@ -155,7 +155,7 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
 };
-
+// TODO refactor
 export const getBlogId = async (substrate: SubsocialSubstrateApi, idOrHandle: string): Promise<BN | undefined> => {
   if (idOrHandle.startsWith('@')) {
     const handle = idOrHandle.substring(1) // Drop '@'

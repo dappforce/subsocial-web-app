@@ -22,13 +22,16 @@
   "scripts": {
     "check": "yarn lint",
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
-    "test": "echo \"skipping tests\"",
-    "dev": "next -p 3003",
-    "build": "next build",
+    "clean": "polkadot-dev-clean-build",
+    "postinstall": "polkadot-dev-yarn-only",
+    "test": "yarn patch && echo \"skipping tests\"",
+    "dev": "yarn patch && next -p 3003",
+    "build": "yarn patch && next build",
     "export": "next export",
-    "start-built": "next start",
-    "start": "node export-env.js && next start -p 80",
-    "storybook": "start-storybook -p 3002"
+    "export-env": "node export-env.js",
+    "patch": "./patch.sh",
+    "start": "yarn patch && next start -p 3003",
+    "storybook": "yarn patch && start-storybook -s ./public -p 3002"
   },
   "devDependencies": {
     "@appbaseio/reactivesearch": "^3.0.3",
@@ -38,6 +41,7 @@
     "@storybook/addon-storysource": "^5.2.5",
     "@storybook/react": "^5.2.5",
     "@types/faker": "^4.1.7",
+    "@subsocial/config": "0.1.2",
     "@types/jest": "^24.0.16",
     "@types/lodash.isempty": "^4.4.6",
     "@types/lodash.partition": "^4.6.6",
@@ -118,5 +122,7 @@
     "url-loader": "^3.0.0",
     "winston": "^3.2.1",
     "yarn": "^1.22.4"
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
+    "url-loader": "^3.0.0"
   }
 }

@@ -8,17 +8,17 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { nonEmptyStr, newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 // import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
-import { NoData } from '../utils/DataList';
+import NoData from '../utils/EmptyList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
-import { Icon, Menu, Dropdown } from 'antd';
+import { Icon, Menu, Dropdown, Tag } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
@@ -140,7 +140,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>);
   };
 
-  const renderNameOnly = (title: string, id: PostId) => {
+  const renderNameOnly = (title: string | undefined, id: PostId) => {
     if (!title || !id) return null;
     return withLink
       ? <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
@@ -156,6 +156,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { blog_id, created: { account, time } } = post;
     return <>
       <AddressComponents
+        withFollowButton={true}
         value={account}
         isShort={true}
         isPadded={false}
@@ -172,7 +173,15 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderContent = (post: Post, content: PostExtContent) => {
+  const renderBlogPreview = (post: Post) => {
+    if (isEmpty(post)) return null
+
+    const { blog_id } = post
+
+    return <ViewBlog id={blog_id} miniPreview withFollowButton />
+  }
+
+  const renderContent = (post: Post, content: PostExtContent | undefined) => {
     if (!post || !content) return null;
 
     const { title, summary, image } = content;
@@ -188,6 +197,16 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
+
+  const renderTags = (content: PostExtContent | undefined) => {
+    if (!content) return null;
+
+    const { tags } = content;
+
+    return <div className='DfTags'>
+      { tags.map((x) => <Tag key={x}>{x}</Tag>) }
+    </div>
+  }
 
   const RenderActionsPanel = () => {
     const [ open, setOpen ] = useState(false);
@@ -223,6 +242,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {renderContent(post, content)}
         </div>
+        {renderTags(content)}
         {withStats && <StatsPanel id={post.id}/>}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
@@ -239,7 +259,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {renderPostCreator(post)}
           <RenderDropDownMenu account={created.account}/>
         </div>
-        <div className='DfSharedSummary'>{renderNameOnly(content.summary, id)}</div>
+        <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
         {/* TODO add body */}
         <Segment className='DfPostPreview'>
           <div className='DfInfo'>
@@ -251,6 +271,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
+        {renderTags(content)}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
@@ -258,10 +279,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderDetails = (content: PostExtContent) => {
-    const { title, body, image } = content;
+  const renderDetails = (content?: PostExtContent) => {
+    if (!content) return null;
+    const { title, body, image, canonical, tags } = content;
     return <Section className='DfContentPage'>
-      <HeadMeta title={title} desc={body} image={image} />
+      <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -272,7 +294,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
         {/* TODO render tags */}
+        {withCreatedBy && renderPostCreator(post)}
+        {renderBlogPreview(post)}
       </div>
+      {renderTags(content)}
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
@@ -281,7 +306,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   switch (variant) {
     case 'name only': {
-      return renderNameOnly(content.title, id);
+      return renderNameOnly(content?.title, id);
     }
     case 'preview': {
       switch (type) {
@@ -298,29 +323,41 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       return renderDetails(content);
     }
     default: {
-      return <div>You should not be here!!!</div>;
+      return <div>You should not be here!</div>;
     }
   }
-  return <div>You should not be here!!!</div>;
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { postId }, req, res } = props;
+  const { query: { blogId, postId }, res } = props;
   const subsocial = await getSubsocialApi()
-  const postData = await subsocial.findPost(new BN(postId as string));
-  let statusCode = 200
-  if (!postData?.struct && req) {
-    // "getInitialProps - res.redirect cause server"
-    statusCode = 404
-    if (res) res.statusCode = 404
-    return { statusCode }
-  } else {
-    const postExtData = postData && postData.struct && await subsocial.findPost(postData.struct.id)
-    return {
-      postData,
-      postExtData
-    };
+  const { substrate } = subsocial
+  const idOrHandle = blogId as string
+  const blogIdFromUrl = await getBlogId(substrate, idOrHandle) // TODO refactor
+  const postData = await subsocial.findPost(new BN(postId as string))
+
+  // Post was not found:
+  if (!postData?.struct && res) {
+    res.statusCode = 404
+    return { statusCode: 404 }
   }
+
+  const blogIdFromPost = postData?.struct?.blog_id
+
+  // If blog id of this post is not equal to blog id/handle from URL,
+  // then redirect to the URL with blog id of this post.
+  if (blogIdFromPost && !blogIdFromPost.eq(blogIdFromUrl) && res) {
+    res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
+    res.end()
+  }
+
+  const sharedPostId = postData?.struct?.extension.asSharedPost
+  const postExtData = sharedPostId && await subsocial.findPost(sharedPostId)
+
+  return {
+    postData,
+    postExtData
+  };
 };
 
 export default ViewPostPage;

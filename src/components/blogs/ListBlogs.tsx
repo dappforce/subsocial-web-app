@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { I18nProps } from '@polkadot/react-components/types';
-
-import { ViewBlogPage } from './ViewBlog';
+import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
+import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
@@ -11,7 +10,7 @@ import BN from 'bn.js';
 import { BlogData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 
-type Props = I18nProps & {
+type Props = {
   totalCount: number;
   blogsData: BlogData[];
 };
@@ -26,7 +25,7 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
         dataSource={blogsData}
         renderItem={(item, index) =>
           <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
-        noDataDesc='Blogs not created yet'
+        noDataDesc='There are no blogs yet'
         noDataExt={<Button href='/blogs/new'>Create blog</Button>}
       />
     </div>
@@ -34,13 +33,14 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
 };
 
 ListBlog.getInitialProps = async (props): Promise<any> => {
-  const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const nextBlogId = await substrate.nextBlogId()
+  const subsocial = await getSubsocialApi()
 
   const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
+
   if (totalCount > 0) {
     const firstId = firstBlogId.toNumber();
     const lastId = nextBlogId.toNumber();
@@ -79,7 +79,7 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
   );
 };
 
-ListMyBlogs.getInitialProps = async (props): Promise<any> => {
+ListMyBlogs.getInitialProps = async (props): Promise<MyBlogProps> => {
   const { query: { address } } = props;
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;

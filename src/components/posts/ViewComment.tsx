@@ -40,8 +40,8 @@ type Props = ApiProps & {
 };
 
 const renderLevelOfComments = (parentComments: Comment[], childrenComments: Comment[]) => {
-  return parentComments.map((comment, i) =>
-    <ViewComment key={i} comment={comment} commentsWithParentId={childrenComments} />);
+  return parentComments.map((comment) =>
+    <ViewComment key={comment.id.toString()} comment={comment} commentsWithParentId={childrenComments} />);
 };
 
 export function CommentsTree (props: Props) {
@@ -160,7 +160,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   useEffect(() => {
     let isSubscribe = true;
 
-    ipfs.findComment(struct.ipfs_hash).then(json => {
+    ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
       isSubscribe && json && setContent(json);
     }).catch(err => log.error('Failed to find comment from IPFS:', err));
 
@@ -177,7 +177,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         const post = await substrate.findPost(post_id);
         isSubscribe && post && setPost(post);
       }
-      const content = await ipfs.findPost(post.ipfs_hash);
+      const content = await ipfs.findPost(post.ipfs_hash.toString());
       if (isSubscribe && content) {
         setPostContent(content);
       }
@@ -298,11 +298,11 @@ ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const commentData = await subsocial.findComment(new BN(commentId as string));
   const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
   return {
-    comment: commentData?.struct || {} as Comment,
     post: postData?.struct,
     postContent: postData?.content,
-    commentsWithParentId: [] as Comment[],
+    comment: commentData?.struct || {} as Comment,
     commentContent: commentData?.content,
+    commentsWithParentId: [] as Comment[],
     isPage: true
   };
 };

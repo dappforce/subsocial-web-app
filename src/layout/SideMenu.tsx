@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
@@ -11,6 +11,7 @@ import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
 import { newLogger } from '@subsocial/utils';
+import { useNotifCounter } from '../components/utils/NotifCounter';
 
 const log = newLogger('SideMenu')
 
@@ -26,8 +27,9 @@ const InnerMenu = () => {
   const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
   const { subsocial, substrate } = useSubsocialApi();
+  const { unreadCount } = useNotifCounter()
   const isLoggedIn = checkIfLoggedIn();
-  const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
+  const [ followedBlogsData, setFollowedBlogsData ] = useState<BlogData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
   const router = useRouter();
   const { pathname } = router;
@@ -99,6 +101,11 @@ const InnerMenu = () => {
 
   const MenuItems = isLoggedIn ? AuthorizedMenu : DefaultMenu;
 
+  const renderBadge = () => {
+    if (!unreadCount || unreadCount <= 0) return null
+    return <Badge count={unreadCount} className="site-badge-count-4" />
+  }
+
   return (
     <Menu
       selectedKeys={[ pathname ]}
@@ -112,12 +119,13 @@ const InnerMenu = () => {
             <a>
               <Icon type={item.image} />
               <span>{item.name}</span>
+              {item.name === 'Notifications' ? renderBadge() : null}
             </a>
           </Link>
         </Menu.Item>)}
       <Menu.Divider/>
       <Menu.Item key={'advanced'} >
-        <a href={appsUrl}>
+        <a href='/bc'>
           <Icon type='exception' />
           <span>Advanced</span>
         </a>

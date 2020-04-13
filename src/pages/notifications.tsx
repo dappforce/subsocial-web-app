@@ -1,4 +1,4 @@
 import dynamic from 'next/dynamic';
-const Notifications = dynamic(() => import('../components/activity/ListNotifications'), { ssr: false });
+const MyNotifications = dynamic(() => import('../components/activity/MyNotifications'), { ssr: false });
 
-export default Notifications;
+export default MyNotifications;

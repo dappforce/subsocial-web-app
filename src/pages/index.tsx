@@ -1,3 +1,3 @@
-import Home from '../components/activity/HomePage';
+import HomePage from '../components/main/HomePage';
 
-export default Home;
+export default HomePage;
