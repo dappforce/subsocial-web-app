@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-target-blank */
 import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
@@ -198,7 +197,6 @@ const Component: NextPage<Props> = (props: Props) => {
                     <Icon type='facebook' />
                   </a>
                 }
-                
                 {hasTwitterLink &&
                   <a target='_blank' href={twitter}>
                     <Icon type='twitter' />

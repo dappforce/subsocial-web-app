@@ -11,7 +11,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { queryBlogsToProp, ZERO } from '../utils/index';
 import { nonEmptyStr, newLogger } from '@subsocial/utils'
 import { ViewPostPage } from '../posts/ViewPost';
-import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils' 
+import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils'
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
@@ -313,7 +313,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const idOrHandle = blogId as string
-  const id = await getBlogId(substrate, idOrHandle) // TODO refactor 
+  const id = await getBlogId(idOrHandle)
   if (!id && res) {
     res.statusCode = 404
     return { statusCode: 404 }
@@ -326,7 +326,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   }
 
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) as unknown as PostId[];
-  const posts = await loadPostDataList(subsocial, postIds.reverse());
+  const posts = await loadPostDataList(postIds.reverse());
   return {
     blogData,
     posts

@@ -23,19 +23,15 @@ import { TxCallback } from '../utils/types';
 import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
 import { Post, IpfsHash, BlogId } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
-import U32 from '@polkadot/types/primitive/U32';
 import { newLogger } from '@subsocial/utils'
-
-const log = newLogger('Edit post')
-
 import { ValidationProps, buildValidationSchema } from './PostValidation';
 import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
 import { Icon } from 'antd';
 import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const DefaultPostExt = new PostExtension({ RegularPost: Null as unknown as RegularPost });
+const log = newLogger('Edit post')
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type OuterProps = ValidationProps & {
   blogId?: BN,
@@ -106,6 +102,7 @@ const InnerForm = (props: FormProps) => {
     Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
   };
 
+  const { ipfs } = useSubsocialApi()
   const [ currentBlogId, setCurrentBlogId ] = useState(initialBlogId)
   const [ showAdvanced, setShowAdvanced ] = useState(false)
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
@@ -314,15 +311,12 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Post>
 };
 
-type StructJson = PostContent | undefined;
-type StructPost = Post | undefined;
-
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
     const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because useless
     const { ipfs } = useSubsocialApi()
     const { structOpt } = props;
-    const [ json, setJson ] = useState<StructJson>();
+    const [ json, setJson ] = useState<PostContent>();
     const [ struct, setStruct ] = useState<Post>();
     const [ trigger, setTrigger ] = useState(false);
     const jsonIsNone = json === undefined;

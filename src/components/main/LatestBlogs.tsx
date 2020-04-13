@@ -2,7 +2,8 @@ import React from 'react';
 import { Button } from 'antd';
 import { Blog } from '@subsocial/types/substrate/interfaces';
 import ListData from '../utils/DataList';
-import { BlogData, ViewBlogPage } from '../blogs/ViewBlog';
+import { ViewBlogPage } from '../blogs/ViewBlog';
+import { BlogData } from '@subsocial/types/dto';
 
 type Props = {
   blogsData: BlogData[]
@@ -10,7 +11,7 @@ type Props = {
 
 export const LatestBlogs = (props: Props) => {
   const { blogsData = [] } = props
-  const blogs = blogsData.filter((x) => typeof x.blog !== 'undefined')
+  const blogs = blogsData.filter((x) => typeof x.struct !== 'undefined')
 
   return <ListData
     title={`Latest blogs`}
@@ -20,7 +21,7 @@ export const LatestBlogs = (props: Props) => {
     renderItem={(item) =>
       <ViewBlogPage
         {...props}
-        key={(item.blog as Blog).id.toString()}
+        key={(item.struct as Blog).id.toString()}
         blogData={item}
         previewDetails
         withFollowButton

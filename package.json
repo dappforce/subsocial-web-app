@@ -34,14 +34,16 @@
     "storybook": "yarn patch && start-storybook -s ./public -p 3002"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/runtime": "^7.4.3",
     "@appbaseio/reactivesearch": "^3.0.3",
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-console": "^1.2.1",
     "@storybook/addon-knobs": "^5.2.5",
     "@storybook/addon-storysource": "^5.2.5",
     "@storybook/react": "^5.2.5",
-    "@types/faker": "^4.1.7",
     "@subsocial/config": "0.1.2",
+    "@types/faker": "^4.1.7",
     "@types/jest": "^24.0.16",
     "@types/lodash.isempty": "^4.4.6",
     "@types/lodash.partition": "^4.6.6",
@@ -64,20 +66,20 @@
     "postcss": "^7.0.21",
     "postcss-browser-reporter": "^0.6.0",
     "postcss-clean": "^1.1.0",
+    "postcss-css-variables": "^0.13.0",
+    "postcss-flexbugs-fixes": "^4.1.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-nested": "^4.1.2",
     "postcss-simple-vars": "^5.0.0",
-    "postcss-flexbugs-fixes": "^4.1.0",
-    "postcss-css-variables": "^0.13.0",
     "precss": "^4.0.0",
     "react-infinite-scroll-component": "^4.5.3",
-    "tsconfig-paths-webpack-plugin": "^3.2.0",
     "react-simplemde-editor": "^4.1.0",
     "react-tooltip": "^3.9.2",
     "rxjs": "^6.4.0",
     "storybook-react-router": "^1.0.8",
     "styled-components": "^4.4.1",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
     "yup": "^0.26.10"
   },
   "dependencies": {
@@ -119,10 +121,9 @@
     "react-tooltip": "^3.9.2",
     "store": "^2.0.12",
     "strip-markdown": "^3.0.3",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
     "url-loader": "^3.0.0",
     "winston": "^3.2.1",
     "yarn": "^1.22.4"
-    "tsconfig-paths-webpack-plugin": "^3.2.0",
-    "url-loader": "^3.0.0"
   }
 }

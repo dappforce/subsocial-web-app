@@ -16,6 +16,7 @@ import { newLogger } from '@subsocial/utils';
 import { Moment } from '@polkadot/types/interfaces';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 import { useSubsocialApi } from './SubsocialApiContext';
+import { getSubsocialApi } from './SubsocialConnect';
 
 type PaginationProps = {
   currentPage?: number;
@@ -155,12 +156,12 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
 };
-// TODO refactor
-export const getBlogId = async (substrate: SubsocialSubstrateApi, idOrHandle: string): Promise<BN | undefined> => {
+
+export const getBlogId = async (idOrHandle: string): Promise<BN | undefined> => {
   if (idOrHandle.startsWith('@')) {
     const handle = idOrHandle.substring(1) // Drop '@'
-    const id = await substrate.getBlogIdByHandle(handle)
-    return id
+    const { substrate } = await getSubsocialApi()
+    return substrate.getBlogIdByHandle(handle)
   } else {
     return new BN(idOrHandle)
   }

@@ -25,7 +25,7 @@ import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
 import { SubsocialApi } from '@subsocial/api/fullApi';
 import { PostData } from '@subsocial/types/dto';
-import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
+import { PostType, loadContentFromIpfs, getExtContent, PostExtContent, loadSharedPostExt } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 const log = newLogger('View post')
@@ -331,9 +331,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId, postId }, res } = props;
   const subsocial = await getSubsocialApi()
-  const { substrate } = subsocial
   const idOrHandle = blogId as string
-  const blogIdFromUrl = await getBlogId(substrate, idOrHandle) // TODO refactor
+  const blogIdFromUrl = await getBlogId(idOrHandle)
   const postData = await subsocial.findPost(new BN(postId as string))
 
   // Post was not found:
@@ -351,8 +350,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     res.end()
   }
 
-  const sharedPostId = postData?.struct?.extension.asSharedPost
-  const postExtData = sharedPostId && await subsocial.findPost(sharedPostId)
+  const postExtData = await loadSharedPostExt(postData)
 
   return {
     postData,

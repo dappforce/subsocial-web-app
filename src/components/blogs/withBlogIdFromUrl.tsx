@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { BlogId } from '@subsocial/types/substrate/interfaces';
 import BN from 'bn.js'
-import { getApi } from '../utils/SubstrateApi';
 import { getBlogId } from '../utils/utils';
 
 export function withBlogIdFromUrl<Props = { id: BlogId }>
@@ -17,11 +16,9 @@ export function withBlogIdFromUrl<Props = { id: BlogId }>
 
       useEffect(() => {
         const getId = async () => {
-          const api = await getApi()
-          const id = await getBlogId(api, idOrHandle)
+          const id = await getBlogId(idOrHandle)
           id && setId(id)
         }
-        
         getId().catch(err => console.error(err))
       }, [ false ])
 

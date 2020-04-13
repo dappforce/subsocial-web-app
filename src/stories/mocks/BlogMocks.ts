@@ -6,10 +6,10 @@ import { i32, Option, u16, u32 } from '@polkadot/types'
 import { BlogContent } from '@subsocial/types/offchain'
 import { AccountId, BlockNumber, Moment } from '@subsocial/types/substrate/interfaces/runtime'
 import { Blog, BlogId, IpfsHash, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
-import { BlogData } from '../../components/blogs/ViewBlog'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
 import { Vec } from '@polkadot/types/codec';
 import { BlogHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types';
+import { BlogData } from '@subsocial/types/dto'
 
 type NewBlogProps = {
   id?: number | BN,
@@ -96,13 +96,13 @@ export const mockBlogValidation = {
 }
 
 export const mockBlogDataAlice = {
-  blog: mockBlogStruct,
-  initialContent: mockBlogJson
+  struct: mockBlogStruct,
+  content: mockBlogJson
 }
 
 export const mockBlogDataBob = {
-  blog: mockBlogStructBob,
-  initialContent: mockBlogJsonBob
+  struct: mockBlogStructBob,
+  content: mockBlogJsonBob
 }
 
 export const mockBlogsData: BlogData[] = [
