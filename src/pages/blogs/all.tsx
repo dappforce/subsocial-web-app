@@ -1,3 +1,3 @@
-import { ListBlog } from '../../components/blogs/ListBlogs';
+import { ListAllBlogs } from '../../components/blogs/ListBlogs';
 
-export default ListBlog;
+export default ListAllBlogs;

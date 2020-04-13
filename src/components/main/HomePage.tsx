@@ -2,13 +2,13 @@ import React from 'react';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 
-import { BlogId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
-import { getApi } from '../utils/SubstrateApi';
+import { PostId } from '@subsocial/types/substrate/interfaces/subsocial';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
-import { BlogData, loadBlogData } from '../blogs/ViewBlog';
-import { loadPostDataList, PostDataListItem } from '../posts/ViewPost';
 import { LatestBlogs } from './LatestBlogs';
 import { LatestPosts } from './LatestPosts';
+import { BlogData } from '@subsocial/types';
+import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils';
 
 const ZERO = new BN(0);
 const FIVE = new BN(5);
@@ -43,16 +43,16 @@ const getLastNIds = (nextId: BN, size: BN): BN[] => {
 }
 
 LatestUpdate.getInitialProps = async (): Promise<Props> => {
-  const api = await getApi();
-  const nextBlogId = await api.query.social.nextBlogId() as BlogId;
-  const nextPostId = await api.query.social.nextPostId() as PostId;
+  const subsocial = await getSubsocialApi();
+  const { substrate } = subsocial
+  const nextBlogId = await substrate.nextBlogId()
+  const nextPostId = await substrate.nextPostId()
 
   const latestBlogIds = getLastNIds(nextBlogId, FIVE);
-  const loadBlogs = latestBlogIds.map(id => loadBlogData(api, id as BlogId));
-  const blogsData = await Promise.all<BlogData>(loadBlogs);
+  const blogsData = await subsocial.findBlogs(latestBlogIds)
 
   const latestPostIds = getLastNIds(nextPostId, FIVE);
-  const postsData = await loadPostDataList(api, latestPostIds as PostId[]);
+  const postsData = await loadPostDataList(latestPostIds as PostId[]);
   console.log('Loaded posts on the home page:', postsData)
 
   return {

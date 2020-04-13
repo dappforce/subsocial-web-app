@@ -10,7 +10,7 @@ import { createType } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
-import { ipfs } from '../utils/OffchainUtils';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { queryBlogsToProp } from '../utils/index';
 import BN from 'bn.js';
 
@@ -25,7 +25,11 @@ import { TxCallback } from '../utils/types';
 import { CommentContent } from '@subsocial/types/offchain';
 import { CommentUpdate } from '@subsocial/types/substrate/classes';
 import U32 from '@polkadot/types/primitive/U32';
+
+const log = newLogger('Edit comment')
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+import { newLogger } from '@subsocial/utils';
 
 type OuterProps = ValidationProps & {
   postId: BN,
@@ -69,6 +73,7 @@ const InnerForm = (props: FormProps) => {
     body
   } = values;
 
+  const { ipfs } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = async (sendTx: () => void) => {
@@ -89,7 +94,7 @@ const InnerForm = (props: FormProps) => {
   };
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => console.log(err));
+    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => log.error('Failed to remove a comment from IPFS:', err));
     setSubmitting(false);
   };
 
@@ -119,7 +124,7 @@ const InnerForm = (props: FormProps) => {
         });
       return [ struct.id, update ];
     } else {
-      console.log('Nothing to update in a comment');
+      log.error('Nothing to update: comment\'s not changed');
       return [];
     }
   };
@@ -207,6 +212,7 @@ type StructJson = CommentContent | undefined;
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
+  const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<StructJson>();
   const [ struct, setStruct ] = useState<Comment>();
@@ -224,12 +230,10 @@ function LoadStruct (props: LoadStructProps) {
 
     if (struct === undefined) return toggleTrigger();
 
-    console.log('Loading comment JSON from IPFS');
-
-    ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
+    ipfs.findComment(struct.ipfs_hash).then(json => {
       const content = json;
       setJson(content);
-    }).catch(err => console.log(err));
+    }).catch(err => log.error('Failed to find a comment in IPFS:', err));
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

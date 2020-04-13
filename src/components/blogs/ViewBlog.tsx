@@ -6,15 +6,16 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
-import { ipfs } from '../utils/OffchainUtils';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';
-import { nonEmptyStr, queryBlogsToProp, ZERO } from '../utils/index';
-import { ViewPostPage, PostDataListItem, loadPostDataList } from '../posts/ViewPost';
+import { queryBlogsToProp, ZERO } from '../utils/index';
+import { nonEmptyStr, newLogger } from '@subsocial/utils'
+import { ViewPostPage } from '../posts/ViewPost';
+import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils'
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import NoData from '../utils/EmptyList';
 import ListData from '../utils/DataList';
@@ -25,24 +26,22 @@ import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
+import { BlogData } from '@subsocial/types/dto'
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
+
+const log = newLogger('View blog')
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 const SUB_SIZE = 2;
-
-export type BlogData = {
-  blog?: Blog,
-  initialContent?: BlogContent
-};
 
 type Props = {
   preview?: boolean,
@@ -65,9 +64,9 @@ type Props = {
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { blog } = props.blogData;
+  const { struct } = props.blogData;
 
-  if (!blog) return <NoData description={<span>Blog not found</span>} />;
+  if (!struct) return <NoData description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -80,7 +79,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     posts = [],
     imageSize = 36,
     onClick,
-    blogData: { initialContent = {} as BlogContent }
+    blogData
   } = props;
 
   const {
@@ -91,22 +90,24 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     posts_count,
     followers_count: followers,
     edit_history
-  } = blog;
+  } = struct;
+
+  const blog = struct;
 
   const { state: { address } } = useMyAccount();
-  const [ content, setContent ] = useState(initialContent);
+  const { ipfs } = useSubsocialApi()
+  const [ content, setContent ] = useState(blogData.content as BlogContent);
   const { desc, name, image, tags } = content;
-
   const [ followersOpen, setFollowersOpen ] = useState(false);
 
   useEffect(() => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    ipfs.findBlog(ipfs_hash.toString()).then(json => {
+    ipfs.findBlog(ipfs_hash).then((json) => {
       const content = json;
       if (isSubscribe && content) setContent(content);
-    }).catch(err => console.log(err));
+    }).catch((err) => log.error('Failed to find blog in IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -297,34 +298,25 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   </div>
 };
 
-export const loadBlogData = async (api: ApiPromise, blogId: BN): Promise<BlogData> => {
-  const blogIdOpt = await api.query.social.blogById(blogId) as Option<Blog>;
-  const blog = blogIdOpt.isSome ? blogIdOpt.unwrap() : undefined;
-  const content = blog && await ipfs.findBlog(blog.ipfs_hash.toString());
-  return {
-    blog: blog,
-    initialContent: content
-  };
-};
-
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { res, query: { blogId } } = props
+  const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial;
   const idOrHandle = blogId as string
-  const api = await getApi()
-  const id = await getBlogId(api, idOrHandle)
+  const id = await getBlogId(idOrHandle)
   if (!id && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
 
-  const blogData = await loadBlogData(api, id as BlogId)
-  if (!blogData.blog && res) {
+  const blogData = id && await subsocial.findBlog(id)
+  if (!blogData?.struct && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
 
-  const postIds = await api.query.social.postIdsByBlogId(blogId) as unknown as PostId[];
-  const posts = await loadPostDataList(api, postIds.reverse());
+  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) as unknown as PostId[]; // TODO maybe delete this type cast?
+  const posts = await loadPostDataList(postIds.reverse());
   return {
     blogData,
     posts

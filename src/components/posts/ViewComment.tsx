@@ -5,12 +5,10 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/react-api/types';
-import { Option } from '@polkadot/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
-
-import { ipfs } from '../utils/OffchainUtils';
-import { partition, isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
+import partition from 'lodash.partition'
 import { NewComment } from './EditComment';
 import { queryBlogsToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -21,14 +19,17 @@ import { MutedDiv } from '../utils/MutedText';
 import Link from 'next/link';
 import { Pluralize, pluralize } from '../utils/Plularize';
 import { Loading, formatUnixDate } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
-import { loadPostData, PostData } from './ViewPost';
 import dynamic from 'next/dynamic';
 import BN from 'bn.js'
 import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
 import { PostContent, CommentContent } from '@subsocial/types/offchain';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
+
+const log = newLogger('View comment')
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
@@ -49,7 +50,8 @@ export function CommentsTree (props: Props) {
     commentIds = [],
     commentIdForPage
   } = props;
-
+  // eslint-disable-next-line no-undef
+  const { substrate } = useSubsocialApi()
   const commentsCount = commentIds.length;// post.comments_count.toNumber();
   const [ loaded, setLoaded ] = useState(false);
   const [ comments, setComments ] = useState(new Array<Comment>());
@@ -59,11 +61,8 @@ export function CommentsTree (props: Props) {
 
     const loadComments = async () => {
       if (!commentsCount) return;
-      const api = await getApi()
-      const apiCalls: Promise<Option<Comment>>[] = commentIds.map(id =>
-        api.query.social.commentById(id) as Promise<Option<Comment>>);
 
-      const loadedComments = (await Promise.all<Option<Comment>>(apiCalls)).map(x => x.unwrap() as Comment);
+      const loadedComments = await substrate.findComments(commentIds);
 
       if (isSubscribe) {
         setComments(loadedComments);
@@ -71,7 +70,7 @@ export function CommentsTree (props: Props) {
       }
     };
 
-    loadComments().catch(err => console.log(err));
+    loadComments().catch(err => log.error('Failed to load comments:', err));
 
     return () => { isSubscribe = false; };
   }, [ commentsCount ]);// TODO change dependense on post.comments_counts or CommentCreated, CommentUpdated with current postId
@@ -140,6 +139,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     postContent: initialPostContent = {} as PostContent,
     commentContent = {} as CommentContent
   } = props;
+  const { substrate, ipfs } = useSubsocialApi()
   const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
@@ -162,32 +162,27 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
     ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
       isSubscribe && json && setContent(json);
-    }).catch(err => console.log(err));
+    }).catch(err => log.error('Failed to find a comment in IPFS:', err));
 
     const loadComment = async () => {
-      const api = await getApi()
-      const result = await api.query.social.commentById(id) as Option<Comment>;
-      if (result.isNone) return;
-      const comment = result.unwrap() as Comment;
+      const comment = await substrate.findComment(id);
       if (isSubscribe) {
-        setStruct(comment);
+        comment && setStruct(comment);
       }
     };
-    loadComment().catch(console.log);
+    loadComment().catch(err => log.error('Failed to load comment:', err));
 
     const loadPostContent = async () => {
       if (isEmpty(post)) {
-        const api = await getApi()
-        const result = await api.query.social.postById(post_id) as Option<Post>;
-        if (result.isNone) return;
-        isSubscribe && setPost(result.unwrap());
+        const post = await substrate.findPost(post_id);
+        isSubscribe && post && setPost(post);
       }
       const content = await ipfs.findPost(post.ipfs_hash.toString());
       if (isSubscribe && content) {
         setPostContent(content);
       }
     };
-    loadPostContent().catch(console.log);
+    loadPostContent().catch(err => log.error('Failed to load post content:', err));
 
     return () => { isSubscribe = false; };
   }, [ doReloadComment ]);
@@ -299,17 +294,15 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
-  const api = await getApi();
-  const commentOpt = await api.query.social.commentById(commentId) as Option<Comment>;
-  const comment = commentOpt.unwrapOr({} as Comment);
-  const postData = comment && await loadPostData(api, comment.post_id) as PostData;
-  const commentContent = comment && await ipfs.findComment(comment.ipfs_hash.toString());
+  const subsocial = await getSubsocialApi()
+  const commentData = await subsocial.findComment(new BN(commentId as string));
+  const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
   return {
-    comment: comment,
-    post: postData.post,
-    postContent: postData.initialContent,
+    post: postData?.struct,
+    postContent: postData?.content,
+    comment: commentData?.struct || {} as Comment,
+    commentContent: commentData?.content,
     commentsWithParentId: [] as Comment[],
-    commentContent,
     isPage: true
   };
 };

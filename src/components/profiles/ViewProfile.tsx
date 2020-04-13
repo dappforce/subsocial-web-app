@@ -1,15 +1,14 @@
-/* eslint-disable react/jsx-no-target-blank */
 import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
-import { GenericAccountId as AccountId, Option } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
-import { nonEmptyStr, queryBlogsToProp, isEmptyStr, ZERO } from '../utils/index';
+import { queryBlogsToProp, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { withSocialAccount, summarize } from '../utils/utils';
-import { getApi } from '../utils/SubstrateApi';
+import { nonEmptyStr, isEmptyStr, summarize } from '@subsocial/utils'
+import { withSocialAccount } from '../utils/utils';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -22,12 +21,11 @@ import { Pluralize } from '../utils/Plularize';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
-import { ipfs } from '../utils/OffchainUtils';
 import BN from 'bn.js';
-import { isEmpty } from 'lodash';
-
+import isEmpty from 'lodash.isempty';
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -199,7 +197,6 @@ const Component: NextPage<Props> = (props: Props) => {
                     <Icon type='facebook' />
                   </a>
                 }
-                
                 {hasTwitterLink &&
                   <a target='_blank' href={twitter}>
                     <Icon type='twitter' />
@@ -267,12 +264,11 @@ const Component: NextPage<Props> = (props: Props) => {
 
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
-  const api = await getApi();
-  const socialAccountOpt = await api.query.social.socialAccountById(address) as Option<SocialAccount>;
-  const socialAccount = socialAccountOpt.isSome ? socialAccountOpt.unwrap() : undefined;
+  const { substrate, ipfs } = await getSubsocialApi()
+  const socialAccount = await substrate.findSocialAccount(address as string)
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
-  const content = profile && await ipfs.getContent<ProfileContent>(profile.ipfs_hash.toString())
+  const content = profile && await ipfs.getContent<ProfileContent>(profile.ipfs_hash)
   return {
     id: new AccountId(registry, address as string),
     socialAccount: socialAccount,

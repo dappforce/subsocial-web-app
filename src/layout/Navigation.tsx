@@ -7,8 +7,10 @@ import { isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Drawer } from 'antd-mobile';
 import dynamic from 'next/dynamic';
-
+import { newLogger } from '@subsocial/utils';
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
+
+const log = newLogger('Navigation')
 
 const { Header, Sider, Content } = Layout;
 
@@ -16,7 +18,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-console.log('The browser: ', isBrowser);
+log.debug('Are we in a browser?', isBrowser);
 
 const DesktopNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();

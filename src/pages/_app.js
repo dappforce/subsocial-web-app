@@ -3,21 +3,21 @@ import App from 'next/app';
 import Head from 'next/head';
 import MainPage from '../layout/MainPage'
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext';
+import { getApi, ipfsUrl, offchainUrl } from '../components/utils/SubsocialConnect';
+import { SubsocialApi } from '@subsocial/api/fullApi';
 
-class MyApp extends App {
-  render () {
-    const { Component, pageProps } = this.props
-    return (
-      <SidebarCollapsedProvider>
-        <Head>
-          <script src="/env.js" />
-        </Head>
-        <MainPage>
-          <Component {...pageProps} />
-        </MainPage>
-      </SidebarCollapsedProvider>
-    )
-  }
+function MyApp (props) {
+  const { Component, pageProps } = props
+  return (
+    <SidebarCollapsedProvider>
+      <Head>
+        <script src="/env.js" />
+      </Head>
+      <MainPage>
+        <Component {...pageProps} />
+      </MainPage>
+    </SidebarCollapsedProvider>
+  )
 }
 
 export default MyApp;

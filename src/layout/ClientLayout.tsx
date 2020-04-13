@@ -3,8 +3,8 @@ import React, { useContext } from 'react';
 import settings from '../components/settings';
 import '../components/utils/styles';
 
-import Api from '../components/utils/Api';
-
+import { Api } from '@polkadot/react-api'
+import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import Queue from '@polkadot/react-components/Status/Queue';
 import Signer from '@polkadot/react-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
@@ -21,36 +21,34 @@ import { NotifCounterProvider } from '../components/utils/NotifCounter';
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = getEnv('SUBSTRATE_URL') || settings.apiUrl || undefined;
   const { queueAction, stqueue, txqueue } = useContext(StatusContext);
-  console.log(url);
 
   return <Queue>
-    <Api
-      url={url}
-    >
-      <BlockAuthors>
-        <Events>
-          <MyAccountProvider>
-            <NotifCounterProvider>
-              <Signer>
-                <Status
-                  queueAction={queueAction}
-                  stqueue={stqueue}
-                  txqueue={txqueue}
-                />
-                <Navigation>
-                  {children}
-                </Navigation>
-              </Signer>
-              <ConnectingOverlay />
-              <AccountsOverlay />
-            </NotifCounterProvider>
-          </MyAccountProvider>
-          <Connecting />
-        </Events>
-      </BlockAuthors>
+    <Api url={url}>
+      <SubsocialApiProvider>
+        <BlockAuthors>
+          <Events>
+            <MyAccountProvider>
+              <NotifCounterProvider>
+                <Signer>
+                  <Status
+                    queueAction={queueAction}
+                    stqueue={stqueue}
+                    txqueue={txqueue}
+                  />
+                  <Navigation>
+                    {children}
+                  </Navigation>
+                </Signer>
+                <ConnectingOverlay />
+                <AccountsOverlay />
+              </NotifCounterProvider>
+            </MyAccountProvider>
+            <Connecting />
+          </Events>
+        </BlockAuthors>
+      </SubsocialApiProvider>
     </Api>
   </Queue>;
 };
 
 export default ClientLayout;
-

@@ -1,6 +1,8 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react'
 import store from 'store'
 import { isMobile } from 'react-device-detect'
+import { newLogger } from '@subsocial/utils';
+const log = newLogger('Sidebar collapsed context')
 
 export const SIDEBAR_COLLAPSED = 'df.colapsed'
 
@@ -22,14 +24,14 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
   switch (action.type) {
     case 'reload':
       collapsed = isMobile
-      console.log('Reload collapsed:', collapsed)
+      log.debug('Reload collapsed:', collapsed)
       return { ...state, collapsed, trigerFollowed: !state.trigerFollowed, inited: true }
 
     case 'set':
       collapsed = action.collapsed
       const trigerFollowed = action.trigerFollowed ? action.trigerFollowed : state.trigerFollowed
       if (collapsed !== state.collapsed) {
-        console.log('Set new collapsed:', collapsed)
+        log.debug('Set new collapsed:', collapsed)
         store.set(SIDEBAR_COLLAPSED, collapsed)
         return { ...state, collapsed, trigerFollowed: trigerFollowed, inited: true }
       }

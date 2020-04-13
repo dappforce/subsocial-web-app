@@ -12,49 +12,6 @@ import queryString from 'query-string';
 
 export const ZERO = new BN(0);
 
-export function bnToStr (bn?: BN, dflt: string = ''): string {
-  return bn ? bn.toString() : dflt;
-}
-
-// String, Numbers, Object
-// --------------------------------------
-
-export const isDefined = (x: any): boolean =>
-  !notDefined(x);
-
-export const isDef = isDefined;
-
-export const notDefined = (x: any): boolean =>
-  x === null || typeof x === 'undefined';
-
-export const notDef = notDefined;
-
-export const isObj = (x: any): boolean =>
-  x !== null && typeof x === 'object';
-
-export const isStr = (x: any): boolean =>
-  typeof x === 'string';
-
-export const isNum = (x: any): boolean =>
-  typeof x === 'number';
-
-export const isEmptyStr = (x: any): boolean =>
-  notDefined(x) || isStr(x) && x.trim().length === 0;
-
-export const nonEmptyStr = (x?: any) =>
-  isStr(x) && x.trim().length > 0;
-
-export const parseNumStr = (num: string): number | undefined => {
-  try {
-    return parseInt(num, undefined);
-  } catch (err) {
-    return undefined;
-  }
-};
-
-export const nonEmptyArr = (x: any): boolean =>
-  Array.isArray(x) && x.length > 0;
-
 /** Example of apiQuery: 'query.councilElection.round' */
 export function queryToProp (
   apiQuery: string,

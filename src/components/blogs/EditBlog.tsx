@@ -7,7 +7,6 @@ import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
-import { ipfs } from '../utils/OffchainUtils';
 import * as DfForms from '../utils/forms';
 import { queryBlogsToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
@@ -21,11 +20,14 @@ import { TxCallback } from '../utils/types';
 import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogContent } from '@subsocial/types/offchain';
 import { BlogUpdate, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes';
+import { newLogger } from '@subsocial/utils'
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 import EditableTagGroup from '../utils/EditableTagGroup';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './BlogValidation';
 
+const log = newLogger('Edit blog')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type OuterProps = ValidationProps & {
@@ -66,9 +68,10 @@ const InnerForm = (props: FormProps) => {
     tags,
     navTabs
   } = values;
+  const { ipfs } = useSubsocialApi()
 
   const goToView = (id: BN) => {
-    Router.push('/blogs/' + id.toString()).catch(console.log);
+    Router.push('/blogs/' + id.toString()).catch(err => log.error('Failed to redirect to blog page. Error:', err));
   };
 
   const [ ipfsCid, setIpfsCid ] = useState('');
@@ -197,16 +200,13 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Blog>;
 };
 
-type StructJson = BlogContent | undefined;
-
-type Struct = Blog | undefined;
-
 // TODO refactor copypasta. See the same function in NavigationEditor
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
+  const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
-  const [ json, setJson ] = useState(undefined as StructJson);
-  const [ struct, setStruct ] = useState(undefined as Struct);
+  const [ json, setJson ] = useState<BlogContent>();
+  const [ struct, setStruct ] = useState<Blog>();
   const [ trigger, setTrigger ] = useState(false);
   const jsonIsNone = json === undefined;
 
@@ -221,11 +221,9 @@ function LoadStruct (props: LoadStructProps) {
 
     if (struct === undefined) return toggleTrigger();
 
-    console.log('Loading blog JSON from IPFS by hash:', struct.ipfs_hash.toString());
     ipfs.findBlog(struct.ipfs_hash.toString()).then(json => {
-      console.log('Loaded a blog JSON from IPFS:', json)
       setJson(json);
-    }).catch(err => console.log(err));
+    }).catch(err => log.error('Failed to find blog in IPFS. Error:', err));
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

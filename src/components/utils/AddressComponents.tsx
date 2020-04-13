@@ -10,10 +10,9 @@ import classes from '@polkadot/react-components/util/classes';
 import toShortAddress from '@polkadot/react-components/util/toShortAddress';
 // import BalanceDisplay from '@polkadot/react-components/Balance';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
-import { nonEmptyStr, ZERO } from './index';
+import { ZERO } from './index';
 import { MyAccountProps, withMyAccount } from './MyAccount';
-import { summarize } from './utils';
-import { getApi } from '../utils/SubstrateApi';
+import { summarize, nonEmptyStr, newLogger } from '@subsocial/utils';
 import Link from 'next/link';
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal';
 import Router from 'next/router';
@@ -23,13 +22,14 @@ import { DfBgImg } from './DfBgImg';
 import { Popover, Icon } from 'antd';
 import dynamic from 'next/dynamic';
 // import { isBrowser } from 'react-device-detect';
-import { ipfs } from './OffchainUtils';
 import { Balance } from '@polkadot/types/interfaces';
-import AccountIndex from '@polkadot/types/generic/AccountIndex';
-import Address from '@polkadot/types/generic/Address';
 import { AccountName } from '@polkadot/react-components';
 import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
+import { useSubsocialApi } from './SubsocialApiContext';
+
+const log = newLogger('AddressComponents')
+
 const FollowAccountButton = dynamic(() => import('./FollowAccountButton'), { ssr: false });
 
 type Variant = 'username' | 'mini-preview' | 'profile-preview' | 'preview' | 'address-popup';
@@ -45,7 +45,7 @@ export type Props = MyAccountProps & BareProps & {
   extraDetails?: React.ReactNode,
   isShort?: boolean,
   session_validators?: Array<AccountId>,
-  value?: AccountId | AccountIndex | Address | string,
+  value?: AccountId | string,
   size?: number,
   withAddress?: boolean,
   withBalance?: boolean,
@@ -81,7 +81,9 @@ function AddressComponents (props: Props) {
     event,
     count,
     subject } = props;
-
+  
+  const { substrate, ipfs } = useSubsocialApi();
+  console.log('SOCIAL', substrate)
   const [ socialAccount, setSocialAccount ] = useState(socialAccountInitial);
   const [ profile, setProfile ] = useState(profileInit);
   const [ profileContent, setProfileContent ] = useState(profileContentInit);
@@ -92,17 +94,16 @@ function AddressComponents (props: Props) {
     let isSubscribe = true;
 
     const UpdateSocialAccount = async () => {
-      const api = await getApi();
-      const socialAccountOpt = await api.query.social.socialAccountById(value) as unknown as Option<SocialAccount>;
-      console.log('Soc.Acc', socialAccountOpt);
-      if (socialAccountOpt.isNone) {
+      const socialAccount = await substrate.findSocialAccount(value)
+      console.log('Social account:', socialAccount);
+
+      if (!socialAccount) {
         isSubscribe && setSocialAccount(undefined);
         isSubscribe && setProfile({} as Profile);
         isSubscribe && setProfileContent({} as ProfileContent);
         return;
       }
 
-      const socialAccount = socialAccountOpt.unwrap();
       isSubscribe && setSocialAccount(socialAccount);
 
       const profileOpt = socialAccount.profile;
@@ -116,11 +117,11 @@ function AddressComponents (props: Props) {
       const profile = profileOpt.unwrap() as Profile;
       isSubscribe && setProfile(profile);
 
-      const profileContent = await ipfs.getContent<ProfileContent>(profile.ipfs_hash.toString())
+      const profileContent = await ipfs.getContent<ProfileContent>(profile.ipfs_hash)
       isSubscribe && profileContent && setProfileContent(profileContent);
     };
 
-    UpdateSocialAccount().catch(console.log);
+    UpdateSocialAccount().catch(err => log.error('Failed to update social account:', err));
 
     return () => { isSubscribe = false; };
   }, [ value ]);

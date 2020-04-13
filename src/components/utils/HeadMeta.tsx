@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { isEmptyStr, nonEmptyStr, nonEmptyArr } from '.';
-import { summarize } from './utils';
+import { isEmptyStr, summarize, nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
 
 type HeadMetaProps = {
   title: string,

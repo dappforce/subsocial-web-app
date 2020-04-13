@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { GenericAccountId, bool as Bool } from '@polkadot/types';
-import { Tuple } from '@polkadot/types/codec';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { getApi } from './SubstrateApi';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
-import { registry } from '@polkadot/react-api';
 import BN from 'bn.js';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
+import { useSubsocialApi } from './SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('FollowBlogButton')
 
 type FollowBlogButtonProps = {
   blogId: BN,
@@ -19,8 +19,9 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { reloadFollowed } = useSidebarCollapsed();
 
-  const dataForQuery = new Tuple(registry, [ 'AccountId', 'u64' ], [ new GenericAccountId(registry, myAddress), blogId ]);
+  if (!myAddress) return null;
 
+  const { substrate } = useSubsocialApi()
   const [ isFollow, setIsFollow ] = useState(false);
 
   const TxSuccess = () => {
@@ -31,11 +32,10 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
   useEffect(() => {
     let isSubscribe = true;
     const load = async () => {
-      const api = await getApi();
-      const _isFollow = await (api.query.social.blogFollowedByAccount(dataForQuery)) as Bool;
-      isSubscribe && setIsFollow(_isFollow.valueOf());
+      const _isFollow = await (substrate.isBlogFollower(myAddress, blogId))
+      isSubscribe && setIsFollow(_isFollow)
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error(`Failed to check if the current account is following a blog with id ${blogId.toString()}. Error:`, err));
 
     return () => { isSubscribe = false; };
   });

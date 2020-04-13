@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Router, { useRouter } from 'next/router';
+import isEmpty from 'lodash.isempty';
 import { List } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
-import { isEmpty } from 'lodash';
 import Section from './Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
 import NoData from './EmptyList';
+// import { newLogger } from '@subsocial/utils';
+// TODO use logger
+// const log = newLogger('Data list')
 
 type Props<T extends any> = {
   className?: string,

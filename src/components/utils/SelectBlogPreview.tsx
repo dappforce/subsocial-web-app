@@ -2,34 +2,34 @@ import React, { useEffect, useState } from 'react'
 import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
 import NoData from './EmptyList';
-import { getApi } from './SubstrateApi';
-import { loadBlogData, BlogData } from '../blogs/ViewBlog';
 import { DfBgImg } from './DfBgImg';
-import { nonEmptyStr } from './index'
 import BN from 'bn.js'
 import { IdentityIcon } from '@polkadot/react-components';
-import { BlogId } from '@subsocial/types/substrate/interfaces';
-import { BlogContent } from '@subsocial/types/offchain';
+import { useSubsocialApi } from './SubsocialApiContext';
+import { isEmptyArray, nonEmptyStr } from '@subsocial/utils';
+import { BlogData } from '@subsocial/types/dto';
+
+type PreparedBlogData = {
+  name: string,
+  image: string,
+  hasImage: boolean,
+  id?: string
+}
 
 type Props = {
   imageSize?: number,
   blogIds: BN[],
   onSelect?: (value: string | number | LabeledValue) => void,
   defaultValue?: string,
-  preparedBlogsData?: {
-    name: string,
-    image: string,
-    hasImage: boolean,
-    id: string | undefined
-  }[] | undefined
+  preparedBlogsData?: PreparedBlogData[]
 };
 
 const SUB_SIZE = 2;
 
 const SelectBlogPreview = (props: Props) => {
-  const { preparedBlogsData, imageSize = 36, onSelect, defaultValue } = props
+  const { preparedBlogsData = [], imageSize = 36, onSelect, defaultValue } = props
 
-  if (!preparedBlogsData) return <NoData description={<span>Blogs not found</span>} />;
+  if (isEmptyArray(preparedBlogsData)) return <NoData description={<span>No blogs found</span>} />;
 
   return <Select
     style={{ width: 200 }}
@@ -57,41 +57,33 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { blogIds } = props
 
-    if (!blogIds) return <NoData description={<span>No blogs found</span>} />
+    if (isEmptyArray(blogIds)) return <NoData description={<span>No blogs found</span>} />
 
-    const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>()
+    const { subsocial } = useSubsocialApi()
+    const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>([])
 
     useEffect(() => {
       const loadBlogs = async () => {
-        const { blogIds } = props
-        if (!blogIds) return
-
-        const api = await getApi();
-
-        // console.log('blogIds from getInitialProps Select', blogIds)
-
-        const loadBlogs = blogIds.map(id => loadBlogData(api, id as BlogId));
-        const blogsData = await Promise.all<BlogData>(loadBlogs);
-
-        // console.log('blogsData from Select Effect:', blogsData)
-
+        const blogsData = await subsocial.findBlogs(blogIds)
         setCurrentBlogsData(blogsData)
       }
 
       loadBlogs();
     }, [ blogIds ])
 
-    const preparedBlogsData = currentBlogsData?.map((x) => {
-      const { initialContent } = x
-      const { name, image } = initialContent as BlogContent
+    const preparedBlogsData = currentBlogsData.map((x) => {
+      const { struct, content } = x
+      if (!struct || !content) return undefined;
+
+      const { name, image } = content
       const hasImage = nonEmptyStr(image)
       return {
-        id: x.blog?.id.toString(),
+        id: struct?.id.toString(),
         name,
         image,
         hasImage
       }
-    })
+    }).filter(x => typeof x !== 'undefined') as PreparedBlogData[]
 
     if (!preparedBlogsData) return <NoData description={<span>No blogs found</span>} />
 

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
-import { GenericAccountId, bool as Bool } from '@polkadot/types';
-import { Tuple } from '@polkadot/types/codec';
+import { GenericAccountId } from '@polkadot/types';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { api, registry } from '@polkadot/react-api';
+import { registry } from '@polkadot/react-api';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
-import AccountId from '@polkadot/types/generic/AccountId';
+import { useSubsocialApi } from './SubsocialApiContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('FollowAccountButton')
 
 type FollowAccountButtonProps = {
   address: string,
@@ -32,17 +34,17 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   const { myAddress, address, size = TX_BUTTON_SIZE } = props;
 
   const accountId = new GenericAccountId(registry, address);
-  const dataForQuery = new Tuple(registry, [ AccountId, AccountId ], [ new GenericAccountId(registry, myAddress), accountId ]);
 
+  const { substrate } = useSubsocialApi()
   const [ isFollow, setIsFollow ] = useState(true);
 
   useEffect(() => {
     let isSubscribe = true;
     const load = async () => {
-      const _isFollow = await (api.query.social[`accountFollowedByAccount`](dataForQuery)) as Bool;
-      isSubscribe && setIsFollow(_isFollow.valueOf());
+      const _isFollow = await (substrate.isAccountFollower(myAddress, address))
+      isSubscribe && setIsFollow(_isFollow);
     };
-    load().catch(err => console.log(err));
+    load().catch(err => log.error('Failed to check isFollow:', err));
 
     return () => { isSubscribe = false; };
   });

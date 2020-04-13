@@ -6,7 +6,7 @@ import { SubmittableResult } from '@polkadot/api';
 import EditableTagGroup from '../utils/EditableTagGroup'
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
-import { ipfs } from '../utils/OffchainUtils';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option, Enum } from '@polkadot/types/codec';
@@ -23,13 +23,15 @@ import { TxCallback } from '../utils/types';
 import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
 import { Post, IpfsHash, BlogId } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
+import { newLogger } from '@subsocial/utils'
 import { ValidationProps, buildValidationSchema } from './PostValidation';
 import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
 import { Icon } from 'antd';
 import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
+const log = newLogger('Edit post')
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type OuterProps = ValidationProps & {
   blogId?: BN,
@@ -74,7 +76,6 @@ const InnerForm = (props: FormProps) => {
     blogIds
   } = props;
 
-  // console.log(extention.value);
   const isRegularPost = extention.value.isEmpty; // TODO maybe fix after run UI
 
   const renderResetButton = () => (
@@ -98,14 +99,13 @@ const InnerForm = (props: FormProps) => {
   const initialBlogId = struct?.blog_id || blogId
 
   const goToView = (id: BN) => {
-    Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
+    Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
   };
 
+  const { ipfs } = useSubsocialApi()
   const [ currentBlogId, setCurrentBlogId ] = useState(initialBlogId)
   const [ showAdvanced, setShowAdvanced ] = useState(false)
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
-
-  const preparedBlogId = currentBlogId
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
@@ -311,13 +311,12 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Post>
 };
 
-type StructJson = PostContent | undefined;
-
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
     const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because useless
+    const { ipfs } = useSubsocialApi()
     const { structOpt } = props;
-    const [ json, setJson ] = useState(undefined as StructJson);
+    const [ json, setJson ] = useState<PostContent>();
     const [ struct, setStruct ] = useState<Post>();
     const [ trigger, setTrigger ] = useState(false);
     const jsonIsNone = json === undefined;
@@ -333,11 +332,9 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       if (struct === undefined) return toggleTrigger();
 
-      console.log('Loading post JSON from IPFS');
-
-      ipfs.findPost(struct.ipfs_hash.toString()).then(json => {
+      ipfs.findPost(struct.ipfs_hash).then(json => {
         setJson(json);
-      }).catch(err => console.log(err));
+      }).catch(err => log.error('Failed to find a post in IPFS:', err));
     }, [ trigger ]);
 
     if (!myAddress || !structOpt || jsonIsNone) {

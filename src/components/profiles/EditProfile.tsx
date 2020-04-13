@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 
-import { ipfs } from '../utils/OffchainUtils';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { queryBlogsToProp } from '../utils/index';
@@ -21,10 +21,12 @@ import { TxCallback } from '../utils/types';
 import { Profile, SocialAccount, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { ProfileUpdate } from '@subsocial/types/substrate/classes';
+import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
+const log = newLogger('Edit profile')
 export type OuterProps = MyAccountProps & ValidationProps & {
   myAddress?: AccountId,
   profile?: Profile,
@@ -74,10 +76,10 @@ const InnerForm = (props: FormProps) => {
 
   const goToView = () => {
     if (myAddress) {
-      Router.push(`/profile/${myAddress}`).catch(console.log);
+      Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
     }
   };
-
+  const { ipfs } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {

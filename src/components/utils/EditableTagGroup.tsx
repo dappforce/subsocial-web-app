@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
 import { ErrorMessage } from 'formik';
 import { SelectValue } from 'antd/lib/select';
-import { nonEmptyStr } from './index';
+import { nonEmptyStr } from '@subsocial/utils';
 
 type Props = {
   name: string,

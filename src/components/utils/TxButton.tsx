@@ -21,6 +21,9 @@ import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import { SemanticShorthandItem, IconProps } from 'semantic-ui-react'
 import { Index } from '@polkadot/types/interfaces';
 import { useMyAccount } from './MyAccountContext';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('TxButton')
 
 interface InjectedProps {
   queueExtrinsic: QueueTxExtrinsicAdd;
@@ -74,6 +77,7 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
 
     return (
       <Button
+        icon={icon as string}
         className={className}
         tooltip={tooltip}
         isBasic={isBasic}
@@ -86,7 +90,6 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
             : isPrimary
         }
         label={label}
-        icon={icon as string}
         onClick={() => {
           if (typeof onClick === 'function') onClick(this.send);
           else this.send();
@@ -180,10 +183,8 @@ const mockSendTx = () => {
   const msg = 'Cannot send a Substrate tx in a mock mode'
   if (isClientSide()) {
     window.alert(`WARN: ${msg}`)
-  } else if (typeof console.warn === 'function') {
-    console.warn(msg)
   } else {
-    console.log(`WARN: ${msg}`)
+    log.warn(msg)
   }
 }
 
