@@ -1,5 +1,5 @@
 import React from 'react'
-import { BlockValueKind, CodeBlockValue } from '../types'
+import { BlockValueKind, CodeBlockValue } from '../../types'
 import SimpleMDEReact from 'react-simplemde-editor'
 import { Field, ErrorMessage } from 'formik'
 import { Dropdown, Menu, Icon } from 'antd'

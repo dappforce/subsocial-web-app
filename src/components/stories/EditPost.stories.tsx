@@ -2,7 +2,7 @@
 import React from 'react';
 import '../utils/styles/subsocial.css';
 import { withStorybookContext } from './withStorybookContext';
-import { InnerEditPost } from '../posts/EditPost';
+import { InnerEditPost } from '../posts/PostEditor/EditPost';
 import { BlogId, Post, PostId, BlockValue } from '../types';
 
 export default {

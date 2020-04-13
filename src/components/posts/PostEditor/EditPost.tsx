@@ -1,59 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, withFormik, FormikProps } from 'formik';
-import * as Yup from 'yup';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@polkadot/ui-api/with';
-import { addJsonToIpfs, getJsonFromIpfs } from '../utils/OffchainUtils';
-import * as DfForms from '../utils/forms';
+import { addJsonToIpfs } from '../../utils/OffchainUtils';
+import * as DfForms from '../../utils/forms';
 import { Text } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData } from '../types';
-import Section from '../utils/Section';
-import { useMyAccount } from '../utils/MyAccountContext';
-import { queryBlogsToProp, parse } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils/utils';
-import Router, { useRouter } from 'next/router';
-import HeadMeta from '../utils/HeadMeta';
+import { PostId, Post, PostContent, PostUpdate, BlogId, PostExtension, RegularPost, PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData } from '../../types';
+import Section from '../../utils/Section';
+import { queryBlogsToProp, parse } from '../../utils/index';
+import { getNewIdFromEvent } from '../../utils/utils';
+import Router from 'next/router';
+import HeadMeta from '../../utils/HeadMeta';
 import { Dropdown, Menu, Icon, Tabs, Button as AntButton} from 'antd';
-import BlockPreview from './BlockPreview';
-import { ViewBlog } from '../blogs/ViewBlog';
+import BlockPreview from '../PostPreview/BlockPreview';
+import { ViewBlog } from '../../blogs/ViewBlog';
 import { isMobile } from 'react-device-detect';
-import SelectBlogPreview from '../utils/SelectBlogPreview'
+import SelectBlogPreview from '../../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
-import EditableTagGroup from '../utils/EditableTagGroup'
+import EditableTagGroup from '../../utils/EditableTagGroup'
 import PostBlockFormik from './PostBlockFormik';
+import buildSchema from './EditPostValidations'
 import './EditPost.css'
+import { withBlogIdFromUrl, withIdFromUrl, LoadStruct } from './EditPostDataHOC';
 
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
-
-const MAX_TAGS_PER_POST = 10
-const MIN_TEXT_BLOCK_LENGTH = 20
-const MIN_BLOCKS = 1
-
-const buildSchema = () => Yup.object().shape({
-  title: Yup.string()
-    .required('Post title is required'),
-  tags: Yup.array()
-    .max(MAX_TAGS_PER_POST, `Too many tags. Maximum: ${MAX_TAGS_PER_POST}`),
-  canonical: Yup.string()
-    .url('Canonical must be a valid URL.'),
-  blockValues: Yup.array()
-    .of(
-      Yup.object({
-        kind: Yup.string(),
-        data: Yup.string()
-          .when('kind', {
-            is: (val) => val === 'text',
-            then: Yup.string().min(MIN_TEXT_BLOCK_LENGTH, `Text must be at least ${MIN_TEXT_BLOCK_LENGTH} characters`),
-            otherwise: Yup.string()
-          })
-      })
-    )
-    .min(MIN_BLOCKS, `Post should have at least ${MIN_BLOCKS} block`)
-});
 
 type ValidationProps = {};
 
@@ -93,8 +67,6 @@ const InnerForm = (props: FormProps) => {
     values,
     dirty,
     isValid,
-    // errors,
-    // touched,
     setFieldValue,
     isSubmitting,
     setSubmitting,
@@ -133,6 +105,14 @@ const InnerForm = (props: FormProps) => {
     Router.push(`/blogs/${preparedBlogId}/posts/${id}`).catch(console.log);
   };
 
+  const blockNames = [
+    { name: 'text', pretty: 'Text Block' },
+    { name: 'link', pretty: 'Link' },
+    { name: 'image', pretty: 'Image' },
+    { name: 'video', pretty: 'Video' },
+    { name: 'code', pretty: 'Code Block' }
+  ]
+
   const [ ipfsHash, setIpfsCid ] = useState('');
   const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
   const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
@@ -144,7 +124,7 @@ const InnerForm = (props: FormProps) => {
     const firstLoad = async () => {
       const res: PreviewData[] = []
       for (const x of blockValues) {
-        if (x.kind === 'link') {
+        if (x.kind === 'link' || x.kind === 'video') {
           const data = await parse(x.data)
           if (!data) continue
           res.push({ id: x.id, data })
@@ -328,14 +308,6 @@ const InnerForm = (props: FormProps) => {
     handleLinkPreviewChange(block, value)
     setFieldValue(name, value)
   }
-
-  const blockNames = [
-    { name: 'text', pretty: 'Text Block' },
-    { name: 'link', pretty: 'Link' },
-    { name: 'image', pretty: 'Image' },
-    { name: 'video', pretty: 'Video' },
-    { name: 'code', pretty: 'Code Block' }
-  ]
 
   const addMenu = (index?: number, onlyItems?: boolean, pos?: string) => {
     if (onlyItems) {
@@ -584,104 +556,6 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
     console.log('formik values', values)
   }
 })(InnerForm);
-
-function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
-    const router = useRouter();
-    const { postId } = router.query;
-    const { id } = props;
-
-    if (id) return <Component { ...props } />;
-
-    try {
-      return <Component id={new PostId(postId as string)} {...props}/>;
-    } catch (err) {
-      return <em>Invalid post ID: {postId}</em>;
-    }
-  };
-}
-
-function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
-    const router = useRouter();
-    const { blogId } = router.query;
-    try {
-      return <Component blogId={new BlogId(blogId as string)} { ...props } />;
-    } catch (err) {
-      return <em>Invalid blog ID: {blogId}</em>;
-    }
-  };
-}
-
-type LoadStructProps = OuterProps & {
-  structOpt: Option<Post>
-};
-
-type StructJson = PostContent | undefined;
-type Struct = Post | undefined;
-
-function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
-  return function (props: LoadStructProps) {
-    const { state: { address: myAddress } } = useMyAccount();
-    const { structOpt } = props;
-    const [ json, setJson ] = useState(undefined as StructJson);
-    const [ struct, setStruct ] = useState(undefined as Struct);
-    const [ trigger, setTrigger ] = useState(false);
-    const [ mappedBlocks, setMappedBlocks ] = useState(undefined as unknown as BlockValueKind[])
-    const jsonIsNone = json === undefined;
-
-    const toggleTrigger = () => {
-      json === undefined && setTrigger(!trigger);
-    };
-
-    useEffect(() => {
-      if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
-
-      setStruct(structOpt.unwrap());
-
-      if (struct === undefined) return toggleTrigger();
-
-      console.log('Loading post JSON from IPFS');
-
-      getJsonFromIpfs<PostContent>(struct.ipfs_hash).then(json => {
-
-        if (json.blocks && json.blocks.length > 0) {
-
-          const processArray = async (arr: PostBlock[]) => {
-            const temp: BlockValueKind[] = []
-            for (const item of arr) {
-              const res = await getJsonFromIpfs<BlockValueKind>(item.cid)
-              temp.push(res)
-            }
-            return temp
-          }
-
-          processArray(json.blocks as PostBlock[]).then((tempBlocks) => {
-            setMappedBlocks(tempBlocks)
-          })
-
-          if (mappedBlocks === undefined) return toggleTrigger();
-
-        }
-        setJson(json);
-      }).catch(err => console.log(err));
-    }, [ trigger ]);
-
-    if (!myAddress || !structOpt || jsonIsNone || !mappedBlocks) {
-      return <Loading />;
-    }
-
-    if (structOpt.isNone) {
-      return <em>Post not found</em>;
-    }
-
-    if (!struct || !struct.created.account.eq(myAddress)) {
-      return <em>You have no rights to edit this post</em>;
-    }
-
-    return <Component {...props} struct={struct} json={json} mappedBlocks={mappedBlocks} myAddress={myAddress} />;
-  };
-}
 
 export const NewPost = withMulti(
   InnerEditPost,

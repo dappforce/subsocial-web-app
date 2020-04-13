@@ -25,7 +25,7 @@ import BN from 'bn.js';
 import { Codec } from '@polkadot/types/types';
 import HeadMeta from '../utils/HeadMeta';
 
-const BlockPreview = dynamic(() => import('./BlockPreview'), { ssr: false });
+const BlockPreview = dynamic(() => import('./PostPreview/BlockPreview'), { ssr: false });
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -127,7 +127,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const firstLoad = async () => {
       const res: PreviewData[] = []
       for (const x of content.blockValues) {
-        if (x.kind === 'link') {
+        if (x.kind === 'link' || x.kind === 'video') {
           const data = await parse(x.data)
           if (!data) continue
           res.push({ id: x.id, data })
