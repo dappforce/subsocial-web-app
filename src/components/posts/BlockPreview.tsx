@@ -11,7 +11,7 @@ import 'brace/mode/html'
 import 'brace/mode/powershell'
 import 'brace/mode/rust'
 import 'brace/theme/github'
-// import Gist from 'react-gist'
+import Gist from './GistEmbed'
 import { Icon } from 'antd'
 import './BlockPreview.css'
 
@@ -109,9 +109,9 @@ const BlockPreview = (props: Props) => {
         const match = x.data.match(GIST_REGEXP)
 
         if (match && match[0]) {
-          // const res = match[0].split('/')
-          // const file = match[5] || ''
-          element = <div className='gistEmbedWrapper'>{/* <Gist id={res[4]} file={file} /> */}</div>
+          const res = match[0].split('/')
+          const file = match[5] || ''
+          element = <div className='gistEmbedWrapper'>{ <Gist id={res[4]} file={file} /> }</div>
           break
         }
       }
