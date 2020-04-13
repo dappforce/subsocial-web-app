@@ -28,9 +28,7 @@ import { withBlogIdFromUrl, withIdFromUrl, LoadStruct } from './EditPostDataHOC'
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
-
 type ValidationProps = {};
-
 type BlockValues = {
   blockValues: BlockValueKind[]
 }
@@ -51,11 +49,8 @@ type OuterProps = ValidationProps & {
 };
 
 type FormValues = PostContent & BlockValues;
-
 type FormProps = OuterProps & FormikProps<FormValues>;
-
 const LabelledField = DfForms.LabelledField<FormValues>();
-
 const LabelledText = DfForms.LabelledText<FormValues>();
 
 const InnerForm = (props: FormProps) => {
@@ -90,14 +85,7 @@ const InnerForm = (props: FormProps) => {
     />
   );
 
-  const {
-    title,
-    blockValues,
-    image,
-    tags,
-    canonical
-  } = values;
-
+  const { title, blockValues, image, tags, canonical } = values;
   const initialBlogId: BlogId = struct?.blog_id || blogId as BlogId
   const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
 
@@ -138,34 +126,23 @@ const InnerForm = (props: FormProps) => {
   }, [])
 
   const mapValuesToBlocks = async () => {
-
     const processArray = async (array: BlockValueKind[]) => {
       const res = []
-
       for (const item of array) {
         const hash = await addJsonToIpfs(item)
-
-        res.push({
-          kind: item.kind,
-          hidden: item.hidden,
-          cid: hash
-        })
+        res.push({ kind: item.kind, hidden: item.hidden, cid: hash })
       }
       return res
     }
-
     if (blockValues && blockValues.length > 0) {
       const tempValues = await processArray(blockValues)
       return tempValues as PostBlock[]
     }
-
     return [] as PostBlock[]
   }
 
   const onSubmit = async (sendTx: () => void) => {
-
     const blocks = await mapValuesToBlocks()
-
     if (isValid || !isRegularPost) {
       const json = { title, blocks, image, tags, canonical };
       addJsonToIpfs(json).then((hash: string) => {
@@ -173,7 +150,6 @@ const InnerForm = (props: FormProps) => {
         sendTx();
       })
     }
-
   };
 
   const onTxCancelled = () => {
@@ -181,16 +157,12 @@ const InnerForm = (props: FormProps) => {
   };
 
   const onTxFailed = (_txResult: SubmittableResult) => {
-    console.log('_txResult on fail', _txResult)
     setSubmitting(false);
   };
 
   const onTxSuccess = (_txResult: SubmittableResult) => {
-    console.log('_txResult on success', _txResult)
     setSubmitting(false);
-
     closeModal && closeModal();
-
     const _id = id || getNewIdFromEvent<PostId>(_txResult);
     _id && isRegularPost && goToView(_id);
   };
@@ -236,16 +208,11 @@ const InnerForm = (props: FormProps) => {
 
   const getNewBlockId = (arr: any[]) => {
     const res = Math.max.apply(null, arr.map((o) => o.id))
-
-    if (res >= 0) {
-      return res + 1
-    } else {
-      return 0
-    }
+    if (res >= 0) return res + 1
+    return 0
   }
 
   const addBlock = (type: PostBlockKind, index?: number, pos?: string) => {
-
     const defaultBlockValue: BlockValueKind = {
       id: getNewBlockId(blockValues),
       kind: type,
@@ -253,28 +220,18 @@ const InnerForm = (props: FormProps) => {
       useOnPreview: false,
       data: ''
     }
-
     if (index === undefined) {
       let newArray: BlockValueKind[] = []
       if (pos === 'after') {
-        newArray = [
-          ...blockValues,
-          defaultBlockValue
-        ]
+        newArray = [ ...blockValues, defaultBlockValue ]
       } else {
-        newArray = [
-          defaultBlockValue,
-          ...blockValues
-        ]
+        newArray = [ defaultBlockValue, ...blockValues ]
       }
-
       setFieldValue('blockValues', newArray)
       return
     }
-
     let value = index + 1
     if (pos === 'before') value = index
-
     setFieldValue('blockValues', [
       ...blockValues.slice(0, value),
       defaultBlockValue,
@@ -283,24 +240,15 @@ const InnerForm = (props: FormProps) => {
   }
 
   const handleLinkPreviewChange = async (block: BlockValueKind, value: string) => {
-
     const data = await parse(value)
-
     if (!data) return
-
     const newParsedData = [ ...linkPreviewData ]
-
     const idx = linkPreviewData.findIndex((el) => el.id === block.id);
-
     if (idx !== -1) {
       newParsedData[idx].data = data
     } else {
-      newParsedData.push({
-        id: block.id,
-        data
-      })
+      newParsedData.push({ id: block.id, data })
     }
-
     setLinkPreviewData(newParsedData)
   }
 
@@ -329,13 +277,11 @@ const InnerForm = (props: FormProps) => {
 
   const handleBlogSelect = (value: string|number|LabeledValue) => {
     if (!value) return;
-
     setCurrentBlogId(new BlogId(value as string))
   };
 
   const renderBlogsPreviewDropdown = () => {
     if (!blogIds) return;
-
     return <SelectBlogPreview
       className={'selectBlogPreview'}
       blogIds={blogIds}
@@ -344,25 +290,18 @@ const InnerForm = (props: FormProps) => {
       defaultValue={currentBlogId.toString()} />
   }
 
-  const form =
-    <Form className='ui form DfForm EditEntityForm'>
-
+  const form = <Form className='ui form DfForm EditEntityForm'>
       {isRegularPost
         ? <>
           <div className='EditPostLabel'>
             Post in blog:
           </div>
-
           {renderBlogsPreviewDropdown()}
-
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
-
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
-
           <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
             <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
           </Dropdown>
-
           {blockValues && blockValues.length > 0
             ? blockValues.map((block: BlockValueKind, index: number) => <PostBlockFormik
               block={block}
@@ -374,13 +313,11 @@ const InnerForm = (props: FormProps) => {
             />)
             : addBlock('text')
           }
-
           { blockValues && blockValues.length > 0 &&
             <Dropdown overlay={() => addMenu(blockValues.length + 1, false, 'after')} className={'EditPostAddButton'}>
               <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
             </Dropdown>
           }
-
           <div className='AdvancedWrapper'>
             <a href="#" onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleAdvanced(e)} >
               { isAdvanced ? <Icon type="up" /> : <Icon type="down" /> } Show Advanced Settings
@@ -390,7 +327,6 @@ const InnerForm = (props: FormProps) => {
               <EditableTagGroup name='tags' tags={tags} label='Tags' tagsData={tagsData} setFieldValue={setFieldValue} />
             </div>}
           </div>
-
         </>
         : <>
           {blockValues && blockValues.length > 0
@@ -414,17 +350,15 @@ const InnerForm = (props: FormProps) => {
 
   const sectionTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
 
-  const formTitle = () =>
-    <>
-      <a href={`/blogs/${preparedBlogId}`}>
-        <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
-      </a>
-      <span style={{ margin: '0 .75rem' }}>/</span>
-      {sectionTitle}
-    </>
+  const formTitle = () => <>
+    <a href={`/blogs/${preparedBlogId}`}>
+      <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
+    </a>
+    <span style={{ margin: '0 .75rem' }}>/</span>
+    {sectionTitle}
+  </>
 
-  const editRegularPost = () =>
-    <Section className='EditEntityBox' title={formTitle()}>
+  const editRegularPost = () => <Section className='EditEntityBox' title={formTitle()}>
       { isMobile
         ? renderForMobile()
         : <div className='EditPostWrapper'>
@@ -465,8 +399,7 @@ const InnerForm = (props: FormProps) => {
       }
     </Section>
 
-  const renderForMobile = () =>
-    <Tabs type="card" className="mobileTabs">
+  const renderForMobile = () => <Tabs type="card" className="mobileTabs">
       <TabPane tab="Editor" key="1">
         <div className='EditPostForm withTabs'>
           {form}
@@ -520,50 +453,27 @@ const InnerForm = (props: FormProps) => {
 };
 
 export const InnerEditPost = withFormik<OuterProps, FormValues>({
-
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
     let blockValues: BlockValueKind[] = []
     if (mappedBlocks && mappedBlocks.length !== 0) {
-      blockValues = mappedBlocks.map((x, i) => {
-        return {
-          ...x,
-          id: i
-        }
-      })
+      blockValues = mappedBlocks.map((x, i) => ({ ...x, id: i }))
     }
-
     if (struct && json && mappedBlocks) {
-      return {
-        ...json,
-        blockValues
-      };
+      return { ...json, blockValues };
     } else {
-      return {
-        title: '',
-        blocks: [],
-        blockValues: [],
-        image: '',
-        tags: [],
-        canonical: ''
-      };
+      return { title: '', blocks: [], blockValues: [], image: '', tags: [], canonical: '' };
     }
   },
-
   validationSchema: () => buildSchema(),
-
-  handleSubmit: values => {
-    console.log('formik values', values)
-  }
+  handleSubmit: values => { console.log('formik values', values) }
 })(InnerForm);
 
 export const NewPost = withMulti(
   InnerEditPost,
   withBlogIdFromUrl
 );
-
 export const NewSharePost = InnerEditPost;
-
 export const EditPost = withMulti<OuterProps>(
   InnerEditPost,
   withIdFromUrl,
