@@ -275,6 +275,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderDetails = (content: PostExtContent) => {
     const { title, body, image } = content;
+    const [ open, setOpen ] = useState(false);
+    const close = () => setOpen(false);
     return <Section className='DfContentPage'>
       <HeadMeta title={title} desc={body} image={image} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
@@ -294,7 +296,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <ShareButton network='twitter' text={title} />
         <ShareButton network='linkedin' text={title} />
       </div>
-      {/* <ShareButtonPost postId={post.id}/> */}
+      <div
+        className='ui tiny button basic DfAction ShareOnBlog'
+        onClick={() => setOpen(true)}
+      >
+        <Icon type='share-alt' />
+      Share
+      </div>
+      {open && <ShareModal postId={isRegularPost ? id : originalPost && originalPost.id} open={open} close={close} />}
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
   };
