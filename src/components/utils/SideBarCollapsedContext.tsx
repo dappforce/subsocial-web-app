@@ -9,13 +9,13 @@ export const SIDEBAR_COLLAPSED = 'df.colapsed'
 type SidebarCollapsedState = {
   inited: boolean
   collapsed?: boolean
-  trigerFollowed?: boolean
+  triggerFollowed?: boolean
 }
 
 type SidebarCollapsedAction = {
   type: 'reload' | 'set' | 'forget' | 'forgetExact'
   collapsed?: boolean
-  trigerFollowed?: boolean
+  triggerFollowed?: boolean
 }
 
 function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction): SidebarCollapsedState {
@@ -25,15 +25,15 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
     case 'reload':
       collapsed = isMobile
       log.debug('Reload collapsed:', collapsed)
-      return { ...state, collapsed, trigerFollowed: !state.trigerFollowed, inited: true }
+      return { ...state, collapsed, triggerFollowed: !state.triggerFollowed, inited: true }
 
     case 'set':
       collapsed = action.collapsed
-      const trigerFollowed = action.trigerFollowed ? action.trigerFollowed : state.trigerFollowed
+      const triggerFollowed = action.triggerFollowed ? action.triggerFollowed : state.triggerFollowed
       if (collapsed !== state.collapsed) {
         log.debug('Set new collapsed:', collapsed)
         store.set(SIDEBAR_COLLAPSED, collapsed)
-        return { ...state, collapsed, trigerFollowed: trigerFollowed, inited: true }
+        return { ...state, collapsed, triggerFollowed: triggerFollowed, inited: true }
       }
       return state
 
@@ -49,7 +49,7 @@ function functionStub () {
 const initialState = {
   inited: false,
   collapsed: undefined,
-  trigerFollowed: false
+  triggerFollowed: false
 }
 
 export type SidebarCollapsedContextProps = {

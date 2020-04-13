@@ -36,7 +36,7 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 type OuterProps = ValidationProps & {
   blogId?: BN,
   id?: BN,
-  extention?: Enum,
+  extension?: Enum,
   struct?: Post
   json?: PostContent,
   onlyTxButton?: boolean,
@@ -61,7 +61,7 @@ const InnerForm = (props: FormProps) => {
     id,
     blogId,
     struct,
-    extention = DefaultPostExt,
+    extension = DefaultPostExt,
     values,
     dirty,
     isValid,
@@ -76,7 +76,7 @@ const InnerForm = (props: FormProps) => {
     blogIds
   } = props;
 
-  const isRegularPost = extention.value.isEmpty; // TODO maybe fix after run UI
+  const isRegularPost = extension.value.isEmpty; // TODO maybe fix after run UI
 
   const renderResetButton = () => (
     <Button
@@ -139,7 +139,7 @@ const InnerForm = (props: FormProps) => {
   const buildTxParams = () => {
     if (isValid || !isRegularPost) {
       if (!struct) {
-        return [ blogId, ipfsHash, extention ];
+        return [ blogId, ipfsHash, extension ];
       } else {
         // TODO update only dirty values.
         const update = new PostUpdate(

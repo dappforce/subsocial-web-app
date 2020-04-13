@@ -22,7 +22,7 @@ interface MenuItem {
 }
 
 const InnerMenu = () => {
-  const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
+  const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
   const { subsocial, substrate } = useSubsocialApi();
   const { unreadCount } = useNotifCounter()
@@ -50,7 +50,7 @@ const InnerMenu = () => {
     loadBlogsData().catch(err => log.error('Failed to load blogs data:', err));
 
     return () => { isSubscribe = false; };
-  }, [ trigerFollowed, myAddress ]);
+  }, [ triggerFollowed, myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();

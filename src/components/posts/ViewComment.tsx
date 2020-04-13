@@ -73,7 +73,7 @@ export function CommentsTree (props: Props) {
     loadComments().catch(err => log.error('Failed to load comments:', err));
 
     return () => { isSubscribe = false; };
-  }, [ commentsCount ]);// TODO change dependense on post.comments_counts or CommentCreated, CommentUpdated with current postId
+  }, [ commentsCount ]);// TODO change dependency to post.comments_counts or CommentCreated, CommentUpdated with the current postId
 
   const isPage = !!commentIdForPage;
 
