@@ -140,7 +140,7 @@ const InnerForm = (props: FormProps) => {
           name='body'
           value={body}
           onChange={(data: string) => setFieldValue('body', data)}
-          className={`DfMdEditor ${errors['body'] && 'error'} markdown-body commentsEditor`}
+          className={`DfMdEditor ${errors['body'] && 'error'} markdown-body CommentsEditor`}
           style={{ marginTop: '1rem' }}
           option={{
             autofocus: autoFocus,

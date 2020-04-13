@@ -1172,7 +1172,7 @@ hr {
   }
 }
 
-.commentsEditor {
+.CommentsEditor {
   &.DfMdEditor {
     i {
       color: $color_light_border;
@@ -1182,4 +1182,15 @@ hr {
       color: black;
     }
   }
+}
+
+.MiniPreviewWrapper {
+  .MiniPreviewBlock {
+    margin-bottom: $space_normal;
+  }
+}
+
+.twitter-tweet {
+  display: flex !important;
+  justify-content: center !important;
 }

@@ -67,14 +67,14 @@ const LinkPreview = (props: Props) => {
       >
         {currentEmbed
           ? renderEmbed(currentEmbed)
-          : <div className={'previewLinkWrapper'}>
-            <div className={`previewImgWrapper`}>
-              <img src={og?.image} className='DfPostImage linkImage' />
+          : <div className={'PreviewLinkWrapper'}>
+            <div className={`PreviewImgWrapper`}>
+              <img src={og?.image} className='DfPostImage LinkImage' />
             </div>
-            <div className={'underPicture'}>
-              <p className='previewLinkTitle'><b>{og?.title}</b></p>
-              <p className='previewDescription'>{og?.description}</p>
-              <p className='previewLinkAfterDescription'><Icon type="link" /> {domain}</p>
+            <div className={'UnderPicture'}>
+              <p className='PreviewLinkTitle'><b>{og?.title}</b></p>
+              <p className='PreviewDescription'>{og?.description}</p>
+              <p className='PreviewLinkAfterDescription'><Icon type="link" /> {domain}</p>
             </div>
           </div>}
       </a>

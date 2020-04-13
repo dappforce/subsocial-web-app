@@ -115,7 +115,7 @@ const PostBlockFormik = (props: Props) => {
       const { lang } = block as CodeBlockValue
       const pretty = langs.find((x) => x.name === lang)?.pretty
       res = <div className='EditPostAceEditor'>
-        <Dropdown overlay={() => modesMenu(block.id)} className={'aceModeSelect'}>
+        <Dropdown overlay={() => modesMenu(block.id)} className={'AceModeSelect'}>
           <a href='#' onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => e.preventDefault()}>
             <Icon type="down" /> Syntax: {pretty || 'JavaScript'}
           </a>
@@ -127,7 +127,7 @@ const PostBlockFormik = (props: Props) => {
           value={block.data}
           name="ace-editor"
           editorProps={{ $blockScrolling: true }}
-          className={'aceEditor'}
+          className={'AceEditor'}
           width='100%'
           minLines={1}
           maxLines={9}
@@ -156,31 +156,31 @@ const PostBlockFormik = (props: Props) => {
   }
 
   const mobileButtonsMenu = (
-    <Menu className='mobileButtonsMenu'>
-      <Icon type="plus-circle" className='addBlockPlusIcon addBefore' />
+    <Menu className='MobileButtonsMenu'>
+      <Icon type="plus-circle" className='AddBlockPlusIcon AddBefore' />
       <SubMenu title={`Add block before`} className='addBlockMenuButton'>
         {addMenu(index, true, 'before')}
       </SubMenu>
-      <Icon type="plus-circle" className='addBlockPlusIcon addAfter' />
+      <Icon type="plus-circle" className='AddBlockPlusIcon AddAfter' />
       <SubMenu title={`Add block after`} className='addBlockMenuButton'>
         {addMenu(index, true, 'after')}
       </SubMenu>
       <Menu.Item>
-        <a onClick={() => handleUseOnPreview(index, isPlaceForPreview)} className={`smallAntButton ${!isPlaceForPreview && 'off'} ${block.useOnPreview && 'on'}`}>
+        <a onClick={() => handleUseOnPreview(index, isPlaceForPreview)} className={`SmallAntButton ${!isPlaceForPreview && 'off'} ${block.useOnPreview && 'on'}`}>
           <Icon type="crown" />
           {block.useOnPreview ? ' Remove from preview' : ' Use in preview'}
         </a>
       </Menu.Item>
       { index > 0 &&
-      <Menu.Item><a className={'smallAntButton'} onClick={() => changeBlockPosition(-1, index)} >
+      <Menu.Item><a className={'SmallAntButton'} onClick={() => changeBlockPosition(-1, index)} >
         <Icon type="up-circle" /> Move Up
       </a></Menu.Item> }
       { index < maxBlockId &&
-        <Menu.Item><a className={'smallAntButton'} onClick={() => changeBlockPosition(1, index)} >
+        <Menu.Item><a className={'SmallAntButton'} onClick={() => changeBlockPosition(1, index)} >
           <Icon type="down-circle" /> Move Down
         </a></Menu.Item> }
       <Menu.Item>
-        <a className={'smallAntButton'} onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
+        <a className={'SmallAntButton'} onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
           {block.hidden
             ? <div><Icon type="eye" /> Show</div>
             : <div><Icon type="eye-invisible" /> Hide</div>
@@ -188,7 +188,7 @@ const PostBlockFormik = (props: Props) => {
         </a>
       </Menu.Item>
       <Menu.Item>
-        <a onClick={() => removeBlock(block.id)} className={'smallAntButton'}>
+        <a onClick={() => removeBlock(block.id)} className={'SmallAntButton'}>
           <Icon type="delete" /> Delete
         </a>
       </Menu.Item>
@@ -196,17 +196,17 @@ const PostBlockFormik = (props: Props) => {
 
   );
 
-  const buttonsMenu = <div className="buttonsForMobile">
+  const buttonsMenu = <div className="ButtonsForMobile">
     <Dropdown overlay={mobileButtonsMenu}>
       <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-        <Icon type="ellipsis" className="menuDotsIcon" />
+        <Icon type="ellipsis" className="MenuDotsIcon" />
       </a>
     </Dropdown>
   </div>
 
-  return <div className={`EditPostBlockWrapper ${isMobile ? 'mobileBlock' : ''}`} key={block.id} >
+  return <div className={`EditPostBlockWrapper ${isMobile ? 'MobileBlock' : ''}`} key={block.id} >
     {buttonsMenu}
-    {block.useOnPreview && <div className='editPostCrown'><Icon type="crown" /></div>}
+    {block.useOnPreview && <div className='EditPostCrown'><Icon type="crown" /></div>}
     {res}
     <ErrorMessage name={`blockValues.${index}.data`} component='div' className='ui pointing red label' />
   </div>

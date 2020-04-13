@@ -29,7 +29,7 @@ const CodePreview = (props: Props) => {
     readOnly={true}
     editorProps={{ $blockScrolling: true }}
     width='100%'
-    className={'aceEditor'}
+    className={'AceEditor'}
     minLines={1}
     maxLines={9}
   />

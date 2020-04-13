@@ -14,54 +14,37 @@
     display: inline-block;
     margin-bottom: $space_tiny;
   }
-  .aceModeSelect {
+  .AceModeSelect {
     width: 150px;
     margin-bottom: 5px;
     color: $color_menu_font;
   }
 }
 
-.twitter-tweet {
-  display: flex !important;
-  justify-content: center !important;
-}
-
-.miniPreviewWrapper {
-  .miniPreviewBlock {
-    margin-bottom: $space_normal;
-  }
-}
-
-.DfShareModal {
-  .navigationButtons {
-    display: none;
-  }
-}
-
-.selectBlogPreview {
+.SelectBlogPreview {
   width: 200px !important;
 }
 
-.mobileTabs {
+.MobileTabs {
   margin-top: $space_normal;
 
-  .selectBlogPreview {
+  .SelectBlogPreview {
     width: 100% !important;
   }
 }
 
-.mobileButtonsMenu {
+.MobileButtonsMenu {
   position: relative;
   width: 200px;
 
-  .addBlockPlusIcon {
+  .AddBlockPlusIcon {
     position: absolute;
     z-index: 1;
-    &.addBefore {
+    &.AddBefore {
       top: 12px;
       left: 12px;
     }
-    &.addAfter {
+    &.AddAfter {
       left: 12px;
       top: 44px;
     }
@@ -85,14 +68,14 @@
   padding: 5px;
   position: relative;
 
-  .editPostCrown {
+  .EditPostCrown {
     position: absolute;
     color: $color_link;
     right: -20px;
   }
 
-  .buttonsForMobile {
-    .menuDotsIcon {
+  .ButtonsForMobile {
+    .MenuDotsIcon {
       -moz-transform: rotate(90deg);
       -ms-transform: rotate(90deg);
       -webkit-transform: rotate(90deg);
@@ -113,7 +96,7 @@
     width: 100%;
   }
 
-  &.mobileBlock .editPostCrown {
+  &.MobileBlock .EditPostCrown {
     right: 5px;
     top: 5px;
   }
@@ -121,16 +104,6 @@
 
 .EditPostAddButton {
   margin: $space_big 0;
-
-  &.defaultAddBlockButton {
-    padding: 0 5px;
-    margin-right: 1rem;
-    cursor: pointer;
-
-    i {
-      margin-right: 3px;
-    }
-  }
 }
 
 .EditEntityForm {
@@ -141,7 +114,7 @@
   width: 50%;
   margin-right: $space_huge;
 
-  &.withTabs {
+  &.WithTabs {
     width: 100%;
     text-align: left;
 
@@ -150,38 +123,10 @@
     }
   }
 
-  .smallAntButton {
+  .SmallAntButton {
     height: $space_big;
     margin-right: 3px;
     position: relative;
-
-    &.off {
-      border-color: $color_light_border;
-      span, i {
-        color: $color_menu_font;
-      }
-    }
-
-    &.on {
-      border-color: $color_link;
-      span, i {
-        color: $color_link;
-      }
-    }
-
-    .previewWarning {
-      position: absolute;
-      background-color: white;
-      padding: 3px;
-      border-radius: 5px;
-      border: 1px solid $color_light_border;
-      color: $color_menu_font;
-      opacity: 0;
-    }
-
-    &:hover .previewWarning {
-      opacity: 1;
-    }
   }
 
   .AdvancedWrapper {
@@ -199,7 +144,7 @@
 .EditPostPreview {
   width: 50%;
 
-  &.withTabs {
+  &.WithTabs {
     width: 100%;
     text-align: left;
   }

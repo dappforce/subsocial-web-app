@@ -1,16 +1,16 @@
 @import '../../utils/styles/subsocial-vars.css';
 
-.previewLinkWrapper {
+.PreviewLinkWrapper {
   border: 1px solid $color_light_border;
   border-radius: 10px;
   position: relative;
 
-  .previewImgWrapper {
-    .linkImage {
+  .PreviewImgWrapper {
+    .LinkImage {
       border-radius: 10px 10px 0 0;
     }
     
-    &.youtube:before {
+    &.Youtube:before {
       content: url(../../../../public/play_youtube.png);
       position: absolute;
       top: calc(50% - 96px);
@@ -18,26 +18,26 @@
     }
   }
 
-  .underPicture {
+  .UnderPicture {
     padding: 0 $space_normal $space_normal $space_normal;
 
-    .previewLinkTitle {
+    .PreviewLinkTitle {
       b {
         font-size: $space_large;
       }
     }
 
-    .previewDescription {
+    .PreviewDescription {
       color: #111;
     }
   
-    .previewLinkAfterDescription {
+    .PreviewLinkAfterDescription {
       color: $color_muted;
     }
   }
 }
 
-.aceEditor {
+.AceEditor {
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
   font-weight: 400;
   line-height: 1.4;

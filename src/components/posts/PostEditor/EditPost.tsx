@@ -283,7 +283,7 @@ const InnerForm = (props: FormProps) => {
   const renderBlogsPreviewDropdown = () => {
     if (!blogIds) return;
     return <SelectBlogPreview
-      className={'selectBlogPreview'}
+      className={'SelectBlogPreview'}
       blogIds={blogIds}
       onSelect={handleBlogSelect}
       imageSize={24}
@@ -300,7 +300,7 @@ const InnerForm = (props: FormProps) => {
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
           <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
-            <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
+            <AntButton type="default" className={'SmallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
           </Dropdown>
           {blockValues && blockValues.length > 0
             ? blockValues.map((block: BlockValueKind, index: number) => <PostBlockFormik
@@ -315,7 +315,7 @@ const InnerForm = (props: FormProps) => {
           }
           { blockValues && blockValues.length > 0 &&
             <Dropdown overlay={() => addMenu(blockValues.length + 1, false, 'after')} className={'EditPostAddButton'}>
-              <AntButton type="default" className={'smallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
+              <AntButton type="default" className={'SmallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
             </Dropdown>
           }
           <div className='AdvancedWrapper'>
@@ -399,14 +399,14 @@ const InnerForm = (props: FormProps) => {
       }
     </Section>
 
-  const renderForMobile = () => <Tabs type="card" className="mobileTabs">
+  const renderForMobile = () => <Tabs type="card" className="MobileTabs">
       <TabPane tab="Editor" key="1">
-        <div className='EditPostForm withTabs'>
+        <div className='EditPostForm WithTabs'>
           {form}
         </div>
       </TabPane>
       <TabPane tab="Full Preview" key="2">
-        <div className='EditPostPreview withTabs'>
+        <div className='EditPostPreview WithTabs'>
           <div className='DfMd'>
             <h1>{title}</h1>
           </div>
@@ -422,7 +422,7 @@ const InnerForm = (props: FormProps) => {
         </div>
       </TabPane>
       <TabPane tab="Short Preview" key="3">
-        <div className='EditPostPreview withTabs'>
+        <div className='EditPostPreview WithTabs'>
           <div>
             <h1>{title}</h1>
           </div>

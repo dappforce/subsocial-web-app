@@ -77,11 +77,6 @@ const VideoPreview = (props: Props) => {
     return null
   }
 
-  console.log('video block:', x)
-  console.log('video embedData:', embedData)
-  console.log('video linkPreviewData:', linkPreviewData)
-
-
   if (!isLink(x.data)) {
     return <div>{x.data}</div>
   }
@@ -94,8 +89,8 @@ const VideoPreview = (props: Props) => {
   if (!previewData) return null
   const { data: { og } } = previewData
   if (!og || !og.url) return null
-  if (og?.url.match(YOUTUBE_REGEXP)) match = 'youtube'
-  if (og?.url.match(VIMEO_REGEX)) match = 'vimeo'
+  if (og?.url.match(YOUTUBE_REGEXP)) match = 'Youtube'
+  if (og?.url.match(VIMEO_REGEX)) match = 'Vimeo'
 
   const domain = x.data.match(DOMAIN_REGEXP)
 
@@ -109,14 +104,14 @@ const VideoPreview = (props: Props) => {
       >
         {currentEmbed
           ? renderEmbed(currentEmbed)
-          : <div className={'previewLinkWrapper'}>
-            <div className={`previewImgWrapper ${match}`}>
-              <img src={og?.image} className='DfPostImage linkImage' />
+          : <div className={'PreviewLinkWrapper'}>
+            <div className={`PreviewImgWrapper ${match}`}>
+              <img src={og?.image} className='DfPostImage LinkImage' />
             </div>
-            <div className={'underPicture'}>
-              <p className='previewLinkTitle'><b>{og?.title}</b></p>
-              <p className='previewDescription'>{og?.description}</p>
-              <p className='previewLinkAfterDescription'><Icon type="link" /> {domain}</p>
+            <div className={'UnderPicture'}>
+              <p className='PreviewLinkTitle'><b>{og?.title}</b></p>
+              <p className='PreviewDescription'>{og?.description}</p>
+              <p className='PreviewLinkAfterDescription'><Icon type="link" /> {domain}</p>
             </div>
           </div>}
       </a>

@@ -222,7 +222,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const hasPreviews = previewBlocks && previewBlocks.length !== 0
     const imageBlock = blockValues.find((x) => x.kind === 'image')
 
-    return <div className='miniPreviewWrapper'>
+    return <div className='MiniPreviewWrapper'>
       <div className='DfPostText'>
         {renderNameOnly(title || summary, post.id)}
         <div className='DfSummary'>
@@ -231,13 +231,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       </div>
       <div>
         {hasPreviews
-          ? previewBlocks.map((x) => <div className='miniPreviewBlock'><BlockPreview
+          ? previewBlocks.map((x) => <div className='MiniPreviewBlock'><BlockPreview
             block={x}
             embedData={embedData}
             setEmbedData={setEmbedData}
             linkPreviewData={linkPreviewData}
           /></div>)
-          : imageBlock && <div className='miniPreviewBlock'><BlockPreview
+          : imageBlock && <div className='MiniPreviewBlock'><BlockPreview
             block={imageBlock}
             embedData={embedData}
             setEmbedData={setEmbedData}
