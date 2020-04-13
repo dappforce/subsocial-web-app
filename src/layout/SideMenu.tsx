@@ -41,18 +41,20 @@ const InnerMenu = () => {
       setLoaded(false);
       const ids = await substrate.blogIdsFollowedByAccount(myAddress)
       const blogsData = await subsocial.findBlogs(ids);
-      isSubscribe && setFollowedBlogsData(blogsData);
-      isSubscribe && setLoaded(true);
+      if (isSubscribe) {
+        setFollowedBlogsData(blogsData);
+        setLoaded(true);
+      }
     };
 
-    loadBlogsData().catch(err => log.error('Error load blogs data:', err));
+    loadBlogsData().catch(err => log.error('Failed to load blogs data:', err));
 
     return () => { isSubscribe = false; };
   }, [ trigerFollowed, myAddress ]);
 
   const onClick = (page: string[]) => {
     isMobile && toggle();
-    Router.push(page[0], page[1]).catch(err => log.error('Error while route:', err));
+    Router.push(page[0], page[1]).catch(err => log.error('Failed to navigate to selected blog:', err));
   };
 
   const DefaultMenu: MenuItem[] = [

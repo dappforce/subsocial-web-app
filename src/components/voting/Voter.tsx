@@ -47,7 +47,7 @@ export const Voter = (props: VoterProps) => {
         : await substrate.findPost(id)
       if (isSubscribe && _struct) setState(_struct);
     }
-    loadStruct(state).catch(err => log.error('Error load struct:', err));
+    loadStruct(state).catch(err => log.error('Failed to load a post or comment. Error:', err));
 
     async function loadReaction () {
       if (!address) return
@@ -55,14 +55,14 @@ export const Voter = (props: VoterProps) => {
       const reactionId = isComment 
         ? await substrate.getCommentReactionIdByAccount(address, id)
         : await substrate.getPostReactionIdByAccount(address, id)
-        const reaction = await substrate.findReaction(reactionId)
+      const reaction = await substrate.findReaction(reactionId)
       if (isSubscribe) {
         setReactionState(reaction);
         reaction && setReactionKind(reaction.kind.toString());
       } 
     }
 
-    loadReaction().catch(err => log.error('Error load reaction:', err));
+    loadReaction().catch(err => log.error('Failed to load a reaction. Error:', err));
 
     return () => { isSubscribe = false; };
   }, [ updateTrigger, address ]);

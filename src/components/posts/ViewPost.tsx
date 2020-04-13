@@ -104,8 +104,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error('Failed to load content from IPFS:', err));
-    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error('Failed to load content for share post from IPFS:', err));
+    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error('Failed to load a post content from IPFS:', err));
+    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error('Failed to load content of a shared post from IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);

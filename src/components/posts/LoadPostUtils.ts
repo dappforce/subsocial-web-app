@@ -5,7 +5,7 @@ import { ipfs, getSubsocialApi } from '../utils/SubsocialConnect';
 import { PostData } from '@subsocial/types/dto';
 import { isMobile } from 'react-device-detect';
 
-export const LIMIT_SUMMARY = isMobile ? 75 : 150;
+export const LIMIT_SUMMARY = isMobile ? 150 : 300;
 
 export type PostType = 'regular' | 'share';
 

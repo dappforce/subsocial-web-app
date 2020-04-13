@@ -30,7 +30,7 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
       const _isFollow = await substrate.isPostSharedByAccount(myAddress, postId)
       isSubscribe && setIsFollow(_isFollow);
     };
-    load().catch(err => log.error('Failed to share post check isFollow:', err));
+    load().catch(err => log.error(`Failed to check if the current account shared a post with id ${postId.toString()}. Error:`, err));
 
     return () => { isSubscribe = false; };
   }, [ postId ]);
@@ -73,7 +73,8 @@ export function ShareButtonComment (props: PropsShareButtonComment) {
       const _isFollow = await substrate.isCommentSharedByAccount(myAddress, commentId)
       setIsFollow(_isFollow);
     };
-    load().catch(err => log.error('Failed to share comment check isFollow:', err));
+    load().catch(err => log.error(`Failed to check if the current account shared a comment with id ${commentId.toString()}. Error:`
+, err));
   }, [ commentId ]);
 
   const buildTxParams = () => {

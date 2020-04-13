@@ -32,7 +32,7 @@ export function Notification (props: Props) {
     AccountFollowed = 'followed your account',
     PostShared = 'shared your post',
     BlogFollowed = 'followed your blog',
-    BlogCreated = 'created blog',
+    BlogCreated = 'created a new blog',
     CommentCreated = 'commented on your post',
     CommentReply = 'replied to your comment',
     PostReactionCreated = 'reacted to your post',
@@ -116,7 +116,7 @@ export function Notification (props: Props) {
   }, [ postId > new BN(0), message ]);
 
   return loading
-    ? <Loading/>
+    ? <Loading />
     : <div className='DfNotificationItem'>
       <AddressComponents
         value={account}

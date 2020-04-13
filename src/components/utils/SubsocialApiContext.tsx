@@ -7,7 +7,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useApi } from '@polkadot/react-hooks';
 import { newLogger } from '@subsocial/utils';
 
-const log = newLogger('Subsocial api context')
+const log = newLogger('SubsocialApiContext')
 
 export type SubsocialApiState = {
   subsocial: SubsocialApi,
@@ -26,7 +26,7 @@ function reducer (state: SubsocialApiState, action: SubsocialApiAction): Subsoci
   switch (action.type) {
     case 'init':
       const subsocial = new SubsocialApi({ substrateApi: action.api, ipfsApi: ipfsUrl, offchainUrl })
-      log.info('Initial subsocial API')
+      log.info('Subsocial API initialized')
       return { subsocial, substrate: subsocial.substrate, ipfs: subsocial.ipfs, isReady: true }
 
     default:
@@ -82,8 +82,8 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
     if (!state.isReady) {
       getApi().then(api => dispatch({ type: 'init', api: api }))
     }
-  }, [ state.isReady ]) // Don't call this effect if `invited` is not changed
-  log.debug('Contex:', state);
+  }, [ state.isReady ])
+  log.debug('State:', state);
   const contextValue = {
     state,
     dispatch,

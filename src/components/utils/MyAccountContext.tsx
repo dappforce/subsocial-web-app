@@ -2,7 +2,7 @@ import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import store from 'store';
 import { newLogger } from '@subsocial/utils';
 
-const log = newLogger('AccountContext')
+const log = newLogger('MyAccountContext')
 
 export const MY_ADDRESS = 'df.myAddress';
 

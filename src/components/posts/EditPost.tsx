@@ -334,7 +334,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       ipfs.findPost(struct.ipfs_hash).then(json => {
         setJson(json);
-      }).catch(err => log.error('Failed to find post from IPFS:', err));
+      }).catch(err => log.error('Failed to find a post in IPFS:', err));
     }, [ trigger ]);
 
     if (!myAddress || !structOpt || jsonIsNone) {

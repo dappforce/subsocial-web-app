@@ -95,7 +95,7 @@ function AddressComponents (props: Props) {
 
     const UpdateSocialAccount = async () => {
       const socialAccount = await substrate.findSocialAccount(value)
-      console.log('Soc.Acc', socialAccount);
+      console.log('Social account:', socialAccount);
 
       if (!socialAccount) {
         isSubscribe && setSocialAccount(undefined);

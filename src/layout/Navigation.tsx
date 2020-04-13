@@ -18,7 +18,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-log.debug('The browser: ', isBrowser);
+log.debug('Are we in a browser?', isBrowser);
 
 const DesktopNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();

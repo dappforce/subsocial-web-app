@@ -107,7 +107,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     ipfs.findBlog(ipfs_hash).then((json) => {
       const content = json;
       if (isSubscribe && content) setContent(content);
-    }).catch((err) => log.error('Failed to find blog from IPFS:', err));
+    }).catch((err) => log.error('Failed to find blog in IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -315,7 +315,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) as unknown as PostId[];
+  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) as unknown as PostId[]; // TODO maybe delete this type cast?
   const posts = await loadPostDataList(postIds.reverse());
   return {
     blogData,

@@ -35,7 +35,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
       const _isFollow = await (substrate.isBlogFollower(myAddress, blogId))
       isSubscribe && setIsFollow(_isFollow)
     };
-    load().catch(err => log.error('Failed to check isFollow:', err));
+    load().catch(err => log.error(`Failed to check if the current account is following a blog with id ${blogId.toString()}. Error:`, err));
 
     return () => { isSubscribe = false; };
   });

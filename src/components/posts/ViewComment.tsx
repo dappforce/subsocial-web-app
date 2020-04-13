@@ -162,7 +162,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
     ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
       isSubscribe && json && setContent(json);
-    }).catch(err => log.error('Failed to find comment from IPFS:', err));
+    }).catch(err => log.error('Failed to find a comment in IPFS:', err));
 
     const loadComment = async () => {
       const comment = await substrate.findComment(id);

@@ -94,7 +94,7 @@ const InnerForm = (props: FormProps) => {
   };
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => log.error('Failed to remove from IPFS:', err));
+    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => log.error('Failed to remove a comment from IPFS:', err));
     setSubmitting(false);
   };
 
@@ -124,7 +124,7 @@ const InnerForm = (props: FormProps) => {
         });
       return [ struct.id, update ];
     } else {
-      log.error('Nothing to update in a comment');
+      log.error('Nothing to update: comment\'s not changed');
       return [];
     }
   };
@@ -233,7 +233,7 @@ function LoadStruct (props: LoadStructProps) {
     ipfs.findComment(struct.ipfs_hash).then(json => {
       const content = json;
       setJson(content);
-    }).catch(err => log.error('Failed to find blog from IPFS:', err));
+    }).catch(err => log.error('Failed to find a comment in IPFS:', err));
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

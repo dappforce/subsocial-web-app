@@ -13,7 +13,7 @@ type PreparedBlogData = {
   name: string,
   image: string,
   hasImage: boolean,
-  id: string | undefined
+  id?: string
 }
 
 type Props = {
@@ -29,7 +29,7 @@ const SUB_SIZE = 2;
 const SelectBlogPreview = (props: Props) => {
   const { preparedBlogsData = [], imageSize = 36, onSelect, defaultValue } = props
 
-  if (isEmptyArray(preparedBlogsData)) return <NoData description={<span>Blogs not found</span>} />;
+  if (isEmptyArray(preparedBlogsData)) return <NoData description={<span>No blogs found</span>} />;
 
   return <Select
     style={{ width: 200 }}

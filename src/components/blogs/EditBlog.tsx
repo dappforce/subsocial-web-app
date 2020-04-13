@@ -68,11 +68,10 @@ const InnerForm = (props: FormProps) => {
     tags,
     navTabs
   } = values;
-  console.log('I am Edit Blog')
   const { ipfs } = useSubsocialApi()
 
   const goToView = (id: BN) => {
-    Router.push('/blogs/' + id.toString()).catch(err => log.error('Error while router:', err));
+    Router.push('/blogs/' + id.toString()).catch(err => log.error('Failed to redirect to blog page. Error:', err));
   };
 
   const [ ipfsCid, setIpfsCid ] = useState('');
@@ -224,7 +223,7 @@ function LoadStruct (props: LoadStructProps) {
 
     ipfs.findBlog(struct.ipfs_hash.toString()).then(json => {
       setJson(json);
-    }).catch(err => log.error('Failed to find blog from ipfs:', err));
+    }).catch(err => log.error('Failed to find blog in IPFS. Error:', err));
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {
