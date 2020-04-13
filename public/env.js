@@ -9,5 +9,5 @@ window.process.env = {
   OFFCHAIN_URL: 'http://127.0.0.1:3001',
   OFFCHAIN_WS: 'ws://127.0.0.1:3011',
   APPS_URL: 'http://testnet.subsocial.network:3002',
-  IPFS_URL: 'http://testnet.subsocial.network:3001'
+  IPFS_URL: 'http://127.0.0.1:3001'
 };
