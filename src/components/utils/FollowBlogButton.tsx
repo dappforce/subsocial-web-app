@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
-import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';

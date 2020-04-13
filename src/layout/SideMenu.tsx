@@ -5,7 +5,7 @@ import Router, { useRouter } from 'next/router';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { Loading, getEnv } from '../components/utils/utils';
+import { Loading } from '../components/utils/utils';
 import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
 import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
@@ -14,8 +14,6 @@ import { newLogger } from '@subsocial/utils';
 import { useNotifCounter } from '../components/utils/NotifCounter';
 
 const log = newLogger('SideMenu')
-
-const appsUrl = getEnv('APPS_URL') || 'http://127.0.0.1:3002';
 
 interface MenuItem {
   name: string;

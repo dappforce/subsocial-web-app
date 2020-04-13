@@ -14,7 +14,6 @@ import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils';
 import { Moment } from '@polkadot/types/interfaces';
-import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 import { useSubsocialApi } from './SubsocialApiContext';
 import { getSubsocialApi } from './SubsocialConnect';
 

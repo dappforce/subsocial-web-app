@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { ViewBlogPage, BlogData, loadBlogData } from './ViewBlog';
-import { BlogId } from '@subsocial/types/substrate/interfaces/subsocial';
+import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import { NextPage } from 'next';
@@ -15,7 +14,7 @@ type Props = {
   blogsData: BlogData[];
 };
 
-export const ListBlog: NextPage<Props> = (props: Props) => {
+export const ListAllBlogs: NextPage<Props> = (props: Props) => {
   const { totalCount, blogsData } = props;
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
@@ -32,10 +31,10 @@ export const ListBlog: NextPage<Props> = (props: Props) => {
   );
 };
 
-ListBlog.getInitialProps = async (props): Promise<any> => {
+ListAllBlogs.getInitialProps = async (props): Promise<any> => {
+  const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const nextBlogId = await substrate.nextBlogId()
-  const subsocial = await getSubsocialApi()
 
   const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();

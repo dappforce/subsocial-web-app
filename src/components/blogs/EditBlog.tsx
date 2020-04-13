@@ -201,17 +201,13 @@ type LoadStructProps = OuterProps & {
   structOpt: Option<Blog>;
 };
 
-type StructJson = BlogContent | undefined;
-
-type Struct = Blog | undefined;
-
 // TODO refactor copypasta. See the same function in NavigationEditor
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
   const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
-  const [ json, setJson ] = useState(undefined as StructJson);
-  const [ struct, setStruct ] = useState(undefined as Struct);
+  const [ json, setJson ] = useState<BlogContent>();
+  const [ struct, setStruct ] = useState<Blog>();
   const [ trigger, setTrigger ] = useState(false);
   const jsonIsNone = json === undefined;
 

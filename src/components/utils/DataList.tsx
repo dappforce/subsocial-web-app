@@ -6,9 +6,9 @@ import { PaginationConfig } from 'antd/lib/pagination';
 import Section from './Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
 import NoData from './EmptyList';
-import { newLogger } from '@subsocial/utils';
-
-const log = newLogger('Data list')
+// import { newLogger } from '@subsocial/utils';
+// TODO use logger
+// const log = newLogger('Data list')
 
 type Props<T extends any> = {
   className?: string,

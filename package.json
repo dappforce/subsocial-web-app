@@ -3,7 +3,7 @@
   "private": true,
   "engines": {
     "node": ">=10.13.0",
-    "yarn": "^1.10.1"
+    "yarn": ">=1.10.1"
   },
   "homepage": ".",
   "resolutions": {

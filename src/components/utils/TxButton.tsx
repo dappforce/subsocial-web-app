@@ -77,6 +77,7 @@ class TxButtonInner extends React.PureComponent<InnerProps> {
 
     return (
       <Button
+        icon={icon as string}
         className={className}
         tooltip={tooltip}
         isBasic={isBasic}

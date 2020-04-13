@@ -21,7 +21,6 @@ import { TxCallback } from '../utils/types';
 import { Profile, SocialAccount, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { ProfileUpdate } from '@subsocial/types/substrate/classes';
-import U32 from '@polkadot/types/primitive/U32';
 import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 
@@ -68,7 +67,6 @@ const InnerForm = (props: FormProps) => {
     personalSite,
     about,
     facebook,
-    medium,
     twitter,
     linkedIn,
     medium,
