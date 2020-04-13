@@ -111,7 +111,7 @@ const BlockPreview = (props: Props) => {
         if (match && match[0]) {
           const res = match[0].split('/')
           const file = match[5] || ''
-          element = <div className='gistEmbedWrapper'>{ <Gist id={res[4]} file={file} /> }</div>
+          element = <Gist id={res[4]} file={file} />
           break
         }
       }

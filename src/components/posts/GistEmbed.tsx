@@ -30,7 +30,7 @@ const Gist = (props: Props) => {
 
     const gistLink = _defineUrl()
     const gistScript = `<script type="text/javascript" src="${gistLink}"></script>`;
-    const styles = '<style>*{font-size:12px;}</style>';
+    const styles = '<style>*{font-size:12px;} .file{height: 300px;}</style>';
     const elementId = file ? `gist-${id}-${file}` : `gist-${id}`;
     const resizeScript = `onload="parent.document.getElementById('${elementId}').style.height=document.body.scrollHeight + 'px'"`;
     const iframeHtml = `<html><head><base target="_parent">${styles}</head><body ${resizeScript}>${gistScript}</body></html>`;
