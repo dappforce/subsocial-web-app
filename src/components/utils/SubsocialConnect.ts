@@ -32,27 +32,24 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
 let subsocial: SubsocialApi | undefined = undefined;
 
 export const getSubsocialApi = async () => {
-  if (subsocial) {
-    console.log('Subsocial is ready')
-    return subsocial;
-  } else {
+  if (!subsocial) {
     const api = await getApi()
-    return new SubsocialApi({ substrateApi: api, ipfsApi: ipfsUrl, offchainUrl})
+    subsocial = new SubsocialApi({ substrateApi: api, ipfsApi: ipfsUrl, offchainUrl })
   }
+  return subsocial
 }
 
-export let api: ApiPromise;
+export let api: ApiPromise
 
 export const getApi = async () => {
   if (polkadotApi) {
-    log.debug('Get Substrate API: @polkadot api');
-    return polkadotApi.isReady;
-  } else if (api) {
-    log.debug('Get Substrate API: SSR api');
-    return api;
+    log.debug('Get Substrate API: @polkadot api')
+    return polkadotApi.isReady
   } else {
-    log.debug('Get Substrate API: DfApi.setup()');
-    api = await Api.connect(substrateUrl);
-    return api;
+    if (!api) {
+      log.debug('Get Substrate API: DfApi.setup()')
+      api = await Api.connect(substrateUrl)
+    }
+    return api
   }
 }

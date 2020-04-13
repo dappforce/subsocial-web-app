@@ -26,7 +26,7 @@ export const Voter = (props: VoterProps) => {
     type
   } = props;
 
-  const { state: { substrate } } = useSubsocialApi()
+  const { substrate } = useSubsocialApi()
   const [ reactionState, setReactionState ] = useState(undefined as (Reaction | undefined));
 
   const { state: { address } } = useMyAccount();

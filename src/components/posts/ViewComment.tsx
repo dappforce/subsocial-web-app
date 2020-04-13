@@ -51,7 +51,7 @@ export function CommentsTree (props: Props) {
     commentIdForPage
   } = props;
   // eslint-disable-next-line no-undef
-  const { state: { substrate } } = useSubsocialApi()
+  const { substrate } = useSubsocialApi()
   const commentsCount = commentIds.length;// post.comments_count.toNumber();
   const [ loaded, setLoaded ] = useState(false);
   const [ comments, setComments ] = useState(new Array<Comment>());
@@ -139,7 +139,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     postContent: initialPostContent = {} as PostContent,
     commentContent = {} as CommentContent
   } = props;
-  const { state: { substrate, ipfs  } } = useSubsocialApi()
+  const { substrate, ipfs } = useSubsocialApi()
   const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 

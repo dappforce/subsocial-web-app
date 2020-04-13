@@ -116,6 +116,7 @@
     "store": "^2.0.12",
     "strip-markdown": "^3.0.3",
     "url-loader": "^3.0.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "yarn": "^1.22.4"
   }
 }

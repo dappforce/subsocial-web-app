@@ -139,7 +139,7 @@ const InnerForm = (props: FormProps) => {
       Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
     }
   };
-  const { state: { ipfs } } = useSubsocialApi()
+  const { ipfs } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {

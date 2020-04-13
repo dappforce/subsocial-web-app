@@ -25,7 +25,7 @@ type Props = ApiProps & {
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {
   const { blogsData, postsData } = props;
-  console.log('BlogData', blogsData[0].content)
+  console.log('BlogData', blogsData)
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <HeadMeta title='Subsocial latest updates' desc='Subsocial home page with latest updates' />
@@ -49,9 +49,10 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 
 LatestUpdate.getInitialProps = async (): Promise<any> => {
   const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial;
   console.log('Subsocial Api', subsocial)
-  const nextBlogId = await subsocial.substrate.nextBlogId() as BlogId
-  const nextPostId = await subsocial.substrate.nextPostId() as PostId
+  const nextBlogId = await substrate.nextBlogId() as BlogId
+  const nextPostId = await substrate.nextPostId() as PostId
   console.log('Subsocial', subsocial, nextBlogId);
   const getLastNIds = (nextId: BN, size: BN): BN[] => {
     const initIds = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
@@ -64,7 +65,7 @@ LatestUpdate.getInitialProps = async (): Promise<any> => {
   const blogsData = await subsocial.findBlogs(latestBlogIds);
   const latestPostIds = getLastNIds(nextPostId, FIVE);
   const postsData = await loadPostDataList(subsocial, latestPostIds as PostId[]);
-  console.log('Data', { content: blogsData[0].content, postsData } )
+  console.log('Data', { content: blogsData, postsData } )
   return {
     blogsData,
     postsData

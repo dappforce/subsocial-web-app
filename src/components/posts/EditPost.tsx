@@ -114,7 +114,7 @@ const InnerForm = (props: FormProps) => {
     Router.push(`/blogs/${blogId}/posts/${id}`).catch(err => log.error('Error while route:', err));
   };
 
-  const { state: { ipfs } } = useSubsocialApi()
+  const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = (sendTx: () => void) => {
@@ -284,7 +284,7 @@ type StructPost = Post | undefined;
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
     const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, becose usles
-    const { state: { ipfs } } = useSubsocialApi()
+    const { ipfs } = useSubsocialApi()
     const { structOpt } = props;
     const [ json, setJson ] = useState(undefined as StructJson);
     const [ struct, setStruct ] = useState(undefined as StructPost);

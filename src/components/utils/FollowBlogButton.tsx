@@ -22,7 +22,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
 
   if (!myAddress) return null;
 
-  const { state: { substrate } } = useSubsocialApi()
+  const { substrate } = useSubsocialApi()
   const [ isFollow, setIsFollow ] = useState(false);
 
   const TxSuccess = () => {

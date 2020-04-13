@@ -81,7 +81,8 @@ function AddressComponents (props: Props) {
     event,
     count,
     subject } = props;
-  const { state: { substrate, ipfs } } = useSubsocialApi();
+  
+  const { substrate, ipfs } = useSubsocialApi();
   console.log('SOCIAL', substrate)
   const [ socialAccount, setSocialAccount ] = useState(socialAccountInitial);
   const [ profile, setProfile ] = useState(profileInit);

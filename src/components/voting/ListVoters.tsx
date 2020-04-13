@@ -36,7 +36,7 @@ function isUpvote (reaction: Reaction): boolean {
 const InnerModalVoters = (props: VotersProps) => {
   const { reactions, open, close, active = ActiveVoters.All } = props;
   const votersCount = reactions ? reactions.length : 0;
-  const { state: { substrate } } = useSubsocialApi()
+  const { substrate } = useSubsocialApi()
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
   const [ trigger, setTrigger ] = useState(false);
   const [ upvoters, downvoters ] = partition(reactionView, (x) => isUpvote(x))

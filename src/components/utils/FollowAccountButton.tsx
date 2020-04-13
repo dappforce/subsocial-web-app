@@ -35,7 +35,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
 
   const accountId = new GenericAccountId(registry, address);
 
-  const { state: { substrate } } = useSubsocialApi()
+  const { substrate } = useSubsocialApi()
   const [ isFollow, setIsFollow ] = useState(true);
 
   useEffect(() => {

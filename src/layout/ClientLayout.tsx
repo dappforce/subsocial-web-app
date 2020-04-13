@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import settings from '../components/settings';
 import '../components/utils/styles';
 
-import Api from '../components/utils/Api';
+import { Api } from '@polkadot/react-api'
 import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import Queue from '@polkadot/react-components/Status/Queue';
 import Signer from '@polkadot/react-signer';
@@ -22,30 +22,28 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
   const { queueAction, stqueue, txqueue } = useContext(StatusContext);
 
   return <Queue>
-    <Api
-      url={url}
-    >
-      <BlockAuthors>
-        <Events>
-          <MyAccountProvider>
-            <Signer>
-              <Status
-                queueAction={queueAction}
-                stqueue={stqueue}
-                txqueue={txqueue}
-              />
-              <SubsocialApiProvider>
+    <Api url={url}>
+      <SubsocialApiProvider>
+        <BlockAuthors>
+          <Events>
+            <MyAccountProvider>
+              <Signer>
+                <Status
+                  queueAction={queueAction}
+                  stqueue={stqueue}
+                  txqueue={txqueue}
+                />
                 <Navigation>
                   {children}
                 </Navigation>
-              </SubsocialApiProvider>
-            </Signer>
-            <ConnectingOverlay />
-            <AccountsOverlay />
-          </MyAccountProvider>
-          <Connecting />
-        </Events>
-      </BlockAuthors>
+              </Signer>
+              <ConnectingOverlay />
+              <AccountsOverlay />
+            </MyAccountProvider>
+            <Connecting />
+          </Events>
+        </BlockAuthors>
+      </SubsocialApiProvider>
     </Api>
   </Queue>;
 };

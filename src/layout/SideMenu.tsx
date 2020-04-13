@@ -25,7 +25,7 @@ interface MenuItem {
 const InnerMenu = () => {
   const { toggle, state: { collapsed, trigerFollowed } } = useSidebarCollapsed();
   const { state: { address: myAddress } } = useMyAccount();
-  const { state: { subsocial, substrate } } = useSubsocialApi();
+  const { subsocial, substrate } = useSubsocialApi();
   const isLoggedIn = checkIfLoggedIn();
   const [ followedBlogsData, setFollowedBlogsData ] = useState([] as BlogData[]);
   const [ loaded, setLoaded ] = useState(false);

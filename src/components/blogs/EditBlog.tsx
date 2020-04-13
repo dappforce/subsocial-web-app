@@ -105,7 +105,7 @@ const InnerForm = (props: FormProps) => {
     tags
   } = values;
   console.log('I am Edit Blog')
-  const { state: { ipfs } } = useSubsocialApi()
+  const { ipfs } = useSubsocialApi()
 
   const goToView = (id: BN) => {
     Router.push('/blogs/' + id.toString()).catch(err => log.error('Error while router:', err));
@@ -257,7 +257,7 @@ type Struct = Blog | undefined;
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
-  const { state: { ipfs } } = useSubsocialApi()
+  const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState(undefined as StructJson);
   const [ struct, setStruct ] = useState(undefined as Struct);

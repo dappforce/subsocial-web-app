@@ -86,7 +86,7 @@ const InnerForm = (props: FormProps) => {
     body
   } = values;
 
-  const { state: { ipfs } } = useSubsocialApi()
+  const { ipfs } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
   const onSubmit = async (sendTx: () => void) => {
@@ -219,7 +219,7 @@ type StructJson = CommentContent | undefined;
 
 function LoadStruct (props: LoadStructProps) {
   const { state: { address: myAddress } } = useMyAccount();
-  const { state: { ipfs } } = useSubsocialApi()
+  const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<StructJson>();
   const [ struct, setStruct ] = useState<Comment>();

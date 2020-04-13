@@ -91,7 +91,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const blog = struct;
 
   const { state: { address } } = useMyAccount();
-  const { state: { ipfs } } = useSubsocialApi()
+  const { ipfs } = useSubsocialApi()
   const [ content, setContent ] = useState(blogData.content as BlogContent);
   const { desc, name, image } = content;
 

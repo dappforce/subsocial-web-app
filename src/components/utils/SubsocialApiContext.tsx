@@ -93,7 +93,15 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
 }
 
 export function useSubsocialApi () {
-  return useContext(SubsocialApiContext)
+  return { ...useContext(SubsocialApiContext).state }
+}
+
+export function useSubstrateApi () {
+  return useSubsocialApi().substrate
+}
+
+export function useIpfsApi () {
+  return useSubsocialApi().ipfs
 }
 
 export default SubsocialApiProvider

@@ -123,7 +123,7 @@ export const ViewNotifications = () => {
 };
 
 function ViewActivity (props: ActivityProps) {
-  const { state: { subsocial } } = useSubsocialApi()
+  const { subsocial } = useSubsocialApi()
   const { activity } = props;
   const { post_id } = activity;
   const [ data, setData ] = useState<PostData[]>();
@@ -143,7 +143,7 @@ function ViewActivity (props: ActivityProps) {
 }
 
 export function Notification (props: ActivityProps) {
-  const { state: { subsocial, substrate } } = useSubsocialApi()
+  const { subsocial, substrate } = useSubsocialApi()
   const { activity } = props;
   const { account, event, date, post_id, comment_id, blog_id, agg_count } = activity;
   const formatDate = moment(date).format('lll');

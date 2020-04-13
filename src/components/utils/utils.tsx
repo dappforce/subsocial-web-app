@@ -120,7 +120,7 @@ export function withSocialAccount<P extends LoadSocialAccount> (Component: React
     const profile = profileOpt.unwrap() as Profile;
 
     const ipfsHash = profile.ipfs_hash;
-    const { state: { ipfs } } = useSubsocialApi()
+    const { ipfs } = useSubsocialApi()
     const [ ProfileContent, setProfileContent ] = useState(undefined as (ProfileContent | undefined));
 
     useEffect(() => {

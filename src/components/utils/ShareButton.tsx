@@ -16,7 +16,7 @@ type PropsShareButtonPost = {
 export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
   const { state: { address: myAddress } } = useMyAccount();
-  const { state: { substrate } } = useSubsocialApi();
+  const { substrate } = useSubsocialApi();
 
   if (!myAddress) return null;
 
@@ -61,7 +61,7 @@ type PropsShareButtonComment = {
 export function ShareButtonComment (props: PropsShareButtonComment) {
   const { commentId } = props;
   const { state: { address: myAddress } } = useMyAccount();
-  const { state: { substrate } } = useSubsocialApi();
+  const { substrate } = useSubsocialApi();
 
   if (!myAddress) return;
 
