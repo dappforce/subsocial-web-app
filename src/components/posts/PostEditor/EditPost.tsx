@@ -7,7 +7,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData } from '../../types';
+import { PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData, PostContent } from '../../types';
 import Section from '../../utils/Section';
 import { parse } from '../../utils/index';
 import { getNewIdFromEvent } from '../../utils/utils';
@@ -31,7 +31,7 @@ import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../../utils/types';
 import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
-import { PostContent } from '@subsocial/types/offchain';
+// import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
 import BloggedSectionTitle from '../../blogs/BloggedSectionTitle';
 
@@ -126,14 +126,14 @@ const InnerForm = (props: FormProps) => {
     const processArray = async (array: BlockValueKind[]) => {
       const res = []
       for (const item of array) {
-        const hash = await ipfs.savePost(item)
+        const hash = await ipfs.savePost(item as any)
         res.push({ kind: item.kind, hidden: item.hidden, cid: hash })
       }
       return res
     }
     if (blockValues && blockValues.length > 0) {
       const tempValues = await processArray(blockValues)
-      return tempValues as PostBlock[]
+      return tempValues as any[]
     }
     return [] as PostBlock[]
   }
@@ -142,7 +142,7 @@ const InnerForm = (props: FormProps) => {
     const blocks = await mapValuesToBlocks()
     if (isValid || !isRegularPost) {
       const json = { title, blocks, image, tags, canonical };
-      ipfs.savePost(json).then(hash => {
+      ipfs.savePost(json as any).then(hash => {
         if (hash) {
           setIpfsCid(hash);
           sendTx();
@@ -281,7 +281,7 @@ const InnerForm = (props: FormProps) => {
   const renderBlogsPreviewDropdown = () => {
     if (!blogIds) return;
     return <SelectBlogPreview
-      className={'SelectBlogPreview'}
+      // className={'SelectBlogPreview'}
       blogIds={blogIds}
       onSelect={handleBlogSelect}
       imageSize={24}
@@ -322,7 +322,7 @@ const InnerForm = (props: FormProps) => {
             </a>
             {isAdvanced && <div>
               <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
-              <EditableTagGroup name='tags' tags={tags} label='Tags' tagsData={tagsData} setFieldValue={setFieldValue} />
+              <EditableTagGroup name='tags' tags={tags} label='Tags' tagSuggestions={tagsData} setFieldValue={setFieldValue} />
             </div>}
           </div>
         </>
@@ -455,7 +455,7 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
     const { struct, json, mappedBlocks } = props;
     let blockValues: BlockValueKind[] = []
     if (mappedBlocks && mappedBlocks.length !== 0) blockValues = mappedBlocks.map((x, i) => ({ ...x, id: i }))
-    if (struct && json && mappedBlocks) return { ...json, blockValues };
+    if (struct && json && mappedBlocks) return { ...json, blocks: [], blockValues };
     return { title: '', blocks: [], blockValues: [], image: '', tags: [], canonical: '' };
   },
   validationSchema: () => buildSchema(),

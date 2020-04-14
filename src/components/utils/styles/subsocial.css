@@ -155,7 +155,6 @@ body,
 
 .EditEntityBox {
   width: 100%;
-  max-width: 600px;
 
   .EditEntityForm {
     width: 100%;
