@@ -246,7 +246,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   return <>
     <HeadMeta title={getName()} desc={about} image={avatar} />
-    <Section>
+    <Section className='bookPage'>
       <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>

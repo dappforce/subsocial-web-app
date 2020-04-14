@@ -7,7 +7,6 @@ import './styles/theme/polkadot.css'; // TODO Maybe delete?
 import './styles/theme/substrate.css';
 
 import './styles/bootstrap-utilities-4.3.1.css';
-import './styles/app.css';
 import './styles/form.css';
 import './styles/media.css';
 import './styles/rx.css';
