@@ -2,7 +2,7 @@ import React from 'react';
 
 import { withCalls, withMulti } from '@polkadot/react-api';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import dynamic from 'next/dynamic';
@@ -54,20 +54,20 @@ const InnerAccountsListModal = (props: Props) => {
 export const BlogFollowersModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    queryBlogsToProp('blogFollowers', { paramName: 'id', propName: 'accounts' })
+    socialQueryToProp('blogFollowers', { paramName: 'id', propName: 'accounts' })
   )
 );
 
 export const AccountFollowersModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    queryBlogsToProp('accountFollowers', { paramName: 'id', propName: 'accounts' })
+    socialQueryToProp('accountFollowers', { paramName: 'id', propName: 'accounts' })
   )
 );
 
 export const AccountFollowingModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    queryBlogsToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'accounts' })
+    socialQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'accounts' })
   )
 );

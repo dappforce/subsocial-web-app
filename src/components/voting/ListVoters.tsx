@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { withCalls, withMulti } from '@polkadot/react-api';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
@@ -13,7 +13,6 @@ import { newLogger } from '@subsocial/utils';
 const log = newLogger('List voters')
 
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
-
 
 type VotersProps = {
   id: CommentId | PostId,
@@ -118,13 +117,13 @@ const InnerModalVoters = (props: VotersProps) => {
 export const PostVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
-    queryBlogsToProp(`reactionIdsByPostId`, { paramName: 'id', propName: 'reactions' })
+    socialQueryToProp(`reactionIdsByPostId`, { paramName: 'id', propName: 'reactions' })
   )
 );
 
 export const CommentVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
-    queryBlogsToProp(`reactionIdsByCommentId`, { paramName: 'id', propName: 'reactions' })
+    socialQueryToProp(`reactionIdsByCommentId`, { paramName: 'id', propName: 'reactions' })
   )
 );

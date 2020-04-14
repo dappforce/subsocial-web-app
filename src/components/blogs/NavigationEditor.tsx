@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -350,7 +350,7 @@ export const EditNavigation = withMulti(
   LoadStruct,
   withBlogIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' })
+    socialQueryToProp('blogById', { paramName: 'id', propName: 'structOpt' })
   )
 );
 

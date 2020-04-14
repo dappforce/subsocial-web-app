@@ -11,7 +11,7 @@ import { Option } from '@polkadot/types/codec';
 import { useMyAccount } from '../utils/MyAccountContext';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import BN from 'bn.js';
 
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -247,21 +247,14 @@ function LoadStruct (props: LoadStructProps) {
   return <EditForm {...props} struct={struct} json={json as CommentContent} />;
 }
 
-const commonSubstrateQueries = [
-  queryBlogsToProp('commentMaxLen', { propName: 'commentMaxLen' })
-]
 
 export const EditComment = withMulti<LoadStructProps>(
   LoadStruct,
   withCalls<OuterProps>(
-    queryBlogsToProp('commentById', { paramName: 'id', propName: 'structOpt' }),
-    ...commonSubstrateQueries
+    socialQueryToProp('commentById', { paramName: 'id', propName: 'structOpt' })
   )
 );
 
 export const NewComment = withMulti<OuterProps>(
-  EditForm,
-  withCalls<OuterProps>(
-    ...commonSubstrateQueries
-  )
+  EditForm
 );

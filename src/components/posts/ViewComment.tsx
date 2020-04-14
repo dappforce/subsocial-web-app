@@ -10,7 +10,7 @@ import mdToText from 'markdown-to-txt';
 import isEmpty from 'lodash.isempty';
 import partition from 'lodash.partition'
 import { NewComment } from './EditComment';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Voter } from '../voting/Voter';
 // import { CommentHistoryModal } from '../utils/ListsEditHistory';
@@ -117,7 +117,7 @@ export function CommentsTree (props: Props) {
 export default withMulti(
   CommentsTree,
   withCalls<Props>(
-    queryBlogsToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
+    socialQueryToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
   )
 );
 

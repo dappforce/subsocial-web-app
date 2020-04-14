@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../utils/forms';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAccount } from '../utils/MyAccountContext';
 import BN from 'bn.js';
@@ -242,9 +242,8 @@ function LoadStruct (props: LoadStructProps) {
 }
 
 const commonSubstrateQueries = [
-  queryBlogsToProp('blogMaxLen', { propName: 'blogMaxLen' }),
-  queryBlogsToProp('handleMinLen', { propName: 'handleMinLen' }),
-  queryBlogsToProp('handleMaxLen', { propName: 'handleMaxLen' })
+  socialQueryToProp('handleMinLen', { propName: 'handleMinLen' }),
+  socialQueryToProp('handleMaxLen', { propName: 'handleMaxLen' })
 ]
 
 export const NewBlog = withMulti(
@@ -258,7 +257,7 @@ export const EditBlog = withMulti(
   LoadStruct,
   withBlogIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
+    socialQueryToProp('blogById', { paramName: 'id', propName: 'structOpt' }),
     ...commonSubstrateQueries
   )
 );
