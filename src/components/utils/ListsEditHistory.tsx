@@ -3,7 +3,7 @@ import React from 'react';
 // import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
 // import { Post, Blog, PostId, BlogId, CommentId, Comment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, ProfileHistoryRecord, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '@subsocial/types/substrate/interfaces/subsocial';
 // import { PostContent, BlogContent, CommentContent, ProfileContent } from '../types';
-// import { queryBlogsToProp } from './index';
+// import { socialQueryToProp } from './index';
 // import { Option } from '@polkadot/types';
 // import { DfMd } from './DfMd';
 // import { IdentityIcon } from '@polkadot/react-components';
@@ -165,7 +165,7 @@ export default <></>;
 // export const CommentHistoryModal = withMulti(
 //   InnerCommentHistoryModal,
 //   withCalls<CommentHistoryProps>(
-//     queryBlogsToProp('commentById', { paramName: 'id', propName: 'commentOpt' })
+//     socialQueryToProp('commentById', { paramName: 'id', propName: 'commentOpt' })
 //   )
 // );
 
@@ -248,7 +248,7 @@ export default <></>;
 // export const PostHistoryModal = withMulti(
 //   InnerPostHistoryModal,
 //   withCalls<PostHistoryProps>(
-//     queryBlogsToProp('postById', { paramName: 'id', propName: 'postOpt' })
+//     socialQueryToProp('postById', { paramName: 'id', propName: 'postOpt' })
 //   )
 // );
 
@@ -343,7 +343,7 @@ export default <></>;
 // export const BlogHistoryModal = withMulti(
 //   InnerBlogHistoryModal,
 //   withCalls<BlogHistoryProps>(
-//     queryBlogsToProp('blogById', { paramName: 'id', propName: 'blogOpt' })
+//     socialQueryToProp('blogById', { paramName: 'id', propName: 'blogOpt' })
 //   )
 // );
 
@@ -439,7 +439,7 @@ export default <></>;
 // export const ProfileHistoryModal = withMulti(
 //   InnerProfileHistoryModal,
 //   withCalls<ProfileHistoryProps>(
-//     queryBlogsToProp('socialAccountById',
+//     socialQueryToProp('socialAccountById',
 //       { paramName: 'id', propName: 'socialAccountOpt' })
 //   ),
 //   withRequireProfile,

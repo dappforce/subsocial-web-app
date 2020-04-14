@@ -12,7 +12,7 @@ import { Null } from '@polkadot/types';
 import { Option, Enum } from '@polkadot/types/codec';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import BN from 'bn.js';
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -354,10 +354,7 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 }
 
 export const InnerFormWithValidation = withMulti(
-  InnerEditPost,
-  withCalls<OuterProps>(
-    queryBlogsToProp('postMaxLen', { propName: 'postMaxLen' })
-  )
+  InnerEditPost
 );
 
 export const NewPost = withMulti(
@@ -371,10 +368,10 @@ export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
   withIdFromUrl,
   withCalls<OuterProps>(
-    queryBlogsToProp('postById', { paramName: 'id', propName: 'structOpt' })
+    socialQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
   LoadStruct,
   withCalls<OuterProps>(
-    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+    socialQueryToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
   )
 );

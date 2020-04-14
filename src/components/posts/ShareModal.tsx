@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { withCalls, withMulti } from '@polkadot/react-api';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import { NewSharePost } from './EditPost';
@@ -81,6 +81,6 @@ export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    queryBlogsToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+    socialQueryToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
   )
 );

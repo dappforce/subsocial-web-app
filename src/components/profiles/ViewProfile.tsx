@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
-import { queryBlogsToProp, ZERO } from '../utils/index';
+import { socialQueryToProp, ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, isEmptyStr, summarize } from '@subsocial/utils'
 import { withSocialAccount } from '../utils/utils';
@@ -282,7 +282,7 @@ export default Component;
 export const ViewProfile = withMulti(
   Component,
   withCalls<Props>(
-    queryBlogsToProp('socialAccountById',
+    socialQueryToProp('socialAccountById',
       { paramName: 'id', propName: 'socialAccountOpt' })
   ),
   withSocialAccount

@@ -10,7 +10,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
-import { queryBlogsToProp } from '../utils/index';
+import { socialQueryToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -292,8 +292,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
 export const EditFormWithValidation = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    queryBlogsToProp('usernameMinLen', { propName: 'usernameMinLen' }),
-    queryBlogsToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
+    socialQueryToProp('usernameMinLen', { propName: 'usernameMinLen' }),
+    socialQueryToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
   )
 );
 
@@ -306,7 +306,7 @@ export const EditProfile = withMulti(
   EditFormWithValidation,
   withMyAccount,
   withCalls<OuterProps>(
-    queryBlogsToProp('socialAccountById', { paramName: 'myAddress', propName: 'socialAccountOpt' })
+    socialQueryToProp('socialAccountById', { paramName: 'myAddress', propName: 'socialAccountOpt' })
   ),
   withRequireProfile,
   withSocialAccount

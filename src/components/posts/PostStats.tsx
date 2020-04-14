@@ -7,7 +7,7 @@ import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import { Pluralize } from '../utils/Plularize';
 import BN from 'bn.js';
 import { withCalls, withMulti } from '@polkadot/react-api';
-import { queryBlogsToProp } from '../utils';
+import { socialQueryToProp } from '../utils';
 
 type StatsProps = {
   id: PostId
@@ -47,6 +47,6 @@ const InnerStatsPanel = (props: StatsProps) => {
 export default withMulti<StatsProps>(
   InnerStatsPanel,
   withCalls(
-    queryBlogsToProp('postById', 'id')
+    socialQueryToProp('postById', 'id')
   )
 );
