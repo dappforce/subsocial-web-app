@@ -277,6 +277,20 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { title, body, image } = content;
     const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
+
+    const shareButtons = <div className='SharePostButtons'>
+      <ShareButton network='facebook' />
+      <ShareButton network='twitter' text={title} />
+      <ShareButton network='linkedin' text={title} />
+      <div
+        className='ui tiny button basic DfAction ShareOnBlog'
+        onClick={() => setOpen(true)}
+      >
+        <Icon type='share-alt' />
+      Share
+      </div>
+    </div>
+
     return <Section className='DfContentPage'>
       <HeadMeta title={title} desc={body} image={image} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
@@ -285,24 +299,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       </div>
       {<StatsPanel id={post.id}/>}
       {withCreatedBy && renderPostCreator(post)}
+      {shareButtons}
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
         {/* TODO render tags */}
       </div>
       <Voter struct={post} type={'Post'}/>
-      <div className='SharePostButtons'>
-        <ShareButton network='facebook' />
-        <ShareButton network='twitter' text={title} />
-        <ShareButton network='linkedin' text={title} />
-      </div>
-      <div
-        className='ui tiny button basic DfAction ShareOnBlog'
-        onClick={() => setOpen(true)}
-      >
-        <Icon type='share-alt' />
-      Share
-      </div>
+      {shareButtons}
       {open && <ShareModal postId={isRegularPost ? id : originalPost && originalPost.id} open={open} close={close} />}
       <CommentsByPost postId={post.id} post={post} />
     </Section>;

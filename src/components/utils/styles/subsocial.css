@@ -1125,16 +1125,15 @@ hr {
 .SharePostButtons {
   display: inline-flex;
   justify-content: center;
+  float: right;
+  align-items: center;
 
-  a {
-    margin-left: $space_huge;
+  a, .ShareOnBlog {
+    margin-left: $space_normal;
+    color: $color_menu_font;
   }
 
   i {
     margin-right: $space_mini;
   }
-}
-
-.ShareOnBlog {
-  float: right;
 }

@@ -17,20 +17,16 @@ const ShareButton = (props: Props) => {
   if (network === 'facebook') {
     link = `https://www.facebook.com/sharer/sharer.php?u=${url}`
     icon = 'facebook'
-    name = 'Facebook'
   } else if (network === 'twitter') {
     link = `https://twitter.com/share?text=${text}&url=${url}`
     icon = 'twitter'
-    name = 'Twitter'
   } else if (network === 'linkedin') {
     link = `https://www.linkedin.com/shareArticle?url=${url}&title=${text}`
     icon = 'linkedin'
-    name = 'LinkedIn'
   }
 
   return <a target='_blank' href={link}>
     <Icon type={icon} />
-    {name}
   </a>
 }
 
