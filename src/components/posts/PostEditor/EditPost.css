@@ -1,0 +1,157 @@
+@import '../../utils/styles/subsocial-vars.css';
+
+.EditPostWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.AddBlockDropdownMenu {
+  max-width: 200px;
+}
+
+.EditPostAceEditor {
+  a {
+    display: inline-block;
+    margin-bottom: $space_tiny;
+  }
+  .AceModeSelect {
+    width: 150px;
+    margin-bottom: 5px;
+    color: $color_menu_font;
+  }
+}
+
+.SelectBlogPreview {
+  width: 200px !important;
+}
+
+.MobileTabs {
+  margin-top: $space_normal;
+
+  .SelectBlogPreview {
+    width: 100% !important;
+  }
+}
+
+.MobileButtonsMenu {
+  position: relative;
+  width: 200px;
+
+  .AddBlockPlusIcon {
+    position: absolute;
+    z-index: 1;
+    &.AddBefore {
+      top: 12px;
+      left: 12px;
+    }
+    &.AddAfter {
+      left: 12px;
+      top: 44px;
+    }
+  }
+
+  .ant-dropdown-menu-submenu-title {
+    padding-left: 30px !important;
+  }
+}
+
+.EditPostLabel {
+  color: rgba(0,0,0,.87);
+  font-weight: 600;
+  font-size: small;
+}
+
+.EditPostBlockWrapper {
+  margin: $space_normal 0;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  position: relative;
+
+  .EditPostCrown {
+    position: absolute;
+    color: $color_link;
+    right: -20px;
+  }
+
+  .ButtonsForMobile {
+    .MenuDotsIcon {
+      -moz-transform: rotate(90deg);
+      -ms-transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      -o-transform: rotate(90deg);
+      transform: rotate(90deg);
+      margin-right: $space_tiny;
+    }
+  }
+
+  display: flex;
+  flex-direction: row;
+
+  .markdown-body {
+    width: 100%;
+  }
+
+  .EditPostAceEditor {
+    width: 100%;
+  }
+
+  &.MobileBlock .EditPostCrown {
+    right: 5px;
+    top: 5px;
+  }
+}
+
+.EditPostAddButton {
+  margin: $space_big 0;
+}
+
+.EditEntityForm {
+  width: 100%;
+}
+
+.EditPostForm {
+  width: 50%;
+  margin-right: $space_huge;
+
+  &.WithTabs {
+    width: 100%;
+    text-align: left;
+
+    .EditPostPreviewBlock {
+      margin-bottom: $space_normal;
+    }
+  }
+
+  .SmallAntButton {
+    height: $space_big;
+    margin-right: 3px;
+    position: relative;
+  }
+
+  .AdvancedWrapper {
+    margin-bottom: $space_huge;
+
+    a {
+      display: block;
+      border-top: 1px solid $color_light_border;
+      padding-top: 1rem;
+      color: $color_menu_font;
+    }
+  }
+}
+
+.EditPostPreview {
+  width: 50%;
+
+  &.WithTabs {
+    width: 100%;
+    text-align: left;
+  }
+
+  .EditPostPreviewBlock {
+    display: flex;
+    margin-top: $space_big;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,49 @@
+@import '../../utils/styles/subsocial-vars.css';
+
+.PreviewLinkWrapper {
+  border: 1px solid $color_light_border;
+  border-radius: 10px;
+  position: relative;
+
+  .PreviewImgWrapper {
+    .LinkImage {
+      border-radius: 10px 10px 0 0;
+    }
+    
+    &.Youtube:before {
+      content: url(../../../../public/play_youtube.png);
+      position: absolute;
+      top: calc(50% - 96px);
+      left: calc(50% - 48px);
+    }
+  }
+
+  .UnderPicture {
+    padding: 0 $space_normal $space_normal $space_normal;
+
+    .PreviewLinkTitle {
+      b {
+        font-size: $space_large;
+      }
+    }
+
+    .PreviewDescription {
+      color: #111;
+    }
+  
+    .PreviewLinkAfterDescription {
+      color: $color_muted;
+    }
+  }
+}
+
+.AceEditor {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #333;
+  font-size: $font_normal;
+  max-height: 200px;
+  word-wrap: normal;
+  white-space: pre;
+}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-
 import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';

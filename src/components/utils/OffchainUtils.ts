@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getEnv } from './utils';
 import { Activity } from '@subsocial/types/offchain';
+import { SiteMetaContent } from '../types';
 
 export const offchainUrl = getEnv('OFFCHAIN_URL') || 'http://localhost:3001';
 export const ipfsUrl = getEnv('IPFS_URL') || '/ip4/127.0.0.1/tcp/5001/http';
@@ -32,4 +33,11 @@ export const clearNotifications = async (myAddress: string): Promise<void> => {
   } catch (err) {
     console.log(`Failed to mark all notifications as read for account: ${myAddress}`, err)
   }
+};
+
+export const parseUrl = async (url: string): Promise<SiteMetaContent> => {
+  const res = await axios.post(`${offchainUrl}/offchain/parser/`, { url });
+  const { data } = res;
+
+  return data.siteMeta;
 };
