@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { DfMd } from '../utils/DfMd';
-import { withCalls, withMulti } from '@polkadot/react-api';
 import { Option, GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';
-import { queryBlogsToProp, ZERO } from '../utils/index';
+import { ZERO } from '../utils/index';
 import { nonEmptyStr, newLogger } from '@subsocial/utils'
 import { ViewPostPage } from '../posts/ViewPost';
 import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils'
@@ -31,7 +30,7 @@ import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
-import { Blog, BlogId, PostId } from '@subsocial/types/substrate/interfaces';
+import { Blog, PostId } from '@subsocial/types/substrate/interfaces';
 import { BlogData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
@@ -51,8 +50,8 @@ type Props = {
   miniPreview?: boolean,
   previewDetails?: boolean,
   withFollowButton?: boolean,
-  id?: BlogId,
-  blogData: BlogData,
+  id?: BN,
+  blogData?: BlogData,
   blogById?: Option<Blog>,
   posts?: PostDataListItem[],
   followers?: AccountId[],
@@ -64,9 +63,9 @@ type Props = {
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { struct } = props.blogData;
+  const { blogData } = props;
 
-  if (!struct) return <NoData description={<span>Blog not found</span>} />;
+  if (!blogData || !blogData?.struct) return <NoData description={<span>Blog not found</span>} />;
 
   const {
     preview = false,
@@ -78,9 +77,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     dropdownPreview = false,
     posts = [],
     imageSize = 36,
-    onClick,
-    blogData
+    onClick
   } = props;
+
+  const blog = blogData.struct;
 
   const {
     id,
@@ -90,9 +90,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     posts_count,
     followers_count: followers,
     edit_history
-  } = struct;
-
-  const blog = struct;
+  } = blog;
 
   const { state: { address } } = useMyAccount();
   const { ipfs } = useSubsocialApi()
@@ -325,22 +323,25 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
 
 export default ViewBlogPage;
 
-const withUnwrap = (Component: React.ComponentType<Props>) => {
+const withLoadedData = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
-    const { blogById } = props;
-    if (!blogById) return <Loading/>;
+    const { id } = props;
 
-    const blog = blogById.unwrap();
+    if (!id) return <NoData description={<span>Blog id is not defined</span>} />;
 
-    return <Component blogData={{ blog: blog }} {...props}/>;
+    const { subsocial } = useSubsocialApi()
+    const [ blogData, setBlogData ] = useState<BlogData>()
+
+    useEffect(() => {
+      const loadData = async () => {
+        const blogData = await subsocial.findBlog(id)
+        blogData && setBlogData(blogData)
+      }
+      loadData()
+    }, [ false ])
+
+    return blogData?.content ? <Component blogData={blogData} {...props}/> : <Loading />;
   };
 };
 
-export const ViewBlog = withMulti(
-  ViewBlogPage,
-  withCalls<Props>(
-    queryBlogsToProp('blogById', 'id'),
-    queryBlogsToProp('postIdsByBlogId', { paramName: 'id', propName: 'postIds' })
-  ),
-  withUnwrap
-);
+export const ViewBlog = withLoadedData(ViewBlogPage)

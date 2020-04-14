@@ -13,7 +13,7 @@ const varsToExport = [
   'LOG_LEVEL'
 ]
 
-function getSerializedVal(varName) {
+function getSerializedVal (varName) {
   const val = process.env[varName]
   return typeof val === 'string' ? `'${val}'` : val
 }
