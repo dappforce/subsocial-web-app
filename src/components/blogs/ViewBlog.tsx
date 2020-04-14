@@ -272,7 +272,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   return <div className='ViewBlogWrapper'>
-    <Section className='DfContentPage'>
+    <Section className='DfContentPage bookPage'>
       <HeadMeta title={name} desc={mdToText(desc)} image={image} />
       <div className='FullProfile'>
         {renderPreview()}

@@ -11,4 +11,56 @@ export const registerSubsocialTypes = (): void => {
   }
 };
 
+// export type IpfsData = PostBlock | BlockValue;
+
+export type PostBlockKind = 'text' | 'code' | 'link' | 'image' | 'video'
+
+export interface PostBlock {
+  kind: PostBlockKind
+  hidden?: boolean
+
+  /** CID aka IPFS hash */
+  cid: string
+}
+
+export type BlockValueKind = BlockValue | CodeBlockValue
+
+export interface BlockValue {
+  id: number
+  kind: PostBlockKind
+  hidden?: boolean
+  useOnPreview: boolean
+  data: string
+}
+
+export interface CodeBlockValue extends BlockValue {
+  lang: string
+}
+
+export type SharedPostContent = {
+  blocks: PostBlock[]
+};
+
+export interface SiteMetaContent {
+  og?: {
+    title?: string,
+    description?: string,
+    image: string,
+    url: string
+  },
+  title?: string,
+  description?: string
+}
+
+export type PreviewData = {
+  id: number,
+  data: SiteMetaContent
+}
+
+export type EmbedData = {
+  id: number,
+  data: string,
+  type: string
+}
+
 export default registerSubsocialTypes;
