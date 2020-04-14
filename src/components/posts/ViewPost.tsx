@@ -23,11 +23,11 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
-import { SubsocialApi } from '@subsocial/api/fullApi';
 import { PostData } from '@subsocial/types/dto';
-import { PostType, loadContentFromIpfs, getExtContent, PostExtContent, loadSharedPostExt } from './LoadPostUtils'
+import { PostType, loadContentFromIpfs, getExtContent, PostExtContent, loadSharedPostExt, getSharedPostId } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const log = newLogger('View post')
 
@@ -352,14 +352,15 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
     const { id } = props;
     const [ postExtData, setExtData ] = useState<PostData>();
     const [ postData, setPostData ] = useState<PostData>();
-    const subsocial = (props as any).subsocial as SubsocialApi
+    const { subsocial } = useSubsocialApi()
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
         const postData = id && await subsocial.findPost(id);
         isSubscribe && postData && setPostData(postData);
-        const postDataExt = postData && postData.struct && await subsocial.findPost(postData.struct.id)
+        const sharedPostId = getSharedPostId(postData)
+        const postDataExt = sharedPostId && await subsocial.findPost(sharedPostId)
         isSubscribe && postDataExt && setExtData(postDataExt);
       };
 
