@@ -47,15 +47,23 @@ export const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> =
 export const loadPostDataList = async (ids: PostId[]) => {
   const subsocial = await getSubsocialApi()
   const postsData = await subsocial.findPosts(ids);
-  const postsExtIds = postsData.map(item => item && item.struct && item.struct.extension.asSharedPost);
+  const postsExtIds = postsData.map(getSharedPostId);
   const postsExtData = await subsocial.findPosts(postsExtIds as PostId[]);
   return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
 };
+
+export const getSharedPostId = (postData?: PostData) => {
+  if (!postData) return undefined;
+
+  const isSharedPost = postData?.struct?.extension.isSharedPost
+  console.log('Is a sharing post?', isSharedPost)
+  return isSharedPost ? postData?.struct?.extension.asSharedPost : undefined
+}
 
 export const loadSharedPostExt = async (postData?: PostData) => {
   if (!postData) return undefined;
 
   const subsocial = await getSubsocialApi();
-  const sharedPostId = postData?.struct?.extension.asSharedPost
+  const sharedPostId = getSharedPostId(postData)
   return sharedPostId && subsocial.findPost(sharedPostId)
 }
