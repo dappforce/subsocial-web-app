@@ -4,14 +4,16 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { NewSharePost } from './EditPost';
 import { ViewPost } from './ViewPost';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
 import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
+import { withCalls, withMulti } from '@polkadot/react-api';
 import BN from 'bn.js';
-import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
+// import dynamic from 'next/dynamic';
+
+// const NewSharePost = dynamic(() => import('./EditPost').then((mod: any) => mod.NewSharePost), { ssr: false });
 
 type Props = MyAccountProps & {
   postId: BN,
@@ -25,8 +27,8 @@ const InnerShareModal = (props: Props) => {
 
   if (!blogIds) return <Loading />;
 
-  const [ blogId, setBlogId ] = useState(blogIds[0]);
-  const extension = new PostExtension({ SharedPost: postId as SharedPost });
+  // const [ blogId, setBlogId ] = useState(blogIds[0]);
+  // const extension = new PostExtension({ SharedPost: new SharedPost(postId) });
 
   const renderShareView = () => {
     if (blogIds.length === 0) {
@@ -36,8 +38,9 @@ const InnerShareModal = (props: Props) => {
     }
 
     const saveBlog = (value: string | number | LabeledValue) => {
-      setBlogId(new BN(value as string));
+      // setBlogId(new BN(value as string));
     };
+
     return (<div className='DfShareModal'>
       <SelectBlogPreview
         blogIds={blogIds}
