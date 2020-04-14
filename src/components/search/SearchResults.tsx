@@ -45,7 +45,7 @@ type Props = {
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
     case ElasticIndex.blogs:
-      return <ViewBlog id={res._id} previewDetails withFollowButton />;
+      return <ViewBlog id={new BN(res._id)} previewDetails withFollowButton />;
     case ElasticIndex.posts:
       return <ViewPost key={i} id={new BN(res._id)} variant='preview' withLink={true} />;
     case ElasticIndex.profiles:

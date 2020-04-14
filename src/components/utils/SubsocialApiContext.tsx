@@ -35,7 +35,7 @@ function reducer (state: SubsocialApiState, action: SubsocialApiAction): Subsoci
 }
 
 function functionStub () {
-  throw new Error ('Function needs to be set in SubsocialApiProvider')
+  throw new Error('Function needs to be set in SubsocialApiProvider')
 }
 
 const initialState = {
