@@ -41,6 +41,14 @@ export type SharedPostContent = {
   blocks: PostBlock[]
 };
 
+export type PostContent = SharedPostContent & {
+  title: string;
+  image: string;
+  tags: string[];
+  canonical: string;
+  // previewsCids?: string[] TODO think about it real talk
+};
+
 export interface SiteMetaContent {
   og?: {
     title?: string,

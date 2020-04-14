@@ -82,13 +82,14 @@ export function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
 
       if (struct === undefined) return toggleTrigger();
 
-      ipfs.findPost(struct.ipfs_hash).then(json => {
+      ipfs.findPost(struct.ipfs_hash).then((json: any) => {
+        console.log('ipfs.findPost(struct.ipfs_hash)', json)
         if (json && json.blocks && json.blocks.length > 0) {
           const processArray = async (arr: PostBlock[]) => {
             const temp: BlockValueKind[] = []
             for (const item of arr) {
               const res = await ipfs.findPost(item.cid)
-              temp.push(res)
+              temp.push(res as any)
             }
             return temp
           }
