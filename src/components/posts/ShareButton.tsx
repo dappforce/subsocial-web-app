@@ -12,45 +12,26 @@ const ShareButton = (props: Props) => {
   const { network, text = '' } = props
   const url = window.location
 
-  const makeLink = () => {
-    switch (network) {
-      case 'facebook': {
-        const link = `https://www.facebook.com/sharer/sharer.php?u=${url}`
-        return <a
-          target='_blank'
-          href={link}
-        >
-          <Icon type="facebook" />
-          Facebook
-        </a>
-      }
-      case 'twitter': {
-        const link = `https://twitter.com/share?text=${text}&url=${url}`
-        return <a
-          target='_blank'
-          href={link}
-        >
-          <Icon type="twitter" />
-          Twitter
-        </a>
-      }
-      case 'linkedin': {
-        const link = `https://www.linkedin.com/shareArticle?url=${url}&title=${text}`
-        return <a
-          target='_blank'
-          href={link}
-        >
-          <Icon type="linkedin" />
-          LinkedIn
-        </a>
-      }
-      default: {
-        return null
-      }
-    }
+  let link, icon, name
+
+  if (network === 'facebook') {
+    link = `https://www.facebook.com/sharer/sharer.php?u=${url}`
+    icon = 'facebook'
+    name = 'Facebook'
+  } else if (network === 'twitter') {
+    link = `https://twitter.com/share?text=${text}&url=${url}`
+    icon = 'twitter'
+    name = 'Twitter'
+  } else if (network === 'linkedin') {
+    link = `https://www.linkedin.com/shareArticle?url=${url}&title=${text}`
+    icon = 'linkedin'
+    name = 'LinkedIn'
   }
 
-  return makeLink()
+  return <a target='_blank' href={link}>
+    <Icon type={icon} />
+    {name}
+  </a>
 }
 
 export default ShareButton
