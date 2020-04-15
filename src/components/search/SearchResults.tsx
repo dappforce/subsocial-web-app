@@ -90,6 +90,7 @@ const Tabs = () => {
   const initialTabIndex = getTabIndexFromUrl();
   const initialTabKey = panes[initialTabIndex].key;
   const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
+  const [ tagsValue ] = useState<string | string[] | undefined>(router.query.tags);
 
   const handleTabChange: OnTabChangeFn = (_event, data) => {
     if (!data || !data.panes) return;
@@ -106,8 +107,25 @@ const Tabs = () => {
     });
   };
 
+  console.log("Tags", tagsValue);
+
   return <>
     <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex}/>
+    <ReactiveComponent
+      componentId='tags'
+      customQuery={() => {
+        return tagsValue == undefined
+          ? null
+          : {
+            query: {
+              term: {
+                tags: tagsValue as string
+              }
+            }
+          };
+      }}
+    />
+
     <ReactiveComponent
       componentId='tab'
       customQuery={() => {
@@ -131,7 +149,7 @@ const App = () => {
       <ReactiveList
         componentId='page'
         dataField='id'
-        react={{ and: [ 'q', 'tab' ] }}
+        react={{ and: [ 'q', 'tab', 'tags' ] }}
         showResultStats={false}
         URLParams={true}
         loader={' '}

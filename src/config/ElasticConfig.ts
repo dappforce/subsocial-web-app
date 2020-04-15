@@ -19,19 +19,21 @@ export const AllElasticIndexes = [
 
 export const ElasticFields = {
   blog: {
-    name: 'blog_name',
-    desc: 'blog_desc'
+    name: 'name',
+    desc: 'desc',
+    tags: 'tags'
   },
   post: {
-    title: 'post_title',
-    body: 'post_body'
+    title: 'title',
+    body: 'body',
+    tags: 'tags'
   },
   comment: {
-    body: 'comment_body'
+    body: 'body'
   },
   profile: {
-    username: 'profile_username',
-    fullname: 'profile_fullname',
-    about: 'profile_about'
+    username: 'username',
+    fullname: 'fullname',
+    about: 'about'
   }
 }
