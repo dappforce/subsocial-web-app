@@ -142,7 +142,6 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
     setIsInitialized(true);
   }, []);
 
-
   if (!isInitialized) {
     return null;
   }
