@@ -15,7 +15,6 @@ import Router from 'next/router';
 import HeadMeta from '../../utils/HeadMeta';
 import { Dropdown, Menu, Icon, Tabs, Button as AntButton} from 'antd';
 import BlockPreview from '../PostPreview/BlockPreview';
-import { ViewBlog } from '../../blogs/ViewBlog';
 import { isMobile } from 'react-device-detect';
 import SelectBlogPreview from '../../utils/SelectBlogPreview'
 import { LabeledValue } from 'antd/lib/select';
@@ -83,7 +82,6 @@ const InnerForm = (props: FormProps) => {
 
   const { title, blockValues, image, tags, canonical } = values;
   const initialBlogId = struct?.blog_id || blogId
-  const preparedBlogId = struct?.blog_id.toString() || blogId?.toString()
 
   const goToView = (id: BN) => {
     Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
@@ -349,15 +347,7 @@ const InnerForm = (props: FormProps) => {
   const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
   const sectionTitle = currentBlogId && <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
 
-  const formTitle = () => <>
-    <a href={`/blogs/${preparedBlogId}`}>
-      <ViewBlog nameOnly={true} id={struct?.blog_id || blogId} />
-    </a>
-    <span style={{ margin: '0 .75rem' }}>/</span>
-    {sectionTitle}
-  </>
-
-  const editRegularPost = () => <Section className='EditEntityBox' title={formTitle()}>
+  const editRegularPost = () => <Section className='EditEntityBox' title={sectionTitle}>
       { isMobile
         ? renderForMobile()
         : <div className='EditPostWrapper'>
