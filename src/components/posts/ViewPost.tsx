@@ -23,8 +23,8 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
-import { PostData } from '@subsocial/types/dto';
-import { PostType, loadContentFromIpfs, getExtContent, PostExtContent, loadSharedPostExt, getSharedPostId } from './LoadPostUtils'
+import { PostData, ExtendedPostData } from '@subsocial/types/dto';
+import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
@@ -320,15 +320,15 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const idOrHandle = blogId as string
   const blogIdFromUrl = await getBlogId(idOrHandle)
-  const postData = await subsocial.findPost(new BN(postId as string))
+  const extPostData = await subsocial.findPostWithExt(new BN(postId as string))
 
   // Post was not found:
-  if (!postData?.struct && res) {
+  if (!extPostData?.post.struct && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
 
-  const blogIdFromPost = postData?.struct?.blog_id
+  const blogIdFromPost = extPostData?.post.struct?.blog_id
 
   // If blog id of this post is not equal to blog id/handle from URL,
   // then redirect to the URL with blog id of this post.
@@ -337,11 +337,9 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     res.end()
   }
 
-  const postExtData = await loadSharedPostExt(postData)
-
   return {
-    postData,
-    postExtData
+    postData: extPostData?.post,
+    postExtData: extPostData?.ext
   };
 };
 
@@ -350,18 +348,14 @@ export default ViewPostPage;
 const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
-    const [ postExtData, setExtData ] = useState<PostData>();
-    const [ postData, setPostData ] = useState<PostData>();
+    const [ extPostData, setExtData ] = useState<ExtendedPostData>();
     const { subsocial } = useSubsocialApi()
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
-        const postData = id && await subsocial.findPost(id);
-        isSubscribe && postData && setPostData(postData);
-        const sharedPostId = getSharedPostId(postData)
-        const postDataExt = sharedPostId && await subsocial.findPost(sharedPostId)
-        isSubscribe && postDataExt && setExtData(postDataExt);
+        const extPostData = id && await subsocial.findPostWithExt(id)
+        isSubscribe && extPostData && setExtData(extPostData);
       };
 
       loadPost().catch(err => log.error('Failed to load post data:', err));
@@ -369,9 +363,9 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
       return () => { isSubscribe = false; };
     }, [ false ]);
 
-    if (isEmpty(postData)) return <Loading/>;
+    if (isEmpty(extPostData)) return <Loading/>;
 
-    return postData ? <Component postData={postData} postExtData={postExtData} {...props}/> : null;
+    return extPostData ? <Component postData={extPostData.post} postExtData={extPostData.ext} {...props}/> : null;
   };
 };
 

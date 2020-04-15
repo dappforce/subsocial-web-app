@@ -10,7 +10,6 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { ZERO } from '../utils/index';
 import { nonEmptyStr, newLogger } from '@subsocial/utils'
 import { ViewPostPage } from '../posts/ViewPost';
-import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils'
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
@@ -31,7 +30,7 @@ import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
 import { Blog, PostId } from '@subsocial/types/substrate/interfaces';
-import { BlogData } from '@subsocial/types/dto'
+import { BlogData, ExtendedPostData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 
@@ -53,7 +52,7 @@ type Props = {
   id?: BN,
   blogData?: BlogData,
   blogById?: Option<Blog>,
-  posts?: PostDataListItem[],
+  posts?: ExtendedPostData[],
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void,
@@ -240,7 +239,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       title={postsSectionTitle()}
       dataSource={posts}
       renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.postData} postExtData={item.postExtData}/>}
+        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>}
       noDataDesc='No posts yet'
       noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
@@ -314,7 +313,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   }
 
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) as unknown as PostId[]; // TODO maybe delete this type cast?
-  const posts = await loadPostDataList(postIds.reverse());
+  const posts = await subsocial.findPostsWithExt(postIds.reverse());
   return {
     blogData,
     posts

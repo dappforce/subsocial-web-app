@@ -7,15 +7,14 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { LatestBlogs } from './LatestBlogs';
 import { LatestPosts } from './LatestPosts';
-import { BlogData } from '@subsocial/types';
-import { PostDataListItem, loadPostDataList } from '../posts/LoadPostUtils';
+import { BlogData, ExtendedPostData } from '@subsocial/types';
 
 const ZERO = new BN(0);
 const FIVE = new BN(5);
 
 type Props = {
   blogsData: BlogData[]
-  postsData: PostDataListItem[]
+  postsData: ExtendedPostData[]
 }
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {
@@ -52,7 +51,7 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const blogsData = await subsocial.findBlogs(latestBlogIds)
 
   const latestPostIds = getLastNIds(nextPostId, FIVE);
-  const postsData = await loadPostDataList(latestPostIds as PostId[]);
+  const postsData = await subsocial.findPostsWithExt(latestPostIds as PostId[]);
   console.log('Loaded posts on the home page:', postsData)
 
   return {
