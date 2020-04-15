@@ -81,6 +81,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     blockValues
   } = props;
 
+  console.log('blogValues from ViewPost main', blockValues)
+
   const {
     id,
     blog_id,
@@ -92,7 +94,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
-  const [ content, setContent ] = useState(getExtContent(initialContent));
+  const [ content, setContent ] = useState(getExtContent({ ...initialContent, blockValues }));
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
@@ -100,7 +102,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
 
   const originalPost = postExtData && postExtData.struct;
-  const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
+  const [ originalContent, setOriginalContent ] = useState(getExtContent({ ...postExtData?.content, blockValues }));
 
   console.log('blockValues from ViewPost main', blockValues)
 
@@ -219,9 +221,35 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <div className='DfSummary'>
             {!hasPreviews && summary}
           </div>
+    const { title, blockValues, summary } = content;
+    const previewBlocks = blockValues.filter((x) => x.useOnPreview === true)
+    const hasPreviews = previewBlocks && previewBlocks.length !== 0
+    const imageBlock = blockValues.find((x) => x.kind === 'image')
+
+    return <div className='MiniPreviewWrapper'>
+      <div className='DfContent'>
+        <div className='DfPostText'>
+          {renderNameOnly(title || summary, post.id)}
+          <div className='DfSummary'>
+            {!hasPreviews && summary}
+          </div>
         </div>
         {hasPreviews
           ? previewBlocks?.map((x: BlockValueKind) => <div className='MiniPreviewBlock'><BlockPreview
+            block={x}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          /></div>)
+          : imageBlock && <div className='MiniPreviewBlock'><BlockPreview
+            block={imageBlock}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          /></div>
+          }
+        {hasPreviews
+          ? previewBlocks.map((x) => <div className='MiniPreviewBlock'><BlockPreview
             block={x}
             embedData={embedData}
             setEmbedData={setEmbedData}

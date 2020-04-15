@@ -11,6 +11,7 @@ export type PostType = 'regular' | 'share';
 
 export type PostExtContent = PostContent & {
   summary: string;
+  blockValues: BlockValueKind[];
 };
 
 export const getTypePost = (post: Post): PostType => {
@@ -22,14 +23,35 @@ export const getTypePost = (post: Post): PostType => {
   }
 };
 
-export const getExtContent = (content: PostContent | undefined): PostExtContent => {
+export const getExtContent = (content: PostContent | undefined | any): PostExtContent => {
   if (!content) return {} as PostExtContent;
+  console.log('content from getExtContent', content)
+  let blockValues = []
+  if (content.blockValues && content.blockValues.length > 0) {
+    blockValues = content.blockValues
+  }
 
-  const summary = summarize(content.body, LIMIT_SUMMARY);
+  const previewBlocks = blockValues.filter((x: BlockValueKind) => x.useOnPreview !== true)
+  const firstText = previewBlocks.find((x: BlockValueKind) => x.kind === 'text')?.data || blockValues.find((x: BlockValueKind) => x.kind === 'text')?.data
+  const summary = summarize(firstText as string, LIMIT_SUMMARY);
+
   return {
     ...content,
+    blockValues,
     summary
   };
+}
+
+export const getBlockValuesFromIpfs = async (postContent: PostExtContent | any) => {
+  const blockValues = []
+  if (postContent.blocks && postContent.blocks.length > 0) {
+    for (const block of postContent.blocks) {
+      const blockValue = await ipfs.findPost(block.cid)
+      blockValues.push(blockValue)
+    }
+  }
+  console.log('blockValues from getBlockValuesFromIpfs', blockValues)
+  return blockValues
 }
 
 export const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
