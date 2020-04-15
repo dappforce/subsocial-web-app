@@ -120,12 +120,10 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
   const [ isApiConnected, setIsApiConnected ] = useState(false);
   const [ isWaitingInjected, setIsWaitingInjected ] = useState(isWeb3Injected);
   const [ isInitialized, setIsInitialized ] = useState(false);
-  console.log('Before useEffect')
   // initial initialization
   useEffect((): void => {
     const provider = new WsProvider(url);
     const signer = new ApiSigner(queuePayload, queueSetTxStatus);
-    console.log('Before api =')
     api = new ApiPromise({ provider, registry, signer, typesChain, typesSpec });
 
     api.on('connected', (): void => setIsApiConnected(true));
@@ -137,7 +135,6 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
         console.error('Unable to load chain', error);
       }
     });
-    console.log('After api =')
     injectedPromise
       .then((): void => setIsWaitingInjected(false))
       .catch((error: Error) => console.error(error));
@@ -145,7 +142,6 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
     setIsInitialized(true);
   }, []);
 
-  console.log('After useEffect')
 
   if (!isInitialized) {
     return null;
