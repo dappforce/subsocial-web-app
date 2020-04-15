@@ -1,5 +1,6 @@
 # Code editors
 .idea
+.vscode
 *.code-workspace
 
 # Logs
