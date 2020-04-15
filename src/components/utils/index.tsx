@@ -16,10 +16,8 @@ export const parse = async (url: string): Promise<SiteMetaContent | undefined> =
 
   try {
     const res = await parseUrl(url)
-    console.log('res from parser', res)
     return res
   } catch (err) {
-    console.log('err in parse:', err)
     return undefined
   }
 }

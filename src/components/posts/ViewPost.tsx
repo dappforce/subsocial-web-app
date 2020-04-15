@@ -5,7 +5,7 @@ import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
-import { nonEmptyStr, newLogger } from '@subsocial/utils';
+import { newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 // import { PostHistoryModal } from '../utils/ListsEditHistory';
@@ -14,9 +14,7 @@ import { ShareModal } from './ShareModal';
 import NoData from '../utils/EmptyList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
-import { DfBgImg } from '../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
-import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
@@ -26,10 +24,13 @@ import { PostData, ExtendedPostData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
+import { PreviewData, EmbedData, BlockValueKind } from '../types';
+import { parse } from '../utils/index';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const log = newLogger('View post')
 
+const BlockPreview = dynamic(() => import('./PostPreview/BlockPreview'), { ssr: false });
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
@@ -57,6 +58,7 @@ type ViewPostPageProps = {
   withBlogName?: boolean;
   postData: PostData;
   postExtData?: PostData;
+  blockValues?: BlockValueKind[];
   commentIds?: BN[];
   statusCode?: number
 };
@@ -77,8 +79,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withActions = true,
     withStats = true,
     withCreatedBy = true,
-    postExtData
+    postExtData,
+    blockValues
   } = props;
+
+  console.log('blogValues from ViewPost main', blockValues)
 
   const {
     id,
@@ -91,13 +96,15 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
-  const [ content, setContent ] = useState(getExtContent(initialContent));
+  const [ content, setContent ] = useState(getExtContent({ ...initialContent, blockValues }));
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
+  const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
+  const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
 
   const originalPost = postExtData && postExtData.struct;
-  const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
+  const [ originalContent, setOriginalContent ] = useState(getExtContent({ ...postExtData?.content, blockValues }));
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -108,6 +115,22 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     return () => { isSubscribe = false; };
   }, [ false ]);
+
+  useEffect(() => {
+    const firstLoad = async () => {
+      const res: PreviewData[] = []
+      for (const x of content.blockValues) {
+        if (x.kind === 'link' || x.kind === 'video') {
+          const data = await parse(x.data)
+          if (!data) continue
+          res.push({ id: x.id, data })
+        }
+      }
+      setLinkPreviewData(res)
+    }
+
+    firstLoad()
+  }, [ content ])
 
   type DropdownProps = {
     account: string | AccountId;
@@ -182,17 +205,34 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderContent = (post: Post, content: PostExtContent | undefined) => {
     if (!post || !content) return null;
 
-    const { title, summary, image } = content;
-    const hasImage = nonEmptyStr(image);
+    const { title, blockValues, summary } = content;
+    const previewBlocks = blockValues.filter((x) => x.useOnPreview === true)
+    const hasPreviews = previewBlocks && previewBlocks.length !== 0
+    const imageBlock = blockValues.find((x) => x.kind === 'image')
 
-    return <div className='DfContent'>
-      <div className='DfPostText'>
-        {renderNameOnly(title || summary, post.id)}
-        <div className='DfSummary'>
-          {summary}
+    return <div className='MiniPreviewWrapper'>
+      <div className='DfContent'>
+        <div className='DfPostText'>
+          {renderNameOnly(title || summary, post.id)}
+          <div className='DfSummary'>
+            {!hasPreviews && summary}
+          </div>
         </div>
+        {hasPreviews
+          ? previewBlocks.map((x) => <div className='MiniPreviewBlock'><BlockPreview
+            block={x}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          /></div>)
+          : imageBlock && <div className='MiniPreviewBlock'><BlockPreview
+            block={imageBlock}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          /></div>
+          }
       </div>
-      {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
 

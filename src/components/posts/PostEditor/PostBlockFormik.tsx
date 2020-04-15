@@ -107,7 +107,7 @@ const PostBlockFormik = (props: Props) => {
         name={`blockValues.${index}.data`}
         placeholder="Video link"
         value={block.data}
-        onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
+        onChange={(e: React.FormEvent<HTMLInputElement>) => handleLinkChange(block, `blockValues.${index}.data`, e.currentTarget.value)}
       />
       break
     }
