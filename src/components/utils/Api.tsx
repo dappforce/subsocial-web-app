@@ -144,7 +144,6 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
     setIsInitialized(true);
   }, []);
 
-  console.log('After useEffect')
 
   if (!isInitialized) {
     return null;

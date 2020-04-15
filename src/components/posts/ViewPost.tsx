@@ -323,7 +323,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const extPostData = await subsocial.findPostWithExt(new BN(postId as string))
 
   // Post was not found:
-  if (!extPostData?.post.struct && res) {
+  if (!extPostData?.post?.struct && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
