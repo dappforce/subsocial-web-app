@@ -2,15 +2,15 @@ import React from 'react';
 import { Post } from '@subsocial/types/substrate/interfaces';
 import ListData from '../utils/DataList';
 import { ViewPostPage } from '../posts/ViewPost';
-import { PostDataListItem } from '../posts/LoadPostUtils';
+import { ExtendedPostData } from '@subsocial/types';
 
 type Props = {
-  postsData: PostDataListItem[]
+  postsData: ExtendedPostData[]
 }
 
 export const LatestPosts = (props: Props) => {
   const { postsData = [] } = props
-  const posts = postsData.filter((x) => typeof x.postData.struct !== 'undefined')
+  const posts = postsData.filter((x) => typeof x.post.struct !== 'undefined')
 
   if (posts.length === 0) {
     return null
@@ -21,10 +21,10 @@ export const LatestPosts = (props: Props) => {
     dataSource={postsData}
     renderItem={(item) =>
       <ViewPostPage
-        key={(item.postData.struct as Post).id.toString()}
+        key={(item.post.struct as Post).id.toString()}
         variant='preview'
-        postData={item.postData}
-        postExtData={item.postExtData}
+        postData={item.post}
+        postExtData={item.ext}
       />
     }
   />

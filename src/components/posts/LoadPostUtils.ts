@@ -1,8 +1,7 @@
-import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { Post } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types';
 import { summarize } from '@subsocial/utils';
-import { ipfs, getSubsocialApi } from '../utils/SubsocialConnect';
-import { PostData } from '@subsocial/types/dto';
+import { ipfs } from '../utils/SubsocialConnect';
 import { isMobile } from 'react-device-detect';
 
 export const LIMIT_SUMMARY = isMobile ? 150 : 300;
@@ -11,11 +10,6 @@ export type PostType = 'regular' | 'share';
 
 export type PostExtContent = PostContent & {
   summary: string;
-};
-
-export type PostDataListItem = {
-  postData: PostData;
-  postExtData?: PostData;
 };
 
 export const getTypePost = (post: Post): PostType => {
@@ -42,28 +36,4 @@ export const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> =
   if (!ipfsContent) return {} as PostExtContent;
 
   return getExtContent(ipfsContent);
-};
-
-export const loadPostDataList = async (ids: PostId[]) => {
-  const subsocial = await getSubsocialApi()
-  const postsData = await subsocial.findPosts(ids);
-  const postsExtIds = postsData.map(getSharedPostId);
-  const postsExtData = await subsocial.findPosts(postsExtIds as PostId[]);
-  return postsData.map((item, i) => ({ postData: item, postExtData: postsExtData[i] }));
-};
-
-export const getSharedPostId = (postData?: PostData) => {
-  if (!postData) return undefined;
-
-  const isSharedPost = postData?.struct?.extension.isSharedPost
-  console.log('Is a sharing post?', isSharedPost)
-  return isSharedPost ? postData?.struct?.extension.asSharedPost : undefined
-}
-
-export const loadSharedPostExt = async (postData?: PostData) => {
-  if (!postData) return undefined;
-
-  const subsocial = await getSubsocialApi();
-  const sharedPostId = getSharedPostId(postData)
-  return sharedPostId && subsocial.findPost(sharedPostId)
 }

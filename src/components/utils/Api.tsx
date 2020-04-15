@@ -120,6 +120,7 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
   const [ isApiConnected, setIsApiConnected ] = useState(false);
   const [ isWaitingInjected, setIsWaitingInjected ] = useState(isWeb3Injected);
   const [ isInitialized, setIsInitialized ] = useState(false);
+
   // initial initialization
   useEffect((): void => {
     const provider = new WsProvider(url);
@@ -135,12 +136,14 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
         console.error('Unable to load chain', error);
       }
     });
+
     injectedPromise
       .then((): void => setIsWaitingInjected(false))
       .catch((error: Error) => console.error(error));
 
     setIsInitialized(true);
   }, []);
+
 
   if (!isInitialized) {
     return null;
