@@ -11,11 +11,11 @@ export const ViewTags = ({ tags = [] }: Props) => {
   if (isEmptyArray(tags)) return null
 
   return <div className='DfTags'>
-    {tags.map(tag => 
-      <Link href={`/search?q="[tag]"`} as={`/search?q="${tag}"`}>
+    {tags.map(tag =>
+      <Link href={`/search?q="${tag}"`}>
         <Tag key={tag}>{tag}</Tag>
-      </Link>)
-    }
+      </Link>
+    )}
   </div>
 }
 
