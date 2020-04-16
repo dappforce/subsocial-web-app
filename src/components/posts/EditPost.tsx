@@ -9,7 +9,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
-import { Option, Enum } from '@polkadot/types/codec';
+import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { socialQueryToProp } from '../utils/index';
@@ -21,7 +21,7 @@ import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
-import { Post, IpfsHash, BlogId } from '@subsocial/types/substrate/interfaces';
+import { Post, IpfsHash, BlogId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
 import { ValidationProps, buildValidationSchema } from './PostValidation';
@@ -36,7 +36,7 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 type OuterProps = ValidationProps & {
   blogId?: BN,
   id?: BN,
-  extension?: Enum,
+  extension?: IPostExtension,
   struct?: Post
   json?: PostContent,
   onlyTxButton?: boolean,
@@ -46,7 +46,7 @@ type OuterProps = ValidationProps & {
   blogIds?: BlogId[]
 };
 
-const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
+const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) }) as IPostExtension
 
 type FormValues = PostContent;
 
@@ -76,7 +76,7 @@ const InnerForm = (props: FormProps) => {
     blogIds
   } = props;
 
-  const isRegularPost = extension.value.isEmpty; // TODO maybe fix after run UI
+  const isRegularPost = extension.value.toRawType() === 'Null'; // TODO fix default extension
 
   const renderResetButton = () => (
     <Button

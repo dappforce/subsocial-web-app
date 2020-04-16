@@ -47,7 +47,6 @@ const InnerShareModal = (props: Props) => {
       <NewSharePost
         blogId={blogId}
         extention={extension}
-        withButtons={false}
       />
       <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
     </div>
