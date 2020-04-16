@@ -46,10 +46,12 @@ const InnerShareModal = (props: Props) => {
         onSelect={saveBlog}
         imageSize={24}
         defaultValue={blogIds[0].toString()} />
+        {/*
       <NewSharePost
         blogId={blogId}
         extention={extension}
       />
+        */}
       <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
     </div>
     );

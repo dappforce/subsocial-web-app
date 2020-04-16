@@ -12,8 +12,8 @@ export const ViewTags = ({ tags = [] }: Props) => {
 
   return <div className='DfTags'>
     {tags.map(tag =>
-      <Link href={`/search?q="${tag}"`}>
-        <Tag key={tag}>{tag}</Tag>
+      <Link href={`/search?q="${tag}"`} key={tag}>
+        <Tag >{tag}</Tag>
       </Link>
     )}
   </div>
