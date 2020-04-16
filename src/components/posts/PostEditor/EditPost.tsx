@@ -279,7 +279,6 @@ const InnerForm = (props: FormProps) => {
   const renderBlogsPreviewDropdown = () => {
     if (!blogIds) return;
     return <SelectBlogPreview
-      // className={'SelectBlogPreview'}
       blogIds={blogIds}
       onSelect={handleBlogSelect}
       imageSize={24}

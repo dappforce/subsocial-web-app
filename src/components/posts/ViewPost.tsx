@@ -25,7 +25,7 @@ import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { PreviewData, EmbedData, BlockValueKind } from '../types';
-import { parse } from '../utils/index';
+// import { parse } from '../utils/index';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const log = newLogger('View post')
@@ -58,7 +58,6 @@ type ViewPostPageProps = {
   withBlogName?: boolean;
   postData: PostData;
   postExtData?: PostData;
-  blockValues?: BlockValueKind[];
   commentIds?: BN[];
   statusCode?: number
 };
@@ -79,11 +78,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withActions = true,
     withStats = true,
     withCreatedBy = true,
-    postExtData,
-    blockValues
+    postExtData
   } = props;
-
-  console.log('blogValues from ViewPost main', blockValues)
 
   const {
     id,
@@ -96,15 +92,17 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
-  const [ content, setContent ] = useState(getExtContent({ ...initialContent, blockValues }));
+  const [ content, setContent ] = useState(getExtContent(initialContent));
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
   const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
-  const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
+  const [ linkPreviewData /*, setLinkPreviewData */] = useState<PreviewData[]>([])
 
   const originalPost = postExtData && postExtData.struct;
-  const [ originalContent, setOriginalContent ] = useState(getExtContent({ ...postExtData?.content, blockValues }));
+  const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
+
+  console.log('content from ViewPost main', content)
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -117,6 +115,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   }, [ false ]);
 
   useEffect(() => {
+    /*
     const firstLoad = async () => {
       const res: PreviewData[] = []
       for (const x of content.blockValues) {
@@ -130,6 +129,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     }
 
     firstLoad()
+    */
   }, [ content ])
 
   type DropdownProps = {
@@ -202,13 +202,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     return <ViewBlog id={blog_id} miniPreview withFollowButton />
   }
 
-  const renderContent = (post: Post, content: PostExtContent | undefined) => {
+  const renderContent = (post: Post, content: PostExtContent | undefined | any) => {
     if (!post || !content) return null;
 
     const { title, blockValues, summary } = content;
-    const previewBlocks = blockValues.filter((x) => x.useOnPreview === true)
+    const previewBlocks = blockValues.filter((x: BlockValueKind) => x.useOnPreview === true)
     const hasPreviews = previewBlocks && previewBlocks.length !== 0
-    const imageBlock = blockValues.find((x) => x.kind === 'image')
+    const imageBlock = blockValues.find((x: BlockValueKind) => x.kind === 'image')
 
     return <div className='MiniPreviewWrapper'>
       <div className='DfContent'>
@@ -219,7 +219,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
         </div>
         {hasPreviews
-          ? previewBlocks.map((x) => <div className='MiniPreviewBlock'><BlockPreview
+          ? previewBlocks.map((x: BlockValueKind) => <div className='MiniPreviewBlock'><BlockPreview
             block={x}
             embedData={embedData}
             setEmbedData={setEmbedData}
@@ -359,15 +359,15 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const idOrHandle = blogId as string
   const blogIdFromUrl = await getBlogId(idOrHandle)
-  const extPostData = await subsocial.findPostWithExt(new BN(postId as string))
+  const postData = await subsocial.findPost(new BN(postId as string))
 
   // Post was not found:
-  if (!extPostData?.post?.struct && res) {
+  if (!postData?.struct && res) {
     res.statusCode = 404
     return { statusCode: 404 }
   }
 
-  const blogIdFromPost = extPostData?.post.struct?.blog_id
+  const blogIdFromPost = postData?.struct.blog_id
 
   // If blog id of this post is not equal to blog id/handle from URL,
   // then redirect to the URL with blog id of this post.
@@ -377,8 +377,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   }
 
   return {
-    postData: extPostData?.post,
-    postExtData: extPostData?.ext
+    postData,
+    postExtData: {} as any
   };
 };
 

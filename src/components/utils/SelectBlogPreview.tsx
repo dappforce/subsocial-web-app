@@ -29,7 +29,7 @@ const SUB_SIZE = 2;
 const SelectBlogPreview = (props: Props) => {
   const { preparedBlogsData = [], imageSize = 36, onSelect, defaultValue } = props
 
-  if (isEmptyArray(preparedBlogsData)) return <NoData description={<span>No blogs found</span>} />;
+  if (isEmptyArray(preparedBlogsData)) return <span>No blogs found</span>;
 
   return <Select
     style={{ width: 200 }}
@@ -57,7 +57,7 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { blogIds } = props
 
-    if (isEmptyArray(blogIds)) return <NoData description={<span>No blogs found</span>} />
+    if (isEmptyArray(blogIds)) return <span>No blogs found</span>
 
     const { subsocial } = useSubsocialApi()
     const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>([])
