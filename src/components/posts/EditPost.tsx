@@ -76,7 +76,7 @@ const InnerForm = (props: FormProps) => {
     blogIds
   } = props;
 
-  const isRegularPost = extension.isRegularPost;
+  const { isRegularPost } = extension
 
   const renderResetButton = () => (
     <Button
