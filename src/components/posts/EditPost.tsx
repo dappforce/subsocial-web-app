@@ -46,7 +46,7 @@ type OuterProps = ValidationProps & {
   blogIds?: BlogId[]
 };
 
-const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) }) as IPostExtension
+const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
 
 type FormValues = PostContent;
 

@@ -12,7 +12,6 @@ import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
 import BN from 'bn.js';
 import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
-import { PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
 
 type Props = MyAccountProps & {
   postId: BN,
@@ -27,7 +26,7 @@ const InnerShareModal = (props: Props) => {
   if (!blogIds) return <Loading />;
 
   const [ blogId, setBlogId ] = useState(blogIds[0]);
-  const extension = new PostExtension({ SharedPost: postId as SharedPost }) as IPostExtension;
+  const extension = new PostExtension({ SharedPost: postId as SharedPost });
 
   const renderShareView = () => {
     if (blogIds.length === 0) {
