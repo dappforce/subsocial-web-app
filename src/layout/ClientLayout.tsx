@@ -15,6 +15,7 @@ import ConnectingOverlay from '../components/main//overlays/Connecting';
 import { getEnv } from '../components/utils/utils';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
 import { Content } from '../components/main/Content';
+
 import { isServerSide } from 'src/components/utils';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
