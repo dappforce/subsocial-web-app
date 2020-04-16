@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { withCalls, withMulti } from '@polkadot/react-api';
 import { socialQueryToProp } from '../utils/index';
@@ -9,7 +9,6 @@ import Link from 'next/link';
 import { Loading } from '../utils/utils';
 import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
-import { withCalls, withMulti } from '@polkadot/react-api';
 import BN from 'bn.js';
 // import dynamic from 'next/dynamic';
 
