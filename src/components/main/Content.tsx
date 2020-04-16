@@ -1,8 +1,7 @@
 import React, { useContext } from 'react'
 import { StatusContext } from '@polkadot/react-components'
-
-import dynamic from 'next/dynamic'
 import { Navigation } from '../../layout/Navigation'
+import dynamic from 'next/dynamic'
 
 const Status = dynamic(() => import('./Status'), { ssr: false });
 export const Content: React.FunctionComponent = ({ children }) => {
