@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
-import { Form, Field, withFormik, FormikProps } from 'formik';
-
+import { Form, withFormik, FormikProps } from 'formik';
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
@@ -55,6 +54,7 @@ const InnerForm = (props: FormProps) => {
     dirty,
     isValid,
     setFieldValue,
+    setFieldTouched,
     isSubmitting,
     setSubmitting,
     resetForm
@@ -130,7 +130,7 @@ const InnerForm = (props: FormProps) => {
         <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
 
         <LabelledField name='desc' label='Description' {...props}>
-          <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
+          <SimpleMDEReact value={desc} onChange={(data: string) => {setFieldValue('desc', data); setFieldTouched('desc', true);}} className={`DfMdEditor ${errors['desc'] && 'error'}`}/>
         </LabelledField>
 
         <EditableTagGroup name='tags' label='Tags' tags={tags} {...props}/>
