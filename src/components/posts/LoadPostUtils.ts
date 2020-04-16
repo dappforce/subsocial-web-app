@@ -1,8 +1,8 @@
 import { Post } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types';
 import { summarize } from '@subsocial/utils';
-import { ipfs } from '../utils/SubsocialConnect';
 import { isMobile } from 'react-device-detect';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 export const LIMIT_SUMMARY = isMobile ? 150 : 300;
 
@@ -32,6 +32,7 @@ export const getExtContent = (content: PostContent | undefined): PostExtContent 
 }
 
 export const loadContentFromIpfs = async (post: Post): Promise<PostExtContent> => {
+  const { ipfs } = await getSubsocialApi()
   const ipfsContent = await ipfs.findPost(post.ipfs_hash);
   if (!ipfsContent) return {} as PostExtContent;
 

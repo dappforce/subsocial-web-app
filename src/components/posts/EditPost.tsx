@@ -76,7 +76,7 @@ const InnerForm = (props: FormProps) => {
     blogIds
   } = props;
 
-  const isRegularPost = extension.value.toRawType() === 'Null'; // TODO fix default extension
+  const isRegularPost = extension.isRegularPost;
 
   const renderResetButton = () => (
     <Button
