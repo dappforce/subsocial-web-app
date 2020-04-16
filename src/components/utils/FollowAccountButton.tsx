@@ -6,8 +6,9 @@ import TxButton from './TxButton';
 import { registry } from '@polkadot/react-api';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
-import { useSubsocialApi } from './SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
+import { Loading } from './utils';
+import { useSubsocialApi } from './SubsocialApiContext';
 
 const log = newLogger('FollowAccountButton')
 
@@ -34,9 +35,9 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
   const { myAddress, address, size = TX_BUTTON_SIZE } = props;
 
   const accountId = new GenericAccountId(registry, address);
-
   const { substrate } = useSubsocialApi()
-  const [ isFollow, setIsFollow ] = useState(true);
+
+  const [ isFollow, setIsFollow ] = useState<boolean>();
 
   useEffect(() => {
     let isSubscribe = true;
@@ -53,7 +54,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     return [ accountId ];
   };
 
-  return <TxButton
+  return isFollow !== undefined ? <TxButton
     icon='send'
     size={size}
     isBasic={isFollow}
@@ -66,7 +67,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
       : `social.followAccount`}
     onSuccess={() => setIsFollow(!isFollow)}
     withSpinner
-  />
+  /> : <Loading/>
 }
 
 export default FollowAccountButton;

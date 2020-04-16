@@ -4,8 +4,9 @@ import TxButton from './TxButton';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
-import { useSubsocialApi } from './SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
+import { Loading } from './utils';
+import { useSubsocialApi } from './SubsocialApiContext';
 
 const log = newLogger('FollowBlogButton')
 
@@ -17,12 +18,12 @@ type FollowBlogButtonProps = {
 export function FollowBlogButton (props: FollowBlogButtonProps) {
   const { blogId, size } = props;
   const { state: { address: myAddress } } = useMyAccount();
+  const { substrate } = useSubsocialApi()
   const { reloadFollowed } = useSidebarCollapsed();
 
   if (!myAddress) return null;
 
-  const { substrate } = useSubsocialApi()
-  const [ isFollow, setIsFollow ] = useState(false);
+  const [ isFollow, setIsFollow ] = useState<boolean>();
 
   const TxSuccess = () => {
     reloadFollowed();
@@ -31,6 +32,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
 
   useEffect(() => {
     let isSubscribe = true;
+
     const load = async () => {
       const _isFollow = await (substrate.isBlogFollower(myAddress, blogId))
       isSubscribe && setIsFollow(_isFollow)
@@ -44,7 +46,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     return [ blogId ];
   };
 
-  return <TxButton
+  return isFollow !== undefined ? <TxButton
     size = {size}
     isBasic={isFollow}
     label={isFollow
@@ -56,7 +58,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
       ? `social.unfollowBlog`
       : `social.followBlog`}
     onSuccess={TxSuccess}
-  />;
+  /> : <Loading/>;
 }
 
 export default FollowBlogButton;

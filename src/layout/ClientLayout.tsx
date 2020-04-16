@@ -15,32 +15,37 @@ import ConnectingOverlay from '../components/main//overlays/Connecting';
 import { getEnv } from '../components/utils/utils';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
 import { Content } from '../components/main/Content';
+import { isServerSide } from 'src/components/utils';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = getEnv('SUBSTRATE_URL') || settings.apiUrl || undefined;
 
-  return <Queue>
-    <Api url={url}>
-      <SubsocialApiProvider>
-        <BlockAuthors>
-          <Events>
-            <MyAccountProvider>
-              <NotifCounterProvider>
-                <Signer>
-                  <Content>
-                    {children}
-                  </Content>
-                </Signer>
-                <ConnectingOverlay />
-                <AccountsOverlay />
-              </NotifCounterProvider>
-            </MyAccountProvider>
-            <Connecting />
-          </Events>
-        </BlockAuthors>
-      </SubsocialApiProvider>
-    </Api>
-  </Queue>;
+  return isServerSide()
+    ? <Content>
+      {children}
+    </Content>
+    : <Queue>
+      <Api url={url}>
+        <SubsocialApiProvider>
+          <BlockAuthors>
+            <Events>
+              <MyAccountProvider>
+                <NotifCounterProvider>
+                  <Signer>
+                    <Content>
+                      {children}
+                    </Content>
+                  </Signer>
+                  <ConnectingOverlay />
+                  <AccountsOverlay />
+                </NotifCounterProvider>
+              </MyAccountProvider>
+              <Connecting />
+            </Events>
+          </BlockAuthors>
+        </SubsocialApiProvider>
+      </Api>
+    </Queue>;
 };
 
 export default ClientLayout;
