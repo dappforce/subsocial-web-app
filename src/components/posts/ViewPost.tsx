@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
-// import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
 import NoData from '../utils/EmptyList';
@@ -25,7 +23,7 @@ import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { PreviewData, EmbedData, BlockValueKind } from '../types';
-// import { parse } from '../utils/index';
+import { parse } from '../utils/index';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const log = newLogger('View post')
@@ -58,6 +56,7 @@ type ViewPostPageProps = {
   withBlogName?: boolean;
   postData: PostData;
   postExtData?: PostData;
+  blockValues?: BlockValueKind[];
   commentIds?: BN[];
   statusCode?: number
 };
@@ -78,7 +77,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withActions = true,
     withStats = true,
     withCreatedBy = true,
-    postExtData
+    postExtData,
+    blockValues
   } = props;
 
   const {
@@ -97,12 +97,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
   const [ embedData, setEmbedData ] = useState<EmbedData[]>([])
-  const [ linkPreviewData /*, setLinkPreviewData */] = useState<PreviewData[]>([])
+  const [ linkPreviewData, setLinkPreviewData ] = useState<PreviewData[]>([])
 
   const originalPost = postExtData && postExtData.struct;
   const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
 
-  console.log('content from ViewPost main', content)
+  console.log('blockValues from ViewPost main', blockValues)
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -115,10 +115,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   }, [ false ]);
 
   useEffect(() => {
-    /*
+
     const firstLoad = async () => {
+      if (!blockValues) return
       const res: PreviewData[] = []
-      for (const x of content.blockValues) {
+      for (const x of blockValues) {
         if (x.kind === 'link' || x.kind === 'video') {
           const data = await parse(x.data)
           if (!data) continue
@@ -129,7 +130,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     }
 
     firstLoad()
-    */
+
   }, [ content ])
 
   type DropdownProps = {
@@ -202,13 +203,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     return <ViewBlog id={blog_id} miniPreview withFollowButton />
   }
 
-  const renderContent = (post: Post, content: PostExtContent | undefined | any) => {
+  const renderContent = (post: Post, content: PostExtContent | undefined) => {
+    console.log('post, content from renderContent', post, content)
     if (!post || !content) return null;
-
-    const { title, blockValues, summary } = content;
-    const previewBlocks = blockValues.filter((x: BlockValueKind) => x.useOnPreview === true)
+    console.log('blockValues from renderContent', blockValues)
+    const { title, summary } = content;
+    const previewBlocks = blockValues?.filter((x: BlockValueKind) => x.useOnPreview === true)
     const hasPreviews = previewBlocks && previewBlocks.length !== 0
-    const imageBlock = blockValues.find((x: BlockValueKind) => x.kind === 'image')
+    const imageBlock = blockValues?.find((x: BlockValueKind) => x.kind === 'image')
 
     return <div className='MiniPreviewWrapper'>
       <div className='DfContent'>
@@ -219,7 +221,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           </div>
         </div>
         {hasPreviews
-          ? previewBlocks.map((x: BlockValueKind) => <div className='MiniPreviewBlock'><BlockPreview
+          ? previewBlocks?.map((x: BlockValueKind) => <div className='MiniPreviewBlock'><BlockPreview
             block={x}
             embedData={embedData}
             setEmbedData={setEmbedData}
@@ -305,30 +307,37 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderDetails = (content?: PostExtContent) => {
-    if (!content) return null;
-    const { title, body, image, canonical, tags } = content;
-    return <Section className='DfContentPage'>
-      <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
+  const renderDetails = (content: PostExtContent) => {
+    const { title, canonical, tags, summary } = content;
+    return <Section className='DfContentPage bookPage'>
+      {<HeadMeta title={title} desc={summary} image={''} canonical={canonical} tags={tags} /> }
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
       </div>
       {<StatsPanel id={post.id}/>}
+      {renderBlogPreview(post)}
       {withCreatedBy && renderPostCreator(post)}
       <div style={{ margin: '1rem 0' }}>
-        {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        <DfMd source={body} />
-        {/* TODO render tags */}
-        {withCreatedBy && renderPostCreator(post)}
-        {renderBlogPreview(post)}
+        {blockValues && blockValues.length > 0 &&
+          blockValues.map((x: BlockValueKind) => {
+            return <div key={x.id} className={'viewPostBlock'}><BlockPreview
+              block={x}
+              embedData={embedData}
+              setEmbedData={setEmbedData}
+              linkPreviewData={linkPreviewData}
+            /></div>
+          })
+        }
+        <ViewTags tags={tags} />
       </div>
-      <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
   };
+
+  console.log('variant', variant)
 
   switch (variant) {
     case 'name only': {
@@ -359,7 +368,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const idOrHandle = blogId as string
   const blogIdFromUrl = await getBlogId(idOrHandle)
-  const postData = await subsocial.findPost(new BN(postId as string))
+  const postData = await subsocial.findPost(new BN(postId as string)) as any
+  const { ipfs } = await getSubsocialApi()
 
   // Post was not found:
   if (!postData?.struct && res) {
@@ -376,9 +386,18 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     res.end()
   }
 
+  const blockValues = []
+  if (postData?.content.blocks && postData?.content.blocks.length > 0) {
+    for (const item of postData?.content.blocks) {
+      const value = await ipfs.findPost(item.cid)
+      blockValues.push(value)
+    }
+  }
+
   return {
     postData,
-    postExtData: {} as any
+    postExtData: {} as any,
+    blockValues
   };
 };
 
@@ -403,6 +422,8 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
     }, [ false ]);
 
     if (isEmpty(extPostData)) return <Loading/>;
+
+    console.log('extPostData from withLoadedData', extPostData)
 
     return extPostData ? <Component postData={extPostData.post} postExtData={extPostData.ext} {...props}/> : null;
   };
