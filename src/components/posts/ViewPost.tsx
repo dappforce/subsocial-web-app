@@ -28,6 +28,7 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const log = newLogger('View post')
 
+const ShareButton = dynamic(() => import('./ShareButton'), { ssr: false });
 const BlockPreview = dynamic(() => import('./PostPreview/BlockPreview'), { ssr: false });
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
@@ -309,6 +310,23 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderDetails = (content: PostExtContent) => {
     const { title, canonical, tags, summary } = content;
+    const [ open, setOpen ] = useState(false);
+    const close = () => setOpen(false);
+
+    const shareButtons = <div className='SharePostButtons'>
+      <ShareButton network='facebook' />
+      <ShareButton network='twitter' text={title} />
+      <ShareButton network='linkedin' text={title} />
+      <ShareButton network='reddit' text={title} />
+      <div
+        className='ui tiny button basic DfAction ShareOnBlog'
+        onClick={() => setOpen(true)}
+      >
+        <Icon type='share-alt' />
+      Share
+      </div>
+    </div>
+
     return <Section className='DfContentPage bookPage'>
       {<HeadMeta title={title} desc={summary} image={''} canonical={canonical} tags={tags} /> }
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
@@ -318,6 +336,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       {<StatsPanel id={post.id}/>}
       {renderBlogPreview(post)}
       {withCreatedBy && renderPostCreator(post)}
+      {shareButtons}
       <div style={{ margin: '1rem 0' }}>
         {blockValues && blockValues.length > 0 &&
           blockValues.map((x: BlockValueKind) => {
@@ -332,6 +351,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <ViewTags tags={tags} />
       </div>
       <Voter struct={post} type={'Post'}/>
+      {shareButtons}
+      {open && <ShareModal postId={isRegularPost ? id : originalPost && originalPost.id} open={open} close={close} />}
       {/* <ShareButtonPost postId={post.id}/> */}
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
