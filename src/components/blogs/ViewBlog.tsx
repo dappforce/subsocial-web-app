@@ -312,7 +312,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) // TODO maybe delete this type cast?
+  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
   const posts = await subsocial.findPostsWithExt(postIds.reverse());
   return {
     blogData,
