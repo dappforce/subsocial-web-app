@@ -29,7 +29,7 @@ import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
-import { Blog, PostId } from '@subsocial/types/substrate/interfaces';
+import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogData, ExtendedPostData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
@@ -312,7 +312,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) as unknown as PostId[]; // TODO maybe delete this type cast?
+  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string)) // TODO maybe delete this type cast?
   const posts = await subsocial.findPostsWithExt(postIds.reverse());
   return {
     blogData,
