@@ -663,8 +663,6 @@ hr {
 
   .Df--AddressComponents-details {
     display: block;
-    text-align: left;
-    float: left;
     color: $color_muted !important;
     font-size: $font_small !important
   }
@@ -1165,11 +1163,6 @@ hr {
   content {
     min-width: 75%;
   }
-}
-
-.TopMenuAccountPopover {
-  left: auto !important;
-  right: $space_normal !important;
 }
 
 .NavEditorWrapper {
