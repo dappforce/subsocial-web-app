@@ -58,7 +58,8 @@ type ViewPostPageProps = {
   postExtData?: PostData;
   blockValues?: BlockValueKind[];
   commentIds?: BN[];
-  statusCode?: number
+  statusCode?: number;
+  fullUrl?: string;
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
@@ -78,7 +79,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withStats = true,
     withCreatedBy = true,
     postExtData,
-    blockValues
+    blockValues,
+    fullUrl
   } = props;
 
   const {
@@ -308,7 +310,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderDetails = (content: PostExtContent) => {
-    const { title, canonical, tags, summary } = content;
+    const { title, canonical = fullUrl, tags, summary } = content;
+
     return <Section className='DfContentPage bookPage'>
       {<HeadMeta title={title} desc={summary} image={''} canonical={canonical} tags={tags} /> }
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
@@ -364,12 +367,19 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 };
 
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { blogId, postId }, res } = props;
+  const { query: { blogId, postId }, res, req } = props;
   const subsocial = await getSubsocialApi()
   const idOrHandle = blogId as string
   const blogIdFromUrl = await getBlogId(idOrHandle)
   const postData = await subsocial.findPost(new BN(postId as string)) as any
   const { ipfs } = await getSubsocialApi()
+
+  let fullUrl
+  if (req && req.headers.host) {
+    fullUrl = req.headers.host + req.url
+  } else {
+    fullUrl = window.location.toString()
+  }
 
   // Post was not found:
   if (!postData?.struct && res) {
@@ -397,7 +407,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   return {
     postData,
     postExtData: {} as any,
-    blockValues
+    blockValues,
+    fullUrl
   };
 };
 

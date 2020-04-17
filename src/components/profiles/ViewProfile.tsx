@@ -38,7 +38,8 @@ export type Props = {
   ProfileContent?: ProfileContent,
   socialAccount?: SocialAccount,
   followers?: AccountId[],
-  size?: number
+  size?: number,
+  fullUrl?: string
 };
 
 const Component: NextPage<Props> = (props: Props) => {
@@ -50,7 +51,8 @@ const Component: NextPage<Props> = (props: Props) => {
     size = 48,
     socialAccount,
     profile = {} as Profile,
-    ProfileContent = {} as ProfileContent
+    ProfileContent = {} as ProfileContent,
+    fullUrl
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
@@ -245,7 +247,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const noFollowing = following.eq(ZERO);
 
   return <>
-    <HeadMeta title={getName()} desc={about} image={avatar} />
+    <HeadMeta title={getName()} desc={about} image={avatar} canonical={fullUrl} />
     <Section className='bookPage'>
       <div className='FullProfile'>
         {renderPreview()}
@@ -263,17 +265,26 @@ const Component: NextPage<Props> = (props: Props) => {
 };
 
 Component.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address } } = props;
+  const { query: { address }, req } = props;
   const { substrate, ipfs } = await getSubsocialApi()
   const socialAccount = await substrate.findSocialAccount(address as string)
   const profileOpt = socialAccount ? socialAccount.profile : undefined;
   const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
   const content = profile && await ipfs.getContent<ProfileContent>(profile.ipfs_hash)
+
+  let fullUrl
+  if (req && req.headers.host) {
+    fullUrl = req.headers.host + req.url
+  } else {
+    fullUrl = window.location.toString()
+  }
+
   return {
     id: new AccountId(registry, address as string),
     socialAccount: socialAccount,
     profile: profile,
-    ProfileContent: content
+    ProfileContent: content,
+    fullUrl
   };
 };
 

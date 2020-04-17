@@ -128,6 +128,7 @@ type ViewCommentProps = {
   post?: Post;
   postContent?: PostContent;
   commentContent?: CommentContent;
+  fullUrl?: string;
 };
 
 export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps) => {
@@ -137,7 +138,8 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     isPage = false,
     post: initialPost = {} as Post,
     postContent: initialPostContent = {} as PostContent,
-    commentContent = {} as CommentContent
+    commentContent = {} as CommentContent,
+    fullUrl
   } = props;
   const { substrate, ipfs } = useSubsocialApi()
   const { state: { address: myAddress } } = useMyAccount();
@@ -228,7 +230,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 
   return <div id={`comment-${id}`} className='DfComment'>
     {isPage && <>
-      <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
+      <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} canonical={fullUrl} />
       <MutedDiv style={{ marginTop: '1rem' }}>{responseTitle}</MutedDiv>
     </>}
     <SuiComment.Group threaded>
@@ -293,16 +295,23 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
 };
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
-  const { query: { commentId } } = props;
+  const { query: { commentId }, req } = props;
   const subsocial = await getSubsocialApi()
   const commentData = await subsocial.findComment(new BN(commentId as string));
   const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
+  let fullUrl
+  if (req && req.headers.host) {
+    fullUrl = req.headers.host + req.url
+  } else {
+    fullUrl = window.location.toString()
+  }
   return {
     post: postData?.struct,
     postContent: postData?.content,
     comment: commentData?.struct || {} as Comment,
     commentContent: commentData?.content,
     commentsWithParentId: [] as Comment[],
-    isPage: true
+    isPage: true,
+    fullUrl
   };
 };

@@ -56,7 +56,8 @@ type Props = {
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void,
-  statusCode?: number
+  statusCode?: number,
+  fullUrl?: string
 };
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
@@ -76,7 +77,8 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     dropdownPreview = false,
     posts = [],
     imageSize = 36,
-    onClick
+    onClick,
+    fullUrl
   } = props;
 
   const blog = blogData.struct;
@@ -273,7 +275,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   return <div className='ViewBlogWrapper'>
     <Section className='DfContentPage bookPage'>
-      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
+      <HeadMeta title={name} desc={mdToText(desc)} canonical={fullUrl} image={image} />
       <div className='FullProfile'>
         {renderPreview()}
       </div>
@@ -296,7 +298,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 };
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const { res, query: { blogId } } = props
+  const { res, query: { blogId }, req } = props
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const idOrHandle = blogId as string
@@ -312,11 +314,19 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
+  let fullUrl
+  if (req && req.headers.host) {
+    fullUrl = req.headers.host + req.url
+  } else {
+    fullUrl = window.location.toString()
+  }
+
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
   const posts = await subsocial.findPostsWithExt(postIds.reverse());
   return {
     blogData,
-    posts
+    posts,
+    fullUrl
   };
 };
 
