@@ -8,6 +8,14 @@ import { mockNextRouter } from '../src/stories/mockNextRouter';
 import { withStorybookContext } from '../src/stories/withStorybookContext';
 
 import '../src/components/utils/styles';
+import { addParameters } from '@storybook/react';
+import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
+
+addParameters({
+  viewport: {
+    viewports: INITIAL_VIEWPORTS,
+  },
+});
 
 // Mock React router:
 addDecorator(StoryRouter());
