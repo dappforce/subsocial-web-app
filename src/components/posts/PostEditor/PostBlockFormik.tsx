@@ -1,5 +1,5 @@
-import React from 'react'
-import { BlockValueKind, CodeBlockValue } from '../../types'
+import React, { useState } from 'react'
+import { BlockValueKind, CodeBlockValue, ImageBlockValue } from '../../types'
 import SimpleMDEReact from 'react-simplemde-editor'
 import { Field, ErrorMessage } from 'formik'
 import { Dropdown, Menu, Icon } from 'antd'
@@ -13,18 +13,26 @@ import 'brace/mode/rust'
 import 'brace/theme/github'
 import { isMobile } from 'react-device-detect'
 import SubMenu from 'antd/lib/menu/SubMenu'
+import { UploadChangeParam } from 'antd/lib/upload';
+import { UploadFile, RcFile } from 'antd/lib/upload/interface';
+import Dragger from 'antd/lib/upload/Dragger'
+import { getImageFromIpfs } from 'src/components/utils'
 
 type Props = {
   block: BlockValueKind
   index: number
   setFieldValue: (field: string, value: any) => void
   handleLinkChange: (block: BlockValueKind, name: string, value: string) => void
+  handleImagePreviewChange: (block: ImageBlockValue, src: string) => void
   blockValues: BlockValueKind[]
   addMenu: (index?: number, onlyItems?: boolean, pos?: string) => JSX.Element[] | JSX.Element
 }
 
 const PostBlockFormik = (props: Props) => {
-  const { block, index, setFieldValue, handleLinkChange, blockValues, addMenu } = props
+  const { block, index, setFieldValue, handleLinkChange, blockValues, addMenu, handleImagePreviewChange } = props
+
+  const [ showImageInputs, setShowImageInputs ] = useState(true)
+  const [ formPreviewImage, setFormPreviewImage ] = useState('')
 
   const langs = [
     { name: 'javascript', pretty: 'JavaScript' },
@@ -35,7 +43,8 @@ const PostBlockFormik = (props: Props) => {
     { name: 'powershell', pretty: 'PowerShell' }
   ]
 
-  const MAX_PREVIEW_BLOCKS = 2;
+  const MAX_PREVIEW_BLOCKS = 2
+  const MAX_IMAGE_SIZE = 2 // MB
 
   const modesMenu = (id: number) => (
     <Menu>
@@ -70,6 +79,45 @@ const PostBlockFormik = (props: Props) => {
     setFieldValue('blockValues', newBlocksOrder)
   }
 
+  const beforeUpload = (file: RcFile) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      console.log('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < MAX_IMAGE_SIZE;
+    if (!isLt2M) {
+      console.log('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  }
+
+  const handleImage = async (info: UploadChangeParam<UploadFile<any>>) => {
+    const { status } = info.file;
+    if (status !== 'uploading') {
+      setShowImageInputs(false)
+    }
+    if (status === 'done') {
+      const response = info.file.response
+      if (response.status === 'ok') {
+        setFieldValue(`blockValues.${index}.hash`, response.hash)
+        const src = await getImageFromIpfs(response.hash)
+        handleImagePreviewChange(block as ImageBlockValue, src)
+        setFormPreviewImage(src)
+        setShowImageInputs(false)
+      }
+      
+    } else if (status === 'error') {
+
+      setShowImageInputs(true)
+    }
+  }
+
+  const handleImgRemove = () => {
+    setFormPreviewImage('')
+    setFieldValue(`blockValues.${index}.hash`, undefined)
+    setShowImageInputs(true)
+  }
+
   let res
 
   switch (block.kind) {
@@ -92,13 +140,35 @@ const PostBlockFormik = (props: Props) => {
       break
     }
     case 'image': {
-      res = <Field
-        type="text"
-        name={`blockValues.${index}.data`}
-        placeholder="Image link"
-        value={block.data}
-        onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
-      />
+      res = showImageInputs
+      ? <div className='ImageBlockWrapper'>
+          <Field
+            type="text"
+            name={`blockValues.${index}.data`}
+            placeholder="Image link"
+            value={block.data}
+            onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
+          />
+          <div className='ImageUploadDivider'>Or</div>
+          <Dragger 
+            name='picture'
+            multiple={false}
+            action='http://127.0.0.1:3001/offchain/upload'
+            onChange={(info: UploadChangeParam<UploadFile<any>>) => handleImage(info)}
+            beforeUpload={beforeUpload}
+            showUploadList={false}
+            className='Dragger'
+          >
+            <p className="ant-upload-drag-icon">
+              <Icon type="inbox" />
+            </p>
+            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+          </Dragger>
+        </div>
+      : <div className='imgFormPreviewWrapper'>
+        <Icon type="delete" className='removeImgIcon' onClick={handleImgRemove} />
+        <img src={formPreviewImage} />
+      </div>
       break
     }
     case 'video': {

@@ -34,7 +34,10 @@ const BlockPreview = (props: Props) => {
       break
     }
     case 'image': {
-      element = <img className='DfPostImage' src={x.data} />
+      let src = x.data
+      const previewData = linkPreviewData.find((y) => y.id === x.id)
+      if (previewData) src = previewData.data as any
+      element = <img className='DfPostImage' src={src} />
       break
     }
     case 'code': {

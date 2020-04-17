@@ -7,9 +7,9 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData, PostContent } from '../../types';
+import { PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData, PostContent, ImageBlockValue } from '../../types';
 import Section from '../../utils/Section';
-import { parse } from '../../utils/index';
+import { parse, getImageFromIpfs } from '../../utils/index';
 import { getNewIdFromEvent } from '../../utils/utils';
 import Router from 'next/router';
 import HeadMeta from '../../utils/HeadMeta';
@@ -109,6 +109,13 @@ const InnerForm = (props: FormProps) => {
       for (const x of blockValues) {
         if (x.kind === 'link' || x.kind === 'video') {
           const data = await parse(x.data)
+          if (!data) continue
+          res.push({ id: x.id, data })
+        }
+        if (x.kind === 'image') {
+          const img = x as ImageBlockValue
+          let data: any
+          if (img.hash) data = await getImageFromIpfs(img.hash)
           if (!data) continue
           res.push({ id: x.id, data })
         }
@@ -247,7 +254,18 @@ const InnerForm = (props: FormProps) => {
     setLinkPreviewData(newParsedData)
   }
 
-  const handleLinkChange = (block: BlockValueKind, name: string, value: string) => {
+  const handleImagePreviewChange = async (block: ImageBlockValue, data: string | any) => {
+    const newParsedData = [ ...linkPreviewData ]
+    const idx = linkPreviewData.findIndex((el) => el.id === block.id);
+    if (idx !== -1) {
+      newParsedData[idx].data = data
+    } else {
+      newParsedData.push({ id: block.id, data })
+    }
+    setLinkPreviewData(newParsedData)
+  }
+
+  const handleLinkChange = async (block: BlockValueKind, name: string, value: string) => {
     handleLinkPreviewChange(block, value)
     setFieldValue(name, value)
   }
@@ -303,6 +321,7 @@ const InnerForm = (props: FormProps) => {
               index={index}
               setFieldValue={setFieldValue}
               handleLinkChange={handleLinkChange}
+              handleImagePreviewChange={handleImagePreviewChange}
               blockValues={blockValues}
               addMenu={addMenu}
             />)
@@ -330,6 +349,7 @@ const InnerForm = (props: FormProps) => {
               index={index}
               setFieldValue={setFieldValue}
               handleLinkChange={handleLinkChange}
+              handleImagePreviewChange={handleImagePreviewChange}
               blockValues={blockValues}
               addMenu={addMenu}
             />)

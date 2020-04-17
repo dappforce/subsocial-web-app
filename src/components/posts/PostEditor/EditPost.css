@@ -100,6 +100,17 @@
     right: 5px;
     top: 5px;
   }
+
+  .ImageBlockWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .Dragger {
+      width: 150px;
+      height: 150px;
+    }
+  }
 }
 
 .EditPostAddButton {

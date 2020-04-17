@@ -13,13 +13,21 @@ import { Options as QueryOptions } from '@polkadot/react-api/hoc/types';
 
 export const parse = async (url: string): Promise<SiteMetaContent | undefined> => {
   if (!nonEmptyStr(url) || !isLink(url)) return
-
   try {
     const res = await parseUrl(url)
     return res
   } catch (err) {
     return undefined
   }
+}
+
+export const getImageFromIpfs = async (hash: string) => {
+  const raw = await fetch(`http://127.0.0.1:8080/ipfs/${hash}`)
+  const data: any = await raw.json()
+  const mimetype = data?.mimetype
+  const image = data?.image
+  const src = `data:${mimetype};base64, ${image}`
+  return src
 }
 
 export const isLink = (s: string) => {
