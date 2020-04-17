@@ -41,7 +41,11 @@ export const SpaceNav = (props: SpaceNavProps) => {
     switch (nt.type) {
       case 'by-tag': {
         const tags = nt.content.data as string[]
-        return <Menu.Item key={nt.id}><a href={`/tags/${tags.join(',')}`}>{nt.title}</a></Menu.Item>
+        return (
+          <Menu.Item key={nt.id}>
+            <a href={`/search?tab=posts&blogid=${blogId}&tags=${tags.join(",")}`}>{nt.title}</a>
+          </Menu.Item>
+        );
       }
       case 'url': {
         const url = nt.content.data as string
