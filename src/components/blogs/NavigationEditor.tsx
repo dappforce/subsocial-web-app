@@ -265,7 +265,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
 
       <Affix offsetTop={80}>
         <div style={{ marginLeft: '2rem', minWidth: '300px' }}>
-          <Alert type="info" showIcon closable message="Drag-n-drop tabs to reorder them." style={{ marginBottom: '1rem' }} />
+          <Alert type="info" showIcon closable message="Drag tabs to reorder them." style={{ marginBottom: '1rem' }} />
           <ReorderNavTabs tabs={navTabs} onChange={(tabs: NavTab[]) => handleSaveNavOrder(tabs)} />
         </div>
       </Affix>
