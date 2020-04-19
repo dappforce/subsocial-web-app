@@ -3546,14 +3546,14 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.2.1-beta20":
-  version "0.2.1-beta20"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.1-beta20.tgz#7a927ec740426e918c08734e59181a0805f3ab94"
-  integrity sha512-KJQJSb9cWTfoECnFaDxucVn7pysPLHW1U7HXe5PrHOuWqHfzZ/ieHkc5KEx2X2LnZ7yeb2ttUbPqJQdHhUOL+g==
+"@subsocial/api@^0.2.1-beta21":
+  version "0.2.1-beta21"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.1-beta21.tgz#7871fff6b13072cf43f0bb0cdb1e1836a2cb6635"
+  integrity sha512-VbaoAoJ/NXPRW6+Wudn8YLRaT6D3DodY0P3fhpqKQSm5WdVVDKx3vI1YJ5uR1iDIf07V+pb7V14iTVGmTNv4dw==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.4.0-beta.46"
-    "@subsocial/types" "^0.1.20-beta16"
+    "@subsocial/types" "^0.1.20-beta17"
     "@subsocial/utils" "^0.1.20"
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
@@ -3566,10 +3566,10 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/types@^0.1.20-beta16":
-  version "0.1.20-beta16"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta16.tgz#36b8880fe949ebd1791e090d4654e307be223214"
-  integrity sha512-MvowOVXtp8FF6NkM6KEwJC7cRX0tkA9rS8yAj0vFfQWO+2frHPEmYS+PvmOAVzJGYH8kLb/IcIL+y/WSDmJASA==
+"@subsocial/types@^0.1.20-beta17":
+  version "0.1.20-beta17"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta17.tgz#f501da0572250ff59c3f387a0409bb805b2feb4a"
+  integrity sha512-kiQTrC3C6MvoFbASmtGbwLYFKeRrLAM1f2/+OZsZAXbsZTmsrRyjYwei8BWm7d0MVaSe7IAEECfPr4qoKq485w==
   dependencies:
     "@babel/runtime" "^7.8.4"
 

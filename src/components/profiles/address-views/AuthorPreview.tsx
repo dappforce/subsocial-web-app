@@ -1,16 +1,16 @@
 import React from 'react'
-import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
-import { ProfileContent } from '@subsocial/types';
+import { ProfileData } from '@subsocial/types';
 import classes from '@polkadot/react-components/util/classes';
 import { BareProps } from '@polkadot/react-api/types';
 import { Popover } from 'antd';
-import Avatar from './utils/Avatar';
+import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
 import Link from 'next/link';
 import { toShortAddress } from '@polkadot/react-components/util';
 import dynamic from 'next/dynamic';
 import Balance from './utils/DfBalance'
 import AccountId from '@polkadot/types/generic/AccountId';
+import { withLoadedAuthor } from './utils/withLoadedAuthor';
 
 type InfoProps = {
   details?: JSX.Element,
@@ -31,14 +31,12 @@ const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) =
 const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = BareProps & {
-  socialAccount?: SocialAccount,
-  profile?: Profile,
-  content?: ProfileContent,
+  author?: ProfileData,
   children?: React.ReactNode,
   details?: JSX.Element
   isPadded?: boolean,
   isShort?: boolean,
-  address: string,
+  address: string | AccountId,
   size?: number,
   withFollowButton?: boolean,
 };
@@ -46,9 +44,7 @@ export type Props = BareProps & {
 export const AuthorPreview = (props: Props) => {
   const {
     address,
-    socialAccount,
-    profile,
-    content = {} as ProfileContent,
+    author = {} as ProfileData,
     className,
     isPadded = true,
     style,
@@ -58,8 +54,9 @@ export const AuthorPreview = (props: Props) => {
     details
   } = props;
 
-  const username = profile && profile.username;
-  const { avatar, fullname } = content
+  const username = author.profile?.username;
+  const avatar = author.content?.avatar
+  const fullname = author.content?.fullname
 
   return <div
     className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
@@ -70,7 +67,7 @@ export const AuthorPreview = (props: Props) => {
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='focus'
-          content={<ProfilePreview address={address} socialAccount={socialAccount} content={content} username={username}/>}
+          content={<ProfilePreview address={address} author={author}/>}
         >
           <Link
             href={`/profile/${address}`}
@@ -88,6 +85,8 @@ export const AuthorPreview = (props: Props) => {
   </div>;
 };
 
-export default AuthorPreview;
+export const AuthorPreviewWithAuthor = withLoadedAuthor(AuthorPreview);
+
+export default AuthorPreviewWithAuthor;
 
 // ${asActivity && 'activity'}

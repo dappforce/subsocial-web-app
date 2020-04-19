@@ -4,15 +4,13 @@ import { socialQueryToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
-import dynamic from 'next/dynamic';
 import partition from 'lodash.partition';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
+import { AuthorPreviewWithAuthor } from '../profiles/address-views';
 
 const log = newLogger('List voters')
-
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type VotersProps = {
   id: CommentId | PostId,
@@ -65,11 +63,11 @@ const InnerModalVoters = (props: VotersProps) => {
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
       return <div key={reaction.id.toNumber()} className="ReactionsItem" >
-        <AddressComponents
-          value={reaction.created.account}
+        <AuthorPreviewWithAuthor
+          address={reaction.created.account}
           isPadded={false}
           size={28}
-          extraDetails={isUpvote(reaction)
+          details={isUpvote(reaction)
             ? <span style={{ color: 'green' }}>Upvoted</span>
             : <span style={{ color: 'red' }}>Downvoted</span>
           }

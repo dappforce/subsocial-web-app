@@ -9,11 +9,12 @@ import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import { newLogger } from '@subsocial/utils';
 import { Loading } from './utils';
 import { useSubsocialApi } from './SubsocialApiContext';
+import { AccountId } from '@polkadot/types/interfaces';
 
 const log = newLogger('FollowAccountButton')
 
 type FollowAccountButtonProps = {
-  address: string,
+  address: string | AccountId,
   size?: Button$Sizes
 };
 
@@ -28,7 +29,7 @@ export function FollowAccountButton (props: FollowAccountButtonProps) {
 }
 
 type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
-  myAddress: string
+  myAddress: string | AccountId
 };
 
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
@@ -48,7 +49,7 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     load().catch(err => log.error('Failed to check isFollow:', err));
 
     return () => { isSubscribe = false; };
-  });
+  }, [ myAddress ]);
 
   const buildTxParams = () => {
     return [ accountId ];

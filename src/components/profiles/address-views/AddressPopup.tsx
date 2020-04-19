@@ -1,34 +1,37 @@
 import React from 'react'
 import SelectAccount from './utils/SelectAccount';
 import { Popover, Icon } from 'antd';
-import Address from './utils/Name'
-import Avatar from './utils/Avatar'
+import Address from './Name'
+import Avatar from './Avatar'
 import { CommonAddressProps } from './utils/types';
-import { SocialAccount } from '@subsocial/types/substrate/interfaces';
-import { ProfileContent } from '@subsocial/types';
+import { withLoadedAuthor } from './utils/withLoadedAuthor';
 
 export const AddressPopup: React.FunctionComponent<CommonAddressProps> = ({
   address,
-  socialAccount = {} as SocialAccount,
-  username,
-  content = {} as ProfileContent
+  author
 }) => {
-  const { reputation } = socialAccount
-  const { fullname, avatar } = content
+  const struct = author?.struct;
+  const content = author?.content
+  const reputation = struct?.reputation
+
   return <Popover
     placement='bottomRight'
     trigger='click'
     className='TopMenuAccount'
     overlayClassName='TopMenuAccountPopover'
-    content={<SelectAccount reputation={reputation}/>}
+    content={<SelectAccount reputation={reputation || 0}/>}
   >
     <div className='addressIcon'>
-      <Avatar size={36} address={address} avatar={avatar} />
+      <Avatar size={36} address={address} avatar={content?.avatar} />
     </div>
     <div className='addressInfo'>
-      <Address asLink={false} fullname={fullname} username={username} address={address}/>
+      <Address asLink={false} author={author} address={address}/>
       {/* <RenderBalance address={address} /> */}
     </div>
     <Icon type='caret-down' />
   </Popover>;
 }
+
+export const AddressPopupWithAuthor = withLoadedAuthor(AddressPopup);
+
+export default AddressPopupWithAuthor;

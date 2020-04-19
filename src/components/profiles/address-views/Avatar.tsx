@@ -2,12 +2,14 @@ import React from 'react'
 import { nonEmptyStr } from '@subsocial/utils';
 import { DfBgImg } from 'src/components/utils/DfBgImg';
 import { IdentityIcon } from '@polkadot/react-components';
+import { AccountId } from '@polkadot/types/interfaces';
+import { withLoadedAuthor } from './utils/withLoadedAuthor';
 
 type ImageProps = {
   size: number,
   style?: any,
-  address: string,
-  avatar: string
+  address: string | AccountId,
+  avatar?: string
 };
 
 export const Avatar: React.FunctionComponent<ImageProps> = ({ size, avatar, address, style }) => {
@@ -20,4 +22,6 @@ export const Avatar: React.FunctionComponent<ImageProps> = ({ size, avatar, addr
     />;
 };
 
-export default Avatar;
+export const AvatarWithAuthor = withLoadedAuthor(Avatar);
+
+export default AvatarWithAuthor;

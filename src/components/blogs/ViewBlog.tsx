@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { DfMd } from '../utils/DfMd';
-import { Option, GenericAccountId as AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
@@ -29,15 +29,19 @@ import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
-import { Blog } from '@subsocial/types/substrate/interfaces';
-import { BlogData, ExtendedPostData } from '@subsocial/types/dto'
+import { BlogData, ExtendedPostData, ProfileData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
+import Name from '../profiles/address-views/Name';
 
 const log = newLogger('View blog')
 
+type PostsSsrList = {
+  post: ExtendedPostData,
+  author?: ProfileData
+}
+
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 const SUB_SIZE = 2;
 
@@ -51,8 +55,8 @@ type Props = {
   withFollowButton?: boolean,
   id?: BN,
   blogData?: BlogData,
-  blogById?: Option<Blog>,
-  posts?: ExtendedPostData[],
+  author?: ProfileData,
+  postsList?: PostsSsrList[]
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void,
@@ -74,9 +78,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     previewDetails = false,
     withFollowButton = false,
     dropdownPreview = false,
-    posts = [],
+    postsList = [],
     imageSize = 36,
-    onClick
+    onClick,
+    author
   } = props;
 
   const blog = blogData.struct;
@@ -237,9 +242,9 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderPostPreviews = () => {
     return <ListData
       title={postsSectionTitle()}
-      dataSource={posts}
+      dataSource={postsList}
       renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>}
+        <ViewPostPage key={index} variant='preview' postData={item.post.post} postExtData={item.post.ext} author={item.author}/>}
       noDataDesc='No posts yet'
       noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
@@ -249,23 +254,21 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
       <span style={{ marginRight: '1rem' }}>{<Pluralize count={postsCount} singularText='Post'/>}</span>
-      {posts.length ? <NewPostButton /> : null}
+      {postsList.length ? <NewPostButton /> : null}
     </div>;
   };
 
   const RenderBlogCreator = () => (
     <MutedDiv className='DfCreator'>
       <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time)}</div>
-      <div className='DfCreator-owner'>
+      <div className='DfCreator-author'>
         <Icon type='user' />
         {'Owned by '}
-        <AddressComponents
+        <Name
           className='DfGreyLink'
-          value={account}
+          address={account}
+          author={author}
           isShort={true}
-          isPadded={false}
-          size={30}
-          variant='username'
         />
       </div>
     </MutedDiv>
@@ -312,11 +315,46 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
+  const authorId = blogData?.struct.created.account as AccountId;
+  const author = await subsocial.findProfile(authorId);
+
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
   const posts = await subsocial.findPostsWithExt(postIds.reverse());
+
+  const postsList: PostsSsrList[] = []
+  const authorIds: AccountId[] = []
+
+  const resultIndicesByAuthorIdMap = new Map<string, number[]>()
+
+  posts.forEach((post, i) => {
+    postsList.push({ post })
+    const authorId = post.post.struct.created.account
+    if (typeof authorId !== 'undefined') {
+      const idStr = authorId.toString()
+      let idxs = resultIndicesByAuthorIdMap.get(idStr)
+      if (typeof idxs === 'undefined') {
+        idxs = []
+        resultIndicesByAuthorIdMap.set(idStr, idxs)
+        authorIds.push(authorId)
+      }
+      idxs.push(i)
+    }
+  })
+
+  const postAuthors = await subsocial.findProfiles(authorIds)
+  postAuthors.forEach(postAuthor => {
+    const id = postAuthor.profile?.created.account.toString()
+    const idxs = resultIndicesByAuthorIdMap.get(id || '') || []
+    idxs.forEach(idx => {
+      postsList[idx].author = postAuthor
+    })
+  })
+
   return {
     blogData,
-    posts
+    posts,
+    author,
+    postsList
   };
 };
 
@@ -330,16 +368,22 @@ const withLoadedData = (Component: React.ComponentType<Props>) => {
 
     const { subsocial } = useSubsocialApi()
     const [ blogData, setBlogData ] = useState<BlogData>()
+    const [ author, setOwner ] = useState<ProfileData>()
 
     useEffect(() => {
       const loadData = async () => {
         const blogData = await subsocial.findBlog(id)
-        blogData && setBlogData(blogData)
+        if (blogData) {
+          setBlogData(blogData)
+          const authorId = blogData.struct.created.account
+          const author = await subsocial.findProfile(authorId)
+          setOwner(author);
+        }
       }
       loadData()
     }, [ false ])
 
-    return blogData?.content ? <Component blogData={blogData} {...props}/> : <Loading />;
+    return blogData?.content ? <Component blogData={blogData} author={author} {...props}/> : <Loading />;
   };
 };
 
