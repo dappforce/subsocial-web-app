@@ -67,16 +67,16 @@ export const RenderFollowedList = (props: Props) => {
             <ViewBlogPage
               key={item.struct.id.toString()}
               blogData={item}
-              onClick={() => {
-                isMobile && toggle();
-              }}
               miniPreview
               imageSize={28}
+              onClick={() => isMobile && toggle()}
             />
           </div>
         </a>
       </Link>)
-    : <div className='DfNoFollowed'><Button type='primary' size='small' href='/blogs/all'>Show all</Button></div>}
+    : <div className='DfNoFollowed'>
+      <Button type='primary' size='small' href='/blogs/all'>Show all</Button>
+    </div>}
   </>;
 };
 

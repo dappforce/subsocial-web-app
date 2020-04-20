@@ -3546,37 +3546,44 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.2.1-beta21":
-  version "0.2.1-beta21"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.1-beta21.tgz#7871fff6b13072cf43f0bb0cdb1e1836a2cb6635"
-  integrity sha512-VbaoAoJ/NXPRW6+Wudn8YLRaT6D3DodY0P3fhpqKQSm5WdVVDKx3vI1YJ5uR1iDIf07V+pb7V14iTVGmTNv4dw==
+"@subsocial/api@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.3.tgz#fbfc52b7a01ab8b152f70a795b83581f01b87e9c"
+  integrity sha512-nEM7BIt+k7pcIjDwQMjwLj//hHfisxk4P7cgUz7DLaXdcdCOnAn4K/ItEMJnpbxvYITQplUN0ZHVU11A0cehMg==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.4.0-beta.46"
-    "@subsocial/types" "^0.1.20-beta17"
-    "@subsocial/utils" "^0.1.20"
+    "@subsocial/types" "^0.1.21"
+    "@subsocial/utils" "^0.1.21"
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
     ipfs-http-client "^33.1.0"
 
-"@subsocial/config@0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.1.3.tgz#ba7d6c95e102635e9cf016b9c488e9d6e0098e24"
-  integrity sha512-5t+OZxP/TGFcCOe99UnuR7lqBIfU9RJswBbI+yeCizxte9Z+aeUkLsPZhrSm2wJ9Vse15Sn26gBVkrGx34BNjA==
+"@subsocial/config@0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.1.4.tgz#0e6fc5dba91f242f95a304f03c1aa45afb7b5b6f"
+  integrity sha512-GyRh1ne82oEEJazqG0P1H1yK4W/LbtZ0vIGNV/e3anaHlPuRsyQP4f8ExlK+Z5NxwecUySWYNFqu3YtqjqI9Bw==
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/types@^0.1.20-beta17":
-  version "0.1.20-beta17"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta17.tgz#f501da0572250ff59c3f387a0409bb805b2feb4a"
-  integrity sha512-kiQTrC3C6MvoFbASmtGbwLYFKeRrLAM1f2/+OZsZAXbsZTmsrRyjYwei8BWm7d0MVaSe7IAEECfPr4qoKq485w==
+"@subsocial/types@^0.1.21":
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.21.tgz#05480751f4a8f0871b9c643a902c755be2d1e529"
+  integrity sha512-SJ2s1TO0ZnKKdTYoivlFgFh5bC18d85aOIkrIjRHPFSQ0J96nb3Du5WU4OUgIhTBvIfidg2WpN2dldSTS+W36Q==
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/utils@^0.1.20":
-  version "0.1.20"
-  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.20.tgz#199b4a1f159d032942367730adad732ab5fe7f8d"
-  integrity sha512-Ha9zu+i9cfrHTxYIRmcrnn3eEhnpMyVJYGGiD48uxubXYj2Md3Bb7hWfr5BXz3eUf3WsjaY/Ui/D+K726i1xdw==
+"@subsocial/types@^0.1.22":
+  version "0.1.22"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.22.tgz#8bdab7c67844c69c55018432d0ab7ffa20a16ec1"
+  integrity sha512-5TrEzpJcHBI0gT9OC9kHE5ZrGpbLqHqPP8rA1TuY2QpP7lZtNT5bPAJaQDYmPkRuk83bsmbHdv6DmbpG9kuECA==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+
+"@subsocial/utils@^0.1.21":
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.21.tgz#bd4b77f0f1b167e343954748482f098d19afbee4"
+  integrity sha512-uTvakYgmXD3ciNF3G1cCxSwLMVQ1Aoow/ept5+a5PdSwoDvv58x3da9aqfKc7MvQrJvQIPT+rGIq6YHJJamn+g==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@types/lodash.truncate" "^4.4.6"
