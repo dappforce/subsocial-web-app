@@ -1,6 +1,6 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import store from 'store';
-import { newLogger } from '@subsocial/utils';
+import { newLogger, nonEmptyStr } from '@subsocial/utils';
 
 const log = newLogger('MyAccountContext')
 
@@ -114,8 +114,12 @@ export function useMyAccount () {
   return useContext(MyAccountContext);
 }
 
-export function checkIfLoggedIn () {
-  return typeof useMyAccount().state.address !== 'undefined';
+export function useMyAddress () {
+  return useMyAccount().state.address
+}
+
+export function useIsLoggedIn () {
+  return nonEmptyStr(useMyAddress())
 }
 
 export default MyAccountProvider;

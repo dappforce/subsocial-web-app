@@ -3,7 +3,7 @@ import { Button, Icon } from 'antd';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
+import { useMyAccount, useIsLoggedIn } from '../components/utils/MyAccountContext';
 import LogInButton from '../components/utils/LogIn';
 import Link from 'next/link';
 import { AddressPopupWithOwner } from 'src/components/profiles/address-views';
@@ -12,7 +12,7 @@ const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
   const { toggle } = useSidebarCollapsed();
   const { state: { address } } = useMyAccount();
-  const isLoggedIn = checkIfLoggedIn();
+  const isLoggedIn = useIsLoggedIn();
 
   return isMobile && show
     ? <div className='DfTopBar DfTopBar--search'>
