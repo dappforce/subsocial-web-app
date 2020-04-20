@@ -1368,3 +1368,7 @@ hr {
     }
   }
 }
+
+.DfNotificationItem {
+  display: flex;
+}

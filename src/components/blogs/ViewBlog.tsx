@@ -8,7 +8,7 @@ import Error from 'next/error'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';
 import { ZERO } from '../utils/index';
-import { nonEmptyStr, newLogger } from '@subsocial/utils'
+import { nonEmptyStr } from '@subsocial/utils'
 import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -33,14 +33,6 @@ import { BlogData, ExtendedPostData, ProfileData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import Name from '../profiles/address-views/Name';
-
-const log = newLogger('View blog')
-
-type PostsSsrList = {
-  post: ExtendedPostData,
-  owner?: ProfileData
-}
-
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 
 const SUB_SIZE = 2;
@@ -56,7 +48,7 @@ type Props = {
   id?: BN,
   blogData?: BlogData,
   owner?: ProfileData,
-  postsList?: PostsSsrList[]
+  posts?: ExtendedPostData[]
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void,
@@ -78,7 +70,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     previewDetails = false,
     withFollowButton = false,
     dropdownPreview = false,
-    postsList = [],
+    posts = [],
     imageSize = 36,
     onClick,
     owner
@@ -90,29 +82,15 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     id,
     score,
     created: { account, time },
-    ipfs_hash,
     posts_count,
     followers_count: followers,
     edit_history
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const { ipfs } = useSubsocialApi()
-  const [ content, setContent ] = useState(blogData.content as BlogContent);
+  const [ content ] = useState(blogData.content as BlogContent);
   const { desc, name, image, tags } = content;
   const [ followersOpen, setFollowersOpen ] = useState(false);
-
-  useEffect(() => {
-    if (!ipfs_hash) return;
-    let isSubscribe = true;
-
-    ipfs.findBlog(ipfs_hash).then((json) => {
-      const content = json;
-      if (isSubscribe && content) setContent(content);
-    }).catch((err) => log.error('Failed to find blog in IPFS:', err));
-
-    return () => { isSubscribe = false; };
-  }, [ false ]);
 
   const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
@@ -242,9 +220,9 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderPostPreviews = () => {
     return <ListData
       title={postsSectionTitle()}
-      dataSource={postsList}
+      dataSource={posts}
       renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.post.post} postExtData={item.post.ext} owner={item.owner}/>}
+        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext} owner={item.owner}/>}
       noDataDesc='No posts yet'
       noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
@@ -254,7 +232,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const postsSectionTitle = () => {
     return <div className='DfSection--withButton'>
       <span style={{ marginRight: '1rem' }}>{<Pluralize count={postsCount} singularText='Post'/>}</span>
-      {postsList.length ? <NewPostButton /> : null}
+      {posts.length ? <NewPostButton /> : null}
     </div>;
   };
 
@@ -319,42 +297,12 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const owner = await subsocial.findProfile(ownerId);
 
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
-  const posts = await subsocial.findPostsWithExt(postIds.reverse());
-
-  const postsList: PostsSsrList[] = []
-  const ownerIds: AccountId[] = []
-
-  const resultIndicesByAuthorIdMap = new Map<string, number[]>()
-
-  posts.forEach((post, i) => {
-    postsList.push({ post })
-    const ownerId = post.post.struct.created.account
-    if (typeof ownerId !== 'undefined') {
-      const idStr = ownerId.toString()
-      let idxs = resultIndicesByAuthorIdMap.get(idStr)
-      if (typeof idxs === 'undefined') {
-        idxs = []
-        resultIndicesByAuthorIdMap.set(idStr, idxs)
-        ownerIds.push(ownerId)
-      }
-      idxs.push(i)
-    }
-  })
-
-  const postOwners = await subsocial.findProfiles(ownerIds)
-  postOwners.forEach(postOwner => {
-    const id = postOwner.profile?.created.account.toString()
-    const idxs = resultIndicesByAuthorIdMap.get(id || '') || []
-    idxs.forEach(idx => {
-      postsList[idx].owner = postOwner
-    })
-  })
+  const posts = await subsocial.findPostWithDetails(postIds.reverse());
 
   return {
     blogData,
     posts,
-    owner,
-    postsList
+    owner
   };
 };
 

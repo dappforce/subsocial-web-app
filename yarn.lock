@@ -2969,7 +2969,7 @@
   dependencies:
     "@types/chrome" "^0.0.95"
 
-"@polkadot/typegen@^1.9.1":
+"@polkadot/typegen@^1.9.1", "@polkadot/typegen@beta":
   version "1.10.1"
   resolved "https://registry.yarnpkg.com/@polkadot/typegen/-/typegen-1.10.1.tgz#30e361ddd34079636e54f1ccdf5aef479bbb9a37"
   integrity sha512-UVzWqlgiD0gF+IxlmwnPb63Xjeh903TFcKhQbtWCFH3aM+S+kl4FUBH0gREjtXLTE/uLTmzN/qSnAoBocBGXjg==
@@ -2995,7 +2995,7 @@
     "@polkadot/util" "^2.8.1"
     bn.js "^5.1.1"
 
-"@polkadot/types@1.10.1", "@polkadot/types@1.4.0-beta.46", "@polkadot/types@1.7.1", "@polkadot/types@^1.9.1":
+"@polkadot/types@1.10.1", "@polkadot/types@1.4.0-beta.46", "@polkadot/types@1.7.1", "@polkadot/types@^1.4.0-beta.46", "@polkadot/types@^1.9.1":
   version "1.10.1"
   resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-1.10.1.tgz#d50de3baaa4129d7fd7d4210da22f89decee632b"
   integrity sha512-GgtfOvWUQh9hLAPBqpJHiWtbSSqwEey+NN/4+zgcK/1lrkS0zC49nh3u53a/AtCAcS+jNJFQP9KdiN7UtcWB9A==
@@ -3546,15 +3546,15 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.2.1-beta21":
-  version "0.2.1-beta21"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.1-beta21.tgz#7871fff6b13072cf43f0bb0cdb1e1836a2cb6635"
-  integrity sha512-VbaoAoJ/NXPRW6+Wudn8YLRaT6D3DodY0P3fhpqKQSm5WdVVDKx3vI1YJ5uR1iDIf07V+pb7V14iTVGmTNv4dw==
+"@subsocial/api@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.5.tgz#fdf32a303705f11db61268f2323822db5caaebeb"
+  integrity sha512-LOimGagr8ZgEHzYrf58l5qPC1VHRCLdpwlKMj1JHp+mk0gOFjJHMDxMrH+eEd1GW0aqeympCTA65lszGpdcnWw==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.4.0-beta.46"
-    "@subsocial/types" "^0.1.20-beta17"
-    "@subsocial/utils" "^0.1.20"
+    "@subsocial/types" "^0.1.24"
+    "@subsocial/utils" "^0.1.21"
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
     ipfs-http-client "^33.1.0"
@@ -3566,12 +3566,30 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/types@^0.1.20-beta17":
-  version "0.1.20-beta17"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.20-beta17.tgz#f501da0572250ff59c3f387a0409bb805b2feb4a"
-  integrity sha512-kiQTrC3C6MvoFbASmtGbwLYFKeRrLAM1f2/+OZsZAXbsZTmsrRyjYwei8BWm7d0MVaSe7IAEECfPr4qoKq485w==
+"@subsocial/types@^0.1.24":
+  version "0.1.24"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.1.24.tgz#6bc765813b745d06c0056e42f7fe71b63a50d3dd"
+  integrity sha512-NLyrRyK/gqcVoP/rXaUjcHBrNqXqI74rwgxQg0ns8kcMbttYAxjqejfP1JvR4UfWIWEXjS6eaBk+rdUWSWfAgw==
   dependencies:
     "@babel/runtime" "^7.8.4"
+    "@polkadot/typegen" beta
+    "@polkadot/types" "^1.4.0-beta.46"
+    "@subsocial/utils" ">=0.1.20"
+    cids "^0.7.1"
+
+"@subsocial/utils@>=0.1.20", "@subsocial/utils@^0.1.21":
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.21.tgz#bd4b77f0f1b167e343954748482f098d19afbee4"
+  integrity sha512-uTvakYgmXD3ciNF3G1cCxSwLMVQ1Aoow/ept5+a5PdSwoDvv58x3da9aqfKc7MvQrJvQIPT+rGIq6YHJJamn+g==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@types/lodash.truncate" "^4.4.6"
+    "@types/winston" "^2.4.4"
+    bn.js "^5.1.1"
+    chalk "^3.0.0"
+    lodash.truncate "^4.4.2"
+    markdown-to-txt "^1.0.1"
+    winston "^3.2.0"
 
 "@subsocial/utils@^0.1.20":
   version "0.1.20"
@@ -6685,7 +6703,7 @@ ci-info@^2.0.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
-cids@~0.7.0, cids@~0.7.1:
+cids@^0.7.1, cids@~0.7.0, cids@~0.7.1:
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/cids/-/cids-0.7.5.tgz#60a08138a99bfb69b6be4ceb63bfef7a396b28b2"
   integrity sha512-zT7mPeghoWAu+ppn8+BS1tQ5qGmbMfB4AregnQjA/qHY3GC1m1ptI9GkWNlgeu38r7CuRdXB47uY2XgAYt6QVA==

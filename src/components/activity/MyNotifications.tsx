@@ -9,7 +9,7 @@ import NotAuthorized from '../utils/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { Notification } from './Notification';
+import { Notifications } from './Notification';
 
 export const MyNotifications = () => {
   const { state: { address: myAddress } } = useMyAccount();
@@ -37,10 +37,6 @@ export const MyNotifications = () => {
 
   const totalCount = items && items.length;
 
-  const renderItems = () =>
-    items.map((item) =>
-      <Notification key={item.id} activity={item} />)
-
   const renderInfiniteScroll = () =>
     <InfiniteScroll
       dataLength={totalCount}
@@ -49,7 +45,7 @@ export const MyNotifications = () => {
       // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
       loader={<Loader active inline='centered' />}
     >
-      {renderItems()}
+      <Notifications activities={items} />
     </InfiniteScroll>
 
   return <>
