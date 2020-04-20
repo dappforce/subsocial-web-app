@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { Menu, Icon, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
@@ -59,7 +58,7 @@ const InnerMenu = () => {
 
   const DefaultMenu: MenuItem[] = [
     {
-      name: 'All blogs',
+      name: 'Explore',
       page: [ '/blogs/all' ],
       image: 'global'
     }
@@ -67,15 +66,24 @@ const InnerMenu = () => {
 
   const AuthorizedMenu: MenuItem[] = [
     {
-      name: 'My Feed',
+      name: 'My feed',
       page: [ '/feed' ],
       image: 'profile'
     },
-    ...DefaultMenu,
     {
-      name: 'New blog',
-      page: [ '/blogs/new' ],
-      image: 'plus'
+      name: 'My notifications',
+      page: [ '/notifications' ],
+      image: 'notification'
+    },
+    {
+      name: 'My subscriptions',
+      page: [ '/blogs/following/[address]', `/blogs/following/${myAddress}` ],
+      image: 'book'
+    },
+    {
+      name: 'My profile',
+      page: [ '/profile/[address]', `/profile/${myAddress}` ],
+      image: 'idcard'
     },
     {
       name: 'My blogs',
@@ -83,23 +91,16 @@ const InnerMenu = () => {
       image: 'book'
     },
     {
-      name: 'Following blogs',
-      page: [ '/blogs/following/[address]', `/blogs/following/${myAddress}` ],
-      image: 'book'
+      name: 'New blog',
+      page: [ '/blogs/new' ],
+      image: 'plus'
     },
-    {
-      name: 'Notifications',
-      page: [ '/notifications' ],
-      image: 'notification'
-    },
-    {
-      name: 'My profile',
-      page: [ '/profile/[address]', `/profile/${myAddress}` ],
-      image: 'idcard'
-    }
+    ...DefaultMenu
   ];
 
-  const MenuItems = isLoggedIn ? AuthorizedMenu : DefaultMenu;
+  const MenuItems = isLoggedIn
+    ? AuthorizedMenu
+    : DefaultMenu;
 
   const renderBadge = () => {
     if (!unreadCount || unreadCount <= 0) return null
