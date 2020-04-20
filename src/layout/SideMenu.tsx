@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, Icon, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
+import { useIsLoggedIn, useMyAddress } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils/utils';
@@ -11,25 +11,20 @@ import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
 import { newLogger } from '@subsocial/utils';
 import { useNotifCounter } from '../components/utils/NotifCounter';
+import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems';
 
 const log = newLogger('SideMenu')
 
-interface MenuItem {
-  name: string;
-  page: string[];
-  image: string;
-}
-
 const InnerMenu = () => {
-  const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
-  const { state: { address: myAddress } } = useMyAccount();
   const { subsocial, substrate } = useSubsocialApi();
+  const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
+  const { pathname } = useRouter();
+  const myAddress = useMyAddress();
+  const isLoggedIn = useIsLoggedIn();
   const { unreadCount } = useNotifCounter()
-  const isLoggedIn = checkIfLoggedIn();
+
   const [ followedBlogsData, setFollowedBlogsData ] = useState<BlogData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
-  const router = useRouter();
-  const { pathname } = router;
 
   useEffect(() => {
     if (!myAddress) return;
@@ -46,66 +41,62 @@ const InnerMenu = () => {
       }
     };
 
-    loadBlogsData().catch(err => log.error('Failed to load blogs data:', err));
+    loadBlogsData().catch(err =>
+      log.error('Failed to load blogs followed by the current user:', err));
 
     return () => { isSubscribe = false; };
   }, [ triggerFollowed, myAddress ]);
 
-  const onClick = (page: string[]) => {
-    isMobile && toggle();
-    Router.push(page[0], page[1]).catch(err => log.error('Failed to navigate to selected blog:', err));
-  };
+  const menuItems = isLoggedIn && myAddress
+    ? buildAuthorizedMenu(myAddress)
+    : DefaultMenu
 
-  const DefaultMenu: MenuItem[] = [
-    {
-      name: 'Explore',
-      page: [ '/blogs/all' ],
-      image: 'global'
-    }
-  ];
+  const goToPage = ([ url, as ]: string[]) => {
+    isMobile && toggle()
+    Router.push(url, as).catch(err =>
+      log.error('Failed to navigate to a selected page:', err))
+  }
 
-  const AuthorizedMenu: MenuItem[] = [
-    {
-      name: 'My feed',
-      page: [ '/feed' ],
-      image: 'profile'
-    },
-    {
-      name: 'My notifications',
-      page: [ '/notifications' ],
-      image: 'notification'
-    },
-    {
-      name: 'My subscriptions',
-      page: [ '/blogs/following/[address]', `/blogs/following/${myAddress}` ],
-      image: 'book'
-    },
-    {
-      name: 'My profile',
-      page: [ '/profile/[address]', `/profile/${myAddress}` ],
-      image: 'idcard'
-    },
-    {
-      name: 'My blogs',
-      page: [ '/blogs/my/[address]', `/blogs/my/${myAddress}` ],
-      image: 'book'
-    },
-    {
-      name: 'New blog',
-      page: [ '/blogs/new' ],
-      image: 'plus'
-    },
-    ...DefaultMenu
-  ];
-
-  const MenuItems = isLoggedIn
-    ? AuthorizedMenu
-    : DefaultMenu;
-
-  const renderBadge = () => {
+  const renderNotificationsBadge = () => {
     if (!unreadCount || unreadCount <= 0) return null
     return <Badge count={unreadCount} className="site-badge-count-4" />
   }
+
+  const renderPageLink = (item: PageLink) => {
+    return item.isAdvanced
+      ? (
+        <Menu.Item key={item.page[0]} >
+          <a href='/bc'>
+            <Icon type='block' />
+            <span>Advanced</span>
+          </a>
+        </Menu.Item>
+      ) : (
+        <Menu.Item key={item.page[0]} onClick={() => goToPage(item.page)}>
+          <Link href={item.page[0]} as={item.page[1]}>
+            <a>
+              <Icon type={item.image} />
+              <span>{item.name}</span>
+              {item.isNotifications && renderNotificationsBadge()}
+            </a>
+          </Link>
+        </Menu.Item>
+      )
+  }
+
+  const renderSubscriptions = () => <>
+    <Menu.Divider />
+    <Menu.ItemGroup
+      className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`}
+      key='followed'
+      title='My subscriptions'
+    >
+      {loaded
+        ? <RenderFollowedList followedBlogsData={followedBlogsData} />
+        : <Loading />
+      }
+    </Menu.ItemGroup>
+  </>
 
   return (
     <Menu
@@ -114,27 +105,11 @@ const InnerMenu = () => {
       theme='light'
       style={{ height: '100%', borderRight: 0 }}
     >
-      {MenuItems.map(item =>
-        <Menu.Item key={item.page[0]} onClick={() => onClick(item.page)}>
-          <Link href={item.page[0]} as={item.page[1]}>
-            <a>
-              <Icon type={item.image} />
-              <span>{item.name}</span>
-              {item.name === 'Notifications' ? renderBadge() : null}
-            </a>
-          </Link>
-        </Menu.Item>)}
-      <Menu.Divider/>
-      <Menu.Item key={'advanced'} >
-        <a href='/bc'>
-          <Icon type='exception' />
-          <span>Advanced</span>
-        </a>
-      </Menu.Item>
-      <Menu.Divider/>
-      {isLoggedIn && <Menu.ItemGroup className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`} key='followed' title='Followed blogs'>
-        {loaded ? <RenderFollowedList followedBlogsData={followedBlogsData} /> : <Loading/>}
-      </Menu.ItemGroup>}
+      {menuItems.map(item => isDivider(item)
+        ? <Menu.Divider />
+        : renderPageLink(item)
+      )}
+      {isLoggedIn && renderSubscriptions()}
     </Menu>
   );
 };
