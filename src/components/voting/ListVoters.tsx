@@ -8,7 +8,7 @@ import partition from 'lodash.partition';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
-import { AuthorPreviewWithAuthor } from '../profiles/address-views';
+import { AuthorPreviewWithOwner } from '../profiles/address-views';
 
 const log = newLogger('List voters')
 
@@ -63,7 +63,7 @@ const InnerModalVoters = (props: VotersProps) => {
   const renderVoters = (state: Array<Reaction>) => {
     return state.map(reaction => {
       return <div key={reaction.id.toNumber()} className="ReactionsItem" >
-        <AuthorPreviewWithAuthor
+        <AuthorPreviewWithOwner
           address={reaction.created.account}
           isPadded={false}
           size={28}

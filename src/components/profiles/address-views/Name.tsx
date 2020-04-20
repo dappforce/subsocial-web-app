@@ -3,7 +3,7 @@ import { toShortAddress } from '@polkadot/react-components/util';
 import { CommonAddressProps } from './utils/types';
 import Link from 'next/link';
 import { ProfileData } from '@subsocial/types';
-import { withLoadedAuthor } from './utils/withLoadedAuthor';
+import { withLoadedOwner } from './utils/withLoadedOwner';
 
 type AddressProps = CommonAddressProps & {
   isShort?: boolean,
@@ -11,8 +11,8 @@ type AddressProps = CommonAddressProps & {
   className?: string
 };
 
-export const Name: React.FunctionComponent<AddressProps> = ({ asLink = true, isShort = true, address, author = {} as ProfileData, className }) => {
-  const { content, profile } = author;
+export const Name: React.FunctionComponent<AddressProps> = ({ asLink = true, isShort = true, address, owner = {} as ProfileData, className }) => {
+  const { content, profile } = owner;
   return (
     <Link href={'/profile/[address]'} as={`/profile/${address}`}>
       <a className={`ui--AddressComponents-address ${asLink && 'asLink'} ${className} `}>
@@ -22,6 +22,6 @@ export const Name: React.FunctionComponent<AddressProps> = ({ asLink = true, isS
   );
 };
 
-export const NameWithAuthor = withLoadedAuthor(Name);
+export const NameWithOwner = withLoadedOwner(Name);
 
 export default Name;

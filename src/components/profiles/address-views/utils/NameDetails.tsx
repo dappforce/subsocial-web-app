@@ -4,9 +4,9 @@ import { toShortAddress } from '@polkadot/react-components/util';
 import Link from 'next/link';
 import { ProfileData } from '@subsocial/types';
 
-export const NameDetails: React.FunctionComponent<CommonAddressProps> = ({ author = {} as ProfileData, address }) => {
+export const NameDetails: React.FunctionComponent<CommonAddressProps> = ({ owner = {} as ProfileData, address }) => {
   const shortAddress = toShortAddress(address);
-  const { profile, content } = author
+  const { profile, content } = owner
   return (
     <Link href='/profile/[address]' as={`/profile/${address}`}>
       <a className='ui--AddressComponents-address'>

@@ -27,7 +27,7 @@ import { PostContent, CommentContent } from '@subsocial/types/offchain';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { AuthorPreviewWithAuthor } from '../profiles/address-views';
+import { AuthorPreviewWithOwner } from '../profiles/address-views';
 
 const log = newLogger('View comment')
 
@@ -233,7 +233,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
       <SuiComment>
         <div className='DfCommentContent'>
           <SuiComment.Metadata>
-            <AuthorPreviewWithAuthor
+            <AuthorPreviewWithOwner
               address={account}
               isShort={true}
               isPadded={false}

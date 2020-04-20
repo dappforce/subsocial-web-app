@@ -4,5 +4,5 @@ import { BareProps } from '@polkadot/react-api/types'
 
 export type CommonAddressProps = BareProps & {
   address: AnyAccountId,
-  author?: ProfileData
+  owner?: ProfileData
 }

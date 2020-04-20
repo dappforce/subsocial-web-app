@@ -2,7 +2,7 @@ import React from 'react'
 import { nonEmptyStr } from '@subsocial/utils';
 import { DfBgImg } from 'src/components/utils/DfBgImg';
 import { IdentityIcon } from '@polkadot/react-components';
-import { withLoadedAuthor } from './utils/withLoadedAuthor';
+import { withLoadedOwner } from './utils/withLoadedOwner';
 import { AnyAccountId } from '@subsocial/types/substrate/interfaces';
 
 type ImageProps = {
@@ -22,6 +22,6 @@ export const Avatar: React.FunctionComponent<ImageProps> = ({ size, avatar, addr
     />;
 };
 
-export const AvatarWithAuthor = withLoadedAuthor(Avatar);
+export const AvatarWithOwner = withLoadedOwner(Avatar);
 
-export default AvatarWithAuthor;
+export default AvatarWithOwner;

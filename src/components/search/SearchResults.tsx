@@ -10,7 +10,7 @@ import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import BN from 'bn.js';
 import { registry } from '@polkadot/react-api';
-import { ProfilePreviewWithAuthor } from '../profiles/address-views';
+import { ProfilePreviewWithOwner } from '../profiles/address-views';
 
 type DataResults = {
   _id: string;
@@ -50,7 +50,7 @@ const resultToPreview = (res: DataResults, i: number) => {
       return <ViewPost key={i} id={new BN(res._id)} variant='preview' withLink={true} />;
     case ElasticIndex.profiles:
       return <Segment>
-        <ProfilePreviewWithAuthor
+        <ProfilePreviewWithOwner
           key={res._id}
           address={new AccountId(registry, res._id)}
           size={30}
@@ -108,7 +108,7 @@ const Tabs = () => {
     <ReactiveComponent
       componentId='blogId'
       customQuery={() => {
-        return blogId == undefined
+        return blogId === undefined
           ? null
           : {
               query: {
@@ -119,11 +119,11 @@ const Tabs = () => {
             };
       }}
     />
-  
+
     <ReactiveComponent
       componentId='tags'
       customQuery={() => {
-        return tags == undefined
+        return tags === undefined
           ? null
           : {
               query: {

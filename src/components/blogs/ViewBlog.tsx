@@ -38,7 +38,7 @@ const log = newLogger('View blog')
 
 type PostsSsrList = {
   post: ExtendedPostData,
-  author?: ProfileData
+  owner?: ProfileData
 }
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
@@ -55,7 +55,7 @@ type Props = {
   withFollowButton?: boolean,
   id?: BN,
   blogData?: BlogData,
-  author?: ProfileData,
+  owner?: ProfileData,
   postsList?: PostsSsrList[]
   followers?: AccountId[],
   imageSize?: number,
@@ -81,7 +81,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     postsList = [],
     imageSize = 36,
     onClick,
-    author
+    owner
   } = props;
 
   const blog = blogData.struct;
@@ -244,7 +244,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       title={postsSectionTitle()}
       dataSource={postsList}
       renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.post.post} postExtData={item.post.ext} author={item.author}/>}
+        <ViewPostPage key={index} variant='preview' postData={item.post.post} postExtData={item.post.ext} owner={item.owner}/>}
       noDataDesc='No posts yet'
       noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
@@ -261,13 +261,13 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const RenderBlogCreator = () => (
     <MutedDiv className='DfCreator'>
       <div className='DfCreator--data'><Icon type='calendar' />Created on {formatUnixDate(time)}</div>
-      <div className='DfCreator-author'>
+      <div className='DfCreator-owner'>
         <Icon type='user' />
         {'Owned by '}
         <Name
           className='DfGreyLink'
           address={account}
-          author={author}
+          owner={owner}
           isShort={true}
         />
       </div>
@@ -315,45 +315,45 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const authorId = blogData?.struct.created.account as AccountId;
-  const author = await subsocial.findProfile(authorId);
+  const ownerId = blogData?.struct.created.account as AccountId;
+  const owner = await subsocial.findProfile(ownerId);
 
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
   const posts = await subsocial.findPostsWithExt(postIds.reverse());
 
   const postsList: PostsSsrList[] = []
-  const authorIds: AccountId[] = []
+  const ownerIds: AccountId[] = []
 
   const resultIndicesByAuthorIdMap = new Map<string, number[]>()
 
   posts.forEach((post, i) => {
     postsList.push({ post })
-    const authorId = post.post.struct.created.account
-    if (typeof authorId !== 'undefined') {
-      const idStr = authorId.toString()
+    const ownerId = post.post.struct.created.account
+    if (typeof ownerId !== 'undefined') {
+      const idStr = ownerId.toString()
       let idxs = resultIndicesByAuthorIdMap.get(idStr)
       if (typeof idxs === 'undefined') {
         idxs = []
         resultIndicesByAuthorIdMap.set(idStr, idxs)
-        authorIds.push(authorId)
+        ownerIds.push(ownerId)
       }
       idxs.push(i)
     }
   })
 
-  const postAuthors = await subsocial.findProfiles(authorIds)
-  postAuthors.forEach(postAuthor => {
-    const id = postAuthor.profile?.created.account.toString()
+  const postOwners = await subsocial.findProfiles(ownerIds)
+  postOwners.forEach(postOwner => {
+    const id = postOwner.profile?.created.account.toString()
     const idxs = resultIndicesByAuthorIdMap.get(id || '') || []
     idxs.forEach(idx => {
-      postsList[idx].author = postAuthor
+      postsList[idx].owner = postOwner
     })
   })
 
   return {
     blogData,
     posts,
-    author,
+    owner,
     postsList
   };
 };
@@ -368,22 +368,22 @@ const withLoadedData = (Component: React.ComponentType<Props>) => {
 
     const { subsocial } = useSubsocialApi()
     const [ blogData, setBlogData ] = useState<BlogData>()
-    const [ author, setOwner ] = useState<ProfileData>()
+    const [ owner, setOwner ] = useState<ProfileData>()
 
     useEffect(() => {
       const loadData = async () => {
         const blogData = await subsocial.findBlog(id)
         if (blogData) {
           setBlogData(blogData)
-          const authorId = blogData.struct.created.account
-          const author = await subsocial.findProfile(authorId)
-          setOwner(author);
+          const ownerId = blogData.struct.created.account
+          const owner = await subsocial.findProfile(ownerId)
+          setOwner(owner);
         }
       }
       loadData()
     }, [ false ])
 
-    return blogData?.content ? <Component blogData={blogData} author={author} {...props}/> : <Loading />;
+    return blogData?.content ? <Component blogData={blogData} owner={owner} {...props}/> : <Loading />;
   };
 };
 

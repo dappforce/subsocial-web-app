@@ -26,7 +26,7 @@ import { Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
-import { withLoadedAuthor } from './address-views/utils/withLoadedAuthor';
+import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -35,7 +35,7 @@ export type Props = {
   nameOnly?: boolean,
   withLink?: boolean,
   id: AccountId,
-  author?: ProfileData,
+  owner?: ProfileData,
   followers?: AccountId[],
   size?: number
 };
@@ -47,7 +47,7 @@ const Component: NextPage<Props> = (props: Props) => {
     nameOnly = false,
     withLink = false,
     size = 48,
-    author = {} as ProfileData
+    owner = {} as ProfileData
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
@@ -57,7 +57,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const { state: { address: myAddress } } = useMyAccount();
   const isMyAccount = address === myAddress;
 
-  const { profile, struct, content } = author;
+  const { profile, struct, content } = owner;
 
   const profileIsNone = isEmpty(profile);
   const followers = struct ? new BN(struct.followers_count) : ZERO;
@@ -264,13 +264,13 @@ const Component: NextPage<Props> = (props: Props) => {
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
   const subsocial = await getSubsocialApi()
-  const author = await subsocial.findProfile(address as string)
+  const owner = await subsocial.findProfile(address as string)
   return {
     id: new AccountId(registry, address as string),
-    author
+    owner
   };
 };
 
 export default Component;
 
-export const ViewProfile = withLoadedAuthor(Component)
+export const ViewProfile = withLoadedOwner(Component)

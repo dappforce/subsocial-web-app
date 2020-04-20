@@ -5,7 +5,7 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
-import { ProfilePreviewWithAuthor } from './address-views';
+import { ProfilePreviewWithOwner } from './address-views';
 
 type Props = {
   accounts?: AccountId[],
@@ -20,7 +20,7 @@ const InnerAccountsListModal = (props: Props) => {
 
   const renderAccounts = () => {
     return accounts && accounts.map((account) =>
-      <ProfilePreviewWithAuthor
+      <ProfilePreviewWithOwner
         key={account.toString()}
         address={account}
         mini

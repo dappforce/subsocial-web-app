@@ -4,14 +4,14 @@ import { Popover, Icon } from 'antd';
 import Address from './Name'
 import Avatar from './Avatar'
 import { CommonAddressProps } from './utils/types';
-import { withLoadedAuthor } from './utils/withLoadedAuthor';
+import { withLoadedOwner } from './utils/withLoadedOwner';
 
 export const AddressPopup: React.FunctionComponent<CommonAddressProps> = ({
   address,
-  author
+  owner
 }) => {
-  const struct = author?.struct;
-  const content = author?.content
+  const struct = owner?.struct;
+  const content = owner?.content
   const reputation = struct?.reputation
 
   return <Popover
@@ -25,13 +25,13 @@ export const AddressPopup: React.FunctionComponent<CommonAddressProps> = ({
       <Avatar size={36} address={address} avatar={content?.avatar} />
     </div>
     <div className='addressInfo'>
-      <Address asLink={false} author={author} address={address}/>
+      <Address asLink={false} owner={owner} address={address}/>
       {/* <RenderBalance address={address} /> */}
     </div>
     <Icon type='caret-down' />
   </Popover>;
 }
 
-export const AddressPopupWithAuthor = withLoadedAuthor(AddressPopup);
+export const AddressPopupWithOwner = withLoadedOwner(AddressPopup);
 
-export default AddressPopupWithAuthor;
+export default AddressPopupWithOwner;

@@ -10,7 +10,7 @@ import { toShortAddress } from '@polkadot/react-components/util';
 import dynamic from 'next/dynamic';
 import Balance from './utils/DfBalance'
 import AccountId from '@polkadot/types/generic/AccountId';
-import { withLoadedAuthor } from './utils/withLoadedAuthor';
+import { withLoadedOwner } from './utils/withLoadedOwner';
 import { CommonAddressProps } from './utils/types';
 
 type InfoProps = {
@@ -43,7 +43,7 @@ export type Props = BareProps & CommonAddressProps & {
 export const AuthorPreview = (props: Props) => {
   const {
     address,
-    author = {} as ProfileData,
+    owner = {} as ProfileData,
     className,
     isPadded = true,
     style,
@@ -53,9 +53,9 @@ export const AuthorPreview = (props: Props) => {
     details
   } = props;
 
-  const username = author.profile?.username;
-  const avatar = author.content?.avatar
-  const fullname = author.content?.fullname
+  const username = owner.profile?.username;
+  const avatar = owner.content?.avatar
+  const fullname = owner.content?.fullname
 
   return <div
     className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
@@ -66,7 +66,7 @@ export const AuthorPreview = (props: Props) => {
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='focus'
-          content={<ProfilePreview address={address} author={author}/>}
+          content={<ProfilePreview address={address} owner={owner}/>}
         >
           <Link
             href={`/profile/${address}`}
@@ -84,8 +84,8 @@ export const AuthorPreview = (props: Props) => {
   </div>;
 };
 
-export const AuthorPreviewWithAuthor = withLoadedAuthor(AuthorPreview);
+export const AuthorPreviewWithOwner = withLoadedOwner(AuthorPreview);
 
-export default AuthorPreviewWithAuthor;
+export default AuthorPreviewWithOwner;
 
 // ${asActivity && 'activity'}

@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import NameDetails from './utils/NameDetails';
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal';
 import { ProfileContent, ProfileData } from '@subsocial/types';
-import { withLoadedAuthor } from './utils/withLoadedAuthor';
+import { withLoadedOwner } from './utils/withLoadedOwner';
 const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
 type ProfilePreviewProps = CommonAddressProps & {
@@ -16,10 +16,10 @@ type ProfilePreviewProps = CommonAddressProps & {
   size?: number
 }
 
-export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ address, author = {} as ProfileData, size, mini = false }) => { // TODO fix CSS style
+export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ address, owner = {} as ProfileData, size, mini = false }) => { // TODO fix CSS style
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { content = {} as ProfileContent, struct } = author;
+  const { content = {} as ProfileContent, struct } = owner;
   const {
     about,
     avatar
@@ -45,7 +45,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
       <Avatar size={size || 40} address={address} avatar={avatar} style={{ marginTop: '.5rem' }}/>
       <div className='content' style={{ paddingLeft: '1rem' }}>
         <div className='header DfAccountTitle'>
-          <NameDetails author={author} address={address} />
+          <NameDetails owner={owner} address={address} />
         </div>
         {!mini && <>
           <div className='DfPopup-about'>
@@ -68,6 +68,6 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
   </div>;
 };
 
-export const ProfilePreviewWithAuthor = withLoadedAuthor(ProfilePreview);
+export const ProfilePreviewWithOwner = withLoadedOwner(ProfilePreview);
 
-export default ProfilePreviewWithAuthor;
+export default ProfilePreviewWithOwner;

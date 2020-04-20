@@ -6,7 +6,7 @@ import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext
 import { useMyAccount, checkIfLoggedIn } from '../components/utils/MyAccountContext';
 import LogInButton from '../components/utils/LogIn';
 import Link from 'next/link';
-import { AddressPopupWithAuthor } from 'src/components/profiles/address-views';
+import { AddressPopupWithOwner } from 'src/components/profiles/address-views';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
@@ -33,7 +33,7 @@ const InnerMenu = () => {
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
         {isLoggedIn && address
-          ? <AddressPopupWithAuthor
+          ? <AddressPopupWithOwner
             className='profileName'
             address={address}
           /> : <LogInButton/>}
