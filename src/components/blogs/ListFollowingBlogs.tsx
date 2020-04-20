@@ -4,7 +4,6 @@ import ListData from '../utils/DataList';
 import { Button } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
-import { Pluralize } from '../utils/Plularize';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
 import { NextPage } from 'next';
@@ -12,6 +11,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
+import { nonEmptyArr } from '@subsocial/utils';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -19,20 +19,22 @@ type ListBlogPageProps = {
 
 export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListBlogPageProps) => {
   const { blogsData } = props;
-  const totalCount = blogsData !== undefined ? blogsData && blogsData.length : 0;
+  const totalCount = nonEmptyArr(blogsData) ? blogsData.length : 0;
+  const title = `My Subscriptions (${totalCount})`
 
-  return (<div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-    <HeadMeta title='Blogs I follow' desc='Subsocial blogs' />
-    <ListData
-      title={<Pluralize count={totalCount} singularText='Following blog'/>}
-      dataSource={blogsData}
-      renderItem={(item, index) => (
-        <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton/>
-      )}
-      noDataDesc='You are not subscribed to any blog'
-      noDataExt={<Button href='/blogs/all'>Show all blogs</Button>}
-    />
-  </div>
+  return (
+    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <HeadMeta title={title} desc='The blogs you follow on Subsocial' />
+      <ListData
+        title={title}
+        dataSource={blogsData}
+        renderItem={(item, index) => (
+          <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton/>
+        )}
+        noDataDesc='You are not subscribed to any blog yet'
+        noDataExt={<Button href='/blogs/all'>Explore blogs</Button>}
+      />
+    </div>
   );
 };
 
