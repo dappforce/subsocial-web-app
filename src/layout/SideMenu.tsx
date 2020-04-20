@@ -67,7 +67,7 @@ const InnerMenu = () => {
 
   const AuthorizedMenu: MenuItem[] = [
     {
-      name: 'Feed',
+      name: 'My Feed',
       page: [ '/feed' ],
       image: 'profile'
     },
