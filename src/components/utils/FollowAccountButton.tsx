@@ -29,7 +29,7 @@ export function FollowAccountButton (props: FollowAccountButtonProps) {
 }
 
 type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
-  myAddress: string | AccountId
+  myAddress: string
 };
 
 function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {

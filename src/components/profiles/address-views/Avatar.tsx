@@ -2,13 +2,13 @@ import React from 'react'
 import { nonEmptyStr } from '@subsocial/utils';
 import { DfBgImg } from 'src/components/utils/DfBgImg';
 import { IdentityIcon } from '@polkadot/react-components';
-import { AccountId } from '@polkadot/types/interfaces';
 import { withLoadedAuthor } from './utils/withLoadedAuthor';
+import { AnyAccountId } from '@subsocial/types/substrate/interfaces';
 
 type ImageProps = {
   size: number,
   style?: any,
-  address: string | AccountId,
+  address: AnyAccountId,
   avatar?: string
 };
 

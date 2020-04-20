@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import Balance from './utils/DfBalance'
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedAuthor } from './utils/withLoadedAuthor';
+import { CommonAddressProps } from './utils/types';
 
 type InfoProps = {
   details?: JSX.Element,
@@ -30,13 +31,11 @@ const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) =
 
 const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
-export type Props = BareProps & {
-  author?: ProfileData,
+export type Props = BareProps & CommonAddressProps & {
   children?: React.ReactNode,
   details?: JSX.Element
   isPadded?: boolean,
   isShort?: boolean,
-  address: string | AccountId,
   size?: number,
   withFollowButton?: boolean,
 };
