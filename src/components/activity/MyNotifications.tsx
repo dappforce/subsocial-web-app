@@ -10,6 +10,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { Notifications } from './Notification';
+import { Loading } from '../utils/utils';
 
 export const MyNotifications = () => {
   const { state: { address: myAddress } } = useMyAccount();
@@ -17,11 +18,12 @@ export const MyNotifications = () => {
   const [ items, setItems ] = useState<Activity[]>([]);
   const [ offset, setOffset ] = useState(0);
   const [ hasNextPage, setHasNextPage ] = useState(true);
+  const [ loaded, setLoaded ] = useState(false);
 
   useEffect(() => {
     if (!myAddress) return;
-
-    getNextPage(0).catch(err => new Error(err));
+    setLoaded(false)
+    getNextPage(0).catch(err => new Error(err)).finally(() => setLoaded(true));
     clearNotifications(myAddress)
   }, [ myAddress ]);
 
@@ -35,7 +37,17 @@ export const MyNotifications = () => {
     setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
   };
 
-  const totalCount = items && items.length;
+  const totalCount = (items && items.length) || 0;
+
+  const Content = () => {
+    if (!loaded) {
+      return <Loading />
+    }
+
+    return totalCount === 0
+      ? <NoData description='No notifications for you' />
+      : renderInfiniteScroll()
+  }
 
   const renderInfiniteScroll = () =>
     <InfiniteScroll
@@ -51,10 +63,7 @@ export const MyNotifications = () => {
   return <>
     <HeadMeta title='My Notifications' />
     <Section title={`My Notifications (${totalCount})`}>
-      {totalCount === 0
-        ? <NoData description='No notifications for you' />
-        : renderInfiniteScroll()
-      }
+      <Content />
     </Section>
   </>
 }

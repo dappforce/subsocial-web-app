@@ -48,7 +48,7 @@ export const AuthorPreview = (props: Props) => {
     isPadded = true,
     style,
     size,
-    withFollowButton,
+    withFollowButton = false,
     children,
     details
   } = props;

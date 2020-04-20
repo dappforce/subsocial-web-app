@@ -1,4 +1,4 @@
-import { AnyAccountId } from '@subsocial/types/substrate/interfaces'
+import { AnyAccountId } from '@subsocial/types/substrate'
 import { ProfileData } from '@subsocial/types'
 import { BareProps } from '@polkadot/react-api/types'
 

@@ -3,7 +3,7 @@ import { nonEmptyStr } from '@subsocial/utils';
 import { DfBgImg } from 'src/components/utils/DfBgImg';
 import { IdentityIcon } from '@polkadot/react-components';
 import { withLoadedOwner } from './utils/withLoadedOwner';
-import { AnyAccountId } from '@subsocial/types/substrate/interfaces';
+import { AnyAccountId } from '@subsocial/types/substrate';
 
 type ImageProps = {
   size: number,

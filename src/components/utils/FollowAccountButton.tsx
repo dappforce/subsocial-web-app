@@ -16,25 +16,11 @@ const log = newLogger('FollowAccountButton')
 type FollowAccountButtonProps = {
   address: string | AccountId,
   size?: Button$Sizes
-};
-
-export function FollowAccountButton (props: FollowAccountButtonProps) {
-  const { address } = props;
-  const { state: { address: myAddress } } = useMyAccount();
-
-  // Account cannot follow itself
-  if (!myAddress || address === myAddress) return null;
-
-  return <InnerFollowAccountButton {...props} myAddress={myAddress}/>;
 }
 
-type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
-  myAddress: string
-};
-
-function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
-  const { myAddress, address, size = TX_BUTTON_SIZE } = props;
-
+function FollowAccountButton (props: FollowAccountButtonProps) {
+  const { address, size = TX_BUTTON_SIZE } = props;
+  const { state: { address: myAddress } } = useMyAccount()
   const accountId = new GenericAccountId(registry, address);
   const { substrate } = useSubsocialApi()
 
@@ -51,11 +37,14 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     return () => { isSubscribe = false; };
   }, [ myAddress ]);
 
+  if (!myAddress || address === myAddress) return null;
+
   const buildTxParams = () => {
     return [ accountId ];
   };
 
   return isFollow !== undefined ? <TxButton
+    className="DfFollowAccountButton"
     icon='send'
     size={size}
     isBasic={isFollow}

@@ -27,7 +27,7 @@ export function withLoadFeed<P extends LoadProps> (Component: React.ComponentTyp
     useEffect(() => {
       setLoaded(false)
       const loadData = async () => {
-        const extPostData = await subsocial.findPostWithDetails(postIds)
+        const extPostData = await subsocial.findPostsWithDetails(postIds)
         extPostData && setPosts(extPostData)
         setLoaded(true)
       };

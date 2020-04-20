@@ -57,7 +57,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const { state: { address: myAddress } } = useMyAccount();
   const isMyAccount = address === myAddress;
 
-  const { profile, struct, content } = owner;
+  const { profile = {} as Profile, struct, content = {} as ProfileContent } = owner;
 
   const profileIsNone = isEmpty(profile);
   const followers = struct ? new BN(struct.followers_count) : ZERO;

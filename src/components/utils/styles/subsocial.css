@@ -642,7 +642,7 @@ hr {
 }
 
 .ui--AddressComponents {
-  width: 70%;
+  display: flex;
 
   .ui--IdentityIcon {
     margin-left: 0;
@@ -1371,4 +1371,7 @@ hr {
 
 .DfNotificationItem {
   display: flex;
+  .DfNotificationContent {
+    margin-left: $space_small;
+  }
 }

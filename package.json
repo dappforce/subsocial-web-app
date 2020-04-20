@@ -99,7 +99,7 @@
     "@polkadot/typegen": "^1.9.1",
     "@polkadot/types": "1.4.0-beta.46",
     "@polkadot/ui-assets": "^0.52.0-beta.3",
-    "@subsocial/api": "^0.2.5",
+    "@subsocial/api": "^0.2.6",
     "@subsocial/types": "^0.1.24",
     "@subsocial/utils": "^0.1.20",
     "@zeit/next-css": "^1.0.1",

@@ -11,11 +11,11 @@ type AddressProps = CommonAddressProps & {
   className?: string
 };
 
-export const Name: React.FunctionComponent<AddressProps> = ({ asLink = true, isShort = true, address, owner = {} as ProfileData, className }) => {
+export const Name: React.FunctionComponent<AddressProps> = ({ isShort = true, address, owner = {} as ProfileData, className }) => {
   const { content, profile } = owner;
   return (
     <Link href={'/profile/[address]'} as={`/profile/${address}`}>
-      <a className={`ui--AddressComponents-address ${asLink && 'asLink'} ${className} `}>
+      <a className={`ui--AddressComponents-address ${className} `}>
         {content?.fullname || profile?.username || (isShort ? toShortAddress(address) : address)}
       </a>
     </Link>
