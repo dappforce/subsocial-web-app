@@ -61,7 +61,7 @@ const InnerMenu = () => {
     if (!unreadCount || unreadCount <= 0) return null
     return <Badge count={unreadCount} className="site-badge-count-4" />
   }
-
+ 
   const renderPageLink = (item: PageLink) => {
     return item.isAdvanced
       ? (
@@ -84,8 +84,7 @@ const InnerMenu = () => {
       )
   }
 
-  const renderSubscriptions = () => <>
-    <Menu.Divider />
+  const renderSubscriptions = () =>
     <Menu.ItemGroup
       className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`}
       key='followed'
@@ -96,7 +95,6 @@ const InnerMenu = () => {
         : <Loading />
       }
     </Menu.ItemGroup>
-  </>
 
   return (
     <Menu
@@ -105,10 +103,11 @@ const InnerMenu = () => {
       theme='light'
       style={{ height: '100%', borderRight: 0 }}
     >
-      {menuItems.map(item => isDivider(item)
-        ? <Menu.Divider />
+      {menuItems.map((item, i) => isDivider(item)
+        ? <Menu.Divider key={'divider-' + i} />
         : renderPageLink(item)
       )}
+      {isLoggedIn && <Menu.Divider />}
       {isLoggedIn && renderSubscriptions()}
     </Menu>
   );
