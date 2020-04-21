@@ -1372,6 +1372,6 @@ hr {
 .DfNotificationItem {
   display: flex;
   .DfNotificationContent {
-    margin-left: $space_small;
+    margin: 0 $space_small;
   }
 }

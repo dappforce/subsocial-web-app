@@ -5,13 +5,12 @@ import { BareProps } from '@polkadot/react-api/types';
 import { Popover } from 'antd';
 import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
-import Link from 'next/link';
 import { toShortAddress } from '@polkadot/react-components/util';
-import dynamic from 'next/dynamic';
 import Balance from './utils/DfBalance'
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { CommonAddressProps } from './utils/types';
+import Link from 'next/link';
 
 type InfoProps = {
   details?: JSX.Element,
@@ -28,8 +27,6 @@ const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) =
     </div>
   </>;
 }
-
-const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = BareProps & CommonAddressProps & {
   children?: React.ReactNode,
@@ -48,7 +45,6 @@ export const AuthorPreview = (props: Props) => {
     isPadded = true,
     style,
     size,
-    withFollowButton = false,
     children,
     details
   } = props;
@@ -65,22 +61,23 @@ export const AuthorPreview = (props: Props) => {
       <Avatar size={size || 36} address={address} avatar={avatar} />
       <div className='DfAddressMini-popup'>
         <Popover
-          trigger='focus'
+          trigger='hover'
           content={<ProfilePreview address={address} owner={owner}/>}
         >
-          <Link
-            href={`/profile/${address}`}
-          >
-            <a className={`ui--AddressComponents-address ${className}`}>
-              {fullname || username || toShortAddress(address)}
-            </a>
-          </Link>
+          <span>
+            <Link
+              href={`/profile/${address}`}
+            >
+              <a className={`ui--AddressComponents-address ${className}`}>
+                {fullname || username || toShortAddress(address)}
+              </a>
+            </Link>
+          </span>
         </Popover>
         <InfoDetails details={details}/>
       </div>
       {children}
     </div>
-    {withFollowButton && <FollowAccountButton address={address} />}
   </div>;
 };
 

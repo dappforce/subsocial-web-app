@@ -29,6 +29,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
+import { ShareButtonPost } from '../utils/ShareButton';
 
 const log = newLogger('View post')
 
@@ -283,13 +284,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
-        {/* TODO render tags */}
-        {withCreatedBy && renderPostCreator(post)}
         {renderBlogPreview(post)}
       </div>
       <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
-      {/* <ShareButtonPost postId={post.id}/> */}
+      <ShareButtonPost postId={post.id}/>
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
   };

@@ -1,11 +1,11 @@
 import React from 'react'
 import moment from 'moment-timezone';
 import ViewBlogPage from '../blogs/ViewBlog';
-import ViewPostPage from '../posts/ViewPost';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, BlogData, PostData, CommentData, Activity } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
+import Link from 'next/link';
 
 export type EventsName = 'AccountFollowed' | 'PostShared' | 'BlogFollowed' | 'BlogCreated' | 'CommentCreated' | 'CommentReply' | 'PostReactionCreated' | 'PostReactionCreated' | 'CommentReactionCreated'
 
@@ -52,7 +52,7 @@ const getBlogPreview = (blogId: BN, map: Map<string, BlogData>): PreviewNotifica
 
 const getPostPreview = (postId: BN, map: Map<string, PostData>): PreviewNotification => {
   const data = map.get(postId.toString())
-  const preview = <ViewPostPage postData={data as PostData} withCreatedBy={false} variant='name only' />
+  const preview = data ? <Link href={`/blogs/${data.struct.blog_id}/posts/${data.struct.id}`} >{data?.content?.title}</Link> : null;
   const image = data?.content?.image;
   return { preview, image }
 }
