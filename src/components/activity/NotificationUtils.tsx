@@ -6,6 +6,7 @@ import { ProfileData, BlogData, PostData, CommentData, Activity } from '@subsoci
 import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
+import { nonEmptyStr } from '@subsocial/utils';
 
 export type EventsName = 'AccountFollowed' | 'PostShared' | 'BlogFollowed' | 'BlogCreated' | 'CommentCreated' | 'CommentReply' | 'PostReactionCreated' | 'PostReactionCreated' | 'CommentReactionCreated'
 
@@ -45,6 +46,9 @@ type PreviewNotification = {
   msg?: string
 }
 
+const renderSubjectPreview = (title?: string, href: string = '') =>
+  nonEmptyStr(title) || nonEmptyStr(href) ? <Link href={href} ><a>{title}</a></Link> : null;
+
 const getBlogPreview = (blogId: BN, map: Map<string, BlogData>): PreviewNotification => {
   const data = map.get(blogId.toString())
   return { preview: <ViewBlogPage blogData={data} nameOnly withLink /> }
@@ -52,20 +56,28 @@ const getBlogPreview = (blogId: BN, map: Map<string, BlogData>): PreviewNotifica
 
 const getPostPreview = (postId: BN, map: Map<string, PostData>): PreviewNotification => {
   const data = map.get(postId.toString())
-  const preview = data ? <Link href={`/blogs/${data.struct.blog_id}/posts/${data.struct.id}`} >{data?.content?.title}</Link> : null;
+  const preview = renderSubjectPreview(data?.content?.title, `/blogs/${data?.struct.blog_id}/posts/${data?.struct.id}`)
   const image = data?.content?.image;
   return { preview, image }
 }
 
 const getCommentPreview = (commentId: BN, commentMap: Map<string, CommentData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
-  const commentStruct = commentMap.get(commentId.toString())?.struct;
-  let msg!: string;
+  const comment = commentMap.get(commentId.toString());
+  const commentStruct = comment?.struct;
   if (commentStruct) {
-    if (commentStruct.parent_id.isSome) {
-      msg = eventsMsg.CommentReactionCreated
-    }
     const postId = commentStruct.post_id
-    return { ...getPostPreview(postId, postMap), msg }
+
+    if (commentStruct.parent_id.isSome) {
+      const msg = eventsMsg.CommentReactionCreated
+      // const commentBody = comment?.content?.body || '';
+      // const commentTitle = summarize(commentBody, 40)
+      // const commentPreview = renderSubjectPreview(commentTitle, `/comment?postId=${commentStruct.post_id}&commentId=${commentStruct.id}`)
+      // const { preview: postPreview, image } = getPostPreview(postId, postMap);
+      // const preview = <>{commentPreview} in {postPreview}</>
+      return { ...getPostPreview(postId, postMap), msg }
+    }
+  
+    return getPostPreview(postId, postMap);
   }
   return undefined;
 }

@@ -29,7 +29,7 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const log = newLogger('Edit profile')
 export type OuterProps = MyAccountProps & ValidationProps & {
-  address: string,
+  myAddress: string,
   owner?: ProfileData,
   requireProfile?: boolean,
 };
@@ -46,7 +46,7 @@ const LabelledText = DfForms.LabelledText<FormValues>();
 
 const InnerForm = (props: FormProps) => {
   const {
-    address,
+    myAddress,
     owner,
     values,
     errors,
@@ -76,8 +76,8 @@ const InnerForm = (props: FormProps) => {
   const profile = owner?.profile
 
   const goToView = () => {
-    if (address) {
-      Router.push(`/profile/${address}`).catch(err => log.error('Error while route:', err));
+    if (myAddress) {
+      Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
     }
   };
   const { ipfs } = useSubsocialApi()
@@ -259,6 +259,7 @@ const EditForm = withFormik<OuterProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
     const { owner } = props;
+    console.log(owner)
     const content = owner?.content
     const profile = owner?.profile
     if (profile && content) {

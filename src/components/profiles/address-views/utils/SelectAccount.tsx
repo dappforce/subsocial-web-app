@@ -8,11 +8,9 @@ type Props = {
 }
 
 export const SelectAccount: React.FunctionComponent<Props> = ({ reputation }) => {
-  return <div className='addressPreview'>
-    <div className='profileInfo'>
-      <div className='profileDesc'>
-          My reputation: {reputation.toString()}
-      </div>
+  return <div className='DfSelectAccount'>
+    <div className='DfProfileInfo'>
+        My reputation: {reputation.toString()}
     </div>
     <InputAddress
       className='DfTopBar--InputAddress' // FIXME dropdown in  popup

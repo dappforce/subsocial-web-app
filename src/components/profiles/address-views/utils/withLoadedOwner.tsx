@@ -3,6 +3,7 @@ import { newLogger } from '@subsocial/utils';
 import { useSubsocialApi } from '../../../utils/SubsocialApiContext';
 import { ProfileData } from '@subsocial/types';
 import { CommonAddressProps } from './types'
+import { Loading } from '../../../utils/utils';
 
 type Props = CommonAddressProps & {
   myAddress?: string
@@ -11,19 +12,20 @@ type Props = CommonAddressProps & {
 export function withLoadedOwner (Component: React.ComponentType<any>) {
   const log = newLogger('Account HOC')
   return function (props: any) {
-    const { address, owner: initialOwner, myAddress = address } = props as Props;
-
+    const { myAddress, owner: initialOwner, address = myAddress } = props as Props;
+  
     if (initialOwner) return <Component {...props} />;
 
     console.log('Author is not exist')
     const { subsocial } = useSubsocialApi()
-    const [ owner, setOwner ] = useState<ProfileData | undefined>(initialOwner);
+    const [ owner, setOwner ] = useState<ProfileData | undefined>();
 
     useEffect(() => {
-
+      if (!address) return;
+  
       let isSubscribe = true;
       const loadContent = async () => {
-        const owner = await subsocial.findProfile(myAddress)
+        const owner = await subsocial.findProfile(address)
         isSubscribe && setOwner(owner)
       }
 
@@ -32,6 +34,6 @@ export function withLoadedOwner (Component: React.ComponentType<any>) {
       return () => { isSubscribe = false; };
     }, [ address ]);
 
-    return <Component {...props} owner={owner} />;
+    return owner ? <Component {...props} owner={owner} /> : <Loading />;
   };
 }
