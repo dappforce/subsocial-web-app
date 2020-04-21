@@ -22,7 +22,7 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
-import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { Post, PostId, BlogId } from '@subsocial/types/substrate/interfaces';
 import { PostData, ExtendedPostData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
@@ -59,7 +59,8 @@ type ViewPostPageProps = {
   postData: PostData;
   postExtData?: PostData;
   commentIds?: BN[];
-  statusCode?: number
+  statusCode?: number;
+  parentBlogName?: string;
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
@@ -78,7 +79,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withActions = true,
     withStats = true,
     withCreatedBy = true,
-    postExtData
+    postExtData,
+    parentBlogName
   } = props;
 
   const {
@@ -270,7 +272,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!content) return null;
     const { title, body, image, canonical, tags } = content;
     return <Section className='DfContentPage'>
-      <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
+      <HeadMeta title={`${title} - ${parentBlogName}`} desc={body} image={image} canonical={canonical} tags={tags} />
       <div className='header DfPostTitle' style={{ display: 'flex' }}>
         <div className='DfPostName'>{title}</div>
         <RenderDropDownMenu account={created.account}/>
@@ -337,9 +339,12 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     res.end()
   }
 
+  const blogData = await subsocial.findBlog(blogIdFromUrl as BlogId)
+
   return {
     postData: extPostData?.post,
-    postExtData: extPostData?.ext
+    postExtData: extPostData?.ext,
+    parentBlogName: blogData?.content?.name
   };
 };
 
