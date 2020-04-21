@@ -54,7 +54,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
 
         const comp = new RegExp(host)
 
-        return <Menu.Item key={nt.id}><a href={url}>{nt.title}{!comp.test(url) && <Icon type="logout" className='ExternalIcon' />}</a></Menu.Item>
+        return <Menu.Item key={nt.id}><a href={url} target={comp.test(url) ? '_self' : '_blank'}>{nt.title}{!comp.test(url) && <Icon type="logout" className='ExternalIcon' />}</a></Menu.Item>
       }
       default: {
         return undefined
