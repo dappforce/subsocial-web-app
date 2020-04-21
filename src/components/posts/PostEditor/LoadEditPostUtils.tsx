@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useMyAccount } from '../../utils/MyAccountContext';
 import { useRouter } from 'next/router';
 import { Loading } from '../../utils/utils';
-import { PostBlock, BlockValueKind } from '../../types';
+import { PostBlock, BlockValueWithOptions } from '../../types';
 import { ValidationProps } from './EditPostValidations'
 import { Post, BlogId } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
@@ -19,7 +19,7 @@ export type OuterProps = ValidationProps & {
   extension?: Enum,
   struct?: Post
   json?: PostContent,
-  mappedBlocks?: BlockValueKind[],
+  mappedBlocks?: BlockValueWithOptions[],
   onlyTxButton?: boolean,
   closeModal?: () => void,
   withButtons?: boolean,
@@ -68,7 +68,7 @@ export function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     const [ json, setJson ] = useState<PostContent>();
     const [ struct, setStruct ] = useState<Post>();
     const [ trigger, setTrigger ] = useState(false);
-    const [ mappedBlocks, setMappedBlocks ] = useState(undefined as unknown as BlockValueKind[])
+    const [ mappedBlocks, setMappedBlocks ] = useState(undefined as unknown as BlockValueWithOptions[])
     const jsonIsNone = json === undefined;
 
     const toggleTrigger = () => {
@@ -86,10 +86,11 @@ export function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
         console.log('ipfs.findPost(struct.ipfs_hash)', json)
         if (json && json.blocks && json.blocks.length > 0) {
           const processArray = async (arr: PostBlock[]) => {
-            const temp: BlockValueKind[] = []
+            const temp: BlockValueWithOptions[] = []
             for (const item of arr) {
-              const res = await ipfs.findPost(item.cid)
-              temp.push(res as any)
+              const res = await ipfs.findPost(item.cid) as unknown as BlockValueWithOptions
+              if (item.featured && res) res.featured = true
+              temp.push(res)
             }
             return temp
           }

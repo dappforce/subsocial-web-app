@@ -7,7 +7,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData, PostContent, ImageBlockValue } from '../../types';
+import { PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData, PostContent, ImageBlockValue, BlockValueWithOptions } from '../../types';
 import Section from '../../utils/Section';
 import { parse, getImageFromIpfs } from '../../utils/index';
 import { getNewIdFromEvent } from '../../utils/utils';
@@ -22,7 +22,7 @@ import EditableTagGroup from '../../utils/EditableTagGroup'
 import PostBlockFormik from './PostBlockFormik';
 import buildSchema from './EditPostValidations'
 import './EditPost.css'
-import { withBlogIdFromUrl, withIdFromUrl, LoadStruct, OuterProps } from './EditPostDataHOC';
+import { withBlogIdFromUrl, withIdFromUrl, LoadStruct, OuterProps } from './LoadEditPostUtils';
 import { useSubsocialApi } from '../../utils/SubsocialApiContext'
 import { socialQueryToProp } from '../../utils/index';
 import BN from 'bn.js';
@@ -33,13 +33,16 @@ import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 // import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
 import BloggedSectionTitle from '../../blogs/BloggedSectionTitle';
+import ViewTags from 'src/components/utils/ViewTags';
+const StatsPanel = dynamic(() => import('../../posts/PostStats'), { ssr: false });
+
 
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
 
 type BlockValues = {
-  blockValues: BlockValueKind[]
+  blockValues: BlockValueWithOptions[]
 }
 
 const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
@@ -128,11 +131,11 @@ const InnerForm = (props: FormProps) => {
   }, [])
 
   const mapValuesToBlocks = async () => {
-    const processArray = async (array: BlockValueKind[]) => {
+    const processArray = async (array: BlockValueWithOptions[]) => {
       const res = []
       for (const item of array) {
         const hash = await ipfs.savePost(item as any)
-        res.push({ kind: item.kind, hidden: item.hidden, cid: hash })
+        res.push({ kind: item.kind, hidden: item.hidden, featured: item.featured, cid: hash })
       }
       return res
     }
@@ -219,7 +222,6 @@ const InnerForm = (props: FormProps) => {
       id: getNewBlockId(blockValues),
       kind: type,
       hidden: false,
-      useOnPreview: false,
       data: ''
     }
     if (index === undefined) {
@@ -316,7 +318,7 @@ const InnerForm = (props: FormProps) => {
             <AntButton type="default" className={'SmallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
           </Dropdown>
           {blockValues && blockValues.length > 0
-            ? blockValues.map((block: BlockValueKind, index: number) => <PostBlockFormik
+            ? blockValues.map((block: BlockValueWithOptions, index: number) => <PostBlockFormik
               block={block}
               index={index}
               setFieldValue={setFieldValue}
@@ -344,7 +346,7 @@ const InnerForm = (props: FormProps) => {
         </>
         : <>
           {blockValues && blockValues.length > 0
-            ? blockValues.map((block: BlockValueKind, index: number) => <PostBlockFormik
+            ? blockValues.map((block: BlockValueWithOptions, index: number) => <PostBlockFormik
               block={block}
               index={index}
               setFieldValue={setFieldValue}
@@ -392,14 +394,18 @@ const InnerForm = (props: FormProps) => {
                 <div>
                   <h1>{title}</h1>
                 </div>
-                {blockValues && blockValues.length !== 0 &&
-                  blockValues.filter((x) => x.useOnPreview).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
-                    block={x}
-                    embedData={embedData}
-                    setEmbedData={setEmbedData}
-                    linkPreviewData={linkPreviewData}
-                  /></div>)
-                }
+                <div className='ShortPreviewWrapper'>
+                  {blockValues && blockValues.length !== 0 &&
+                    blockValues.filter((x) => x.featured).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
+                      block={x}
+                      embedData={embedData}
+                      setEmbedData={setEmbedData}
+                      linkPreviewData={linkPreviewData}
+                    /></div>)
+                  }
+                  <ViewTags tags={values.tags} />
+                  <StatsPanel id={currentBlogId} />
+                </div>
               </TabPane>
             </Tabs>
           </div>
@@ -435,7 +441,7 @@ const InnerForm = (props: FormProps) => {
             <h1>{title}</h1>
           </div>
           {blockValues && blockValues.length !== 0 &&
-            blockValues.filter((x) => x.useOnPreview).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
+            blockValues.filter((x) => x.featured).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
               block={x}
               embedData={embedData}
               setEmbedData={setEmbedData}
@@ -462,7 +468,7 @@ const InnerForm = (props: FormProps) => {
 export const InnerEditPost = withFormik<OuterProps, FormValues>({
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
-    let blockValues: BlockValueKind[] = []
+    let blockValues: BlockValueWithOptions[] = []
     if (mappedBlocks && mappedBlocks.length !== 0) blockValues = mappedBlocks.map((x, i) => ({ ...x, id: i }))
     if (struct && json && mappedBlocks) return { ...json, blocks: [], blockValues };
     return { title: '', blocks: [], blockValues: [], image: '', tags: [], canonical: '' };

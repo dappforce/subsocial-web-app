@@ -18,18 +18,21 @@ export type PostBlockKind = 'text' | 'code' | 'link' | 'image' | 'video'
 export interface PostBlock {
   kind: PostBlockKind
   hidden?: boolean
-
+  featured?: boolean
   /** CID aka IPFS hash */
   cid: string
 }
 
 export type BlockValueKind = BlockValue | CodeBlockValue | ImageBlockValue
 
+export type BlockValueWithOptions = BlockValueKind & {
+  featured: boolean
+}
+
 export interface BlockValue {
   id: number
   kind: PostBlockKind
   hidden?: boolean
-  useOnPreview: boolean
   data: string
 }
 
@@ -39,6 +42,7 @@ export interface CodeBlockValue extends BlockValue {
 
 export interface ImageBlockValue extends BlockValue {
   hash: string
+  description?: string
 }
 
 export type SharedPostContent = {
@@ -50,7 +54,6 @@ export type PostContent = SharedPostContent & {
   image: string;
   tags: string[];
   canonical: string;
-  // previewsCids?: string[] TODO think about it real talk
 };
 
 export interface SiteMetaContent {

@@ -22,8 +22,8 @@ import { PostData, ExtendedPostData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
-import { PreviewData, EmbedData, BlockValueKind } from '../types';
-import { parse } from '../utils/index';
+import { PreviewData, EmbedData, BlockValueKind, BlockValueWithOptions, ImageBlockValue } from '../types';
+import { parse, getImageFromIpfs } from '../utils/index';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 const log = newLogger('View post')
@@ -56,7 +56,7 @@ type ViewPostPageProps = {
   withBlogName?: boolean;
   postData: PostData;
   postExtData?: PostData;
-  blockValues?: BlockValueKind[];
+  blockValues?: BlockValueWithOptions[];
   commentIds?: BN[];
   statusCode?: number
 };
@@ -102,8 +102,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const originalPost = postExtData && postExtData.struct;
   const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
 
-  console.log('blockValues from ViewPost main', blockValues)
-
   useEffect(() => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
@@ -122,6 +120,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       for (const x of blockValues) {
         if (x.kind === 'link' || x.kind === 'video') {
           const data = await parse(x.data)
+          if (!data) continue
+          res.push({ id: x.id, data })
+        }
+        if (x.kind === 'image') {
+          const img = x as ImageBlockValue
+          let data: any
+          if (img.hash) data = await getImageFromIpfs(img.hash)
           if (!data) continue
           res.push({ id: x.id, data })
         }
@@ -208,7 +213,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!post || !content) return null;
     console.log('blockValues from renderContent', blockValues)
     const { title, summary } = content;
-    const previewBlocks = blockValues?.filter((x: BlockValueKind) => x.useOnPreview === true)
+    const previewBlocks = blockValues?.filter((x: BlockValueWithOptions) => x.featured === true)
     const hasPreviews = previewBlocks && previewBlocks.length !== 0
     const imageBlock = blockValues?.find((x: BlockValueKind) => x.kind === 'image')
 
@@ -401,7 +406,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const blockValues = []
   if (postData?.content.blocks && postData?.content.blocks.length > 0) {
     for (const item of postData?.content.blocks) {
-      const value = await ipfs.findPost(item.cid)
+      const value = await ipfs.findPost(item.cid) as unknown as BlockValueWithOptions
+      if (item.featured && value) value.featured === true
       blockValues.push(value)
     }
   }

@@ -74,6 +74,31 @@
     right: -20px;
   }
 
+  .ImgFormPreviewWrapper {
+    position: relative;
+
+    .RemoveImgIcon {
+      position: absolute;
+      color: red;
+      font-size: 3rem;
+      background-color: white;
+      border-radius: 10px;
+      padding: 1rem;
+      top: calc(50% - 3rem);
+      left: calc(50% - 3rem);
+      opacity: 0;
+    }
+    &:hover {
+      .RemoveImgIcon {
+        opacity: 1;
+      }
+    }
+    img {
+      margin-bottom: $space_tiny;
+    }
+  }
+  
+
   .ButtonsForMobile {
     .MenuDotsIcon {
       -moz-transform: rotate(90deg);
@@ -107,14 +132,36 @@
     width: 100%;
 
     .Dragger {
-      width: 150px;
+      width: 100%;
       height: 150px;
+    }
+
+    .ImageUploadDivider {
+      position: relative;
+      display: flex;
+      justify-content: center;
+
+      &:after, &:before {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        height: 1px;
+        background: $color_light_border;
+        content: "";
+        width: 45%;
+        display: block;
+      }
+      &:before {
+        right: 0;
+        left: unset;
+      }
+
     }
   }
 }
 
 .EditPostAddButton {
-  margin: $space_big 0;
+  margin: $space_normal 0;
 }
 
 .EditEntityForm {
@@ -164,5 +211,9 @@
     display: flex;
     margin-top: $space_big;
     flex-direction: column;
+
+    .ImageDescriptionPreview {
+      
+    }
   }
 }

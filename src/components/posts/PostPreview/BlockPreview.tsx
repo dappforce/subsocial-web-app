@@ -1,5 +1,5 @@
 import React from 'react'
-import { BlockValueKind, EmbedData, PreviewData } from '../../types'
+import { BlockValueKind, EmbedData, PreviewData, ImageBlockValue } from '../../types'
 import { DfMd } from '../../utils/DfMd'
 import './BlockPreview.css'
 import VideoPreview from './VideoPreview'
@@ -34,10 +34,14 @@ const BlockPreview = (props: Props) => {
       break
     }
     case 'image': {
-      let src = x.data
-      const previewData = linkPreviewData.find((y) => y.id === x.id)
+      const block = x as ImageBlockValue
+      let src = block.data
+      const previewData = linkPreviewData.find((y) => y.id === block.id)
       if (previewData) src = previewData.data as any
-      element = <img className='DfPostImage' src={src} />
+      element = <div>
+        <img className='DfPostImage' src={src} />
+        <div className='ImageDescriptionPreview'>{block.description}</div>
+      </div>
       break
     }
     case 'code': {

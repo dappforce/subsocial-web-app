@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { BlockValueKind, CodeBlockValue, ImageBlockValue } from '../../types'
+import React, { useState, useEffect } from 'react'
+import { BlockValueKind, CodeBlockValue, ImageBlockValue, BlockValueWithOptions } from '../../types'
 import SimpleMDEReact from 'react-simplemde-editor'
 import { Field, ErrorMessage } from 'formik'
 import { Dropdown, Menu, Icon } from 'antd'
@@ -19,12 +19,12 @@ import Dragger from 'antd/lib/upload/Dragger'
 import { getImageFromIpfs } from 'src/components/utils'
 
 type Props = {
-  block: BlockValueKind
+  block: BlockValueWithOptions
   index: number
   setFieldValue: (field: string, value: any) => void
   handleLinkChange: (block: BlockValueKind, name: string, value: string) => void
   handleImagePreviewChange: (block: ImageBlockValue, src: string) => void
-  blockValues: BlockValueKind[]
+  blockValues: BlockValueWithOptions[]
   addMenu: (index?: number, onlyItems?: boolean, pos?: string) => JSX.Element[] | JSX.Element
 }
 
@@ -33,6 +33,22 @@ const PostBlockFormik = (props: Props) => {
 
   const [ showImageInputs, setShowImageInputs ] = useState(true)
   const [ formPreviewImage, setFormPreviewImage ] = useState('')
+
+  useEffect(() => {
+    const getImageForPreview = async () => {
+      let res
+      if (block.kind === 'image') {
+        const img = block as ImageBlockValue
+        let data: any
+        if (img.hash) data = await getImageFromIpfs(img.hash)
+        if (data) res = data
+      }
+      setFormPreviewImage(res)
+      if (res) setShowImageInputs(false)
+    }
+
+    getImageForPreview()
+  }, [])
 
   const langs = [
     { name: 'javascript', pretty: 'JavaScript' },
@@ -140,6 +156,7 @@ const PostBlockFormik = (props: Props) => {
       break
     }
     case 'image': {
+      const img = block as ImageBlockValue
       res = showImageInputs
       ? <div className='ImageBlockWrapper'>
           <Field
@@ -165,9 +182,17 @@ const PostBlockFormik = (props: Props) => {
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
           </Dragger>
         </div>
-      : <div className='imgFormPreviewWrapper'>
-        <Icon type="delete" className='removeImgIcon' onClick={handleImgRemove} />
+      : <div className='ImgFormPreviewWrapper'>
+        <Icon type="delete" className='RemoveImgIcon' onClick={handleImgRemove} />
         <img src={formPreviewImage} />
+        <Field
+          type="text"
+          name={`blockValues.${index}.description`}
+          placeholder="Image description"
+          value={img.description}
+          className={'ImageDescription'}
+          onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.description`, e.currentTarget.value)}
+        />
       </div>
       break
     }
@@ -216,13 +241,13 @@ const PostBlockFormik = (props: Props) => {
 
   let tempArray = 0
   blockValues.find((x) => {
-    if (x.useOnPreview) tempArray++
+    if (x.featured) tempArray++
   })
   const isPlaceForPreview = tempArray < MAX_PREVIEW_BLOCKS
 
   const handleUseOnPreview = (index: number, isPlaceForPreview: boolean) => {
-    if (!isPlaceForPreview && !blockValues[index].useOnPreview) return
-    setFieldValue(`blockValues.${index}.useOnPreview`, !blockValues[index].useOnPreview)
+    if (!isPlaceForPreview && !blockValues[index].featured) return
+    setFieldValue(`blockValues.${index}.featured`, !blockValues[index].featured)
   }
 
   const mobileButtonsMenu = (
@@ -236,9 +261,8 @@ const PostBlockFormik = (props: Props) => {
         {addMenu(index, true, 'after')}
       </SubMenu>
       <Menu.Item>
-        <a onClick={() => handleUseOnPreview(index, isPlaceForPreview)} className={`SmallAntButton ${!isPlaceForPreview && 'off'} ${block.useOnPreview && 'on'}`}>
-          <Icon type="crown" />
-          {block.useOnPreview ? ' Remove from preview' : ' Use in preview'}
+        <a onClick={() => handleUseOnPreview(index, isPlaceForPreview)} className={`SmallAntButton ${!isPlaceForPreview && 'off'} ${block.featured && 'on'}`}>
+        <Icon type="star" /> Featured
         </a>
       </Menu.Item>
       { index > 0 &&
@@ -275,9 +299,10 @@ const PostBlockFormik = (props: Props) => {
   </div>
 
   return <div className={`EditPostBlockWrapper ${isMobile ? 'MobileBlock' : ''}`} key={block.id} >
-    {buttonsMenu}
-    {block.useOnPreview && <div className='EditPostCrown'><Icon type="crown" /></div>}
     {res}
+    {buttonsMenu}
+    {block.featured && <div className='EditPostCrown'><Icon type="star" /></div>}
+    
     <ErrorMessage name={`blockValues.${index}.data`} component='div' className='ui pointing red label' />
   </div>
 
