@@ -27,6 +27,8 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
   const [ isFollow, setIsFollow ] = useState<boolean>();
 
   useEffect(() => {
+    if (!myAddress) return;
+
     let isSubscribe = true;
     const load = async () => {
       const _isFollow = await (substrate.isAccountFollower(myAddress, address))
