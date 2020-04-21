@@ -56,7 +56,8 @@ type Props = {
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void,
-  statusCode?: number
+  statusCode?: number,
+  host?: string
 };
 
 export const ViewBlogPage: NextPage<Props> = (props: Props) => {
@@ -76,7 +77,8 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     dropdownPreview = false,
     posts = [],
     imageSize = 36,
-    onClick
+    onClick,
+    host
   } = props;
 
   const blog = blogData.struct;
@@ -291,12 +293,13 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       {...content}
       blogId={new BN(id)}
       creator={account}
+      host={host}
     />
   </div>
 };
 
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const { res, query: { blogId } } = props
+  const { res, query: { blogId }, req } = props
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const idOrHandle = blogId as string
@@ -312,11 +315,15 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
+  let host
+  if (req) host = req.headers.host
+
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
   const posts = await subsocial.findPostsWithExt(postIds.reverse());
   return {
     blogData,
-    posts
+    posts,
+    host
   };
 };
 

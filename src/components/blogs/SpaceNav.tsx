@@ -24,6 +24,7 @@ export interface SpaceNavProps {
     teamMembers?: SpaceContent[]
     projects?: SpaceContent[]
   }
+  host?: string
 }
 
 export const SpaceNav = (props: SpaceNavProps) => {
@@ -34,7 +35,8 @@ export const SpaceNav = (props: SpaceNavProps) => {
     desc,
     image,
     imageSize = 150,
-    navTabs = []
+    navTabs = [],
+    host = ''
   } = props;
 
   const renderMenuItem = (nt: NavTab) => {
@@ -49,7 +51,10 @@ export const SpaceNav = (props: SpaceNavProps) => {
       }
       case 'url': {
         const url = nt.content.data as string
-        return <Menu.Item key={nt.id}><a href={url}>{nt.title}</a></Menu.Item>
+
+        const comp = new RegExp(host)
+
+        return <Menu.Item key={nt.id}><a href={url}>{nt.title}{!comp.test(url) && <Icon type="logout" className='ExternalIcon' />}</a></Menu.Item>
       }
       default: {
         return undefined

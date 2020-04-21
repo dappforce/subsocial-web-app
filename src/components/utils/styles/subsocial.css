@@ -1363,6 +1363,11 @@ hr {
     box-sizing: border-box;
     border-radius: 2px;
     margin-bottom: $space_huge;
+
+    .ExternalIcon {
+      font-size: $font_small;
+      margin-left: $space_tiny;
+    }
   }
 
   .SpaceNavSettings {
