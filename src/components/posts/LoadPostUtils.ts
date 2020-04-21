@@ -3,7 +3,6 @@ import { PostContent } from '@subsocial/types';
 import { summarize } from '@subsocial/utils';
 import { isMobile } from 'react-device-detect';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { BlockValueKind } from '../types';
 
 export const LIMIT_SUMMARY = isMobile ? 150 : 300;
 

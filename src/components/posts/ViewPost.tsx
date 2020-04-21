@@ -63,6 +63,7 @@ type ViewPostPageProps = {
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
+  console.log('props in ViewPostPage', props)
 
   const { struct, content: initialContent } = props.postData;
 
@@ -209,23 +210,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   }
 
   const renderContent = (post: Post, content: PostExtContent | undefined) => {
-    console.log('post, content from renderContent', post, content)
+    console.log('content ViewPost renderContent', content)
+    console.log('post ViewPost renderContent', post)
     if (!post || !content) return null;
-    console.log('blockValues from renderContent', blockValues)
+
     const { title, summary } = content;
     const previewBlocks = blockValues?.filter((x: BlockValueWithOptions) => x.featured === true)
-    const hasPreviews = previewBlocks && previewBlocks.length !== 0
-    const imageBlock = blockValues?.find((x: BlockValueKind) => x.kind === 'image')
-
-    return <div className='MiniPreviewWrapper'>
-      <div className='DfContent'>
-        <div className='DfPostText'>
-          {renderNameOnly(title || summary, post.id)}
-          <div className='DfSummary'>
-            {!hasPreviews && summary}
-          </div>
-    const { title, blockValues, summary } = content;
-    const previewBlocks = blockValues.filter((x: BlockValueKind) => x.useOnPreview === true)
     const hasPreviews = previewBlocks && previewBlocks.length !== 0
     const imageBlock = blockValues?.find((x: BlockValueKind) => x.kind === 'image')
 
@@ -354,8 +344,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </Section>;
   };
 
-  console.log('variant', variant)
-
   switch (variant) {
     case 'name only': {
       return renderNameOnly(content?.title, id);
@@ -402,12 +390,12 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
     res.end()
   }
-
+  console.log('postData in initialProps in ViewPost', postData)
   const blockValues = []
   if (postData?.content.blocks && postData?.content.blocks.length > 0) {
     for (const item of postData?.content.blocks) {
       const value = await ipfs.findPost(item.cid) as unknown as BlockValueWithOptions
-      if (item.featured && value) value.featured === true
+      if (item.featured && value) value.featured = true
       blockValues.push(value)
     }
   }

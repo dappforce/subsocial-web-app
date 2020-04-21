@@ -33,6 +33,7 @@ import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogData, ExtendedPostData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
+import { BlockValueWithOptions } from '../types';
 
 const log = newLogger('View blog')
 
@@ -238,8 +239,8 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     return <ListData
       title={postsSectionTitle()}
       dataSource={posts}
-      renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>}
+      renderItem={(item: any, index) =>
+        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext} blockValues={item.blockValues} />}
       noDataDesc='No posts yet'
       noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
@@ -298,9 +299,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const { res, query: { blogId } } = props
   const subsocial = await getSubsocialApi()
-  const { substrate } = subsocial;
+  const { substrate, ipfs } = subsocial;
   const idOrHandle = blogId as string
   const id = await getBlogId(idOrHandle)
+
   if (!id && res) {
     res.statusCode = 404
     return { statusCode: 404 }
@@ -313,7 +315,28 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   }
 
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
-  const posts = await subsocial.findPostsWithExt(postIds.reverse());
+  const posts: any = await subsocial.findPostsWithExt(postIds.reverse());
+
+  let i = 0;
+  for (const item of posts) {
+    const postBlockValues = []
+    const blocks = item?.post?.content?.blocks
+
+    if (blocks && blocks.length > 0) {
+
+      for (const x of blocks) {
+        if (x.featured) {
+          const res = await ipfs.findPost(x.cid) as unknown as BlockValueWithOptions
+          if (x.featured && res) res.featured = true
+          postBlockValues.push(res)
+        }
+      }
+    }
+    posts[i].blockValues = postBlockValues
+    i++
+  }
+
+  console.log('posts in initialProps in ViewBlog', posts)
   return {
     blogData,
     posts

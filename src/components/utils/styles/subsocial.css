@@ -36,6 +36,7 @@ body,
 
   .bookPage {
     max-width: 728px;
+    width: 100%;
   }
 }
 
@@ -1417,6 +1418,10 @@ hr {
 }
 
 .MiniPreviewWrapper {
+  .DfContent {
+    display: flex;
+    flex-direction: column;
+  }
   .MiniPreviewBlock {
     margin-bottom: $space_normal;
   }
