@@ -59,7 +59,9 @@ type ViewPostPageProps = {
   postData: PostData;
   postExtData?: PostData;
   commentIds?: BN[];
-  statusCode?: number
+  statusCode?: number;
+  nextPostId?: PostId;
+  prevPostId?: PostId;
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
@@ -78,7 +80,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withActions = true,
     withStats = true,
     withCreatedBy = true,
-    postExtData
+    postExtData,
+    nextPostId,
+    prevPostId
   } = props;
 
   const {
@@ -287,6 +291,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
+      {prevPostId && <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${prevPostId}`}><a>Prev Post</a></Link> }
+      {nextPostId && <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${nextPostId}`}><a>Next Post</a></Link> }
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
   };
@@ -318,6 +324,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId, postId }, res } = props;
   const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial
   const idOrHandle = blogId as string
   const blogIdFromUrl = await getBlogId(idOrHandle)
   const extPostData = await subsocial.findPostWithExt(new BN(postId as string))
@@ -337,9 +344,20 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     res.end()
   }
 
+  const postIds = await substrate.postIdsByBlogId(new BN(blogIdFromPost as unknown as string))
+  const idx = postIds.findIndex((x) => x.toString() === postId)
+  let nextPostId, prevPostId
+  if (idx !== -1) {
+    nextPostId = postIds[idx + 1] || undefined
+    prevPostId = postIds[idx - 1] || undefined
+  }
+
+  console.log('postIds in initialProps in ViewPost', postIds)
   return {
     postData: extPostData?.post,
-    postExtData: extPostData?.ext
+    postExtData: extPostData?.ext,
+    nextPostId,
+    prevPostId
   };
 };
 
