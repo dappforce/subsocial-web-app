@@ -16,8 +16,8 @@ import { Segment } from 'semantic-ui-react';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import NoData from '../utils/EmptyList';
-import ListData from '../utils/DataList';
-import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
+import { Loader } from 'semantic-ui-react'
+import { Tag, Button, Icon, Menu, Dropdown, Pagination } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
@@ -33,6 +33,8 @@ import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogData, ExtendedPostData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
+import { INFINITE_SCROLL_PAGE_SIZE } from 'src/config/ListData.config';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const log = newLogger('View blog')
 
@@ -235,15 +237,41 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   }
 
   const renderPostPreviews = () => {
-    return <ListData
-      title={postsSectionTitle()}
-      dataSource={posts}
-      renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>}
-      noDataDesc='No posts yet'
-      noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
-    />;
+    
+    const [ items, setItems ] = useState<any[]>([]);
+    const [ offset, setOffset ] = useState(0);
+    const [ hasMore, setHasMore ] = useState(true);
+    const [ currentPage, setCurrentPage ] = useState(0)
+    const [ hidePagination, setHidePagination ] = useState(false)
+
+    const getNextPage = async (actualOffset: number = offset) => {
+      const isFirstPage = actualOffset === 0;
+      const data = posts.slice(actualOffset, INFINITE_SCROLL_PAGE_SIZE + actualOffset);
+  
+      if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
+  
+      setItems(isFirstPage ? data : items.concat(data));
+      setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
+      setCurrentPage(currentPage + 1)
+      setHidePagination(true)
+    };
+
+    const totalCount = items && items.length;
+
+    return <InfiniteScroll
+      dataLength={totalCount}
+      next={getNextPage}
+      hasMore={hasMore}
+      loader={<Loader active inline='centered' />}
+    >
+      {items && items.length > 0
+        ? items.map((item, index) => <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>)
+        : isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
+      {!hidePagination &&
+        <Pagination current={currentPage} pageSize={INFINITE_SCROLL_PAGE_SIZE} total={posts.length} />}
+    </InfiniteScroll>
   };
+
   const NewPostButton = () => isMyBlog ? <Button href={`/blogs/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button> : null;
 
   const postsSectionTitle = () => {
@@ -252,6 +280,8 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       {posts.length ? <NewPostButton /> : null}
     </div>;
   };
+
+  console.log(postsSectionTitle)
 
   const RenderBlogCreator = () => (
     <MutedDiv className='DfCreator'>

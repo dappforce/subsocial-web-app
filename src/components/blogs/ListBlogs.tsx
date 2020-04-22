@@ -1,13 +1,15 @@
-import React from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { Loader } from 'semantic-ui-react'
 import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
-import { Button } from 'antd';
+import { Button, Pagination } from 'antd';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import BN from 'bn.js';
 import { BlogData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { INFINITE_SCROLL_PAGE_SIZE } from 'src/config/ListData.config';
 
 type Props = {
   totalCount: number;
@@ -15,18 +17,47 @@ type Props = {
 };
 
 export const ListAllBlogs: NextPage<Props> = (props: Props) => {
-  const { totalCount, blogsData } = props;
+  const { blogsData } = props;
+
+  const [ items, setItems ] = useState<any[]>([]);
+  const [ offset, setOffset ] = useState(0);
+  const [ hasMore, setHasMore ] = useState(true);
+  const [ currentPage, setCurrentPage ] = useState(0)
+  const [ hidePagination, setHidePagination ] = useState(false)
+
+  const getNextPage = async (actualOffset: number = offset) => {
+    const isFirstPage = actualOffset === 0;
+    const data = blogsData.slice(actualOffset, INFINITE_SCROLL_PAGE_SIZE + actualOffset);
+
+    if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
+
+    setItems(isFirstPage ? data : items.concat(data));
+    setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
+    setCurrentPage(currentPage + 1)
+    setHidePagination(true)
+  };
+
+  useEffect(() => {
+    getNextPage()
+  }, [])
+
+  const totalCount = items && items.length;
+
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <HeadMeta title='All blogs' desc='Subsocial blogs' />
-      <ListData
-        title={`All blogs (${totalCount})`}
-        dataSource={blogsData}
-        renderItem={(item, index) =>
-          <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
-        noDataDesc='There are no blogs yet'
-        noDataExt={<Button href='/blogs/new'>Create blog</Button>}
-      />
+      <InfiniteScroll
+        dataLength={totalCount}
+        next={getNextPage}
+        hasMore={hasMore}
+        loader={<Loader active inline='centered' />}
+      >
+        {items && items.length > 0
+          ? items.map((item, index) => <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />)
+          : <Button href='/blogs/new'>Create blog</Button>}
+        {!hidePagination &&
+          <Pagination current={currentPage} pageSize={INFINITE_SCROLL_PAGE_SIZE} total={blogsData.length} />}
+      </InfiniteScroll>
     </div>
   );
 };
