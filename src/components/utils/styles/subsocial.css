@@ -91,6 +91,8 @@ body,
 }
 
 .DfEntirePost {
+  padding: 0 $space_tiny;
+
   .DfVoter {
     margin-left: -1rem;
   }
@@ -225,8 +227,16 @@ body,
 
 .DfCommentContent {
   .metadata {
-    margin-left: 0;
+    margin-left: 0 !important;
     font-size: $font_normal;
+  }
+  .text {
+    display: inline-block;
+    margin: $space_small 0 !important;
+    padding: $space_tiny $space_normal;
+    border-radius: 15px;
+    background-color: #fff;
+    box-shadow: 0 0 5px 2px #eeecec;
   }
 }
 
@@ -322,16 +332,6 @@ form.ui.form.DfForm.EditEntityForm {
 
   .ui.comments {
     max-width: 100%;
-
-    .comment {
-      .metadata {
-        color: $color_muted;
-        margin-left: 0;
-      }
-      .text {
-        margin: 0;
-      }
-    }
   }
 }
 
@@ -925,14 +925,6 @@ hr {
       color: $color_font_normal;
     }
   }
-
-  .CodeMirror:focus {
-    border-color: #40a9ff;
-    border-right-width: 1px!important;
-    outline: 0;
-    -webkit-box-shadow: 0 0 0 2px rgba(24,144,255,.2);
-    box-shadow: 0 0 0 2px rgba(24,144,255,.2);
-  }
 }
 
 
@@ -949,7 +941,6 @@ hr {
   .editor-toolbar {
     border-color: #e0b4b4;
   }
-
 }
 
 .ui.DfMenu.menu {
