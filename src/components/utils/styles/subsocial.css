@@ -642,7 +642,7 @@ hr {
 }
 
 .ui--AddressComponents {
-  width: 70%;
+  display: flex;
 
   .ui--IdentityIcon {
     margin-left: 0;
@@ -663,8 +663,6 @@ hr {
 
   .Df--AddressComponents-details {
     display: block;
-    text-align: left;
-    float: left;
     color: $color_muted !important;
     font-size: $font_small !important
   }
@@ -699,18 +697,6 @@ hr {
   .ui--Balance {
     font-size: $font_small;
     color: $color_muted;
-  }
-}
-
-.addressPreview {
-  .profileInfo {
-    .profileDesc {
-      padding-bottom: $space_tiny;
-    }
-  }
-
-  .ui.search.dropdown {
-    max-width: 25rem;
   }
 }
 
@@ -1167,11 +1153,6 @@ hr {
   }
 }
 
-.TopMenuAccountPopover {
-  left: auto !important;
-  right: $space_normal !important;
-}
-
 .NavEditorWrapper {
   display: flex;
   justify-content: space-between;
@@ -1374,4 +1355,40 @@ hr {
       text-decoration: underline;
     }
   }
+}
+
+.DfNotificationItem {
+  display: flex;
+  width: 50rem;
+  min-height: 60px;
+  margin-top: 1rem;
+  .DfNotificationContent {
+    margin: 0 $space_small;
+    width: inherit;
+  }
+}
+.DfCurrentAddress {
+  display: flex;
+
+  .Identicon__Wrapper-sc-1gm2vek-0.kTKCiE.ui--IdentityIcon {
+    position: relative;
+    top: .8rem!important;
+  }
+
+  .DfAddressInfo {
+    margin: 0 $space_tiny;
+  }
+}
+
+.DfSelectAccount {
+  padding: $space_small $space_normal;
+
+  .DfProfileInfo{
+      padding-bottom: $space_tiny;
+  }
+
+  .ui.search.dropdown {
+    max-width: 25rem;
+  }
+  
 }

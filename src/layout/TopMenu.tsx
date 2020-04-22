@@ -4,9 +4,9 @@ import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { useMyAccount, useIsLoggedIn } from '../components/utils/MyAccountContext';
-import AddressComponents from '../components/utils/AddressComponents';
 import LogInButton from '../components/utils/LogIn';
 import Link from 'next/link';
+import { AddressPopupWithOwner } from 'src/components/profiles/address-views';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
@@ -32,14 +32,10 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        {isLoggedIn
-          ? <AddressComponents
+        {isLoggedIn && address
+          ? <AddressPopupWithOwner
             className='profileName'
-            value={address}
-            isShort={true}
-            isPadded={false}
-            size={30}
-            variant='address-popup'
+            address={address}
           /> : <LogInButton/>}
       </div>
     </div>;

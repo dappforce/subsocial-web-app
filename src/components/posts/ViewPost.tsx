@@ -23,17 +23,18 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
-import { PostData, ExtendedPostData } from '@subsocial/types/dto';
+import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import AuthorPreview from '../profiles/address-views/AuthorPreview';
+import { ShareButtonPost } from '../utils/ShareButton';
 
 const log = newLogger('View post')
 
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
 type PostVariant = 'full' | 'preview' | 'name only';
@@ -57,6 +58,7 @@ type ViewPostPageProps = {
   withActions?: boolean;
   withBlogName?: boolean;
   postData: PostData;
+  owner?: ProfileData,
   postExtData?: PostData;
   commentIds?: BN[];
   statusCode?: number
@@ -78,7 +80,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withActions = true,
     withStats = true,
     withCreatedBy = true,
-    postExtData
+    postExtData,
+    owner
   } = props;
 
   const {
@@ -154,13 +157,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (isEmpty(post)) return null;
     const { blog_id, created: { account, time } } = post;
     return <>
-      <AddressComponents
-        withFollowButton={true}
-        value={account}
+      <AuthorPreview
+        address={account}
+        owner={owner}
+        withFollowButton
         isShort={true}
         isPadded={false}
         size={size}
-        extraDetails={<div>
+        details={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
           <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
             <a className='DfGreyLink'>
@@ -280,13 +284,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <div style={{ margin: '1rem 0' }}>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
-        {/* TODO render tags */}
-        {withCreatedBy && renderPostCreator(post)}
         {renderBlogPreview(post)}
       </div>
       <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
-      {/* <ShareButtonPost postId={post.id}/> */}
+      <ShareButtonPost postId={post.id}/>
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
   };
@@ -329,6 +331,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   }
 
   const blogIdFromPost = extPostData?.post.struct?.blog_id
+  const ownerId = extPostData?.post.struct?.created.account as AccountId;
+  const owner = await subsocial.findProfile(ownerId);
 
   // If blog id of this post is not equal to blog id/handle from URL,
   // then redirect to the URL with blog id of this post.
@@ -339,7 +343,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
 
   return {
     postData: extPostData?.post,
-    postExtData: extPostData?.ext
+    postExtData: extPostData?.ext,
+    owner
   };
 };
 
@@ -349,13 +354,19 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
     const [ extPostData, setExtData ] = useState<ExtendedPostData>();
+    const [ owner, setOwner ] = useState<ProfileData>()
     const { subsocial } = useSubsocialApi()
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
         const extPostData = id && await subsocial.findPostWithExt(id)
-        isSubscribe && extPostData && setExtData(extPostData);
+        if (isSubscribe && extPostData) {
+          setExtData(extPostData);
+          const ownerId = extPostData.post.struct.created.account
+          const owner = await subsocial.findProfile(ownerId)
+          setOwner(owner);
+        }
       };
 
       loadPost().catch(err => log.error('Failed to load post data:', err));
@@ -365,7 +376,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
 
     if (isEmpty(extPostData)) return <Loading/>;
 
-    return extPostData ? <Component postData={extPostData.post} postExtData={extPostData.ext} {...props}/> : null;
+    return extPostData ? <Component postData={extPostData.post} postExtData={extPostData.ext} owner={owner} {...props}/> : null;
   };
 };
 

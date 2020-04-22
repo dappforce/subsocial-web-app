@@ -9,37 +9,26 @@ import { Button$Sizes } from '@polkadot/react-components/Button/types';
 import { newLogger } from '@subsocial/utils';
 import { Loading } from './utils';
 import { useSubsocialApi } from './SubsocialApiContext';
+import { AccountId } from '@polkadot/types/interfaces';
 
 const log = newLogger('FollowAccountButton')
 
 type FollowAccountButtonProps = {
-  address: string,
+  address: string | AccountId,
   size?: Button$Sizes
-};
-
-export function FollowAccountButton (props: FollowAccountButtonProps) {
-  const { address } = props;
-  const { state: { address: myAddress } } = useMyAccount();
-
-  // Account cannot follow itself
-  if (!myAddress || address === myAddress) return null;
-
-  return <InnerFollowAccountButton {...props} myAddress={myAddress}/>;
 }
 
-type InnerFollowAccountButtonProps = FollowAccountButtonProps & {
-  myAddress: string
-};
-
-function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
-  const { myAddress, address, size = TX_BUTTON_SIZE } = props;
-
+function FollowAccountButton (props: FollowAccountButtonProps) {
+  const { address, size = TX_BUTTON_SIZE } = props;
+  const { state: { address: myAddress } } = useMyAccount()
   const accountId = new GenericAccountId(registry, address);
   const { substrate } = useSubsocialApi()
 
   const [ isFollow, setIsFollow ] = useState<boolean>();
 
   useEffect(() => {
+    if (!myAddress) return;
+
     let isSubscribe = true;
     const load = async () => {
       const _isFollow = await (substrate.isAccountFollower(myAddress, address))
@@ -48,13 +37,16 @@ function InnerFollowAccountButton (props: InnerFollowAccountButtonProps) {
     load().catch(err => log.error('Failed to check isFollow:', err));
 
     return () => { isSubscribe = false; };
-  });
+  }, [ myAddress ]);
+
+  if (!myAddress || address === myAddress) return null;
 
   const buildTxParams = () => {
     return [ accountId ];
   };
 
   return isFollow !== undefined ? <TxButton
+    className="DfFollowAccountButton"
     icon='send'
     size={size}
     isBasic={isFollow}

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { DfMd } from '../utils/DfMd';
-import { Option, GenericAccountId as AccountId } from '@polkadot/types';
+import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';
 import { ZERO } from '../utils/index';
-import { nonEmptyStr, newLogger } from '@subsocial/utils'
+import { nonEmptyStr } from '@subsocial/utils'
 import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -29,15 +29,11 @@ import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
 import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
-import { Blog } from '@subsocial/types/substrate/interfaces';
-import { BlogData, ExtendedPostData } from '@subsocial/types/dto'
+import { BlogData, ExtendedPostData, ProfileData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
-
-const log = newLogger('View blog')
-
+import Name from '../profiles/address-views/Name';
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 const SUB_SIZE = 2;
 
@@ -51,8 +47,8 @@ type Props = {
   withFollowButton?: boolean,
   id?: BN,
   blogData?: BlogData,
-  blogById?: Option<Blog>,
-  posts?: ExtendedPostData[],
+  owner?: ProfileData,
+  posts?: ExtendedPostData[]
   followers?: AccountId[],
   imageSize?: number,
   onClick?: () => void,
@@ -76,7 +72,8 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     dropdownPreview = false,
     posts = [],
     imageSize = 36,
-    onClick
+    onClick,
+    owner
   } = props;
 
   const blog = blogData.struct;
@@ -85,29 +82,15 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     id,
     score,
     created: { account, time },
-    ipfs_hash,
     posts_count,
     followers_count: followers,
     edit_history
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const { ipfs } = useSubsocialApi()
-  const [ content, setContent ] = useState(blogData.content as BlogContent);
+  const [ content ] = useState(blogData.content as BlogContent);
   const { desc, name, image, tags } = content;
   const [ followersOpen, setFollowersOpen ] = useState(false);
-
-  useEffect(() => {
-    if (!ipfs_hash) return;
-    let isSubscribe = true;
-
-    ipfs.findBlog(ipfs_hash).then((json) => {
-      const content = json;
-      if (isSubscribe && content) setContent(content);
-    }).catch((err) => log.error('Failed to find blog in IPFS:', err));
-
-    return () => { isSubscribe = false; };
-  }, [ false ]);
 
   const isMyBlog = address && account && address === account.toString();
   const hasImage = image && nonEmptyStr(image);
@@ -239,7 +222,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       title={postsSectionTitle()}
       dataSource={posts}
       renderItem={(item, index) =>
-        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>}
+        <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext} owner={item.owner}/>}
       noDataDesc='No posts yet'
       noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
     />;
@@ -259,13 +242,11 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       <div className='DfCreator-owner'>
         <Icon type='user' />
         {'Owned by '}
-        <AddressComponents
+        <Name
           className='DfGreyLink'
-          value={account}
+          address={account}
+          owner={owner}
           isShort={true}
-          isPadded={false}
-          size={30}
-          variant='username'
         />
       </div>
     </MutedDiv>
@@ -312,11 +293,16 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
+  const ownerId = blogData?.struct.created.account as AccountId;
+  const owner = await subsocial.findProfile(ownerId);
+
   const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
-  const posts = await subsocial.findPostsWithExt(postIds.reverse());
+  const posts = await subsocial.findPostsWithDetails(postIds.reverse());
+
   return {
     blogData,
-    posts
+    posts,
+    owner
   };
 };
 
@@ -330,16 +316,22 @@ const withLoadedData = (Component: React.ComponentType<Props>) => {
 
     const { subsocial } = useSubsocialApi()
     const [ blogData, setBlogData ] = useState<BlogData>()
+    const [ owner, setOwner ] = useState<ProfileData>()
 
     useEffect(() => {
       const loadData = async () => {
         const blogData = await subsocial.findBlog(id)
-        blogData && setBlogData(blogData)
+        if (blogData) {
+          setBlogData(blogData)
+          const ownerId = blogData.struct.created.account
+          const owner = await subsocial.findProfile(ownerId)
+          setOwner(owner);
+        }
       }
       loadData()
     }, [ false ])
 
-    return blogData?.content ? <Component blogData={blogData} {...props}/> : <Loading />;
+    return blogData?.content ? <Component blogData={blogData} owner={owner} {...props}/> : <Loading />;
   };
 };
 

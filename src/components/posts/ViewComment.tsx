@@ -21,17 +21,15 @@ import { Pluralize, pluralize } from '../utils/Plularize';
 import { Loading, formatUnixDate } from '../utils/utils';
 import { Icon, Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
-import dynamic from 'next/dynamic';
 import BN from 'bn.js'
 import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
 import { PostContent, CommentContent } from '@subsocial/types/offchain';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
+import { AuthorPreviewWithOwner } from '../profiles/address-views';
 
 const log = newLogger('View comment')
-
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 
 type Props = ApiProps & {
   postId: BN;
@@ -235,12 +233,12 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
       <SuiComment>
         <div className='DfCommentContent'>
           <SuiComment.Metadata>
-            <AddressComponents
-              value={account}
+            <AuthorPreviewWithOwner
+              address={account}
               isShort={true}
               isPadded={false}
               size={32}
-              extraDetails={
+              details={
                 <Link href={`/comment?postId=${struct.post_id.toString()}&commentId=${id.toString()}`}>
                   <a className='DfGreyLink'>
                     {`${moment(formatUnixDate(time)).fromNow()} · ${pluralize(score, 'Point')}`}
