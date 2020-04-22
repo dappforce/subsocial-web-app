@@ -1077,11 +1077,6 @@ hr {
     padding: $space_tiny;
     padding-left: $space_normal;
   }
-
-  .DfNoFollowed {
-    display: flex;
-    justify-content: center;
-  }
 }
 
 .DfSideMenu--FollowedBlogs.collapsed {

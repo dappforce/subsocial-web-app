@@ -11,7 +11,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { nonEmptyArr } from '@subsocial/utils';
+import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -49,37 +49,42 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProp
   };
 };
 
-type Props = {
-  followedBlogsData: BlogData[]
-};
-
-export const RenderFollowedList = (props: Props) => {
-  const { followedBlogsData } = props;
-  const totalCount = followedBlogsData !== undefined ? followedBlogsData && followedBlogsData.length : 0;
+const BlogLink = (props: { item: BlogData }) => {
+  const { item } = props;
   const router = useRouter();
   const { pathname, query } = router;
   const currentBlog = pathname.includes('blogs') ? new BN(query.blogId as string) : undefined;
   const { toggle } = useSidebarCollapsed();
 
-  return <>{totalCount > 0
-    ? followedBlogsData.map((item) => !item.struct ? null :
-      <Link key={item.struct.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.struct.id}`}>
-        <a className='DfMenuItem'>
-          <div className={currentBlog && item.struct && currentBlog.eq(item.struct.id) ? 'DfSelectedBlog' : ''} >
-            <ViewBlogPage
-              key={item.struct.id.toString()}
-              blogData={item}
-              miniPreview
-              imageSize={28}
-              onClick={() => isMobile && toggle()}
-            />
-          </div>
-        </a>
-      </Link>)
-    : <div className='DfNoFollowed'>
-      <Button type='primary' size='small' href='/blogs/all'>Show all</Button>
-    </div>}
-  </>;
-};
+  return <Link key={item.struct.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.struct.id}`}>
+    <a className='DfMenuItem'>
+      <div className={currentBlog && item.struct && currentBlog.eq(item.struct.id) ? 'DfSelectedBlog' : ''} >
+        <ViewBlogPage
+          key={item.struct.id.toString()}
+          blogData={item}
+          miniPreview
+          imageSize={28}
+          onClick={() => isMobile && toggle()}
+        />
+      </div>
+    </a>
+  </Link>
+}
+
+export const RenderFollowedList = (props: { followedBlogsData: BlogData[] }) => {
+  const { followedBlogsData } = props;
+
+  if (isEmptyArray(followedBlogsData)) {
+    return (
+      <div className='text-center m-2'>
+        <Button type='primary' href='/blogs/all'>Explore Blogs</Button>
+      </div>
+    )
+  }
+
+  return <>{followedBlogsData.map((item) =>
+    <BlogLink key={item.struct.id.toString()} item={item} />
+  )}</>
+}
 
 export default RenderFollowedList;
