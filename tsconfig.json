@@ -1,0 +1,33 @@
+{
+  "extends": "./node_modules/@polkadot/dev/config/tsconfig",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "typeRoots": [
+    "./node_modules/@polkadot/ts",
+    "./node_modules/@types"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.stories.tsx",
+    "**/*.stories.ts"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx", "src/pages/_app.js"
+  ]
+}

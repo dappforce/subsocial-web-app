@@ -1,0 +1,18 @@
+# docker-compose.yml
+version: "3"
+services:
+  web-ui:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    image: dappforce/subsocial-ui:latest
+    container_name: subsocial-web-ui
+    restart: on-failure
+    network_mode: "host"
+
+  nginx:
+    build: ./nginx
+    container_name: subsocial-proxy
+    image: dappforce/subsocial-proxy:latest
+    restart: on-failure
+    network_mode: "host"
