@@ -1,0 +1,39 @@
+._mt15 {
+  margin-top: 15px;
+}
+
+._mt30 {
+  margin-top: 30px;
+}
+
+._mt5 {
+  margin-top: 5px;
+}
+
+._ml5 {
+  margin-left: 5px;
+}
+
+._mr5 {
+  margin-right: 5px;
+}
+
+._mb15 {
+  margin-bottom: 15px;
+}
+
+._ml15 {
+  margin-left: 15px;
+}
+
+._mb30 {
+  margin-bottom: 30px;
+}
+
+._mb5 {
+  margin-bottom: 5px;
+}
+
+.ant-form-item {
+  margin-bottom: 0px;
+}
