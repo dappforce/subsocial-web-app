@@ -17,7 +17,7 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
-
+import SocialLink from './SocialLink'
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
@@ -35,7 +35,7 @@ export type Props = {
   withLink?: boolean,
   id: AccountId,
   profile?: Profile,
-  ProfileContent?: ProfileContent,
+  ProfileContent?: ProfileContent | any,
   socialAccount?: SocialAccount,
   followers?: AccountId[],
   size?: number
@@ -76,24 +76,13 @@ const Component: NextPage<Props> = (props: Props) => {
     email,
     personalSite,
     about,
-    facebook,
-    twitter,
-    linkedIn,
-    medium,
-    github,
-    instagram
+    socialLinks
   } = ProfileContent;
 
   // TODO fix copypasta of social links. Implement via array.
   const hasEmail = email && nonEmptyStr(email);
   const hasPersonalSite = personalSite && nonEmptyStr(personalSite);
   const hasAvatar = avatar && nonEmptyStr(avatar);
-  const hasFacebookLink = facebook && nonEmptyStr(facebook);
-  const hasTwitterLink = twitter && nonEmptyStr(twitter);
-  const hasLinkedInLink = linkedIn && nonEmptyStr(linkedIn);
-  const hasMediumLink = medium && nonEmptyStr(medium);
-  const hasGitHubLink = github && nonEmptyStr(github);
-  const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
   const renderCreateProfileButton = profileIsNone && address === myAddress &&
     <Link href={`/profile/new`}>
@@ -192,40 +181,10 @@ const Component: NextPage<Props> = (props: Props) => {
                     <Icon type='global' />
                   </a>
                 }
-                {hasFacebookLink &&
-                  <a target='_blank' href={facebook}>
-                    <Icon type='facebook' />
-                  </a>
+                {(socialLinks && socialLinks.length > 0) &&
+                    socialLinks.map((x: string, i: number) => <SocialLink link={x} key={i} />)
                 }
-                {hasTwitterLink &&
-                  <a target='_blank' href={twitter}>
-                    <Icon type='twitter' />
-                  </a>}
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasLinkedInLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='linkedin' />
-                  </a>
-                }
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasGitHubLink &&
-                  <a target='_blank' href={github}>
-                    <Icon type='github' />
-                  </a>
-                }
-                {hasInstagramLink &&
-                  <a target='_blank' href={instagram}>
-                    <Icon type='instagram' />
-                  </a>
-                }
+                
               </div>
             </div>
             {renderDescription()}

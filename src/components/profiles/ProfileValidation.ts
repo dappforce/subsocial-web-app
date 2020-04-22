@@ -32,11 +32,5 @@ export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape(
     .email('Enter a correct email address'),
 
   avatar: urlValidation('Avatar'),
-  personalSite: urlValidation('Personal site'),
-  facebook: urlValidation('Facebook'),
-  twitter: urlValidation('Twitter'),
-  linkedIn: urlValidation('LinkedIn'),
-  medium: urlValidation('Medium'),
-  github: urlValidation('GitHub'),
-  instagram: urlValidation('Instagram')
+  personalSite: urlValidation('Personal site')
 })

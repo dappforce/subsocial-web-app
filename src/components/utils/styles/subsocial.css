@@ -1375,3 +1375,7 @@ hr {
     }
   }
 }
+
+.DraggableSocialInput {
+  padding: 10px;
+}

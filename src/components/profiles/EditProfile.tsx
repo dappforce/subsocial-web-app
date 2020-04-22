@@ -23,6 +23,7 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { ProfileUpdate } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -37,6 +38,7 @@ export type OuterProps = MyAccountProps & ValidationProps & {
 
 type FormValues = ProfileContent & {
   username: string;
+  socialLinks: string[]
 };
 
 type FormProps = OuterProps & FormikProps<FormValues>;
@@ -66,12 +68,7 @@ const InnerForm = (props: FormProps) => {
     email,
     personalSite,
     about,
-    facebook,
-    twitter,
-    linkedIn,
-    medium,
-    github,
-    instagram
+    socialLinks
   } = values;
 
   const goToView = () => {
@@ -90,14 +87,9 @@ const InnerForm = (props: FormProps) => {
         email,
         personalSite,
         about,
-        facebook,
-        twitter,
-        linkedIn,
-        medium,
-        github,
-        instagram
+        socialLinks
       };
-      ipfs.saveContent(json).then(cid => {
+      ipfs.saveContent(json as any).then(cid => {
         setIpfsCid(cid);
         sendTx();
       }).catch(err => new Error(err));
@@ -130,8 +122,37 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
+  const handleAddSocNetwork = () => {
+    const maxIndex = socialLinks.length
+
+    setFieldValue(`socialLinks.${maxIndex}`, '')
+  }
+
+  const reorder = (list: any[], startIndex: number, endIndex: number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+  
+    return result;
+  };
+
+  const onDragEnd = (result: any) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const newItems = reorder(
+      socialLinks,
+      result.source.index,
+      result.destination.index
+    );
+
+    setFieldValue('socialLinks', newItems)
+  }
+
   const title = profile ? `Edit profile` : `New profile`;
-  const shouldBeValidUrlText = `Should be a valid URL.`;
+  // const shouldBeValidUrlText = `Should be a valid URL.`;
 
   return (<>
     <HeadMeta title={title}/>
@@ -174,47 +195,42 @@ const InnerForm = (props: FormProps) => {
           {...props}
         />
 
-        <LabelledText
-          name='facebook'
-          label='Facebook profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {(socialLinks && socialLinks.length > 0) &&
+                  socialLinks.map((x, i) =>  (
+                  <Draggable key={i} draggableId={i.toString()} index={i}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className='DraggableSocialInput'
+                      >
+                        <Field 
+                          type='text'
+                          name={`socialLinks.${i}`}
+                          value={x}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      
+        <div className='AddSocialInput' onClick={handleAddSocNetwork}>Add Social Network</div>
+        
 
-        <LabelledText
-          name='twitter'
-          label='Twitter profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='linkedIn'
-          label='LinkedIn profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='medium'
-          label='Medium profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='github'
-          label='GitHub profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='instagram'
-          label='Instagram profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
+       
 
         <LabelledField name='about' label='About' {...props}>
           <Field component={SimpleMDEReact} name='about' value={about} onChange={(data: string) => setFieldValue('about', data)} className={`DfMdEditor ${errors['about'] && 'error'}`} />
@@ -256,7 +272,7 @@ const InnerForm = (props: FormProps) => {
 const EditForm = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
-  mapPropsToValues: (props): FormValues => {
+  mapPropsToValues: (props: any): FormValues => {
     const { profile, ProfileContent } = props;
     if (profile && ProfileContent) {
       const username = profile.username.toString();
@@ -272,13 +288,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
         about: '',
         email: '',
         personalSite: '',
-        facebook: '',
-        twitter: '',
-        linkedIn: '',
-        medium: '',
-        github: '',
-        instagram: ''
-      };
+        socialLinks: []
+      } as any;
     }
   },
 
