@@ -10,7 +10,7 @@ export const NameDetails: React.FunctionComponent<CommonAddressProps> = ({ owner
   return (
     <Link href='/profile/[address]' as={`/profile/${address}`}>
       <a className='ui--AddressComponents-address'>
-        <b className='AddressComponents-fullname'>{content?.fullname || shortAddress}</b>
+        <span className='AddressComponents-fullname'>{content?.fullname || shortAddress}</span>
         <div className='DfPopup-username'>{profile?.username && `${profile?.username} - `}{shortAddress}</div>
       </a>
     </Link>

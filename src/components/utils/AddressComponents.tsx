@@ -297,7 +297,7 @@ function AddressComponents (props: Props) {
     return (
       <Link href='/profile/[address]' as={`/profile/${address}`}>
         <a className='ui--AddressComponents-address'>
-          <b className='AddressComponents-fullname'>{fullname || shortAddress}</b>
+          <span className='AddressComponents-fullname'>{fullname || shortAddress}</span>
           <div className='DfPopup-username'>{username && `${username} - `}{shortAddress}</div>
         </a>
       </Link>

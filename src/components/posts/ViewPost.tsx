@@ -146,9 +146,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!title || !id) return null;
     return withLink
       ? <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
-        <a className='header DfPostTitle--preview'>
-          {title}
-        </a>
+        <a className='header DfPostTitle--preview'>{title}</a>
       </Link>
       : <div className='header DfPostTitle--preview'>{title}</div>;
   };
@@ -184,20 +182,25 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     return <ViewBlog id={blog_id} miniPreview withFollowButton />
   }
 
-  const renderContent = (post: Post, content: PostExtContent | undefined) => {
+  const renderPostImage = (content?: PostExtContent) => {
+    if (!content) return null;
+
+    const { image } = content;
+
+    return nonEmptyStr(image) &&
+      <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
+  }
+
+  const renderContent = (post: Post, content?: PostExtContent) => {
     if (!post || !content) return null;
 
-    const { title, summary, image } = content;
-    const hasImage = nonEmptyStr(image);
+    const { title, summary } = content;
 
     return <div className='DfContent'>
-      <div className='DfPostText'>
-        {renderNameOnly(title || summary, post.id)}
-        <div className='DfSummary'>
-          {summary}
-        </div>
+      {renderNameOnly(title || summary, post.id)}
+      <div className='DfSummary'>
+        {summary}
       </div>
-      {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
 
@@ -230,13 +233,20 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <Segment className={`DfPostPreview`}>
         <div className='DfInfo'>
           <div className='DfRow'>
-            {renderPostCreator(post)}
-            <RenderDropDownMenu account={created.account}/>
+            <div>
+              <div className='DfRow'>
+                {renderPostCreator(post)}
+                <RenderDropDownMenu account={created.account}/>
+              </div>
+              {renderContent(post, content)}
+              <ViewTags tags={content?.tags} />
+              {/* {withStats && <StatsPanel id={post.id}/>} */}
+            </div>
+            <div>
+              {renderPostImage(content)}
+            </div>
           </div>
-          {renderContent(post, content)}
         </div>
-        <ViewTags tags={content?.tags} />
-        {withStats && <StatsPanel id={post.id}/>}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
@@ -275,8 +285,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { title, body, image, canonical, tags } = content;
     return <Section className='DfContentPage'>
       <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
-      <div className='header DfPostTitle' style={{ display: 'flex' }}>
-        <div className='DfPostName'>{title}</div>
+      <div className='DfRow'>
+        <h1 className='DfPostName'>{title}</h1>
         <RenderDropDownMenu account={created.account}/>
       </div>
       {<StatsPanel id={post.id}/>}

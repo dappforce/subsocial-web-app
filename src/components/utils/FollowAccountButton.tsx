@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import { GenericAccountId } from '@polkadot/types';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
@@ -47,7 +46,6 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
 
   return isFollow !== undefined ? <TxButton
     className="DfFollowAccountButton"
-    icon='send'
     size={size}
     isBasic={isFollow}
     label={isFollow

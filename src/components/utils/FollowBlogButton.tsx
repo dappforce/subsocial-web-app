@@ -29,7 +29,7 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
 }
 
 export function InnerFollowBlogButton (props: InnerFollowBlogButtonProps) {
-  const { blogId, size, myAddress } = props;
+  const { blogId, size = 'small', myAddress } = props;
   const { substrate } = useSubsocialApi()
   const { reloadFollowed } = useSidebarCollapsed();
   const [ isFollow, setIsFollow ] = useState<boolean>();
@@ -56,7 +56,7 @@ export function InnerFollowBlogButton (props: InnerFollowBlogButtonProps) {
   };
 
   return isFollow !== undefined ? <TxButton
-    size = {size}
+    size={size}
     isBasic={isFollow}
     label={isFollow
       ? 'Unfollow'
@@ -65,7 +65,8 @@ export function InnerFollowBlogButton (props: InnerFollowBlogButtonProps) {
     params={buildTxParams()}
     tx={isFollow
       ? `social.unfollowBlog`
-      : `social.followBlog`}
+      : `social.followBlog`
+    }
     onSuccess={TxSuccess}
   /> : <Loading/>;
 }

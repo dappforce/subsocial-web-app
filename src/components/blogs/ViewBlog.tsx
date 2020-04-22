@@ -27,7 +27,6 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
-import '../utils/styles/wide-content.css'
 import { BlogContent } from '@subsocial/types/offchain';
 import { BlogData, ExtendedPostData, ProfileData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
