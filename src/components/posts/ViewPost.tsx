@@ -29,7 +29,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
-import { ShareButtonPost } from '../utils/ShareButton';
+// import { ShareButtonPost } from '../utils/ShareButton';
 
 const log = newLogger('View post')
 
@@ -174,13 +174,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderBlogPreview = (post: Post) => {
-    if (isEmpty(post)) return null
+  // const renderBlogPreview = (post: Post) => {
+  //   if (isEmpty(post)) return null
 
-    const { blog_id } = post
+  //   const { blog_id } = post
 
-    return <ViewBlog id={blog_id} miniPreview withFollowButton />
-  }
+  //   return <ViewBlog id={blog_id} miniPreview withFollowButton />
+  // }
 
   const renderPostImage = (content?: PostExtContent) => {
     if (!content) return null;
@@ -283,23 +283,25 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderDetails = (content?: PostExtContent) => {
     if (!content) return null;
     const { title, body, image, canonical, tags } = content;
-    return <Section className='DfContentPage'>
+    return <Section className='DfContentPage DfEntirePost'>
       <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
       <div className='DfRow'>
         <h1 className='DfPostName'>{title}</h1>
         <RenderDropDownMenu account={created.account}/>
       </div>
-      {<StatsPanel id={post.id}/>}
-      {withCreatedBy && renderPostCreator(post)}
-      <div style={{ margin: '1rem 0' }}>
+      <div className='DfRow'>
+        {withCreatedBy && renderPostCreator(post)}
+        {<StatsPanel id={post.id}/>}
+      </div>
+      <div className='DfPostContent'>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
-        {renderBlogPreview(post)}
+        {/* {renderBlogPreview(post)} */}
       </div>
       <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
-      <ShareButtonPost postId={post.id}/>
-      <CommentsByPost postId={post.id} post={post} />
+      {/* <ShareButtonPost postId={post.id}/> */}
+      <div className='mt-3'><CommentsByPost postId={post.id} post={post} /></div>
     </Section>;
   };
 

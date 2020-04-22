@@ -90,6 +90,18 @@ body,
   margin-bottom: $space_small;
 }
 
+.DfEntirePost {
+  .DfVoter {
+    margin-left: -1rem;
+  }
+  .DfTags {
+    margin: $space_big 0;
+  }
+  .DfPostContent {
+    margin: $space_big 0;
+  }
+}
+
 .DfPostName {
   margin-bottom: $space_normal;
   margin-right: $space_normal;
@@ -256,12 +268,12 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .DfVoter {
-  &.vertical {
-    margin-right: $space_tiny;
+  i.icon {
+    margin: 0 .5rem !important;
   }
 
-  .ui.button:first-of-type {
-    padding-left: 0;
+  &.vertical {
+    margin-right: $space_tiny;
   }
 
   .ui.button {
@@ -269,10 +281,9 @@ form.ui.form.DfForm.EditEntityForm {
     color: $color_muted;
     min-width: initial;
     max-height: initial;
-    padding: $space_tiny $space_tiny $space_tiny $space_normal;
+    padding: $space_tiny;
 
     &.red {
-
       &:hover,
       &.active {
         color: red !important;
@@ -280,7 +291,6 @@ form.ui.form.DfForm.EditEntityForm {
     }
 
     &.green {
-
       &:hover,
       &.active {
         color: green !important;
@@ -301,27 +311,28 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .DfCommentsByPost {
-  h4 {
+  border-top: $color_light_border 1px solid;
+
+  h3 {
     font-size: $font_large;
     font-weight: 400;
     color: $color_muted;
-    border-top: $color_light_border 1px solid;
     padding-top: $space_normal;
-  }
-
-  .ui.comments .comment .metadata {
-    margin-left: 0;
-    color: $color_muted;
-  }
-
-  .ui.comments .comment .text {
-    margin: 0;
   }
 
   .ui.comments {
     max-width: 100%;
-  }
 
+    .comment {
+      .metadata {
+        color: $color_muted;
+        margin-left: 0;
+      }
+      .text {
+        margin: 0;
+      }
+    }
+  }
 }
 
 .DfCommentContent {
@@ -453,15 +464,11 @@ hr {
   margin-bottom: $space_tiny;
   font-size: $font_small;
 
-  .MutedText {
-    margin-right: $space_normal;
-  }
-
   a,
   span {
     color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small;
-    margin-right: $space_normal;
+    margin-left: $space_normal;
   }
 }
 
@@ -507,13 +514,13 @@ hr {
   width: 100%;
 }
 
+.DfRow {
+  display: flex;
+  justify-content: space-between;
+}
+
 .ui.segment.DfPostPreview {
   padding-bottom: 0;
-
-  .DfRow {
-    display: flex;
-    justify-content: space-between;
-  }
 
   .DfInfo {
     width: -webkit-fill-available;
@@ -534,21 +541,23 @@ hr {
   }
 
   .DfAction {
-    width: 32%;
+    width: 33.33%;
     display: flex;
     justify-content: center;
-
-    i:not(.DfVoter) {
-      margin-right: .35rem;
-    }
-  }
-
-  .ui.tiny.button.basic.DfAction {
+    margin: .25rem 0;
     font-weight: bold;
     font-size: $font_normal;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    background-color: rgba(255, 255, 255, 0) !important;
+
+    &:hover {
+      background-color: #f0f0f0 !important;
+      border-radius: 5px;
+    }
+
+    i:not(.DfVoter) {
+      margin-right: .35rem;
+    }
   }
 }
 
@@ -904,10 +913,25 @@ hr {
 
   .editor-toolbar {
     border-color: $color_light_border;
+    color: #c0c0c0;
 
     &.fullscreen {
       z-index: 1000;
     }
+  }
+
+  &:hover {
+    .editor-toolbar {
+      color: $color_font_normal;
+    }
+  }
+
+  .CodeMirror:focus {
+    border-color: #40a9ff;
+    border-right-width: 1px!important;
+    outline: 0;
+    -webkit-box-shadow: 0 0 0 2px rgba(24,144,255,.2);
+    box-shadow: 0 0 0 2px rgba(24,144,255,.2);
   }
 }
 
@@ -1018,6 +1042,7 @@ hr {
 
 .ui.segment {
   background-color: #fff;
+  padding: $space_large;
 }
 
 .DfDataList {
