@@ -92,7 +92,7 @@ const InnerMenu = () => {
     >
       {loaded
         ? <RenderFollowedList followedBlogsData={followedBlogsData} />
-        : <Loading />
+        : <div className='text-center m-2'><Loading /></div>
       }
     </Menu.ItemGroup>
 

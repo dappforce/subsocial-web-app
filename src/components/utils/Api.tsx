@@ -89,12 +89,16 @@ async function loadOnReady (api: ApiPromise): Promise<State> {
   TokenUnit.setAbbr(tokenSymbol);
 
   // finally load the keyring
-  keyring.loadAll({
-    genesisHash: api.genesisHash,
-    isDevelopment,
-    ss58Format,
-    type: 'ed25519'
-  }, injectedAccounts);
+  try {
+    keyring.loadAll({
+      genesisHash: api.genesisHash,
+      isDevelopment,
+      ss58Format,
+      type: 'ed25519'
+    }, injectedAccounts);
+  } catch (err) {
+    console.error('Failed to load keyring', err);
+  }
 
   const defaultSection = Object.keys(api.tx)[0];
   const defaultMethod = Object.keys(api.tx[defaultSection])[0];

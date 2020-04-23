@@ -9,7 +9,8 @@ import NotAuthorized from '../utils/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { Notification } from './Notification';
+import { Notifications } from './Notification';
+import { Loading } from '../utils/utils';
 
 export const MyNotifications = () => {
   const { state: { address: myAddress } } = useMyAccount();
@@ -17,11 +18,12 @@ export const MyNotifications = () => {
   const [ items, setItems ] = useState<Activity[]>([]);
   const [ offset, setOffset ] = useState(0);
   const [ hasNextPage, setHasNextPage ] = useState(true);
+  const [ loaded, setLoaded ] = useState(false);
 
   useEffect(() => {
     if (!myAddress) return;
-
-    getNextPage(0).catch(err => new Error(err));
+    setLoaded(false)
+    getNextPage(0).catch(err => new Error(err)).finally(() => setLoaded(true));
     clearNotifications(myAddress)
   }, [ myAddress ]);
 
@@ -35,11 +37,17 @@ export const MyNotifications = () => {
     setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
   };
 
-  const totalCount = items && items.length;
+  const totalCount = (items && items.length) || 0;
 
-  const renderItems = () =>
-    items.map((item) =>
-      <Notification key={item.id} activity={item} />)
+  const Content = () => {
+    if (!loaded) {
+      return <Loading />
+    }
+
+    return totalCount === 0
+      ? <NoData description='No notifications for you' />
+      : renderInfiniteScroll()
+  }
 
   const renderInfiniteScroll = () =>
     <InfiniteScroll
@@ -49,16 +57,13 @@ export const MyNotifications = () => {
       // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
       loader={<Loader active inline='centered' />}
     >
-      {renderItems()}
+      <Notifications activities={items} />
     </InfiniteScroll>
 
   return <>
     <HeadMeta title='My Notifications' />
     <Section title={`My Notifications (${totalCount})`}>
-      {totalCount === 0
-        ? <NoData description='No notifications for you' />
-        : renderInfiniteScroll()
-      }
+      <Content />
     </Section>
   </>
 }

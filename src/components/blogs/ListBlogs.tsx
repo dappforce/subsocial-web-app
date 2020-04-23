@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
@@ -16,11 +15,13 @@ type Props = {
 
 export const ListAllBlogs: NextPage<Props> = (props: Props) => {
   const { totalCount, blogsData } = props;
+  const title = `Explore Blogs (${totalCount})`
+
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta title='All blogs' desc='Subsocial blogs' />
+      <HeadMeta title={title} desc='Find interesting blogs on Subsocial and follow them.' />
       <ListData
-        title={`All blogs (${totalCount})`}
+        title={title}
         dataSource={blogsData}
         renderItem={(item, index) =>
           <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
@@ -63,8 +64,8 @@ type MyBlogProps = {
 export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
   const { blogsData } = props;
   const totalCount = blogsData.length;
-  return (<>
-    <HeadMeta title='My blogs' desc='Subsocial blogs' />
+  return <>
+    <HeadMeta title='My blogs' desc='The blogs I manage on Subsocial' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`My Blogs (${totalCount})`}
@@ -75,7 +76,6 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
       />
     </div>
   </>
-  );
 };
 
 ListMyBlogs.getInitialProps = async (props): Promise<MyBlogProps> => {

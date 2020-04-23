@@ -23,17 +23,18 @@ import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
-import { PostData, ExtendedPostData } from '@subsocial/types/dto';
+import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import AuthorPreview from '../profiles/address-views/AuthorPreview';
+// import { ShareButtonPost } from '../utils/ShareButton';
 
 const log = newLogger('View post')
 
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
 type PostVariant = 'full' | 'preview' | 'name only';
@@ -57,6 +58,7 @@ type ViewPostPageProps = {
   withActions?: boolean;
   withBlogName?: boolean;
   postData: PostData;
+  owner?: ProfileData,
   postExtData?: PostData;
   commentIds?: BN[];
   statusCode?: number;
@@ -82,7 +84,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withCreatedBy = true,
     postExtData,
     nextPostId,
-    prevPostId
+    prevPostId,
+    owner
   } = props;
 
   const {
@@ -147,9 +150,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!title || !id) return null;
     return withLink
       ? <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
-        <a className='header DfPostTitle--preview'>
-          {title}
-        </a>
+        <a className='header DfPostTitle--preview'>{title}</a>
       </Link>
       : <div className='header DfPostTitle--preview'>{title}</div>;
   };
@@ -158,13 +159,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (isEmpty(post)) return null;
     const { blog_id, created: { account, time } } = post;
     return <>
-      <AddressComponents
-        withFollowButton={true}
-        value={account}
+      <AuthorPreview
+        address={account}
+        owner={owner}
+        withFollowButton
         isShort={true}
         isPadded={false}
         size={size}
-        extraDetails={<div>
+        details={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
           <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
             <a className='DfGreyLink'>
@@ -176,28 +178,33 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  const renderBlogPreview = (post: Post) => {
-    if (isEmpty(post)) return null
+  // const renderBlogPreview = (post: Post) => {
+  //   if (isEmpty(post)) return null
 
-    const { blog_id } = post
+  //   const { blog_id } = post
 
-    return <ViewBlog id={blog_id} miniPreview withFollowButton />
+  //   return <ViewBlog id={blog_id} miniPreview withFollowButton />
+  // }
+
+  const renderPostImage = (content?: PostExtContent) => {
+    if (!content) return null;
+
+    const { image } = content;
+
+    return nonEmptyStr(image) &&
+      <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
   }
 
-  const renderContent = (post: Post, content: PostExtContent | undefined) => {
+  const renderContent = (post: Post, content?: PostExtContent) => {
     if (!post || !content) return null;
 
-    const { title, summary, image } = content;
-    const hasImage = nonEmptyStr(image);
+    const { title, summary } = content;
 
     return <div className='DfContent'>
-      <div className='DfPostText'>
-        {renderNameOnly(title || summary, post.id)}
-        <div className='DfSummary'>
-          {summary}
-        </div>
+      {renderNameOnly(title || summary, post.id)}
+      <div className='DfSummary'>
+        {summary}
       </div>
-      {hasImage && <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />}
     </div>;
   };
 
@@ -230,13 +237,20 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <Segment className={`DfPostPreview`}>
         <div className='DfInfo'>
           <div className='DfRow'>
-            {renderPostCreator(post)}
-            <RenderDropDownMenu account={created.account}/>
+            <div>
+              <div className='DfRow'>
+                {renderPostCreator(post)}
+                <RenderDropDownMenu account={created.account}/>
+              </div>
+              {renderContent(post, content)}
+              <ViewTags tags={content?.tags} />
+              {/* {withStats && <StatsPanel id={post.id}/>} */}
+            </div>
+            <div>
+              {renderPostImage(content)}
+            </div>
           </div>
-          {renderContent(post, content)}
         </div>
-        <ViewTags tags={content?.tags} />
-        {withStats && <StatsPanel id={post.id}/>}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
@@ -273,20 +287,20 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderDetails = (content?: PostExtContent) => {
     if (!content) return null;
     const { title, body, image, canonical, tags } = content;
-    return <Section className='DfContentPage'>
+    return <Section className='DfContentPage DfEntirePost'>
       <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
-      <div className='header DfPostTitle' style={{ display: 'flex' }}>
-        <div className='DfPostName'>{title}</div>
+      <div className='DfRow'>
+        <h1 className='DfPostName'>{title}</h1>
         <RenderDropDownMenu account={created.account}/>
       </div>
-      {<StatsPanel id={post.id}/>}
-      {withCreatedBy && renderPostCreator(post)}
-      <div style={{ margin: '1rem 0' }}>
+      <div className='DfRow'>
+        {withCreatedBy && renderPostCreator(post)}
+        {<StatsPanel id={post.id}/>}
+      </div>
+      <div className='DfPostContent'>
         {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
         <DfMd source={body} />
-        {/* TODO render tags */}
-        {withCreatedBy && renderPostCreator(post)}
-        {renderBlogPreview(post)}
+        {/* {renderBlogPreview(post)} */}
       </div>
       <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
@@ -297,7 +311,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         {nextPostId &&
           <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${nextPostId}`}><a>Next <Icon type="arrow-right" /></a></Link> }
       </div>
-      <CommentsByPost postId={post.id} post={post} />
+
+      <div className='mt-3'><CommentsByPost postId={post.id} post={post} /></div>
+
     </Section>;
   };
 
@@ -340,6 +356,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   }
 
   const blogIdFromPost = extPostData?.post.struct?.blog_id
+  const ownerId = extPostData?.post.struct?.created.account as AccountId;
+  const owner = await subsocial.findProfile(ownerId);
 
   // If blog id of this post is not equal to blog id/handle from URL,
   // then redirect to the URL with blog id of this post.
@@ -360,7 +378,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     postData: extPostData?.post,
     postExtData: extPostData?.ext,
     nextPostId,
-    prevPostId
+    prevPostId,
+    owner
   };
 };
 
@@ -370,13 +389,19 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
     const [ extPostData, setExtData ] = useState<ExtendedPostData>();
+    const [ owner, setOwner ] = useState<ProfileData>()
     const { subsocial } = useSubsocialApi()
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
         const extPostData = id && await subsocial.findPostWithExt(id)
-        isSubscribe && extPostData && setExtData(extPostData);
+        if (isSubscribe && extPostData) {
+          setExtData(extPostData);
+          const ownerId = extPostData.post.struct.created.account
+          const owner = await subsocial.findProfile(ownerId)
+          setOwner(owner);
+        }
       };
 
       loadPost().catch(err => log.error('Failed to load post data:', err));
@@ -386,7 +411,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
 
     if (isEmpty(extPostData)) return <Loading/>;
 
-    return extPostData ? <Component postData={extPostData.post} postExtData={extPostData.ext} {...props}/> : null;
+    return extPostData ? <Component postData={extPostData.post} postExtData={extPostData.ext} owner={owner} {...props}/> : null;
   };
 };
 

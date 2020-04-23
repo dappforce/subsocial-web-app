@@ -15,14 +15,23 @@ type FollowBlogButtonProps = {
   size?: Button$Sizes
 };
 
-export function FollowBlogButton (props: FollowBlogButtonProps) {
-  const { blogId, size } = props;
-  const { state: { address: myAddress } } = useMyAccount();
-  const { substrate } = useSubsocialApi()
-  const { reloadFollowed } = useSidebarCollapsed();
+type InnerFollowBlogButtonProps = FollowBlogButtonProps & {
+  myAddress: string
+};
 
+export function FollowBlogButton (props: FollowBlogButtonProps) {
+  const { state: { address: myAddress } } = useMyAccount();
+
+  // Account cannot follow itself
   if (!myAddress) return null;
 
+  return <InnerFollowBlogButton {...props} myAddress={myAddress}/>;
+}
+
+export function InnerFollowBlogButton (props: InnerFollowBlogButtonProps) {
+  const { blogId, size = 'small', myAddress } = props;
+  const { substrate } = useSubsocialApi()
+  const { reloadFollowed } = useSidebarCollapsed();
   const [ isFollow, setIsFollow ] = useState<boolean>();
 
   const TxSuccess = () => {
@@ -40,14 +49,14 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     load().catch(err => log.error(`Failed to check if the current account is following a blog with id ${blogId.toString()}. Error:`, err));
 
     return () => { isSubscribe = false; };
-  });
+  }, [ myAddress ]);
 
   const buildTxParams = () => {
     return [ blogId ];
   };
 
   return isFollow !== undefined ? <TxButton
-    size = {size}
+    size={size}
     isBasic={isFollow}
     label={isFollow
       ? 'Unfollow'
@@ -56,7 +65,8 @@ export function FollowBlogButton (props: FollowBlogButtonProps) {
     params={buildTxParams()}
     tx={isFollow
       ? `social.unfollowBlog`
-      : `social.followBlog`}
+      : `social.followBlog`
+    }
     onSuccess={TxSuccess}
   /> : <Loading/>;
 }
