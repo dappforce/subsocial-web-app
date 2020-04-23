@@ -33,7 +33,6 @@ import { Blog } from '@subsocial/types/substrate/interfaces';
 import { BlogData, ExtendedPostData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
-import SocialLink from '../utils/SocialLink'
 
 const log = newLogger('View blog')
 
@@ -95,7 +94,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const { state: { address } } = useMyAccount();
   const { ipfs } = useSubsocialApi()
   const [ content, setContent ] = useState(blogData.content as BlogContent);
-  const { desc, name, image, tags, socialLinks } = content as any;
+  const { desc, name, image, tags } = content as any;
   const [ followersOpen, setFollowersOpen ] = useState(false);
 
   useEffect(() => {
@@ -290,13 +289,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </Section>
     <div>
       <SpaceNav
-        {...content}
+        {...content as any}
         blogId={new BN(id)}
         creator={account}
       />
-      {(socialLinks && socialLinks.length > 0) &&
-        socialLinks.map((x: string, i: number) => <SocialLink link={x} key={i} />)
-      }
     </div>
     
     

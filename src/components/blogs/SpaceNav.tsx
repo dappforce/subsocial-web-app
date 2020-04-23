@@ -9,6 +9,7 @@ import BN from 'bn.js'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { NavTab } from '@subsocial/types/offchain'
 import { IdentityIcon } from '@polkadot/react-components'
+import SocialLink from '../utils/SocialLink'
 
 export interface SpaceNavProps {
   blogId: BN,
@@ -24,6 +25,7 @@ export interface SpaceNavProps {
     teamMembers?: SpaceContent[]
     projects?: SpaceContent[]
   }
+  socialLinks: string[]
 }
 
 export const SpaceNav = (props: SpaceNavProps) => {
@@ -35,6 +37,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
     image,
     imageSize = 150,
     navTabs = [],
+    socialLinks
   } = props;
 
   const renderMenuItem = (nt: NavTab) => {
@@ -69,6 +72,9 @@ export const SpaceNav = (props: SpaceNavProps) => {
       <div className="SNheadTitle">{name}</div>
       <FollowBlogButton blogId={blogId} />
       {nonEmptyStr(desc) && <div className="SNheadDescription">{desc}</div>}
+      {(socialLinks && socialLinks.length > 0) &&
+        socialLinks.map((x: string, i: number) => <SocialLink className='SpaceNavSocialLink' link={x} key={i} />)
+      }
     </div>
 
     <div className='SpaceNavSettings'>

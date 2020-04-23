@@ -22,7 +22,7 @@ import { BlogContent } from '@subsocial/types/offchain';
 import { BlogUpdate, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-
+import { Button as AntdButton } from 'antd'
 import EditableTagGroup from '../utils/EditableTagGroup';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './BlogValidation';
@@ -172,6 +172,7 @@ const InnerForm = (props: FormProps) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
+                <label className='SocialLinksLabel'>Social links:</label>
                 {(socialLinks && socialLinks.length > 0) &&
                   socialLinks.map((x, i) =>  (
                   <Draggable key={i} draggableId={i.toString()} index={i}>
@@ -186,6 +187,7 @@ const InnerForm = (props: FormProps) => {
                           type='text'
                           name={`socialLinks.${i}`}
                           value={x}
+                          placeholder='Paste link here'
                         />
                       </div>
                     )}
@@ -196,8 +198,8 @@ const InnerForm = (props: FormProps) => {
             )}
           </Droppable>
         </DragDropContext>
-      
-        <div className='AddSocialInput' onClick={handleAddSocNetwork}>Add Social Network</div>
+
+        <AntdButton size='small' onClick={handleAddSocNetwork} className='AddSocialInput'>Add Social Network</AntdButton>
 
         <EditableTagGroup name='tags' label='Tags' tags={tags} {...props}/>
 

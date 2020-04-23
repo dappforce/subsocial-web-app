@@ -185,6 +185,15 @@ body,
 form.ui.form.DfForm.EditEntityForm {
   margin-bottom: $space_huge;
 
+  .SocialLinksLabel {
+    display: block;
+    margin: 0 0 .28571429rem 0;
+    color: rgba(0,0,0,.87);
+    font-size: .92857143em;
+    font-weight: 700;
+    text-transform: none;
+  }
+
   .EPadvanced {
     margin-bottom: $space_normal;
     padding-bottom: $space_normal;
@@ -1327,6 +1336,14 @@ hr {
     border-radius: 2px;
     margin-bottom: $space_huge;
 
+    .SpaceNavSocialLink {
+      margin-top: $space_small;
+
+      i {
+        font-size: $space_big;
+      }
+    }
+
     .SNavatar {
       margin: auto;
 
@@ -1377,5 +1394,5 @@ hr {
 }
 
 .DraggableSocialInput {
-  padding: 10px;
+  padding: 10px 0;
 }
