@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import { Option, GenericAccountId as AccountId } from '@polkadot/types';
+import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -9,7 +9,6 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import { Button as AntdButton } from 'antd'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
-import { withSocialAccount, withRequireProfile } from '../utils/utils';
 import { socialQueryToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
@@ -18,21 +17,21 @@ import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../utils/types';
-import { Profile, SocialAccount, IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { ProfileUpdate } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { ProfileData } from '@subsocial/types';
+import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const log = newLogger('Edit profile')
 export type OuterProps = MyAccountProps & ValidationProps & {
-  myAddress?: AccountId,
-  profile?: Profile,
-  ProfileContent?: ProfileContent,
-  socialAccount?: SocialAccount,
+  myAddress: string,
+  owner?: ProfileData,
   requireProfile?: boolean,
 };
 
@@ -50,7 +49,7 @@ const LabelledText = DfForms.LabelledText<FormValues>();
 const InnerForm = (props: FormProps) => {
   const {
     myAddress,
-    profile,
+    owner,
     values,
     errors,
     dirty,
@@ -70,6 +69,8 @@ const InnerForm = (props: FormProps) => {
     about,
     socialLinks
   } = values;
+
+  const profile = owner?.profile
 
   const goToView = () => {
     if (myAddress) {
@@ -271,13 +272,16 @@ const InnerForm = (props: FormProps) => {
 const EditForm = withFormik<OuterProps, FormValues>({
 
   // Transform outer props into form values
-  mapPropsToValues: (props: any): FormValues => {
-    const { profile, ProfileContent } = props;
-    if (profile && ProfileContent) {
+  mapPropsToValues: (props): FormValues => {
+    const { owner } = props;
+    console.log(owner)
+    const content = owner?.content
+    const profile = owner?.profile
+    if (profile && content) {
       const username = profile.username.toString();
       return {
         username,
-        ...ProfileContent
+        ...content
       };
     } else {
       return {
@@ -315,11 +319,7 @@ export const NewProfile = withMulti(
 export const EditProfile = withMulti(
   EditFormWithValidation,
   withMyAccount,
-  withCalls<OuterProps>(
-    socialQueryToProp('socialAccountById', { paramName: 'myAddress', propName: 'socialAccountOpt' })
-  ),
-  withRequireProfile,
-  withSocialAccount
+  withLoadedOwner
 );
 
 export default NewProfile;

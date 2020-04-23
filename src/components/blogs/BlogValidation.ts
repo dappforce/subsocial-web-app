@@ -18,7 +18,6 @@ const blogMaxLen = 10000;
 export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape({
 
   handle: Yup.string()
-    .required('Handle is required')
     .matches(HANDLE_REGEX, 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_)')
     .min(p.handleMinLen.toNumber(), minLenError('Handle', p.handleMinLen))
     .max(p.handleMaxLen.toNumber(), maxLenError('Handle', p.handleMaxLen)),

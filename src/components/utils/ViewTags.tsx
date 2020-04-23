@@ -12,9 +12,11 @@ export const ViewTags = ({ tags = [] }: Props) => {
 
   return <div className='DfTags'>
     {tags.map(tag =>
-      <Link key={tag} href={`/search?tags=${tag}`}>
-        <Tag>{tag}</Tag>
-      </Link>
+      <Tag key={tag}>
+        <Link href={`/search?tags=${tag}`}>
+          <a>{tag}</a>
+        </Link>
+      </Tag>
     )}
   </div>
 }
