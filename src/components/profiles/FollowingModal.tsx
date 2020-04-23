@@ -5,8 +5,7 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
-import dynamic from 'next/dynamic';
-const AddressComponents = dynamic(() => import('../utils/AddressComponents'), { ssr: false });
+import { ProfilePreviewWithOwner } from './address-views';
 
 type Props = {
   following?: AccountId[],
@@ -20,15 +19,10 @@ const InnerFollowingModal = (props: Props) => {
   const renderFollowing = () => {
     return following && following.map((account) =>
       <div key={account.toString()} className='DfModal'>
-        <AddressComponents
-          value={account}
-          isShort={true}
-          isPadded={false}
+        <ProfilePreviewWithOwner
+          address={account}
           size={48}
-          withName
-          withBalance
-          withFollowButton
-          variant='mini-preview'
+          mini
         />
       </div>
     );

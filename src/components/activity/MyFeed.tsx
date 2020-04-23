@@ -10,7 +10,7 @@ import NotAuthorized from '../utils/NotAuthorized';
 import { getNewsFeed } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
-import PostPreview from '../posts/PostPreview';
+import { PostPreviewList } from '../posts/PostPreview';
 
 export const MyFeed = () => {
   const { state: { address: myAddress } } = useMyAccount();
@@ -38,11 +38,7 @@ export const MyFeed = () => {
 
   const totalCount = items && items.length;
 
-  const renderItems = () =>
-    items.map((item) => {
-      const postId = hexToBn(item.post_id)
-      return <PostPreview key={item.id} postId={postId} />
-    })
+  const postIds = items.map(x => hexToBn(x.post_id))
 
   const renderInfiniteScroll = () =>
     <InfiniteScroll
@@ -52,7 +48,7 @@ export const MyFeed = () => {
       // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
       loader={<Loader active inline='centered' />}
     >
-      {renderItems()}
+      <PostPreviewList postIds={postIds} />
     </InfiniteScroll>
 
   return <>
