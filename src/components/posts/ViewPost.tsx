@@ -291,8 +291,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <ViewTags tags={tags} />
       <Voter struct={post} type={'Post'}/>
       {/* <ShareButtonPost postId={post.id}/> */}
-      {prevPostId && <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${prevPostId}`}><a>Prev Post</a></Link> }
-      {nextPostId && <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${nextPostId}`}><a>Next Post</a></Link> }
+      <div className='PrevNextButtons'>
+        {prevPostId &&
+          <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${prevPostId}`}><a><Icon type="arrow-left" /> Previous</a></Link> }
+        {nextPostId &&
+          <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${nextPostId}`}><a>Next <Icon type="arrow-right" /></a></Link> }
+      </div>
       <CommentsByPost postId={post.id} post={post} />
     </Section>;
   };
@@ -352,7 +356,6 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     prevPostId = postIds[idx - 1] || undefined
   }
 
-  console.log('postIds in initialProps in ViewPost', postIds)
   return {
     postData: extPostData?.post,
     postExtData: extPostData?.ext,
