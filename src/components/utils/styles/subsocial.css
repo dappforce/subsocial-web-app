@@ -1108,7 +1108,7 @@ hr {
 .DfSider {
   background: #fff;
   border-right: 1px solid $color_light_border;
-  overflow: hidden;
+  overflow-y: auto;
   height: 100vh;
   left: 0;
 
@@ -1450,7 +1450,9 @@ a.DfStatItem {
   }
 
   .DfAddressInfo {
-    margin: 0 $space_tiny;
+    margin: $space_normal $space_tiny;
+    display: block;
+    line-height: normal;
 
     a {
       @extend .DfBlackLink;
@@ -1460,10 +1462,17 @@ a.DfStatItem {
       margin-left: $space_tiny;
     }
   }
+  &:after {
+    content: '▼';
+    zoom: .8;
+  }
 }
 
 .DfSelectAccount {
   padding: $space_small $space_normal;
+  min-width: 385px;
+  max-width: 385px;
+  width: 385px;
 
   .DfProfileInfo{
       padding-bottom: $space_tiny;

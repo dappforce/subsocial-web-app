@@ -1,43 +1,34 @@
 import React from 'react'
 import { ProfileData } from '@subsocial/types';
 import classes from '@polkadot/react-components/util/classes';
-import { BareProps } from '@polkadot/react-api/types';
 import { Popover } from 'antd';
 import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
 import { toShortAddress } from '@polkadot/react-components/util';
-import Balance from './utils/DfBalance'
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
-import { CommonAddressProps } from './utils/types';
+import { CommonProps } from './utils/types';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 
-type InfoProps = {
+export type InfoProps = {
   details?: JSX.Element,
   address?: string | AccountId
 }
-const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
+export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
   return <>
     <div className='Df--AddressComponents-details'>
       {address && <>
         <Balance address={address.toString()} />
-        {' · '}
       </>}
+      {address && details && ' · '}
       {details}
     </div>
   </>;
 }
 
-export type Props = BareProps & CommonAddressProps & {
-  children?: React.ReactNode,
-  details?: JSX.Element
-  isPadded?: boolean,
-  isShort?: boolean,
-  size?: number,
-  withFollowButton?: boolean,
-};
-
-export const AuthorPreview = (props: Props) => {
+export const AuthorPreview = (props: CommonProps) => {
   const {
     address,
     owner = {} as ProfileData,

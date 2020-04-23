@@ -75,6 +75,6 @@ export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    socialQueryToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+    socialQueryToProp(`blogIdsByOwner`, { paramName: 'address', propName: 'blogIds' })
   )
 );
