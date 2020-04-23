@@ -232,9 +232,10 @@ body,
   }
   .text {
     display: inline-block;
-    margin: $space_small 0 !important;
+    margin: $space_tiny 0 !important;
     padding: $space_tiny $space_normal;
     border-radius: 15px;
+    border-top-left-radius: 0;
     background-color: #fff;
     box-shadow: 0 0 5px 2px #eeecec;
   }
