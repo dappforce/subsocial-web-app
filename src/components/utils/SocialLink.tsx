@@ -3,6 +3,7 @@ import { Icon } from 'antd'
 
 type Props = {
   link: string
+  className?: string
 }
 
 const RegExps = [
@@ -13,14 +14,11 @@ const RegExps = [
 ]
 
 const SocialLink = (props: Props) => {
-  const { link } = props
+  const { link, className } = props
 
-  let icon = ''
-  RegExps.map((x) => {
-    if (link.match(x.regexp)) icon = x.name
-  })
+  const icon = RegExps.find((x) => link.match(x.regexp))?.name
 
-  return  <a target='_blank' href={link}>
+  return  <a target='_blank' className={className} href={link}>
     <Icon type={icon} />
   </a>
 }
