@@ -6,7 +6,7 @@ import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti, registry } from '@polkadot/react-api';
-
+import { Button as AntdButton } from 'antd'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { withSocialAccount, withRequireProfile } from '../utils/utils';
@@ -202,6 +202,7 @@ const InnerForm = (props: FormProps) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
+                <label className='SocialLinksLabel'>Social links:</label>
                 {(socialLinks && socialLinks.length > 0) &&
                   socialLinks.map((x, i) =>  (
                   <Draggable key={i} draggableId={i.toString()} index={i}>
@@ -216,6 +217,7 @@ const InnerForm = (props: FormProps) => {
                           type='text'
                           name={`socialLinks.${i}`}
                           value={x}
+                          placeholder='Paste link here'
                         />
                       </div>
                     )}
@@ -227,10 +229,7 @@ const InnerForm = (props: FormProps) => {
           </Droppable>
         </DragDropContext>
       
-        <div className='AddSocialInput' onClick={handleAddSocNetwork}>Add Social Network</div>
-        
-
-       
+        <AntdButton size='small' onClick={handleAddSocNetwork} className='AddSocialInput'>Add Social Network</AntdButton>
 
         <LabelledField name='about' label='About' {...props}>
           <Field component={SimpleMDEReact} name='about' value={about} onChange={(data: string) => setFieldValue('about', data)} className={`DfMdEditor ${errors['about'] && 'error'}`} />
