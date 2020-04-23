@@ -34,7 +34,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
     desc,
     image,
     imageSize = 150,
-    navTabs = []
+    navTabs = [],
   } = props;
 
   const renderMenuItem = (nt: NavTab) => {

@@ -26,6 +26,7 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './BlogValidation';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const log = newLogger('Edit blog')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -38,6 +39,7 @@ type OuterProps = ValidationProps & {
 
 type FormValues = BlogContent & {
   handle: string;
+  socialLinks: string[]
 };
 
 type FormProps = OuterProps & FormikProps<FormValues>;
@@ -66,6 +68,7 @@ const InnerForm = (props: FormProps) => {
     desc,
     image,
     tags,
+    socialLinks,
     navTabs
   } = values;
   const { ipfs } = useSubsocialApi()
@@ -78,7 +81,7 @@ const InnerForm = (props: FormProps) => {
 
   const onSubmit = (sendTx: () => void) => {
     if (isValid) {
-      const json = { name, desc, image, tags, navTabs };
+      const json = { name, desc, image, tags, navTabs, socialLinks };
       ipfs.saveBlog(json).then(cid => {
         if (cid) {
           setIpfsCid(cid.toString());
@@ -116,6 +119,35 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
+  const handleAddSocNetwork = () => {
+    const maxIndex = socialLinks ? socialLinks.length : 0
+
+    setFieldValue(`socialLinks.${maxIndex}`, '')
+  }
+
+  const reorder = (list: any[], startIndex: number, endIndex: number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+  
+    return result;
+  };
+
+  const onDragEnd = (result: any) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const newItems = reorder(
+      socialLinks,
+      result.source.index,
+      result.destination.index
+    );
+
+    setFieldValue('socialLinks', newItems)
+  }
+
   const title = struct ? `Edit blog` : `New blog`;
 
   return (<>
@@ -132,6 +164,40 @@ const InnerForm = (props: FormProps) => {
         <LabelledField name='desc' label='Description' {...props}>
           <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
         </LabelledField>
+
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {(socialLinks && socialLinks.length > 0) &&
+                  socialLinks.map((x, i) =>  (
+                  <Draggable key={i} draggableId={i.toString()} index={i}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className='DraggableSocialInput'
+                      >
+                        <Field 
+                          type='text'
+                          name={`socialLinks.${i}`}
+                          value={x}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      
+        <div className='AddSocialInput' onClick={handleAddSocNetwork}>Add Social Network</div>
 
         <EditableTagGroup name='tags' label='Tags' tags={tags} {...props}/>
 
@@ -177,13 +243,14 @@ export const EditForm = withFormik<OuterProps, FormValues>({
       return {
         handle,
         ...json
-      };
+      } as any;
     } else {
       return {
         handle: '',
         name: '',
         desc: '',
         image: '',
+        socialLinks: [],
         tags: []
       };
     }
