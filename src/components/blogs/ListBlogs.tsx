@@ -64,8 +64,8 @@ type MyBlogProps = {
 export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
   const { blogsData } = props;
   const totalCount = blogsData.length;
-  return (<>
-    <HeadMeta title='My blogs' desc='Subsocial blogs' />
+  return <>
+    <HeadMeta title='My blogs' desc='The blogs I manage on Subsocial' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <ListData
         title={`My Blogs (${totalCount})`}
@@ -76,7 +76,6 @@ export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
       />
     </div>
   </>
-  );
 };
 
 ListMyBlogs.getInitialProps = async (props): Promise<MyBlogProps> => {

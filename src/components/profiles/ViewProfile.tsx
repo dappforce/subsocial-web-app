@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
+import { registry } from '@polkadot/react-api';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
-import { socialQueryToProp, ZERO } from '../utils/index';
+import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, isEmptyStr, summarize } from '@subsocial/utils'
-import { withSocialAccount } from '../utils/utils';
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -23,9 +22,11 @@ import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
-import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
+import { Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
+import { ProfileData } from '@subsocial/types';
+import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -34,9 +35,7 @@ export type Props = {
   nameOnly?: boolean,
   withLink?: boolean,
   id: AccountId,
-  profile?: Profile,
-  ProfileContent?: ProfileContent,
-  socialAccount?: SocialAccount,
+  owner?: ProfileData,
   followers?: AccountId[],
   size?: number
 };
@@ -48,9 +47,7 @@ const Component: NextPage<Props> = (props: Props) => {
     nameOnly = false,
     withLink = false,
     size = 48,
-    socialAccount,
-    profile = {} as Profile,
-    ProfileContent = {} as ProfileContent
+    owner = {} as ProfileData
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
@@ -60,15 +57,17 @@ const Component: NextPage<Props> = (props: Props) => {
   const { state: { address: myAddress } } = useMyAccount();
   const isMyAccount = address === myAddress;
 
-  const profileIsNone = !socialAccount || isEmpty(profile);
-  const followers = socialAccount ? new BN(socialAccount.followers_count) : ZERO;
-  const following = socialAccount ? new BN(socialAccount.following_accounts_count) : ZERO;
-  const reputation = socialAccount ? new BN(socialAccount.reputation) : ZERO;
+  const { profile = {} as Profile, struct, content = {} as ProfileContent } = owner;
+
+  const profileIsNone = isEmpty(profile);
+  const followers = struct ? new BN(struct.followers_count) : ZERO;
+  const following = struct ? new BN(struct.following_accounts_count) : ZERO;
+  const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
     username,
     edit_history
-  } = profile;
+  } = profile as Profile;
 
   const {
     fullname,
@@ -82,7 +81,7 @@ const Component: NextPage<Props> = (props: Props) => {
     medium,
     github,
     instagram
-  } = ProfileContent;
+  } = content as ProfileContent;
 
   // TODO fix copypasta of social links. Implement via array.
   const hasEmail = email && nonEmptyStr(email);
@@ -264,26 +263,14 @@ const Component: NextPage<Props> = (props: Props) => {
 
 Component.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
-  const { substrate, ipfs } = await getSubsocialApi()
-  const socialAccount = await substrate.findSocialAccount(address as string)
-  const profileOpt = socialAccount ? socialAccount.profile : undefined;
-  const profile = profileOpt !== undefined && profileOpt.isSome ? profileOpt.unwrap() as Profile : undefined;
-  const content = profile && await ipfs.getContent<ProfileContent>(profile.ipfs_hash)
+  const subsocial = await getSubsocialApi()
+  const owner = await subsocial.findProfile(address as string)
   return {
     id: new AccountId(registry, address as string),
-    socialAccount: socialAccount,
-    profile: profile,
-    ProfileContent: content
+    owner
   };
 };
 
 export default Component;
 
-export const ViewProfile = withMulti(
-  Component,
-  withCalls<Props>(
-    socialQueryToProp('socialAccountById',
-      { paramName: 'id', propName: 'socialAccountOpt' })
-  ),
-  withSocialAccount
-);
+export const ViewProfile = withLoadedOwner(Component)
