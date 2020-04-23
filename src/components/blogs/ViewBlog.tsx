@@ -35,6 +35,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { INFINITE_SCROLL_PAGE_SIZE } from 'src/config/ListData.config';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import ListData from '../utils/DataList';
 
 const log = newLogger('View blog')
 
@@ -244,6 +245,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     const [ currentPage, setCurrentPage ] = useState(0)
     const [ hidePagination, setHidePagination ] = useState(false)
 
+    useEffect(() => {
+      getNextPage()
+    }, [])
+
     const getNextPage = async (actualOffset: number = offset) => {
       const isFirstPage = actualOffset === 0;
       const data = posts.slice(actualOffset, INFINITE_SCROLL_PAGE_SIZE + actualOffset);
@@ -258,18 +263,27 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
     const totalCount = items && items.length;
 
-    return <InfiniteScroll
-      dataLength={totalCount}
-      next={getNextPage}
-      hasMore={hasMore}
-      loader={<Loader active inline='centered' />}
-    >
-      {items && items.length > 0
-        ? items.map((item, index) => <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>)
-        : isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
-      {!hidePagination &&
-        <Pagination current={currentPage} pageSize={INFINITE_SCROLL_PAGE_SIZE} total={posts.length} />}
-    </InfiniteScroll>
+    return process.browser
+      ? <InfiniteScroll
+          dataLength={totalCount}
+          next={getNextPage}
+          hasMore={hasMore}
+          loader={<Loader active inline='centered' />}
+        >
+          {items && items.length > 0
+            ? items.map((item, index) => <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext}/>)
+            : isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
+          {!hidePagination &&
+            <Pagination current={currentPage} pageSize={INFINITE_SCROLL_PAGE_SIZE} total={posts.length} />}
+        </InfiniteScroll>
+      : <ListData
+          title={postsSectionTitle()}
+          dataSource={posts}
+          renderItem={(item, index) =>
+            <ViewPostPage key={index} variant='preview' postData={item.post} postExtData={item.ext} />}
+          noDataDesc='No posts yet'
+          noDataExt={isMyBlog ? <Button href={`/blogs/${id}/posts/new`}>Create post</Button> : null}
+        />
   };
 
   const NewPostButton = () => isMyBlog ? <Button href={`/blogs/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button> : null;
