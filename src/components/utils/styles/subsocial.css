@@ -42,8 +42,6 @@ body,
 .DfPageContent {
   padding: $space_big 0;
   overflow-wrap: break-word;
-  min-width: 428px;
-  max-width: 700px;
   margin: 0 auto;
   color: $color_font_normal;
 }
@@ -100,7 +98,9 @@ body,
 }
 
 .DfEntirePost {
-  padding: 0 $space_tiny;
+
+  /* padding: 0 $space_tiny; */
+
 
   .DfVoter {
     margin-left: -1rem;
@@ -241,9 +241,10 @@ body,
   }
   .text {
     display: inline-block;
-    margin: $space_small 0 !important;
+    margin: $space_tiny 0 !important;
     padding: $space_tiny $space_normal;
     border-radius: 15px;
+    border-top-left-radius: 0;
     background-color: #fff;
     box-shadow: 0 0 5px 2px #eeecec;
   }
@@ -331,6 +332,7 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfCommentsByPost {
   border-top: $color_light_border 1px solid;
+  margin: 0 !important;
 
   h3 {
     font-size: $font_large;
@@ -574,6 +576,7 @@ hr {
   .DfSection {
     margin-top: $space_huge;
     margin-bottom: 0;
+    width: auto;
   }
 
   .EditEntityBox {
@@ -796,8 +799,15 @@ hr {
   align-items: center;
 }
 
+.DfSectionOuter {
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 428px;
+  max-width: calc(680px + $space_normal * 2);
+}
+
 .DfSection {
-  margin-bottom: $space_normal;
+  margin: $space_normal;
 
   .viewblog-minipreview {
     display: flex;
@@ -1371,8 +1381,10 @@ a.DfStatItem {
 }
 
 .SpaceNav {
-  margin-left: $space_big;
-  width: 300px;
+  margin-right: $space_big;
+  margin-bottom: $space_big;
+  min-width: 200px;
+  max-width: 300px;
 
   .SNhead {
     display: flex;

@@ -14,10 +14,12 @@ export default class Section extends React.PureComponent<Props> {
     className = (className || '') + ' DfSection';
 
     return (
-      <section id={id} className={className}>
-        {this.renderTitle()}
-        <div>{children}</div>
-      </section>
+      <div className='DfSectionOuter'>
+        <section id={id} className={className}>
+          {this.renderTitle()}
+          <div>{children}</div>
+        </section>
+      </div>
     );
   }
 
