@@ -52,7 +52,7 @@ export const Voter = (props: VoterProps) => {
     async function loadReaction () {
       if (!address) return
 
-      const reactionId = isComment 
+      const reactionId = isComment
         ? await substrate.getCommentReactionIdByAccount(address, id)
         : await substrate.getPostReactionIdByAccount(address, id)
       const reaction = await substrate.findReaction(reactionId)

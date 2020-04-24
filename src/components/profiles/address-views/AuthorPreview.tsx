@@ -34,6 +34,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     owner = {} as ProfileData,
     className,
     isPadded = true,
+    isShort = true,
     style,
     size,
     children,
@@ -60,7 +61,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
               href={`/profile/${address}`}
             >
               <a className={`ui--AddressComponents-address ${className}`}>
-                {fullname || username || toShortAddress(address)}
+                {fullname || username || (isShort ? toShortAddress(address) : address.toString())}
               </a>
             </Link>
           </span>

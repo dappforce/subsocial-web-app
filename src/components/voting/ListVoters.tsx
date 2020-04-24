@@ -66,6 +66,7 @@ const InnerModalVoters = (props: VotersProps) => {
         <AuthorPreviewWithOwner
           address={reaction.created.account}
           isPadded={false}
+          isShort={false}
           size={28}
           details={isUpvote(reaction)
             ? <span style={{ color: 'green' }}>Upvoted</span>
