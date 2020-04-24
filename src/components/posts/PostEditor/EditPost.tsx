@@ -394,7 +394,7 @@ const InnerForm = (props: FormProps) => {
               <TabPane tab="Short Preview" key="2">
                   <ViewPostPage
                     variant='preview'
-                    postData={{ struct: struct as Post, }}
+                    postData={{ struct: struct as Post, content: values as any }}
                     blockValues={blockValues}
                   />
               </TabPane>
