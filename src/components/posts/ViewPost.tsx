@@ -283,26 +283,29 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderDetails = (content?: PostExtContent) => {
     if (!content) return null;
     const { title, body, image, canonical, tags } = content;
-    return <Section className='DfContentPage DfEntirePost'>
-      <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
-      <div className='DfRow'>
-        <h1 className='DfPostName'>{title}</h1>
-        <RenderDropDownMenu account={created.account}/>
-      </div>
-      <div className='DfRow'>
-        {withCreatedBy && renderPostCreator(post)}
-        {<StatsPanel id={post.id}/>}
-      </div>
-      <div className='DfPostContent'>
-        {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        <DfMd source={body} />
-        {/* {renderBlogPreview(post)} */}
-      </div>
-      <ViewTags tags={tags} />
-      <Voter struct={post} type={'Post'}/>
-      {/* <ShareButtonPost postId={post.id}/> */}
-      <div className='mt-3'><CommentsByPost postId={post.id} post={post} /></div>
-    </Section>;
+
+    return <>
+      <Section className='DfContentPage DfEntirePost'>
+        <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
+        <div className='DfRow'>
+          <h1 className='DfPostName'>{title}</h1>
+          <RenderDropDownMenu account={created.account}/>
+        </div>
+        <div className='DfRow'>
+          {withCreatedBy && renderPostCreator(post)}
+          {<StatsPanel id={post.id}/>}
+        </div>
+        <div className='DfPostContent'>
+          {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
+          <DfMd source={body} />
+          {/* {renderBlogPreview(post)} */}
+        </div>
+        <ViewTags tags={tags} />
+        <Voter struct={post} type={'Post'}/>
+        {/* <ShareButtonPost postId={post.id}/> */}
+      </Section>
+      <CommentsByPost postId={post.id} post={post} />
+    </>
   };
 
   switch (variant) {
