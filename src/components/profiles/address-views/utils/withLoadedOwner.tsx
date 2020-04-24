@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { newLogger } from '@subsocial/utils';
 import { useSubsocialApi } from '../../../utils/SubsocialApiContext';
 import { ProfileData } from '@subsocial/types';
-import { CommonProps } from './types'
+import { ExtendedAddressProps } from './types'
 import { Loading } from '../../../utils/utils';
 
 const log = newLogger(withLoadedOwner.name)
 
-type Props = CommonProps & {
+type Props = ExtendedAddressProps & {
   size?: number,
   avatar?: string,
   mini?: boolean

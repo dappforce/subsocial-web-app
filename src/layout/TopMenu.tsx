@@ -10,7 +10,7 @@ import { AddressPopupWithOwner } from 'src/components/profiles/address-views';
 
 const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
-  const { toggle } = useSidebarCollapsed();
+  const { toggle, show: open } = useSidebarCollapsed();
   const { state: { address } } = useMyAccount();
   const isLoggedIn = useIsLoggedIn();
 
@@ -21,7 +21,7 @@ const InnerMenu = () => {
     </div>
     : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
-        <Button type='link' onClick={toggle} className='DfBurgerIcon'>
+        <Button type='link' onClick={toggle} onMouseEnter={open} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
         <Link href='/'><a className='DfBrand'>{'Subsocial'}</a></Link>

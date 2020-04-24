@@ -51,3 +51,5 @@ export function isServerSide (): boolean {
 export function isClientSide (): boolean {
   return !isServerSide()
 }
+
+export const isHomePage = (): boolean => isClientSide() && window.location.pathname === '/'

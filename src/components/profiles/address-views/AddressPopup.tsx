@@ -3,11 +3,12 @@ import SelectAccount from './utils/SelectAccount';
 import { Dropdown, Menu } from 'antd';
 import Address from './Name'
 import Avatar from './Avatar'
-import { CommonAddressProps } from './utils/types';
+import { AddressProps } from './utils/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { InfoDetails } from '.';
+import { isBrowser } from 'react-device-detect';
 
-export const AddressPopup: React.FunctionComponent<CommonAddressProps> = ({
+export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   address,
   owner
 }) => {
@@ -26,7 +27,7 @@ export const AddressPopup: React.FunctionComponent<CommonAddressProps> = ({
         <Avatar size={36} address={address} avatar={content?.avatar} />
       </div>
       <div className='DfAddressInfo ui--AddressComponents'>
-        <Address asLink={false} owner={owner} address={address}/>
+        <Address asLink={isBrowser} owner={owner} address={address} />
         <InfoDetails address={address} />
       </div>
     </span>

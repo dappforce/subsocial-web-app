@@ -15,6 +15,15 @@ body,
   }
 }
 
+.am-drawer-content {
+  padding-top: 0 !important;
+  text-align: left !important;
+}
+
+.ant-layout-sider-children {
+  overflow: auto;
+}
+
 .DfBlackLink {
   color: $color_font_normal;
   @extend .DfLinkOnHover;
