@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { newLogger } from '@subsocial/utils';
 import { useSubsocialApi } from '../../../utils/SubsocialApiContext';
 import { ProfileData } from '@subsocial/types';
-import { CommonAddressProps } from './types'
+import { CommonProps } from './types'
 import { Loading } from '../../../utils/utils';
 
 const log = newLogger(withLoadedOwner.name)
 
-type Props = CommonAddressProps & {
-  myAddress?: string
+type Props = CommonProps & {
+  size?: number,
+  avatar?: string,
+  mini?: boolean
 };
 
-export function withLoadedOwner (Component: React.ComponentType<any>) {
-  return function (props: any) {
-    const { myAddress, owner: initialOwner, address = myAddress } = props as Props;
+export function withLoadedOwner<P extends Props> (Component: React.ComponentType<any>) {
+  return function (props: P) {
+    const { owner: initialOwner, address } = props as Props;
 
     if (initialOwner) return <Component {...props} />;
 
@@ -21,14 +23,16 @@ export function withLoadedOwner (Component: React.ComponentType<any>) {
 
     const { subsocial } = useSubsocialApi()
     const [ owner, setOwner ] = useState<ProfileData>();
+    const [ loaded, setLoaded ] = useState(true);
 
     useEffect(() => {
       if (!address) return;
-
+      setLoaded(false)
       let isSubscribe = true;
       const loadContent = async () => {
         const owner = await subsocial.findProfile(address)
         isSubscribe && setOwner(owner)
+        setLoaded(true)
       }
 
       loadContent().catch(err =>
@@ -37,6 +41,6 @@ export function withLoadedOwner (Component: React.ComponentType<any>) {
       return () => { isSubscribe = false; };
     }, [ address?.toString() ]);
 
-    return owner ? <Component {...props} owner={owner} /> : <Loading />;
+    return loaded ? <Component {...props} owner={owner} /> : <Loading />;
   };
 }

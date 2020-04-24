@@ -1,9 +1,10 @@
 import React from 'react'
 import { isBrowser } from 'react-device-detect';
 import BalanceDisplay from '@polkadot/react-components/Balance';
+import { AnyAccountId } from '@subsocial/types/substrate';
 
 type BalanceProps = {
-  address: string
+  address: AnyAccountId
 };
 
 export const Balance: React.FunctionComponent<BalanceProps> = ({ address }) => {
