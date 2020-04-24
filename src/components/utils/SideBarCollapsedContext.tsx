@@ -1,7 +1,7 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react'
 import store from 'store'
-import { isMobile } from 'react-device-detect'
 import { newLogger } from '@subsocial/utils';
+import { isHomePage } from '.';
 const log = newLogger('Sidebar collapsed context')
 
 export const SIDEBAR_COLLAPSED = 'df.colapsed'
@@ -23,7 +23,7 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
 
   switch (action.type) {
     case 'reload':
-      collapsed = isMobile
+      collapsed = !isHomePage()
       log.debug('Reload collapsed:', collapsed)
       return { ...state, collapsed, triggerFollowed: !state.triggerFollowed, inited: true }
 
@@ -86,8 +86,8 @@ export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
   const contextValue = {
     state,
     dispatch,
-    hide: () => dispatch({ type: 'set', collapsed: false }),
-    show: () => dispatch({ type: 'set', collapsed: true }),
+    hide: () => dispatch({ type: 'set', collapsed: true }),
+    show: () => dispatch({ type: 'set', collapsed: false }),
     toggle: () => dispatch({ type: 'set', collapsed: !state.collapsed }),
     forget: () => dispatch({ type: 'forget', collapsed: state.collapsed }),
     reloadFollowed: () => dispatch({ type: 'reload' })

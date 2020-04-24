@@ -7,7 +7,7 @@ import ProfilePreview from './ProfilePreview';
 import { toShortAddress } from '@polkadot/react-components/util';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
-import { CommonProps } from './utils/types';
+import { ExtendedAddressProps } from './utils/types';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
@@ -28,7 +28,7 @@ export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, addre
   </>;
 }
 
-export const AuthorPreview = (props: CommonProps) => {
+export const AuthorPreview = (props: ExtendedAddressProps) => {
   const {
     address,
     owner = {} as ProfileData,

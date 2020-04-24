@@ -3,11 +3,12 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import Menu from './SideMenu';
-import { isBrowser } from 'react-device-detect';
+import { isBrowser, isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Drawer } from 'antd-mobile';
 import dynamic from 'next/dynamic';
 import { newLogger } from '@subsocial/utils';
+import { isHomePage } from 'src/components/utils';
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 
 const log = newLogger('Navigation')
@@ -20,7 +21,7 @@ interface Props {
 
 log.debug('Are we in a browser?', isBrowser);
 
-const DesktopNav = () => {
+const HomeNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();
   return <div><Sider
     className='DfSider'
@@ -32,14 +33,14 @@ const DesktopNav = () => {
   </Sider></div>;
 };
 
-const MobileNav: FunctionComponent = ({ children }) => {
-  const { state: { collapsed }, toggle } = useSidebarCollapsed();
+const DefaultNav: FunctionComponent = ({ children }) => {
+  const { state: { collapsed }, toggle, hide } = useSidebarCollapsed();
   return <Drawer
     className='DfMobileSideBar'
-    style={{ minHeight: document.documentElement.clientHeight }}
+    style={isMobile ? { minHeight: document.documentElement.clientHeight } : {}}
     enableDragHandle
     contentStyle={{ color: '#a6a6a6', textAlign: 'center', paddingTop: 42 }}
-    sidebar={<Menu />}
+    sidebar={<div onMouseLeave={hide}><Menu /></div>}
     open={!collapsed}
     onOpenChange={toggle}
   >
@@ -62,14 +63,14 @@ export const Navigation = (props: Props): JSX.Element => {
         <TopMenu />
       </Header>
       <Layout>
-        {isBrowser
+        {isHomePage()
           ? <>
-            <DesktopNav />
+            <HomeNav />
             <MainContent />
           </>
-          : <MobileNav>
+          : <DefaultNav>
             <MainContent />
-          </MobileNav>
+          </DefaultNav>
         }
       </Layout>
     </Layout>

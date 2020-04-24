@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { CommonAddressProps } from './utils/types'
+import { AddressProps } from './utils/types'
 import Avatar from './Avatar';
 import { summarize } from '@subsocial/utils';
 import { Pluralize } from 'src/components/utils/Plularize';
@@ -11,7 +11,7 @@ import { ProfileContent, ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
-type ProfilePreviewProps = CommonAddressProps & {
+type ProfilePreviewProps = AddressProps & {
   mini?: boolean,
   size?: number
 }

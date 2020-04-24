@@ -9,7 +9,7 @@
   -webkit-overflow-scrolling: touch;
 
   .ant-menu-inline {
-    width: 250px;
+    width: 200px;
   }
 }
 
@@ -200,7 +200,6 @@
   }
 
   .ProfileDetails {
-    max-width: 18rem;
     .content {
       padding-left: 0;
       padding-right: .5rem;
@@ -259,11 +258,6 @@
     .ui.segment {
       margin: 0;
     }
-  }
-
-  .am-drawer-content {
-    padding-top: 0 !important;
-    text-align: left !important;
   }
 
   .ui--Status {

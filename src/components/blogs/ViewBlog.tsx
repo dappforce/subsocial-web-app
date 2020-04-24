@@ -87,7 +87,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   } = blog;
 
   const { state: { address } } = useMyAccount();
-  const [ content ] = useState(blogData.content as BlogContent);
+  const [ content ] = useState(blogData?.content || {} as BlogContent);
   const { desc, name, image, tags } = content;
   const [ followersOpen, setFollowersOpen ] = useState(false);
 
@@ -267,11 +267,11 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
       {renderPostPreviews()}
     </Section>
-    <SpaceNav
+    {isBrowser && <SpaceNav
       {...content}
       blogId={new BN(id)}
       creator={account}
-    />
+    />}
   </div>
 };
 
