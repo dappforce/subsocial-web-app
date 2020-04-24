@@ -24,7 +24,11 @@ const InnerMenu = () => {
         <Button type='link' onClick={toggle} onMouseEnter={open} className='DfBurgerIcon'>
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
-        <Link href='/'><a className='DfBrand'>{'Subsocial'}</a></Link>
+        <Link href='/'>
+          <a className='DfBrand'>
+            <img src='/subsocial-logo.svg' alt='Subsocial' />
+          </a>
+        </Link>
       </div>
       {isBrowser && <Search/>}
       <div className='DfTopBar--rightContent'>

@@ -17,9 +17,7 @@ const MAX_TITLE_LEN = 45;
 const MAX_DESC_LEN = 300;
 
 const SITE_NAME = 'Subsocial Network';
-
 const DEFAULT_TITLE = 'Subsocial - Protocol for decentralized social networks';
-
 const DEFAULT_DESC = ''; // TODO create default description
 
 export const createTitle = (title: string) => {
@@ -27,21 +25,24 @@ export const createTitle = (title: string) => {
     return DEFAULT_TITLE;
   }
 
-  return `${title.length <= MAX_TITLE_LEN ? title : title.substr(0, MAX_TITLE_LEN)} - Subsocial`;
+  const leftPart = title.length <= MAX_TITLE_LEN ? title : summarize(title, MAX_TITLE_LEN)
+  return `${leftPart} - Subsocial`;
 };
 
 export function HeadMeta (props: HeadMetaProps) {
-  const { title, desc = DEFAULT_DESC, image = 'public/subsocial-logo.png', canonical, tags } = props;
+  const { title, desc = DEFAULT_DESC, image = '/subsocial-sign.png', canonical, tags } = props;
   const summary = summarize(desc, MAX_DESC_LEN);
   return <div>
     <Head>
       <title>{createTitle(title)}</title>
       {nonEmptyStr(canonical) && <link rel="canonical" href={canonical} />}
       {nonEmptyArr(tags) && <meta name="keywords" content={tags?.join(', ')} />}
+
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={image} />
       <meta property='og:title' content={title} />
       <meta property='og:description' content={desc} />
+
       <meta name='twitter:site' content={SITE_NAME} />
       <meta name='twitter:image' content={image} />
       <meta name='twitter:title' content={title} />

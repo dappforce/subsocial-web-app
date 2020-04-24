@@ -37,7 +37,7 @@ const InnerStatsPanel = (props: StatsProps) => {
   const toggleCommentsSection = goToCommentsId ? undefined : () => setCommentsSection(!commentsSection)
   const comments = <Pluralize count={comments_count} singularText='Comment' />
 
-  return (<>
+  return <>
     <div className='DfCountsPreview'>
       <MutedSpan className={reactionsCount ? '' : 'disable'}>
         <span className='DfBlackLink' onClick={showReactionsModal}>
@@ -54,7 +54,7 @@ const InnerStatsPanel = (props: StatsProps) => {
       <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan>
     </div>
     {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)} />}
-  </>);
+  </>;
 };
 
 export default withMulti<StatsProps>(
