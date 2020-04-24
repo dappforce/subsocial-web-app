@@ -332,7 +332,6 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfCommentsByPost {
   border-top: $color_light_border 1px solid;
-  margin: 0 !important;
 
   h3 {
     font-size: $font_large;
@@ -475,8 +474,8 @@ hr {
   margin-bottom: $space_tiny;
   font-size: $font_small;
 
-  a,
-  span {
+  & > a,
+  & > span {
     color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small;
     margin-left: $space_normal;
@@ -509,6 +508,10 @@ hr {
 
   .DfCountsPreview {
     justify-content: flex-end;
+  }
+
+  .DfCommentsByPost {
+    margin: 0 !important;
   }
 
   .ui.button {

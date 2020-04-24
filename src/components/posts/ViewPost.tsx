@@ -283,6 +283,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderDetails = (content?: PostExtContent) => {
     if (!content) return null;
     const { title, body, image, canonical, tags } = content;
+    const goToCommentsId = 'comments'
 
     return <>
       <Section className='DfContentPage DfEntirePost'>
@@ -293,7 +294,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         </div>
         <div className='DfRow'>
           {withCreatedBy && renderPostCreator(post)}
-          {<StatsPanel id={post.id}/>}
+          {<StatsPanel id={post.id} goToCommentsId={goToCommentsId} />}
         </div>
         <div className='DfPostContent'>
           {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
@@ -304,7 +305,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <Voter struct={post} type={'Post'}/>
         {/* <ShareButtonPost postId={post.id}/> */}
       </Section>
-      <CommentsByPost postId={post.id} post={post} />
+      <div id={goToCommentsId}><CommentsByPost postId={post.id} post={post} /></div>
     </>
   };
 
