@@ -25,7 +25,6 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
 export const clearNotifications = async (myAddress: string): Promise<void> => {
   try {
     const res = await axios.post(getOffchainUrl(`/notifications/${myAddress}/readAll`));
-
     if (res.status !== 200) {
       console.warn('Failed to mark all notifications as read for account:', myAddress, 'res.status:', res.status)
     }

@@ -3,7 +3,7 @@ import { Loader } from 'semantic-ui-react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { Activity } from '@subsocial/types/offchain';
-import { clearNotifications, getNotifications } from '../utils/OffchainUtils';
+import { getNotifications } from '../utils/OffchainUtils';
 import NoData from '../utils/EmptyList';
 import NotAuthorized from '../utils/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -24,7 +24,9 @@ export const MyNotifications = () => {
     if (!myAddress) return;
     setLoaded(false)
     getNextPage(0).catch(err => new Error(err)).finally(() => setLoaded(true));
-    clearNotifications(myAddress)
+
+    // TODO fix 'Mark all notifications as read' when user's session key implemented:
+    // clearNotifications(myAddress)
   }, [ myAddress ]);
 
   if (!myAddress) return <NotAuthorized />;
