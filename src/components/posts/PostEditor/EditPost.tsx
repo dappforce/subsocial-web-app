@@ -29,12 +29,13 @@ import BN from 'bn.js';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../../utils/types';
 import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
-import { IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
 // import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
 import BloggedSectionTitle from '../../blogs/BloggedSectionTitle';
-import ViewTags from 'src/components/utils/ViewTags';
-const StatsPanel = dynamic(() => import('../../posts/PostStats'), { ssr: false });
+// import ViewTags from 'src/components/utils/ViewTags';
+import ViewPostPage from '../ViewPost';
+// const StatsPanel = dynamic(() => import('../../posts/PostStats'), { ssr: false });
 
 
 const log = newLogger('Edit post')
@@ -391,21 +392,11 @@ const InnerForm = (props: FormProps) => {
                 }
               </TabPane>
               <TabPane tab="Short Preview" key="2">
-                <div>
-                  <h1>{title}</h1>
-                </div>
-                <div className='ShortPreviewWrapper'>
-                  {blockValues && blockValues.length !== 0 &&
-                    blockValues.filter((x) => x.featured).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
-                      block={x}
-                      embedData={embedData}
-                      setEmbedData={setEmbedData}
-                      linkPreviewData={linkPreviewData}
-                    /></div>)
-                  }
-                  <ViewTags tags={values.tags} />
-                  <StatsPanel id={currentBlogId} />
-                </div>
+                  <ViewPostPage
+                    variant='preview'
+                    postData={{ struct: struct as Post, }}
+                    blockValues={blockValues}
+                  />
               </TabPane>
             </Tabs>
           </div>

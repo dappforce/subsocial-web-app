@@ -210,8 +210,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   }
 
   const renderContent = (post: Post, content: PostExtContent | undefined) => {
-    console.log('content ViewPost renderContent', content)
-    console.log('post ViewPost renderContent', post)
     if (!post || !content) return null;
 
     const { title, summary } = content;
