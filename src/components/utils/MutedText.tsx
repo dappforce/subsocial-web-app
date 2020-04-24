@@ -2,8 +2,9 @@ import React from 'react';
 
 type Props = React.PropsWithChildren<{
   smaller?: boolean
-  className?: string,
+  className?: string
   style?: React.CSSProperties
+  onClick?: React.MouseEventHandler<any>
 }>;
 
 function getClassNames (props: Props): string {
@@ -12,11 +13,11 @@ function getClassNames (props: Props): string {
 }
 
 export const MutedSpan = (props: Props) => {
-  const { style, children } = props;
-  return <span className={getClassNames(props)} style={style}>{children}</span>;
+  const { style, onClick, children } = props;
+  return <span className={getClassNames(props)} style={style} onClick={onClick}>{children}</span>;
 };
 
 export const MutedDiv = (props: Props) => {
-  const { style, children } = props;
-  return <div className={getClassNames(props)} style={style}>{children}</div>;
+  const { style, onClick, children } = props;
+  return <div className={getClassNames(props)} style={style} onClick={onClick}>{children}</div>;
 };
