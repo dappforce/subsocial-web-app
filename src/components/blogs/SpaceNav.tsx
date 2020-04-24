@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Menu, Icon } from 'antd'
 import FollowBlogButton from '../utils/FollowBlogButton'
-import { nonEmptyStr } from '@subsocial/utils'
+import { nonEmptyStr, nonEmptyArr } from '@subsocial/utils'
 import { DfBgImg } from '../utils/DfBgImg'
 import { SpaceContent } from '../spaces/SpacePreview'
 import BN from 'bn.js'
@@ -33,7 +33,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
     name,
     desc,
     image,
-    imageSize = 150,
+    imageSize = 100,
     navTabs = []
   } = props;
 
@@ -62,7 +62,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
       <div className="SNavatar">
         {nonEmptyStr(image)
           ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
-          : <IdentityIcon className='image' value={creator} size={imageSize} />
+          : <IdentityIcon className='image' size={imageSize} value={creator} />
         }
       </div>
 
@@ -71,22 +71,23 @@ export const SpaceNav = (props: SpaceNavProps) => {
       {nonEmptyStr(desc) && <div className="SNheadDescription">{desc}</div>}
     </div>
 
+    {nonEmptyArr(navTabs) &&
+      <Menu mode="inline" className="SNmenu">
+        {navTabs.map(renderMenuItem)}
+      </Menu>
+    }
+
     <div className='SpaceNavSettings'>
       <Link
         href='/blogs/[blogId]/space-navigation/edit'
         as={`/blogs/${blogId}/space-navigation/edit`}
       >
         <a className='text-secondary'>
-          <Icon type="setting" /> Edit Menu
+          <Icon type="setting" className='mr-2' />
+          Edit Menu
         </a>
       </Link>
     </div>
-
-    {navTabs.length > 0 &&
-      <Menu mode="inline" className="SNmenu">
-        {navTabs.map(renderMenuItem)}
-      </Menu>
-    }
 
     {/*
       spaces.teamMembers &&

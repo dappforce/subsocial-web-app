@@ -252,6 +252,11 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   return <div className='ViewBlogWrapper'>
+    {isBrowser && <SpaceNav
+      {...content}
+      blogId={new BN(id)}
+      creator={account}
+    />}
     <Section className='DfContentPage'>
       <HeadMeta title={name} desc={mdToText(desc)} image={image} />
       <div className='FullProfile'>
@@ -267,11 +272,6 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       {followersOpen && <BlogFollowersModal id={id} accountsCount={blog.followers_count} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
       {renderPostPreviews()}
     </Section>
-    {isBrowser && <SpaceNav
-      {...content}
-      blogId={new BN(id)}
-      creator={account}
-    />}
   </div>
 };
 
