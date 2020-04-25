@@ -14,29 +14,43 @@ To learn more about Subsocial, please visit [Subsocial Network](http://subsocial
 
 If you want to develop Subsocial's web UI or just check it out locally, there is an easy way to do it.
 
-1. Clone this repo:
+Clone this repo:
 
 ```sh
 git clone git@github.com:dappforce/dappforce-subsocial-ui.git
 cd dappforce-subsocial-ui
 ```
 
-2. Connect the app to Subsocial's server (Substrate node, IPFS):
+Connect the app to Subsocial's server (Substrate node, IPFS):
 
 ```sh
 cp subsocial-v2.env .env
 ```
 
-3. Install project dependencies:
+Install project dependencies:
 
 ```sh
 yarn
 ```
 
-4. Run the app in a development mode:
+### Option A: Run in a DEV mode
+
+A dev mode supports hot deploys – this is very helpful when developing UI, 
+but it takes some time in seconds when it compiles after you made changes to the source code of the app.
 
 ```sh
 ./run-dev.sh
+```
+
+Go to [localhost:3003](http://localhost:3003)
+
+### Option B: Run in a PROD mode
+
+Prod mode doesn't support hot reloads, but works super fast, because UI gets compiled by Next.js before running.
+
+```sh
+yarn build
+yarn start
 ```
 
 Go to [localhost:3003](http://localhost:3003)
