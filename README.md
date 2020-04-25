@@ -14,24 +14,32 @@ To learn more about Subsocial, please visit [Subsocial Network](http://subsocial
 
 There is an easy way to run this web UI on you local machine while connected to Subsocial's remote server.
 
-```bash
-# Clone this repo:
-git clone git@github.com:dappforce/dappforce-subsocial-ui.git subsocial-ui
+1. Clone this repo:
 
-cd subsocial-ui
-
-# Config the app: point it to Subsocial's server 
-# (it has Substrate node, IPFS and other required software)
-cp subsocial-v2.env .env
-
-# Install project dependencies:
-yarn
-
-# Run this web app in a development mode:
-./run-dev.sh
-
-# Go to http://localhost:3003
+```sh
+git clone git@github.com:dappforce/dappforce-subsocial-ui.git
+cd dappforce-subsocial-ui
 ```
+
+2. Point the app to Subsocial's server (Sobstrate node, IPFS): 
+
+```sh
+cp subsocial-v2.env .env
+```
+
+3. Install project dependencies:
+
+```sh
+yarn
+```
+
+4. Run the app in a development mode:
+
+```sh
+./run-dev.sh
+```
+
+Go to http://localhost:3003
 
 ## Build with Docker
 
