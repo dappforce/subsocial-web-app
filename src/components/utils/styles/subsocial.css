@@ -29,7 +29,17 @@ body,
 }
 
 .DfBoxShadow {
-  box-shadow: 0 0 5px 2px #eeecec;
+  $shadow: 0 0 5px 2px #eeecec !important;
+  -moz-box-shadow: $shadow;
+  -webkit-box-shadow: $shadow;
+  box-shadow: $shadow;
+}
+
+.DfNoBoxShadow {
+  $shadow: none !important;
+  -moz-box-shadow: $shadow;
+  -webkit-box-shadow: $shadow;
+  box-shadow: $shadow;
 }
 
 /* Other Styles */
@@ -263,7 +273,7 @@ body,
   .text {
     display: inline-block;
     margin: $space_tiny 0 !important;
-    padding: $space_tiny $space_normal;
+    padding: $space_small $space_normal;
     border-radius: 15px;
     border-top-left-radius: 0;
     background-color: #fff;
@@ -533,6 +543,13 @@ hr {
 
   .DfCommentsByPost {
     margin: 0 !important;
+
+    .DfCommentContent {
+      .text {
+        background-color: #f0f0f0;
+        @extend .DfNoBoxShadow;
+      }
+    }
   }
 
   .ui.button {
@@ -582,8 +599,7 @@ hr {
     margin: .25rem 0;
     font-weight: bold;
     font-size: $font_normal;
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
+    @extend .DfNoBoxShadow;
 
     &:hover {
       background-color: #f0f0f0 !important;
