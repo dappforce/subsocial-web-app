@@ -1085,6 +1085,12 @@ hr {
   width: 100%;
   display: flex;
   justify-content: space-between;
+
+  /* Fix black background of top menu in prod mode: */
+  &.ant-layout-header {
+    padding: 0 .5rem !important;
+    background-color: #fff !important;
+  }
 }
 
 .ant-layout {
@@ -1510,9 +1516,13 @@ a.DfStatItem {
   display: flex;
   margin: 0 1rem;
 
-  .Identicon__Wrapper-sc-1gm2vek-0.kTKCiE.ui--IdentityIcon {
-    position: relative;
-    top: .8rem !important;
+  &:after {
+    content: '▼';
+    zoom: .8;
+  }
+
+  .DfAddressIcon {
+    margin: $space_normal 0;
   }
 
   .DfAddressInfo {
@@ -1527,10 +1537,6 @@ a.DfStatItem {
     .anticon-caret-down {
       margin-left: $space_tiny;
     }
-  }
-  &:after {
-    content: '▼';
-    zoom: .8;
   }
 }
 
