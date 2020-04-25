@@ -39,7 +39,7 @@ yarn
 ./run-dev.sh
 ```
 
-Go to http://localhost:3003
+Go to [localhost:3003](http://localhost:3003)
 
 ## Build with Docker
 
