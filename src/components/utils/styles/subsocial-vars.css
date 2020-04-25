@@ -27,3 +27,4 @@ $color_light_border: #ddd;
 
 /* 64px is a height of Ant Design toolbar */
 $height_top_menu: 64px;
+$border_radius_normal: 4px;

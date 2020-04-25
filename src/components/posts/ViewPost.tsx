@@ -305,7 +305,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         <Voter struct={post} type={'Post'}/>
         {/* <ShareButtonPost postId={post.id}/> */}
       </Section>
-      <div id={goToCommentsId}><CommentsByPost postId={post.id} post={post} /></div>
+      <Section id={goToCommentsId}>
+        <CommentsByPost postId={post.id} post={post} />
+      </Section>
     </>
   };
 

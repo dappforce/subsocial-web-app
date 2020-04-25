@@ -7,21 +7,15 @@ body,
   font-size: 16px !important;
 }
 
+/* Common Resusable Classes */
+/* ---------------------------------------- */
+
 .DfLinkOnHover {
   &:hover {
     color: $color_link;
     cursor: pointer;
     text-decoration: none;
   }
-}
-
-.am-drawer-content {
-  padding-top: 0 !important;
-  text-align: left !important;
-}
-
-.ant-layout-sider-children {
-  overflow: auto;
 }
 
 .DfBlackLink {
@@ -32,6 +26,22 @@ body,
 .DfBoldBlackLink {
   @extend .DfBlackLink;
   font-weight: 600;
+}
+
+.DfBoxShadow {
+  box-shadow: 0 0 5px 2px #eeecec;
+}
+
+/* Other Styles */
+/* ---------------------------------------- */
+
+.am-drawer-content {
+  padding-top: 0 !important;
+  text-align: left !important;
+}
+
+.ant-layout-sider-children {
+  overflow: auto;
 }
 
 /* Used as a hack to fix ReactBase font-size */
@@ -107,9 +117,7 @@ body,
 }
 
 .DfEntirePost {
-
   /* padding: 0 $space_tiny; */
-
 
   .DfVoter {
     margin-left: -1rem;
@@ -119,6 +127,10 @@ body,
   }
   .DfPostContent {
     margin: $space_big 0;
+    padding: $space_big;
+    background-color: #fff;
+    border-radius: $border_radius_normal;
+    @extend .DfBoxShadow;
   }
 }
 
@@ -255,7 +267,7 @@ body,
     border-radius: 15px;
     border-top-left-radius: 0;
     background-color: #fff;
-    box-shadow: 0 0 5px 2px #eeecec;
+    @extend .DfBoxShadow;
   }
 }
 
@@ -575,7 +587,7 @@ hr {
 
     &:hover {
       background-color: #f0f0f0 !important;
-      border-radius: 4px;
+      border-radius: $border_radius_normal;
     }
 
     i:not(.DfVoter) {
@@ -1371,7 +1383,7 @@ a.DfStatItem {
 
   &:hover {
      background-color: #eee;
-     border-radius: 4px;
+     border-radius: $border_radius_normal;
   }
 
   .ant-list-item-meta-title {
@@ -1405,7 +1417,7 @@ a.DfStatItem {
     background-color: #fff;
     border: 1px solid $color_light_border;
     box-sizing: border-box;
-    border-radius: 4px;
+    border-radius: $border_radius_normal;
     margin-bottom: $space_big;
 
     .SNavatar {
@@ -1426,7 +1438,6 @@ a.DfStatItem {
     }
 
     .SNheadDescription {
-      font-weight: 500;
       margin-top: $space_normal;
     }
 
@@ -1442,7 +1453,7 @@ a.DfStatItem {
   .SNmenu {
     border: 1px solid $color_light_border;
     box-sizing: border-box;
-    border-radius: 4px;
+    border-radius: $border_radius_normal;
     margin-bottom: $space_big;
     width: 100% !important;
   }

@@ -25,7 +25,7 @@ import BN from 'bn.js'
 import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
 import { PostContent, CommentContent } from '@subsocial/types/offchain';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { newLogger } from '@subsocial/utils';
+import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { AuthorPreviewWithOwner } from '../profiles/address-views';
 
@@ -94,13 +94,13 @@ export function CommentsTree (props: Props) {
   };
 
   const RenderCommentsOnPost = () => (
-    <Section className='DfCommentsByPost'>
+    <div className='DfCommentsByPost'>
       <h3><Pluralize count={commentsCount} singularText='comment' /></h3>
       <div id={`comments-on-post-${postId}`}>
         {<NewComment postId={postId}/>}
         {renderComments()}
       </div>
-    </Section>
+    </div>
   );
 
   const RenderCommentPage = () => (
@@ -239,11 +239,14 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
               isPadded={false}
               size={32}
               details={
-                <Link href={`/comment?postId=${struct.post_id.toString()}&commentId=${id.toString()}`}>
-                  <a className='DfGreyLink'>
-                    {`${moment(formatUnixDate(time)).fromNow()} · ${pluralize(score, 'Point')}`}
-                  </a>
-                </Link>}
+                <span>
+                  <Link href={`/comment?postId=${struct.post_id.toString()}&commentId=${id.toString()}`}>
+                    <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
+                  </Link>
+                  {' · '}
+                  {pluralize(score, 'Point')}
+                </span>
+              }
             />
           </SuiComment.Metadata>
           <SuiComment.Content>
@@ -253,12 +256,17 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
                 id={struct.id}
                 postId={struct.post_id}
                 json={content.body}
-                onSuccess={() => { setShowEditForm(false); setDoReloadComment(!doReloadComment); }}
+                onSuccess={() => {
+                  setShowEditForm(false)
+                  setDoReloadComment(!doReloadComment)
+                }}
               />
               : <>
-                <SuiComment.Text>
-                  <DfMd source={content.body} />
-                </SuiComment.Text>
+                {nonEmptyStr(content.body) &&
+                  <SuiComment.Text>
+                    <DfMd source={content.body} />
+                  </SuiComment.Text>
+                }
                 <SuiComment.Actions>
                   {showReplyForm
                     ? <SuiComment.Action>
@@ -279,12 +287,15 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
                       <SuiComment.Action>
                         <RenderDropDownMenu />
                       </SuiComment.Action>
-                    </>}
+                    </>
+                  }
                 </SuiComment.Actions>
               </>}
           </SuiComment.Content>
         </div>
-        <div className={'ChildComment'}>{renderLevelOfComments(parentComments, childrenComments)}</div>
+        <div className={'ChildComment'}>
+          {renderLevelOfComments(parentComments, childrenComments)}
+        </div>
       </SuiComment>
     </SuiComment.Group>
   </div>;
