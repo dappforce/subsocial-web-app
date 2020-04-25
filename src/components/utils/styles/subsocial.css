@@ -1523,6 +1523,10 @@ a.DfStatItem {
 
   .DfAddressIcon {
     margin: $space_normal 0;
+
+    .ui--IdentityIcon {
+      display: block;
+    }
   }
 
   .DfAddressInfo {
