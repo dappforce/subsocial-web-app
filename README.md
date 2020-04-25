@@ -35,8 +35,7 @@ yarn
 
 ### Option A: Run in a DEV mode
 
-A dev mode supports hot deploys – this is very helpful when developing UI, 
-but it takes some time in seconds when it compiles after you made changes to the source code of the app.
+A dev mode supports hot reloads – this is very helpful when developing UI bacuse you can see changes in your browser without restarting the app. But it takes some time (in seconds) compile updated parts of the app, after you made changes to the source code.
 
 ```sh
 ./run-dev.sh
@@ -46,7 +45,7 @@ Go to [localhost:3003](http://localhost:3003)
 
 ### Option B: Run in a PROD mode
 
-Prod mode doesn't support hot reloads, but works super fast, because UI gets compiled by Next.js before running.
+A prod mode doesn't support hot reloads, but works super fast, because UI gets compiled by Next.js before running.
 
 ```sh
 yarn build
