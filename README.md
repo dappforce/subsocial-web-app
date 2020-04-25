@@ -10,7 +10,7 @@ To learn more about Subsocial, please visit [Subsocial Network](http://subsocial
 
 [![Subsocial demo #4, 2019-11-28](http://i3.ytimg.com/vi/pFGvlKpJdss/maxresdefault.jpg)](https://www.youtube.com/watch?v=pFGvlKpJdss)
 
-## Run locally in dev mode
+## Run locally
 
 If you want to develop Subsocial's web UI or just check it out locally, there is an easy way to do it.
 
