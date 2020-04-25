@@ -1030,7 +1030,8 @@ hr {
     margin-top: 0 !important;
   }
 
-  width: 60%;
+  width: 450px;
+  min-width: 320px;
   color: rgba(0, 0, 0, 0.7);
   z-index: 2;
   padding: 0 1rem;
