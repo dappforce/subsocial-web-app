@@ -71,6 +71,10 @@ body,
   text-align: end;
   font-size: $font_small;
 
+  .ant-tag:hover {
+    background-color: #fff;
+  }
+
   a {
     @extend .DfLinkOnHover;
   }
