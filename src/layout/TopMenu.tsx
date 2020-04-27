@@ -9,9 +9,9 @@ import Link from 'next/link';
 import { AddressPopupWithOwner } from 'src/components/profiles/address-views';
 
 const InnerMenu = () => {
-  const [ show, setShow ] = useState(isBrowser);
   const { toggle, show: open } = useSidebarCollapsed();
   const { state: { address } } = useMyAccount();
+  const [ show, setShow ] = useState(isBrowser);
   const isLoggedIn = useIsLoggedIn();
 
   return isMobile && show

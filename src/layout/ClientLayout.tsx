@@ -10,7 +10,6 @@ import Signer from '@polkadot/react-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
 import Connecting from '../components/main/Connecting';
 import { BlockAuthors, Events } from '@polkadot/react-query';
-import AccountsOverlay from '../components/main//overlays/Accounts';
 import ConnectingOverlay from '../components/main//overlays/Connecting';
 import { getEnv } from '../components/utils/utils';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
@@ -38,7 +37,6 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
                     </Content>
                   </Signer>
                   <ConnectingOverlay />
-                  <AccountsOverlay />
                 </NotifCounterProvider>
               </MyAccountProvider>
               <Connecting />

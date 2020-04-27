@@ -9,6 +9,7 @@ import { Option } from '@polkadot/react-components/InputAddress/types';
 import React, { useState } from 'react';
 import { useMyAccount } from '../MyAccountContext';
 import InputAddress from '@polkadot/react-components/InputAddress';
+// import { useApi } from '@polkadot/react-hooks';
 
 interface Props extends BareProps {
   defaultValue?: Uint8Array | string | null;
@@ -36,8 +37,9 @@ const DEFAULT_TYPE = 'all';
 const MULTI_DEFAULT: string[] = [];
 
 export const DfInputAddress = (props: Props) => {
-  const { className, defaultValue, help, hideAddress = false, isDisabled = false, isError, isMultiple, label, labelExtra, options, optionsAll, placeholder, type = DEFAULT_TYPE, style, withEllipsis, withLabel, onChange, onChangeMulti } = props;
+  const { className, help, hideAddress = false, isDisabled = false, isError, isMultiple, label, labelExtra, options, optionsAll, placeholder, type = DEFAULT_TYPE, style, withEllipsis, withLabel, onChange, onChangeMulti } = props;
   const { state: { address }, set: setCurrentAccount } = useMyAccount();
+  // const { isApiConnected, isApiReady } = useApi()
   const [ value, setValue ] = useState(address !== undefined ? address : null);
 
   const DfOnChange = (value: string | null): void => {
@@ -49,7 +51,7 @@ export const DfInputAddress = (props: Props) => {
   return <InputAddress
     className={className}
     type={type}
-    defaultValue={defaultValue}
+    defaultValue={null}
     help={help}
     isDisabled={isDisabled}
     isError={isError}

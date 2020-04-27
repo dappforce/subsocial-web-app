@@ -25,6 +25,7 @@ export const LatestPosts = (props: Props) => {
         variant='preview'
         postData={item.post}
         postExtData={item.ext}
+        owner={item.owner}
       />
     }
   />
