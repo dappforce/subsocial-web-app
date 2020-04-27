@@ -3,7 +3,7 @@ import React from 'react';
 import settings from '../components/settings';
 import '../components/utils/styles';
 
-import Api from '../components/utils/Api'
+import Api from '@polkadot/react-api/Api'
 import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import Queue from '@polkadot/react-components/Status/Queue';
 import Signer from '@polkadot/react-signer';
