@@ -42,6 +42,11 @@ body,
   box-shadow: $shadow;
 }
 
+.DfProfileModalLink {
+  @extend .DfGreyLink;
+  margin-right: $space_huge
+}
+
 /* Other Styles */
 /* ---------------------------------------- */
 
@@ -210,9 +215,9 @@ body,
   font-weight: 600;
 }
 
-.DfProfileTitle {
+/*.DfProfileTitle {
   margin-bottom: $space_normal;
-}
+}*/
 
 .ProfileDetails {
   display: flex !important;
@@ -421,7 +426,6 @@ hr {
 
 .disable,
 .disable:hover {
-  margin-right: $space_tiny;
   color: $color_muted;
   text-decoration: none !important;
   cursor: default !important;
@@ -752,6 +756,13 @@ hr {
   }
 }
 
+
+.Df--AddressComponents-details {
+  color: $color_muted !important;
+  font-size: $font_small !important;
+  margin-top: $space_mini;
+}
+
 .ui--AddressComponents {
   display: flex;
 
@@ -775,9 +786,6 @@ hr {
 
   .Df--AddressComponents-details {
     display: block;
-    color: $color_muted !important;
-    font-size: $font_small !important;
-    margin-top: $space_mini;
   }
 
   .ui--AddressSummary-name,
@@ -934,6 +942,9 @@ hr {
   border-radius: 50%;
   vertical-align: middle;
   border: 1px solid $color_light_border;
+  &.space {
+    margin-right: $space_tiny;
+  }
 }
 
 .ui.top.left.flowing.popup.transition.visible {
@@ -1539,7 +1550,7 @@ a.DfStatItem {
   }
 
   .DfAddressInfo {
-    margin: $space_normal $space_tiny;
+    margin: $space_normal $space_tiny $space_normal 0;
     display: block;
     line-height: normal;
 

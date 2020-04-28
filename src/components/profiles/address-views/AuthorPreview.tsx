@@ -10,6 +10,7 @@ import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { useApi } from '@polkadot/react-hooks';
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 
 export type InfoProps = {
@@ -17,9 +18,10 @@ export type InfoProps = {
   address?: string | AccountId
 }
 export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
+  const { isApiConnected } = useApi()
   return <>
     <div className='Df--AddressComponents-details'>
-      {address && <>
+      {address && isApiConnected && <>
         <Balance address={address.toString()} />
       </>}
       {address && details && ' · '}
