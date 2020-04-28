@@ -14,7 +14,7 @@ export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} 
 
   if (content && nonEmptyStr(content.fullname)) {
     title = content?.fullname
-    subtitle = nonEmptyStr(profile?.username) ? `@${profile?.username} - ${shortAddress}` : shortAddress
+    subtitle = nonEmptyStr(profile?.username) ? `@${profile?.username} · ${shortAddress}` : shortAddress
   } else if (nonEmptyStr(profile?.username)) {
     title = `@${profile?.username}`
     subtitle = shortAddress
@@ -26,8 +26,8 @@ export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} 
     <Link href='/profile/[address]' as={`/profile/${address}`}>
       <a className='ui--AddressComponents-address'>
         <span className='AddressComponents-fullname'>{title}</span>
-        <InfoDetails address={address} details={<>Repupation: {struct.reputation.toString()}</>} />
         nonEmptyStr(subTitle) <div className='DfPopup-username'>{subtitle}</div>
+        <InfoDetails address={address} details={<>Repupation: {struct.reputation.toString()}</>} />
       </a>
     </Link>
   );
