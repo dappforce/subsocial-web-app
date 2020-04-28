@@ -769,13 +769,15 @@ hr {
   }
 
   .ui--AddressComponents-info {
-    display: inline-flex;
+    display: flex;
+    align-items: center;
   }
 
   .Df--AddressComponents-details {
     display: block;
     color: $color_muted !important;
     font-size: $font_small !important;
+    margin-top: $space_mini;
   }
 
   .ui--AddressSummary-name,
@@ -843,16 +845,7 @@ hr {
   align-items: center;
 }
 
-.DfSectionOuter {
-  margin-left: auto;
-  margin-right: auto;
-  min-width: 428px;
-  max-width: calc(680px + $space_normal * 2);
-  width: calc(680px + $space_normal * 2);
-}
-
 .DfSection {
-  margin: $space_normal;
 
   .viewblog-minipreview {
     display: flex;
@@ -872,6 +865,21 @@ hr {
     border: none;
     padding-top: $space_tiny;
     padding-bottom: $space_tiny;
+  }
+}
+
+
+@media (min-width: 560px) {
+  .DfSectionOuter {
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 428px;
+    max-width: calc(680px + $space_normal * 2);
+    width: calc(680px + $space_normal * 2);
+  }
+
+  .DfSection {
+    margin: $space_normal;
   }
 }
 

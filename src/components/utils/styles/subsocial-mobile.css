@@ -24,6 +24,12 @@
   padding: 0;
 }
 
+.DfBrand.mobile {
+    img {
+      max-width: 36px;
+    }
+}
+
 .item.header.disabled {
   margin: 0;
 
@@ -61,6 +67,23 @@
 }
 
 @media (max-width: 450px) {
+  
+  .DfEntirePost {
+    .DfPostContent {
+      padding: 1rem;
+      margin: 1rem -1rem;
+      border-radius:0;
+    }
+
+    .DfInfoPanel {
+      display: block;
+
+    }
+  }
+
+  .DfSectionOuter {
+    width: 100%;
+  }
 
   .item.header.disabled {
     zoom: 0.8;
@@ -121,6 +144,10 @@
 
     .ui--AddressComponents-info {
       max-width: 11rem;
+
+      .Df--AddressComponents-details {
+        margin-top: $space_mini;
+      }
     }
 
     .ui.attached.tabular.menu {
@@ -266,7 +293,8 @@
   }
 
   .DfPostName {
-    margin-right: $space_tiny;
+    font-size: 2rem;
+    margin-bottom: $space_normal !important;
     width: 87%;
   }
 

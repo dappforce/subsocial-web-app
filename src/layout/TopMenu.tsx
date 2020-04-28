@@ -14,6 +14,8 @@ const InnerMenu = () => {
   const [ show, setShow ] = useState(isBrowser);
   const isLoggedIn = useIsLoggedIn();
 
+  const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
+
   return isMobile && show
     ? <div className='DfTopBar DfTopBar--search'>
       <Search/>
@@ -25,8 +27,8 @@ const InnerMenu = () => {
           <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
         </Button>
         <Link href='/'>
-          <a className='DfBrand'>
-            <img src='/subsocial-logo.svg' alt='Subsocial' />
+          <a className={`DfBrand ${isMobile ? 'mobile' : ''}`}>
+            <img src={logoImg} alt='Subsocial' />
           </a>
         </Link>
       </div>

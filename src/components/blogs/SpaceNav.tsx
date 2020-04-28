@@ -43,7 +43,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
         const tags = nt.content.data as string[]
         return (
           <Menu.Item key={nt.id}>
-            <a href={`/search?tab=posts&blogId=${blogId}&tags=${tags.join(",")}`}>{nt.title}</a>
+            <a href={`/search?tab=posts&blogId=${blogId}&tags=${tags.join(',')}`}>{nt.title}</a>
           </Menu.Item>
         );
       }
