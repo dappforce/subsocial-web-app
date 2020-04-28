@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
 import { Layout } from 'antd';
@@ -28,6 +28,7 @@ const HomeNav = () => {
     trigger={null}
     collapsible
     collapsed={collapsed}
+    defaultCollapsed={false}
   >
     <Menu />
   </Sider></div>;
@@ -35,6 +36,9 @@ const HomeNav = () => {
 
 const DefaultNav: FunctionComponent = ({ children }) => {
   const { state: { collapsed }, toggle, hide } = useSidebarCollapsed();
+
+  useEffect(() => hide(), [ false ])
+
   return <Drawer
     className='DfMobileSideBar'
     style={isMobile ? { minHeight: document.documentElement.clientHeight } : {}}
@@ -63,7 +67,7 @@ export const Navigation = (props: Props): JSX.Element => {
         <TopMenu />
       </Header>
       <Layout>
-        {isHomePage()
+        {isHomePage() && isBrowser
           ? <>
             <HomeNav />
             <MainContent />

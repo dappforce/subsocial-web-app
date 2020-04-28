@@ -25,11 +25,11 @@ import { TxCallback } from '../utils/types';
 import { CommentContent } from '@subsocial/types/offchain';
 import { CommentUpdate } from '@subsocial/types/substrate/classes';
 import U32 from '@polkadot/types/primitive/U32';
+import { newLogger } from '@subsocial/utils';
 
 const log = newLogger('Edit comment')
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-import { newLogger } from '@subsocial/utils';
 
 type OuterProps = ValidationProps & {
   postId: BN,
@@ -246,7 +246,6 @@ function LoadStruct (props: LoadStructProps) {
 
   return <EditForm {...props} struct={struct} json={json as CommentContent} />;
 }
-
 
 export const EditComment = withMulti<LoadStructProps>(
   LoadStruct,

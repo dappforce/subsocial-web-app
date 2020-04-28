@@ -17,7 +17,7 @@ import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
 import { DfBgImg } from '../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
-import { isMobile } from 'react-device-detect';
+import { isMobile, isBrowser } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
 import { useMyAccount } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
@@ -294,7 +294,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         </div>
         <div className='DfRow'>
           {withCreatedBy && renderPostCreator(post)}
-          {<StatsPanel id={post.id} goToCommentsId={goToCommentsId} />}
+          {isBrowser && <StatsPanel id={post.id} goToCommentsId={goToCommentsId} />}
         </div>
         <div className='DfPostContent'>
           {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
