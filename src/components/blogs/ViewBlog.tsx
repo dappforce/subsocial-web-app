@@ -141,7 +141,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     <div className={'viewblog-minipreview'}>
       <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
         {hasImage
-          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
+          ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
         }
         <div className='content'>
@@ -156,7 +156,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
-          ? <DfBgImg className='DfAvatar' size={imageSize} src={image} rounded/>
+          ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} rounded/>
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
         }
         <div className='content'>

@@ -14,9 +14,9 @@ type ImageProps = {
 
 export const Avatar: React.FunctionComponent<ImageProps> = ({ size, avatar, address, style }) => {
   return avatar && nonEmptyStr(avatar)
-    ? <DfBgImg size={size} src={avatar} className='DfAvatar ui--IdentityIcon' style={style} rounded />
+    ? <DfBgImg size={size} src={avatar} className='DfAvatar space ui--IdentityIcon' style={style} rounded />
     : <IdentityIcon
-      style={style}
+      style={{ ...style, marginRight: '.5rem' }}
       size={size}
       value={address}
     />;

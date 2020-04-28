@@ -27,6 +27,8 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
+import { InfoDetails } from './address-views';
+import { useApi } from '@polkadot/react-hooks';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -52,6 +54,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
+  const { isApiConnected, isApiReady } = useApi()
 
   const address = id.toString();
   const { state: { address: myAddress } } = useMyAccount();
@@ -142,7 +145,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const NameAsLink = () => (
     <Link href='/profile/[address]' as={`/profile/${address}`}>
-      <a className='handle'>{getName()}</a>
+      <a className='handle DfBoldBlackLink'>{getName()}</a>
     </Link>
   );
 
@@ -156,7 +159,7 @@ const Component: NextPage<Props> = (props: Props) => {
     return <div>
       <div className={`item ProfileDetails MyBlog`}>
         {hasAvatar
-          ? <DfBgImg size={size} src={avatar} className='DfAvatar' rounded/>
+          ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
           : <IdentityIcon className='image' value={address} size={size} />
         }
         <div className='content'>
@@ -165,15 +168,9 @@ const Component: NextPage<Props> = (props: Props) => {
             {renderDropDownMenu()}
           </div>
           {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
-          {/* <BalanceDisplay
-
-            label='Balance: '
-            className='Df--profile-balance'
-            params={address}
-          /> */}
           <div className='about'>
             <div>
-              <MutedDiv className='DfScore'>Reputation: {reputation.toString()}</MutedDiv>
+              {isApiConnected && isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
               <div className='DfSocialLinks'>
                 {hasEmail &&
                   <a target='_blank' href={`mailto:${email}`}>
@@ -250,8 +247,8 @@ const Component: NextPage<Props> = (props: Props) => {
         {renderPreview()}
         <div className='Profile--actions'>
           <FollowAccountButton address={address} size={TX_BUTTON_SIZE}/>
-          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`DfGreyLink ${noFollowers && 'disable'}`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
-          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`DfGreyLink ${noFollowing && 'disable'}`}>{following.toString()} Following </span>
+          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
+          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{following.toString()} Following </span>
         </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}

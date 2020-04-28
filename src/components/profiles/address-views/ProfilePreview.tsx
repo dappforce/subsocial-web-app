@@ -42,7 +42,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
 
   return <div>
     <div className={`item ProfileDetails MyProfile`}>
-      <Avatar size={size || 40} address={address} avatar={avatar} style={{ marginTop: '.5rem' }}/>
+      <Avatar size={size || 44} address={address} avatar={avatar} style={{ marginTop: '.5rem' }}/>
       <div className='content' style={{ paddingLeft: '1rem' }}>
         <div className='header DfAccountTitle'>
           <NameDetails owner={owner} address={address} />
