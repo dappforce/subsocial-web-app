@@ -9,9 +9,9 @@ type BalanceProps = {
 };
 
 export const Balance: React.FunctionComponent<BalanceProps> = ({ address }) => {
-  const { isApiConnected, isApiReady } = useApi();
+  const { isApiReady } = useApi();
 
-  if (!isApiConnected && !isApiReady) return null;
+  if (!isApiReady) return null;
 
   return (
     <BalanceDisplay

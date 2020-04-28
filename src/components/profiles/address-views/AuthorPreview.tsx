@@ -18,10 +18,10 @@ export type InfoProps = {
   address?: string | AccountId
 }
 export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
-  const { isApiConnected } = useApi()
+  const { isApiReady } = useApi()
   return <>
     <div className='Df--AddressComponents-details'>
-      {address && isApiConnected && <>
+      {address && isApiReady && <>
         <Balance address={address.toString()} />
       </>}
       {address && details && ' · '}
