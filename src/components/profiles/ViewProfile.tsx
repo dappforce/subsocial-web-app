@@ -54,7 +54,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { isApiConnected, isApiReady } = useApi()
+  const { isApiReady } = useApi()
 
   const address = id.toString();
   const { state: { address: myAddress } } = useMyAccount();
@@ -170,7 +170,7 @@ const Component: NextPage<Props> = (props: Props) => {
           {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
           <div className='about'>
             <div>
-              {isApiConnected && isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
+              {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
               <div className='DfSocialLinks'>
                 {hasEmail &&
                   <a target='_blank' href={`mailto:${email}`}>
