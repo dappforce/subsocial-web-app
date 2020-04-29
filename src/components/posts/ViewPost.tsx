@@ -9,7 +9,6 @@ import Error from 'next/error'
 import { nonEmptyStr, newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
-// import { PostHistoryModal } from '../utils/ListsEditHistory';
 import { PostVoters } from '../voting/ListVoters';
 import { ShareModal } from './ShareModal';
 import NoData from '../utils/EmptyList';
@@ -29,7 +28,6 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
-// import { ShareButtonPost } from '../utils/ShareButton';
 
 const log = newLogger('View post')
 
@@ -228,25 +226,31 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       </div>);
   };
 
+  const renderInfoPostPreview = (post: Post, content: PostExtContent, owner?: ProfileData) => {
+    if (!content || !post) return null;
+
+    return <div className='DfInfo'>
+      <div className='DfRow'>
+        <div>
+          <div className='DfRow'>
+            {renderPostCreator(post, owner)}
+            <RenderDropDownMenu account={post.created.account}/>
+          </div>
+          {renderContent(post, content)}
+          <ViewTags tags={content?.tags} />
+          {/* {withStats && <StatsPanel id={post.id}/>} */}
+        </div>
+        <div>
+          {renderPostImage(originalContent)}
+        </div>
+      </div>
+    </div>
+  }
+
   const renderRegularPreview = () => {
     return <>
-      <Segment className={`DfPostPreview`}>
-        <div className='DfInfo'>
-          <div className='DfRow'>
-            <div>
-              <div className='DfRow'>
-                {renderPostCreator(post, owner)}
-                <RenderDropDownMenu account={created.account}/>
-              </div>
-              {renderContent(post, content)}
-              <ViewTags tags={content?.tags} />
-              {/* {withStats && <StatsPanel id={post.id}/>} */}
-            </div>
-            <div>
-              {renderPostImage(content)}
-            </div>
-          </div>
-        </div>
+      <Segment className='DfPostPreview'>
+        {renderInfoPostPreview(post, content, owner)}
         {withActions && <RenderActionsPanel/>}
         {commentsSection && <CommentsByPost postId={post.id} post={post} />}
       </Segment>
@@ -255,7 +259,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderSharedPreview = () => {
     if (!originalPost || !originalContent) return <></>;
-    const account = originalPost.created.account;
     return <>
       <Segment className={`DfPostPreview`}>
         <div className='DfRow'>
@@ -264,22 +267,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         </div>
         <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
         <Segment className='DfPostPreview'>
-          <div className='DfInfo'>
-            <div className='DfRow'>
-              <div>
-                <div className='DfRow'>
-                  {renderPostCreator(originalPost)}
-                  <RenderDropDownMenu account={account}/>
-                </div>
-                {renderContent(originalPost, originalContent)}
-                <ViewTags tags={originalContent?.tags} />
-                {/* {withStats && <StatsPanel id={post.id}/>} */}
-              </div>
-              <div>
-                {renderPostImage(originalContent)}
-              </div>
-            </div>
-          </div>
+          {renderInfoPostPreview(originalPost, originalContent)}
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
         {withActions && <RenderActionsPanel/>}
