@@ -151,7 +151,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       : <div className='header DfPostTitle--preview'>{title}</div>;
   };
 
-  const renderPostCreator = (post: Post, size?: number) => {
+  const renderPostCreator = (post: Post, owner?: ProfileData, size?: number) => {
     if (isEmpty(post)) return null;
     const { blog_id, created: { account, time } } = post;
     return <>
@@ -235,7 +235,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <div className='DfRow'>
             <div>
               <div className='DfRow'>
-                {renderPostCreator(post)}
+                {renderPostCreator(post, owner)}
                 <RenderDropDownMenu account={created.account}/>
               </div>
               {renderContent(post, content)}
@@ -259,17 +259,26 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     return <>
       <Segment className={`DfPostPreview`}>
         <div className='DfRow'>
-          {renderPostCreator(post)}
+          {renderPostCreator(post, owner)}
           <RenderDropDownMenu account={created.account}/>
         </div>
         <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
         <Segment className='DfPostPreview'>
           <div className='DfInfo'>
             <div className='DfRow'>
-              {renderPostCreator(originalPost)}
-              <RenderDropDownMenu account={account}/>
+              <div>
+                <div className='DfRow'>
+                  {renderPostCreator(originalPost)}
+                  <RenderDropDownMenu account={account}/>
+                </div>
+                {renderContent(originalPost, originalContent)}
+                <ViewTags tags={originalContent?.tags} />
+                {/* {withStats && <StatsPanel id={post.id}/>} */}
+              </div>
+              <div>
+                {renderPostImage(originalContent)}
+              </div>
             </div>
-            {renderContent(originalPost, originalContent)}
           </div>
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
@@ -293,7 +302,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <RenderDropDownMenu account={created.account}/>
         </div>
         <div className='DfRow'>
-          {withCreatedBy && renderPostCreator(post)}
+          {withCreatedBy && renderPostCreator(post, owner)}
           {isBrowser && <StatsPanel id={post.id} goToCommentsId={goToCommentsId} />}
         </div>
         <div className='DfPostContent'>

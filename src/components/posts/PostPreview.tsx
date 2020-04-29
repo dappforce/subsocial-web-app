@@ -40,7 +40,7 @@ export function withLoadFeed<P extends LoadProps> (Component: React.ComponentTyp
 }
 
 export const PostPreviewListView: React.FunctionComponent<PostPreviewListProps> = ({ posts }) =>
-  <>{posts.map(x => <PostPreview post={x} />)}</>
+  <>{posts.map(x => <PostPreview key={x.post.struct.id.toString()} post={x} />)}</>
 
 export function PostPreview (props: PostPreviewProps) {
   const { post, ext, owner } = props.post
