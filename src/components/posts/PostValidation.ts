@@ -7,13 +7,9 @@ const TITLE_MAX_LEN = 100;
 
 const MAX_TAGS_PER_POST = 10
 
-export type ValidationProps = {
-  postMaxLen?: number // TODO this should be a UI const.
-}
+const POST_MAX_LEN = 10000;
 
-const postMaxLen = 10000;
-
-export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape({
+export const buildValidationSchema = () => Yup.object().shape({
   title: Yup.string()
     // .required('Post title is required')
     .min(TITLE_MIN_LEN, minLenError('Post title', TITLE_MIN_LEN))
@@ -22,7 +18,7 @@ export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape(
   body: Yup.string()
     .required('Post body is required')
     // .min(p.minTextLen.toNumber(), minLenError('Post body', p.postMinLen))
-    .max(p.postMaxLen || postMaxLen, maxLenError('Post body', p.postMaxLen || postMaxLen)),
+    .max(POST_MAX_LEN, maxLenError('Post body', POST_MAX_LEN)),
 
   image: urlValidation('Image'),
 
@@ -32,7 +28,7 @@ export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape(
   canonical: urlValidation('Original post')
 })
 
-export const buildSharePostValidationSchema = (p?: ValidationProps) => Yup.object().shape({
+export const buildSharePostValidationSchema = () => Yup.object().shape({
   body: Yup.string()
-    .max(p?.postMaxLen || postMaxLen, maxLenError('Post body', p?.postMaxLen || postMaxLen))
+    .max(POST_MAX_LEN, maxLenError('Post body', POST_MAX_LEN))
 })

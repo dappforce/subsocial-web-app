@@ -24,7 +24,7 @@ import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
 import { Post, IpfsHash, BlogId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
-import { ValidationProps, buildValidationSchema } from './PostValidation';
+import { buildValidationSchema } from './PostValidation';
 import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
 import { Icon } from 'antd';
@@ -33,7 +33,7 @@ import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-type OuterProps = ValidationProps & {
+type OuterProps = {
   blogId?: BN,
   id?: BN,
   extension?: IPostExtension,
@@ -300,7 +300,7 @@ function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
     const router = useRouter();
     const { blogId } = router.query;
     try {
-      return <Component blogId={new BN(blogId as string)} postMaxLen={1000} />;
+      return <Component blogId={new BN(blogId as string)} />;
     } catch (err) {
       return <em>Invalid blog ID: {blogId}</em>;
     }
