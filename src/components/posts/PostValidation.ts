@@ -31,3 +31,8 @@ export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape(
 
   canonical: urlValidation('Original post')
 })
+
+export const buildSharePostValidationSchema = (p?: ValidationProps) => Yup.object().shape({
+  body: Yup.string()
+    .max(p?.postMaxLen || postMaxLen, maxLenError('Post body', p?.postMaxLen || postMaxLen))
+})
