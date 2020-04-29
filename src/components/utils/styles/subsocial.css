@@ -620,7 +620,7 @@ hr {
   }
 }
 
-.DfShareModal {
+.DfShareModalBody {
   .DfSection {
     margin-top: $space_huge;
     margin-bottom: 0;
@@ -951,6 +951,10 @@ hr {
   .DfAvatar {
     margin: 0 $space_tiny $space_tiny 0;
   }
+}
+
+.item.ProfileDetails.DfPreview {
+  align-items: center;
 }
 
 .ui.top.left.flowing.popup.transition.visible {
@@ -1576,5 +1580,16 @@ a.DfStatItem {
 
   .ui.search.dropdown {
     max-width: 25rem;
+  }
+}
+
+.DfError {
+  color: red
+}
+
+.DfShareModalPadding.scrolling.content {
+  padding-bottom: 0;
+  .ui.segment.DfPostPreview {
+    padding-bottom: 1rem;
   }
 }
