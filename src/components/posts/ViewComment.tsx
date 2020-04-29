@@ -310,7 +310,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     ? (
       <Section>
         <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
-        <MutedDiv>{renderResponseTitle}</MutedDiv>
+        <MutedDiv>{renderResponseTitle()}</MutedDiv>
         <div className='mt-3'>{componentContent}</div>
       </Section>
     )
