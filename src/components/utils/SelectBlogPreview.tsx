@@ -26,17 +26,19 @@ type Props = {
 
 const SUB_SIZE = 2;
 
+const NoBlogsFound = <NoData description={<span>No blogs found</span>} />
+
 const SelectBlogPreview = (props: Props) => {
   const { preparedBlogsData = [], imageSize = 36, onSelect, defaultValue } = props
 
-  if (isEmptyArray(preparedBlogsData)) return <NoData description={<span>No blogs found</span>} />;
+  if (isEmptyArray(preparedBlogsData)) return NoBlogsFound
 
   return <Select
     style={{ width: 200 }}
     onSelect={onSelect}
     defaultValue={defaultValue}
   >
-    { preparedBlogsData.map((x) => (
+    {preparedBlogsData.map((x) =>
       <Select.Option value={x.id} key={x.id}>
         <div className={`item ProfileDetails DfPreview`}>
           {x.hasImage
@@ -48,7 +50,6 @@ const SelectBlogPreview = (props: Props) => {
           </div>
         </div>
       </Select.Option>
-    )
     )}
   </Select>
 }
@@ -57,7 +58,7 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { blogIds } = props
 
-    if (isEmptyArray(blogIds)) return <NoData description={<span>No blogs found</span>} />
+    if (isEmptyArray(blogIds)) return NoBlogsFound
 
     const { subsocial } = useSubsocialApi()
     const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>([])
@@ -85,7 +86,7 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
       }
     }).filter(x => typeof x !== 'undefined') as PreparedBlogData[]
 
-    if (!preparedBlogsData) return <NoData description={<span>No blogs found</span>} />
+    if (!preparedBlogsData) return NoBlogsFound
 
     return <Component preparedBlogsData={preparedBlogsData} {...props} />
   }

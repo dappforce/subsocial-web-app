@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { withCalls, withMulti } from '@polkadot/react-api';
 import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
@@ -17,11 +16,12 @@ import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from '@polkadot/react-components/Status/types';
 import { SubmittableResult } from '@polkadot/api';
 import SimpleMDEReact from 'react-simplemde-editor';
-// import { useApi } from '@polkadot/react-hooks';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
+import { isEmptyArray } from '@subsocial/utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
 type Props = MyAccountProps & {
   postId: BN,
   open: boolean,
@@ -29,16 +29,19 @@ type Props = MyAccountProps & {
   blogIds?: BN[]
 };
 
+const Fields = {
+  body: 'body'
+}
+
 const InnerShareModal = (props: Props) => {
   const { open, close, postId, blogIds } = props;
 
-  const extension = new PostExtension({ SharedPost: postId as SharedPost });
-
   if (!blogIds) return <Loading />;
 
+  const extension = new PostExtension({ SharedPost: postId as SharedPost });
+
   const { ipfs } = useSubsocialApi()
-  // const { isApiReady, isApiConnected } = useApi()
-  const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
   const [ blogId, setBlogId ] = useState(blogIds[0]);
 
   const { control, errors, formState, watch } = useForm({
@@ -47,15 +50,13 @@ const InnerShareModal = (props: Props) => {
     mode: 'onBlur'
   });
 
-  const body = watch('body', '');
+  const body = watch(Fields.body, '');
   const { isSubmitting } = formState;
 
   const onSubmit = (sendTx: () => void) => {
-    console.log(body)
-    console.log(errors)
-    ipfs.saveContent({ body: body }).then(hash => {
+    ipfs.saveContent({ body }).then(hash => {
       if (hash) {
-        setIpfsCid(hash);
+        setIpfsHash(hash);
         sendTx();
       }
     }).catch(err => new Error(err));
@@ -88,26 +89,31 @@ const InnerShareModal = (props: Props) => {
   );
 
   const renderShareView = () => {
-    if (blogIds.length === 0) {
+    if (isEmptyArray(blogIds)) {
       return (
-        <Link href='/blogs/new'><a className='ui button primary'>Create your first blog</a></Link>
-      );
+        <Link href='/blogs/new'>
+          <a className='ui button primary'>
+            Create your first blog
+          </a>
+        </Link>
+      )
     }
 
-    return (<div className='DfShareModalBody'>
+    return <div className='DfShareModalBody'>
       <form>
         <Controller
           as={<SimpleMDEReact />}
-          name='body'
+          name={Fields.body}
           control={control}
           value={body}
-          className={`DfMdEditor ${errors['body'] && 'error'}`}
+          className={`DfMdEditor ${errors[Fields.body] && 'error'}`}
         />
-        <div className='DfError'><ErrorMessage errors={errors} name='body' /></div>
+        <div className='DfError'>
+          <ErrorMessage errors={errors} name={Fields.body} />
+        </div>
       </form>
-      <ViewPost id={postId} withStats={false} withActions={false} variant='preview'/>
+      <ViewPost id={postId} withStats={false} withActions={false} variant='preview' />
     </div>
-    );
   };
 
   const saveBlog = (value: string | number | LabeledValue) => {
@@ -121,13 +127,14 @@ const InnerShareModal = (props: Props) => {
       size='small'
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header style={{ justifyContent: 'space-between' }}>
-        <span>Share post to your blog</span>
+      <Modal.Header>
+        <span className='mr-3'>Share a post to your blog:</span>
         <SelectBlogPreview
           blogIds={blogIds}
           onSelect={saveBlog}
           imageSize={24}
-          defaultValue={blogIds[0].toString()} />
+          defaultValue={blogIds[0].toString()}
+        />
       </Modal.Header>
       <Modal.Content scrolling className='DfShareModalPadding'>
         {renderShareView()}
