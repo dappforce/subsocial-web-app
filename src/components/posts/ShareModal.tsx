@@ -99,7 +99,6 @@ const InnerShareModal = (props: Props) => {
         <Controller
           as={<SimpleMDEReact />}
           name='body'
-          rules={{ maxLength: 10 }}
           control={control}
           value={body}
           className={`DfMdEditor ${errors['body'] && 'error'}`}
