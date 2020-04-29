@@ -21,9 +21,9 @@ export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, addre
   const { isApiReady } = useApi()
   return <>
     <div className='Df--AddressComponents-details'>
-      {address && isApiReady && <>
+      {address && isApiReady &&
         <Balance address={address.toString()} />
-      </>}
+      }
       {address && details && ' · '}
       {details}
     </div>
@@ -59,9 +59,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
           content={<ProfilePreview address={address} owner={owner}/>}
         >
           <span>
-            <Link
-              href={`/profile/${address}`}
-            >
+            <Link href={`/profile/${address}`}>
               <a className={`ui--AddressComponents-address ${className}`}>
                 {fullname || username || (isShort ? toShortAddress(address) : address.toString())}
               </a>
@@ -78,5 +76,3 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
 export const AuthorPreviewWithOwner = withLoadedOwner(AuthorPreview);
 
 export default AuthorPreviewWithOwner;
-
-// ${asActivity && 'activity'}

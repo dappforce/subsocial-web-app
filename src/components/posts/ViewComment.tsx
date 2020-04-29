@@ -137,6 +137,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     postContent: initialPostContent = {} as PostContent,
     commentContent = {} as CommentContent
   } = props;
+
   const { substrate, ipfs } = useSubsocialApi()
   const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
@@ -221,14 +222,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     </span>
   );
 
-  const responseTitle = <>In response to <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${post.blog_id}/posts/${post_id.toString()}`}><a>{postContent.title}</a></Link></>;
-  const bodyAsText = mdToText(content.body);
-
-  return <div id={`comment-${id}`} className='DfComment'>
-    {isPage && <>
-      <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
-      <MutedDiv style={{ marginTop: '1rem' }}>{responseTitle}</MutedDiv>
-    </>}
+  const componentContent = <div id={`comment-${id}`} className='DfComment'>
     <SuiComment.Group threaded>
       <SuiComment>
         <div className='DfCommentContent'>
@@ -298,14 +292,37 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
         </div>
       </SuiComment>
     </SuiComment.Group>
-  </div>;
+  </div>
+
+  const renderResponseTitle = () => <>
+    In response to{' '}
+    <Link
+      href='/blogs/[blogId]/posts/[postId]'
+      as={`/blogs/${post.blog_id}/posts/${post_id.toString()}`}
+    >
+      <a>{postContent.title}</a>
+    </Link>
+  </>
+
+  const bodyAsText = mdToText(content.body);
+
+  return isPage
+    ? (
+      <Section>
+        <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
+        <MutedDiv>{renderResponseTitle}</MutedDiv>
+        <div className='mt-3'>{componentContent}</div>
+      </Section>
+    )
+    : componentContent
 };
 
 ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
   const { query: { commentId } } = props;
   const subsocial = await getSubsocialApi()
   const commentData = await subsocial.findComment(new BN(commentId as string));
-  const postData = commentData && commentData.struct && await subsocial.findPost(commentData.struct.post_id);
+  const postData = commentData?.struct && await subsocial.findPost(commentData.struct.post_id);
+
   return {
     post: postData?.struct,
     postContent: postData?.content,

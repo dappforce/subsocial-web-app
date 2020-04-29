@@ -8,7 +8,7 @@ type Props = BareProps & {
   level?: number
 };
 
-export default class Section extends React.PureComponent<Props> {
+export class Section extends React.PureComponent<Props> {
   render () {
     let { id, className, children } = this.props;
     className = (className || '') + ' DfSection';
@@ -35,3 +35,5 @@ export default class Section extends React.PureComponent<Props> {
     );
   }
 }
+
+export default Section
