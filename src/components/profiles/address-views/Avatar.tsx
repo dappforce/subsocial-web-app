@@ -24,4 +24,4 @@ export const Avatar: React.FunctionComponent<ImageProps> = ({ size, avatar, addr
 
 export const AvatarWithOwner = withLoadedOwner(Avatar);
 
-export default AvatarWithOwner;
+export default Avatar;

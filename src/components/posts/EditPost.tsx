@@ -157,7 +157,6 @@ const InnerForm = (props: FormProps) => {
   const renderTxButton = () => (
     <TxButton
       type='submit'
-      size='medium'
       label={!struct
         ? `Create a post`
         : `Update a post`

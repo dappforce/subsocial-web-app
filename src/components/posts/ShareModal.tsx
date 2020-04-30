@@ -77,7 +77,6 @@ const InnerShareModal = (props: Props) => {
   const renderTxButton = () => (
     <TxButton
       type='submit'
-      size='medium'
       label={`Create a post`}
       isDisabled={isSubmitting}
       params={buildTxParams()}

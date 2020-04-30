@@ -233,7 +233,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderInfoPostPreview = (post: Post, content: PostExtContent, owner?: ProfileData) => {
     if (!content || !post) return null;
-
     return <div className='DfInfo'>
       <div className='DfRow'>
         <div>

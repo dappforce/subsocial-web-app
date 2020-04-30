@@ -9,6 +9,7 @@ import BN from 'bn.js';
 import { ReactionKind } from '@subsocial/types/substrate/classes';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
+import { Icon } from 'antd';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const log = newLogger('Voter')
@@ -59,7 +60,7 @@ export const Voter = (props: VoterProps) => {
       if (isSubscribe) {
         setReactionState(reaction);
         reaction && setReactionKind(reaction.kind.toString());
-      } 
+      }
     }
 
     loadReaction().catch(err => log.error('Failed to load a reaction. Error:', err));
@@ -106,11 +107,10 @@ export const Voter = (props: VoterProps) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
-      const icon = `thumbs ${isUpvote ? 'up' : 'down'} outline`;
+      const icon = isUpvote ? 'like' : 'dislike';
 
       return (<TxButton
         type='submit'
-        icon={icon}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
         onSuccess={() => setUpdateTrigger(!updateTrigger)}
@@ -119,7 +119,9 @@ export const Voter = (props: VoterProps) => {
           : (reactionKind !== `${reactionName}`)
             ? `social.update${type}Reaction`
             : `social.delete${type}Reaction`}
-      />);
+      >
+        <Icon type={icon} />
+      </TxButton>);
     };
 
     const count = calcVotingPercentage();

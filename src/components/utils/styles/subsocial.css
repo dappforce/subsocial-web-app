@@ -57,6 +57,30 @@ body,
   }
 }
 
+.ui.primary.button {
+  color: #fff;
+  background-color: #1890ff;
+  border-color: #1890ff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  line-height: 1.499;
+  position: relative;
+  display: inline-block;
+  font-weight: 400;
+  white-space: nowrap;
+  text-align: center;
+  touch-action: manipulation;
+  height: 32px;
+  padding: 0 15px;
+  font-size: 14px;
+  border-radius: 4px;
+  background-image: none;
+}
+
+.ant-comment-content-author {
+  font-size: inherit;
+  line-height: inherit;
+}
+
 .am-drawer-content {
   padding-top: 0 !important;
   text-align: left !important;
@@ -293,12 +317,12 @@ body,
   margin: -1rem 0 0 $space_large;
 }
 
-.DfCommentContent {
+.DfCommentContent, .DfComment {
   .metadata {
     margin-left: 0 !important;
     font-size: $font_normal;
   }
-  .text {
+  .text, .ant-comment-content-detail {
     display: inline-block;
     margin: $space_tiny 0 !important;
     padding: $space_small $space_normal;
@@ -1014,11 +1038,9 @@ hr {
     }
   }
 
-  &:hover {
-    .editor-toolbar {
+  &:hover .editor-toolbar {
       color: $color_font_normal;
     }
-  }
 }
 
 
@@ -1596,4 +1618,56 @@ a.DfStatItem {
   .ui.segment.DfPostPreview {
     padding-bottom: 1rem;
   }
+}
+
+.DfNewComment {
+
+  .ant-comment-avatar {
+    display: none;
+  }
+  .ant-comment-content-author-name {
+    font-size: $font_small;
+    line-height: inherit;
+
+    .DfAuthorBlock {
+      display: flex;
+      .anticon-ellipsis.ant-dropdown-trigger {
+        margin-left: $space_big;
+      }
+    }
+  }
+
+  .ant-comment-content-detail {
+    .DfMd {
+      display: inline-block;
+      margin: $space_tiny 0 !important;
+      padding: $space_small $space_normal;
+      border-radius: 15px;
+      border-top-left-radius: 0;
+      background-color: #fff;
+      @extend .DfBoxShadow;
+    }
+
+    .DfMdEditor {
+      margin-top: $space_small;
+    }
+  }
+
+  .ant-comment-actions {
+    margin: $space_tiny 0;
+  }
+
+  .ant-comment-nested {
+    box-shadow: -1px 0 0 rgba(34,36,38,.15);
+    margin-left: 2rem;
+    padding-left: 1rem;
+  }
+
+  .DfActionButtonsBlock {
+    padding: $space_tiny 0;
+  }
+}
+
+.anticon-ellipsis.ant-dropdown-trigger {
+  font-size: $font_big;
 }
