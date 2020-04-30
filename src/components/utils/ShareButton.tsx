@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
-import { CommentId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { useMyAccount } from './MyAccountContext';
 import TxButton from './TxButton';
 import BN from 'bn.js';
@@ -50,49 +48,6 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
     tx={isFollow
       ? `social.unsharePost`
       : `social.sharePost`}
-    onSuccess={() => setTriggerReload(!triggerReload) }
-  />;
-}
-
-type PropsShareButtonComment = {
-  commentId: CommentId
-};
-
-export function ShareButtonComment (props: PropsShareButtonComment) {
-  const { commentId } = props;
-  const { state: { address: myAddress } } = useMyAccount();
-  const { substrate } = useSubsocialApi();
-
-  if (!myAddress) return;
-
-  const [ isFollow, setIsFollow ] = useState(false);
-  const [ triggerReload, setTriggerReload ] = useState(false);
-
-  useEffect(() => {
-    const load = async () => {
-      const _isFollow = await substrate.isCommentSharedByAccount(myAddress, commentId)
-      setIsFollow(_isFollow);
-    };
-    load().catch(err => log.error(`Failed to check if the current account shared a comment with id ${commentId.toString()}. Error:`
-, err));
-  }, [ commentId ]);
-
-  const buildTxParams = () => {
-    return [ commentId ];
-  };
-
-  return <TxButton
-    type='submit'
-    size='tiny'
-    isBasic={true}
-    isPrimary={false}
-    label={isFollow
-      ? 'Unshare post'
-      : 'Share post'}
-    params={buildTxParams()}
-    tx={isFollow
-      ? `social.unshareComment`
-      : `social.shareComment`}
     onSuccess={() => setTriggerReload(!triggerReload) }
   />;
 }
