@@ -142,7 +142,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
-  const { id, score, created: { account, time }, post_id, edit_history } = comment;
+  const { id, score, created: { account, time }, post_id } = comment;
   const [ struct, setStruct ] = useState(comment);
   const [ post, setPost ] = useState(initialPost);
   const [ postContent, setPostContent ] = useState(initialPostContent);
@@ -192,7 +192,7 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     // const [ open, setOpen ] = useState(false);
     // const close = () => setOpen(false);
     // console.log(open, close());
-    const showDropdown = isMyStruct || edit_history.length > 0;
+    const showDropdown = isMyStruct;
 
     const menu = (
       <Menu>
