@@ -86,8 +86,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     id,
     blog_id,
     created,
-    ipfs_hash,
-    edit_history
+    ipfs_hash
   } = post;
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
@@ -118,7 +117,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const RenderDropDownMenu = (props: DropdownProps) => {
     const { state: { address } } = useMyAccount();
     const isMyStruct = address === props.account;
-    const showDropdown = isMyStruct || edit_history.length > 0;
+    const showDropdown = isMyStruct;
 
     const menu = (
       <Menu>
@@ -241,7 +240,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {/* {withStats && <StatsPanel id={post.id}/>} */}
         </div>
         <div>
-          {renderPostImage(originalContent)}
+          {renderPostImage(content)}
         </div>
       </div>
     </div>

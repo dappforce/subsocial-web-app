@@ -82,8 +82,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     score,
     created: { account, time },
     posts_count,
-    followers_count: followers,
-    edit_history
+    followers_count: followers
   } = blog;
 
   const { state: { address } } = useMyAccount();
@@ -96,7 +95,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
-    const showDropdown = isMyBlog || edit_history.length > 0;
+    const showDropdown = isMyBlog
 
     const menu = (
       <Menu>

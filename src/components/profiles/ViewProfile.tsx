@@ -68,8 +68,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
-    username,
-    edit_history
+    username
   } = profile as Profile;
 
   const {
@@ -108,7 +107,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const renderDropDownMenu = () => {
     if (profileIsNone) return null;
 
-    const showDropdown = isMyAccount || edit_history.length > 0;
+    const showDropdown = isMyAccount
 
     const menu = (
       <Menu>
