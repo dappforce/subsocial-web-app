@@ -1625,6 +1625,15 @@ a.DfStatItem {
   .ant-comment-avatar {
     display: none;
   }
+
+  .ant-comment-actions {
+    li {
+      span {
+        font-size: $font_small;
+      }
+    }
+  }
+
   .ant-comment-content-author-name {
     font-size: $font_small;
     line-height: inherit;

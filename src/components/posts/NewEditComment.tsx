@@ -115,7 +115,7 @@ export const EditComment = (props: Props) => {
       </div>
       <div className='DfActionButtonsBlock'>
         {renderTxButton()}
-        <Button type='default' onClick={close}>Close</Button>
+        <Button type='default' onClick={close}>Cancel</Button>
       </div>
     </form>
   </div>
