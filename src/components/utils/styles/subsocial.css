@@ -523,6 +523,8 @@ hr {
 
 .ui--AddressComponents-address {
   @extend .DfBoldBlackLink;
+  display: flex;
+  flex-direction: column;
 }
 
 .DfPostPreview,
@@ -759,8 +761,8 @@ hr {
 
 .Df--AddressComponents-details {
   color: $color_muted !important;
-  font-size: $font_small !important;
-  margin-top: $space_mini;
+  font-size: $font_normal !important;
+  font-weight: normal;
 }
 
 .ui--AddressComponents {
@@ -928,10 +930,6 @@ hr {
     font-size: $font_large;
   }
 
-  .DfPopup-username {
-    font-size: $font_small;
-  }
-
   .Df--AddressComponents-details {
     margin-right: $space_mini;
   }
@@ -967,11 +965,10 @@ hr {
 
 .AddressComponents-fullname {
   @extend .DfBoldBlackLink;
-  font-size: $font_large;
 }
 
 .DfPopup-username {
-  font-size: $font_small;
+  font-size: $font_normal !important;
   color: #4e4e4e;
 }
 
@@ -1554,9 +1551,10 @@ a.DfStatItem {
   }
 
   .DfAddressInfo {
-    margin: $space_normal $space_tiny $space_normal 0;
-    display: block;
+    display: flex;
+    flex-direction: column;
     line-height: normal;
+    margin: $space_normal $space_tiny $space_normal 0;
 
     a {
       @extend .DfBlackLink;

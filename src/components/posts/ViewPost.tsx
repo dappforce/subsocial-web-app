@@ -213,7 +213,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           onClick={() => setCommentsSection(!commentsSection)}
         >
           <Icon type='message' />
-        Comment
+          Comment
         </div>
         <div
           className='ui tiny button basic DfAction'
