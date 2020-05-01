@@ -47,6 +47,8 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
   const avatar = owner.content?.avatar
   const fullname = owner.content?.fullname
 
+  const queryId = username ? `@${username}` : address.toString()
+
   return <div
     className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
     style={style}
@@ -59,7 +61,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
           content={<ProfilePreview address={address} owner={owner}/>}
         >
           <span>
-            <Link href={`/profile/${address}`}>
+            <Link href={`/profile/${queryId}`}>
               <a className={`ui--AddressComponents-address ${className}`}>
                 {fullname || username || (isShort ? toShortAddress(address) : address.toString())}
               </a>

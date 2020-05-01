@@ -19,8 +19,6 @@ export function withLoadedOwner<P extends Props> (Component: React.ComponentType
 
     if (initialOwner) return <Component {...props} />;
 
-    log.debug('Profile is not loaded yet for this address:', address)
-
     const { subsocial } = useSubsocialApi()
     const [ owner, setOwner ] = useState<ProfileData>();
     const [ loaded, setLoaded ] = useState(true);

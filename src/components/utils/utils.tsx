@@ -1,9 +1,8 @@
 import React from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
 
-import { Option, GenericAccountId } from '@polkadot/types';
+import { Option, GenericAccountId, Text } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
-import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import moment from 'moment-timezone';
 import AccountId from '@polkadot/types/generic/AccountId';
@@ -72,22 +71,6 @@ export type UrlHasAddressProps = {
   };
 };
 
-type LoadProps = {
-  id: AccountId;
-};
-
-export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
-  return function (props: LoadProps) {
-    const router = useRouter();
-    const { address } = router.query;
-    try {
-      return <Component id={new GenericAccountId(registry, address as string)} {...props}/>;
-    } catch (err) {
-      return <em>Invalid address: {address}</em>;
-    }
-  };
-}
-
 type PropsWithSocialAccount = {
   profile?: Profile;
   ProfileContent?: ProfileContent;
@@ -122,7 +105,28 @@ export const getBlogId = async (idOrHandle: string): Promise<BN | undefined> => 
   }
 }
 
+export const getAccountId = async (addressOrHandle: string): Promise<AccountId | undefined> => {
+  if (addressOrHandle.startsWith('@')) {
+    const handle = addressOrHandle.substring(1) // Drop '@'
+    const { substrate } = await getSubsocialApi()
+    return substrate.getAccountIdByHandle(handle)
+  } else {
+    return new GenericAccountId(registry, addressOrHandle)
+  }
+}
+
 export function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process;
   return env[varName]
+}
+
+export const unwrapHandle = (handleOpt: Option<Text>) => {
+  if (typeof handleOpt === 'string') {
+    return `@${handleOpt}`
+  }
+
+  if (handleOpt.isNone) return undefined;
+
+  const handle = handleOpt.unwrap()
+  return `@${handle}`
 }

@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
-import { registry } from '@polkadot/react-api';
-import { GenericAccountId as AccountId } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -29,6 +28,7 @@ import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
 import { useApi } from '@polkadot/react-hooks';
+import { getAccountId } from '../utils/utils';
 // const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -142,8 +142,10 @@ const Component: NextPage<Props> = (props: Props) => {
     ? summarize(about)
     : <DfMd source={about} />;
 
+  const queryId = `@${username}` || address
+
   const NameAsLink = () => (
-    <Link href='/profile/[address]' as={`/profile/${address}`}>
+    <Link href='/profile/[address]' as={`/profile/${queryId}`}>
       <a className='handle DfBoldBlackLink'>{getName()}</a>
     </Link>
   );
@@ -257,12 +259,19 @@ const Component: NextPage<Props> = (props: Props) => {
   </>;
 };
 
-Component.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address } } = props;
+Component.getInitialProps = async (props): Promise<any> => {
+  const { query: { address }, res } = props;
   const subsocial = await getSubsocialApi()
+  const accountId = await getAccountId(address as string);
+
+  if (!accountId && res) {
+    res.statusCode = 404
+    return { statusCode: 404 }
+  }
+
   const owner = await subsocial.findProfile(address as string)
   return {
-    id: new AccountId(registry, address as string),
+    id: accountId,
     owner
   };
 };
