@@ -221,7 +221,7 @@ body,
 
 .ProfileDetails {
   display: flex !important;
-
+  align-items: center;
   .content {
     padding: 0 $space_small;
   }

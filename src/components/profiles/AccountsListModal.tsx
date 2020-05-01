@@ -6,6 +6,7 @@ import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { ProfilePreviewWithOwner } from './address-views';
+import ListData from '../utils/DataList';
 
 type Props = {
   accounts?: AccountId[],
@@ -18,15 +19,7 @@ type Props = {
 const InnerAccountsListModal = (props: Props) => {
   const { accounts, open, close, title } = props;
 
-  const renderAccounts = () => {
-    return accounts && accounts.map((account) =>
-      <ProfilePreviewWithOwner
-        key={account.toString()}
-        address={account}
-        mini
-      />
-    );
-  };
+  if (!accounts) return null;
 
   return (
     <Modal
@@ -37,8 +30,13 @@ const InnerAccountsListModal = (props: Props) => {
       style={{ marginTop: '3rem' }}
     >
       <Modal.Header>{title}</Modal.Header>
-      <Modal.Content scrolling>
-        {renderAccounts()}
+      <Modal.Content scrolling className='DfAccountsModal'>
+        <ListData
+          dataSource={accounts}
+          renderItem={(item) =>
+            <ProfilePreviewWithOwner key={item.toString()} address={item} mini />}
+          noDataDesc='No followers yet'
+        />
       </Modal.Content>
       <Modal.Actions>
         <Button content='Close' size={TX_BUTTON_SIZE} onClick={close} />
