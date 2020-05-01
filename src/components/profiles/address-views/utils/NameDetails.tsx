@@ -22,8 +22,10 @@ export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} 
     title = shortAddress
   }
 
+  const queryId = profile?.username ? `@${profile.username}` : address.toString()
+
   return (
-    <Link href='/profile/[address]' as={`/profile/${address}`}>
+    <Link href='/profile/[address]' as={`/profile/${queryId}`}>
       <a className='ui--AddressComponents-address'>
         <span className='AddressComponents-fullname'>{title}</span>
         {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}

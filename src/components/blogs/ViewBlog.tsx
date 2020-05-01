@@ -13,7 +13,7 @@ import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId, unwrapHandle } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import NoData from '../utils/EmptyList';
 import ListData from '../utils/DataList';
@@ -80,10 +80,13 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const {
     id,
     score,
+    handle,
     created: { account, time },
     posts_count,
     followers_count: followers
   } = blog;
+
+  const queryId = unwrapHandle(handle) || id;
 
   const { state: { address } } = useMyAccount();
   const [ content ] = useState(blogData?.content || {} as BlogContent);
@@ -100,7 +103,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyBlog && <Menu.Item key='0'>
-          <Link href={`/blogs/[id]/edit`} as={`/blogs/${id.toString()}/edit`}><a className='item'>Edit</a></Link>
+          <Link href={`/blogs/[id]/edit`} as={`/blogs/${queryId}/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -116,7 +119,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </>);
   };
 
-  const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${id}`}><a>{name}</a></Link>;
+  const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${queryId}`}><a>{name}</a></Link>;
 
   const renderNameOnly = () => {
     return withLink
@@ -179,7 +182,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderPreviewExtraDetails = () => {
     return <>
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
-        <Link href='/blogs/[blogId]' as={`/blogs/${id}`}>
+        <Link href='/blogs/[blogId]' as={`/blogs/${queryId}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
             <Pluralize count={postsCount} singularText='Post'/>
           </a>
@@ -279,6 +282,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const idOrHandle = blogId as string
+
   const id = await getBlogId(idOrHandle)
   if (!id && res) {
     res.statusCode = 404
@@ -294,7 +298,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const ownerId = blogData?.struct.created.account as AccountId;
   const owner = await subsocial.findProfile(ownerId);
 
-  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
+  const postIds = await substrate.postIdsByBlogId(id as BN)
   const posts = await subsocial.findPostsWithDetails(postIds.reverse());
 
   return {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
-import NoData from './EmptyList';
 import { DfBgImg } from './DfBgImg';
 import BN from 'bn.js'
 import { IdentityIcon } from '@polkadot/react-components';
@@ -26,12 +25,10 @@ type Props = {
 
 const SUB_SIZE = 2;
 
-const NoBlogsFound = <NoData description={<span>No blogs found</span>} />
-
 const SelectBlogPreview = (props: Props) => {
   const { preparedBlogsData = [], imageSize = 36, onSelect, defaultValue } = props
 
-  if (isEmptyArray(preparedBlogsData)) return NoBlogsFound
+  if (isEmptyArray(preparedBlogsData)) return null
 
   return <Select
     style={{ width: 200 }}
@@ -58,7 +55,7 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { blogIds } = props
 
-    if (isEmptyArray(blogIds)) return NoBlogsFound
+    if (isEmptyArray(blogIds)) return null
 
     const { subsocial } = useSubsocialApi()
     const [ currentBlogsData, setCurrentBlogsData ] = useState<BlogData[]>([])
@@ -86,7 +83,7 @@ const GetBlogData = (Component: React.ComponentType<Props>) => {
       }
     }).filter(x => typeof x !== 'undefined') as PreparedBlogData[]
 
-    if (!preparedBlogsData) return NoBlogsFound
+    if (!preparedBlogsData) return null
 
     return <Component preparedBlogsData={preparedBlogsData} {...props} />
   }
