@@ -221,7 +221,6 @@ body,
 
 .ProfileDetails {
   display: flex !important;
-  align-items: center;
   .content {
     padding: 0 $space_small;
   }
@@ -755,6 +754,10 @@ hr {
   text-align: left;
   .ReactionsItem {
     margin: $space_normal 0;
+  }
+
+  .ProfileDetails {
+    align-items: center;
   }
 }
 
