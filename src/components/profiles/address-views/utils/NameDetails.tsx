@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ProfileData } from '@subsocial/types';
 import { InfoDetails } from '../AuthorPreview';
 import { nonEmptyStr } from '@subsocial/utils';
-import { ZERO } from '../../../utils';
 
 export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} as ProfileData, address }) => {
   const shortAddress = toShortAddress(address);
@@ -28,7 +27,7 @@ export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} 
       <a className='ui--AddressComponents-address'>
         <span className='AddressComponents-fullname'>{title}</span>
         {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}
-        <InfoDetails address={address} details={<>Reputation: {struct?.reputation.toString() || ZERO}</>} />
+        <InfoDetails address={address} details={<>Reputation: {struct?.reputation.toString() || 0}</>} />
       </a>
     </Link>
   );
