@@ -27,7 +27,7 @@ export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} 
       <a className='ui--AddressComponents-address'>
         <span className='AddressComponents-fullname'>{title}</span>
         {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}
-        <InfoDetails address={address} details={<>Reputation: {struct.reputation.toString()}</>} />
+        <InfoDetails address={address} details={<>Reputation: {struct?.reputation.toString() || 0}</>} />
       </a>
     </Link>
   );
