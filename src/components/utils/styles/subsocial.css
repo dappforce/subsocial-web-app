@@ -165,8 +165,24 @@ body,
   margin-bottom: $space_normal;
 }
 
-.DfMenuItem {
+.DfMenuBlogLink {
   color: $color_menu_font;
+  padding: $space_tiny;
+  padding-left: $space_normal;
+  display: block;
+
+  .ProfileDetails {
+    .DfAvatar.space {
+      margin-right: 0;
+    }
+    .content {
+      padding: 0;
+      padding-left: .5rem;
+    }
+    .handle {
+      margin-right: 0;
+    }
+  }
 }
 
 .ProfilePreviews,
@@ -215,13 +231,9 @@ body,
   font-weight: 600;
 }
 
-/*.DfProfileTitle {
-  margin-bottom: $space_normal;
-}*/
-
 .ProfileDetails {
   display: flex !important;
-  align-items: center;
+
   .content {
     padding: 0 $space_small;
   }
@@ -462,13 +474,12 @@ hr {
 }
 
 .Profile--actions {
-  margin-top: $space_big;
-  margin-left: 4rem;
-  margin-bottom: 2rem;
+  margin-top: $space_large;
+  margin-left: 4.75rem;
 
-  button {
-    background-color: $color_page_bg;
-    margin-right: $space_normal;
+  .DfCreateProfileButton {
+    margin-top: $space_normal;
+    text-align: initial;
   }
 }
 
@@ -523,8 +534,6 @@ hr {
 
 .ui--AddressComponents-address {
   @extend .DfBoldBlackLink;
-  display: flex;
-  flex-direction: column;
 }
 
 .DfPostPreview,
@@ -753,15 +762,19 @@ hr {
 
 .ui.modal .scrolling.content {
   text-align: left;
+
   .ReactionsItem {
     margin: $space_normal 0;
+  }
+
+  .ProfileDetails {
+    align-items: center;
   }
 }
 
 
 .Df--AddressComponents-details {
   color: $color_muted !important;
-  font-size: $font_normal !important;
   font-weight: normal;
 }
 
@@ -951,25 +964,14 @@ hr {
   }
 }
 
-.item.ProfileDetails.DfPreview {
+.ProfileDetails.DfPreview {
   align-items: center;
-}
-
-.ui.top.left.flowing.popup.transition.visible {
-  .item.ProfileDetails.MyProfile {
-    padding-left: 0 !important;
-    border-bottom: 1px solid #ccc;
-    padding: .5rem 0;
-  }
-}
-
-.AddressComponents-fullname {
-  @extend .DfBoldBlackLink;
 }
 
 .DfPopup-username {
   font-size: $font_normal !important;
   color: #4e4e4e;
+  margin: $space_mini 0;
 }
 
 .DfPopup-about {
@@ -980,6 +982,7 @@ hr {
   color: $color_muted;
   display: flex;
   justify-content: flex-start;
+  margin: $space_tiny 0;
 
   .DfPopup-link {
     margin-right: $space_normal;
@@ -1178,11 +1181,6 @@ hr {
     .handle {
       padding: $space_tiny 0rem;
     }
-  }
-
-  .item {
-    padding: $space_tiny;
-    padding-left: $space_normal;
   }
 }
 
@@ -1587,6 +1585,7 @@ a.DfStatItem {
 
 .DfShareModalPadding.scrolling.content {
   padding-bottom: 0;
+
   .ui.segment.DfPostPreview {
     padding-bottom: 1rem;
   }

@@ -18,16 +18,17 @@ import { DfBgImg } from '../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile, isBrowser } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
 import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
-import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
+import { PostType, loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
+import SummarizeMd from '../utils/md/SummarizeMd';
 
 const log = newLogger('View post')
 
@@ -90,22 +91,26 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   } = post;
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
-  // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
-  const [ content, setContent ] = useState(getExtContent(initialContent));
+  const [ content, setContent ] = useState(initialContent || {} as PostExtContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
 
   const originalPost = postExtData && postExtData.struct;
-  const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
+  const [ originalContent, setOriginalContent ] = useState(postExtData?.content)
 
   useEffect(() => {
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error('Failed to load a post content from IPFS:', err));
-    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error('Failed to load content of a shared post from IPFS:', err));
+    loadContentFromIpfs(post)
+      .then(content => isSubscribe && setContent(content))
+      .catch(err => log.error('Failed to load a post content from IPFS:', err));
+
+    originalPost && loadContentFromIpfs(originalPost)
+      .then(content => isSubscribe && setOriginalContent(content))
+      .catch(err => log.error('Failed to load content of a shared post from IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -115,14 +120,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const RenderDropDownMenu = (props: DropdownProps) => {
-    const { state: { address } } = useMyAccount();
-    const isMyStruct = address === props.account;
-    const showDropdown = isMyStruct;
+    const isMyPost = isMyAddress(props.account);
 
     const menu = (
       <Menu>
-        {isMyStruct && <Menu.Item key='0'>
-          <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
+        {isMyPost && <Menu.Item key='0'>
+          <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}>
+            <a className='item'>Edit</a>
+          </Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -130,13 +135,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       </Menu>
     );
 
-    return (<>
-      {showDropdown &&
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <Icon type='ellipsis' />
-      </Dropdown>}
+    return <>
+      {isMyPost &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <Icon type='ellipsis' />
+        </Dropdown>
+      }
       {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    </>
   };
 
   const renderNameOnly = (title: string | undefined, id: PostId) => {
@@ -191,12 +197,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderContent = (post: Post, content?: PostExtContent) => {
     if (!post || !content) return null;
 
-    const { title, summary } = content;
+    const { title, body } = content;
 
     return <div className='DfContent'>
-      {renderNameOnly(title || summary, post.id)}
+      {renderNameOnly(title, post.id)}
       <div className='DfSummary'>
-        {summary}
+        <SummarizeMd md={body} />
       </div>
     </div>;
   };
@@ -264,7 +270,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {renderPostCreator(post, owner)}
           <RenderDropDownMenu account={created.account}/>
         </div>
-        <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
+        <div className='DfSharedSummary'>
+          <SummarizeMd md={content?.body} />
+        </div>
         <Segment className='DfPostPreview'>
           {renderInfoPostPreview(originalPost, originalContent)}
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}

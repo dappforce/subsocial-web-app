@@ -83,7 +83,7 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
       getApi().then(api => dispatch({ type: 'init', api: api }))
     }
   }, [ state.isReady ])
-  log.debug('State:', state);
+
   const contextValue = {
     state,
     dispatch,

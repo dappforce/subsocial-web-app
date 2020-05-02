@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { GenericAccountId } from '@polkadot/types';
-import { useMyAccount } from './MyAccountContext';
+import { useMyAddress, isMyAddress } from './MyAccountContext';
 import TxButton from './TxButton';
 import { registry } from '@polkadot/react-api';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@polkadot/react-components/Button/types';
-import { newLogger } from '@subsocial/utils';
+import { newLogger, notDef } from '@subsocial/utils';
 import { Loading } from './utils';
 import { useSubsocialApi } from './SubsocialApiContext';
 import { AccountId } from '@polkadot/types/interfaces';
@@ -19,7 +19,7 @@ type FollowAccountButtonProps = {
 
 function FollowAccountButton (props: FollowAccountButtonProps) {
   const { address, size = TX_BUTTON_SIZE } = props;
-  const { state: { address: myAddress } } = useMyAccount()
+  const myAddress = useMyAddress()
   const accountId = new GenericAccountId(registry, address);
   const { substrate } = useSubsocialApi()
 
@@ -38,13 +38,13 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
     return () => { isSubscribe = false; };
   }, [ myAddress ]);
 
-  if (!myAddress || address === myAddress) return null;
+  if (!myAddress || isMyAddress(address)) return null;
 
   const buildTxParams = () => {
     return [ accountId ];
   };
 
-  return isFollow !== undefined ? <TxButton
+  return notDef(isFollow) ? <Loading/> : <TxButton
     className="DfFollowAccountButton"
     size={size}
     isBasic={isFollow}
@@ -57,7 +57,7 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
       : `social.followAccount`}
     onSuccess={() => setIsFollow(!isFollow)}
     withSpinner
-  /> : <Loading/>
+  />
 }
 
 export default FollowAccountButton;

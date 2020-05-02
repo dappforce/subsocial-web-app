@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
 import { AddressProps } from './utils/types'
 import Avatar from './Avatar';
-import { summarize } from '@subsocial/utils';
+import { nonEmptyStr } from '@subsocial/utils';
 import { Pluralize } from 'src/components/utils/Plularize';
 import dynamic from 'next/dynamic';
 import NameDetails from './utils/NameDetails';
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal';
 import { ProfileContent, ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
+import { SummarizeMd } from 'src/components/utils/md';
 const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
 type ProfilePreviewProps = AddressProps & {
@@ -41,16 +41,16 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
   };
 
   return <div>
-    <div className={`item ProfileDetails MyProfile`}>
+    <div className={`ProfileDetails`}>
       <Avatar size={size || 44} address={address} avatar={avatar} style={{ marginTop: '.5rem' }}/>
       <div className='content'>
-        <div className='header DfAccountTitle'>
-          <NameDetails owner={owner} address={address} />
-        </div>
+        <NameDetails owner={owner} address={address} />
         {!mini && <>
-          <div className='DfPopup-about'>
-            {about && summarize(about)}
-          </div>
+          {nonEmptyStr(about) &&
+            <div className='DfPopup-about'>
+              <SummarizeMd md={about} />
+            </div>
+          }
           <div className='DfPopup-links'>
             <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
               <Pluralize count={followers} singularText='Follower'/>

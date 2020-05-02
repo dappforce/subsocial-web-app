@@ -5,7 +5,7 @@ import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { useMyAddress } from '../utils/MyAccountContext';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
@@ -306,7 +306,7 @@ type LoadStructProps = OuterProps & {
 
 // TODO refactor copypasta. See the same function in EditBlog
 function LoadStruct (props: LoadStructProps) {
-  const { state: { address: myAddress } } = useMyAccount();
+  const myAddress = useMyAddress()
   const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<BlogContent>();

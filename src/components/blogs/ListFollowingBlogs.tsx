@@ -2,7 +2,6 @@ import React from 'react';
 import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
-import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
@@ -12,6 +11,7 @@ import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
+import { unwrapHandle } from '../utils/utils';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -51,14 +51,23 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProp
 
 const BlogLink = (props: { item: BlogData }) => {
   const { item } = props;
-  const router = useRouter();
-  const { pathname, query } = router;
-  const currentBlog = pathname.includes('blogs') ? new BN(query.blogId as string) : undefined;
+  const { pathname, query } = useRouter();
   const { toggle } = useSidebarCollapsed();
 
-  return <Link key={item.struct.id.toString()} href='/blogs/[blogId]' as={`/blogs/${item.struct.id}`}>
-    <a className='DfMenuItem'>
-      <div className={currentBlog && item.struct && currentBlog.eq(item.struct.id) ? 'DfSelectedBlog' : ''} >
+  if (!item) return null;
+
+  const blogIdOrHandle = query.blogId as string;
+  const currentBlogIdOrHandle = pathname.includes('blogs') ? blogIdOrHandle : undefined;
+  const { handle, id } = item.struct;
+  const isSelectedBlog = currentBlogIdOrHandle === unwrapHandle(handle) || currentBlogIdOrHandle === id.toString()
+
+  return (
+    <Link
+      key={id.toString()}
+      href='/blogs/[blogId]'
+      as={`/blogs/${unwrapHandle(handle) || id}`}
+    >
+      <a className={`DfMenuBlogLink ${isSelectedBlog ? 'DfSelectedBlog' : ''}`}>
         <ViewBlogPage
           key={item.struct.id.toString()}
           blogData={item}
@@ -66,9 +75,9 @@ const BlogLink = (props: { item: BlogData }) => {
           imageSize={28}
           onClick={() => isMobile && toggle()}
         />
-      </div>
-    </a>
-  </Link>
+      </a>
+    </Link>
+  )
 }
 
 export const RenderFollowedList = (props: { followedBlogsData: BlogData[] }) => {

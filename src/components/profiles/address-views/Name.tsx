@@ -13,9 +13,15 @@ type Props = AddressProps & {
 
 export const Name: React.FunctionComponent<Props> = ({ isShort = true, asLink = true, address, owner = {} as ProfileData, className }) => {
   const { content, profile } = owner;
-  const name = content?.fullname || profile?.username || (isShort ? toShortAddress(address) : address.toString())
+  const username = profile?.username;
+  const addressString = address.toString();
+
+  const name = content?.fullname || profile?.username || (isShort ? toShortAddress(address) : addressString)
+
+  const queryId = username ? `@${username}` : addressString;
+
   return asLink
-    ? <Link href={'/profile/[address]'} as={`/profile/${address}`}>
+    ? <Link href={'/profile/[address]'} as={`/profile/${queryId}`}>
       <a className={`ui--AddressComponents-address ${className} `}>
         {name}
       </a>

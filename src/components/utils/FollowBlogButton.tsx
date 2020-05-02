@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useMyAccount } from './MyAccountContext';
+import { useMyAddress } from './MyAccountContext';
 import TxButton from './TxButton';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
@@ -20,7 +20,7 @@ type InnerFollowBlogButtonProps = FollowBlogButtonProps & {
 };
 
 export function FollowBlogButton (props: FollowBlogButtonProps) {
-  const { state: { address: myAddress } } = useMyAccount();
+  const myAddress = useMyAddress()
 
   // Account cannot follow itself
   if (!myAddress) return null;

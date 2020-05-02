@@ -14,18 +14,18 @@ import { useApi } from '@polkadot/react-hooks';
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 
 export type InfoProps = {
-  details?: JSX.Element,
   address?: string | AccountId
+  details?: JSX.Element
 }
+
 export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
   const { isApiReady } = useApi()
   return <>
     <div className='Df--AddressComponents-details'>
       {address && isApiReady &&
-        <Balance address={address.toString()} />
+        <div><Balance address={address.toString()} /></div>
       }
-      {address && details && ' · '}
-      {details}
+      {details && <div>{details}</div>}
     </div>
   </>;
 }
@@ -47,6 +47,8 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
   const avatar = owner.content?.avatar
   const fullname = owner.content?.fullname
 
+  const queryId = username ? `@${username}` : address.toString()
+
   return <div
     className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
     style={style}
@@ -59,7 +61,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
           content={<ProfilePreview address={address} owner={owner}/>}
         >
           <span>
-            <Link href={`/profile/${address}`}>
+            <Link href={`/profile/${queryId}`}>
               <a className={`ui--AddressComponents-address ${className}`}>
                 {fullname || username || (isShort ? toShortAddress(address) : address.toString())}
               </a>

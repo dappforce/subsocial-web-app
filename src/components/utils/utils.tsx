@@ -1,9 +1,7 @@
 import React from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
-
-import { Option, GenericAccountId } from '@polkadot/types';
+import { Option, GenericAccountId, Text } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
-import { useRouter } from 'next/router';
 import { Icon } from 'antd';
 import moment from 'moment-timezone';
 import AccountId from '@polkadot/types/generic/AccountId';
@@ -13,6 +11,7 @@ import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { getSubsocialApi } from './SubsocialConnect';
+import { nonEmptyStr } from '@subsocial/utils';
 
 type PaginationProps = {
   currentPage?: number;
@@ -72,22 +71,6 @@ export type UrlHasAddressProps = {
   };
 };
 
-type LoadProps = {
-  id: AccountId;
-};
-
-export function withAddressFromUrl (Component: React.ComponentType<LoadProps>) {
-  return function (props: LoadProps) {
-    const router = useRouter();
-    const { address } = router.query;
-    try {
-      return <Component id={new GenericAccountId(registry, address as string)} {...props}/>;
-    } catch (err) {
-      return <em>Invalid address: {address}</em>;
-    }
-  };
-}
-
 type PropsWithSocialAccount = {
   profile?: Profile;
   ProfileContent?: ProfileContent;
@@ -122,7 +105,30 @@ export const getBlogId = async (idOrHandle: string): Promise<BN | undefined> => 
   }
 }
 
+export const getAccountId = async (addressOrHandle: string): Promise<AccountId | undefined> => {
+  if (addressOrHandle.startsWith('@')) {
+    const handle = addressOrHandle.substring(1) // Drop '@'
+    const { substrate } = await getSubsocialApi()
+    return substrate.getAccountIdByHandle(handle)
+  } else {
+    return new GenericAccountId(registry, addressOrHandle)
+  }
+}
+
 export function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process;
   return env[varName]
+}
+
+export const unwrapHandle = (handle?: string | Option<Text>): string | undefined => {
+  if (nonEmptyStr(handle)) {
+    return `@${handle}`
+  } else if (handle?.isSome) {
+    return `@${handle.unwrap().toString()}`
+  }
+  return undefined
+}
+
+export function equalAddresses (addr1?: string | AccountId, addr2?: string | AccountId) {
+  return addr1?.toString() === addr2?.toString()
 }

@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
-import { registry } from '@polkadot/react-api';
-import { GenericAccountId as AccountId } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { nonEmptyStr, isEmptyStr, summarize } from '@subsocial/utils'
+import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
@@ -29,7 +28,10 @@ import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
 import { useApi } from '@polkadot/react-hooks';
-// const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
+import { getAccountId } from '../utils/utils';
+import MyEntityLabel from '../utils/MyEntityLabel';
+import { SummarizeMd } from '../utils/md';
+
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = {
@@ -57,8 +59,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const { isApiReady } = useApi()
 
   const address = id.toString();
-  const { state: { address: myAddress } } = useMyAccount();
-  const isMyAccount = address === myAddress;
+  const isMyAccount = isMyAddress(address);
 
   const { profile = {} as Profile, struct, content = {} as ProfileContent } = owner;
 
@@ -96,9 +97,9 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasGitHubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
-  const renderCreateProfileButton = profileIsNone && address === myAddress &&
+  const createProfileButton = profileIsNone && isMyAccount &&
     <Link href={`/profile/new`}>
-      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className={'ui button primary ' + TX_BUTTON_SIZE}>
+      <a className={'DfCreateProfileButton ui button primary ' + TX_BUTTON_SIZE}>
         <i className='plus icon' />
         Create profile
       </a>
@@ -106,8 +107,6 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const renderDropDownMenu = () => {
     if (profileIsNone) return null;
-
-    const showDropdown = isMyAccount
 
     const menu = (
       <Menu>
@@ -120,12 +119,14 @@ const Component: NextPage<Props> = (props: Props) => {
       </Menu>
     );
 
-    return (showDropdown && <>
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <Icon type='ellipsis' />
-      </Dropdown>
+    return <>
+      {isMyAccount &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <Icon type='ellipsis' />
+        </Dropdown>
+      }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    </>
   };
 
   const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(username);
@@ -139,11 +140,13 @@ const Component: NextPage<Props> = (props: Props) => {
   };
 
   const renderDescription = () => preview
-    ? summarize(about)
-    : <DfMd source={about} />;
+    ? <SummarizeMd md={about} />
+    : <DfMd className='mt-3' source={about} />
+
+  const queryId = `@${username}` || address
 
   const NameAsLink = () => (
-    <Link href='/profile/[address]' as={`/profile/${address}`}>
+    <Link href='/profile/[address]' as={`/profile/${queryId}`}>
       <a className='handle DfBoldBlackLink'>{getName()}</a>
     </Link>
   );
@@ -156,7 +159,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const renderPreview = () => {
     return <div>
-      <div className={`item ProfileDetails MyBlog`}>
+      <div className={`ProfileDetails MyBlog`}>
         {hasAvatar
           ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
           : <IdentityIcon className='image' value={address} size={size} />
@@ -164,6 +167,7 @@ const Component: NextPage<Props> = (props: Props) => {
         <div className='content'>
           <div className='header DfProfileTitle'>
             <NameAsLink />
+            <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
             {renderDropDownMenu()}
           </div>
           {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
@@ -245,24 +249,33 @@ const Component: NextPage<Props> = (props: Props) => {
       <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>
-          <FollowAccountButton address={address} size={TX_BUTTON_SIZE}/>
           <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
           <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{following.toString()} Following </span>
+          <div className='mt-3'>
+            {createProfileButton}
+            <FollowAccountButton address={address} size={TX_BUTTON_SIZE} />
+          </div>
         </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
-      {renderCreateProfileButton}
     </Section>
   </>;
 };
 
-Component.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address } } = props;
+Component.getInitialProps = async (props): Promise<any> => {
+  const { query: { address }, res } = props;
   const subsocial = await getSubsocialApi()
+  const accountId = await getAccountId(address as string);
+
+  if (!accountId && res) {
+    res.statusCode = 404
+    return { statusCode: 404 }
+  }
+
   const owner = await subsocial.findProfile(address as string)
   return {
-    id: new AccountId(registry, address as string),
+    id: accountId,
     owner
   };
 };

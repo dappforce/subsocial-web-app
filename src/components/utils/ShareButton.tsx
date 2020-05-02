@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useMyAccount } from './MyAccountContext';
+import { useMyAddress } from './MyAccountContext';
 import TxButton from './TxButton';
 import BN from 'bn.js';
 import { useSubsocialApi } from './SubsocialApiContext';
@@ -13,7 +13,7 @@ type PropsShareButtonPost = {
 
 export function ShareButtonPost (props: PropsShareButtonPost) {
   const { postId } = props;
-  const { state: { address: myAddress } } = useMyAccount();
+  const myAddress = useMyAddress()
   const { substrate } = useSubsocialApi();
 
   if (!myAddress) return null;

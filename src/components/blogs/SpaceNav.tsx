@@ -9,6 +9,8 @@ import BN from 'bn.js'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { NavTab } from '@subsocial/types/offchain'
 import { IdentityIcon } from '@polkadot/react-components'
+import { isMyAddress } from '../utils/MyAccountContext'
+import { SummarizeMd } from '../utils/md'
 
 export interface SpaceNavProps {
   blogId: BN,
@@ -57,26 +59,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
     }
   }
 
-  return <div className="SpaceNav">
-    <div className="SNhead">
-      <div className="SNavatar">
-        {nonEmptyStr(image)
-          ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
-          : <IdentityIcon className='image' size={imageSize} value={creator} />
-        }
-      </div>
-
-      <div className="SNheadTitle">{name}</div>
-      <FollowBlogButton blogId={blogId} />
-      {nonEmptyStr(desc) && <div className="SNheadDescription">{desc}</div>}
-    </div>
-
-    {nonEmptyArr(navTabs) &&
-      <Menu mode="inline" className="SNmenu">
-        {navTabs.map(renderMenuItem)}
-      </Menu>
-    }
-
+  const renderEditMenuLink = () => isMyAddress(creator) &&
     <div className='SpaceNavSettings'>
       <Link
         href='/blogs/[blogId]/space-navigation/edit'
@@ -88,6 +71,33 @@ export const SpaceNav = (props: SpaceNavProps) => {
         </a>
       </Link>
     </div>
+
+  return <div className="SpaceNav">
+    <div className="SNhead">
+      <div className="SNavatar">
+        {nonEmptyStr(image)
+          ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
+          : <IdentityIcon className='image' size={imageSize} value={creator} />
+        }
+      </div>
+
+      <div className="SNheadTitle">{name}</div>
+      <FollowBlogButton blogId={blogId} />
+
+      {nonEmptyStr(desc) &&
+        <div className="SNheadDescription">
+          <SummarizeMd md={desc} />
+        </div>
+      }
+    </div>
+
+    {nonEmptyArr(navTabs) &&
+      <Menu mode="inline" className="SNmenu">
+        {navTabs.map(renderMenuItem)}
+      </Menu>
+    }
+
+    {renderEditMenuLink()}
 
     {/*
       spaces.teamMembers &&

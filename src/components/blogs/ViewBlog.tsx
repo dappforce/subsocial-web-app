@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { DfMd } from '../utils/DfMd';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
@@ -13,17 +12,17 @@ import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId, unwrapHandle } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import NoData from '../utils/EmptyList';
 import ListData from '../utils/DataList';
-import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
+import { Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
@@ -32,6 +31,9 @@ import { BlogData, ExtendedPostData, ProfileData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import Name from '../profiles/address-views/Name';
+import MyEntityLabel from '../utils/MyEntityLabel';
+import { SummarizeMd } from '../utils/md';
+
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 
 const SUB_SIZE = 2;
@@ -80,27 +82,29 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const {
     id,
     score,
+    handle,
     created: { account, time },
     posts_count,
     followers_count: followers
   } = blog;
 
-  const { state: { address } } = useMyAccount();
+  const queryId = unwrapHandle(handle) || id;
+
   const [ content ] = useState(blogData?.content || {} as BlogContent);
   const { desc, name, image, tags } = content;
   const [ followersOpen, setFollowersOpen ] = useState(false);
 
-  const isMyBlog = address && account && address === account.toString();
-  const hasImage = image && nonEmptyStr(image);
+  const isMyBlog = isMyAddress(account);
+  const hasImage = nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
-    const showDropdown = isMyBlog
-
     const menu = (
       <Menu>
         {isMyBlog && <Menu.Item key='0'>
-          <Link href={`/blogs/[id]/edit`} as={`/blogs/${id.toString()}/edit`}><a className='item'>Edit</a></Link>
+          <Link href={`/blogs/[id]/edit`} as={`/blogs/${queryId}/edit`}>
+            <a className='item'>Edit</a>
+          </Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -108,15 +112,17 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       </Menu>
     );
 
-    return (showDropdown && <>
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <Icon type='ellipsis' />
-      </Dropdown>
+    return <>
+      {isMyBlog &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <Icon type='ellipsis' />
+        </Dropdown>
+      }
       {/* open && <BlogHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    </>
   };
 
-  const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${id}`}><a>{name}</a></Link>;
+  const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${queryId}`}><a>{name}</a></Link>;
 
   const renderNameOnly = () => {
     return withLink
@@ -125,7 +131,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   };
 
   const renderDropDownPreview = () => (
-    <div className={`item ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
+    <div className={`ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
       {hasImage
         ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
@@ -138,7 +144,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const renderMiniPreview = () => (
     <div className={'viewblog-minipreview'}>
-      <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+      <div onClick={onClick} className={`ProfileDetails ${isMyBlog && 'MyBlog'}`}>
         {hasImage
           ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
@@ -152,7 +158,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   const renderPreview = () => {
-    return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+    return <div className={`ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
           ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} rounded/>
@@ -161,12 +167,16 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
         <div className='content'>
           <span className='header DfBlogTitle'>
             <span><NameAsLink /></span>
-            {isMyBlog && isBrowser && <Tag color='green' style={{ marginLeft: '.5rem' }}>My blog</Tag>}
+            <MyEntityLabel isMy={isMyBlog}>My blog</MyEntityLabel>
             {!previewDetails && renderDropDownMenu()}
           </span>
-          <div className='description'>
-            <DfMd source={desc} />
-          </div>
+
+          {nonEmptyStr(desc) &&
+            <div className='description'>
+              <SummarizeMd md={desc} />
+            </div>
+          }
+
           <ViewTags tags={tags} />
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}
@@ -179,7 +189,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderPreviewExtraDetails = () => {
     return <>
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
-        <Link href='/blogs/[blogId]' as={`/blogs/${id}`}>
+        <Link href='/blogs/[blogId]' as={`/blogs/${queryId}`}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
             <Pluralize count={postsCount} singularText='Post'/>
           </a>
@@ -279,6 +289,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const idOrHandle = blogId as string
+
   const id = await getBlogId(idOrHandle)
   if (!id && res) {
     res.statusCode = 404
@@ -294,7 +305,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<any> => {
   const ownerId = blogData?.struct.created.account as AccountId;
   const owner = await subsocial.findProfile(ownerId);
 
-  const postIds = await substrate.postIdsByBlogId(new BN(blogId as string))
+  const postIds = await substrate.postIdsByBlogId(id as BN)
   const posts = await subsocial.findPostsWithDetails(postIds.reverse());
 
   return {

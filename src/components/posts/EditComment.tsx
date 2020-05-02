@@ -8,7 +8,7 @@ import * as DfForms from '../utils/forms';
 
 import { createType } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { useMyAddress } from '../utils/MyAccountContext';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { socialQueryToProp } from '../utils/index';
@@ -211,7 +211,7 @@ type LoadStructProps = OuterProps & {
 type StructJson = CommentContent | undefined;
 
 function LoadStruct (props: LoadStructProps) {
-  const { state: { address: myAddress } } = useMyAccount();
+  const myAddress = useMyAddress()
   const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<StructJson>();
