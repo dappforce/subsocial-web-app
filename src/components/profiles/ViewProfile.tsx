@@ -96,9 +96,9 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasGitHubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
-  const renderCreateProfileButton = profileIsNone && address === myAddress &&
+  const createProfileButton = profileIsNone && address === myAddress &&
     <Link href={`/profile/new`}>
-      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className={'ui button primary ' + TX_BUTTON_SIZE}>
+      <a className={'DfCreateProfileButton ui button primary ' + TX_BUTTON_SIZE}>
         <i className='plus icon' />
         Create profile
       </a>
@@ -140,7 +140,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const renderDescription = () => preview
     ? summarize(about)
-    : <DfMd source={about} />;
+    : <DfMd className='mt-3' source={about} />
 
   const queryId = `@${username}` || address
 
@@ -158,7 +158,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const renderPreview = () => {
     return <div>
-      <div className={`item ProfileDetails MyBlog`}>
+      <div className={`ProfileDetails MyBlog`}>
         {hasAvatar
           ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
           : <IdentityIcon className='image' value={address} size={size} />
@@ -247,14 +247,16 @@ const Component: NextPage<Props> = (props: Props) => {
       <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>
-          <FollowAccountButton address={address} size={TX_BUTTON_SIZE}/>
           <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
           <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{following.toString()} Following </span>
+          <div className='mt-3'>
+            {createProfileButton}
+            <FollowAccountButton address={address} size={TX_BUTTON_SIZE} />
+          </div>
         </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
-      {renderCreateProfileButton}
     </Section>
   </>;
 };

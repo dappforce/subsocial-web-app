@@ -13,7 +13,7 @@ export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} 
   let subtitle = ''
 
   if (content && nonEmptyStr(content.fullname)) {
-    title = content?.fullname
+    title = content.fullname
     subtitle = nonEmptyStr(profile?.username) ? `@${profile?.username} · ${shortAddress}` : shortAddress
   } else if (nonEmptyStr(profile?.username)) {
     title = `@${profile?.username}`
@@ -24,15 +24,15 @@ export const NameDetails: React.FunctionComponent<AddressProps> = ({ owner = {} 
 
   const queryId = profile?.username ? `@${profile.username}` : address.toString()
 
-  return (
-    <Link href='/profile/[address]' as={`/profile/${queryId}`}>
-      <a className='ui--AddressComponents-address'>
-        <span className='AddressComponents-fullname'>{title}</span>
-        {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}
-        <InfoDetails address={address} details={<>Reputation: {struct?.reputation.toString() || 0}</>} />
-      </a>
-    </Link>
-  );
-};
+  return <>
+    <div className='header DfAccountTitle'>
+      <Link href='/profile/[address]' as={`/profile/${queryId}`}>
+        <a className='ui--AddressComponents-address'>{title}</a>
+      </Link>
+    </div>
+    {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}
+    <InfoDetails address={address} details={<>Reputation: {struct?.reputation.toString() || 0}</>} />
+  </>
+}
 
 export default NameDetails;

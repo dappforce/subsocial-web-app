@@ -128,7 +128,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   };
 
   const renderDropDownPreview = () => (
-    <div className={`item ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
+    <div className={`ProfileDetails DfPreview ${isMyBlog && 'MyBlog'}`}>
       {hasImage
         ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
         : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
@@ -141,7 +141,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const renderMiniPreview = () => (
     <div className={'viewblog-minipreview'}>
-      <div onClick={onClick} className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+      <div onClick={onClick} className={`ProfileDetails ${isMyBlog && 'MyBlog'}`}>
         {hasImage
           ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
@@ -155,7 +155,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   );
 
   const renderPreview = () => {
-    return <div className={`item ProfileDetails ${isMyBlog && 'MyBlog'}`}>
+    return <div className={`ProfileDetails ${isMyBlog && 'MyBlog'}`}>
       <div className='DfBlogBody'>
         {hasImage
           ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} rounded/>

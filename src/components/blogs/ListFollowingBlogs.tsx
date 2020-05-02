@@ -2,7 +2,6 @@ import React from 'react';
 import { ViewBlogPage } from './ViewBlog';
 import ListData from '../utils/DataList';
 import { Button } from 'antd';
-
 import { useRouter } from 'next/router';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { isMobile } from 'react-device-detect';
@@ -62,9 +61,13 @@ const BlogLink = (props: { item: BlogData }) => {
   const { handle, id } = item.struct;
   const isSelectedBlog = currentBlogIdOrHandle === unwrapHandle(handle) || currentBlogIdOrHandle === id.toString()
 
-  return <Link key={id.toString()} href='/blogs/[blogId]' as={`/blogs/${unwrapHandle(handle) || id}`}>
-    <a className='DfMenuItem'>
-      <div className={isSelectedBlog ? 'DfSelectedBlog' : ''} >
+  return (
+    <Link
+      key={id.toString()}
+      href='/blogs/[blogId]'
+      as={`/blogs/${unwrapHandle(handle) || id}`}
+    >
+      <a className={`DfMenuBlogLink ${isSelectedBlog ? 'DfSelectedBlog' : ''}`}>
         <ViewBlogPage
           key={item.struct.id.toString()}
           blogData={item}
@@ -72,9 +75,9 @@ const BlogLink = (props: { item: BlogData }) => {
           imageSize={28}
           onClick={() => isMobile && toggle()}
         />
-      </div>
-    </a>
-  </Link>
+      </a>
+    </Link>
+  )
 }
 
 export const RenderFollowedList = (props: { followedBlogsData: BlogData[] }) => {

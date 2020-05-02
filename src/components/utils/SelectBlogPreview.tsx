@@ -37,7 +37,7 @@ const SelectBlogPreview = (props: Props) => {
   >
     {preparedBlogsData.map((x) =>
       <Select.Option value={x.id} key={x.id}>
-        <div className={`item ProfileDetails DfPreview`}>
+        <div className={`ProfileDetails DfPreview`}>
           {x.hasImage
             ? <DfBgImg className='DfAvatar' size={imageSize} src={x.image} style={{ border: '1px solid #ddd' }} rounded/>
             : <IdentityIcon className='image' size={imageSize - SUB_SIZE} />
