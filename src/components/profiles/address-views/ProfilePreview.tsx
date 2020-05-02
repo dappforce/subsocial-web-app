@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { AddressProps } from './utils/types'
 import Avatar from './Avatar';
-import { summarize } from '@subsocial/utils';
+import { summarize, nonEmptyStr } from '@subsocial/utils';
 import { Pluralize } from 'src/components/utils/Plularize';
 import dynamic from 'next/dynamic';
 import NameDetails from './utils/NameDetails';
@@ -48,9 +47,11 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
           <NameDetails owner={owner} address={address} />
         </div>
         {!mini && <>
-          <div className='DfPopup-about'>
-            {about && summarize(about)}
-          </div>
+          {nonEmptyStr(about) &&
+            <div className='DfPopup-about'>
+              {about && summarize(about)}
+            </div>
+          }
           <div className='DfPopup-links'>
             <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
               <Pluralize count={followers} singularText='Follower'/>
