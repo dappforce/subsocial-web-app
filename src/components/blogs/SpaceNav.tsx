@@ -9,6 +9,7 @@ import BN from 'bn.js'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { NavTab } from '@subsocial/types/offchain'
 import { IdentityIcon } from '@polkadot/react-components'
+import { isMyAddress } from '../utils/MyAccountContext'
 
 export interface SpaceNavProps {
   blogId: BN,
@@ -57,6 +58,19 @@ export const SpaceNav = (props: SpaceNavProps) => {
     }
   }
 
+  const renderEditMenuLink = () => isMyAddress(creator) &&
+    <div className='SpaceNavSettings'>
+      <Link
+        href='/blogs/[blogId]/space-navigation/edit'
+        as={`/blogs/${blogId}/space-navigation/edit`}
+      >
+        <a className='text-secondary'>
+          <Icon type="setting" className='mr-2' />
+          Edit Menu
+        </a>
+      </Link>
+    </div>
+
   return <div className="SpaceNav">
     <div className="SNhead">
       <div className="SNavatar">
@@ -77,17 +91,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
       </Menu>
     }
 
-    <div className='SpaceNavSettings'>
-      <Link
-        href='/blogs/[blogId]/space-navigation/edit'
-        as={`/blogs/${blogId}/space-navigation/edit`}
-      >
-        <a className='text-secondary'>
-          <Icon type="setting" className='mr-2' />
-          Edit Menu
-        </a>
-      </Link>
-    </div>
+    {renderEditMenuLink()}
 
     {/*
       spaces.teamMembers &&
