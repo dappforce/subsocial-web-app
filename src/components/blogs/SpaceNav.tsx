@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Menu, Icon } from 'antd'
 import FollowBlogButton from '../utils/FollowBlogButton'
-import { nonEmptyStr, nonEmptyArr, isEmptyStr } from '@subsocial/utils'
+import { nonEmptyStr, nonEmptyArr, summarize } from '@subsocial/utils'
 import { DfBgImg } from '../utils/DfBgImg'
 import { SpaceContent } from '../spaces/SpacePreview'
 import BN from 'bn.js'
@@ -10,57 +10,6 @@ import AccountId from '@polkadot/types/generic/AccountId'
 import { NavTab } from '@subsocial/types/offchain'
 import { IdentityIcon } from '@polkadot/react-components'
 import { isMyAddress } from '../utils/MyAccountContext'
-
-
-import truncate from 'lodash.truncate'
-import mdToText from 'markdown-to-txt'
-
-export const DEFAULT_SUMMARY_LENGTH = 300
-
-export const SEPARATOR = /[.,:;!?()[]{}\s]+/
-
-/** Shorten a plain text up to `limit` chars. Split by separators. */
-export const summarize = (
-  text: string,
-  limit: number = DEFAULT_SUMMARY_LENGTH
-): string => {
-  if (isEmptyStr(text)) return ''
-
-  text = text.trim()
-
-  return text.length <= limit
-    ? text
-    : truncate(text, {
-      length: limit,
-      separator: SEPARATOR
-    })
-}
-
-/**
- * Markdown options:
- *
- * @escapeHtml (default: true) Escapes HTML in the final string
- * @gfp (default: true) Uses github flavor markdown (passed through to marked)
- * @pedantic (default: false) Conform to markdown.pl (passed through to marked)
- */
-export type MdOpts = {
-  escapeHtml?: boolean
-  gfm?: boolean
-  pedantic?: boolean
-}
-
-export const DEFAULT_MARKDOWN_OPTIONS: MdOpts = { escapeHtml: false }
-
-/** Shorten a markdown text up to `limit` chars. Split by separators. */
-export const summarizeMd = (
-  mdText: string,
-  mdOpts: MdOpts = DEFAULT_MARKDOWN_OPTIONS,
-  limit: number = DEFAULT_SUMMARY_LENGTH
-): string => {
-  const text = mdToText(mdText, mdOpts)
-  return summarize(text, limit)
-}
-
 
 export interface SpaceNavProps {
   blogId: BN,
@@ -135,7 +84,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
       <FollowBlogButton blogId={blogId} />
 
       {nonEmptyStr(desc) &&
-        <div className="SNheadDescription">{summarizeMd(desc)}</div>
+        <div className="SNheadDescription">{summarize(desc)}</div>
       }
     </div>
 
