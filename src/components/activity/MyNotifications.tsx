@@ -8,12 +8,12 @@ import NoData from '../utils/EmptyList';
 import NotAuthorized from '../utils/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { useMyAddress } from '../utils/MyAccountContext';
 import { Notifications } from './Notification';
 import { Loading } from '../utils/utils';
 
 export const MyNotifications = () => {
-  const { state: { address: myAddress } } = useMyAccount();
+  const myAddress = useMyAddress()
 
   const [ items, setItems ] = useState<Activity[]>([]);
   const [ offset, setOffset ] = useState(0);

@@ -3,7 +3,7 @@ import { Loader } from 'semantic-ui-react'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { hexToBn } from '@polkadot/util';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { useMyAddress } from '../utils/MyAccountContext';
 import { Activity } from '@subsocial/types/offchain';
 import NoData from '../utils/EmptyList';
 import NotAuthorized from '../utils/NotAuthorized';
@@ -13,7 +13,7 @@ import Section from '../utils/Section';
 import { PostPreviewList } from '../posts/PostPreview';
 
 export const MyFeed = () => {
-  const { state: { address: myAddress } } = useMyAccount();
+  const myAddress = useMyAddress()
 
   const [ items, setItems ] = useState<Activity[]>([]);
   const [ offset, setOffset ] = useState(0);
