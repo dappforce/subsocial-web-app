@@ -29,7 +29,8 @@ import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
 import { useApi } from '@polkadot/react-hooks';
 import { getAccountId } from '../utils/utils';
-// const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
+import MyEntityLabel from '../utils/MyEntityLabel';
+
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = {
@@ -106,8 +107,6 @@ const Component: NextPage<Props> = (props: Props) => {
   const renderDropDownMenu = () => {
     if (profileIsNone) return null;
 
-    const showDropdown = isMyAccount
-
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
@@ -119,12 +118,14 @@ const Component: NextPage<Props> = (props: Props) => {
       </Menu>
     );
 
-    return (showDropdown && <>
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <Icon type='ellipsis' />
-      </Dropdown>
+    return <>
+      {isMyAccount &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <Icon type='ellipsis' />
+        </Dropdown>
+      }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    </>
   };
 
   const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(username);
@@ -165,6 +166,7 @@ const Component: NextPage<Props> = (props: Props) => {
         <div className='content'>
           <div className='header DfProfileTitle'>
             <NameAsLink />
+            <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
             {renderDropDownMenu()}
           </div>
           {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
