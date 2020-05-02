@@ -17,7 +17,7 @@ import { Loading, formatUnixDate, getBlogId, unwrapHandle } from '../utils/utils
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import NoData from '../utils/EmptyList';
 import ListData from '../utils/DataList';
-import { Tag, Button, Icon, Menu, Dropdown } from 'antd';
+import { Button, Icon, Menu, Dropdown } from 'antd';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
@@ -32,6 +32,8 @@ import { BlogData, ExtendedPostData, ProfileData } from '@subsocial/types/dto'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import Name from '../profiles/address-views/Name';
+import MyEntityLabel from '../utils/MyEntityLabel';
+
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 
 const SUB_SIZE = 2;
@@ -165,7 +167,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
         <div className='content'>
           <span className='header DfBlogTitle'>
             <span><NameAsLink /></span>
-            {isMyBlog && isBrowser && <Tag color='green' style={{ marginLeft: '.5rem' }}>My blog</Tag>}
+            <MyEntityLabel isMy={isMyBlog}>My blog</MyEntityLabel>
             {!previewDetails && renderDropDownMenu()}
           </span>
           <div className='description'>
