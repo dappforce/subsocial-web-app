@@ -128,4 +128,8 @@ export function useIsLoggedIn () {
   return nonEmptyStr(useMyAddress())
 }
 
+export function notLoggedIn () {
+  return !useIsLoggedIn()
+}
+
 export default MyAccountProvider;

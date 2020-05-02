@@ -10,7 +10,7 @@ import { withCalls, withMulti, registry } from '@polkadot/react-api';
 import * as DfForms from '../utils/forms';
 import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { useMyAddress } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
@@ -202,7 +202,7 @@ type LoadStructProps = OuterProps & {
 
 // TODO refactor copypasta. See the same function in NavigationEditor
 function LoadStruct (props: LoadStructProps) {
-  const { state: { address: myAddress } } = useMyAccount();
+  const myAddress = useMyAddress()
   const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<BlogContent>();
