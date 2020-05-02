@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { AddressProps } from './utils/types'
 import Avatar from './Avatar';
-import { summarize, nonEmptyStr } from '@subsocial/utils';
+import { nonEmptyStr } from '@subsocial/utils';
 import { Pluralize } from 'src/components/utils/Plularize';
 import dynamic from 'next/dynamic';
 import NameDetails from './utils/NameDetails';
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal';
 import { ProfileContent, ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
+import { SummarizeMd } from 'src/components/utils/md';
 const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
 type ProfilePreviewProps = AddressProps & {
@@ -47,7 +48,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
         {!mini && <>
           {nonEmptyStr(about) &&
             <div className='DfPopup-about'>
-              {summarize(about)}
+              <SummarizeMd md={about} />
             </div>
           }
           <div className='DfPopup-links'>

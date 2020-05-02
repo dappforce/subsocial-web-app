@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
-import { isEmptyStr, summarize, nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
+import { isEmptyStr, nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
+import { summarize } from './text';
 
 type HeadMetaProps = {
   title: string,
@@ -25,13 +26,14 @@ export const createTitle = (title: string) => {
     return DEFAULT_TITLE;
   }
 
-  const leftPart = title.length <= MAX_TITLE_LEN ? title : summarize(title, MAX_TITLE_LEN)
+  const leftPart = summarize(title, MAX_TITLE_LEN)
   return `${leftPart} - Subsocial`;
 };
 
 export function HeadMeta (props: HeadMetaProps) {
   const { title, desc = DEFAULT_DESC, image = '/subsocial-sign.png', canonical, tags } = props;
   const summary = summarize(desc, MAX_DESC_LEN);
+
   return <div>
     <Head>
       <title>{createTitle(title)}</title>

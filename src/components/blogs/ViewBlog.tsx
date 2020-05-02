@@ -7,7 +7,7 @@ import Error from 'next/error'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';
 import { ZERO } from '../utils/index';
-import { nonEmptyStr, summarize } from '@subsocial/utils'
+import { nonEmptyStr } from '@subsocial/utils'
 import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -32,6 +32,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import Name from '../profiles/address-views/Name';
 import MyEntityLabel from '../utils/MyEntityLabel';
+import { SummarizeMd } from '../utils/md';
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 
@@ -171,7 +172,9 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
           </span>
 
           {nonEmptyStr(desc) &&
-            <div className='description'>{summarize(desc)}</div>
+            <div className='description'>
+              <SummarizeMd md={desc} />
+            </div>
           }
 
           <ViewTags tags={tags} />
