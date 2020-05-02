@@ -1,9 +1,8 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
-
 import { withCalls, withMulti } from '@polkadot/react-api';
 import Section from '../utils/Section';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../utils/MyAccountContext';
 import { ApiProps } from '@polkadot/react-api/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
@@ -139,7 +138,6 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
   } = props;
 
   const { substrate, ipfs } = useSubsocialApi()
-  const { state: { address: myAddress } } = useMyAccount();
   const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
 
   const { id, score, created: { account, time }, post_id } = comment;
@@ -186,17 +184,16 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
     return () => { isSubscribe = false; };
   }, [ doReloadComment ]);
 
-  const isMyStruct = myAddress === account.toString();
+  const isMyComment = isMyAddress(account)
 
   const RenderDropDownMenu = () => {
     // const [ open, setOpen ] = useState(false);
     // const close = () => setOpen(false);
     // console.log(open, close());
-    const showDropdown = isMyStruct;
 
     const menu = (
       <Menu>
-        {(isMyStruct || showEditForm) && <Menu.Item key='0'>
+        {(isMyComment || showEditForm) && <Menu.Item key='0'>
           <div onClick={() => setShowEditForm(true)} >Edit</div>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
@@ -205,12 +202,14 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
       </Menu>
     );
 
-    return (<>{showDropdown &&
-    <Dropdown overlay={menu} placement='bottomRight'>
-      <Icon type='ellipsis' />
-    </Dropdown>}
-    {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    return <>
+      {isMyComment &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <Icon type='ellipsis' />
+        </Dropdown>
+      }
+      {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
+    </>
   };
 
   const replyButton = () => (

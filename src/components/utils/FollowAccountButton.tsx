@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GenericAccountId } from '@polkadot/types';
-import { useMyAddress } from './MyAccountContext';
+import { useMyAddress, isMyAddress } from './MyAccountContext';
 import TxButton from './TxButton';
 import { registry } from '@polkadot/react-api';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
@@ -38,7 +38,7 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
     return () => { isSubscribe = false; };
   }, [ myAddress ]);
 
-  if (!myAddress || address === myAddress) return null;
+  if (!myAddress || isMyAddress(address)) return null;
 
   const buildTxParams = () => {
     return [ accountId ];

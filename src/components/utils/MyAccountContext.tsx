@@ -1,6 +1,8 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
+import { AccountId } from '@polkadot/types/interfaces';
+import { equalAddresses } from './utils';
 
 const log = newLogger('MyAccountContext')
 
@@ -116,6 +118,10 @@ export function useMyAccount () {
 
 export function useMyAddress () {
   return useMyAccount().state.address
+}
+
+export function isMyAddress (anotherAddress?: string | AccountId) {
+  return equalAddresses(useMyAddress(), anotherAddress)
 }
 
 export function useIsLoggedIn () {

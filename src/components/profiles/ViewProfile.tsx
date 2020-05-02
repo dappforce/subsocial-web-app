@@ -11,7 +11,7 @@ import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModa
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../utils/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
@@ -57,8 +57,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const { isApiReady } = useApi()
 
   const address = id.toString();
-  const { state: { address: myAddress } } = useMyAccount();
-  const isMyAccount = address === myAddress;
+  const isMyAccount = isMyAddress(address);
 
   const { profile = {} as Profile, struct, content = {} as ProfileContent } = owner;
 
@@ -96,7 +95,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasGitHubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
-  const createProfileButton = profileIsNone && address === myAddress &&
+  const createProfileButton = profileIsNone && isMyAccount &&
     <Link href={`/profile/new`}>
       <a className={'DfCreateProfileButton ui button primary ' + TX_BUTTON_SIZE}>
         <i className='plus icon' />
