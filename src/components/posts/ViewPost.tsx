@@ -18,7 +18,7 @@ import { DfBgImg } from '../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile, isBrowser } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
@@ -104,8 +104,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     if (!ipfs_hash) return;
     let isSubscribe = true;
 
-    loadContentFromIpfs(post).then(content => isSubscribe && setContent(content)).catch(err => log.error('Failed to load a post content from IPFS:', err));
-    originalPost && loadContentFromIpfs(originalPost).then(content => isSubscribe && setOriginalContent(content)).catch(err => log.error('Failed to load content of a shared post from IPFS:', err));
+    loadContentFromIpfs(post)
+      .then(content => isSubscribe && setContent(content))
+      .catch(err => log.error('Failed to load a post content from IPFS:', err));
+
+    originalPost && loadContentFromIpfs(originalPost)
+      .then(content => isSubscribe && setOriginalContent(content))
+      .catch(err => log.error('Failed to load content of a shared post from IPFS:', err));
 
     return () => { isSubscribe = false; };
   }, [ false ]);
@@ -115,14 +120,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const RenderDropDownMenu = (props: DropdownProps) => {
-    const { state: { address } } = useMyAccount();
-    const isMyStruct = address === props.account;
-    const showDropdown = isMyStruct;
+    const isMyPost = isMyAddress(props.account);
 
     const menu = (
       <Menu>
-        {isMyStruct && <Menu.Item key='0'>
-          <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}><a className='item'>Edit</a></Link>
+        {isMyPost && <Menu.Item key='0'>
+          <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}>
+            <a className='item'>Edit</a>
+          </Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -130,13 +135,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       </Menu>
     );
 
-    return (<>
-      {showDropdown &&
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <Icon type='ellipsis' />
-      </Dropdown>}
+    return <>
+      {isMyPost &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <Icon type='ellipsis' />
+        </Dropdown>
+      }
       {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    </>
   };
 
   const renderNameOnly = (title: string | undefined, id: PostId) => {

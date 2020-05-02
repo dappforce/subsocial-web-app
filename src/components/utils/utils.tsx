@@ -128,3 +128,7 @@ export const unwrapHandle = (handle?: string | Option<Text>): string | undefined
   }
   return undefined
 }
+
+export function equalAddresses (addr1?: string | AccountId, addr2?: string | AccountId) {
+  return addr1?.toString() === addr2?.toString()
+}

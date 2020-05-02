@@ -23,7 +23,7 @@ import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
 import { isBrowser } from 'react-device-detect';
 import { NextPage } from 'next';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import SpaceNav from './SpaceNav'
@@ -88,22 +88,21 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
 
   const queryId = unwrapHandle(handle) || id;
 
-  const { state: { address } } = useMyAccount();
   const [ content ] = useState(blogData?.content || {} as BlogContent);
   const { desc, name, image, tags } = content;
   const [ followersOpen, setFollowersOpen ] = useState(false);
 
-  const isMyBlog = address && account && address === account.toString();
-  const hasImage = image && nonEmptyStr(image);
+  const isMyBlog = isMyAddress(account);
+  const hasImage = nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
-    const showDropdown = isMyBlog
-
     const menu = (
       <Menu>
         {isMyBlog && <Menu.Item key='0'>
-          <Link href={`/blogs/[id]/edit`} as={`/blogs/${queryId}/edit`}><a className='item'>Edit</a></Link>
+          <Link href={`/blogs/[id]/edit`} as={`/blogs/${queryId}/edit`}>
+            <a className='item'>Edit</a>
+          </Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -111,12 +110,14 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
       </Menu>
     );
 
-    return (showDropdown && <>
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <Icon type='ellipsis' />
-      </Dropdown>
+    return <>
+      {isMyBlog &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <Icon type='ellipsis' />
+        </Dropdown>
+      }
       {/* open && <BlogHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    </>
   };
 
   const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${queryId}`}><a>{name}</a></Link>;
