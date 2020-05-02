@@ -47,7 +47,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
         {!mini && <>
           {nonEmptyStr(about) &&
             <div className='DfPopup-about'>
-              {about && summarize(about)}
+              {summarize(about)}
             </div>
           }
           <div className='DfPopup-links'>

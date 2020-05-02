@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { DfMd } from '../utils/DfMd';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import Error from 'next/error'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';
 import { ZERO } from '../utils/index';
-import { nonEmptyStr } from '@subsocial/utils'
+import { nonEmptyStr, summarize } from '@subsocial/utils'
 import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
@@ -170,9 +169,11 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
             <MyEntityLabel isMy={isMyBlog}>My blog</MyEntityLabel>
             {!previewDetails && renderDropDownMenu()}
           </span>
-          <div className='description'>
-            <DfMd source={desc} />
-          </div>
+
+          {nonEmptyStr(desc) &&
+            <div className='description'>{summarize(desc)}</div>
+          }
+
           <ViewTags tags={tags} />
           {!previewDetails && <RenderBlogCreator />}
           {previewDetails && renderPreviewExtraDetails()}
