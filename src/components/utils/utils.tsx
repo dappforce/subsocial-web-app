@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
-
 import { Option, GenericAccountId, Text } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
 import { Icon } from 'antd';
@@ -12,6 +11,7 @@ import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { getSubsocialApi } from './SubsocialConnect';
+import { nonEmptyStr } from '@subsocial/utils';
 
 type PaginationProps = {
   currentPage?: number;
@@ -120,13 +120,11 @@ export function getEnv (varName: string): string | undefined {
   return env[varName]
 }
 
-export const unwrapHandle = (handleOpt: Option<Text>) => {
-  if (typeof handleOpt === 'string') {
-    return `@${handleOpt}`
+export const unwrapHandle = (handle?: string | Option<Text>): string | undefined => {
+  if (nonEmptyStr(handle)) {
+    return `@${handle}`
+  } else if (handle?.isSome) {
+    return `@${handle.unwrap().toString()}`
   }
-
-  if (handleOpt.isNone) return undefined;
-
-  const handle = handleOpt.unwrap()
-  return `@${handle}`
+  return undefined
 }
