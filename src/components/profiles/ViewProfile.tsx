@@ -6,7 +6,7 @@ import { AccountId } from '@polkadot/types/interfaces';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { nonEmptyStr, isEmptyStr, summarize } from '@subsocial/utils'
+import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -30,6 +30,7 @@ import { InfoDetails } from './address-views';
 import { useApi } from '@polkadot/react-hooks';
 import { getAccountId } from '../utils/utils';
 import MyEntityLabel from '../utils/MyEntityLabel';
+import { SummarizeMd } from '../utils/md';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -139,7 +140,7 @@ const Component: NextPage<Props> = (props: Props) => {
   };
 
   const renderDescription = () => preview
-    ? summarize(about)
+    ? <SummarizeMd md={about} />
     : <DfMd className='mt-3' source={about} />
 
   const queryId = `@${username}` || address

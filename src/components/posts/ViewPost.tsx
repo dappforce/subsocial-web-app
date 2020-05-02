@@ -23,11 +23,12 @@ import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, PostId } from '@subsocial/types/substrate/interfaces';
 import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
-import { PostType, loadContentFromIpfs, getExtContent, PostExtContent } from './LoadPostUtils'
+import { PostType, loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
+import SummarizeMd from '../utils/md/SummarizeMd';
 
 const log = newLogger('View post')
 
@@ -90,15 +91,14 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   } = post;
 
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
-  // console.log('Type of the post:', type);
   const isRegularPost = type === 'regular';
-  const [ content, setContent ] = useState(getExtContent(initialContent));
+  const [ content, setContent ] = useState(initialContent || {} as PostExtContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
 
   const originalPost = postExtData && postExtData.struct;
-  const [ originalContent, setOriginalContent ] = useState(getExtContent(postExtData?.content));
+  const [ originalContent, setOriginalContent ] = useState(postExtData?.content)
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -197,12 +197,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderContent = (post: Post, content?: PostExtContent) => {
     if (!post || !content) return null;
 
-    const { title, summary } = content;
+    const { title, body } = content;
 
     return <div className='DfContent'>
-      {renderNameOnly(title || summary, post.id)}
+      {renderNameOnly(title, post.id)}
       <div className='DfSummary'>
-        {summary}
+        <SummarizeMd md={body} />
       </div>
     </div>;
   };
@@ -270,7 +270,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {renderPostCreator(post, owner)}
           <RenderDropDownMenu account={created.account}/>
         </div>
-        <div className='DfSharedSummary'>{renderNameOnly(content?.summary, id)}</div>
+        <div className='DfSharedSummary'>
+          <SummarizeMd md={content?.body} />
+        </div>
         <Segment className='DfPostPreview'>
           {renderInfoPostPreview(originalPost, originalContent)}
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}

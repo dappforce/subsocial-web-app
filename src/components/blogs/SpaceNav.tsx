@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Menu, Icon } from 'antd'
 import FollowBlogButton from '../utils/FollowBlogButton'
-import { nonEmptyStr, nonEmptyArr, summarize } from '@subsocial/utils'
+import { nonEmptyStr, nonEmptyArr } from '@subsocial/utils'
 import { DfBgImg } from '../utils/DfBgImg'
 import { SpaceContent } from '../spaces/SpacePreview'
 import BN from 'bn.js'
@@ -10,6 +10,7 @@ import AccountId from '@polkadot/types/generic/AccountId'
 import { NavTab } from '@subsocial/types/offchain'
 import { IdentityIcon } from '@polkadot/react-components'
 import { isMyAddress } from '../utils/MyAccountContext'
+import { SummarizeMd } from '../utils/md'
 
 export interface SpaceNavProps {
   blogId: BN,
@@ -84,7 +85,9 @@ export const SpaceNav = (props: SpaceNavProps) => {
       <FollowBlogButton blogId={blogId} />
 
       {nonEmptyStr(desc) &&
-        <div className="SNheadDescription">{summarize(desc)}</div>
+        <div className="SNheadDescription">
+          <SummarizeMd md={desc} />
+        </div>
       }
     </div>
 
