@@ -167,6 +167,19 @@ body,
 
 .DfMenuItem {
   color: $color_menu_font;
+
+  .ProfileDetails {
+    .DfAvatar.space {
+      margin-right: 0;
+    }
+    .content {
+      padding: 0;
+      padding-left: .5rem;
+    }
+    .handle {
+      margin-right: 0;
+    }
+  }
 }
 
 .ProfilePreviews,
@@ -214,10 +227,6 @@ body,
   font-size: $font_big;
   font-weight: 600;
 }
-
-/*.DfProfileTitle {
-  margin-bottom: $space_normal;
-}*/
 
 .ProfileDetails {
   display: flex !important;
@@ -522,8 +531,6 @@ hr {
 
 .ui--AddressComponents-address {
   @extend .DfBoldBlackLink;
-  display: flex;
-  flex-direction: column;
 }
 
 .DfPostPreview,
@@ -973,6 +980,7 @@ hr {
 .DfPopup-username {
   font-size: $font_normal !important;
   color: #4e4e4e;
+  margin: $space_mini 0;
 }
 
 .DfPopup-about {
@@ -983,6 +991,7 @@ hr {
   color: $color_muted;
   display: flex;
   justify-content: flex-start;
+  margin: $space_tiny 0;
 
   .DfPopup-link {
     margin-right: $space_normal;
