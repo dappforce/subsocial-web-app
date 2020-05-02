@@ -40,12 +40,10 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
   };
 
   return <div>
-    <div className={`item ProfileDetails MyProfile`}>
+    <div className={`ProfileDetails`}>
       <Avatar size={size || 44} address={address} avatar={avatar} style={{ marginTop: '.5rem' }}/>
       <div className='content'>
-        <div className='header DfAccountTitle'>
-          <NameDetails owner={owner} address={address} />
-        </div>
+        <NameDetails owner={owner} address={address} />
         {!mini && <>
           {nonEmptyStr(about) &&
             <div className='DfPopup-about'>

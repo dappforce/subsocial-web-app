@@ -14,18 +14,18 @@ import { useApi } from '@polkadot/react-hooks';
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 
 export type InfoProps = {
-  details?: JSX.Element,
   address?: string | AccountId
+  details?: JSX.Element
 }
+
 export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
   const { isApiReady } = useApi()
   return <>
     <div className='Df--AddressComponents-details'>
       {address && isApiReady &&
-        <Balance address={address.toString()} />
+        <div><Balance address={address.toString()} /></div>
       }
-      {address && details && ' · '}
-      {details}
+      {details && <div>{details}</div>}
     </div>
   </>;
 }
