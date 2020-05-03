@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { withFormik, FormikProps, Form, Field } from 'formik';
 import { Switch, DatePicker, Button } from 'antd';
-import SimpleMDEReact from 'react-simplemde-editor';
 import moment from 'moment-timezone';
 import { Moment } from 'moment-timezone/moment-timezone';
 
@@ -12,6 +11,7 @@ import Section from '../../utils/Section';
 
 import './index.css';
 import { buildValidationSchema } from './validation';
+import DfMdEditor from 'src/components/utils/DfMdEditor';
 
 export type Company = {
   id: number
@@ -185,7 +185,7 @@ const InnerForm = (props: FormProps) => {
         </div>
 
         <LabelledField name={Fields.description} label='Description' {...props}>
-          <Field component={SimpleMDEReact}
+          <Field component={DfMdEditor}
             name={Fields.description}
             value={description}
             onChange={(data: string) => setFieldValue(Fields.description, data)}

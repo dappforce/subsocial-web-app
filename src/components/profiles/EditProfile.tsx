@@ -12,7 +12,6 @@ import * as DfForms from '../utils/forms';
 import { socialQueryToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
-import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
@@ -24,6 +23,7 @@ import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
+import DfMdEditor from '../utils/DfMdEditor';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -218,7 +218,7 @@ const InnerForm = (props: FormProps) => {
         />
 
         <LabelledField name='about' label='About' {...props}>
-          <Field component={SimpleMDEReact} name='about' value={about} onChange={(data: string) => setFieldValue('about', data)} className={`DfMdEditor ${errors['about'] && 'error'}`} />
+          <Field component={DfMdEditor} name='about' value={about} onChange={(data: string) => setFieldValue('about', data)} className={`DfMdEditor ${errors['about'] && 'error'}`} />
         </LabelledField>
 
         <LabelledField {...props}>
