@@ -14,7 +14,6 @@ import { useMyAddress } from '../utils/MyAccountContext';
 import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import BN from 'bn.js';
-import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
@@ -28,6 +27,7 @@ import { LabeledValue } from 'antd/lib/select';
 import SelectBlogPreview from '../utils/SelectBlogPreview';
 import { Icon } from 'antd';
 import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
+import DfMdEditor from '../utils/DfMdEditor';
 
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -204,7 +204,7 @@ const InnerForm = (props: FormProps) => {
           <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
           <LabelledField name='body' label='Description' {...props}>
-            <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
+            <Field component={DfMdEditor} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
 
           <div className="EPadvanced">
@@ -218,7 +218,7 @@ const InnerForm = (props: FormProps) => {
           </div>
         </>
         : <>
-          <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
+          <DfMdEditor value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
         </>
       }
       {withButtons && <LabelledField {...props}>

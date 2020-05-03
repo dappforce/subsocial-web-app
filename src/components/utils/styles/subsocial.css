@@ -50,6 +50,13 @@ body,
 /* Other Styles */
 /* ---------------------------------------- */
 
+.DfMdEditor--preview {
+  .markdown-body {
+    background-color: #fff !important;
+    padding: $space_normal !important;
+  }
+}
+
 .am-drawer-content {
   padding-top: 0 !important;
   text-align: left !important;

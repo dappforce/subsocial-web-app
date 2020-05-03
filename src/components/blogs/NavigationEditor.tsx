@@ -6,7 +6,6 @@ import Section from '../utils/Section';
 import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAddress } from '../utils/MyAccountContext';
-import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { AutoComplete, Switch, Affix, Alert } from 'antd';
@@ -24,6 +23,7 @@ import { BlogUpdate, OptionText } from '@subsocial/types/substrate/classes';
 import { withMulti, withCalls, registry } from '@polkadot/react-api';
 import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import DfMdEditor from '../utils/DfMdEditor';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -218,7 +218,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
 
                       <div className="NEText">Description:</div>
                       <Field
-                        component={SimpleMDEReact}
+                        component={DfMdEditor}
                         name={`navTabs.${index}.description`} value={nt.description}
                         onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)}
                         className={`DfMdEditor NETextEditor`} />
