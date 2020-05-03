@@ -1,5 +1,6 @@
 import React from 'react'
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from 'react-markdown'
+import '../utils/styles/github-markdown.css'
 
 interface Props {
   source?: string
@@ -8,7 +9,7 @@ interface Props {
 
 export const DfMd = ({ source, className = '' }: Props) =>
   <ReactMarkdown
-    className={`DfMd ${className}`}
+    className={`markdown-body ${className}`}
     source={source}
     linkTarget='_blank'
   />
