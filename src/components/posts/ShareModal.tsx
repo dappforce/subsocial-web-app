@@ -15,10 +15,10 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from '@polkadot/react-components/Status/types';
 import { SubmittableResult } from '@polkadot/api';
-import SimpleMDEReact from 'react-simplemde-editor';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
+import DfMdEditor from '../utils/DfMdEditor';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -102,7 +102,7 @@ const InnerShareModal = (props: Props) => {
     return <div className='DfShareModalBody'>
       <form>
         <Controller
-          as={<SimpleMDEReact />}
+          as={<DfMdEditor />}
           name={Fields.body}
           control={control}
           value={body}

@@ -14,7 +14,6 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { socialQueryToProp } from '../utils/index';
 import BN from 'bn.js';
 
-import SimpleMDEReact from 'react-simplemde-editor';
 import { Loading } from '../utils/utils';
 import NoData from '../utils/EmptyList';
 import { ValidationProps, buildValidationSchema } from './CommentValidation';
@@ -26,6 +25,7 @@ import { CommentContent } from '@subsocial/types/offchain';
 import { CommentUpdate } from '@subsocial/types/substrate/classes';
 import U32 from '@polkadot/types/primitive/U32';
 import { newLogger } from '@subsocial/utils';
+import DfMdEditor from '../utils/DfMdEditor';
 
 const log = newLogger('Edit comment')
 
@@ -133,7 +133,7 @@ const InnerForm = (props: FormProps) => {
     <Form className='ui form DfForm EditEntityForm'>
       <LabelledField name='body' {...props}>
         <Field
-          component={SimpleMDEReact}
+          component={DfMdEditor}
           name='body'
           value={body}
           onChange={(data: string) => setFieldValue('body', data)}

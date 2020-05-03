@@ -12,7 +12,6 @@ import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
 import { useMyAddress } from '../utils/MyAccountContext';
 import BN from 'bn.js';
-import SimpleMDEReact from 'react-simplemde-editor';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
@@ -26,6 +25,7 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './BlogValidation';
+import DfMdEditor from '../utils/DfMdEditor';
 
 const log = newLogger('Edit blog')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -130,7 +130,7 @@ const InnerForm = (props: FormProps) => {
         <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
 
         <LabelledField name='desc' label='Description' {...props}>
-          <Field component={SimpleMDEReact} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
+          <Field component={DfMdEditor} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
         </LabelledField>
 
         <EditableTagGroup name='tags' label='Tags' tags={tags} {...props}/>
