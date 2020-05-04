@@ -13,11 +13,11 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
 import { blogUrl, blogIdForUrl } from '../utils/urls';
 
-type ListBlogPageProps = {
+type Props = {
   blogsData: BlogData[]
 };
 
-export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListBlogPageProps) => {
+export const ListFollowingBlogsPage: NextPage<Props> = (props) => {
   const { blogsData } = props;
   const totalCount = nonEmptyArr(blogsData) ? blogsData.length : 0;
   const title = `My Subscriptions (${totalCount})`
@@ -38,17 +38,21 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   );
 };
 
-ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProps> => {
+ListFollowingBlogsPage.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
+
+  // TODO sort blog ids in a desc order (don't forget to sort by id.toString())
   const followedBlogIds = await substrate.blogIdsFollowedByAccount(address as string)
   const blogsData = await subsocial.findBlogs(followedBlogIds);
+
   return {
     blogsData
   };
 };
 
+// TODO extract to a separate file:
 const BlogLink = (props: { item: BlogData }) => {
   const { item } = props;
   const { pathname, query } = useRouter();

@@ -5,16 +5,17 @@ import { Button } from 'antd';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import BN from 'bn.js';
+import { ZERO, ONE } from '../utils';
 import { BlogData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 
 type Props = {
-  totalCount: number;
-  blogsData: BlogData[];
-};
+  totalCount?: BN
+  blogsData?: BlogData[]
+}
 
 export const ListAllBlogs: NextPage<Props> = (props) => {
-  const { totalCount, blogsData } = props;
+  const { totalCount = ZERO, blogsData = [] } = props
   const title = `Explore Blogs (${totalCount})`
 
   return (
@@ -23,40 +24,46 @@ export const ListAllBlogs: NextPage<Props> = (props) => {
       <ListData
         title={title}
         dataSource={blogsData}
-        renderItem={(item, index) =>
-          <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
         noDataDesc='There are no blogs yet'
         noDataExt={<Button href='/blogs/new'>Create blog</Button>}
+        renderItem={(item) =>
+          <ViewBlogPage
+            key={item.struct.id.toString()}
+            {...props}
+            blogData={item}
+            previewDetails
+            withFollowButton
+          />
+        }
       />
     </div>
-  );
-};
+  )
+}
+
+const firstBlogId = ONE
 
 // TODO add pagination
 
-ListAllBlogs.getInitialProps = async (_props): Promise<any> => {
+ListAllBlogs.getInitialProps = async (_props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
-  const { substrate } = subsocial;
+  const { substrate } = subsocial
 
   const nextBlogId = await substrate.nextBlogId()
-  const firstBlogId = new BN(1);
-  const totalCount = nextBlogId.sub(firstBlogId).toNumber();
-  let blogsData: BlogData[] = [];
+  const totalCount = nextBlogId.sub(firstBlogId)
+  let blogsData: BlogData[] = []
 
-  if (totalCount > 0) {
-    const firstId = firstBlogId.toNumber();
-    const lastId = nextBlogId.toNumber();
-    const blogIds: BN[] = [];
-    for (let i = firstId; i < lastId; i++) {
-      blogIds.push(new BN(i));
+  if (totalCount.gt(ZERO)) {
+    const blogIds: BN[] = []
+    for (let id = totalCount; id.gte(firstBlogId); id = id.sub(ONE)) {
+      blogIds.push(id)
     }
-    blogsData = await subsocial.findBlogs(blogIds);
+    blogsData = await subsocial.findBlogs(blogIds)
   }
 
   return {
     totalCount,
     blogsData
-  };
-};
+  }
+}
 
 export default ListAllBlogs
