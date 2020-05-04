@@ -21,7 +21,7 @@ type Props = MyAccountProps & {
   parentId: BN,
   struct?: Post,
   content?: PostContent,
-  close: () => void,
+  close?: () => void,
 };
 
 const Fields = {
@@ -34,11 +34,13 @@ export const EditComment = (props: Props) => {
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
-  const { control, errors, formState, watch } = useForm({
+  const { control, errors, formState, watch, reset } = useForm({
     validationSchema: buildSharePostValidationSchema(),
     reValidateMode: 'onBlur',
     mode: 'onBlur'
   });
+
+  const cancelCallback = () => close ? close() : reset(Fields)
 
   console.log(content?.body)
 
@@ -59,11 +61,11 @@ export const EditComment = (props: Props) => {
   };
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    close()
+    cancelCallback()
   };
 
   const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
-    close()
+    cancelCallback()
   };
 
   const buildTxParams = () => {
@@ -115,7 +117,7 @@ export const EditComment = (props: Props) => {
       </div>
       <div className='DfActionButtonsBlock'>
         {renderTxButton()}
-        <Button type='default' onClick={close}>Cancel</Button>
+        <Button type='default' onClick={cancelCallback}>Cancel</Button>
       </div>
     </form>
   </div>

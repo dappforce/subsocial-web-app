@@ -11,12 +11,21 @@ type Props = AddressProps & {
   className?: string
 };
 
+type GetNameOptions = AddressProps & {
+  isShort?: boolean
+}
+
+export const getProfileName = (options: GetNameOptions) => {
+  const { owner, isShort = true, address } = options;
+  return owner?.content?.fullname || owner?.profile?.username || (isShort ? toShortAddress(address) : address)
+}
+
 export const Name: React.FunctionComponent<Props> = ({ isShort = true, asLink = true, address, owner = {} as ProfileData, className }) => {
-  const { content, profile } = owner;
+  const { profile } = owner;
   const username = profile?.username;
   const addressString = address.toString();
 
-  const name = content?.fullname || profile?.username || (isShort ? toShortAddress(address) : addressString)
+  const name = getProfileName({ address, isShort, owner })
 
   const queryId = username ? `@${username}` : addressString;
 

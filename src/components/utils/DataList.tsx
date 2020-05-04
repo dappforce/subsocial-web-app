@@ -21,7 +21,7 @@ type Props<T extends any> = {
 
 // TODO rename to DataList
 export function ListData<T extends any> (props: Props<T>) {
-  const { dataSource, renderItem, className, title, noDataDesc = 'no data', noDataExt } = props;
+  const { dataSource, renderItem, className, title, noDataDesc = null, noDataExt } = props;
   const total = dataSource.length;
 
   const router = useRouter();

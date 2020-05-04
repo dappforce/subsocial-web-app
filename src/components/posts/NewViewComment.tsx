@@ -18,7 +18,7 @@ type Props = {
   owner?: ProfileData,
   address: AnyAccountId,
   struct: Post,
-  content: PostContent
+  content?: PostContent
 }
 
 export const ViewComment: FunctionComponent<Props> = ({ children = null, owner, struct, content }) => {

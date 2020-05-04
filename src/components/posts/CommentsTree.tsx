@@ -45,9 +45,19 @@ const CommentPage: React.FunctionComponent<CommentPageProps> = ({ comment }) => 
   const address = struct.created.account.toString()
   const profileName = getProfileName({ address, owner }).toString()
 
+  const renderResponseTitle = () => <>
+  In response to{' '}
+  <Link
+    href='/blogs/[blogId]/posts/[postId]'
+    as={`/blogs/${post.blog_id}/posts/${post_id.toString()}`}
+    >
+      <a>{postContent.title}</a>
+    </Link>
+  </>
+
   return <Section className='DfContentPage DfEntirePost'>
       <HeadMeta desc={mdToText(content?.body)} title={`${profileName} commented on ${content?.title}`} />
-      
+
   </Section> 
 
 }
