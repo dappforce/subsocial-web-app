@@ -12,7 +12,7 @@ import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { Loading, formatUnixDate, getBlogId, unwrapHandle } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import NoData from '../utils/EmptyList';
 import ListData from '../utils/DataList';
@@ -33,6 +33,7 @@ import ViewTags from '../utils/ViewTags';
 import Name from '../profiles/address-views/Name';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
+import { blogUrl, editBlogUrl } from '../utils/urls';
 
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 
@@ -82,13 +83,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const {
     id,
     score,
-    handle,
     created: { account, time },
     posts_count,
     followers_count: followers
   } = blog;
-
-  const queryId = unwrapHandle(handle) || id;
 
   const [ content ] = useState(blogData?.content || {} as BlogContent);
   const { desc, name, image, tags } = content;
@@ -102,7 +100,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyBlog && <Menu.Item key='0'>
-          <Link href={`/blogs/[id]/edit`} as={`/blogs/${queryId}/edit`}>
+          <Link href={`/blogs/[id]/edit`} as={editBlogUrl(blog)}>
             <a className='item'>Edit</a>
           </Link>
         </Menu.Item>}
@@ -122,7 +120,10 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
     </>
   };
 
-  const NameAsLink = () => <Link href='/blogs/[blogId]' as={`/blogs/${queryId}`}><a>{name}</a></Link>;
+  const NameAsLink = () =>
+    <Link href='/blogs/[blogId]' as={blogUrl(blog)}>
+      <a>{name}</a>
+    </Link>
 
   const renderNameOnly = () => {
     return withLink
@@ -189,7 +190,7 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const renderPreviewExtraDetails = () => {
     return <>
       <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
-        <Link href='/blogs/[blogId]' as={`/blogs/${queryId}`}>
+        <Link href='/blogs/[blogId]' as={blogUrl(blog)}>
           <a className={'DfStatItem ' + (!postsCount && 'disable')}>
             <Pluralize count={postsCount} singularText='Post'/>
           </a>

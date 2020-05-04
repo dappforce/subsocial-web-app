@@ -1,3 +1,5 @@
+import { accountUrl, blogsFollowedByAccountUrl, blogsOwnedByAccountUrl } from 'src/components/utils/urls'
+
 export type Divider = 'Divider'
 
 export const Divider: Divider = 'Divider'
@@ -34,38 +36,41 @@ export const DefaultMenu: MenuItem[] = [
   }
 ];
 
-export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => [
-  {
-    name: 'My feed',
-    page: [ '/feed' ],
-    image: 'profile'
-  },
-  {
-    name: 'My notifications',
-    page: [ '/notifications' ],
-    image: 'notification',
-    isNotifications: true
-  },
-  {
-    name: 'My subscriptions',
-    page: [ '/blogs/following/[address]', `/blogs/following/${myAddress}` ],
-    image: 'book'
-  },
-  {
-    name: 'My profile',
-    page: [ '/profile/[address]', `/profile/${myAddress}` ],
-    image: 'user'
-  },
-  {
-    name: 'My blogs',
-    page: [ '/blogs/my/[address]', `/blogs/my/${myAddress}` ],
-    image: 'book'
-  },
-  {
-    name: 'New blog',
-    page: [ '/blogs/new' ],
-    image: 'plus'
-  },
-  Divider,
-  ...DefaultMenu
-]
+export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
+  const account = { address: myAddress }
+  return [
+    {
+      name: 'My feed',
+      page: [ '/feed' ],
+      image: 'profile'
+    },
+    {
+      name: 'My notifications',
+      page: [ '/notifications' ],
+      image: 'notification',
+      isNotifications: true
+    },
+    {
+      name: 'My subscriptions',
+      page: [ '/blogs/following/[address]', blogsFollowedByAccountUrl(account) ],
+      image: 'book'
+    },
+    {
+      name: 'My profile',
+      page: [ '/profile/[address]', accountUrl(account) ],
+      image: 'user'
+    },
+    {
+      name: 'My blogs',
+      page: [ '/blogs/my/[address]', blogsOwnedByAccountUrl(account) ],
+      image: 'book'
+    },
+    {
+      name: 'New blog',
+      page: [ '/blogs/new' ],
+      image: 'plus'
+    },
+    Divider,
+    ...DefaultMenu
+  ]
+}
