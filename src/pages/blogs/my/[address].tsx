@@ -1,3 +1,3 @@
-import { ListMyBlogs } from '../../../components/blogs/ListBlogs';
+import ListMyBlogs from '../../../components/blogs/ListMyBlogs';
 
 export default ListMyBlogs;

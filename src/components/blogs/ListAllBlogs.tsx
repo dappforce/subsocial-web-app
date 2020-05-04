@@ -13,8 +13,7 @@ type Props = {
   blogsData: BlogData[];
 };
 
-// TODO extract to a separate file:
-export const ListAllBlogs: NextPage<Props> = (props: Props) => {
+export const ListAllBlogs: NextPage<Props> = (props) => {
   const { totalCount, blogsData } = props;
   const title = `Explore Blogs (${totalCount})`
 
@@ -33,7 +32,9 @@ export const ListAllBlogs: NextPage<Props> = (props: Props) => {
   );
 };
 
-ListAllBlogs.getInitialProps = async (props): Promise<any> => {
+// TODO add pagination
+
+ListAllBlogs.getInitialProps = async (_props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
 
@@ -58,36 +59,4 @@ ListAllBlogs.getInitialProps = async (props): Promise<any> => {
   };
 };
 
-type MyBlogProps = {
-  blogsData: BlogData[];
-};
-
-// TODO extract to a separate file:
-export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
-  const { blogsData } = props;
-  const totalCount = blogsData.length;
-
-  return <>
-    <HeadMeta title='My blogs' desc='The blogs I manage on Subsocial' />
-    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <ListData
-        title={`My Blogs (${totalCount})`}
-        dataSource={blogsData}
-        renderItem={(item, index) => <ViewBlogPage {...props} key={index} blogData={item} previewDetails withFollowButton />}
-        noDataDesc='You do not have your own blogs yet'
-        noDataExt={<Button href='/blogs/new'>Create my first blog</Button>}
-      />
-    </div>
-  </>
-};
-
-ListMyBlogs.getInitialProps = async (props): Promise<MyBlogProps> => {
-  const { query: { address } } = props;
-  const subsocial = await getSubsocialApi()
-  const { substrate } = subsocial;
-  const myBlogIds = await substrate.blogIdsByOwner(address as string)
-  const blogsData = await subsocial.findBlogs(myBlogIds);
-  return {
-    blogsData
-  }
-}
+export default ListAllBlogs
