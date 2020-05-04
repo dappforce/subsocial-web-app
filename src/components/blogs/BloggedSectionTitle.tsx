@@ -15,6 +15,7 @@ export const BloggedSectionTitle = ({
   const { isStorybook } = useStorybookContext()
   return <>
     {!isStorybook && <>
+      {/* TODO replace '<a />' tag with Next Link + URL builder */}
       <a href={`/blogs/${blogId.toString()}`}>
         <ViewBlog nameOnly={true} id={blogId} />
       </a>
