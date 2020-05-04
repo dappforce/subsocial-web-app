@@ -31,6 +31,7 @@ import { useApi } from '@polkadot/react-hooks';
 import { getAccountId } from '../utils/utils';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
+import { accountUrl } from '../utils/urls';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -61,16 +62,20 @@ const Component: NextPage<Props> = (props: Props) => {
   const address = id.toString();
   const isMyAccount = isMyAddress(address);
 
-  const { profile = {} as Profile, struct, content = {} as ProfileContent } = owner;
+  const {
+    struct,
+    content = {} as ProfileContent,
+    profile = {} as Profile
+  } = owner;
 
-  const profileIsNone = isEmpty(profile);
+  const noProfile = isEmpty(profile);
   const followers = struct ? new BN(struct.followers_count) : ZERO;
   const following = struct ? new BN(struct.following_accounts_count) : ZERO;
   const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
     username
-  } = profile as Profile;
+  } = profile;
 
   const {
     fullname,
@@ -84,7 +89,7 @@ const Component: NextPage<Props> = (props: Props) => {
     medium,
     github,
     instagram
-  } = content as ProfileContent;
+  } = content;
 
   // TODO fix copypasta of social links. Implement via array.
   const hasEmail = email && nonEmptyStr(email);
@@ -97,7 +102,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasGitHubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
-  const createProfileButton = profileIsNone && isMyAccount &&
+  const createProfileButton = noProfile && isMyAccount &&
     <Link href={`/profile/new`}>
       <a className={'DfCreateProfileButton ui button primary ' + TX_BUTTON_SIZE}>
         <i className='plus icon' />
@@ -106,7 +111,7 @@ const Component: NextPage<Props> = (props: Props) => {
     </Link>;
 
   const renderDropDownMenu = () => {
-    if (profileIsNone) return null;
+    if (noProfile) return null;
 
     const menu = (
       <Menu>
@@ -131,6 +136,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(username);
 
+  // TODO extract function: there is similar code in other files
   const getName = () => {
     if (isOnlyAddress) {
       return address;
@@ -146,7 +152,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const queryId = `@${username}` || address
 
   const NameAsLink = () => (
-    <Link href='/profile/[address]' as={`/profile/${queryId}`}>
+    <Link href='/profile/[address]' as={accountUrl({ address, username })}>
       <a className='handle DfBoldBlackLink'>{getName()}</a>
     </Link>
   );
@@ -268,6 +274,7 @@ Component.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const accountId = await getAccountId(address as string);
 
+  // TODO resolve profile by accountId or handle (username)
   if (!accountId && res) {
     res.statusCode = 404
     return { statusCode: 404 }

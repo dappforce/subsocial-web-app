@@ -13,6 +13,7 @@ type Props = {
   blogsData: BlogData[];
 };
 
+// TODO extract to a separate file:
 export const ListAllBlogs: NextPage<Props> = (props: Props) => {
   const { totalCount, blogsData } = props;
   const title = `Explore Blogs (${totalCount})`
@@ -35,8 +36,8 @@ export const ListAllBlogs: NextPage<Props> = (props: Props) => {
 ListAllBlogs.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
-  const nextBlogId = await substrate.nextBlogId()
 
+  const nextBlogId = await substrate.nextBlogId()
   const firstBlogId = new BN(1);
   const totalCount = nextBlogId.sub(firstBlogId).toNumber();
   let blogsData: BlogData[] = [];
@@ -61,9 +62,11 @@ type MyBlogProps = {
   blogsData: BlogData[];
 };
 
+// TODO extract to a separate file:
 export const ListMyBlogs: NextPage<MyBlogProps> = (props: MyBlogProps) => {
   const { blogsData } = props;
   const totalCount = blogsData.length;
+
   return <>
     <HeadMeta title='My blogs' desc='The blogs I manage on Subsocial' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>

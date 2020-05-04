@@ -1,9 +1,10 @@
 import React from 'react'
+import Link from 'next/link';
 import { toShortAddress } from '@polkadot/react-components/util';
 import { AddressProps } from './utils/types';
-import Link from 'next/link';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
+import { accountUrl } from 'src/components/utils/urls';
 
 type Props = AddressProps & {
   isShort?: boolean,
@@ -27,11 +28,9 @@ export const Name: React.FunctionComponent<Props> = ({ isShort = true, asLink = 
 
   const name = getProfileName({ address, isShort, owner })
 
-  const queryId = username ? `@${username}` : addressString;
-
   return asLink
-    ? <Link href={'/profile/[address]'} as={`/profile/${queryId}`}>
-      <a className={`ui--AddressComponents-address ${className} `}>
+    ? <Link href='/profile/[address]' as={accountUrl({ address, username })}>
+      <a className={`ui--AddressComponents-address ${className}`}>
         {name}
       </a>
     </Link>

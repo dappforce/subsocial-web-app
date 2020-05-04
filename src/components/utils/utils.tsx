@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pagination as SuiPagination } from 'semantic-ui-react';
-import { Option, GenericAccountId, Text } from '@polkadot/types';
+import { Option, GenericAccountId } from '@polkadot/types';
 import { SubmittableResult } from '@polkadot/api';
 import { Icon } from 'antd';
 import moment from 'moment-timezone';
@@ -12,6 +12,11 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { getSubsocialApi } from './SubsocialConnect';
 import { nonEmptyStr } from '@subsocial/utils';
+
+export function getEnv (varName: string): string | undefined {
+  const { env } = typeof window === 'undefined' ? process : window.process;
+  return env[varName]
+}
 
 type PaginationProps = {
   currentPage?: number;
@@ -113,20 +118,6 @@ export const getAccountId = async (addressOrHandle: string): Promise<AccountId |
   } else {
     return new GenericAccountId(registry, addressOrHandle)
   }
-}
-
-export function getEnv (varName: string): string | undefined {
-  const { env } = typeof window === 'undefined' ? process : window.process;
-  return env[varName]
-}
-
-export const unwrapHandle = (handle?: string | Option<Text>): string | undefined => {
-  if (nonEmptyStr(handle)) {
-    return `@${handle}`
-  } else if (handle?.isSome) {
-    return `@${handle.unwrap().toString()}`
-  }
-  return undefined
 }
 
 export function equalAddresses (addr1?: string | AccountId, addr2?: string | AccountId) {
