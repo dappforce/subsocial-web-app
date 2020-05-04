@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
-import { unwrapHandle } from '../utils/utils';
+import { blogUrl, blogIdForUrl } from '../utils/urls';
 
 type ListBlogPageProps = {
   blogsData: BlogData[]
@@ -56,20 +56,19 @@ const BlogLink = (props: { item: BlogData }) => {
 
   if (!item) return null;
 
-  const blogIdOrHandle = query.blogId as string;
-  const currentBlogIdOrHandle = pathname.includes('blogs') ? blogIdOrHandle : undefined;
-  const { handle, id } = item.struct;
-  const isSelectedBlog = currentBlogIdOrHandle === unwrapHandle(handle) || currentBlogIdOrHandle === id.toString()
+  const idForUrl = blogIdForUrl(item.struct)
+  const isSelectedBlog = pathname.includes('blogs') &&
+    query.blogId as string === idForUrl
 
   return (
     <Link
-      key={id.toString()}
+      key={idForUrl}
       href='/blogs/[blogId]'
-      as={`/blogs/${unwrapHandle(handle) || id}`}
+      as={blogUrl(item.struct)}
     >
       <a className={`DfMenuBlogLink ${isSelectedBlog ? 'DfSelectedBlog' : ''}`}>
         <ViewBlogPage
-          key={item.struct.id.toString()}
+          key={idForUrl}
           blogData={item}
           miniPreview
           imageSize={28}
