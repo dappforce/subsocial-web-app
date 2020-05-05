@@ -83,6 +83,11 @@ body,
   text-align: end;
   font-size: $font_small;
 
+  .anticon {
+    color: #bbb !important;
+    margin-right: .35rem !important;
+  }
+
   .ant-tag:hover {
     background-color: #fff;
   }
