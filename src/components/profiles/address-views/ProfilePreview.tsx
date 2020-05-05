@@ -3,13 +3,11 @@ import { AddressProps } from './utils/types'
 import Avatar from './Avatar';
 import { nonEmptyStr } from '@subsocial/utils';
 import { Pluralize } from 'src/components/utils/Plularize';
-import dynamic from 'next/dynamic';
 import NameDetails from './utils/NameDetails';
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal';
 import { ProfileContent, ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { SummarizeMd } from 'src/components/utils/md';
-const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButton'), { ssr: false });
 
 type ProfilePreviewProps = AddressProps & {
   mini?: boolean,
@@ -63,7 +61,6 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
           {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
         </>}
       </div>
-      <FollowAccountButton address={address} />
     </div>
   </div>;
 };
