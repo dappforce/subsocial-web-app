@@ -83,6 +83,11 @@ body,
   text-align: end;
   font-size: $font_small;
 
+  .anticon {
+    color: #bbb !important;
+    margin-right: .35rem !important;
+  }
+
   .ant-tag:hover {
     background-color: #fff;
   }
@@ -137,6 +142,14 @@ body,
   margin: $space_small 0;
 }
 
+.DfBookPage {
+  @extend .DfBoxShadow;
+  margin: $space_big 0;
+  padding: $space_big;
+  background-color: #fff;
+  border-radius: $border_radius_normal;
+}
+
 .DfPostTitle--preview {
   @extend .DfBoldBlackLink;
   margin-bottom: $space_small;
@@ -152,11 +165,7 @@ body,
     margin: $space_big 0;
   }
   .DfPostContent {
-    margin: $space_big 0;
-    padding: $space_big;
-    background-color: #fff;
-    border-radius: $border_radius_normal;
-    @extend .DfBoxShadow;
+    @extend .DfBookPage;
   }
 }
 
@@ -258,6 +267,19 @@ body,
 
     .button {
       padding: $space_tiny $space_small;
+    }
+  }
+}
+
+.ant-popover {
+  .ProfileDetails {
+    .content {
+      max-width: 330px;
+      padding: 0;
+      padding-left: $space_mini;
+    }
+    .DfPopup-about {
+      color: $color_font_normal;
     }
   }
 }
@@ -499,10 +521,6 @@ hr {
 }
 
 .DfBlogStats {
-  margin-top: $space_tiny;
-  font-size: $font_small;
-  display: flex;
-
   .DfStatItem {
     margin-right: $space_normal;
   }
@@ -1482,11 +1500,11 @@ a.DfStatItem {
     }
 
     .SNheadTitle {
-      color: #000;
       font-weight: 500;
       font-size: $font_big;
       line-height: $space_huge;
       margin: $space_normal 0;
+      text-align: center;
     }
 
     .SNheadDescription {

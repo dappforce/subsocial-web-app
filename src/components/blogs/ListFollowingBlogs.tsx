@@ -1,23 +1,24 @@
-import React from 'react';
-import { ViewBlogPage } from './ViewBlog';
-import ListData from '../utils/DataList';
-import { Button } from 'antd';
-import { useRouter } from 'next/router';
-import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
-import { isMobile } from 'react-device-detect';
-import { NextPage } from 'next';
-import { HeadMeta } from '../utils/HeadMeta';
-import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
-import { blogUrl, blogIdForUrl } from '../utils/urls';
+import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
+import { Button } from 'antd';
+import { NextPage } from 'next';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { isMobile } from 'react-device-detect';
 
-type ListBlogPageProps = {
+import ListData from '../utils/DataList';
+import { HeadMeta } from '../utils/HeadMeta';
+import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
+import { blogIdForUrl, blogUrl } from '../utils/urls';
+import { ViewBlogPage } from './ViewBlog';
+
+type Props = {
   blogsData: BlogData[]
 };
 
-export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListBlogPageProps) => {
+export const ListFollowingBlogsPage: NextPage<Props> = (props) => {
   const { blogsData } = props;
   const totalCount = nonEmptyArr(blogsData) ? blogsData.length : 0;
   const title = `My Subscriptions (${totalCount})`
@@ -38,16 +39,21 @@ export const ListFollowingBlogsPage: NextPage<ListBlogPageProps> = (props: ListB
   );
 };
 
-ListFollowingBlogsPage.getInitialProps = async (props): Promise<ListBlogPageProps> => {
+ListFollowingBlogsPage.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
+
+  // TODO sort blog ids in a desc order (don't forget to sort by id.toString())
   const followedBlogIds = await substrate.blogIdsFollowedByAccount(address as string)
   const blogsData = await subsocial.findBlogs(followedBlogIds);
+
   return {
     blogsData
   };
 };
+
+// TODO extract to a separate file:
 
 const BlogLink = (props: { item: BlogData }) => {
   const { item } = props;

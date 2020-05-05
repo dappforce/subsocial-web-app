@@ -1,15 +1,28 @@
-import React from 'react'
-import Link from 'next/link';
-import { AddressProps } from './types';
 import { toShortAddress } from '@polkadot/react-components/util';
 import { ProfileData } from '@subsocial/types';
-import { InfoDetails } from '../AuthorPreview';
 import { nonEmptyStr } from '@subsocial/utils';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import React from 'react';
 import { isMyAddress } from 'src/components/utils/MyAccountContext';
 import MyEntityLabel from 'src/components/utils/MyEntityLabel';
 import { accountUrl } from 'src/components/utils/urls';
 
-export const NameDetails = ({ owner = {} as ProfileData, address }: AddressProps) => {
+import { InfoDetails } from '../AuthorPreview';
+import { AddressProps } from './types';
+
+const FollowAccountButton = dynamic(() => import('../../../utils/FollowAccountButton'), { ssr: false });
+
+type Props = AddressProps & {
+  withFollowButton?: boolean
+}
+
+export const NameDetails = ({
+  owner = {} as ProfileData,
+  address,
+  withFollowButton = true
+}: Props) => {
+
   const { profile, content, struct } = owner
   const isMyAccount = isMyAddress(address)
   const shortAddress = toShortAddress(address)
@@ -34,6 +47,7 @@ export const NameDetails = ({ owner = {} as ProfileData, address }: AddressProps
         <a className='ui--AddressComponents-address'>{title}</a>
       </Link>
       <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+      {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
     </div>
     {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}
     <InfoDetails address={address} details={<>Reputation: {struct?.reputation?.toString() || 0}</>} />

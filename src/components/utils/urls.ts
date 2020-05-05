@@ -34,7 +34,7 @@ function stringifySubUrls (...subUrls: string[]): string {
 // Blog URLs
 // --------------------------------------------------
 
-type HasBlogIdOrHandle = Pick<Blog, 'id' | 'handle'>
+export type HasBlogIdOrHandle = Pick<Blog, 'id' | 'handle'>
 
 export function blogIdForUrl ({ id, handle }: HasBlogIdOrHandle): string {
   if (notDef(id) && notDef(handle)) {
@@ -70,7 +70,7 @@ export function aboutBlogUrl (blog: HasBlogIdOrHandle): string {
 // Post URLs
 // --------------------------------------------------
 
-type HasPostId = Pick<Post, 'id'>
+export type HasPostId = Pick<Post, 'id'>
 
 /** /blogs/[blogId]/posts/new */
 export function newPostUrl (blog: HasBlogIdOrHandle): string {
@@ -96,7 +96,7 @@ export function editPostUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
 // Comment URLs
 // --------------------------------------------------
 
-type HasCommentId = Pick<Comment, 'id'>
+export type HasCommentId = Pick<Comment, 'id'>
 
 /** /blogs/[blogId]/posts/[postId]/comments */
 export function postCommentsUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
@@ -117,7 +117,7 @@ export function commentUrl (blog: HasBlogIdOrHandle, post: HasPostId, comment: H
 // Account URLs
 // --------------------------------------------------
 
-type HasAddressOrUsername = {
+export type HasAddressOrUsername = {
   address: AnyAddress
   username?: AnyText
 }
