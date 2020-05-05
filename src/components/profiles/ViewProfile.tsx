@@ -273,6 +273,7 @@ Component.getInitialProps = async (props): Promise<any> => {
   const accountId = await getAccountId(address as string);
 
   // TODO resolve profile by accountId or handle (username)
+
   if (!accountId && res) {
     res.statusCode = 404
     return { statusCode: 404 }

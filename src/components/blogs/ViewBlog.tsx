@@ -1,51 +1,55 @@
-import React, { useState } from 'react';
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import { GenericAccountId as AccountId } from '@polkadot/types';
 import IdentityIcon from '@polkadot/react-components/IdentityIcon';
-import Error from 'next/error'
-import { HeadMeta } from '../utils/HeadMeta';
-import { ZERO } from '../utils/index';
-import { nonEmptyStr } from '@subsocial/utils'
-import { ViewPostPage } from '../posts/ViewPost';
-import { BlogFollowersModal } from '../profiles/AccountsListModal';
-// import { BlogHistoryModal } from '../utils/ListsEditHistory';
-import { Segment } from 'semantic-ui-react';
-import { formatUnixDate, getBlogId } from '../utils/utils';
-import { MutedSpan, MutedDiv } from '../utils/MutedText';
-import NoData from '../utils/EmptyList';
-import ListData from '../utils/DataList';
-import { Button, Icon, Menu, Dropdown } from 'antd';
-import { DfBgImg } from '../utils/DfBgImg';
-import { Pluralize } from '../utils/Plularize';
-import Section from '../utils/Section';
-import { isBrowser } from 'react-device-detect';
-import { NextPage } from 'next';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { GenericAccountId as AccountId } from '@polkadot/types';
+import { BlogContent } from '@subsocial/types/offchain';
+import { nonEmptyStr } from '@subsocial/utils';
+import { Button, Dropdown, Icon, Menu } from 'antd';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
-import SpaceNav from './SpaceNav'
-import { BlogContent } from '@subsocial/types/offchain';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import ViewTags from '../utils/ViewTags';
-import Name from '../profiles/address-views/Name';
-import MyEntityLabel from '../utils/MyEntityLabel';
+import { NextPage } from 'next';
+import dynamic from 'next/dynamic';
+import Error from 'next/error';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { isBrowser } from 'react-device-detect';
+import { Segment } from 'semantic-ui-react';
+
+import { ViewPostPage } from '../posts/ViewPost';
+import { ZERO } from '../utils';
+import ListData from '../utils/DataList';
+import { DfBgImg } from '../utils/DfBgImg';
+import NoData from '../utils/EmptyList';
+import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
+import { isMyAddress } from '../utils/MyAccountContext';
+import MyEntityLabel from '../utils/MyEntityLabel';
+import { return404 } from '../utils/next';
+import { Pluralize } from '../utils/Plularize';
+import Section from '../utils/Section';
+import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { blogUrl, editBlogUrl } from '../utils/urls';
+import { getBlogId } from '../utils/utils';
+import ViewTags from '../utils/ViewTags';
+import BlogStatsRow from './BlogStatsRow';
+import SpaceNav from './SpaceNav';
 import { ViewBlogProps } from './ViewBlogProps';
 import withLoadBlogDataById from './withLoadBlogDataById';
 
+// import { BlogHistoryModal } from '../utils/ListsEditHistory';
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
 
 // TODO get rid of this 'hack'
 const SUB_SIZE = 2;
 
-export const ViewBlogPage: NextPage<ViewBlogProps> = (props) => {
+type Props = ViewBlogProps
+
+export const ViewBlogPage: NextPage<Props> = (props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
   const { blogData } = props;
 
-  if (!blogData || !blogData?.struct) return <NoData description={<span>Blog not found</span>} />;
+  if (!blogData || !blogData?.struct) {
+    return <NoData description={<span>Blog not found</span>} />
+  }
 
   const {
     preview = false,
@@ -57,23 +61,19 @@ export const ViewBlogPage: NextPage<ViewBlogProps> = (props) => {
     dropdownPreview = false,
     posts = [],
     imageSize = 36,
-    onClick,
-    owner
+    onClick
   } = props;
 
   const blog = blogData.struct;
 
   const {
     id,
-    score,
-    created: { account, time },
-    posts_count,
-    followers_count: followers
+    created: { account },
+    posts_count
   } = blog;
 
   const [ content ] = useState(blogData?.content || {} as BlogContent);
   const { desc, name, image, tags } = content;
-  const [ followersOpen, setFollowersOpen ] = useState(false);
 
   const isMyBlog = isMyAddress(account);
   const hasImage = nonEmptyStr(image);
@@ -158,44 +158,10 @@ export const ViewBlogPage: NextPage<ViewBlogProps> = (props) => {
           }
 
           <ViewTags tags={tags} />
-          {!previewDetails && <RenderBlogCreator />}
-          {previewDetails && renderPreviewExtraDetails()}
+          {previewDetails && <BlogStatsRow blog={blog} />}
         </div>
       </div>
       {withFollowButton && <FollowBlogButton blogId={id} />}
-    </div>
-
-  const renderBlogFollowersLink = () => {
-    const className = 'DfStatItem DfGreyLink ' + (!followers && 'disable')
-    return (
-      <div onClick={() => setFollowersOpen(true)} className={className}>
-        <Pluralize count={followers} singularText='Follower'/>
-      </div>
-    )
-  }
-
-  const renderPreviewExtraDetails = () =>
-    <div className={`DfBlogStats ${isMyBlog && 'MyBlog'}`}>
-      <Link href='/blogs/[blogId]' as={blogUrl(blog)}>
-        <a className={'DfStatItem ' + (!postsCount && 'disable')}>
-          <Pluralize count={postsCount} singularText='Post'/>
-        </a>
-      </Link>
-
-      {renderBlogFollowersLink()}
-
-      <MutedSpan className='DfStatItem'><Pluralize count={score} singularText='Point' /></MutedSpan>
-
-      <MutedSpan>{renderDropDownMenu()}</MutedSpan>
-
-      {followersOpen &&
-        <BlogFollowersModal
-          id={id}
-          title={<Pluralize count={followers} singularText='Follower'/>}
-          accountsCount={blog.followers_count}
-          open={followersOpen}
-          close={() => setFollowersOpen(false)}
-        />}
     </div>
 
   if (nameOnly) {
@@ -242,90 +208,54 @@ export const ViewBlogPage: NextPage<ViewBlogProps> = (props) => {
       {posts.length > 0 && <NewPostButton />}
     </div>
 
-  const RenderBlogCreator = () =>
-    <MutedDiv className='DfCreator'>
-      <div className='DfCreator--data'>
-        <Icon type='calendar' />
-        Created on {formatUnixDate(time)}
-      </div>
-      <div className='DfCreator-owner'>
-        <Icon type='user' />
-        {'Owned by '}
-        <Name
-          className='DfGreyLink'
-          address={account}
-          owner={owner}
-          isShort={true}
-        />
-      </div>
-    </MutedDiv>
+  // TODO extract WithSpaceNav
 
   return <div className='ViewBlogWrapper'>
-    {isBrowser && <SpaceNav
-      {...content}
-      blogId={new BN(id)}
-      creator={account}
-    />}
+    {isBrowser &&
+      <SpaceNav
+        {...content}
+        blogId={new BN(id)}
+        creator={account}
+      />
+    }
+    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
     <Section className='DfContentPage'>
-      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-      <div className='FullProfile'>
-        {renderPreview()}
-      </div>
-      <div className='DfSpacedButtons'>
-        <FollowBlogButton blogId={id} />
-        {renderBlogFollowersLink()}
-      </div>
-
-      {followersOpen &&
-        <BlogFollowersModal
-          id={id}
-          title={<Pluralize count={followers} singularText='Follower' />}
-          accountsCount={blog.followers_count}
-          open={followersOpen}
-          close={() => setFollowersOpen(false)}
-        />
-      }
-
       {renderPostPreviews()}
     </Section>
   </div>
 }
 
-ViewBlogPage.getInitialProps = async (props): Promise<any> => {
-  const { res, query: { blogId } } = props
-  const subsocial = await getSubsocialApi()
-  const { substrate } = subsocial;
-  const idOrHandle = blogId as string
+// TODO extract getInitialProps, this func is similar in AboutBlog
 
-  const return404 = () => {
-    if (res) {
-      res.statusCode = 404
-    }
-    return { statusCode: 404 }
-  }
+ViewBlogPage.getInitialProps = async (props): Promise<Props> => {
+  const { query: { blogId } } = props
+  const idOrHandle = blogId as string
 
   const id = await getBlogId(idOrHandle)
   if (!id) {
-    return return404()
+    return return404(props)
   }
+
+  const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial
 
   const blogData = id && await subsocial.findBlog(id)
   if (!blogData?.struct) {
-    return return404()
+    return return404(props)
   }
 
-  const ownerId = blogData?.struct.created.account as AccountId;
-  const owner = await subsocial.findProfile(ownerId);
+  const ownerId = blogData?.struct.created.account as AccountId
+  const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsByBlogId(id as BN)
-  const posts = await subsocial.findPostsWithDetails(postIds.reverse());
+  const posts = await subsocial.findPostsWithDetails(postIds.reverse())
 
   return {
     blogData,
     posts,
     owner
-  };
-};
+  }
+}
 
 export default ViewBlogPage
 

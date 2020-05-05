@@ -1,16 +1,17 @@
-import React from 'react';
-import { Tag, Icon } from 'antd';
 import { isEmptyArray } from '@subsocial/utils';
+import { Icon, Tag } from 'antd';
 import Link from 'next/link';
+import React from 'react';
 
 type Props = {
   tags?: string[]
+  className?: string
 }
 
-export const ViewTags = ({ tags = [] }: Props) => {
+export const ViewTags = ({ tags = [], className = '' }: Props) => {
   if (isEmptyArray(tags)) return null
 
-  return <div className='DfTags'>
+  return <div className={`DfTags ${className}`}>
     {tags.map(tag =>
       <Tag key={tag}>
         <Link href={`/search?tags=${tag}`}>

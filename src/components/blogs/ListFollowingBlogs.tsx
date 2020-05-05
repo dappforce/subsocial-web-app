@@ -1,17 +1,18 @@
-import React from 'react';
-import { ViewBlogPage } from './ViewBlog';
-import ListData from '../utils/DataList';
-import { Button } from 'antd';
-import { useRouter } from 'next/router';
-import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
-import { isMobile } from 'react-device-detect';
-import { NextPage } from 'next';
-import { HeadMeta } from '../utils/HeadMeta';
-import Link from 'next/link';
 import { BlogData } from '@subsocial/types/dto';
+import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
+import { Button } from 'antd';
+import { NextPage } from 'next';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { isMobile } from 'react-device-detect';
+
+import ListData from '../utils/DataList';
+import { HeadMeta } from '../utils/HeadMeta';
+import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
-import { blogUrl, blogIdForUrl } from '../utils/urls';
+import { blogIdForUrl, blogUrl } from '../utils/urls';
+import { ViewBlogPage } from './ViewBlog';
 
 type Props = {
   blogsData: BlogData[]
@@ -53,6 +54,7 @@ ListFollowingBlogsPage.getInitialProps = async (props): Promise<Props> => {
 };
 
 // TODO extract to a separate file:
+
 const BlogLink = (props: { item: BlogData }) => {
   const { item } = props;
   const { pathname, query } = useRouter();
