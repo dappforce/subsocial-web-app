@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag } from 'antd';
+import { Tag, Icon } from 'antd';
 import { isEmptyArray } from '@subsocial/utils';
 import Link from 'next/link';
 
@@ -14,7 +14,7 @@ export const ViewTags = ({ tags = [] }: Props) => {
     {tags.map(tag =>
       <Tag key={tag}>
         <Link href={`/search?tags=${tag}`}>
-          <a>{tag}</a>
+          <a><Icon type='tag' />{tag}</a>
         </Link>
       </Tag>
     )}
