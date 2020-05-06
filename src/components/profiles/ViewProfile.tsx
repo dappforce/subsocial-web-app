@@ -149,8 +149,6 @@ const Component: NextPage<Props> = (props: Props) => {
     ? <SummarizeMd md={about} />
     : <DfMd className='mt-3' source={about} />
 
-  const queryId = `@${username}` || address
-
   const NameAsLink = () => (
     <Link href='/profile/[address]' as={accountUrl({ address, username })}>
       <a className='handle DfBoldBlackLink'>{getName()}</a>

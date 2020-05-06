@@ -1,4 +1,4 @@
-import { Blog, Post, Comment } from '@subsocial/types/substrate/interfaces'
+import { Blog, Post } from '@subsocial/types/substrate/interfaces'
 import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from './substrate'
 import { newLogger, nonEmptyStr, notDef, nonEmptyArr } from '@subsocial/utils'
 
@@ -96,7 +96,7 @@ export function editPostUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
 // Comment URLs
 // --------------------------------------------------
 
-type HasCommentId = Pick<Comment, 'id'>
+type HasCommentId = Pick<Post, 'id'>
 
 /** /blogs/[blogId]/posts/[postId]/comments */
 export function postCommentsUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {

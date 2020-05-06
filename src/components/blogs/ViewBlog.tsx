@@ -12,7 +12,7 @@ import { ViewPostPage } from '../posts/ViewPost';
 import { BlogFollowersModal } from '../profiles/AccountsListModal';
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 import { Segment } from 'semantic-ui-react';
-import { Loading, formatUnixDate, getBlogId, unwrapHandle } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { MutedSpan, MutedDiv } from '../utils/MutedText';
 import NoData from '../utils/EmptyList';
 import ListData from '../utils/DataList';
@@ -83,7 +83,6 @@ export const ViewBlogPage: NextPage<Props> = (props: Props) => {
   const {
     id,
     score,
-    handle,
     created: { account, time },
     posts_count,
     followers_count: followers

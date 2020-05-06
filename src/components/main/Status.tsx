@@ -1,74 +1,76 @@
-/* eslint-disable @typescript-eslint/camelcase */
-// Copyright 2017-2020 @polkadot/apps authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
 
-import { EventRecord } from '@polkadot/types/interfaces';
 import { KeyringOptions } from '@polkadot/ui-keyring/options/types';
-import { ActionStatus, QueueStatus, QueueTx, QueueAction$Add } from '@polkadot/react-components/Status/types';
+import { QueueStatus, QueueTx, QueueAction$Add } from '@polkadot/react-components/Status/types';
+import { I18nProps } from '@polkadot/react-components/types';
 
-import React, { useEffect } from 'react';
+import React from 'react';
+import keyringOption from '@polkadot/ui-keyring/options';
 import { Status as StatusDisplay } from '@polkadot/react-components';
-import { useAccounts, useApi, useCall } from '@polkadot/react-hooks';
+import { withCall, withMulti, withObservable } from '@polkadot/react-api/hoc';
 import { stringToU8a } from '@polkadot/util';
 import { xxhashAsHex } from '@polkadot/util-crypto';
+import { EventRecord } from '@polkadot/types/interfaces';
 
-interface Props {
-  optionsAll?: KeyringOptions;
-  queueAction: QueueAction$Add;
-  stqueue: QueueStatus[];
-  txqueue: QueueTx[];
-}
+type Props = I18nProps & {
+  optionsAll?: KeyringOptions,
+  queueAction: QueueAction$Add,
+  stqueue: QueueStatus[],
+  system_events?: EventRecord[],
+  txqueue: QueueTx[]
+};
 
 let prevEventHash: string;
 
-export default function Status ({ optionsAll, queueAction, stqueue, txqueue }: Props): React.ReactElement<Props> {
-  const { api, isApiReady } = useApi();
-  const { allAccounts } = useAccounts();
-  const events = useCall<EventRecord[]>(isApiReady ? api.query.system?.events : undefined, []);
+class Status extends React.PureComponent<Props> {
+  componentDidUpdate ({ optionsAll = { account: [] as any } as KeyringOptions, queueAction, system_events }: Props) {
+    const eventHash = xxhashAsHex(stringToU8a(JSON.stringify(system_events || [])));
 
-  useEffect((): void => {
-    const eventHash = xxhashAsHex(stringToU8a(JSON.stringify(events)));
-
-    if (!optionsAll || eventHash === prevEventHash) {
+    if (eventHash === prevEventHash) {
       return;
     }
 
     prevEventHash = eventHash;
 
-    const statusses = events && events
-      .map(({ event: { data, method, section } }): ActionStatus | null => {
-        if (section === 'balances' && method === 'Transfer') {
-          const account = data[1].toString();
+    const addresses = optionsAll.account.map((account) => account.value);
 
-          if (allAccounts.includes(account)) {
-            return {
-              account,
-              action: `${section}.${method}`,
-              status: 'event',
-              message: 'transfer received'
-            };
-          }
-        } else if (section === 'democracy') {
+    (system_events || []).forEach(({ event: { data, method, section } }) => {
+      if (section === 'balances' && method === 'Transfer') {
+        const account = data[1].toString();
 
-          return {
+        if (addresses.includes(account)) {
+          queueAction({
+            account,
             action: `${section}.${method}`,
             status: 'event',
-            message: 'update on #{{index}}'
-          };
+            message: 'transfer received'
+          });
         }
+      } else if (section === 'democracy') {
+        const index = data[0].toString();
 
-        return null;
-      })
-      .filter((item): boolean => !!item) as ActionStatus[];
+        queueAction({
+          action: `${section}.${method}`,
+          status: 'event',
+          message: `update on #{${index}}`
+        });
+      }
+    });
+  }
 
-    statusses && statusses.length && queueAction(statusses);
-  }, [ events ]);
+  render () {
+    const { stqueue, txqueue } = this.props;
 
-  return (
-    <StatusDisplay
-      stqueue={stqueue}
-      txqueue={txqueue}
-    />
-  );
+    return (
+      <StatusDisplay
+        stqueue={stqueue}
+        txqueue={txqueue}
+      />
+    );
+  }
 }
+
+export default withMulti(
+  Status,
+  withCall('query.system.events'),
+  withObservable(keyringOption.optionsSubject, { propName: 'optionsAll' })
+);

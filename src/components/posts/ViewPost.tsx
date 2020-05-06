@@ -29,10 +29,10 @@ import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../utils/md/SummarizeMd';
+import { CommentSection } from './CommentsTree';
 
 const log = newLogger('View post')
 
-const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
@@ -157,6 +157,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderPostCreator = (post: Post, owner?: ProfileData, size?: number) => {
     if (isEmpty(post)) return null;
     const { blog_id, created: { account, time } } = post;
+    const blogId = blog_id.isSome && blog_id.unwrap();
     return <>
       <AuthorPreview
         address={account}
@@ -166,7 +167,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         isPadded={false}
         size={size}
         details={<div>
-          {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
+          {withBlogName && blogId && <><div className='DfGreyLink'><ViewBlog id={blogId} nameOnly /></div>{' • '}</>}
           <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
             <a className='DfGreyLink'>
               {formatUnixDate(time)}
@@ -212,7 +213,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const close = () => setOpen(false);
     return (
       <div className='DfActionsPanel'>
-        <div className='DfAction'><Voter struct={post} type={'Post'} /></div>
+        <div className='DfAction'><Voter struct={post} /></div>
         <div
           className='ui tiny button basic DfAction'
           onClick={() => setCommentsSection(!commentsSection)}
@@ -256,7 +257,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <Segment className='DfPostPreview'>
         {renderInfoPostPreview(post, content, owner)}
         {withActions && <RenderActionsPanel/>}
-        {commentsSection && <CommentsByPost postId={post.id} post={post} />}
+        {commentsSection && <CommentSection post={post} />}
       </Segment>
     </>;
   };
@@ -277,7 +278,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
         {withActions && <RenderActionsPanel/>}
-        {commentsSection && <CommentsByPost postId={post.id} post={post} />}
+        {commentsSection && <CommentSection post={post} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
       </Segment>
     </>;
@@ -305,12 +306,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {/* {renderBlogPreview(post)} */}
         </div>
         <ViewTags tags={tags} />
-        <Voter struct={post} type={'Post'}/>
+        <Voter struct={post} />
         {/* <ShareButtonPost postId={post.id}/> */}
       </Section>
-      <Section id={goToCommentsId}>
-        <CommentsByPost postId={post.id} post={post} />
-      </Section>
+      <CommentSection post={post} />
     </>
   };
 

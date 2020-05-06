@@ -62,7 +62,7 @@ export const ViewComment: FunctionComponent<Props> = ({ children = null, owner, 
     className='DfNewComment'
     actions={!showReplyForm
       ? [
-        <Voter key={`voters-of-comments-${id}`} struct={struct} type={'Comment'} />,
+        <Voter key={`voters-of-comments-${id}`} struct={struct} />,
         <span key={`reply-comment-${id}`} style={{ marginLeft: '.5rem' }} onClick={() => setShowReplyForm(true)} >Reply</span>
       ]
       : []}
@@ -86,11 +86,11 @@ export const ViewComment: FunctionComponent<Props> = ({ children = null, owner, 
       <RenderDropDownMenu key={`comment-dropdown-menu-${id}`} />
     </div>}
     content={showEditForm
-      ? <EditComment struct={struct} content={content} parentId={struct.id} close={() => setShowEditForm(false)}/>
-      : <DfMd source={content.body} />
+      ? <EditComment struct={struct} content={content} post={struct} callback={() => setShowEditForm(false)}/>
+      : <DfMd source={content?.body} />
     }
   >
-    {showReplyForm && <EditComment parentId={struct.id} close={() => setShowReplyForm(false)}/>}
+    {showReplyForm && <EditComment post={struct} callback={() => setShowReplyForm(false)}/>}
     {children}
   </Comment>
 };

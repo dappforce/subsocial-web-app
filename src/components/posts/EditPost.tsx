@@ -95,7 +95,7 @@ const InnerForm = (props: FormProps) => {
     canonical
   } = values;
 
-  const initialBlogId = struct?.blog_id || blogId
+  const initialBlogId = blogId
 
   const goToView = (id: BN) => {
     Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
@@ -109,9 +109,11 @@ const InnerForm = (props: FormProps) => {
   const onSubmit = (sendTx: () => void) => {
     if (isValid || !isRegularPost) {
       const json = { title, body, image, tags, canonical };
+      console.log(json)
       ipfs.savePost(json).then(hash => {
         if (hash) {
           setIpfsCid(hash);
+          console.log(ipfsHash)
           sendTx();
         }
       }).catch(err => new Error(err));
@@ -138,7 +140,8 @@ const InnerForm = (props: FormProps) => {
   const buildTxParams = () => {
     if (isValid || !isRegularPost) {
       if (!struct) {
-        return [ blogId, ipfsHash, extension ];
+        console.log([ currentBlogId, ipfsHash, extension ])
+        return [ currentBlogId, ipfsHash, extension ];
       } else {
         // TODO update only dirty values.
         const update = new PostUpdate(
@@ -156,7 +159,6 @@ const InnerForm = (props: FormProps) => {
 
   const renderTxButton = () => (
     <TxButton
-      type='submit'
       label={!struct
         ? `Create a post`
         : `Update a post`

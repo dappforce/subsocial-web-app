@@ -11,7 +11,6 @@ import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { getSubsocialApi } from './SubsocialConnect';
-import { nonEmptyStr } from '@subsocial/utils';
 
 export function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process;

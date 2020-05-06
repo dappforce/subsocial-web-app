@@ -3,13 +3,12 @@ import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
 import { useMyAccount } from '../utils/MyAccountContext';
-import { CommentVoters, PostVoters } from './ListVoters';
-import { Post, Reaction, Comment } from '@subsocial/types/substrate/interfaces/subsocial';
+import { PostVoters } from './ListVoters';
+import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';
 import { ReactionKind } from '@subsocial/types/substrate/classes';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
-import { Icon } from 'antd';
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const log = newLogger('Voter')
@@ -17,14 +16,12 @@ const log = newLogger('Voter')
 const ZERO = new BN(0);
 
 type VoterProps = {
-  struct: Comment | Post,
-  type: 'Comment' | 'Post'
+  struct: Post
 };
 
 export const Voter = (props: VoterProps) => {
   const {
-    struct,
-    type
+    struct
   } = props;
 
   const { substrate } = useSubsocialApi()
@@ -37,15 +34,12 @@ export const Voter = (props: VoterProps) => {
   const [ state, setState ] = useState(struct);
   const [ updateTrigger, setUpdateTrigger ] = useState(true);
   const { id } = state;
-  const isComment = type === 'Comment';
 
   useEffect(() => {
     let isSubscribe = true;
 
     async function loadStruct<T extends Comment | Post> (_: T) {
-      const _struct = isComment
-        ? await substrate.findComment(id)
-        : await substrate.findPost(id)
+      const _struct = await substrate.findPost(id)
       if (isSubscribe && _struct) setState(_struct);
     }
     loadStruct(state).catch(err => log.error('Failed to load a post or comment. Error:', err));
@@ -53,9 +47,7 @@ export const Voter = (props: VoterProps) => {
     async function loadReaction () {
       if (!address) return
 
-      const reactionId = isComment
-        ? await substrate.getCommentReactionIdByAccount(address, id)
-        : await substrate.getPostReactionIdByAccount(address, id)
+      const reactionId = await substrate.getPostReactionIdByAccount(address, id)
       const reaction = await substrate.findReaction(reactionId)
       if (isSubscribe) {
         setReactionState(reaction);
@@ -107,21 +99,20 @@ export const Voter = (props: VoterProps) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
-      const icon = isUpvote ? 'like' : 'dislike';
-
+      const typeIcon = isUpvote ? 'up' : 'down';
+      console.log('I am TxButton')
       return (<TxButton
         type='submit'
+        icon={`thumbs ${typeIcon} outline`}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
         onSuccess={() => setUpdateTrigger(!updateTrigger)}
         tx={!reactionState
-          ? `social.create${type}Reaction`
+          ? `social.createPostReaction`
           : (reactionKind !== `${reactionName}`)
-            ? `social.update${type}Reaction`
-            : `social.delete${type}Reaction`}
-      >
-        <Icon type={icon} />
-      </TxButton>);
+            ? `social.updatePostReaction`
+            : `social.deletePostReaction`}
+      />);
     };
 
     const count = calcVotingPercentage();
@@ -132,9 +123,7 @@ export const Voter = (props: VoterProps) => {
         <Button content={ count === 0 ? count.toString() : count + '%' } variant='primary' className={`${countColor} active`} onClick={() => setOpen(true)}/>
         {renderTxButton(false)}
       </Button.Group>
-      {isComment
-        ? open && <CommentVoters id={id} open={open} close={close}/>
-        : open && <PostVoters id={id} open={open} close={close}/>}
+      {open && <PostVoters id={id} open={open} close={close}/>}
     </>;
   };
 

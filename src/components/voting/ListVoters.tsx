@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { withCalls, withMulti } from '@polkadot/react-api';
 import { socialQueryToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
-import { ReactionId, Reaction, CommentId, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
+import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
 import partition from 'lodash.partition';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
@@ -13,7 +13,7 @@ import { AuthorPreviewWithOwner } from '../profiles/address-views';
 const log = newLogger('List voters')
 
 type VotersProps = {
-  id: CommentId | PostId,
+  id: PostId,
   reactions?: ReactionId[],
   active?: number
   open: boolean,

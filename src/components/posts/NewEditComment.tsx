@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { MyAccountProps } from '../utils/MyAccount';
-import { PostExtension, SharedPost, PostUpdate } from '@subsocial/types/substrate/classes';
+import { PostExtension, PostUpdate, CommentExt } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
+import { IpfsHash, Post, PostId } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from '@polkadot/react-components/Status/types';
 import { SubmittableResult } from '@polkadot/api';
 import SimpleMDEReact from 'react-simplemde-editor';
@@ -12,16 +12,16 @@ import { buildSharePostValidationSchema } from './PostValidation'
 import { PostContent } from '@subsocial/types';
 import { registry } from '@polkadot/react-api';
 import { Option } from '@polkadot/types/codec';
-import BN from 'bn.js'
 import { Button } from 'antd';
+import { getNewIdFromEvent } from '../utils/utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type Props = MyAccountProps & {
-  parentId: BN,
+  post: Post,
   struct?: Post,
   content?: PostContent,
-  close?: () => void,
+  callback?: (id?: PostId) => void,
 };
 
 const Fields = {
@@ -29,8 +29,7 @@ const Fields = {
 }
 
 export const EditComment = (props: Props) => {
-  const { close, struct, content, parentId } = props;
-
+  const { callback, struct, content, post } = props;
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
@@ -40,20 +39,25 @@ export const EditComment = (props: Props) => {
     mode: 'onBlur'
   });
 
-  const cancelCallback = () => close ? close() : reset(Fields)
-
-  console.log(content?.body)
+  const cancelCallback = () => {
+    callback && callback()
+    reset(Fields)
+  }
 
   const body = watch(Fields.body, content?.body || '');
 
   console.log('Body wather:', body);
   const { isSubmitting, dirty } = formState;
 
-  const extension = new PostExtension({ SharedPost: struct?.id || parentId as SharedPost });
+  const { id, extension } = post;
+  const commentExt = extension.isComment ? extension.asComment : undefined
+
+  const newExtension = commentExt && new PostExtension({ Comment: new CommentExt({ parent_id: new Option(registry, 'u64', id), root_post_id: commentExt.root_post_id }) });
 
   const onSubmit = (sendTx: () => void) => {
     ipfs.saveContent({ body }).then(hash => {
       if (hash) {
+        console.log(hash);
         setIpfsHash(hash);
         sendTx();
       }
@@ -64,13 +68,14 @@ export const EditComment = (props: Props) => {
     cancelCallback()
   };
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
-    cancelCallback()
+  const onTxSuccess: TxCallback = (txResult: SubmittableResult) => {
+    const _id = id || getNewIdFromEvent(txResult);
+    callback && callback(_id)
   };
 
   const buildTxParams = () => {
     if (!struct) {
-      return [ ipfsHash, extension ];
+      return [ ipfsHash, newExtension ];
     } else {
       // TODO update only dirty values.
       const update = new PostUpdate(
@@ -85,7 +90,7 @@ export const EditComment = (props: Props) => {
 
   const renderTxButton = () => (
     <TxButton
-      type='submit'
+      type='button'
       label={!struct
         ? `Create a post`
         : `Update a post`
@@ -115,10 +120,10 @@ export const EditComment = (props: Props) => {
       <div className='DfError'>
         <ErrorMessage errors={errors} name={Fields.body} />
       </div>
-      <div className='DfActionButtonsBlock'>
-        {renderTxButton()}
-        <Button type='default' onClick={cancelCallback}>Cancel</Button>
-      </div>
     </form>
+    <div className='DfActionButtonsBlock'>
+      {renderTxButton()}
+      <Button type='default' onClick={cancelCallback}>Cancel</Button>
+    </div>
   </div>
 };

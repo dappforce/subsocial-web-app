@@ -29,7 +29,7 @@ export const Name: React.FunctionComponent<Props> = ({ isShort = true, asLink = 
   const name = getProfileName({ address, isShort, owner })
 
   return asLink
-    ? <Link href='/profile/[address]' as={accountUrl({ address, username })}>
+    ? <Link href='/profile/[address]' as={accountUrl({ address: addressString, username })}>
       <a className={`ui--AddressComponents-address ${className}`}>
         {name}
       </a>

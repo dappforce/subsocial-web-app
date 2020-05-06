@@ -40,16 +40,4 @@ export const NameDetails = ({ owner = {} as ProfileData, address }: AddressProps
   </>
 }
 
-  return <>
-    <div className='header DfAccountTitle'>
-      <Link href='/profile/[address]' as={`/profile/${queryId}`}>
-        <a className='ui--AddressComponents-address'>{title}</a>
-      </Link>
-      <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
-    </div>
-    {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}
-    <InfoDetails address={address} details={<>Reputation: {struct?.reputation.toString() || 0}</>} />
-  </>
-}
-
 export default NameDetails;
