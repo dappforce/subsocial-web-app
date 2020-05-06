@@ -5,22 +5,33 @@ import { summarizeMd } from './summarize'
 type Props = {
   md?: string
   limit?: number
+  more?: JSX.Element
 }
 
-export const SummarizeMd = ({ md, limit }: Props) => {
+export const SummarizeMd = ({ md, limit, more }: Props) => {
+  if (isEmptyStr(md)) return null
+
   const [ summary, setSummary ] = useState<string>()
+  const [ showMore, setShowMore ] = useState<boolean>(false)
 
   useEffect(() => {
-    if (isEmptyStr(md)) return
-
     const process = async () => {
-      setSummary(await summarizeMd(md, limit))
+      const summary = await summarizeMd(md, limit)
+      setSummary(summary)
+      if (md && summary.length < md.length) {
+        setShowMore(true)
+      }
     }
 
     process()
   }, [ md, limit ])
 
-  return <>{summary}</>
+  if (isEmptyStr(summary)) return null
+
+  return <>
+    {summary}
+    {showMore && <>{' '}{more}</>}
+  </>
 }
 
 export default SummarizeMd
