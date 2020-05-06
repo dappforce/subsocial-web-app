@@ -1,10 +1,9 @@
 import React from 'react'
-import Link from 'next/link';
 import { toShortAddress } from '@polkadot/react-components/util';
 import { AddressProps } from './utils/types';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
-import { accountUrl } from 'src/components/utils/urls';
+import ViewProfileLink from '../ViewProfileLink';
 
 type Props = AddressProps & {
   isShort?: boolean,
@@ -21,21 +20,18 @@ export const Name = ({
 }: Props) => {
 
   const { content, profile } = owner
+  const fullname = content?.fullname
   const username = profile?.username?.toString()
 
   // TODO extract a function? (find similar copypasta in other files):
   const addressString = isShort ? toShortAddress(address) : address.toString()
-
-  const name = content?.fullname || username || addressString
+  const name = fullname || username || addressString
+  const nameClass = `ui--AddressComponents-address ${className}`
 
   return asLink
-    ? <Link href='/profile/[address]' as={accountUrl({ address, username })}>
-      <a className={`ui--AddressComponents-address ${className}`}>
-        {name}
-      </a>
-    </Link>
+    ? <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
     : <>{name}</>
-};
+}
 
 export const NameWithOwner = withLoadedOwner(Name);
 

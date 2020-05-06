@@ -8,6 +8,7 @@ import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListMod
 import { ProfileContent, ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { SummarizeMd } from 'src/components/utils/md';
+import ViewProfileLink from '../ViewProfileLink';
 
 type ProfilePreviewProps = AddressProps & {
   mini?: boolean,
@@ -17,11 +18,11 @@ type ProfilePreviewProps = AddressProps & {
 export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ address, owner = {} as ProfileData, size, mini = false }) => { // TODO fix CSS style
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { content = {} as ProfileContent, struct } = owner;
-  const {
-    about,
-    avatar
-  } = content
+
+  const { struct, content = {} as ProfileContent, profile } = owner;
+  const { about, avatar } = content
+  const { username } = profile || {}
+  const accountForUrl = { address, username }
 
   const followers = struct ? struct.followers_count.toString() : '0';
   const following = struct ? struct.following_accounts_count.toString() : '0';
@@ -46,7 +47,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
         {!mini && <>
           {nonEmptyStr(about) &&
             <div className='DfPopup-about'>
-              <SummarizeMd md={about} />
+              <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
             </div>
           }
           <div className='DfPopup-links'>
