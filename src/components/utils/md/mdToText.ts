@@ -3,13 +3,17 @@ import { isEmptyStr } from '@subsocial/utils'
 
 const remark = require('remark')
 const strip = require('strip-markdown')
+// const squeezeParagraphs = require('remark-squeeze-paragraphs')
 
-const stripMd = remark().use(strip).process
+const processMd = remark()
+  .use(strip)
+  // .use(squeezeParagraphs) // <-- doesn't work very well: leaves couple sequential new lines
+  .process
 
 export async function mdToText (md?: string) {
   return isEmptyStr(md)
     ? md
-    : String(await stripMd(md) as string)
+    : String(await processMd(md) as string)
 }
 
 export default mdToText

@@ -30,10 +30,12 @@ export const SummarizeMd = ({ md, limit, more }: Props) => {
 
   if (isEmptyStr(summary)) return null
 
-  return <>
-    {summary}
-    {showMore && <span className='DfSeeMore'>{' '}{more}</span>}
-  </>
+  return (
+    <div className='DfSummary'>
+      {summary}
+      {showMore && <span className='DfSeeMore'>{' '}{more}</span>}
+    </div>
+  )
 }
 
 export default SummarizeMd
