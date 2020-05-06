@@ -202,11 +202,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     return <div className='DfContent'>
       {renderNameOnly(blog, post, title)}
-      <div className='DfSummary'>
-        <SummarizeMd md={body} more={renderPostLink(blog, post, 'See More')} />
-      </div>
-    </div>;
-  };
+      <SummarizeMd md={body} more={renderPostLink(blog, post, 'See More')} />
+    </div>
+  }
 
   const RenderActionsPanel = () => {
     const [ open, setOpen ] = useState(false);

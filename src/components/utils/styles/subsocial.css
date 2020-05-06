@@ -147,6 +147,7 @@ body,
 
 .DfSummary {
   margin: $space_small 0;
+  /* white-space: pre-wrap; */
 }
 
 .DfBookPage {
