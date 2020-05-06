@@ -546,8 +546,7 @@ hr {
 .DfCountsPreview {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: $space_tiny;
-  font-size: $font_small;
+  margin-top: $space_normal;
 
   & > a,
   & > span {

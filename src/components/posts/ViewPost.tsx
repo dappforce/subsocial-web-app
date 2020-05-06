@@ -21,7 +21,7 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { isMyAddress } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
-import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { Post } from '@subsocial/types/substrate/interfaces';
 import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
@@ -29,6 +29,8 @@ import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../utils/md/SummarizeMd';
+import ViewPostLink from './ViewPostLink';
+import { HasBlogIdOrHandle, HasPostId, newBlogUrlFixture } from '../utils/urls';
 
 const log = newLogger('View post')
 
@@ -145,14 +147,18 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>
   };
 
-  const renderNameOnly = (title: string | undefined, id: PostId) => {
-    if (!title || !id) return null;
-    return withLink
-      ? <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
-        <a className='header DfPostTitle--preview'>{title}</a>
-      </Link>
-      : <div className='header DfPostTitle--preview'>{title}</div>;
-  };
+  const renderPostLink = (blog: HasBlogIdOrHandle, post: HasPostId, title?: string) =>
+    <ViewPostLink blog={blog} post={post} title={title} className='DfBoldBlackLink' />
+
+  const renderNameOnly = (blog: HasBlogIdOrHandle, post: HasPostId, title?: string) => {
+    if (!blog?.id || !post?.id || !title) return null
+
+    return (
+      <div className={'header DfPostTitle--preview'}>
+        {withLink ? renderPostLink(blog, post, title) : title}
+      </div>
+    )
+  }
 
   const renderPostCreator = (post: Post, owner?: ProfileData, size?: number) => {
     if (isEmpty(post)) return null;
@@ -177,14 +183,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     </>;
   };
 
-  // const renderBlogPreview = (post: Post) => {
-  //   if (isEmpty(post)) return null
-
-  //   const { blog_id } = post
-
-  //   return <ViewBlog id={blog_id} miniPreview withFollowButton />
-  // }
-
   const renderPostImage = (content?: PostExtContent) => {
     if (!content) return null;
 
@@ -199,10 +197,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     const { title, body } = content;
 
+    // TODO Fix this hack
+    const blog = newBlogUrlFixture(post.blog_id)
+
     return <div className='DfContent'>
-      {renderNameOnly(title, post.id)}
+      {renderNameOnly(blog, post, title)}
       <div className='DfSummary'>
-        <SummarizeMd md={body} />
+        <SummarizeMd md={body} more={renderPostLink(blog, post, 'See More')} />
       </div>
     </div>;
   };
@@ -210,25 +211,25 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const RenderActionsPanel = () => {
     const [ open, setOpen ] = useState(false);
     const close = () => setOpen(false);
+    const postId = isRegularPost ? id : originalPost && originalPost.id
+    const actionClass = 'ui tiny button basic DfAction'
+
     return (
       <div className='DfActionsPanel'>
-        <div className='DfAction'><Voter struct={post} type={'Post'} /></div>
-        <div
-          className='ui tiny button basic DfAction'
-          onClick={() => setCommentsSection(!commentsSection)}
-        >
+        <div className='DfAction'>
+          <Voter struct={post} type={'Post'} />
+        </div>
+        <div className={actionClass} onClick={() => setCommentsSection(!commentsSection)}>
           <Icon type='message' />
           Comment
         </div>
-        <div
-          className='ui tiny button basic DfAction'
-          onClick={() => setOpen(true)}
-        >
+        <div className={actionClass} onClick={() => setOpen(true)}>
           <Icon type='share-alt' />
-        Share
+          Share
         </div>
-        {open && <ShareModal postId={isRegularPost ? id : originalPost && originalPost.id} open={open} close={close} />}
-      </div>);
+        {open && <ShareModal postId={postId} open={open} close={close} />}
+      </div>
+    );
   };
 
   const renderInfoPostPreview = (post: Post, content: PostExtContent, owner?: ProfileData) => {
@@ -264,6 +265,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   const renderSharedPreview = () => {
     if (!originalPost || !originalContent) return <></>;
+
+    // TODO Fix this hack
+    const blog = newBlogUrlFixture(originalPost.blog_id)
+
     return <>
       <Segment className={`DfPostPreview`}>
         <div className='DfRow'>
@@ -271,7 +276,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <RenderDropDownMenu account={created.account}/>
         </div>
         <div className='DfSharedSummary'>
-          <SummarizeMd md={content?.body} />
+          <SummarizeMd md={content?.body} more={renderPostLink(blog, originalPost, 'See More')} />
         </div>
         <Segment className='DfPostPreview'>
           {renderInfoPostPreview(originalPost, originalContent)}
@@ -317,7 +322,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
   switch (variant) {
     case 'name only': {
-      return renderNameOnly(content?.title, id);
+      // TODO Fix this hack
+      const blog = newBlogUrlFixture(blog_id)
+      return renderNameOnly(blog, post, content?.title);
     }
     case 'preview': {
       switch (type) {
@@ -356,8 +363,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const ownerId = extPostData?.post.struct?.created.account as AccountId;
   const owner = await subsocial.findProfile(ownerId);
 
-  // If blog id of this post is not equal to blog id/handle from URL,
-  // then redirect to the URL with blog id of this post.
+  // If a blog id of this post is not equal to the blog id/handle from URL,
+  // then redirect to the URL with the blog id of this post.
   if (blogIdFromPost && !blogIdFromPost.eq(blogIdFromUrl) && res) {
     res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
     res.end()

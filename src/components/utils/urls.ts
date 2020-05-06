@@ -1,4 +1,4 @@
-import { Blog, Post, Comment } from '@subsocial/types/substrate/interfaces'
+import { Blog, Post, Comment, BlogId } from '@subsocial/types/substrate/interfaces'
 import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from './substrate'
 import { newLogger, nonEmptyStr, notDef, nonEmptyArr } from '@subsocial/utils'
 
@@ -35,6 +35,15 @@ function stringifySubUrls (...subUrls: string[]): string {
 // --------------------------------------------------
 
 export type HasBlogIdOrHandle = Pick<Blog, 'id' | 'handle'>
+
+/**
+ * WARN: It's not recommended to use this hack.
+ * You should pass both blog's id and handle in order to construct
+ * good looking URLs for blogs and posts that support a blog handle.
+ */
+export function newBlogUrlFixture (id: BlogId): HasBlogIdOrHandle {
+  return { id } as HasBlogIdOrHandle
+}
 
 export function blogIdForUrl ({ id, handle }: HasBlogIdOrHandle): string {
   if (notDef(id) && notDef(handle)) {
