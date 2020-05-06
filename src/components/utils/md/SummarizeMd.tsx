@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { isEmptyStr } from '@subsocial/utils'
-import { summarizeMd } from './summarize'
+import { mdToText } from './mdToText'
+import { summarize } from '../text'
 
 type Props = {
   md?: string
@@ -16,9 +17,10 @@ export const SummarizeMd = ({ md, limit, more }: Props) => {
 
   useEffect(() => {
     const process = async () => {
-      const summary = await summarizeMd(md, limit)
+      const text = await mdToText(md)
+      const summary = summarize(text, limit)
       setSummary(summary)
-      if (md && summary.length < md.length) {
+      if (text && text.length > summary.length) {
         setShowMore(true)
       }
     }
@@ -30,7 +32,7 @@ export const SummarizeMd = ({ md, limit, more }: Props) => {
 
   return <>
     {summary}
-    {showMore && <>{' '}{more}</>}
+    {showMore && <span className='DfSeeMore'>{' '}{more}</span>}
   </>
 }
 
