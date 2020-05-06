@@ -28,6 +28,13 @@ body,
   font-weight: 600;
 }
 
+.DfSeeMoreLink,
+.DfSeeMore a {
+  @extend .DfBoldBlackLink;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
 .DfBoxShadow {
   $shadow: 0 0 5px 2px #eeecec !important;
   -moz-box-shadow: $shadow;
@@ -521,8 +528,14 @@ hr {
 }
 
 .DfBlogStats {
+  margin-top: $space_normal;
+
   .DfStatItem {
     margin-right: $space_normal;
+
+    &::last-child {
+      margin-right: 0;
+    }
   }
 }
 
