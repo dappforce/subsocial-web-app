@@ -17,7 +17,7 @@ export const SummarizeMd = ({ md, limit, more }: Props) => {
 
   useEffect(() => {
     const process = async () => {
-      const text = await mdToText(md)
+      const text = (await mdToText(md))?.trim()
       const summary = summarize(text, limit)
       setSummary(summary)
       if (text && text.length > summary.length) {
