@@ -13,7 +13,8 @@ import { DfBgImg } from '../utils/DfBgImg';
 import FollowBlogButton from '../utils/FollowBlogButton';
 import { SummarizeMd } from '../utils/md';
 import { isMyAddress } from '../utils/MyAccountContext';
-import { aboutBlogUrl, blogUrl, HasBlogIdOrHandle } from '../utils/urls';
+import { aboutBlogUrl, blogUrl, newBlogUrlFixture } from '../utils/urls';
+import AboutBlogLink from './AboutBlogLink';
 
 export interface SpaceNavProps {
   blogId: BN,
@@ -82,8 +83,8 @@ export const SpaceNav = (props: SpaceNavProps) => {
       </Link>
     </div>
 
-  // TODO Fix this hack: pass a blog handle to be able to construct { id, handle }
-  const blog = { id: blogId as BlogId } as HasBlogIdOrHandle
+  // TODO Fix this hack
+  const blog = newBlogUrlFixture(blogId as BlogId)
 
   return <div className="SpaceNav">
     <div className="SNhead">
@@ -108,10 +109,9 @@ export const SpaceNav = (props: SpaceNavProps) => {
 
       {nonEmptyStr(desc) &&
         <div className="SNheadDescription">
-          <SummarizeMd md={desc} />{' '}
-          <Link href='/blogs/[blogId]/about' as={aboutBlogUrl(blog)}>
-            <a className='DfBlackLink text-nowrap'><b>Learn More</b></a>
-          </Link>
+          <SummarizeMd md={desc} more={
+            <AboutBlogLink blog={blog} title={'Learn More'} />
+          } />
         </div>
       }
     </div>
@@ -128,16 +128,6 @@ export const SpaceNav = (props: SpaceNavProps) => {
     </Menu>
 
     {renderEditMenuLink()}
-
-    {/*
-      spaces.teamMembers &&
-        <SpacePreview spaces={spaces.teamMembers} name="Team" iconType="user" />
-    */}
-
-    {/*
-      spaces.projects &&
-        <SpacePreview spaces={spaces.projects} name="Projects" iconType="file" />
-    */}
   </div>
 }
 

@@ -148,7 +148,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   };
 
   const renderPostLink = (blog: HasBlogIdOrHandle, post: HasPostId, title?: string) =>
-    <ViewPostLink blog={blog} post={post} title={title} className='DfBoldBlackLink' />
+    <ViewPostLink blog={blog} post={post} title={title} className='DfBlackLink' />
 
   const renderNameOnly = (blog: HasBlogIdOrHandle, post: HasPostId, title?: string) => {
     if (!blog?.id || !post?.id || !title) return null

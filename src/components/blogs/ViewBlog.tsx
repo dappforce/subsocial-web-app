@@ -26,13 +26,15 @@ import { return404 } from '../utils/next';
 import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { blogUrl, editBlogUrl } from '../utils/urls';
+import { editBlogUrl } from '../utils/urls';
 import { getBlogId } from '../utils/utils';
 import ViewTags from '../utils/ViewTags';
 import BlogStatsRow from './BlogStatsRow';
 import SpaceNav from './SpaceNav';
 import { ViewBlogProps } from './ViewBlogProps';
 import withLoadBlogDataById from './withLoadBlogDataById';
+import AboutBlogLink from './AboutBlogLink';
+import ViewBlogLink from './ViewBlogLink';
 
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
@@ -102,14 +104,12 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
     </>
   };
 
-  const NameAsLink = () =>
-    <Link href='/blogs/[blogId]' as={blogUrl(blog)}>
-      <a>{name}</a>
-    </Link>
+  const BlogNameAsLink = () =>
+    <ViewBlogLink blog={blog} title={name} />
 
   const renderNameOnly = () =>
     withLink
-      ? <NameAsLink />
+      ? <BlogNameAsLink />
       : <span>{name}</span>
 
   const renderDropDownPreview = () =>
@@ -146,14 +146,16 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
         }
         <div className='content'>
           <span className='header DfBlogTitle'>
-            <span><NameAsLink /></span>
+            <BlogNameAsLink />
             <MyEntityLabel isMy={isMyBlog}>My blog</MyEntityLabel>
             {!previewDetails && renderDropDownMenu()}
           </span>
 
           {nonEmptyStr(desc) &&
             <div className='description'>
-              <SummarizeMd md={desc} />
+              <SummarizeMd md={desc} more={
+                <AboutBlogLink blog={blog} title={'Learn More'} />
+              } />
             </div>
           }
 
