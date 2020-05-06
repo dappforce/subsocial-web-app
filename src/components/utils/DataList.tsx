@@ -15,7 +15,7 @@ type Props<T extends any> = {
   dataSource: T[], // TODO add generic type
   renderItem: (item: T, index: number) => JSX.Element,
   title?: React.ReactNode,
-  noDataDesc?: React.ReactNode | string,
+  noDataDesc?: React.ReactNode,
   noDataExt?: React.ReactNode
 }
 
