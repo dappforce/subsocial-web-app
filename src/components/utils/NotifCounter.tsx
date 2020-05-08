@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { offchainWs } from './OffchainUtils'
+import { offchainWs } from './env'
 import { useMyAccount } from './MyAccountContext';
 
 export type NotifCounterContextProps = {

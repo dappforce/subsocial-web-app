@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { api as polkadotApi } from '@polkadot/react-api';
 import { Api } from '@subsocial/api/substrateConnect'
-import { getEnv } from './utils';
+import { offchainUrl, substrateUrl, ipfsNodeUrl } from './env';
 import { ApiPromise } from '@polkadot/api';
 import { Activity } from '@subsocial/types/offchain';
 // import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
@@ -10,10 +10,6 @@ import { newLogger } from '@subsocial/utils';
 import { SubsocialApi } from '@subsocial/api/fullApi';
 
 const log = newLogger('SubsocialConnect')
-
-export const offchainUrl = getEnv('OFFCHAIN_URL') || 'http://localhost:3001';
-export const ipfsUrl = getEnv('IPFS_URL') || '/ip4/127.0.0.1/tcp/8080';
-export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944';
 
 export const ipfs = {} as any
 
@@ -34,7 +30,7 @@ let subsocial: SubsocialApi | undefined = undefined;
 export const getSubsocialApi = async () => {
   if (!subsocial) {
     const api = await getApi()
-    subsocial = new SubsocialApi({ substrateApi: api, ipfsApi: ipfsUrl, offchainUrl })
+    subsocial = new SubsocialApi({ substrateApi: api, ipfsNodeUrl, offchainUrl })
   }
   return subsocial
 }

@@ -1,10 +1,6 @@
 import axios from 'axios';
-import { getEnv } from './utils';
+import { offchainUrl } from './env';
 import { Activity } from '@subsocial/types/offchain';
-
-export const offchainUrl = getEnv('OFFCHAIN_URL') || 'http://localhost:3001';
-export const ipfsUrl = getEnv('IPFS_URL') || '/ip4/127.0.0.1/tcp/5001/http';
-export const offchainWs = getEnv('OFFCHAIN_WS')
 
 function getOffchainUrl (subUrl: string): string {
   return `${offchainUrl}/v1/offchain${subUrl}`
