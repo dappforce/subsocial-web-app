@@ -12,11 +12,6 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { getSubsocialApi } from './SubsocialConnect';
 
-export function getEnv (varName: string): string | undefined {
-  const { env } = typeof window === 'undefined' ? process : window.process;
-  return env[varName]
-}
-
 type PaginationProps = {
   currentPage?: number;
   totalItems: number;

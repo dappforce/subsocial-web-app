@@ -1,7 +1,3 @@
-import { getEnv } from '../components/utils/utils';
-
-export const ElasticNodeURL = getEnv('ELASTIC_URL') || 'http://localhost:9200';
-
 export type ElasticIndexTypes = 'blogs' | 'posts' | 'profiles';
 
 export const ElasticIndex = {

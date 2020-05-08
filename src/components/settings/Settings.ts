@@ -4,9 +4,9 @@
 
 import store from 'store';
 
-import { CRYPTOS, ENDPOINT_DEFAULT, ENDPOINTS, LANGUAGE_DEFAULT, LANGUAGES, UIMODE_DEFAULT, UIMODES, UITHEME_DEFAULT, UITHEMES } from './defaults';
+import { CRYPTOS, ENDPOINTS, LANGUAGE_DEFAULT, LANGUAGES, UIMODE_DEFAULT, UIMODES, UITHEME_DEFAULT, UITHEMES } from './defaults';
 import { Options, SettingsStruct } from './types';
-import { getEnv } from '../utils/utils';
+import { substrateUrl } from '../utils/env';
 
 export class Settings implements SettingsStruct {
   private _apiUrl: string;
@@ -20,7 +20,7 @@ export class Settings implements SettingsStruct {
   constructor () {
     const settings = store.get('settings') || {};
 
-    this._apiUrl = settings.apiUrl || getEnv('SUBSTRATE_URL') || ENDPOINT_DEFAULT;
+    this._apiUrl = settings.apiUrl || substrateUrl;
     this._i18nLang = settings.i18nLang || LANGUAGE_DEFAULT;
     this._uiMode = settings.uiMode || UIMODE_DEFAULT;
     this._uiTheme = settings.uiTheme || UITHEME_DEFAULT;
