@@ -3,7 +3,7 @@ import BN from 'bn.js';
 
 // Substrate/Polkadot API utils
 // --------------------------------------
-import { Options as QueryOptions } from '@polkadot/react-api/hoc/types';
+import { Options as QueryOptions } from '@subsocial/react-api/hoc/types';
 
 // Parse URLs
 // --------------------------------------

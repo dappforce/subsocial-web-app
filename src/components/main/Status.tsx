@@ -1,12 +1,12 @@
 
 import { KeyringOptions } from '@polkadot/ui-keyring/options/types';
-import { QueueStatus, QueueTx, QueueAction$Add } from '@polkadot/react-components/Status/types';
-import { I18nProps } from '@polkadot/react-components/types';
+import { QueueStatus, QueueTx, QueueAction$Add } from '@subsocial/react-components/Status/types';
+import { I18nProps } from '@subsocial/react-components/types';
 
 import React from 'react';
 import keyringOption from '@polkadot/ui-keyring/options';
-import { Status as StatusDisplay } from '@polkadot/react-components';
-import { withCall, withMulti, withObservable } from '@polkadot/react-api/hoc';
+import { Status as StatusDisplay } from '@subsocial/react-components';
+import { withCall, withMulti, withObservable } from '@subsocial/react-api/hoc';
 import { stringToU8a } from '@polkadot/util';
 import { xxhashAsHex } from '@polkadot/util-crypto';
 import { EventRecord } from '@polkadot/types/interfaces';

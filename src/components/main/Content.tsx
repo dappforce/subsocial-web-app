@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Navigation } from '../../layout/Navigation'
-import { StatusContext } from '@polkadot/react-components';
+import { StatusContext } from '@subsocial/react-components';
 import dynamic from 'next/dynamic';
 const Status = dynamic(() => import('./Status'), { ssr: false });
 

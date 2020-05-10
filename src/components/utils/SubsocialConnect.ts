@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { api as polkadotApi } from '@polkadot/react-api';
+import { api as polkadotApi } from '@subsocial/react-api';
 import { Api } from '@subsocial/api/substrateConnect'
 import { getEnv } from './utils';
 import { ApiPromise } from '@polkadot/api';
@@ -34,7 +34,7 @@ let subsocial!: SubsocialApi;
 export const getSubsocialApi = async () => {
   if (!subsocial) {
     const api = await getApi()
-    subsocial = new SubsocialApi({ substrateApi: api, ipfsApi: ipfsUrl, offchainUrl })
+    subsocial = new SubsocialApi({ substrateApi: api, ipfsNodeUrl: ipfsUrl, offchainUrl })
   }
   return subsocial
 }

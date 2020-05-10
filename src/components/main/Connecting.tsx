@@ -1,10 +1,10 @@
 
-import { I18nProps } from '@polkadot/react-components/types';
-import { ApiProps } from '@polkadot/react-api/types';
+import { I18nProps } from '@subsocial/react-components/types';
+import { ApiProps } from '@subsocial/react-api/types';
 
 import React from 'react';
 import styled from 'styled-components';
-import { withApi, withMulti } from '@polkadot/react-api';
+import { withApi, withMulti } from '@subsocial/react-api';
 import settings from '../settings';
 type Props = I18nProps & ApiProps;
 

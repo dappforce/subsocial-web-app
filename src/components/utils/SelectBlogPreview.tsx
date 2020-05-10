@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
 import { DfBgImg } from './DfBgImg';
 import BN from 'bn.js'
-import { IdentityIcon } from '@polkadot/react-components';
+import { IdentityIcon } from '@subsocial/react-components';
 import { useSubsocialApi } from './SubsocialApiContext';
 import { isEmptyArray, nonEmptyStr } from '@subsocial/utils';
 import { BlogData } from '@subsocial/types/dto';

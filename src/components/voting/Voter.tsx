@@ -102,7 +102,6 @@ export const Voter = (props: VoterProps) => {
       const typeIcon = isUpvote ? 'up' : 'down';
       console.log('I am TxButton')
       return (<TxButton
-        type='submit'
         icon={`thumbs ${typeIcon} outline`}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}

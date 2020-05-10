@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React from 'react';
-import { useApi } from '@polkadot/react-hooks';
+import { useApi } from '@subsocial/react-hooks';
 import settings from '../../settings';
 
 import BaseOverlay from './Base';

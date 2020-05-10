@@ -9,7 +9,7 @@ import ListData from '../utils/DataList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import BN from 'bn.js';
-import { registry } from '@polkadot/react-api';
+import { registry } from '@subsocial/react-api';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
 
 type DataResults = {

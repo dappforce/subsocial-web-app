@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link';
 import { AddressProps } from './types';
-import { toShortAddress } from '@polkadot/react-components/util';
+import { toShortAddress } from '@subsocial/react-components/util';
 import { ProfileData } from '@subsocial/types';
 import { InfoDetails } from '../AuthorPreview';
 import { nonEmptyStr } from '@subsocial/utils';

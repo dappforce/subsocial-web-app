@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import IdentityIcon from '@polkadot/react-components/IdentityIcon';
+import IdentityIcon from '@subsocial/react-components/IdentityIcon';
 import Error from 'next/error'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { HeadMeta } from '../utils/HeadMeta';

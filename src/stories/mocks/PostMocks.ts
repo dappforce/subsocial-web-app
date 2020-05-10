@@ -1,6 +1,6 @@
 import { mockBlogId } from './BlogMocks';
 import U32 from '@polkadot/types/primitive/U32';
-import { registry } from '@polkadot/react-api';
+import { registry } from '@subsocial/react-api';
 import { BlogId, Post } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import BN from 'bn.js'

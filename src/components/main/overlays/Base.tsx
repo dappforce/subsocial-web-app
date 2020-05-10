@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Icon } from '@polkadot/react-components';
+import { Icon } from '@subsocial/react-components';
 
 interface Props {
   children: React.ReactNode;

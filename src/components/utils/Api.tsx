@@ -4,25 +4,25 @@
 
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { ChainProperties, ChainType } from '@polkadot/types/interfaces';
-import { ApiProps, ApiState } from '@polkadot/react-api/types';
+import { ApiProps, ApiState } from '@subsocial/react-api/types';
 
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import ApiPromise from '@polkadot/api/promise';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { WsProvider } from '@polkadot/rpc-provider';
-import { StatusContext } from '@polkadot/react-components/Status';
-import { TokenUnit } from '@polkadot/react-components/InputNumber';
+import { StatusContext } from '@subsocial/react-components/Status';
+import { TokenUnit } from '@subsocial/react-components/InputNumber';
 import keyring from '@polkadot/ui-keyring';
 import uiSettings from '@polkadot/ui-settings';
-import ApiSigner from '@polkadot/react-signer/ApiSigner';
+import ApiSigner from '@subsocial/react-signer/ApiSigner';
 import { formatBalance, isTestChain } from '@polkadot/util';
 import { setSS58Format } from '@polkadot/util-crypto';
 import addressDefaults from '@polkadot/util-crypto/address/defaults';
 
-import ApiContext from '@polkadot/react-api/ApiContext';
-import registry from '@polkadot/react-api/typeRegistry';
-import typesChain from '@polkadot/react-api/overrides/chain';
-import typesSpec from '@polkadot/react-api/overrides/spec';
+import ApiContext from '@subsocial/react-api/ApiContext';
+import registry from '@subsocial/react-api/typeRegistry';
+import typesChain from '@subsocial/react-api/overrides/chain';
+import typesSpec from '@subsocial/react-api/overrides/spec';
 
 interface Props {
   children: React.ReactNode;

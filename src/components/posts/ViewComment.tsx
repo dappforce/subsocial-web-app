@@ -1,9 +1,9 @@
 import { Comment as SuiComment } from 'semantic-ui-react';
 import React, { useState, useEffect } from 'react';
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti } from '@subsocial/react-api';
 import Section from '../utils/Section';
 import { isMyAddress } from '../utils/MyAccountContext';
-import { ApiProps } from '@polkadot/react-api/types';
+import { ApiProps } from '@subsocial/react-api/types';
 import moment from 'moment-timezone';
 import mdToText from 'markdown-to-txt';
 import isEmpty from 'lodash.isempty';

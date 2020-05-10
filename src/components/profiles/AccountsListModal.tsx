@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti } from '@subsocial/react-api';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';

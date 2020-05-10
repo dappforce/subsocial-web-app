@@ -5,7 +5,7 @@ import { SubmittableResult } from '@polkadot/api';
 import { Icon } from 'antd';
 import moment from 'moment-timezone';
 import AccountId from '@polkadot/types/generic/AccountId';
-import { registry } from '@polkadot/react-api';
+import { registry } from '@subsocial/react-api';
 import BN from 'bn.js';
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';

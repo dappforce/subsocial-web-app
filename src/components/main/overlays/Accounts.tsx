@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAccounts, useApi } from '@polkadot/react-hooks';
+import { useAccounts, useApi } from '@subsocial/react-hooks';
 
 import BaseOverlay from './Base';
 

@@ -8,7 +8,7 @@ import { SpaceContent } from '../spaces/SpacePreview'
 import BN from 'bn.js'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { NavTab } from '@subsocial/types/offchain'
-import { IdentityIcon } from '@polkadot/react-components'
+import { IdentityIcon } from '@subsocial/react-components'
 import { isMyAddress } from '../utils/MyAccountContext'
 import { SummarizeMd } from '../utils/md'
 

@@ -4,7 +4,7 @@ import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import EditableTagGroup from '../utils/EditableTagGroup'
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@subsocial/react-api';
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
@@ -16,9 +16,9 @@ import { getNewIdFromEvent, Loading } from '../utils/utils';
 import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxFailedCallback } from '@subsocial/react-components/Status/types';
 import { TxCallback } from '../utils/types';
-import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
+import { PostExtension, PostUpdate, OptionId, OptionText } from '@subsocial/types/substrate/classes';
 import { Post, IpfsHash, BlogId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
@@ -104,23 +104,10 @@ const InnerForm = (props: FormProps) => {
   const { ipfs } = useSubsocialApi()
   const [ currentBlogId, setCurrentBlogId ] = useState(initialBlogId)
   const [ showAdvanced, setShowAdvanced ] = useState(false)
-  const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
-
-  const onSubmit = (sendTx: () => void) => {
-    if (isValid || !isRegularPost) {
-      const json = { title, body, image, tags, canonical };
-      console.log(json)
-      ipfs.savePost(json).then(hash => {
-        if (hash) {
-          setIpfsCid(hash);
-          console.log(ipfsHash)
-          sendTx();
-        }
-      }).catch(err => new Error(err));
-    }
-  };
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     setSubmitting(false);
   };
 
@@ -137,23 +124,41 @@ const InnerForm = (props: FormProps) => {
     setShowAdvanced(!showAdvanced)
   }
 
-  const buildTxParams = () => {
+  const newTxParams = (hash: IpfsHash) => {
     if (isValid || !isRegularPost) {
       if (!struct) {
-        console.log([ currentBlogId, ipfsHash, extension ])
-        return [ currentBlogId, ipfsHash, extension ];
+        return [ currentBlogId, hash, extension ];
       } else {
         // TODO update only dirty values.
         const update = new PostUpdate(
           {
           // TODO setting new blog_id will move the post to another blog.
-            blog_id: new Option(registry, 'u64', null),
-            ipfs_hash: new Option(registry, 'Text', ipfsHash)
+            blog_id: new OptionId(),
+            ipfs_hash: new OptionText(hash)
           });
         return [ struct.id, update ];
       }
     } else {
       return [];
+    }
+  };
+
+  const buildTxParams = async () => {
+    try {
+      if (isValid || !isRegularPost) {
+        const json = { title, body, image, tags, canonical };
+        const hash = await ipfs.savePost(json)
+        if (hash) {
+          setIpfsHash(hash);
+          return newTxParams(hash)
+        } else {
+          throw new Error('Invalid hash')
+        }
+      }
+      return []
+    } catch (err) {
+      log.error('Failed build tx params: %o', err)
+      return []
     }
   };
 
@@ -164,12 +169,11 @@ const InnerForm = (props: FormProps) => {
         : `Update a post`
       }
       isDisabled={isSubmitting || (isRegularPost && !dirty)}
-      params={buildTxParams()}
+      params={buildTxParams as any}
       tx={struct
         ? 'social.updatePost'
         : 'social.createPost'
       }
-      onClick={onSubmit}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
     />

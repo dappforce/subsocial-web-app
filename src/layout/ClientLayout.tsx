@@ -3,13 +3,13 @@ import React from 'react';
 import settings from '../components/settings';
 import '../components/utils/styles';
 
-import Api from '@polkadot/react-api/Api'
+import Api from '@subsocial/react-api/Api'
 import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
-import Queue from '@polkadot/react-components/Status/Queue';
-import Signer from '@polkadot/react-signer';
+import Queue from '@subsocial/react-components/Status/Queue';
+import Signer from '@subsocial/react-signer';
 import { MyAccountProvider } from '../components/utils/MyAccountContext';
 import Connecting from '../components/main/Connecting';
-import { BlockAuthors, Events } from '@polkadot/react-query';
+import { BlockAuthors, Events } from '@subsocial/react-query';
 import ConnectingOverlay from '../components/main//overlays/Connecting';
 import { getEnv } from '../components/utils/utils';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';

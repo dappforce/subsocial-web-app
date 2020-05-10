@@ -1,12 +1,12 @@
 import React from 'react';
-// import { withMulti, withCalls } from '@polkadot/react-api';
+// import { withMulti, withCalls } from '@subsocial/react-api';
 // import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
 // import { Post, Blog, PostId, BlogId, CommentId, Comment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, ProfileHistoryRecord, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '@subsocial/types/substrate/interfaces/subsocial';
 // import { PostContent, BlogContent, CommentContent, ProfileContent } from '../types';
 // import { socialQueryToProp } from './index';
 // import { Option } from '@polkadot/types';
 // import { DfMd } from './DfMd';
-// import { IdentityIcon } from '@polkadot/react-components';
+// import { IdentityIcon } from '@subsocial/react-components';
 // import Link from 'next/link';
 // import { getJsonFromIpfs } from './OffchainUtils';
 // import { withRequireProfile, withSocialAccount, Loading } from './utils';
