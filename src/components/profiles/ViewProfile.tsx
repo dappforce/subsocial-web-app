@@ -3,7 +3,7 @@ import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
 import { AccountId } from '@polkadot/types/interfaces';
-import IdentityIcon from '@subsocial/react-components/IdentityIcon';
+import IdentityIcon from '@polkadot/react-identicon';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'

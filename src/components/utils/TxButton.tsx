@@ -9,8 +9,7 @@ import { useStorybookContext } from './StorybookContext';
 import { isClientSide } from '.';
 import { useMyAccount } from './MyAccountContext';
 import { newLogger } from '@subsocial/utils';
-import { TxButton } from '@subsocial/react-components';
-import { TxButtonProps } from '@subsocial/react-components/types';
+import TxButton from '@subsocial/react-components/TxButton';
 
 const log = newLogger('TxButton')
 
@@ -39,7 +38,7 @@ function MockTxButton (props: any) {
   )
 }
 
-function ResolvedButton (props: TxButtonProps) {
+function ResolvedButton (props: any) {
   const { isStorybook = false } = useStorybookContext()
   const { state: { address } } = useMyAccount();
   return isStorybook
