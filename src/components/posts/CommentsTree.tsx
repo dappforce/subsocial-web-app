@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { PostId, Post } from '@subsocial/types/substrate/interfaces'
 import ListData from '../utils/DataList';
 import { ViewComment } from './NewViewComment';
-import { EditComment } from './NewEditComment';
+import { NewComment } from './NewComment';
 import Section from '../utils/Section';
 import { getProfileName } from '../profiles/address-views/Name';
 import mdToText from 'markdown-to-txt';
@@ -17,6 +17,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { getBlogId } from '../utils/utils';
 import BN from 'bn.js'
 import { Pluralize } from '../utils/Plularize';
+import { ZERO } from '../utils';
 
 const log = newLogger('Comment')
 
@@ -42,10 +43,14 @@ type CommentSectionProps = {
 
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = ({ post }) => {
   const { id, total_replies_count } = post;
+  const [ newCommentId, setCommentId ] = useState<PostId>(ZERO as PostId)
+
+  const commentTree = useMemo(() => <CommentsTree parentId={id} newCommentId={newCommentId}/>, [ newCommentId ])
+
   return <Section className='DfCommentSection'>
     <h3><Pluralize count={total_replies_count.toString()} singularText='comment' /></h3>
-    <EditComment post={post} />
-    <CommentsTree parentId={id} />
+    <NewComment post={post} callback={(id) => setCommentId(id as PostId)}/>
+    {commentTree}
   </Section>
 }
 
@@ -114,14 +119,17 @@ CommentPage.getInitialProps = async (props): Promise<any> => {
 }
 
 type LoadProps = {
-  parentId: PostId
+  parentId: PostId,
+  newCommentId?: PostId
 }
 
 export const withLoadedComments = (Component: React.ComponentType<CommentsTreeProps>) => {
   return (props: LoadProps) => {
-    const { parentId } = props;
-    const [ comments, setComments ] = useState<ExtendedPostData[]>();
+    const { parentId, newCommentId } = props;
+    const [ replyComments, setComments ] = useState<ExtendedPostData[]>();
     const { subsocial, substrate } = useSubsocialApi();
+
+    console.log('Reload comments')
 
     useEffect(() => {
       const loadComments = async () => {
@@ -134,7 +142,18 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
       loadComments().catch(err => log.error('Failed load comments: %o', err))
     }, [ false ]);
 
-    return comments ? <Component comments={comments} /> : null;
+    useEffect(() => {
+      if (!newCommentId) return;
+
+      const loadComment = async () => {
+        const comment= await subsocial.findPostsWithDetails([ newCommentId ]);
+        replyComments?.concat(...comment)
+      }
+
+      loadComment().catch(err => log.error('Failed load new comment: %o', err))
+    }, [ newCommentId ])
+
+    return replyComments ? <Component comments={replyComments} /> : null;
   }
 }
 

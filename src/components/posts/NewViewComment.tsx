@@ -4,21 +4,22 @@ import { ProfileData } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { AnyAccountId } from '@subsocial/types/substrate';
 import { DfMd } from '../utils/DfMd';
-import { PostContent } from '@subsocial/types';
-import { Post } from '@subsocial/types/substrate/interfaces';
+import { CommentContent } from '@subsocial/types';
+import { Post, PostId } from '@subsocial/types/substrate/interfaces';
 import Voter from '../voting/Voter';
 import { useMyAddress } from '../utils/MyAccountContext';
 import Link from 'next/link';
 import { pluralize } from '../utils/Plularize';
 import { formatUnixDate } from '../utils/utils';
 import moment from 'moment-timezone';
-import { EditComment } from './NewEditComment';
+import { EditComment, NewComment } from './NewComment';
+import { CommentsTree } from './CommentsTree'
 
 type Props = {
   owner?: ProfileData,
   address: AnyAccountId,
   struct: Post,
-  content?: PostContent
+  content?: CommentContent
 }
 
 export const ViewComment: FunctionComponent<Props> = ({ children = null, owner, struct, content }) => {
@@ -27,11 +28,14 @@ export const ViewComment: FunctionComponent<Props> = ({ children = null, owner, 
   const {
     id,
     created: { account, time },
-    score
+    score,
+    direct_replies_count
   } = struct
 
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
+  const [ showReplices, setShowReplices ] = useState(false);
+  const [ newRelicesId, setNewReplicesId ] = useState<PostId>();
 
   const isMyStruct = myAddress === account.toString()
 
@@ -57,6 +61,13 @@ export const ViewComment: FunctionComponent<Props> = ({ children = null, owner, 
     {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
     </>);
   };
+
+  const ViewRepliecesLink = () => 
+    <Link href={''}>
+      <a onClick={(event) => { event.preventDefault(); setShowReplices(true) }}>
+        View all {direct_replies_count.toString()} replices
+      </a>
+    </Link>
 
   return <Comment
     className='DfNewComment'
@@ -86,12 +97,15 @@ export const ViewComment: FunctionComponent<Props> = ({ children = null, owner, 
       <RenderDropDownMenu key={`comment-dropdown-menu-${id}`} />
     </div>}
     content={showEditForm
-      ? <EditComment struct={struct} content={content} post={struct} callback={() => setShowEditForm(false)}/>
+      ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
       : <DfMd source={content?.body} />
     }
   >
-    {showReplyForm && <EditComment post={struct} callback={() => setShowReplyForm(false)}/>}
-    {children}
+    <div>
+      {showReplyForm && <NewComment post={struct} callback={(id) => { setShowReplyForm(false); setNewReplicesId(id as PostId) }}/>}
+      <ViewRepliecesLink />
+      {showReplices && <CommentsTree parentId={id} newCommentId={newRelicesId} />}
+    </div>
   </Comment>
 };
 

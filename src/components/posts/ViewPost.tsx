@@ -87,9 +87,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     id,
     blog_id,
     created,
-    ipfs_hash
+    ipfs_hash,
+    extension
   } = post;
 
+  console.log(extension);
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
   const [ content, setContent ] = useState(initialContent || {} as PostExtContent);

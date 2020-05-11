@@ -3,35 +3,39 @@ import { MyAccountProps } from '../utils/MyAccount';
 import { PostExtension, PostUpdate, CommentExt, OptionId } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { IpfsHash, Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from '@subsocial/react-components/Status/types';
 import { SubmittableResult } from '@polkadot/api';
 import SimpleMDEReact from 'react-simplemde-editor';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation'
-import { PostContent } from '@subsocial/types';
+import { CommentContent } from '@subsocial/types';
 import { registry } from '@subsocial/react-api';
 import { Option } from '@polkadot/types/codec';
 import { Button } from 'antd';
 import { getNewIdFromEvent } from '../utils/utils';
 import { newLogger } from '@subsocial/utils';
+import BN from 'bn.js'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const log = newLogger('New Comment');
 
+type FCallback = (id?: BN) => void
+
 type Props = MyAccountProps & {
-  post: Post,
-  struct?: Post,
-  content?: PostContent,
-  callback?: (id?: PostId) => void,
+  newTxParams: (hash: IpfsHash) => any[]
+  content?: CommentContent,
+  extrinsic: string,
+  label: string,
+  callback?: FCallback
 };
 
 const Fields = {
   body: 'body'
 }
 
-export const EditComment = (props: Props) => {
-  const { callback, struct, content, post } = props;
+export const InnerEditComment = (props: Props) => {
+  const { callback, newTxParams, content, label, extrinsic } = props;
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
@@ -51,37 +55,14 @@ export const EditComment = (props: Props) => {
   console.log('Body wather:', body);
   const { isSubmitting, dirty } = formState;
 
-  const { id, extension } = post;
-
-  const commentExt = extension.isComment
-    ? new CommentExt({ parent_id: new OptionId(id as any), root_post_id: extension.asComment.root_post_id })
-    : new CommentExt({ parent_id: new OptionId(), root_post_id: id })
-
-  const newExtension = new PostExtension({ Comment: commentExt })
-
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     cancelCallback()
   };
 
   const onTxSuccess: TxCallback = (txResult: SubmittableResult) => {
-    const _id = id || getNewIdFromEvent(txResult);
-    callback && callback(_id)
-  };
-
-  const newTxParams = (hash: IpfsHash): any[] => {
-    if (!struct) {
-      return [ newExtension, hash ];
-    } else {
-      // TODO update only dirty values.
-      const update = new PostUpdate(
-        {
-        // TODO setting new blog_id will move the post to another blog.
-          blog_id: new Option(registry, 'u64', null),
-          ipfs_hash: new Option(registry, 'Text', hash)
-        });
-      return [ struct.id, update ];
-    }
+    const id = getNewIdFromEvent(txResult);
+    callback && callback(id)
   };
 
   const buildTxParams = async (): Promise<any[]> => {
@@ -101,16 +82,10 @@ export const EditComment = (props: Props) => {
 
   const renderTxButton = () => (
     <TxButton
-      label={!struct
-        ? `Create a post`
-        : `Update a post`
-      }
+      label={label}
       isDisabled={isSubmitting || !dirty}
       params={buildTxParams as any}
-      tx={struct
-        ? 'social.updatePost'
-        : 'social.createPost'
-      }
+      tx={extrinsic}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
     />
@@ -136,3 +111,46 @@ export const EditComment = (props: Props) => {
     </div>
   </div>
 };
+
+type NewCommentProps = {
+  post: Post,
+  callback?: FCallback
+}
+
+export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback }) => {
+  const { id, extension } = post;
+
+  const commentExt = extension.Comment
+    ? new CommentExt({ parent_id: new OptionId(id), root_post_id: extension.Comment.root_post_id })
+    : new CommentExt({ parent_id: new OptionId(), root_post_id: id })
+
+  const newExtension = new PostExtension({ Comment: commentExt })
+
+  console.log(newExtension)
+
+  const newTxParams = (hash: IpfsHash) => [ new OptionId(), newExtension, hash ];
+
+  return <InnerEditComment newTxParams={newTxParams} label='Comment' extrinsic='social.createPost' callback={callback} />;
+}
+
+type EditCommentProps = {
+  struct: Post,
+  content: CommentContent,
+  callback?: FCallback
+}
+
+export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct, content, callback }) => {
+
+  const newTxParams = (hash: IpfsHash) => {
+    const update = new PostUpdate(
+      {
+      // TODO setting new blog_id will move the post to another blog.
+        blog_id: new Option(registry, 'u64', null),
+        ipfs_hash: new Option(registry, 'Text', hash)
+      });
+      return [ struct.id, update ];
+  }
+
+  return <InnerEditComment newTxParams={newTxParams} label='Edit' extrinsic='social.updatePost' callback={callback} content={content} />;
+}
+

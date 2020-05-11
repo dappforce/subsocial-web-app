@@ -75,7 +75,7 @@ const InnerForm = (props: FormProps) => {
     blogIds
   } = props;
 
-  const { isRegularPost } = extension
+  const isRegularPost = !!extension.RegularPost
 
   const renderResetButton = () => (
     <Button
@@ -127,7 +127,7 @@ const InnerForm = (props: FormProps) => {
   const newTxParams = (hash: IpfsHash) => {
     if (isValid || !isRegularPost) {
       if (!struct) {
-        return [ currentBlogId, hash, extension ];
+        return [ currentBlogId, extension, hash ];
       } else {
         // TODO update only dirty values.
         const update = new PostUpdate(

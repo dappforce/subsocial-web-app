@@ -65,7 +65,7 @@ const InnerShareModal = (props: Props) => {
   };
 
   const newTxParams = (hash: IpfsHash) => {
-    return [ blogId, hash, extension ];
+    return [ blogId, extension, hash ];
   };
 
   const buildTxParams = async (): Promise<any[]> => {
