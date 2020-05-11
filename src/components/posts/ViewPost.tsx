@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-
 import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
@@ -10,7 +9,6 @@ import { nonEmptyStr, newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
 import { PostVoters } from '../voting/ListVoters';
-import { ShareModal } from './ShareModal';
 import NoData from '../utils/EmptyList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
@@ -31,8 +29,9 @@ import AuthorPreview from '../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../utils/md/SummarizeMd';
 import ViewPostLink from './ViewPostLink';
 import { HasBlogIdOrHandle, HasPostId, newBlogUrlFixture } from '../utils/urls';
+import SharePostAction from './SharePostAction';
 
-const log = newLogger('View post')
+const log = newLogger('View Post')
 
 const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
@@ -207,8 +206,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   }
 
   const RenderActionsPanel = () => {
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
     const postId = isRegularPost ? id : originalPost && originalPost.id
     const actionClass = 'ui tiny button basic DfAction'
 
@@ -221,11 +218,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           <Icon type='message' />
           Comment
         </div>
-        <div className={actionClass} onClick={() => setOpen(true)}>
-          <Icon type='share-alt' />
-          Share
-        </div>
-        {open && <ShareModal postId={postId} open={open} close={close} />}
+        <SharePostAction postId={postId} className={actionClass} />
       </div>
     );
   };
@@ -309,8 +302,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {/* {renderBlogPreview(post)} */}
         </div>
         <ViewTags tags={tags} />
-        <Voter struct={post} type={'Post'}/>
-        {/* <ShareButtonPost postId={post.id}/> */}
+        <div className='DfRow'>
+          <Voter struct={post} type={'Post'} />
+          <SharePostAction postId={post.id} className='DfShareAction' />
+        </div>
       </Section>
       <Section id={goToCommentsId}>
         <CommentsByPost postId={post.id} post={post} />
