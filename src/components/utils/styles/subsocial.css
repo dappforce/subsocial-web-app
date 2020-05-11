@@ -175,6 +175,11 @@ body,
   .DfPostContent {
     @extend .DfBookPage;
   }
+  .DfShareAction {
+    padding: $space_small $space_normal;
+    cursor: pointer;
+    @extend .DfBlackLink;
+  }
 }
 
 .DfPostName {
