@@ -12,7 +12,7 @@ export type PostExtContent = PostContent
 
 export const getTypePost = (post: Post): PostType => {
   const { extension } = post;
-  if (extension.SharedPost) {
+  if (extension.isSharedPost) {
     return 'share';
   } else {
     return 'regular';

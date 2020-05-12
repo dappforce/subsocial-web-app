@@ -28,6 +28,7 @@ type Props = MyAccountProps & {
   extrinsic: string,
   label: string,
   callback?: FCallback
+  withCancel?: boolean
 };
 
 const Fields = {
@@ -35,7 +36,7 @@ const Fields = {
 }
 
 export const InnerEditComment = (props: Props) => {
-  const { callback, newTxParams, content, label, extrinsic } = props;
+  const { callback, newTxParams, content, label, extrinsic, withCancel = false } = props;
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
@@ -107,30 +108,32 @@ export const InnerEditComment = (props: Props) => {
     </form>
     <div className='DfActionButtonsBlock'>
       {renderTxButton()}
-      <Button type='default' onClick={cancelCallback}>Cancel</Button>
+      {withCancel && <Button type='default' onClick={cancelCallback}>Cancel</Button>}
     </div>
   </div>
 };
 
 type NewCommentProps = {
   post: Post,
-  callback?: FCallback
+  callback?: FCallback,
+  withCancel?: boolean
 }
 
-export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback }) => {
+export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel }) => {
   const { id, extension } = post;
+  console.log(post)
 
-  const commentExt = extension.Comment
-    ? new CommentExt({ parent_id: new OptionId(id), root_post_id: extension.Comment.root_post_id })
+  const commentExt = extension.isComment
+    ? new CommentExt({ parent_id: new OptionId(id), root_post_id: extension.asComment.root_post_id })
     : new CommentExt({ parent_id: new OptionId(), root_post_id: id })
 
   const newExtension = new PostExtension({ Comment: commentExt })
 
-  console.log(newExtension)
+  console.log(commentExt)
 
   const newTxParams = (hash: IpfsHash) => [ new OptionId(), newExtension, hash ];
 
-  return <InnerEditComment newTxParams={newTxParams} label='Comment' extrinsic='social.createPost' callback={callback} />;
+  return <InnerEditComment newTxParams={newTxParams} label='Comment' extrinsic='social.createPost' callback={callback} withCancel={withCancel} />;
 }
 
 type EditCommentProps = {
@@ -148,9 +151,8 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
         blog_id: new Option(registry, 'u64', null),
         ipfs_hash: new Option(registry, 'Text', hash)
       });
-      return [ struct.id, update ];
+    return [ struct.id, update ];
   }
 
-  return <InnerEditComment newTxParams={newTxParams} label='Edit' extrinsic='social.updatePost' callback={callback} content={content} />;
+  return <InnerEditComment newTxParams={newTxParams} label='Edit' extrinsic='social.updatePost' callback={callback} content={content} withCancel />;
 }
-

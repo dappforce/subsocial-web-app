@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PostId, Post } from '@subsocial/types/substrate/interfaces'
 import ListData from '../utils/DataList';
-import { ViewComment } from './NewViewComment';
+import { ViewComment } from './ViewComment';
 import { NewComment } from './NewComment';
 import Section from '../utils/Section';
 import { getProfileName } from '../profiles/address-views/Name';
@@ -17,7 +17,6 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { getBlogId } from '../utils/utils';
 import BN from 'bn.js'
 import { Pluralize } from '../utils/Plularize';
-import { ZERO } from '../utils';
 
 const log = newLogger('Comment')
 
@@ -41,18 +40,16 @@ type CommentSectionProps = {
   post: Post
 }
 
-export const CommentSection: React.FunctionComponent<CommentSectionProps> = ({ post }) => {
+export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post }) => {
   const { id, total_replies_count } = post;
-  const [ newCommentId, setCommentId ] = useState<PostId>(ZERO as PostId)
-
-  const commentTree = useMemo(() => <CommentsTree parentId={id} newCommentId={newCommentId}/>, [ newCommentId ])
+  const [ newCommentId, setCommentId ] = useState<PostId>()
 
   return <Section className='DfCommentSection'>
     <h3><Pluralize count={total_replies_count.toString()} singularText='comment' /></h3>
     <NewComment post={post} callback={(id) => setCommentId(id as PostId)}/>
-    {commentTree}
+    <CommentsTree parentId={id} newCommentId={newCommentId}/>
   </Section>
-}
+})
 
 type CommentPageProps = {
   comment: ExtendedPostData,
@@ -132,6 +129,7 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
     console.log('Reload comments')
 
     useEffect(() => {
+      if (replyComments && replyComments.length > 0) return;
       const loadComments = async () => {
         const replyIds = await substrate.getReplyIdsByPostId(parentId);
         console.log(replyIds)
@@ -146,7 +144,7 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
       if (!newCommentId) return;
 
       const loadComment = async () => {
-        const comment= await subsocial.findPostsWithDetails([ newCommentId ]);
+        const comment = await subsocial.findPostsWithDetails([ newCommentId ]);
         replyComments?.concat(...comment)
       }
 
@@ -157,4 +155,4 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
   }
 }
 
-export const CommentsTree = withLoadedComments(ViewCommentsTree);
+export const CommentsTree = React.memo(withLoadedComments(ViewCommentsTree));

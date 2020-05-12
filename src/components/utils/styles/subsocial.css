@@ -57,25 +57,6 @@ body,
   }
 }
 
-.ui.primary.button {
-  color: #fff;
-  background-color: #1890ff;
-  border-color: #1890ff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
-  line-height: 1.499;
-  position: relative;
-  display: inline-block;
-  font-weight: 400;
-  white-space: nowrap;
-  text-align: center;
-  touch-action: manipulation;
-  height: 32px;
-  padding: 0 15px;
-  font-size: 14px;
-  border-radius: 4px;
-  background-image: none;
-}
-
 .ant-comment-content-author {
   font-size: inherit;
   line-height: inherit;
@@ -170,8 +151,9 @@ body,
   /* padding: 0 $space_tiny; */
 
   .DfVoter {
-    margin-left: -1rem;
+    margin-left: -$space_tiny;
   }
+  
   .DfTags {
     margin: $space_big 0;
   }
@@ -1632,6 +1614,11 @@ a.DfStatItem {
         font-size: $font_small;
       }
     }
+
+    .DfVoter {
+      margin-left: -$space_tiny
+    }
+    
   }
 
   .ant-comment-content-author-name {
@@ -1647,9 +1634,9 @@ a.DfStatItem {
   }
 
   .ant-comment-content-detail {
-    .DfMd {
+    .markdown-body  {
       display: inline-block;
-      margin: $space_tiny 0 !important;
+      margin-top: $space_tiny !important;
       padding: $space_small $space_normal;
       border-radius: 15px;
       border-top-left-radius: 0;
@@ -1668,8 +1655,9 @@ a.DfStatItem {
 
   .ant-comment-nested {
     box-shadow: -1px 0 0 rgba(34,36,38,.15);
-    margin-left: 2rem;
-    padding-left: 1rem;
+    margin-left: $space_huge;
+    padding: $space_normal;
+    padding-right: 0;
   }
 
   .DfActionButtonsBlock {
@@ -1679,4 +1667,15 @@ a.DfStatItem {
 
 .anticon-ellipsis.ant-dropdown-trigger {
   font-size: $font_big;
+}
+
+.DfCommentSection {
+  border-top: 1px solid #2d2d2d;
+  h3 {
+    padding: $space_small 0;
+  }
+
+  .DfActionButtonsBlock {
+    padding: $space_small 0;
+  }
 }

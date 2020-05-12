@@ -21,7 +21,7 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { isMyAddress } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
-import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { Post, PostId, BlogId } from '@subsocial/types/substrate/interfaces';
 import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
@@ -159,7 +159,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderPostCreator = (post: Post, owner?: ProfileData, size?: number) => {
     if (isEmpty(post)) return null;
     const { blog_id, created: { account, time } } = post;
-    const blogId = blog_id.isSome && blog_id.unwrap();
+    const blogId = blog_id as unknown as BlogId;
     return <>
       <AuthorPreview
         address={account}
