@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
-import { AllElasticIndexes, ElasticNodeURL } from '../config/ElasticConfig';
+import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import Menu from './SideMenu';
 import { isBrowser, isMobile } from 'react-device-detect';
@@ -9,6 +9,7 @@ import { Drawer } from 'antd-mobile';
 import dynamic from 'next/dynamic';
 import { newLogger } from '@subsocial/utils';
 import { isHomePage } from 'src/components/utils';
+import { ElasticNodeURL } from 'src/components/utils/env';
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 
 const log = newLogger('Navigation')

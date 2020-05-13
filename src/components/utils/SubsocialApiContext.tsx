@@ -2,7 +2,8 @@ import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import { SubsocialApi } from '@subsocial/api/fullApi';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
-import { ipfsUrl, getApi, offchainUrl } from './SubsocialConnect';
+import { getApi } from './SubsocialConnect';
+import { ipfsNodeUrl, offchainUrl } from './env'
 import { ApiPromise } from '@polkadot/api';
 import { useApi } from '@subsocial/react-hooks';
 import { newLogger } from '@subsocial/utils';
@@ -21,16 +22,17 @@ type SubsocialApiAction = {
   api: ApiPromise
 }
 
-function reducer (state: SubsocialApiState, action: SubsocialApiAction): SubsocialApiState {
+function reducer (_state: SubsocialApiState, action: SubsocialApiAction): SubsocialApiState {
 
   switch (action.type) {
-    case 'init':
-      const subsocial = new SubsocialApi({ substrateApi: action.api, ipfsNodeUrl: ipfsUrl, offchainUrl })
+    case 'init': {
+      const subsocial = new SubsocialApi({ substrateApi: action.api, ipfsNodeUrl, offchainUrl })
       log.info('Subsocial API initialized')
       return { subsocial, substrate: subsocial.substrate, ipfs: subsocial.ipfs, isReady: true }
-
-    default:
+    }
+    default: {
       throw new Error('No action type provided')
+    }
   }
 }
 
@@ -64,7 +66,7 @@ export type SubsocialApiProps = {
 const createSubsocialState = (api: ApiPromise) => {
   if (!api) return undefined;
 
-  const subsocial = new SubsocialApi({ substrateApi: api, ipfsNodeUrl: ipfsUrl, offchainUrl });
+  const subsocial = new SubsocialApi({ substrateApi: api, ipfsNodeUrl, offchainUrl });
   return {
     subsocial,
     substrate: subsocial.substrate,

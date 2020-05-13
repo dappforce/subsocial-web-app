@@ -11,14 +11,14 @@ import { MyAccountProvider } from '../components/utils/MyAccountContext';
 import Connecting from '../components/main/Connecting';
 import { BlockAuthors, Events } from '@subsocial/react-query';
 import ConnectingOverlay from '../components/main//overlays/Connecting';
-import { getEnv } from '../components/utils/utils';
+import { substrateUrl } from '../components/utils/env';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
 import { Content } from '../components/main/Content';
 
 import { isServerSide } from 'src/components/utils';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
-  const url = getEnv('SUBSTRATE_URL') || settings.apiUrl || undefined;
+  const url = substrateUrl || settings.apiUrl || undefined;
 
   return isServerSide()
     ? <Content>
