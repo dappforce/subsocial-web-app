@@ -31,7 +31,7 @@ import { useApi } from '@subsocial/react-hooks';
 import { getAccountId } from '../utils/utils';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
-import { accountUrl } from '../utils/urls';
+import ViewProfileLink from './ViewProfileLink';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -145,15 +145,14 @@ const Component: NextPage<Props> = (props: Props) => {
     }
   };
 
+  const accountForUrl = { address, username }
+
   const renderDescription = () => preview
-    ? <SummarizeMd md={about} />
+    ? <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
     : <DfMd className='mt-3' source={about} />
 
-  const NameAsLink = () => (
-    <Link href='/profile/[address]' as={accountUrl({ address, username })}>
-      <a className='handle DfBoldBlackLink'>{getName()}</a>
-    </Link>
-  );
+  const NameAsLink = () =>
+    <ViewProfileLink account={accountForUrl} title={getName()} className='handle DfBoldBlackLink' />
 
   const renderNameOnly = () => {
     return withLink
@@ -273,6 +272,7 @@ Component.getInitialProps = async (props): Promise<any> => {
   const accountId = await getAccountId(address as string);
 
   // TODO resolve profile by accountId or handle (username)
+
   if (!accountId && res) {
     res.statusCode = 404
     return { statusCode: 404 }

@@ -23,12 +23,12 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <HeadMeta
-        title='Subsocial latest updates'
-        desc='Subsocial home page with latest updates'
+        title='Latest posts and blogs'
+        desc='Subsocial is an open decentralized social network'
       />
-      <LatestBlogs {...props} blogsData={blogsData} />
       <LatestPosts {...props} postsData={postsData} />
       {/* TODO Show latest comments */}
+      <LatestBlogs {...props} blogsData={blogsData} />
     </div>
   );
 }

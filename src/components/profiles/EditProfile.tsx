@@ -76,6 +76,7 @@ const InnerForm = (props: FormProps) => {
 
   const goToView = () => {
     if (myAddress) {
+      // TODO use accountUrl({ address, username })
       Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
     }
   };

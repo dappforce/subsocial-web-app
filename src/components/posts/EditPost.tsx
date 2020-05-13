@@ -206,11 +206,12 @@ const InnerForm = (props: FormProps) => {
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
-          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
-          <LabelledField name='body' label='Description' {...props}>
+          <LabelledField name='body' label='Post' {...props}>
             <Field component={DfMdEditor} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
+
+          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
           <div className="EPadvanced">
             <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>

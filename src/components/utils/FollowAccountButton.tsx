@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { GenericAccountId } from '@polkadot/types';
 import { useMyAddress, isMyAddress } from './MyAccountContext';
-import TxButton from './TxButton';
 import { registry } from '@subsocial/react-api';
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Button$Sizes } from '@subsocial/react-components/Button/types';
 import { newLogger, notDef } from '@subsocial/utils';
-import { Loading } from './utils';
+import React, { useEffect, useState } from 'react';
+
+import { TX_BUTTON_SIZE } from '../../config/Size.config';
+import { isMyAddress, useMyAddress } from './MyAccountContext';
 import { useSubsocialApi } from './SubsocialApiContext';
-import { AccountId } from '@polkadot/types/interfaces';
+import TxButton from './TxButton';
+import { Loading } from './utils';
 
 const log = newLogger('FollowAccountButton')
 
 type FollowAccountButtonProps = {
-  address: string | AccountId,
+  address: string | AccountId
   size?: Button$Sizes
+  className?: string
 }
 
 function FollowAccountButton (props: FollowAccountButtonProps) {
-  const { address, size = TX_BUTTON_SIZE } = props;
+  const { address, size = TX_BUTTON_SIZE, className = '' } = props;
   const myAddress = useMyAddress()
   const accountId = new GenericAccountId(registry, address);
   const { substrate } = useSubsocialApi()
@@ -44,20 +47,23 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
     return [ accountId ];
   };
 
-  return notDef(isFollow) ? <Loading/> : <TxButton
-    className="DfFollowAccountButton"
-    size={size}
-    isBasic={isFollow}
-    label={isFollow
-      ? 'Unfollow'
-      : 'Follow'}
-    params={buildTxParams()}
-    tx={isFollow
-      ? `social.unfollowAccount`
-      : `social.followAccount`}
-    onSuccess={() => setIsFollow(!isFollow)}
-    withSpinner
-  />
+  return <span className={className}>{notDef(isFollow)
+    ? <Loading />
+    : <TxButton
+      className="DfFollowAccountButton"
+      size={size}
+      isBasic={isFollow}
+      label={isFollow
+        ? 'Unfollow'
+        : 'Follow'}
+      params={buildTxParams()}
+      tx={isFollow
+        ? `social.unfollowAccount`
+        : `social.followAccount`}
+      onSuccess={() => setIsFollow(!isFollow)}
+      withSpinner
+    />
+  }</span>
 }
 
 export default FollowAccountButton;

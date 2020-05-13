@@ -4,7 +4,7 @@ import { toShortAddress } from '@subsocial/react-components/util';
 import { AddressProps } from './utils/types';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
-import { accountUrl } from 'src/components/utils/urls';
+import ViewProfileLink from '../ViewProfileLink';
 
 type Props = AddressProps & {
   isShort?: boolean,
@@ -12,30 +12,27 @@ type Props = AddressProps & {
   className?: string
 };
 
-type GetNameOptions = AddressProps & {
-  isShort?: boolean
-}
+export const Name = ({
+  address,
+  owner = {} as ProfileData,
+  isShort = true,
+  asLink = true,
+  className
+}: Props) => {
 
-export const getProfileName = (options: GetNameOptions) => {
-  const { owner, isShort = true, address } = options;
-  return owner?.content?.fullname || owner?.profile?.username || (isShort ? toShortAddress(address) : address)
-}
+  const { content, profile } = owner
+  const fullname = content?.fullname
+  const username = profile?.username?.toString()
 
-export const Name: React.FunctionComponent<Props> = ({ isShort = true, asLink = true, address, owner = {} as ProfileData, className }) => {
-  const { profile } = owner;
-  const username = profile?.username;
-  const addressString = address.toString();
-
-  const name = getProfileName({ address, isShort, owner })
+  // TODO extract a function? (find similar copypasta in other files):
+  const addressString = isShort ? toShortAddress(address) : address.toString()
+  const name = fullname || username || addressString
+  const nameClass = `ui--AddressComponents-address ${className}`
 
   return asLink
-    ? <Link href='/profile/[address]' as={accountUrl({ address: addressString, username })}>
-      <a className={`ui--AddressComponents-address ${className}`}>
-        {name}
-      </a>
-    </Link>
+    ? <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
     : <>{name}</>
-};
+}
 
 export const NameWithOwner = withLoadedOwner(Name);
 

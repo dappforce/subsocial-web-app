@@ -25,11 +25,11 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 const log = newLogger('ShareModal')
 
 type Props = MyAccountProps & {
-  postId: BN,
-  open: boolean,
-  close: () => void,
+  postId: BN
   blogIds?: BN[]
-};
+  open: boolean
+  close: () => void
+}
 
 const Fields = {
   body: 'body'
@@ -38,7 +38,23 @@ const Fields = {
 const InnerShareModal = (props: Props) => {
   const { open, close, postId, blogIds } = props;
 
-  if (!blogIds) return <Loading />;
+  const renderModal = (children: React.ReactElement) =>
+    <Modal
+      onClose={close}
+      open={open}
+      size='small'
+      style={{ marginTop: '3rem' }}
+    >
+      {children}
+    </Modal>
+
+  if (!blogIds) {
+    return renderModal(
+      <div className='p-4 text-center'>
+        <Loading />
+      </div>
+    )
+  }
 
   const extension = new PostExtension({ SharedPost: postId as SharedPost });
 
@@ -57,10 +73,12 @@ const InnerShareModal = (props: Props) => {
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
+    // TODO show a failure message
     close()
   };
 
   const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
+    // TODO show a success message
     close()
   };
 
@@ -126,32 +144,25 @@ const InnerShareModal = (props: Props) => {
     setBlogId(new BN(value as string));
   };
 
-  return (
-    <Modal
-      onClose={close}
-      open={open}
-      size='small'
-      style={{ marginTop: '3rem' }}
-    >
-      <Modal.Header>
-        <span className='mr-3'>Share a post to your blog:</span>
-        <SelectBlogPreview
-          blogIds={blogIds}
-          onSelect={saveBlog}
-          imageSize={24}
-          defaultValue={blogIds[0].toString()}
-        />
-      </Modal.Header>
-      <Modal.Content scrolling className='DfShareModalPadding'>
-        {renderShareView()}
-      </Modal.Content>
-      <Modal.Actions>
-        <Button size='medium' onClick={close}>Cancel</Button>
-        {renderTxButton()}
-      </Modal.Actions>
-    </Modal>
-  );
-};
+  return renderModal(<>
+    <Modal.Header>
+      <span className='mr-3'>Share the post to your blog:</span>
+      <SelectBlogPreview
+        blogIds={blogIds}
+        onSelect={saveBlog}
+        imageSize={24}
+        defaultValue={blogIds[0].toString()}
+      />
+    </Modal.Header>
+    <Modal.Content scrolling className='DfShareModalPadding'>
+      {renderShareView()}
+    </Modal.Content>
+    <Modal.Actions>
+      <Button size='medium' onClick={close}>Cancel</Button>
+      {renderTxButton()}
+    </Modal.Actions>
+  </>)
+}
 
 export const ShareModal = withMulti(
   InnerShareModal,

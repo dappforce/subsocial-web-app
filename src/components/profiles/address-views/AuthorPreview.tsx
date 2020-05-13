@@ -8,9 +8,10 @@ import { toShortAddress } from '@subsocial/react-components/util';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useApi } from '@subsocial/react-hooks';
+import ViewProfileLink from '../ViewProfileLink';
+
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 
 export type InfoProps = {
@@ -43,11 +44,14 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     details
   } = props;
 
-  const username = owner.profile?.username;
   const avatar = owner.content?.avatar
   const fullname = owner.content?.fullname
+  const username = owner.profile?.username?.toString()
 
-  const queryId = username ? `@${username}` : address.toString()
+  // TODO extract a function? (find similar copypasta in other files):
+  const addressString = isShort ? toShortAddress(address) : address.toString()
+  const name = fullname || username || addressString
+  const nameClass = `ui--AddressComponents-address ${className}`
 
   return <div
     className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
@@ -61,19 +65,15 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
           content={<ProfilePreview address={address} owner={owner}/>}
         >
           <span>
-            <Link href={`/profile/${queryId}`}>
-              <a className={`ui--AddressComponents-address ${className}`}>
-                {fullname || username || (isShort ? toShortAddress(address) : address.toString())}
-              </a>
-            </Link>
+            <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
           </span>
         </Popover>
         <InfoDetails details={details}/>
       </div>
       {children}
     </div>
-  </div>;
-};
+  </div>
+}
 
 export const AuthorPreviewWithOwner = withLoadedOwner(AuthorPreview);
 

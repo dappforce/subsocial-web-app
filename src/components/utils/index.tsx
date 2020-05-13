@@ -1,16 +1,13 @@
 /* eslint-disable no-mixed-operators */
-import BN from 'bn.js';
+import BN from 'bn.js'
+import { Options as QueryOptions } from '@subsocial/react-api/hoc/types'
+import queryString from 'query-string'
+
+export const ZERO = new BN(0)
+export const ONE = new BN(1)
 
 // Substrate/Polkadot API utils
 // --------------------------------------
-import { Options as QueryOptions } from '@subsocial/react-api/hoc/types';
-
-// Parse URLs
-// --------------------------------------
-
-import queryString from 'query-string';
-
-export const ZERO = new BN(0);
 
 /** Example of apiQuery: 'query.councilElection.round' */
 export function queryToProp (
@@ -36,13 +33,19 @@ export function queryToProp (
 }
 
 export const socialQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
-  return queryToProp(`query.social.${storageItem}`, paramNameOrOpts);
-};
+  return queryToProp(`query.social.${storageItem}`, paramNameOrOpts)
+}
 
-export function getUrlParam (location: Location, paramName: string, deflt: string | undefined = undefined): string | undefined {
+// Parse URLs
+// --------------------------------------
+
+export function getUrlParam (location: Location, paramName: string, deflt?: string): string | undefined {
   const params = queryString.parse(location.search);
   return params[paramName] ? params[paramName] as string : deflt;
 }
+
+// Next.js utils
+// --------------------------------------
 
 export function isServerSide (): boolean {
   return typeof window === 'undefined'
@@ -52,4 +55,5 @@ export function isClientSide (): boolean {
   return !isServerSide()
 }
 
-export const isHomePage = (): boolean => isClientSide() && window.location.pathname === '/'
+export const isHomePage = (): boolean =>
+  isClientSide() && window.location.pathname === '/'

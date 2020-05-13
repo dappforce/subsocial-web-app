@@ -266,7 +266,7 @@
   }
 
   .DfBlogStats {
-    font-size: $font_tiny;
+    font-size: $font_tiny; /* TODO maybe delete */
 
     .DfStatItem {
       margin-right: $space_tiny;

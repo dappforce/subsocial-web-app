@@ -1,4 +1,4 @@
-import { Blog, Post } from '@subsocial/types/substrate/interfaces'
+import { Blog, Post, Comment, BlogId } from '@subsocial/types/substrate/interfaces'
 import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from './substrate'
 import { newLogger, nonEmptyStr, notDef, nonEmptyArr } from '@subsocial/utils'
 
@@ -34,7 +34,16 @@ function stringifySubUrls (...subUrls: string[]): string {
 // Blog URLs
 // --------------------------------------------------
 
-type HasBlogIdOrHandle = Pick<Blog, 'id' | 'handle'>
+export type HasBlogIdOrHandle = Pick<Blog, 'id' | 'handle'>
+
+/**
+ * WARN: It's not recommended to use this hack.
+ * You should pass both blog's id and handle in order to construct
+ * good looking URLs for blogs and posts that support a blog handle.
+ */
+export function newBlogUrlFixture (id: BlogId): HasBlogIdOrHandle {
+  return { id } as HasBlogIdOrHandle
+}
 
 export function blogIdForUrl ({ id, handle }: HasBlogIdOrHandle): string {
   if (notDef(id) && notDef(handle)) {
@@ -70,7 +79,7 @@ export function aboutBlogUrl (blog: HasBlogIdOrHandle): string {
 // Post URLs
 // --------------------------------------------------
 
-type HasPostId = Pick<Post, 'id'>
+export type HasPostId = Pick<Post, 'id'>
 
 /** /blogs/[blogId]/posts/new */
 export function newPostUrl (blog: HasBlogIdOrHandle): string {
@@ -96,7 +105,7 @@ export function editPostUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
 // Comment URLs
 // --------------------------------------------------
 
-type HasCommentId = Pick<Post, 'id'>
+export type HasCommentId = Pick<Comment, 'id'>
 
 /** /blogs/[blogId]/posts/[postId]/comments */
 export function postCommentsUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
@@ -117,7 +126,7 @@ export function commentUrl (blog: HasBlogIdOrHandle, post: HasPostId, comment: H
 // Account URLs
 // --------------------------------------------------
 
-type HasAddressOrUsername = {
+export type HasAddressOrUsername = {
   address: AnyAddress
   username?: AnyText
 }

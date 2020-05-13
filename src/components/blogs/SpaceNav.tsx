@@ -1,16 +1,20 @@
-import React from 'react'
-import Link from 'next/link'
-import { Menu, Icon } from 'antd'
-import FollowBlogButton from '../utils/FollowBlogButton'
-import { nonEmptyStr, nonEmptyArr } from '@subsocial/utils'
-import { DfBgImg } from '../utils/DfBgImg'
-import { SpaceContent } from '../spaces/SpacePreview'
-import BN from 'bn.js'
-import AccountId from '@polkadot/types/generic/AccountId'
-import { NavTab } from '@subsocial/types/offchain'
-import { IdentityIcon } from '@subsocial/react-components'
-import { isMyAddress } from '../utils/MyAccountContext'
-import { SummarizeMd } from '../utils/md'
+import { IdentityIcon } from '@polkadot/react-components';
+import AccountId from '@polkadot/types/generic/AccountId';
+import { NavTab } from '@subsocial/types/offchain';
+import { BlogId } from '@subsocial/types/substrate/interfaces';
+import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils';
+import { Icon, Menu } from 'antd';
+import BN from 'bn.js';
+import Link from 'next/link';
+import React from 'react';
+
+import { SpaceContent } from '../spaces/SpacePreview';
+import { DfBgImg } from '../utils/DfBgImg';
+import FollowBlogButton from '../utils/FollowBlogButton';
+import { SummarizeMd } from '../utils/md';
+import { isMyAddress } from '../utils/MyAccountContext';
+import { aboutBlogUrl, blogUrl, newBlogUrlFixture } from '../utils/urls';
+import AboutBlogLink from './AboutBlogLink';
 
 export interface SpaceNavProps {
   blogId: BN,
@@ -45,13 +49,20 @@ export const SpaceNav = (props: SpaceNavProps) => {
         const tags = nt.content.data as string[]
         return (
           <Menu.Item key={nt.id}>
+            {/* TODO replace with Next Link + URL builder */}
             <a href={`/search?tab=posts&blogId=${blogId}&tags=${tags.join(',')}`}>{nt.title}</a>
           </Menu.Item>
-        );
+        )
       }
       case 'url': {
         const url = nt.content.data as string
-        return <Menu.Item key={nt.id}><a href={url}>{nt.title}</a></Menu.Item>
+        return (
+          <Menu.Item key={nt.id}>
+            {/* TODO replace with Next Link + URL builder if it's Subsocial URL,
+            otherwise add 'outer' link icon  */}
+            <a href={url}>{nt.title}</a>
+          </Menu.Item>
+        )
       }
       default: {
         return undefined
@@ -72,42 +83,51 @@ export const SpaceNav = (props: SpaceNavProps) => {
       </Link>
     </div>
 
+  // TODO Fix this hack
+  const blog = newBlogUrlFixture(blogId as BlogId)
+
   return <div className="SpaceNav">
     <div className="SNhead">
       <div className="SNavatar">
-        {nonEmptyStr(image)
-          ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
-          : <IdentityIcon className='image' size={imageSize} value={creator} />
-        }
+        <Link href='/blogs/[blogId]' as={blogUrl(blog)}>
+          <a className='DfBlackLink'>
+            {nonEmptyStr(image)
+              ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
+              : <IdentityIcon className='image' size={imageSize} value={creator} />
+            }
+          </a>
+        </Link>
       </div>
 
-      <div className="SNheadTitle">{name}</div>
+      <div className="SNheadTitle">
+        <Link href='/blogs/[blogId]' as={blogUrl(blog)}>
+          <a className='DfBlackLink'>{name}</a>
+        </Link>
+      </div>
+
       <FollowBlogButton blogId={blogId} />
 
       {nonEmptyStr(desc) &&
         <div className="SNheadDescription">
-          <SummarizeMd md={desc} />
+          <SummarizeMd md={desc} more={
+            <AboutBlogLink blog={blog} title={'Learn More'} />
+          } />
         </div>
       }
     </div>
 
-    {nonEmptyArr(navTabs) &&
-      <Menu mode="inline" className="SNmenu">
-        {navTabs.map(renderMenuItem)}
-      </Menu>
-    }
+    <Menu mode="inline" className="SNmenu">
+      {nonEmptyArr(navTabs) &&
+        navTabs.map(renderMenuItem)
+      }
+      <Menu.Item>
+        <Link href='/blogs/[blogId]/about' as={aboutBlogUrl(blog)}>
+          <a>About</a>
+        </Link>
+      </Menu.Item>
+    </Menu>
 
     {renderEditMenuLink()}
-
-    {/*
-      spaces.teamMembers &&
-        <SpacePreview spaces={spaces.teamMembers} name="Team" iconType="user" />
-    */}
-
-    {/*
-      spaces.projects &&
-        <SpacePreview spaces={spaces.projects} name="Projects" iconType="file" />
-    */}
   </div>
 }
 
