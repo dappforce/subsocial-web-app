@@ -123,13 +123,13 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
   const { id, extension } = post;
   console.log(post)
 
-  const commentExt = extension.isComment
-    ? new CommentExt({ parent_id: new OptionId(id), root_post_id: extension.asComment.root_post_id })
+  const comment = (extension.isComment && extension.asComment) || (extension as any).Comment
+
+  const commentExt = comment
+    ? new CommentExt({ parent_id: new OptionId(id), root_post_id: comment.root_post_id })
     : new CommentExt({ parent_id: new OptionId(), root_post_id: id })
 
   const newExtension = new PostExtension({ Comment: commentExt })
-
-  console.log(commentExt)
 
   const newTxParams = (hash: IpfsHash) => [ new OptionId(), newExtension, hash ];
 

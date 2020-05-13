@@ -1640,6 +1640,11 @@ a.DfStatItem {
 
 .DfNewComment {
 
+  .ant-comment-inner {
+    padding-top: 0;
+    padding-bottom: $space_tiny;
+  }
+
   .ant-comment-avatar {
     display: none;
   }
@@ -1692,8 +1697,11 @@ a.DfStatItem {
   .ant-comment-nested {
     box-shadow: -1px 0 0 rgba(34,36,38,.15);
     margin-left: $space_huge;
-    padding: $space_normal;
-    padding-right: 0;
+    padding-left: $space_normal;
+
+    .DfCommentChild {
+      margin-top: $space_tiny
+    }
   }
 
   .DfActionButtonsBlock {
@@ -1706,7 +1714,7 @@ a.DfStatItem {
 }
 
 .DfCommentSection {
-  border-top: 1px solid #2d2d2d;
+  border-top: 1px solid $color_light_border;
   h3 {
     padding: $space_small 0;
   }

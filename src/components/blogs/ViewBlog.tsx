@@ -1,4 +1,4 @@
-import IdentityIcon from '@polkadot/react-components/IdentityIcon';
+import IdentityIcon from '@subsocial/react-components/IdentityIcon';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { BlogContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
@@ -193,6 +193,7 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
           postData={item.post}
           postExtData={item.ext}
           owner={item.owner}
+          blog={blog}
         />
       }
     />

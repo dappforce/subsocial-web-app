@@ -1,11 +1,10 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Comment, Menu, Dropdown, Icon } from 'antd';
-import { ProfileData } from '@subsocial/types/dto';
+import { ProfileData, ExtendedPostData } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
-import { AnyAccountId } from '@subsocial/types/substrate';
 import { DfMd } from '../utils/DfMd';
 import { CommentContent } from '@subsocial/types';
-import { Post, PostId } from '@subsocial/types/substrate/interfaces';
+import { Post, PostId, Blog } from '@subsocial/types/substrate/interfaces';
 import Voter from '../voting/Voter';
 import { useMyAddress } from '../utils/MyAccountContext';
 import Link from 'next/link';
@@ -13,16 +12,19 @@ import { pluralize, Pluralize } from '../utils/Plularize';
 import { formatUnixDate } from '../utils/utils';
 import moment from 'moment-timezone';
 import { EditComment, NewComment } from './NewComment';
-import { CommentsTree } from './CommentsTree'
+import { CommentsTree } from './CommentTree'
+import { postUrl } from '../utils/urls';
 
 type Props = {
+  blog: Blog,
   owner?: ProfileData,
-  address: AnyAccountId,
   struct: Post,
-  content?: CommentContent
+  content?: CommentContent,
+  replies?: ExtendedPostData[],
+  withShowReplies?: boolean
 }
 
-export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content }) => {
+export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, blog, replies, withShowReplies }) => {
   const myAddress = useMyAddress()
 
   const {
@@ -33,14 +35,15 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content }
     extension
   } = struct
 
-  console.log(extension);
+  console.log(extension, typeof direct_replies_count);
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
-  const [ showReplices, setShowReplices ] = useState(false);
+  const [ showReplices, setShowReplices ] = useState(withShowReplies);
   const [ newRelicesId, setNewReplicesId ] = useState<PostId>();
+  const [ repliesCount ] = useState(direct_replies_count.toString())
 
   const isMyStruct = myAddress === account.toString()
-
+  const commentLink = postUrl(blog, struct);
   const RenderDropDownMenu = () => {
 
     const showDropdown = isMyStruct || true;
@@ -65,18 +68,32 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content }
   };
 
   const ViewRepliecesLink = () => {
-    const replies = direct_replies_count
     const viewActionMessage = showReplices ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
-    return replies.eqn(0)
-      ? null
-      : <Link href={''}>
-        <a onClick={(event) => { event.preventDefault(); setShowReplices(!showReplices) }}>
-          {viewActionMessage}
-          {' '}
-          <Pluralize count={direct_replies_count} singularText='reply' pluralText='replies' />
-        </a>
-      </Link>
+    return <Link href={commentLink}>
+      <a onClick={(event) => { event.preventDefault(); setShowReplices(!showReplices) }}>
+        {viewActionMessage}
+        {' '}
+        <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
+      </a>
+    </Link>
   }
+
+  const isReplies = !(repliesCount === '0');
+  const isShowChild = showReplyForm || showReplices || isReplies;
+
+  const ChildPanel = isShowChild ? <div className="DfCommentChild">
+    {showReplyForm &&
+    <NewComment
+      post={struct}
+      callback={(id) => {
+        setShowReplyForm(false);
+        setNewReplicesId(id as PostId);
+      }}
+      withCancel
+    />}
+    {isReplies && <ViewRepliecesLink />}
+    {showReplices && <CommentsTree parentId={id} newCommentId={newRelicesId} replies={replies} blog={blog}/>}
+  </div> : null
 
   return <Comment
     className='DfNewComment'
@@ -95,7 +112,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content }
         size={32}
         details={
           <span>
-            <Link href={`/create-new-link`}>
+            <Link href={commentLink}>
               <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
             </Link>
             {' · '}
@@ -110,11 +127,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content }
       : <DfMd source={content?.body} />
     }
   >
-    <div className="DfCommentChild">
-      {showReplyForm && <NewComment post={struct} callback={(id) => { setShowReplyForm(false); setNewReplicesId(id as PostId) }} withCancel/>}
-      <ViewRepliecesLink />
-      {showReplices && <CommentsTree parentId={id} newCommentId={newRelicesId}/>}
-    </div>
+    {ChildPanel}
   </Comment>
 };
 

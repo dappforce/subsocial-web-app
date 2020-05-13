@@ -1,4 +1,4 @@
-import { IdentityIcon } from '@polkadot/react-components';
+import { IdentityIcon } from '@subsocial/react-components';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { NavTab } from '@subsocial/types/offchain';
 import { BlogId } from '@subsocial/types/substrate/interfaces';
