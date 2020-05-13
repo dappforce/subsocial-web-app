@@ -261,7 +261,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             size='medium'
             label={'Update Navigation'}
             isDisabled={!isValid || isSubmitting}
-            params={buildTxParams as any}
+            params={buildTxParams}
             tx={'social.updateBlog'}
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}

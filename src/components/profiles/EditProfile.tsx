@@ -238,7 +238,7 @@ const InnerForm = (props: FormProps) => {
               : 'Create my profile'
             }
             isDisabled={!dirty || isSubmitting}
-            params={buildTxParams as any}
+            params={buildTxParams}
             tx={profile
               ? 'social.updateProfile'
               : 'social.createProfile'

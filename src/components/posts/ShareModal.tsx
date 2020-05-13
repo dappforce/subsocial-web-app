@@ -87,7 +87,7 @@ const InnerShareModal = (props: Props) => {
     <TxButton
       label={`Create a post`}
       isDisabled={isSubmitting}
-      params={buildTxParams as any}
+      params={buildTxParams}
       tx={'social.createPost'}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}

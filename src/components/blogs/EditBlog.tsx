@@ -150,7 +150,7 @@ const InnerForm = (props: FormProps) => {
               : 'Create new blog'
             }
             isDisabled={!dirty || isSubmitting}
-            params={buildTxParams as any}
+            params={buildTxParams}
             tx={struct
               ? 'social.updateBlog'
               : 'social.createBlog'

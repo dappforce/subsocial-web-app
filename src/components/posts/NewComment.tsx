@@ -85,7 +85,7 @@ export const InnerEditComment = (props: Props) => {
     <TxButton
       label={label}
       isDisabled={isSubmitting || !dirty}
-      params={buildTxParams as any}
+      params={buildTxParams}
       tx={extrinsic}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
