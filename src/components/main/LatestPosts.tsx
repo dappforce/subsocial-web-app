@@ -26,6 +26,7 @@ export const LatestPosts = (props: Props) => {
         postData={item.post}
         postExtData={item.ext}
         owner={item.owner}
+        blog={{} as any}
       />
     }
   />

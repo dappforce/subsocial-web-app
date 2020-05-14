@@ -30,7 +30,6 @@ export const MyFeed = () => {
   const getNextPage = async (actualOffset: number = offset) => {
     const isFirstPage = actualOffset === 0;
     const data = await getNewsFeed(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
-    console.log('Data', actualOffset, data);
     if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
     setItems(isFirstPage ? data : items.concat(data));
     setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);

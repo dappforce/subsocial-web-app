@@ -266,7 +266,6 @@ const EditForm = withFormik<OuterProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
     const { owner } = props;
-    console.log(owner)
     const content = owner?.content
     const profile = owner?.profile
     if (profile && content) {

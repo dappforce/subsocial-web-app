@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { PostId, Post, Blog } from '@subsocial/types/substrate/interfaces'
+import React, { useState, useEffect } from 'react'
+import { Post, Blog } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './NewComment';
 import Section from '../utils/Section';
@@ -11,6 +11,7 @@ import { getProfileName } from '../utils/utils';
 import { Pluralize } from '../utils/Plularize';
 import ViewPostLink from './ViewPostLink';
 import { CommentsTree } from './CommentTree';
+import { useSubstrateApi } from '../utils/SubsocialApiContext';
 
 type CommentSectionProps = {
   blog: Blog,
@@ -20,13 +21,35 @@ type CommentSectionProps = {
 }
 
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, blog, replies = [] }) => {
-  const { total_replies_count } = post;
-  const [ newCommentId, setCommentId ] = useState<PostId>()
+  const { total_replies_count, id } = post;
+  const [ totalCount, setCount ] = useState(total_replies_count.toString())
+  const [ newCommentId, setCommentId ] = useState(new Date().toString())
+  const substrate = useSubstrateApi();
+
+  useEffect(() => {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>newCommentId', newCommentId)
+    if (!newCommentId) return;
+
+    substrate.findPost(id).then((post) => {
+      if (post) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> I am here')
+        setCount(post.total_replies_count.toString())
+      }
+    })
+
+  }, [ false ])
 
   return <Section id={hashId} className='DfCommentSection'>
-    <h3><Pluralize count={total_replies_count.toString()} singularText='comment' /></h3>
-    <NewComment post={post} callback={(id) => setCommentId(id as PostId)}/>
-    <CommentsTree parentId={post.id} blog={blog} replies={replies} newCommentId={newCommentId}/>
+    <h3><Pluralize count={totalCount} singularText='comment' /></h3>
+    <NewComment
+      post={post}
+      callback={(id) => {
+        console.log('I am in callback', id);
+        setCommentId(id?.toString() || '')
+        console.log('I am after useState')
+      }}
+    />
+    <CommentsTree parentId={post.id} blog={blog} replies={replies} newCommentId={newCommentId as any}/>
   </Section>
 })
 

@@ -28,9 +28,9 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../utils/md/SummarizeMd';
 import ViewPostLink from './ViewPostLink';
-import { HasBlogIdOrHandle, HasPostId } from '../utils/urls';
+import { HasBlogIdOrHandle, HasPostId, postUrl } from '../utils/urls';
 import SharePostAction from './SharePostAction';
-import { CommentSection, CommentPage } from './CommentsSection';
+import { CommentSection } from './CommentsSection';
 import { return404 } from '../utils/next';
 import partition from 'lodash.partition'
 
@@ -97,11 +97,9 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     id,
     blog_id,
     created,
-    ipfs_hash,
-    extension
+    ipfs_hash
   } = post;
 
-  console.log(extension);
   const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
   const isRegularPost = type === 'regular';
   const [ content, setContent ] = useState(initialContent || {} as PostExtContent);
@@ -183,7 +181,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         size={size}
         details={<div>
           {withBlogName && <><div className='DfGreyLink'><ViewBlog id={unwrapSubstrateId(blog_id)} nameOnly /></div>{' • '}</>}
-          <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
+          <Link href={postUrl(blog, post)}>
             <a className='DfGreyLink'>
               {formatUnixDate(time)}
             </a>
@@ -289,11 +287,19 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { title, body, image, canonical, tags } = content;
     const goToCommentsId = 'comments'
 
+    const renderResponseTitle = (parentPost: PostData) => <>
+      In response to{' '}
+      <ViewPostLink blog={blog} post={parentPost.struct} title={parentPost.content?.title} />
+    </>
+    const titleMsg = parentPost
+      ? renderResponseTitle(parentPost)
+      : title
+
     return <>
       <Section className='DfContentPage DfEntirePost'>
         <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
-          <h1 className='DfPostName'>{title}</h1>
+          {<h1 className='DfPostName'>{titleMsg}</h1>}
           <RenderDropDownMenu account={created.account}/>
         </div>
         <div className='DfRow'>
@@ -314,17 +320,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <CommentSection post={post} hashId={goToCommentsId} replies={replies} blog={blog} />
     </>
   };
-
-  console.log('Extension comment:', extension.isComment, parentPost)
-  if (parentPost) {
-    console.log(replies, postData)
-    return <CommentPage
-      blog={blog}
-      parentPost={parentPost}
-      comment={{ post: postData, owner: owner }}
-      replies={replies || []}
-    />
-  }
 
   switch (variant) {
     case 'name only': {

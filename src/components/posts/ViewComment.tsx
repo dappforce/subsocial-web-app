@@ -31,16 +31,14 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     id,
     created: { account, time },
     score,
-    direct_replies_count,
-    extension
+    direct_replies_count
   } = struct
 
-  console.log(extension, typeof direct_replies_count);
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplices, setShowReplices ] = useState(withShowReplies);
   const [ newRelicesId, setNewReplicesId ] = useState<PostId>();
-  const [ repliesCount ] = useState(direct_replies_count.toString())
+  const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
 
   const isMyStruct = myAddress === account.toString()
   const commentLink = postUrl(blog, struct);
@@ -78,7 +76,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     </Link>
   }
 
-  const isReplies = !(repliesCount === '0');
+  const isReplies = repliesCount !== '0';
   const isShowChild = showReplyForm || showReplices || isReplies;
 
   const ChildPanel = isShowChild ? <div className="DfCommentChild">
@@ -88,6 +86,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
       callback={(id) => {
         setShowReplyForm(false);
         setNewReplicesId(id as PostId);
+        setCount(repliesCount + 1)
       }}
       withCancel
     />}

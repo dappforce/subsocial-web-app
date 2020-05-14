@@ -189,7 +189,7 @@ body,
 }
 
 .DfPostName {
-  margin-bottom: $space_normal;
+  margin-bottom: $space_normal !important;
   margin-right: $space_normal;
   color: $color_font_normal;
   font-size: 2.5rem;

@@ -100,7 +100,6 @@ export const Voter = (props: VoterProps) => {
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
       const typeIcon = isUpvote ? 'up' : 'down';
-      console.log('I am TxButton')
       return (<TxButton
         icon={`thumbs ${typeIcon} outline`}
         className={`${color} ${isActive}`}

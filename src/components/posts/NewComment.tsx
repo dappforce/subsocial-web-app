@@ -53,7 +53,6 @@ export const InnerEditComment = (props: Props) => {
 
   const body = watch(Fields.body, content?.body || '');
 
-  console.log('Body wather:', body);
   const { isSubmitting, dirty } = formState;
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
@@ -63,6 +62,7 @@ export const InnerEditComment = (props: Props) => {
 
   const onTxSuccess: TxCallback = (txResult: SubmittableResult) => {
     const id = getNewIdFromEvent(txResult);
+    console.log('New comment id from event:', id)
     callback && callback(id)
   };
 
@@ -108,7 +108,7 @@ export const InnerEditComment = (props: Props) => {
     </form>
     <div className='DfActionButtonsBlock'>
       {renderTxButton()}
-      {withCancel && <Button type='default' onClick={cancelCallback}>Cancel</Button>}
+      {withCancel && <Button type='link' onClick={cancelCallback} className="DfGreyLink">Cancel</Button>}
     </div>
   </div>
 };
@@ -121,7 +121,6 @@ type NewCommentProps = {
 
 export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel }) => {
   const { id, extension } = post;
-  console.log(post)
 
   const comment = (extension.isComment && extension.asComment) || (extension as any).Comment
 
