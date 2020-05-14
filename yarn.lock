@@ -3475,10 +3475,10 @@
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
 
-"@subsocial/apps-config@^0.41.16":
-  version "0.41.16"
-  resolved "https://registry.yarnpkg.com/@subsocial/apps-config/-/apps-config-0.41.16.tgz#b91186beac1d9ed158a759bd03d731b0e99821ff"
-  integrity sha512-/ob4tTOtTikKWK3SbhBaSt65WZdaoy9chVSFlF4usx5lVIUfBB7N5w0Af6WtGxkbrIlWFwcVojlZGWnXRvg3tw==
+"@subsocial/apps-config@^0.41.18":
+  version "0.41.18"
+  resolved "https://registry.yarnpkg.com/@subsocial/apps-config/-/apps-config-0.41.18.tgz#c73b1a191a5edca84e49f5040fe128c95d56d658"
+  integrity sha512-BvcKQpPA3pG+Voz0CKkvekSucnCI55L/4AK/QQNG757TsGXpoNXg+JW4hPB4pK+8XZ2W56raxmRVgsffEpo03Q==
   dependencies:
     "@babel/runtime" "^7.9.2"
     edgeware-node-types "^2.0.1"
@@ -3490,28 +3490,28 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/react-api@^0.41.16":
-  version "0.41.16"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-api/-/react-api-0.41.16.tgz#bf81696edd07ab85d02630b5604bb89f97e8b00c"
-  integrity sha512-UPfMY0MMZSoPNmW+p7gH3hFoG7GYsXDAlS1SKbtTI7Gxud3lgRjbDGoHLfd7IjkY94T2izuNy6jfD400VmUg4g==
+"@subsocial/react-api@^0.41.18":
+  version "0.41.18"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-api/-/react-api-0.41.18.tgz#0d1751f9673c3d7fcc61065cbe2c2bf72c9ebd2f"
+  integrity sha512-kCFsPpcJaX+45kTorwzy6umzrkWJGRuWIzVKCO2bPXhkCGs08rS4/EV2P6F1K6UyZBklwRihprJdbv+94ML5xg==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@polkadot/api" "^1.11.0-beta.32"
     "@polkadot/extension-dapp" "^0.24.0-beta.17"
     rxjs-compat "^6.5.5"
 
-"@subsocial/react-components@^0.41.16":
-  version "0.41.16"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-components/-/react-components-0.41.16.tgz#aa47030a151c3296854141d390ae2dc3f7ac1226"
-  integrity sha512-7sc5tFhJCqcMYbblzqQN1puI59FTn7H2FDZq6wZUEdTjPxeeode4dbEXxuzEb5HJncfD88MjPZvlBYvmzwe7Ag==
+"@subsocial/react-components@^0.41.18":
+  version "0.41.18"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-components/-/react-components-0.41.18.tgz#398d66ed0b1f37974d04f1636080dba35b36b3ac"
+  integrity sha512-Oxo6PBVu/7J10alT9glmStghF9hy3kSVUmhk728tQ0KgCp0LyrEy6Hlesr6zyzyd50yuCSMx74IdsWyEi62F/g==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@polkadot/keyring" "^2.8.1"
     "@polkadot/react-identicon" "^0.52.1"
     "@polkadot/ui-keyring" "^0.52.1"
     "@polkadot/ui-settings" "^0.52.1"
-    "@subsocial/react-api" "^0.41.16"
-    "@subsocial/react-query" "^0.41.16"
+    "@subsocial/react-api" "^0.41.18"
+    "@subsocial/react-query" "^0.41.18"
     chart.js "^2.9.3"
     codeflask "^1.4.1"
     i18next "^19.4.2"
@@ -3534,37 +3534,37 @@
     store "^2.0.12"
     styled-theming "^2.2.0"
 
-"@subsocial/react-hooks@^0.41.16":
-  version "0.41.16"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-hooks/-/react-hooks-0.41.16.tgz#2331f10702b9086e5c785eb1417746d0beecec21"
-  integrity sha512-q8kyj6TbZgsv0qObIsxKti48I5Kod6n7y4Quy/OXI3OOzqVhhSMcUe8r+rJ62t9+0Xf0Bdmx6RPG1hgpw5uNag==
+"@subsocial/react-hooks@^0.41.18":
+  version "0.41.18"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-hooks/-/react-hooks-0.41.18.tgz#0cbc74870b6e09f0e79b4b0d0edbc2c7f78ef277"
+  integrity sha512-AXLFi5GnOZfwGzTu0oGg1qSccV7pQn8ijXaCBBMTsEEjErIghlqgT7YRVfkJdtorbW45XRTneqBL2ogohbYXeQ==
   dependencies:
     "@babel/runtime" "^7.9.2"
     memoizee "^0.4.14"
 
-"@subsocial/react-params@^0.41.16":
-  version "0.41.16"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-params/-/react-params-0.41.16.tgz#9abfeb2fd7cd5410e2589c37637de39b4bbfdb49"
-  integrity sha512-lMKZ35HGTiBynFSkez7hQFUjp3x4WhtIEYHJS2uM1fnD3WbSEJJxYwqjFEUyYwjES+BzbJzAg83zPM72AEnJnQ==
+"@subsocial/react-params@^0.41.18":
+  version "0.41.18"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-params/-/react-params-0.41.18.tgz#237be09aed9d3731d8e42c7b468aa707b5cf59e0"
+  integrity sha512-zYaLpE0GXG2Tgp0z+LVXOOZDnS+ys08gR1zapHfoyO7llVT1f1j69QEe27DlnjiKM+35d6F/27fBtdKYuIOlag==
   dependencies:
     "@babel/runtime" "^7.9.2"
-    "@subsocial/react-components" "^0.41.16"
+    "@subsocial/react-components" "^0.41.18"
 
-"@subsocial/react-query@^0.41.16":
-  version "0.41.16"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-query/-/react-query-0.41.16.tgz#7a1e35174f8f2d8f01c25ed8a7cb9f2fa6db74f6"
-  integrity sha512-dE/+zmI6CzoqmmeBCVQkiyEtM7ddvQ+2r4NzQbl2wrqd4mgnjuT4P3L4JN0ReUABMgnHI4s7VT5OlxS9XKyV2g==
+"@subsocial/react-query@^0.41.18":
+  version "0.41.18"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-query/-/react-query-0.41.18.tgz#da97173e6cb08c24b3a1b648625766c97b358d1e"
+  integrity sha512-ezILcvx4WIyMufUDXtdTr8uZt0J9nuotV0Ert+gyxEOR4gPpCwDQWL9qJtqkmc2khrOf64qyxRBkVPzRz9xmfg==
   dependencies:
     "@babel/runtime" "^7.9.2"
 
-"@subsocial/react-signer@^0.41.16":
-  version "0.41.16"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-signer/-/react-signer-0.41.16.tgz#0bf5b94da07e5e3c89f1903fa8ffa3b3effa35bc"
-  integrity sha512-RTrSFOguv+ws6sMnn1yV3MTAmP8rA6CvWT0RfacGBnH9t0e+UjSRtVWMK5uU3UE+WoOXBetOw1fck7+3jyS73A==
+"@subsocial/react-signer@^0.41.18":
+  version "0.41.18"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-signer/-/react-signer-0.41.18.tgz#7e12ecb0d069fc880933f9200392c992e8d8365d"
+  integrity sha512-k5gde4aEEnYS+ZGtf+s4TPMSHuHPdvBRLKehYvFWfgbcYftn9vvxg2sE8SswSwELWZeplwIUc9FhtkZhDDjvlg==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@polkadot/react-qr" "^0.52.1"
-    "@subsocial/react-components" "^0.41.16"
+    "@subsocial/react-components" "^0.41.18"
 
 "@subsocial/types@^0.2.1":
   version "0.2.1"
@@ -3576,22 +3576,6 @@
     cids "^0.7.1"
 
 "@subsocial/utils@0.1.23", "@subsocial/utils@^0.1.23":
-  version "0.1.23"
-  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.23.tgz#f06fbc93e85875ac8ca6f70a07ff5c30a39633e5"
-  integrity sha512-UUi3e0CF+VMD6wXYM2GjjMANcL6X0kXkQyArYbzAxvJwOOfyowth42Z4ZE2hGXi2fbMbHz33Ml0KOWvAexQZ4A==
-  dependencies:
-    "@babel/runtime" "^7.8.4"
-    "@types/circular-json" "^0.4.0"
-    "@types/lodash.truncate" "^4.4.6"
-    "@types/winston" "^2.4.4"
-    bn.js "^5.1.1"
-    chalk "^3.0.0"
-    circular-json "^0.5.9"
-    dotenv "^8.0.0"
-    lodash.truncate "^4.4.2"
-    winston "^3.2.0"
-
-"@subsocial/utils@^0.1.23":
   version "0.1.23"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.23.tgz#f06fbc93e85875ac8ca6f70a07ff5c30a39633e5"
   integrity sha512-UUi3e0CF+VMD6wXYM2GjjMANcL6X0kXkQyArYbzAxvJwOOfyowth42Z4ZE2hGXi2fbMbHz33Ml0KOWvAexQZ4A==
@@ -7288,7 +7272,7 @@ create-emotion@^9.2.12:
     stylis "^3.5.0"
     stylis-rule-sheet "^0.0.10"
 
-create-hash@^1.1.0, create-hash@^1.1.2:
+create-hash@^1.1.0, create-hash@^1.1.2, create-hash@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/create-hash/-/create-hash-1.2.0.tgz#889078af11a63756bcfb59bd221996be3a9ef196"
   integrity sha512-z00bCGNHDG8mHAkP7CtT1qVu+bFQUPjYq/4Iv3C3kWjTFV10zIjfSoeqXo9Asws8gwSHDGj/hl2u4OGIjapeCg==
