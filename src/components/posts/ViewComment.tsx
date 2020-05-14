@@ -15,6 +15,7 @@ import { EditComment, NewComment } from './NewComment';
 import { CommentsTree } from './CommentTree'
 import { postUrl } from '../utils/urls';
 import { useSubstrateApi } from '../utils/SubsocialApiContext';
+import SharePostAction from './SharePostAction';
 
 type Props = {
   blog: Blog,
@@ -110,7 +111,8 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     actions={!showReplyForm
       ? [
         <Voter key={`voters-of-comments-${id}`} struct={struct} />,
-        <span key={`reply-comment-${id}`} style={{ marginLeft: '.5rem' }} onClick={() => setShowReplyForm(true)} >Reply</span>
+        <SharePostAction postId={id} className='DfShareAction' withIcon={false} />,
+        <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)} >Reply</span>
       ]
       : []}
     author={<div className='DfAuthorBlock'>

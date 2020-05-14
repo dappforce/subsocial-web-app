@@ -6,13 +6,15 @@ import { ShareModal } from './ShareModal'
 type Props = {
   postId?: PostId
   title?: React.ReactNode
-  className?: string
+  className?: string,
+  withIcon?: boolean
 }
 
 export const SharePostAction = ({
   postId,
   title = 'Share',
-  className = ''
+  className = '',
+  withIcon = true
 }: Props) => {
 
   const [ open, setOpen ] = useState(false)
@@ -20,7 +22,8 @@ export const SharePostAction = ({
 
   return (
     <span className={className} onClick={() => setOpen(true)}>
-      <Icon type='share-alt' />{' '}{title}
+      {withIcon && <><Icon type='share-alt' /> {' '}</>}
+      {title}
       {open && <ShareModal postId={postId} open={open} close={close} />}
     </span>
   )

@@ -151,7 +151,7 @@ const InnerShareModal = (props: Props) => {
         blogIds={blogIds}
         onSelect={saveBlog}
         imageSize={24}
-        defaultValue={blogIds[0].toString()}
+        defaultValue={blogId?.toString()}
       />
     </Modal.Header>
     <Modal.Content scrolling className='DfShareModalPadding'>

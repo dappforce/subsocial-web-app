@@ -1692,6 +1692,10 @@ a.DfStatItem {
 
   .ant-comment-actions {
     margin: $space_tiny 0;
+
+    span {
+      margin-left: $space_tiny;
+    }
   }
 
   .ant-comment-nested {
