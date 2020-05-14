@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Comment, Menu, Dropdown, Icon } from 'antd';
 import { ProfileData, ExtendedPostData } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { DfMd } from '../utils/DfMd';
 import { CommentContent } from '@subsocial/types';
-import { Post, PostId, Blog } from '@subsocial/types/substrate/interfaces';
+import { Post, Blog } from '@subsocial/types/substrate/interfaces';
 import Voter from '../voting/Voter';
 import { useMyAddress } from '../utils/MyAccountContext';
 import Link from 'next/link';
@@ -14,6 +14,7 @@ import moment from 'moment-timezone';
 import { EditComment, NewComment } from './NewComment';
 import { CommentsTree } from './CommentTree'
 import { postUrl } from '../utils/urls';
+import { useSubstrateApi } from '../utils/SubsocialApiContext';
 
 type Props = {
   blog: Blog,
@@ -37,11 +38,23 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplices, setShowReplices ] = useState(withShowReplies);
-  const [ newRelicesId, setNewReplicesId ] = useState<PostId>();
   const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
+  const substrate = useSubstrateApi()
 
   const isMyStruct = myAddress === account.toString()
   const commentLink = postUrl(blog, struct);
+
+  useEffect(() => {
+
+    substrate.findPost(id).then((post) => {
+      if (post) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> I am here')
+        setCount(post.direct_replies_count.toString())
+      }
+    })
+
+  }, [ false ])
+
   const RenderDropDownMenu = () => {
 
     const showDropdown = isMyStruct || true;
@@ -83,15 +96,13 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     {showReplyForm &&
     <NewComment
       post={struct}
-      callback={(id) => {
+      callback={() => {
         setShowReplyForm(false);
-        setNewReplicesId(id as PostId);
-        setCount(repliesCount + 1)
       }}
       withCancel
     />}
     {isReplies && <ViewRepliecesLink />}
-    {showReplices && <CommentsTree parentId={id} newCommentId={newRelicesId} replies={replies} blog={blog}/>}
+    {showReplices && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
   </div> : null
 
   return <Comment

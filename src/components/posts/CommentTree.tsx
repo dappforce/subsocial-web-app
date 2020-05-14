@@ -23,6 +23,7 @@ type CommentsTreeProps = {
 const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, blog }) => {
   return nonEmptyArr(comments) ? <ListData
     dataSource={comments}
+    paginationOff
     renderItem={(item) => {
       const { post: { struct, content }, owner } = item;
 
@@ -33,7 +34,7 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
 
 export const withLoadedComments = (Component: React.ComponentType<CommentsTreeProps>) => {
   return (props: LoadProps) => {
-    const { parentId, newCommentId, blog, replies = [] } = props;
+    const { parentId, blog, replies = [] } = props;
 
     const [ replyComments, setComments ] = useState<ExtendedPostData[]>(replies);
     const [ isCommentReplies, setIsCommentReplies ] = useState(replyComments.length > 0)
@@ -42,7 +43,6 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
     console.log('Reload comments', isCommentReplies, replyComments)
 
     useEffect(() => {
-      if (isCommentReplies) return;
       console.log('Load comment')
       const loadComments = async () => {
         const replyIds = await substrate.getReplyIdsByPostId(parentId);
@@ -54,18 +54,6 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
 
       loadComments().catch(err => log.error('Failed load comments: %o', err))
     }, [ false ]);
-
-    useEffect(() => {
-      if (!newCommentId) return;
-
-      const loadComment = async () => {
-        const comment = await subsocial.findPostsWithDetails([ newCommentId ]);
-        setComments([ ...replyComments, ...comment ]);
-        setIsCommentReplies(true);
-      }
-
-      loadComment().catch(err => log.error('Failed load new comment: %o', err))
-    }, [ newCommentId ])
 
     return isCommentReplies ? <Component blog={blog} comments={replyComments} /> : null;
   }
