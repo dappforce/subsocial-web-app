@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DfBgImg } from '../utils/DfBgImg';
 import { nonEmptyStr } from '@subsocial/utils';
 import Avatar from '../profiles/address-views/Avatar'
-import { ProfileData, PostData, CommentData, BlogData, AnySubsocialData, CommonStruct, Activity } from '@subsocial/types';
+import { ProfileData, PostData, BlogData, AnySubsocialData, CommonStruct, Activity } from '@subsocial/types';
 import Name from '../profiles/address-views/Name';
 import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
@@ -29,7 +29,6 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     const [ loaded, setLoaded ] = useState(false)
     const [ blogByBlogIdMap, setBlogByBlogIdMap ] = useState(new Map<string, BlogData>())
     const [ postByPostIdMap, setPostByPostIdMap ] = useState(new Map<string, PostData>())
-    const [ commentByCommentIdMap, setCommentByCommentIdMap ] = useState(new Map<string, CommentData>())
     const [ ownerDataByOwnerIdMap, setOwnerDataByOwnerIdMap ] = useState(new Map<string, ProfileData>())
 
     useEffect(() => {
@@ -38,20 +37,18 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
       const ownerIds: string[] = []
       const blogIds: BN[] = []
       const postIds: BN[] = []
-      const commentIds: BN[] = []
 
       activities.forEach(({ account, blog_id, post_id, comment_id }) => {
         nonEmptyStr(account) && ownerIds.push(account)
         nonEmptyStr(blog_id) && blogIds.push(hexToBn(blog_id))
         nonEmptyStr(post_id) && postIds.push(hexToBn(post_id))
-        nonEmptyStr(comment_id) && commentIds.push(hexToBn(comment_id))
+        nonEmptyStr(comment_id) && postIds.push(hexToBn(comment_id))
       })
 
       const loadData = async () => {
         const ownersData = await subsocial.findProfiles(ownerIds);
         const blogsData = await subsocial.findBlogs(blogIds)
         const postsData = await subsocial.findPosts(postIds)
-        const commentsData = await subsocial.findComments(commentIds)
 
         function createMap<T extends AnySubsocialData> (data: T[], owners: boolean = false) {
           const dataByIdMap = new Map<string, T>()
@@ -66,7 +63,6 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
         setOwnerDataByOwnerIdMap(createMap<ProfileData>(ownersData, true))
         setBlogByBlogIdMap(createMap<BlogData>(blogsData))
         setPostByPostIdMap(createMap<PostData>(postsData))
-        setCommentByCommentIdMap(createMap<CommentData>(commentsData))
         setLoaded(true);
       }
 
@@ -77,7 +73,6 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     const activityStore: ActivityStore = {
       blogByBlogIdMap,
       postByPostIdMap,
-      commentByCommentIdMap,
       ownerDataByOwnerIdMap
     }
 

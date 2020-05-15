@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment-timezone';
 import ViewBlogPage from '../blogs/ViewBlog';
 import { Pluralize } from '../utils/Plularize';
-import { ProfileData, BlogData, PostData, CommentData, Activity } from '@subsocial/types';
+import { ProfileData, BlogData, PostData, Activity } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
@@ -36,7 +36,6 @@ export type NotificationType = {
 export type ActivityStore = {
   blogByBlogIdMap: Map<string, BlogData>,
   postByPostIdMap: Map<string, PostData>,
-  commentByCommentIdMap: Map<string, CommentData>,
   ownerDataByOwnerIdMap: Map<string, ProfileData>
 }
 
@@ -61,38 +60,39 @@ const getPostPreview = (postId: BN, map: Map<string, PostData>): PreviewNotifica
   return { preview, image }
 }
 
-const getCommentPreview = (commentId: BN, commentMap: Map<string, CommentData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
-  const comment = commentMap.get(commentId.toString());
+const getCommentPreview = (commentId: BN, postMap: Map<string, PostData>): PreviewNotification | undefined => {
+  const comment = postMap.get(commentId.toString());
   const commentStruct = comment?.struct;
-  if (commentStruct) {
-    const postId = commentStruct.post_id
+  const isCommentExt = commentStruct?.extension.isComment
+  if (commentStruct && isCommentExt) {
+    const { parent_id, root_post_id } = commentStruct.extension.asComment
 
-    if (commentStruct.parent_id.isSome) {
+    if (parent_id.isSome) {
       const msg = eventsMsg.CommentReactionCreated
       // const commentBody = comment?.content?.body || '';
       // const commentTitle = summarize(commentBody, 40)
       // const commentPreview = renderSubjectPreview(commentTitle, `/comment?postId=${commentStruct.post_id}&commentId=${commentStruct.id}`)
       // const { preview: postPreview, image } = getPostPreview(postId, postMap);
       // const preview = <>{commentPreview} in {postPreview}</>
-      return { ...getPostPreview(postId, postMap), msg }
+      return { ...getPostPreview(root_post_id, postMap), msg }
     }
-  
-    return getPostPreview(postId, postMap);
+
+    return getPostPreview(root_post_id, postMap);
   }
   return undefined;
 }
 
 const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
   const { event, blog_id, post_id, comment_id } = activity;
-  const { blogByBlogIdMap, postByPostIdMap, commentByCommentIdMap } = store;
+  const { blogByBlogIdMap, postByPostIdMap } = store;
 
   switch (event) {
     case 'BlogFollowed': return getBlogPreview(hexToBn(blog_id), blogByBlogIdMap)
     case 'BlogCreated': return getBlogPreview(hexToBn(blog_id), blogByBlogIdMap)
-    case 'CommentCreated': return getCommentPreview(hexToBn(comment_id), commentByCommentIdMap, postByPostIdMap)
+    case 'PostCreated': return getCommentPreview(hexToBn(comment_id), postByPostIdMap)
     case 'PostShared': return getPostPreview(hexToBn(post_id), postByPostIdMap)
     case 'PostReactionCreated': return getPostPreview(hexToBn(post_id), postByPostIdMap)
-    case 'CommentReactionCreated': return getCommentPreview(hexToBn(comment_id), commentByCommentIdMap, postByPostIdMap)
+    case 'CommentReactionCreated': return getCommentPreview(hexToBn(comment_id), postByPostIdMap)
   }
 
   return undefined

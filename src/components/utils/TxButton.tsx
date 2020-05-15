@@ -10,7 +10,7 @@ import { isClientSide } from '.';
 import { useMyAccount } from './MyAccountContext';
 import { newLogger } from '@subsocial/utils';
 import { useApi } from '@subsocial/react-hooks';
-import TxButton, { TxButtonProps } from '@subsocial/react-components/TxButton';
+import TxButton from '@subsocial/react-components/TxButton';
 
 const log = newLogger('TxButton')
 
@@ -39,7 +39,7 @@ function MockTxButton (props: any) {
   )
 }
 
-function ResolvedButton (props: TxButtonProps) {
+function ResolvedButton (props: any) {
   const { isStorybook = false } = useStorybookContext()
   const { isApiReady } = useApi()
   const { state: { address } } = useMyAccount();
