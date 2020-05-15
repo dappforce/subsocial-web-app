@@ -40,13 +40,9 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
     const [ isCommentReplies, setIsCommentReplies ] = useState(replyComments.length > 0)
     const { subsocial, substrate } = useSubsocialApi();
 
-    console.log('Reload comments', isCommentReplies, replyComments)
-
     useEffect(() => {
-      console.log('Load comment')
       const loadComments = async () => {
         const replyIds = await substrate.getReplyIdsByPostId(parentId);
-        console.log(replyIds)
         const comments = await subsocial.findPostsWithDetails(replyIds);
         setComments(comments)
         setIsCommentReplies(true);

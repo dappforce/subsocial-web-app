@@ -62,7 +62,6 @@ export const InnerEditComment = (props: Props) => {
 
   const onTxSuccess: TxCallback = (txResult: SubmittableResult) => {
     const id = getNewIdFromEvent(txResult);
-    console.log('New comment id from event:', id)
     callback && callback(id)
   };
 

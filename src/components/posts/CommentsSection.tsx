@@ -23,16 +23,12 @@ type CommentSectionProps = {
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, blog, replies = [] }) => {
   const { total_replies_count, id } = post;
   const [ totalCount, setCount ] = useState(total_replies_count.toString())
-  const [ newCommentId, setCommentId ] = useState(new Date().toString())
   const substrate = useSubstrateApi();
 
   useEffect(() => {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>newCommentId', newCommentId)
-    if (!newCommentId) return;
 
     substrate.findPost(id).then((post) => {
       if (post) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> I am here')
         setCount(post.total_replies_count.toString())
       }
     })
@@ -43,13 +39,8 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
     <h3><Pluralize count={totalCount} singularText='comment' /></h3>
     <NewComment
       post={post}
-      callback={(id) => {
-        console.log('I am in callback', id);
-        setCommentId(id?.toString() || '')
-        console.log('I am after useState')
-      }}
     />
-    <CommentsTree parentId={post.id} blog={blog} replies={replies} newCommentId={newCommentId as any}/>
+    <CommentsTree parentId={post.id} blog={blog} replies={replies} />
   </Section>
 })
 
