@@ -38,7 +38,7 @@ export const Voter = (props: VoterProps) => {
   useEffect(() => {
     let isSubscribe = true;
 
-    async function loadStruct<T extends Comment | Post> (_: T) {
+    async function loadStruct<T extends Post> (_: T) {
       const _struct = await substrate.findPost(id)
       if (isSubscribe && _struct) setState(_struct);
     }

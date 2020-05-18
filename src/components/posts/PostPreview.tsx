@@ -4,6 +4,7 @@ import ViewPostPage from '../posts/ViewPost';
 import { Loading } from '../utils/utils';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { ExtendedPostData } from '@subsocial/types';
+import { Blog } from '@subsocial/types/substrate/interfaces';
 
 type LoadProps = {
   postIds: BN[]
@@ -45,7 +46,7 @@ export const PostPreviewListView: React.FunctionComponent<PostPreviewListProps> 
 export function PostPreview (props: PostPreviewProps) {
   const { post, ext, owner } = props.post
 
-  return <ViewPostPage postData={post} postExtData={ext} owner={owner} variant='preview' withBlogName />
+  return <ViewPostPage postData={post} blog={{} as Blog} postExtData={ext} owner={owner} variant='preview' withBlogName />
 }
 
 export const PostPreviewList = withLoadFeed(PostPreviewListView)
