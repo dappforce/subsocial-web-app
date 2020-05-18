@@ -8,7 +8,7 @@ import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 
-export type EventsName = 'AccountFollowed' | 'PostShared' | 'BlogFollowed' | 'BlogCreated' | 'CommentCreated' | 'CommentReply' | 'PostReactionCreated' | 'PostReactionCreated' | 'CommentReactionCreated'
+export type EventsName = 'AccountFollowed' | 'PostShared' | 'CommentShared' | 'BlogFollowed' | 'BlogCreated' | 'CommentCreated' | 'CommentReply' | 'PostReactionCreated' | 'PostReactionCreated' | 'CommentReactionCreated'
 
 export type EventsMsg = {
   [key in EventsName]: string;
@@ -17,6 +17,7 @@ export type EventsMsg = {
 export const eventsMsg: EventsMsg = {
   AccountFollowed: 'followed your account',
   PostShared: 'shared your post',
+  CommentShared: 'shared your comment',
   BlogFollowed: 'followed your blog',
   BlogCreated: 'created a new blog',
   CommentCreated: 'commented on your post',
@@ -89,8 +90,9 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
   switch (event) {
     case 'BlogFollowed': return getBlogPreview(hexToBn(blog_id), blogByBlogIdMap)
     case 'BlogCreated': return getBlogPreview(hexToBn(blog_id), blogByBlogIdMap)
-    case 'PostCreated': return getCommentPreview(hexToBn(comment_id), postByPostIdMap)
+    case 'CommentCreated': return getCommentPreview(hexToBn(comment_id), postByPostIdMap)
     case 'PostShared': return getPostPreview(hexToBn(post_id), postByPostIdMap)
+    case 'CommentShared': return getPostPreview(hexToBn(comment_id), postByPostIdMap)
     case 'PostReactionCreated': return getPostPreview(hexToBn(post_id), postByPostIdMap)
     case 'CommentReactionCreated': return getCommentPreview(hexToBn(comment_id), postByPostIdMap)
   }
