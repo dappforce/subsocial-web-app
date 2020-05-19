@@ -9,7 +9,7 @@ import BN from 'bn.js'
 import { hexToBn } from '@polkadot/util';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils/utils';
-import { SocialAccount } from '@subsocial/types/substrate/interfaces';
+import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
 
 type Struct = Exclude<CommonStruct, SocialAccount>;
@@ -47,22 +47,43 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
 
       const loadData = async () => {
         const ownersData = await subsocial.findProfiles(ownerIds);
-        const blogsData = await subsocial.findBlogs(blogIds)
         const postsData = await subsocial.findPosts(postIds)
 
-        function createMap<T extends AnySubsocialData> (data: T[], owners: boolean = false) {
+        function createMap<T extends AnySubsocialData> (data: T[], structName?: 'profile' | 'post') {
           const dataByIdMap = new Map<string, T>()
           data.forEach(x => {
-            const id = owners ? (x as ProfileData).profile?.created.account : (x.struct as Struct).id;
+            let id;
+
+            switch (structName) {
+              case 'profile': {
+                id = (x as ProfileData).profile?.created.account;
+                break;
+              }
+              case 'post': {
+                const struct = (x.struct as Post)
+                id = struct.id;
+                const blogId = struct.blog_id.unwrapOr(undefined);
+                blogId && blogIds.push(blogId)
+                break;
+              }
+              default : {
+                id = (x.struct as Struct).id
+              }
+
+            }
+
             if (id) {
               dataByIdMap.set(id.toString(), x);
             }
           })
           return dataByIdMap;
         }
-        setOwnerDataByOwnerIdMap(createMap<ProfileData>(ownersData, true))
+        setPostByPostIdMap(createMap<PostData>(postsData, 'post'))
+        setOwnerDataByOwnerIdMap(createMap<ProfileData>(ownersData, 'profile'))
+
+        const blogsData = await subsocial.findBlogs(blogIds)
         setBlogByBlogIdMap(createMap<BlogData>(blogsData))
-        setPostByPostIdMap(createMap<PostData>(postsData))
+
         setLoaded(true);
       }
 

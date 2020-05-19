@@ -251,7 +251,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsByBlogId(id as BN)
-  const posts = await subsocial.findPostsWithDetails(postIds.reverse())
+  const posts = await subsocial.findPostsWithAllDetails(postIds.reverse())
 
   return {
     blogData,

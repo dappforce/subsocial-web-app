@@ -20,7 +20,7 @@ import { isMyAddress } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import { Post, Blog } from '@subsocial/types/substrate/interfaces';
-import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
+import { PostData, ExtendedPostData, ProfileData, BlogData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
@@ -31,7 +31,6 @@ import ViewPostLink from './ViewPostLink';
 import { HasBlogIdOrHandle, HasPostId, postUrl } from '../utils/urls';
 import SharePostAction from './SharePostAction';
 import { CommentSection } from './CommentsSection';
-import { return404 } from '../utils/next';
 import partition from 'lodash.partition'
 
 const log = newLogger('View Post')
@@ -89,13 +88,12 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     postExtData,
     owner,
     replies,
-    blog,
+    blog = { id: new BN(1) } as Blog, // TODO hack before fix resolved blog for comment
     parentPost
   } = props;
 
   const {
     id,
-    blog_id,
     created,
     ipfs_hash
   } = post;
@@ -135,7 +133,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const menu = (
       <Menu>
         {isMyPost && <Menu.Item key='0'>
-          <Link href='/blogs/[blogId]/posts/[postId]/edit' as={`/blogs/${blog_id}/posts/${id}/edit`}>
+          <Link href='/blogs/[blogId]/posts/[postId]/edit' as={postUrl(blog, post)}>
             <a className='item'>Edit</a>
           </Link>
         </Menu.Item>}
@@ -171,6 +169,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   const renderPostCreator = (post: Post, owner?: ProfileData, size?: number) => {
     if (isEmpty(post)) return null;
     const { blog_id, created: { account, time } } = post;
+    // TODO replace on loaded blog after refactor this components
+    const blogId = unwrapSubstrateId(blog_id) || unwrapSubstrateId(parentPost?.struct.blog_id)
     return <>
       <AuthorPreview
         address={account}
@@ -180,7 +180,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         isPadded={false}
         size={size}
         details={<div>
-          {withBlogName && <><div className='DfGreyLink'><ViewBlog id={unwrapSubstrateId(blog_id)} nameOnly /></div>{' • '}</>}
+          {withBlogName && blogId && <><div className='DfGreyLink'><ViewBlog id={blogId} nameOnly withLink /></div>{' • '}</>}
           <Link href={postUrl(blog, post)}>
             <a className='DfGreyLink'>
               {formatUnixDate(time)}
@@ -351,15 +351,10 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { substrate } = subsocial;
   const idOrHandle = blogId as string
   const blogIdFromUrl = await getBlogId(idOrHandle)
-  const blog = blogIdFromUrl && await substrate.findBlog(blogIdFromUrl)
-
-  if (!blog) {
-    return return404(props)
-  }
 
   const postIdFromUrl = new BN(postId as string)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findPostsWithDetails([ ...replyIds, postIdFromUrl ])
+  const comments = await subsocial.findPostsWithAllDetails([ ...replyIds, postIdFromUrl ])
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
   const extPostData = extPostsData.pop()
   const isComment = extPostData?.post.struct.extension.isComment;
@@ -378,7 +373,7 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
     postExtData: extPostData?.ext,
     owner: extPostData?.owner,
     replies,
-    blog,
+    blog: extPostData?.blog,
     parentPost
   };
 };
@@ -389,22 +384,19 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
     const [ extPostData, setExtData ] = useState<ExtendedPostData>();
-    const [ owner, setOwner ] = useState<ProfileData>()
-    const [ blog, setBlog ] = useState<Blog>();
-    const { subsocial, substrate } = useSubsocialApi()
+    const { subsocial } = useSubsocialApi()
 
     useEffect(() => {
       let isSubscribe = true;
       const loadPost = async () => {
-        const extPostData = id && await subsocial.findPostWithExt(id)
+        const extPostData = id && await subsocial.findPostWithAllDetails(id)
         if (isSubscribe && extPostData) {
-          setExtData(extPostData);
-          const ownerId = extPostData.post.struct.created.account
-          const owner = await subsocial.findProfile(ownerId)
-          setOwner(owner);
-          const blogId = unwrapSubstrateId(extPostData.post.struct.blog_id)
-          const blog = blogId && await substrate.findBlog(blogId);
-          setBlog(blog)
+          const extension = extPostData.post.struct.extension
+          if (extension.isComment) {
+            const rootPostData = await subsocial.findPostWithAllDetails(extension.asComment.root_post_id)
+            extPostData.blog = rootPostData?.blog || {} as BlogData
+          }
+          setExtData(extPostData)
         }
       };
 
@@ -415,7 +407,15 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
 
     if (isEmpty(extPostData)) return <Loading/>;
 
-    return extPostData && blog ? <Component blog={blog} postData={extPostData.post} postExtData={extPostData.ext} owner={owner} {...props}/> : null;
+    return extPostData
+      ? <Component
+        {...props}
+        blog={extPostData.blog.struct}
+        postData={extPostData.post}
+        postExtData={extPostData.ext}
+        owner={extPostData.owner}
+      />
+      : null;
   };
 };
 
