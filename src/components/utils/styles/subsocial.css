@@ -116,9 +116,9 @@ body,
     margin-left: 14.5%;
     width: 85.5%;
 
-    .ui--IdentityIcon {
-      left: -3rem !important;
-      top: -10px !important;
+    .ui--IdentityIcon-Outer {
+      left: -3.1rem !important;
+      top: -.7rem !important;
     }
   }
 }
@@ -950,6 +950,10 @@ hr {
     min-width: 428px;
     max-width: calc(680px + $space_normal * 2);
     width: calc(680px + $space_normal * 2);
+
+    .DfSectionOuter {
+      width: 100%;
+    }
   }
 
   .DfSection {
