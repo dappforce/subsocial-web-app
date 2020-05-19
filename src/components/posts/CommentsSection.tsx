@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Post, Blog } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './NewComment';
-import Section from '../utils/Section';
 import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
 import { PostData, ExtendedPostData } from '@subsocial/types/dto';
@@ -12,6 +11,7 @@ import { Pluralize } from '../utils/Plularize';
 import ViewPostLink from './ViewPostLink';
 import { CommentsTree } from './CommentTree';
 import { useSubstrateApi } from '../utils/SubsocialApiContext';
+import Section from '../utils/Section';
 
 type CommentSectionProps = {
   blog: Blog,

@@ -132,6 +132,9 @@ export const getProfileName = (options: GetNameOptions) => {
 }
 
 export const unwrapSubstrateId = (optId?: Option<Codec>): SubstrateId | undefined => {
-  if (typeof optId === 'string') return optId as SubstrateId;
-  return optId?.unwrapOr(undefined) as any
+  if (optId instanceof Option) {
+    return optId.unwrapOr(undefined) as any
+  }
+
+  return optId && optId as SubstrateId
 }

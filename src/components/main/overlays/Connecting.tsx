@@ -7,6 +7,7 @@ import { useApi } from '@subsocial/react-hooks';
 import settings from '../../settings';
 
 import BaseOverlay from './Base';
+import { Loading } from 'src/components/utils/utils';
 
 const wsUrl = settings.apiUrl;
 const isWs = wsUrl.startsWith('ws://');
@@ -22,13 +23,7 @@ export default function Connecting ({ className }: Props): React.ReactElement<Pr
 
   if (isWaitingInjected) {
     return (
-      <BaseOverlay
-        className={className}
-        icon='puzzle'
-        type='info'
-      >
-        <div>{'Waiting for authorization from the extension. Please open the installed extension and approve or reject access.'}</div>
-      </BaseOverlay>
+      <Loading />
     );
   } else if (!isApiConnected) {
     return (
