@@ -76,17 +76,17 @@ const getCommentPreview = (commentId: BN, blogMap: Map<string, BlogData>, postMa
   if (commentStruct && isCommentExt) {
     const { root_post_id } = commentStruct.extension.asComment
 
-    if (parent_id.isSome) {
+    /* if (parent_id.isSome) {
       const msg = eventsMsg.CommentReactionCreated
       // const commentBody = comment?.content?.body || '';
       // const commentTitle = summarize(commentBody, 40)
       // const commentPreview = renderSubjectPreview(commentTitle, `/comment?postId=${commentStruct.post_id}&commentId=${commentStruct.id}`)
       // const { preview: postPreview, image } = getPostPreview(postId, postMap);
       // const preview = <>{commentPreview} in {postPreview}</>
-      return { ...getPostPreview(root_post_id, postMap), msg }
-    }
+      return { ...getPostPreview(root_post_id, blogMap, postMap), msg }
+    } */
 
-    return getPostPreview(root_post_id, postMap);
+    return getPostPreview(root_post_id, blogMap, postMap);
   }
   return undefined;
 }
