@@ -11,6 +11,7 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import BN from 'bn.js';
 import { registry } from '@subsocial/react-api';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
+import { DEFAULT_AVATAR_SIZE } from '../../config/Size.config';
 
 type DataResults = {
   _id: string;
@@ -53,7 +54,7 @@ const resultToPreview = (res: DataResults, i: number) => {
         <ProfilePreviewWithOwner
           key={res._id}
           address={new AccountId(registry, res._id)}
-          size={30}
+          size={DEFAULT_AVATAR_SIZE}
         />
       </Segment>;
     default:
@@ -111,12 +112,12 @@ const Tabs = () => {
         return blogId === undefined
           ? null
           : {
-              query: {
-                term: {
-                  blog_id: blogId
-                }
+            query: {
+              term: {
+                blog_id: blogId
               }
-            };
+            }
+          };
       }}
     />
 
@@ -126,12 +127,12 @@ const Tabs = () => {
         return tags === undefined
           ? null
           : {
-              query: {
-                terms: {
-                  tags: (tags as string).split(',')
-                }
+            query: {
+              terms: {
+                tags: (tags as string).split(',')
               }
-            };
+            }
+          };
       }}
     />
 

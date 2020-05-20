@@ -32,6 +32,7 @@ import { getAccountId } from '../utils/utils';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
 import ViewProfileLink from './ViewProfileLink';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -51,7 +52,7 @@ const Component: NextPage<Props> = (props: Props) => {
     preview = false,
     nameOnly = false,
     withLink = false,
-    size = 48,
+    size = LARGE_AVATAR_SIZE,
     owner = {} as ProfileData
   } = props;
 

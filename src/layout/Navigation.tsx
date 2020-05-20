@@ -3,7 +3,7 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout } from 'antd';
 import Menu from './SideMenu';
-import { isBrowser, isMobile } from 'react-device-detect';
+import { isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Drawer } from 'antd-mobile';
 import dynamic from 'next/dynamic';
@@ -42,7 +42,6 @@ const DefaultNav: FunctionComponent = ({ children }) => {
 
   return <Drawer
     className='DfMobileSideBar'
-    style={isMobile ? { minHeight: document.documentElement.clientHeight } : {}}
     enableDragHandle
     contentStyle={{ color: '#a6a6a6', textAlign: 'center', paddingTop: 42 }}
     sidebar={<div onMouseLeave={hide}><Menu /></div>}
