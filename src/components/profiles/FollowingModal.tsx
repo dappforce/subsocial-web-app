@@ -6,6 +6,7 @@ import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { ProfilePreviewWithOwner } from './address-views';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 
 type Props = {
   following?: AccountId[],
@@ -21,7 +22,7 @@ const InnerFollowingModal = (props: Props) => {
       <div key={account.toString()} className='DfModal'>
         <ProfilePreviewWithOwner
           address={account}
-          size={48}
+          size={LARGE_AVATAR_SIZE}
           mini
         />
       </div>

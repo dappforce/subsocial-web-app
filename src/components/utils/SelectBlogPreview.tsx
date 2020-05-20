@@ -7,6 +7,7 @@ import { IdentityIcon } from '@subsocial/react-components';
 import { useSubsocialApi } from './SubsocialApiContext';
 import { isEmptyArray, nonEmptyStr } from '@subsocial/utils';
 import { BlogData } from '@subsocial/types/dto';
+import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 type PreparedBlogData = {
   name: string,
@@ -26,7 +27,7 @@ type Props = {
 const SUB_SIZE = 2;
 
 const SelectBlogPreview = (props: Props) => {
-  const { preparedBlogsData = [], imageSize = 36, onSelect, defaultValue } = props
+  const { preparedBlogsData = [], imageSize = DEFAULT_AVATAR_SIZE, onSelect, defaultValue } = props
 
   if (isEmptyArray(preparedBlogsData)) return null
 
