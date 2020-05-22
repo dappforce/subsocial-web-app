@@ -3726,6 +3726,22 @@
     markdown-to-txt "^1.0.1"
     winston "^3.2.0"
 
+"@subsocial/utils@^0.1.23":
+  version "0.1.23"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.23.tgz#f06fbc93e85875ac8ca6f70a07ff5c30a39633e5"
+  integrity sha512-UUi3e0CF+VMD6wXYM2GjjMANcL6X0kXkQyArYbzAxvJwOOfyowth42Z4ZE2hGXi2fbMbHz33Ml0KOWvAexQZ4A==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@types/circular-json" "^0.4.0"
+    "@types/lodash.truncate" "^4.4.6"
+    "@types/winston" "^2.4.4"
+    bn.js "^5.1.1"
+    chalk "^3.0.0"
+    circular-json "^0.5.9"
+    dotenv "^8.0.0"
+    lodash.truncate "^4.4.2"
+    winston "^3.2.0"
+
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-4.2.0.tgz#dadcb6218503532d6884b210e7f3c502caaa44b1"
@@ -3894,6 +3910,11 @@
   integrity sha512-P6BOI1R8P7OOV0neudBBFwQI52rRnRJ4cfKbDhHentiwxJ8bU76SkkV0FvMRmZjM5Sag/RbwawnHJfiMSQ4Vng==
   dependencies:
     "@types/filesystem" "*"
+
+"@types/circular-json@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@types/circular-json/-/circular-json-0.4.0.tgz#7401f7e218cfe87ad4c43690da5658b9acaf51be"
+  integrity sha512-7+kYB7x5a7nFWW1YPBh3KxhwKfiaI4PbZ1RvzBU91LZy7lWJO822CI+pqzSre/DZ7KsCuMKdHnLHHFu8AyXbQg==
 
 "@types/codemirror@^0.0.76":
   version "0.0.76"
@@ -6863,6 +6884,11 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
+
+circular-json@^0.5.9:
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/circular-json/-/circular-json-0.5.9.tgz#932763ae88f4f7dead7a0d09c8a51a4743a53b1d"
+  integrity sha512-4ivwqHpIFJZBuhN3g/pEcdbnGUywkBblloGbkglyloVjjR3uT6tieI89MVOfbP2tHX5sgb01FuLgAOzebNlJNQ==
 
 class-is@^1.1.0:
   version "1.1.0"
