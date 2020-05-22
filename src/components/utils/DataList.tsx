@@ -103,7 +103,7 @@ export function ListData<T extends any> (props: Props<T>) {
 
   return !title
     ? list
-    : <Section title={renderTitle()}>{list}</Section>
+    : <Section className='bookPage' title={renderTitle()}>{list}</Section>
 }
 
 export default ListData

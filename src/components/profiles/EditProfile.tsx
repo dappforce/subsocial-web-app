@@ -135,7 +135,7 @@ const InnerForm = (props: FormProps) => {
 
   return (<>
     <HeadMeta title={title}/>
-    <Section className='EditEntityBox' title={title}>
+    <Section className='EditEntityBox bookPage' title={title}>
       <Form className='ui form DfForm EditEntityForm'>
 
         <LabelledText

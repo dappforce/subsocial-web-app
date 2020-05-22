@@ -17,9 +17,26 @@ body,
   max-width: 728px;
   color: #111;
 
+  .viewPostBlock {
+    margin-bottom: $space_huge;
+  }
+
+  .blogMiniPreview {
+    margin: $space_normal 0;
+  }
+
+  .ant-tabs-nav-wrap {
+    display: flex;
+  }
+
   .DfTags {
     margin: $space_normal 0;
     text-align: end;
+  }
+
+  .bookPage {
+    max-width: 728px;
+    width: 100%;
   }
 }
 
@@ -155,7 +172,6 @@ body,
 
 .EditEntityBox {
   width: 100%;
-  max-width: 600px;
 
   .EditEntityForm {
     width: 100%;
@@ -1374,4 +1390,44 @@ hr {
       text-decoration: underline;
     }
   }
+}
+
+.markdown-body {
+  i {
+    color: $color_light_border;
+  }
+
+  &:hover,
+  &:focus-within {
+    i:not(.separator) {
+      color: black;
+    }
+  }
+}
+
+.CommentsEditor {
+  &.DfMdEditor {
+    i {
+      color: $color_light_border;
+    }
+
+    &:hover i:not(.separator) {
+      color: black;
+    }
+  }
+}
+
+.MiniPreviewWrapper {
+  .DfContent {
+    display: flex;
+    flex-direction: column;
+  }
+  .MiniPreviewBlock {
+    margin-bottom: $space_normal;
+  }
+}
+
+.twitter-tweet {
+  display: flex !important;
+  justify-content: center !important;
 }
