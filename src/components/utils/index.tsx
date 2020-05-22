@@ -2,7 +2,9 @@
 import BN from 'bn.js';
 import { SiteMetaContent } from '../types';
 import { parseUrl } from './OffchainUtils';
-import { nonEmptyStr } from '@subsocial/utils'
+import { isEmptyStr, newLogger } from '@subsocial/utils'
+
+const log = newLogger('Utils')
 
 // Substrate/Polkadot API utils
 // --------------------------------------
@@ -11,17 +13,20 @@ import { Options as QueryOptions } from '@polkadot/react-api/hoc/types';
 // Parse URLs
 // --------------------------------------
 
+// TODO merge this func with `OffchainUtils.parseUrl`
 export const parse = async (url: string): Promise<SiteMetaContent | undefined> => {
-  if (!nonEmptyStr(url) || !isLink(url)) return
+  if (isEmptyStr(url) || !isLink(url)) return
+
   try {
-    const res = await parseUrl(url)
-    return res
+    return await parseUrl(url)
   } catch (err) {
+    log.warn('Failed to parse URL: %s', url)
     return undefined
   }
 }
 
 export const getImageFromIpfs = async (hash: string) => {
+  // TODO get image from IPFS cluster
   const raw = await fetch(`http://127.0.0.1:8080/ipfs/${hash}`)
   const data: any = await raw.json()
   const mimetype = data?.mimetype
@@ -41,6 +46,7 @@ export const isLink = (s: string) => {
   }
 }
 
+// TODO move these regexps to another file. Closer to Post Editor?
 export const VIMEO_REGEX = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
 export const YOUTUBE_REGEXP = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
 export const TWITTER_REGEXP = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w-]*\/)*([\w-]*)/;

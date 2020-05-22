@@ -98,11 +98,11 @@ const PostBlockFormik = (props: Props) => {
   const beforeUpload = (file: RcFile) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      console.log('You can only upload JPG/PNG file!');
+      console.log('You can upload JPG or PNG file');
     }
     const isLt2M = file.size / 1024 / 1024 < MAX_IMAGE_SIZE;
     if (!isLt2M) {
-      console.log('Image must smaller than 2MB!');
+      console.log('Image must be less than 2 MB');
     }
     return isJpgOrPng && isLt2M;
   }
@@ -112,6 +112,7 @@ const PostBlockFormik = (props: Props) => {
     if (status !== 'uploading') {
       setShowImageInputs(false)
     }
+
     if (status === 'done') {
       const response = info.file.response
       if (response.status === 'ok') {
@@ -121,9 +122,7 @@ const PostBlockFormik = (props: Props) => {
         setFormPreviewImage(src)
         setShowImageInputs(false)
       }
-      
     } else if (status === 'error') {
-
       setShowImageInputs(true)
     }
   }
@@ -158,7 +157,7 @@ const PostBlockFormik = (props: Props) => {
     case 'image': {
       const img = block as ImageBlockValue
       res = showImageInputs
-      ? <div className='ImageBlockWrapper'>
+        ? <div className='ImageBlockWrapper'>
           <Field
             type="text"
             name={`blockValues.${index}.data`}
@@ -167,7 +166,7 @@ const PostBlockFormik = (props: Props) => {
             onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
           />
           <div className='ImageUploadDivider'>Or</div>
-          <Dragger 
+          <Dragger
             name='picture'
             multiple={false}
             action='http://127.0.0.1:3001/offchain/upload'
@@ -182,18 +181,18 @@ const PostBlockFormik = (props: Props) => {
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
           </Dragger>
         </div>
-      : <div className='ImgFormPreviewWrapper'>
-        <Icon type="delete" className='RemoveImgIcon' onClick={handleImgRemove} />
-        <img src={formPreviewImage} />
-        <Field
-          type="text"
-          name={`blockValues.${index}.description`}
-          placeholder="Image description"
-          value={img.description}
-          className={'ImageDescription'}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.description`, e.currentTarget.value)}
-        />
-      </div>
+        : <div className='ImgFormPreviewWrapper'>
+          <Icon type="delete" className='RemoveImgIcon' onClick={handleImgRemove} />
+          <img src={formPreviewImage} />
+          <Field
+            type="text"
+            name={`blockValues.${index}.description`}
+            placeholder="Image description"
+            value={img.description}
+            className={'ImageDescription'}
+            onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.description`, e.currentTarget.value)}
+          />
+        </div>
       break
     }
     case 'video': {
@@ -225,7 +224,7 @@ const PostBlockFormik = (props: Props) => {
           className={'AceEditor'}
           width='100%'
           minLines={1}
-          maxLines={9}
+          maxLines={10}
         />
       </div>
       break
@@ -262,7 +261,7 @@ const PostBlockFormik = (props: Props) => {
       </SubMenu>
       <Menu.Item>
         <a onClick={() => handleUseOnPreview(index, isPlaceForPreview)} className={`SmallAntButton ${!isPlaceForPreview && 'off'} ${block.featured && 'on'}`}>
-        <Icon type="star" /> Featured
+          <Icon type="star" /> Featured
         </a>
       </Menu.Item>
       { index > 0 &&
@@ -287,7 +286,6 @@ const PostBlockFormik = (props: Props) => {
         </a>
       </Menu.Item>
     </Menu>
-
   );
 
   const buttonsMenu = <div className="ButtonsForMobile">
@@ -302,10 +300,8 @@ const PostBlockFormik = (props: Props) => {
     {res}
     {buttonsMenu}
     {block.featured && <div className='EditPostCrown'><Icon type="star" /></div>}
-    
     <ErrorMessage name={`blockValues.${index}.data`} component='div' className='ui pointing red label' />
   </div>
-
 }
 
 export default PostBlockFormik

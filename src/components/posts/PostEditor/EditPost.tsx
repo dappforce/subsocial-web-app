@@ -9,11 +9,11 @@ import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import { PostBlock, BlockValueKind, BlockValue, PostBlockKind, PreviewData, EmbedData, PostContent, ImageBlockValue, BlockValueWithOptions } from '../../types';
 import Section from '../../utils/Section';
-import { parse, getImageFromIpfs } from '../../utils/index';
+import { parse, getImageFromIpfs, socialQueryToProp } from '../../utils/index';
 import { getNewIdFromEvent } from '../../utils/utils';
 import Router from 'next/router';
 import HeadMeta from '../../utils/HeadMeta';
-import { Dropdown, Menu, Icon, Tabs, Button as AntButton} from 'antd';
+import { Dropdown, Menu, Icon, Tabs, Button as AntButton } from 'antd';
 import BlockPreview from '../PostPreview/BlockPreview';
 import { isMobile } from 'react-device-detect';
 import SelectBlogPreview from '../../utils/SelectBlogPreview'
@@ -24,21 +24,16 @@ import buildSchema from './EditPostValidations'
 import './EditPost.css'
 import { withBlogIdFromUrl, withIdFromUrl, LoadStruct, OuterProps } from './LoadEditPostUtils';
 import { useSubsocialApi } from '../../utils/SubsocialApiContext'
-import { socialQueryToProp } from '../../utils/index';
 import BN from 'bn.js';
 import { TxFailedCallback } from '@polkadot/react-components/Status/types';
 import { TxCallback } from '../../utils/types';
 import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
 import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
-// import { PostContent } from '@subsocial/types/offchain';
-import { newLogger } from '@subsocial/utils'
+import { newLogger, nonEmptyArr } from '@subsocial/utils'
 import BloggedSectionTitle from '../../blogs/BloggedSectionTitle';
-// import ViewTags from 'src/components/utils/ViewTags';
 import ViewPostPage from '../ViewPost';
-// const StatsPanel = dynamic(() => import('../../posts/PostStats'), { ssr: false });
 
-
-const log = newLogger('Edit post')
+const log = newLogger('Post Editor')
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
 const { TabPane } = Tabs;
 
@@ -69,7 +64,7 @@ const InnerForm = (props: FormProps) => {
     withButtons = true,
     closeModal,
     blogIds,
-    tagsData = [ 'qwe', 'asd', 'zxc' ]
+    tagsData = []
   } = props;
 
   const isRegularPost = extension.value.isEmpty; // TODO maybe fix after run UI
@@ -88,7 +83,8 @@ const InnerForm = (props: FormProps) => {
   const initialBlogId = struct?.blog_id || blogId
 
   const goToView = (id: BN) => {
-    Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
+    Router.push(`/blogs/${currentBlogId}/posts/${id}`)
+      .catch(err => log.error('Failed to redirect to the post page:', err));
   };
 
   const blockNames = [
@@ -140,7 +136,7 @@ const InnerForm = (props: FormProps) => {
       }
       return res
     }
-    if (blockValues && blockValues.length > 0) {
+    if (nonEmptyArr(blockValues)) {
       const tempValues = await processArray(blockValues)
       return tempValues as any[]
     }
@@ -247,6 +243,7 @@ const InnerForm = (props: FormProps) => {
   const handleLinkPreviewChange = async (block: BlockValueKind, value: string) => {
     const data = await parse(value)
     if (!data) return
+
     const newParsedData = [ ...linkPreviewData ]
     const idx = linkPreviewData.findIndex((el) => el.id === block.id);
     if (idx !== -1) {
@@ -274,21 +271,19 @@ const InnerForm = (props: FormProps) => {
   }
 
   const addMenu = (index?: number, onlyItems?: boolean, pos?: string) => {
-    if (onlyItems) {
-      return blockNames.map((x) => <Menu.Item key={x.name} onClick={() => addBlock(x.name as PostBlockKind, index, pos)}>
+    const menuItems = blockNames.map((x) =>
+      <Menu.Item key={x.name} onClick={() => addBlock(x.name as PostBlockKind, index, pos)}>
         {x.pretty}
-      </Menu.Item>)
-    }
-    return <Menu className='AddBlockDropdownMenu'>
-      {blockNames.map((x) => <Menu.Item key={x.name} onClick={() => addBlock(x.name as PostBlockKind, index, pos)}>
-        {x.pretty}
-      </Menu.Item>)}
-    </Menu>
-  };
+      </Menu.Item>
+    )
 
-  const handleAdvanced = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    e.preventDefault()
-    setIsAdvanced(!isAdvanced)
+    if (onlyItems) return menuItems
+
+    return (
+      <Menu className='AddBlockDropdownMenu'>
+        {menuItems}
+      </Menu>
+    )
   }
 
   const handleBlogSelect = (value: string | number | LabeledValue) => {
@@ -307,47 +302,57 @@ const InnerForm = (props: FormProps) => {
   }
 
   const form = <Form className='ui form DfForm EditEntityForm'>
-      {isRegularPost
-        ? <>
-          <div className='EditPostLabel'>
-            Post in blog:
-          </div>
-          {renderBlogsPreviewDropdown()}
-          <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
-          {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
-          <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
-            <AntButton type="default" className={'SmallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
+    {isRegularPost
+      ? <>
+        <div className='EditPostLabel'>
+          Post in blog:
+        </div>
+        {renderBlogsPreviewDropdown()}
+        <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
+        {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
+        <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
+          <AntButton type="default" className={'SmallAntButton'} size="small">
+            <Icon type="plus-circle" /> Add block
+          </AntButton>
+        </Dropdown>
+        {nonEmptyArr(blockValues)
+          ? blockValues.map((block, index) =>
+            <PostBlockFormik
+              block={block}
+              index={index}
+              setFieldValue={setFieldValue}
+              handleLinkChange={handleLinkChange}
+              handleImagePreviewChange={handleImagePreviewChange}
+              blockValues={blockValues}
+              addMenu={addMenu}
+            />
+          )
+          : addBlock('text')
+        }
+        {nonEmptyArr(blockValues) &&
+          <Dropdown overlay={() => addMenu(blockValues.length + 1, false, 'after')} className={'EditPostAddButton'}>
+            <AntButton type="default" className={'SmallAntButton'} size="small">
+              <Icon type="plus-circle" /> Add block
+            </AntButton>
           </Dropdown>
-          {blockValues && blockValues.length > 0
-            ? blockValues.map((block: BlockValueWithOptions, index: number) => <PostBlockFormik
-              block={block}
-              index={index}
-              setFieldValue={setFieldValue}
-              handleLinkChange={handleLinkChange}
-              handleImagePreviewChange={handleImagePreviewChange}
-              blockValues={blockValues}
-              addMenu={addMenu}
-            />)
-            : addBlock('text')
-          }
-          { blockValues && blockValues.length > 0 &&
-            <Dropdown overlay={() => addMenu(blockValues.length + 1, false, 'after')} className={'EditPostAddButton'}>
-              <AntButton type="default" className={'SmallAntButton'} size="small"><Icon type="plus-circle" /> Add block</AntButton>
-            </Dropdown>
-          }
-          <div className='AdvancedWrapper'>
-            <a href="#" onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => handleAdvanced(e)} >
-              { isAdvanced ? <Icon type="up" /> : <Icon type="down" /> } Show Advanced Settings
-            </a>
-            {isAdvanced && <div>
-              <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
-              <EditableTagGroup name='tags' tags={tags} label='Tags' tagSuggestions={tagsData} setFieldValue={setFieldValue} />
-            </div>}
+        }
+        <div className='AdvancedWrapper'>
+          <div onClick={() => setIsAdvanced(!isAdvanced)}>
+            {isAdvanced
+              ? <Icon type="up" />
+              : <Icon type="down" />
+            }{' '}Advanced settings
           </div>
-        </>
-        : <>
-          {blockValues && blockValues.length > 0
-            ? blockValues.map((block: BlockValueWithOptions, index: number) => <PostBlockFormik
+          {isAdvanced && <div>
+            <LabelledText name='canonical' label='Canonical URL' placeholder={`Set canonical URL of your post`} {...props} />
+            <EditableTagGroup name='tags' tags={tags} label='Tags' tagSuggestions={tagsData} setFieldValue={setFieldValue} />
+          </div>}
+        </div>
+      </>
+      : <>
+        {nonEmptyArr(blockValues)
+          ? blockValues.map((block, index) =>
+            <PostBlockFormik
               block={block}
               index={index}
               setFieldValue={setFieldValue}
@@ -355,95 +360,101 @@ const InnerForm = (props: FormProps) => {
               handleImagePreviewChange={handleImagePreviewChange}
               blockValues={blockValues}
               addMenu={addMenu}
-            />)
-            : addBlock('text')
-          }
-        </>
-      }
-      {withButtons && <LabelledField {...props}>
+            />
+          )
+          : addBlock('text')
+        }
+      </>
+    }
+    {withButtons &&
+      <LabelledField {...props}>
         {renderTxButton()}
         {renderResetButton()}
-      </LabelledField>}
-    </Form>;
+      </LabelledField>
+    }
+  </Form>;
 
-  const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
-  const sectionTitle = currentBlogId && <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
+  const pageTitle = isRegularPost
+    ? (!struct ? `New post` : `Edit my post`)
+    : 'Share post';
 
+  const sectionTitle = currentBlogId &&
+    <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
+
+  // TODO fix copypasta. See const renderForMobile = ()
   const editRegularPost = () => <Section className='EditEntityBox' title={sectionTitle}>
-      { isMobile
-        ? renderForMobile()
-        : <div className='EditPostWrapper'>
-          <div className='EditPostForm'>
-            {form}
-          </div>
-          <div className='EditPostPreview'>
-            <Tabs type="card">
-              <TabPane tab="Full Preview" key="1">
-                <div>
-                  <h1>{title}</h1>
-                </div>
-                {blockValues && blockValues.length !== 0 &&
-                  blockValues.map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
-                    block={x}
-                    embedData={embedData}
-                    setEmbedData={setEmbedData}
-                    linkPreviewData={linkPreviewData}
-                  /></div>)
-                }
-              </TabPane>
-              <TabPane tab="Short Preview" key="2">
-                  <ViewPostPage
-                    variant='preview'
-                    postData={{ struct: struct as Post, content: values as any }}
-                    blockValues={blockValues}
-                  />
-              </TabPane>
-            </Tabs>
-          </div>
-        </div>
-      }
-    </Section>
-
-  const renderForMobile = () => <Tabs type="card" className="MobileTabs">
-      <TabPane tab="Editor" key="1">
-        <div className='EditPostForm WithTabs'>
+    {isMobile
+      ? renderForMobile()
+      : <div className='EditPostWrapper'>
+        <div className='EditPostForm'>
           {form}
         </div>
-      </TabPane>
-      <TabPane tab="Full Preview" key="2">
-        <div className='EditPostPreview WithTabs'>
-          <div className='DfMd'>
-            <h1>{title}</h1>
-          </div>
-          {blockValues && blockValues.length !== 0 &&
-            blockValues.map((x: BlockValue) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
-              key={x.id}
-              block={x}
-              embedData={embedData}
-              setEmbedData={setEmbedData}
-              linkPreviewData={linkPreviewData}
-            /></div>)
-          }
+        <div className='EditPostPreview'>
+          <Tabs type="card">
+            <TabPane tab="Full Preview" key="1">
+              <div>
+                <h1>{title}</h1>
+              </div>
+              {nonEmptyArr(blockValues) &&
+                blockValues.map((x: BlockValueKind) =>
+                  <div key={x.id} className={'EditPostPreviewBlock'}>
+                    <BlockPreview
+                      block={x}
+                      embedData={embedData}
+                      setEmbedData={setEmbedData}
+                      linkPreviewData={linkPreviewData}
+                    />
+                  </div>
+                )
+              }
+            </TabPane>
+            <TabPane tab="Short Preview" key="2">
+              <ViewPostPage
+                variant='preview'
+                postData={{ struct: struct as Post, content: values as any }}
+                blockValues={blockValues}
+              />
+            </TabPane>
+          </Tabs>
         </div>
-      </TabPane>
-      <TabPane tab="Short Preview" key="3">
-        <div className='EditPostPreview WithTabs'>
-          <div>
-            <h1>{title}</h1>
-          </div>
-          {blockValues && blockValues.length !== 0 &&
-            blockValues.filter((x) => x.featured).map((x: BlockValueKind) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
-              block={x}
-              embedData={embedData}
-              setEmbedData={setEmbedData}
-              linkPreviewData={linkPreviewData}
-            /></div>)
-          }
-        </div>
-      </TabPane>
-    </Tabs>
+      </div>
+    }
+  </Section>
 
-  const editSharedPost = () => <div style={{ marginTop: '1rem' }}>{form}</div>
+  // TODO fix copypasta. See const editRegularPost = ()
+  const renderForMobile = () => <Tabs type="card" className="MobileTabs">
+    <TabPane tab="Editor" key="1">
+      <div className='EditPostForm WithTabs'>
+        {form}
+      </div>
+    </TabPane>
+    <TabPane tab="Full Preview" key="2">
+      <div className='EditPostPreview WithTabs'>
+        <div className='DfMd'>
+          <h1>{title}</h1>
+        </div>
+        {blockValues && blockValues.length !== 0 &&
+          blockValues.map((x: BlockValue) => <div key={x.id} className={'EditPostPreviewBlock'}><BlockPreview
+            key={x.id}
+            block={x}
+            embedData={embedData}
+            setEmbedData={setEmbedData}
+            linkPreviewData={linkPreviewData}
+          /></div>)
+        }
+      </div>
+    </TabPane>
+    <TabPane tab="Short Preview" key="3">
+      <ViewPostPage
+        variant='preview'
+        postData={{ struct: struct as Post, content: values as any }}
+        blockValues={blockValues}
+      />
+    </TabPane>
+  </Tabs>
+
+  const editSharedPost = () =>
+    <div className='mt-3'>{form}</div>
 
   return onlyTxButton
     ? renderTxButton()
@@ -460,19 +471,43 @@ export const InnerEditPost = withFormik<OuterProps, FormValues>({
   mapPropsToValues: (props): FormValues => {
     const { struct, json, mappedBlocks } = props;
     let blockValues: BlockValueWithOptions[] = []
-    if (mappedBlocks && mappedBlocks.length !== 0) blockValues = mappedBlocks.map((x, i) => ({ ...x, id: i }))
-    if (struct && json && mappedBlocks) return { ...json, blocks: [], blockValues };
-    return { title: '', blocks: [], blockValues: [], image: '', tags: [], canonical: '' };
+
+    if (nonEmptyArr(mappedBlocks)) {
+      blockValues = mappedBlocks.map((x, id) => ({ ...x, id }))
+    }
+
+    if (struct && json && mappedBlocks) {
+      return {
+        ...json,
+        blocks: [],
+        blockValues
+      }
+    }
+
+    return {
+      title: '',
+      blocks: [],
+      blockValues: [],
+      image: '', // TODO depracated: delete?
+      tags: [],
+      canonical: ''
+    }
   },
+
   validationSchema: () => buildSchema(),
-  handleSubmit: values => { console.log('formik values', values) }
-})(InnerForm);
+
+  handleSubmit: values => {
+    // log.debug('Formik values', values)
+  }
+})(InnerForm)
 
 export const NewPost = withMulti(
   InnerEditPost,
   withBlogIdFromUrl
 );
+
 export const NewSharePost = InnerEditPost;
+
 export const EditPost = withMulti<OuterProps>(
   InnerEditPost,
   withIdFromUrl,

@@ -53,12 +53,13 @@ const LinkPreview = (props: Props) => {
   const previewData = linkPreviewData.find((y) => y.id === x.id)
 
   if (!previewData) return null
+
   const { data: { og } } = previewData
   if (!og || !og.url) return null
 
   const domain = x.data.match(DOMAIN_REGEXP)
 
-  return <div>
+  return (
     <div>
       <a
         href={x.data}
@@ -79,7 +80,7 @@ const LinkPreview = (props: Props) => {
           </div>}
       </a>
     </div>
-  </div>
+  )
 }
 
 export default LinkPreview

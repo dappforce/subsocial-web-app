@@ -59,14 +59,14 @@ const VideoPreview = (props: Props) => {
           allow='autoplay; encrypted-media'
           allowFullScreen
           width='100%'
-          height='450px'
+          // height='450px'
           title={`video${embedData?.data}`}
         />
       }
       case 'vimeo': {
         return <iframe src={`https://player.vimeo.com/video/${embedData?.data}?autoplay=1&loop=1&autopause=0`}
           width="100%"
-          height="450"
+          // height="450"
           allow="autoplay; fullscreen"
           frameBorder={0}
         />
@@ -88,6 +88,7 @@ const VideoPreview = (props: Props) => {
   let match
 
   if (!previewData) return null
+
   const { data: { og } } = previewData
   if (!og || !og.url) return null
   if (og?.url.match(YOUTUBE_REGEXP)) match = 'Youtube'
@@ -95,7 +96,7 @@ const VideoPreview = (props: Props) => {
 
   const domain = x.data.match(DOMAIN_REGEXP)
 
-  return <div>
+  return (
     <div>
       <a
         href={x.data}
@@ -117,7 +118,7 @@ const VideoPreview = (props: Props) => {
           </div>}
       </a>
     </div>
-  </div>
+  )
 }
 
 export default VideoPreview

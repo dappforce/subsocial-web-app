@@ -1,4 +1,5 @@
 import React from 'react'
+import { isServerSide } from 'src/components/utils'
 import { CodeBlockValue, BlockValueKind } from '../../types'
 import AceEditor from 'react-ace'
 import 'brace/mode/javascript'
@@ -17,7 +18,7 @@ const CodePreview = (props: Props) => {
   const { block: x } = props
   const { lang } = x as CodeBlockValue
 
-  if (typeof window === 'undefined') {
+  if (isServerSide()) {
     return <pre>{x.data}</pre>
   }
 
@@ -31,7 +32,7 @@ const CodePreview = (props: Props) => {
     width='100%'
     className={'AceEditor'}
     minLines={1}
-    maxLines={9}
+    maxLines={10}
   />
 }
 

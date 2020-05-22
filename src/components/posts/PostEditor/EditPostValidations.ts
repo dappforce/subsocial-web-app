@@ -5,7 +5,7 @@ export type ValidationProps = {
 }
 
 const MAX_TAGS_PER_POST = 10
-const MIN_TEXT_BLOCK_LENGTH = 20
+const MIN_TEXT_BLOCK_LENGTH = 1
 const MIN_BLOCKS = 1
 
 const buildSchema = () => Yup.object().shape({
