@@ -175,12 +175,11 @@ const InnerForm = (props: FormProps) => {
         return [ blogId, ipfsHash, extension ];
       } else {
         // TODO update only dirty values.
-        const update = new PostUpdate(
-          {
+        const update = new PostUpdate({
           // TODO setting new blog_id will move the post to another blog.
-            blog_id: new Option(registry, 'u64', null),
-            ipfs_hash: new Option(registry, 'Text', ipfsHash)
-          });
+          blog_id: new Option(registry, 'u64', null),
+          ipfs_hash: new Option(registry, 'Text', ipfsHash)
+        });
         return [ struct.id, update ];
       }
     } else {
@@ -293,12 +292,14 @@ const InnerForm = (props: FormProps) => {
   };
 
   const renderBlogsPreviewDropdown = () => {
-    if (!blogIds) return;
+    if (!blogIds) return
+
     return <SelectBlogPreview
       blogIds={blogIds}
       onSelect={handleBlogSelect}
       imageSize={24}
-      defaultValue={currentBlogId?.toString()} />
+      defaultValue={currentBlogId?.toString()}
+    />
   }
 
   const form = <Form className='ui form DfForm EditEntityForm'>
@@ -309,10 +310,10 @@ const InnerForm = (props: FormProps) => {
         </div>
         {renderBlogsPreviewDropdown()}
         <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
-        {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
+        {/* TODO ask a post summary or auto-generate and show under an 'Advanced' tab. */}
         <Dropdown overlay={addMenu} className={'EditPostAddButton'}>
-          <AntButton type="default" className={'SmallAntButton'} size="small">
-            <Icon type="plus-circle" /> Add block
+          <AntButton type='default' className={'SmallAntButton'} size='small'>
+            <Icon type='plus-circle' /> Add block
           </AntButton>
         </Dropdown>
         {nonEmptyArr(blockValues)
@@ -331,16 +332,16 @@ const InnerForm = (props: FormProps) => {
         }
         {nonEmptyArr(blockValues) &&
           <Dropdown overlay={() => addMenu(blockValues.length + 1, false, 'after')} className={'EditPostAddButton'}>
-            <AntButton type="default" className={'SmallAntButton'} size="small">
-              <Icon type="plus-circle" /> Add block
+            <AntButton type='default' className={'SmallAntButton'} size='small'>
+              <Icon type='plus-circle' /> Add block
             </AntButton>
           </Dropdown>
         }
         <div className='AdvancedWrapper'>
           <div onClick={() => setIsAdvanced(!isAdvanced)}>
             {isAdvanced
-              ? <Icon type="up" />
-              : <Icon type="down" />
+              ? <Icon type='up' />
+              : <Icon type='down' />
             }{' '}Advanced settings
           </div>
           {isAdvanced && <div>
@@ -390,8 +391,8 @@ const InnerForm = (props: FormProps) => {
           {form}
         </div>
         <div className='EditPostPreview'>
-          <Tabs type="card">
-            <TabPane tab="Full Preview" key="1">
+          <Tabs type='card'>
+            <TabPane tab='Full Preview' key='1'>
               <div>
                 <h1>{title}</h1>
               </div>
@@ -408,7 +409,7 @@ const InnerForm = (props: FormProps) => {
                 )
               }
             </TabPane>
-            <TabPane tab="Short Preview" key="2">
+            <TabPane tab='Short Preview' key='2'>
               <ViewPostPage
                 variant='preview'
                 postData={{ struct: struct as Post, content: values as any }}
@@ -422,13 +423,13 @@ const InnerForm = (props: FormProps) => {
   </Section>
 
   // TODO fix copypasta. See const editRegularPost = ()
-  const renderForMobile = () => <Tabs type="card" className="MobileTabs">
-    <TabPane tab="Editor" key="1">
+  const renderForMobile = () => <Tabs type='card' className='MobileTabs'>
+    <TabPane tab='Editor' key='1'>
       <div className='EditPostForm WithTabs'>
         {form}
       </div>
     </TabPane>
-    <TabPane tab="Full Preview" key="2">
+    <TabPane tab='Full Preview' key='2'>
       <div className='EditPostPreview WithTabs'>
         <div className='DfMd'>
           <h1>{title}</h1>
@@ -444,7 +445,7 @@ const InnerForm = (props: FormProps) => {
         }
       </div>
     </TabPane>
-    <TabPane tab="Short Preview" key="3">
+    <TabPane tab='Short Preview' key='3'>
       <ViewPostPage
         variant='preview'
         postData={{ struct: struct as Post, content: values as any }}

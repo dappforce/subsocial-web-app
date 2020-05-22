@@ -8,7 +8,7 @@ import 'brace/mode/javascript'
 import 'brace/mode/typescript'
 import 'brace/mode/scss'
 import 'brace/mode/html'
-import 'brace/mode/powershell'
+import 'brace/mode/sh'
 import 'brace/mode/rust'
 import 'brace/theme/github'
 import { isMobile } from 'react-device-detect'
@@ -56,7 +56,7 @@ const PostBlockFormik = (props: Props) => {
     { name: 'html', pretty: 'HTML' },
     { name: 'scss', pretty: 'CSS/SCSS' },
     { name: 'rust', pretty: 'Rust' },
-    { name: 'powershell', pretty: 'PowerShell' }
+    { name: 'sh', pretty: 'Shell' }
   ]
 
   const MAX_PREVIEW_BLOCKS = 2
@@ -146,9 +146,9 @@ const PostBlockFormik = (props: Props) => {
     }
     case 'link': {
       res = <Field
-        type="text"
+        type='text'
         name={`blockValues.${index}.data`}
-        placeholder="Link"
+        placeholder='Link'
         value={block.data}
         onChange={(e: React.FormEvent<HTMLInputElement>) => handleLinkChange(block, `blockValues.${index}.data`, e.currentTarget.value)}
       />
@@ -159,9 +159,9 @@ const PostBlockFormik = (props: Props) => {
       res = showImageInputs
         ? <div className='ImageBlockWrapper'>
           <Field
-            type="text"
+            type='text'
             name={`blockValues.${index}.data`}
-            placeholder="Image link"
+            placeholder='Image link'
             value={block.data}
             onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.data`, e.currentTarget.value)}
           />
@@ -175,19 +175,19 @@ const PostBlockFormik = (props: Props) => {
             showUploadList={false}
             className='Dragger'
           >
-            <p className="ant-upload-drag-icon">
-              <Icon type="inbox" />
+            <p className='ant-upload-drag-icon'>
+              <Icon type='inbox' />
             </p>
-            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+            <p className='ant-upload-text'>Click or drag file to this area to upload</p>
           </Dragger>
         </div>
         : <div className='ImgFormPreviewWrapper'>
-          <Icon type="delete" className='RemoveImgIcon' onClick={handleImgRemove} />
+          <Icon type='delete' className='RemoveImgIcon' onClick={handleImgRemove} />
           <img src={formPreviewImage} />
           <Field
-            type="text"
+            type='text'
             name={`blockValues.${index}.description`}
-            placeholder="Image description"
+            placeholder='Image description'
             value={img.description}
             className={'ImageDescription'}
             onChange={(e: React.FormEvent<HTMLInputElement>) => setFieldValue(`blockValues.${index}.description`, e.currentTarget.value)}
@@ -197,9 +197,9 @@ const PostBlockFormik = (props: Props) => {
     }
     case 'video': {
       res = <Field
-        type="text"
+        type='text'
         name={`blockValues.${index}.data`}
-        placeholder="Video link"
+        placeholder='Video link'
         value={block.data}
         onChange={(e: React.FormEvent<HTMLInputElement>) => handleLinkChange(block, `blockValues.${index}.data`, e.currentTarget.value)}
       />
@@ -211,15 +211,15 @@ const PostBlockFormik = (props: Props) => {
       res = <div className='EditPostAceEditor'>
         <Dropdown overlay={() => modesMenu(block.id)} className={'AceModeSelect'}>
           <a href='#' onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => e.preventDefault()}>
-            <Icon type="down" /> Syntax: {pretty || 'JavaScript'}
+            <Icon type='down' /> Syntax: {pretty || 'JavaScript'}
           </a>
         </Dropdown>
         <AceEditor
           mode={lang || 'javascript'}
-          theme="github"
+          theme='github'
           onChange={(value: string) => setFieldValue(`blockValues.${index}.data`, value)}
           value={block.data}
-          name="ace-editor"
+          name='ace-editor'
           editorProps={{ $blockScrolling: true }}
           className={'AceEditor'}
           width='100%'
@@ -251,47 +251,47 @@ const PostBlockFormik = (props: Props) => {
 
   const mobileButtonsMenu = (
     <Menu className='MobileButtonsMenu'>
-      <Icon type="plus-circle" className='AddBlockPlusIcon AddBefore' />
+      <Icon type='plus-circle' className='AddBlockPlusIcon AddBefore' />
       <SubMenu title={`Add block before`} className='addBlockMenuButton'>
         {addMenu(index, true, 'before')}
       </SubMenu>
-      <Icon type="plus-circle" className='AddBlockPlusIcon AddAfter' />
+      <Icon type='plus-circle' className='AddBlockPlusIcon AddAfter' />
       <SubMenu title={`Add block after`} className='addBlockMenuButton'>
         {addMenu(index, true, 'after')}
       </SubMenu>
       <Menu.Item>
         <a onClick={() => handleUseOnPreview(index, isPlaceForPreview)} className={`SmallAntButton ${!isPlaceForPreview && 'off'} ${block.featured && 'on'}`}>
-          <Icon type="star" /> Featured
+          <Icon type='star' /> Featured
         </a>
       </Menu.Item>
       { index > 0 &&
       <Menu.Item><a className={'SmallAntButton'} onClick={() => changeBlockPosition(-1, index)} >
-        <Icon type="up-circle" /> Move Up
+        <Icon type='up-circle' /> Move Up
       </a></Menu.Item> }
       { index < maxBlockId &&
         <Menu.Item><a className={'SmallAntButton'} onClick={() => changeBlockPosition(1, index)} >
-          <Icon type="down-circle" /> Move Down
+          <Icon type='down-circle' /> Move Down
         </a></Menu.Item> }
       <Menu.Item>
         <a className={'SmallAntButton'} onClick={() => setFieldValue(`blockValues.${index}.hidden`, !block.hidden)}>
           {block.hidden
-            ? <div><Icon type="eye" /> Show</div>
-            : <div><Icon type="eye-invisible" /> Hide</div>
+            ? <div><Icon type='eye' /> Show</div>
+            : <div><Icon type='eye-invisible' /> Hide</div>
           }
         </a>
       </Menu.Item>
       <Menu.Item>
         <a onClick={() => removeBlock(block.id)} className={'SmallAntButton'}>
-          <Icon type="delete" /> Delete
+          <Icon type='delete' /> Delete
         </a>
       </Menu.Item>
     </Menu>
   );
 
-  const buttonsMenu = <div className="ButtonsForMobile">
+  const buttonsMenu = <div className='ButtonsForMobile'>
     <Dropdown overlay={mobileButtonsMenu}>
-      <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-        <Icon type="ellipsis" className="MenuDotsIcon" />
+      <a className='ant-dropdown-link' onClick={e => e.preventDefault()}>
+        <Icon type='ellipsis' className='MenuDotsIcon' />
       </a>
     </Dropdown>
   </div>
@@ -299,7 +299,7 @@ const PostBlockFormik = (props: Props) => {
   return <div className={`EditPostBlockWrapper ${isMobile ? 'MobileBlock' : ''}`} key={block.id} >
     {res}
     {buttonsMenu}
-    {block.featured && <div className='EditPostCrown'><Icon type="star" /></div>}
+    {block.featured && <div className='EditPostCrown'><Icon type='star' /></div>}
     <ErrorMessage name={`blockValues.${index}.data`} component='div' className='ui pointing red label' />
   </div>
 }

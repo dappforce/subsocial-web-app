@@ -17,12 +17,10 @@ const LinkPreview = (props: Props) => {
   const renderEmbed = (embedData: EmbedData) => {
     switch (embedData.type) {
       case 'twitter': {
-        return <Tweet options={{
-          width: '100%'
-        }} tweetId={embedData?.data}/>
+        return <Tweet options={{ width: '100%' }} tweetId={embedData?.data} />
       }
       case 'default': {
-        return <div>default embed</div>
+        return <div>Default embed</div>
       }
     }
     return null
@@ -75,7 +73,7 @@ const LinkPreview = (props: Props) => {
             <div className={'UnderPicture'}>
               <p className='PreviewLinkTitle'><b>{og?.title}</b></p>
               <p className='PreviewDescription'>{og?.description}</p>
-              <p className='PreviewLinkAfterDescription'><Icon type="link" /> {domain}</p>
+              <p className='PreviewLinkAfterDescription'><Icon type='link' /> {domain}</p>
             </div>
           </div>}
       </a>

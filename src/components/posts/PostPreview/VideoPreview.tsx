@@ -65,9 +65,9 @@ const VideoPreview = (props: Props) => {
       }
       case 'vimeo': {
         return <iframe src={`https://player.vimeo.com/video/${embedData?.data}?autoplay=1&loop=1&autopause=0`}
-          width="100%"
-          // height="450"
-          allow="autoplay; fullscreen"
+          width='100%'
+          // height='450'
+          allow='autoplay; fullscreen'
           frameBorder={0}
         />
       }
@@ -113,7 +113,7 @@ const VideoPreview = (props: Props) => {
             <div className={'UnderPicture'}>
               <p className='PreviewLinkTitle'><b>{og?.title}</b></p>
               <p className='PreviewDescription'>{og?.description}</p>
-              <p className='PreviewLinkAfterDescription'><Icon type="link" /> {domain}</p>
+              <p className='PreviewLinkAfterDescription'><Icon type='link' /> {domain}</p>
             </div>
           </div>}
       </a>

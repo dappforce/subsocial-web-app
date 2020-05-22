@@ -6,7 +6,7 @@ import 'brace/mode/javascript'
 import 'brace/mode/typescript'
 import 'brace/mode/scss'
 import 'brace/mode/html'
-import 'brace/mode/powershell'
+import 'brace/mode/sh'
 import 'brace/mode/rust'
 import 'brace/theme/github'
 
@@ -24,9 +24,9 @@ const CodePreview = (props: Props) => {
 
   return <AceEditor
     mode={lang || 'javascript'}
-    theme="github"
+    theme='github'
     value={x.data}
-    name="ace-editor-readonly"
+    name='ace-editor-readonly'
     readOnly={true}
     editorProps={{ $blockScrolling: true }}
     width='100%'

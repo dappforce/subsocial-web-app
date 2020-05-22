@@ -146,7 +146,7 @@
         top: 50%;
         height: 1px;
         background: $color_light_border;
-        content: "";
+        content: '';
         width: 45%;
         display: block;
       }
