@@ -245,7 +245,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<Props> => {
     return return404(props)
   }
 
-  const ownerId = blogData?.struct.created.account as AccountId
+  const ownerId = blogData?.struct.owner as AccountId
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsByBlogId(id as BN)

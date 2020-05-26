@@ -22,7 +22,7 @@ export const withLoadBlogDataById = (Component: React.ComponentType<Props>) => {
         const blogData = await subsocial.findBlog(id)
         if (blogData) {
           setBlogData(blogData)
-          const ownerId = blogData.struct.created.account
+          const ownerId = blogData.struct.owner
           const owner = await subsocial.findProfile(ownerId)
           setOwner(owner);
         }

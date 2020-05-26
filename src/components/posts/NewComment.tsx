@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MyAccountProps } from '../utils/MyAccount';
-import { PostExtension, PostUpdate, CommentExt, OptionId } from '@subsocial/types/substrate/classes';
+import { PostExtension, PostUpdate, CommentExt, OptionId, OptionBool } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
@@ -147,7 +147,8 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
       {
       // TODO setting new blog_id will move the post to another blog.
         blog_id: new Option(registry, 'u64', null),
-        ipfs_hash: new Option(registry, 'Text', hash)
+        ipfs_hash: new Option(registry, 'Text', hash),
+        hidden: new OptionBool(false) // TODO has no implementation on UI
       });
     return [ struct.id, update ];
   }

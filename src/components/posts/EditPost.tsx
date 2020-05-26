@@ -18,7 +18,7 @@ import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@subsocial/react-components/Status/types';
 import { TxCallback } from '../utils/types';
-import { PostExtension, PostUpdate, OptionId, OptionText } from '@subsocial/types/substrate/classes';
+import { PostExtension, PostUpdate, OptionId, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
 import { Post, IpfsHash, BlogId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
@@ -134,7 +134,8 @@ const InnerForm = (props: FormProps) => {
           {
           // TODO setting new blog_id will move the post to another blog.
             blog_id: new OptionId(),
-            ipfs_hash: new OptionText(hash)
+            ipfs_hash: new OptionText(hash),
+            hidden: new OptionBool(false) // TODO has no implementation on UI
           });
         return [ struct.id, update ];
       }
