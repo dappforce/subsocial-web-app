@@ -6,7 +6,7 @@ import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti, registry } from '@subsocial/react-api';
+import { withCalls, withMulti } from '@subsocial/react-api';
 import * as DfForms from '../utils/forms';
 import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
@@ -18,7 +18,7 @@ import { TxFailedCallback } from '@subsocial/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { Blog, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { BlogContent } from '@subsocial/types/offchain';
-import { BlogUpdate, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes';
+import { BlogUpdate, OptionOptionText, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
@@ -96,9 +96,9 @@ const InnerForm = (props: FormProps) => {
     } else {
       // TODO update only dirty values.
       const update = new BlogUpdate({
-        writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
         handle: new OptionOptionText(handle),
-        ipfs_hash: new OptionText(hash)
+        ipfs_hash: new OptionText(hash),
+        hidden: new OptionBool(false) // TODO has no implementation on UI
       });
       return [ struct.id, update ];
     }
@@ -235,7 +235,7 @@ function LoadStruct (props: LoadStructProps) {
     return <Loading />;
   }
 
-  if (!struct || !struct.created.account.eq(myAddress)) {
+  if (!struct || !struct.owner.eq(myAddress)) {
     return <em>You have no rights to edit this blog</em>;
   }
 
