@@ -191,10 +191,7 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
         <ViewPostPage
           key={item.post.struct.id.toString()}
           variant='preview'
-          postData={item.post}
-          postExtData={item.ext}
-          owner={item.owner}
-          blog={blog}
+          postStruct={item}
         />
       }
     />

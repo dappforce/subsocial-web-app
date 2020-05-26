@@ -19,9 +19,9 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { isMyAddress } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
-import { Post, Blog } from '@subsocial/types/substrate/interfaces';
-import { PostData, ExtendedPostData, ProfileData, BlogData } from '@subsocial/types/dto';
-import { PostType, loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
+import { Post } from '@subsocial/types/substrate/interfaces';
+import { PostData, PostWithAllDetails, ProfileData, BlogData } from '@subsocial/types/dto';
+import { loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import ViewTags from '../utils/ViewTags';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
@@ -32,6 +32,7 @@ import { HasBlogIdOrHandle, HasPostId, postUrl } from '../utils/urls';
 import SharePostAction from './SharePostAction';
 import { CommentSection } from './CommentsSection';
 import partition from 'lodash.partition'
+import { useRouter } from 'next/router';
 
 const log = newLogger('View Post')
 
@@ -58,26 +59,29 @@ type ViewPostPageProps = {
   withStats?: boolean;
   withActions?: boolean;
   withBlogName?: boolean;
-  postData: PostData;
-  owner?: ProfileData,
-  postExtData?: PostData;
+  postStruct: PostWithAllDetails;
   commentIds?: BN[];
   statusCode?: number,
-  blog: Blog,
-  replies?: ExtendedPostData[],
+  replies?: PostWithAllDetails[],
   parentPost?: PostData
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { postData } = props
-  const { struct, content: initialContent } = postData;
+  const { postStruct } = props
+  const {
+    post: { struct, content: initialContent },
+    ext: postExtData,
+    blog: blogData,
+    owner
+  } = postStruct;
 
-  if (!struct) return <NoData description={<span>Post not found</span>} />;
+  if (!struct || !blogData) return useRouter().pathname.includes('posts') ? <NoData description={<span>Post not found</span>} /> : null;
 
   const post = struct;
 
+  const { struct: blog } = blogData
   const {
     variant = 'full',
     withBlogName = false,
@@ -85,28 +89,25 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withActions = true,
     withStats = true,
     withCreatedBy = true,
-    postExtData,
-    owner,
     replies,
-    blog = { id: new BN(1) } as Blog, // TODO hack before fix resolved blog for comment
     parentPost
   } = props;
 
   const {
     id,
     created,
-    ipfs_hash
+    ipfs_hash,
+    extension
   } = post;
 
-  const type: PostType = isEmpty(postExtData) ? 'regular' : 'share';
-  const isRegularPost = type === 'regular';
+  const isRegularPost = !(extension.isSharedPost || (extension as any).SharedPost); // hack because SSR don`t undestand methods, only object
   const [ content, setContent ] = useState(initialContent || {} as PostExtContent);
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
   const [ activeVoters ] = useState(0);
 
-  const originalPost = postExtData && postExtData.struct;
-  const [ originalContent, setOriginalContent ] = useState(postExtData?.content)
+  const originalPost = postExtData && postExtData.post.struct;
+  const [ originalContent, setOriginalContent ] = useState(postExtData?.post.content)
 
   useEffect(() => {
     if (!ipfs_hash) return;
@@ -326,15 +327,11 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       return renderNameOnly(blog, post, content?.title);
     }
     case 'preview': {
-      switch (type) {
-        case 'regular': {
-          return renderRegularPreview();
-        }
-        case 'share': {
-          return renderSharedPreview();
-        }
+      if (isRegularPost) {
+        return renderRegularPreview();
+      } else {
+        return renderSharedPreview();
       }
-      break;
     }
     case 'full': {
       return renderDetails(content);
@@ -369,11 +366,8 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   }
 
   return {
-    postData: extPostData?.post,
-    postExtData: extPostData?.ext,
-    owner: extPostData?.owner,
+    postStruct: extPostData,
     replies,
-    blog: extPostData?.blog,
     parentPost
   };
 };
@@ -383,7 +377,7 @@ export default ViewPostPage;
 const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
   return (props: ViewPostProps) => {
     const { id } = props;
-    const [ extPostData, setExtData ] = useState<ExtendedPostData>();
+    const [ extPostData, setExtData ] = useState<PostWithAllDetails>();
     const { subsocial } = useSubsocialApi()
 
     useEffect(() => {
@@ -410,10 +404,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
     return extPostData
       ? <Component
         {...props}
-        blog={extPostData.blog.struct}
-        postData={extPostData.post}
-        postExtData={extPostData.ext}
-        owner={extPostData.owner}
+        postStruct={extPostData}
       />
       : null;
   };
