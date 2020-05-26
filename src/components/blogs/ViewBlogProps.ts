@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import { GenericAccountId as AccountId } from '@polkadot/types'
-import { BlogData, ExtendedPostData, ProfileData } from '@subsocial/types/dto'
+import { BlogData, PostWithAllDetails, ProfileData } from '@subsocial/types/dto'
 
 export type ViewBlogProps = {
   preview?: boolean
@@ -13,7 +13,7 @@ export type ViewBlogProps = {
   id?: BN
   blogData?: BlogData
   owner?: ProfileData
-  posts?: ExtendedPostData[]
+  posts?: PostWithAllDetails[]
   followers?: AccountId[]
   imageSize?: number
   onClick?: () => void

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { Loading } from '../utils/utils';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { ExtendedPostData } from '@subsocial/types';
+import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from './PostPreview';
 
 type OuterProps = {
@@ -10,13 +10,13 @@ type OuterProps = {
 }
 
 type ResolvedProps = {
-  posts: ExtendedPostData[]
+  posts: PostWithAllDetails[]
 }
 
 export function withLoadPostsWithBlogs<P extends OuterProps> (Component: React.ComponentType<ResolvedProps>) {
   return function (props: P) {
     const { postIds } = props
-    const [ posts, setPosts ] = useState<ExtendedPostData[]>()
+    const [ posts, setPosts ] = useState<PostWithAllDetails[]>()
     const [ loaded, setLoaded ] = useState(false)
     const { subsocial } = useSubsocialApi()
 

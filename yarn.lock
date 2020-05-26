@@ -3463,12 +3463,14 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@file:../dappforce-subsocial-js/packages/api/build":
-  version "0.2.23"
+"@subsocial/api@^0.2.28":
+  version "0.2.28"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.28.tgz#ac19b7768e7efe790ffcbc905449cb552e702e3f"
+  integrity sha512-jHTI2+0+bF4NH7rtuBXsPLVHVGuuqt3XaKEAlUMi816hKwM1SRqslHWrWyaIrdbM9Qj0ORylDwU9uqiDXmh/lg==
   dependencies:
     "@babel/runtime" "^7.8.4"
-    "@polkadot/api" "^1.11.1"
-    "@subsocial/types" "^0.2.1"
+    "@polkadot/api" "1.13.1"
+    "@subsocial/types" "^0.2.3"
     "@subsocial/utils" "^0.1.23"
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
@@ -3564,17 +3566,10 @@
     "@polkadot/react-qr" "^0.52.1"
     "@subsocial/react-components" "^0.41.18"
 
-"@subsocial/types@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.2.1.tgz#3c7e87a45c5c6baf5794cae867f73cc33a892899"
-  integrity sha512-FXuyRaNpUKXrSjU6E2ImqFgAx8GsjFfQDbL5bZY5/q10M3Th/9LlfmozLpCcUKKtoqQ18RX8yS9mdlf9IUCLyg==
-  dependencies:
-    "@babel/runtime" "^7.8.4"
-    "@subsocial/utils" "^0.1.23"
-    cids "^0.7.1"
-
-"@subsocial/types@file:../dappforce-subsocial-js/packages/types/build":
-  version "0.2.1"
+"@subsocial/types@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.2.3.tgz#341a1660cacfc2c811b5893062807229a9adcae0"
+  integrity sha512-dtbY4nWM95uSmlDt4x6BZt29oeeccAtBV/Ay2gYVXXR4yZ4rVU6oxOAKCBgSJ8NneZwRzuzL/fqTe/UG069TMQ==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@subsocial/utils" "^0.1.23"

@@ -1,5 +1,5 @@
 import { PostId, Blog } from '@subsocial/types/substrate/interfaces';
-import { ExtendedPostData } from '@subsocial/types';
+import { PostWithAllDetails } from '@subsocial/types';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import React, { useState, useEffect } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
@@ -11,13 +11,13 @@ const log = newLogger('CommentTree')
 type LoadProps = {
   parentId: PostId,
   blog: Blog,
-  replies?: ExtendedPostData[],
+  replies?: PostWithAllDetails[],
   newCommentId?: PostId
 }
 
 type CommentsTreeProps = {
   blog: Blog,
-  comments: ExtendedPostData[]
+  comments: PostWithAllDetails[]
 }
 
 const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, blog }) => {
@@ -36,14 +36,14 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
   return (props: LoadProps) => {
     const { parentId, blog, replies = [] } = props;
 
-    const [ replyComments, setComments ] = useState<ExtendedPostData[]>(replies);
+    const [ replyComments, setComments ] = useState<PostWithAllDetails[]>(replies);
     const [ isCommentReplies, setIsCommentReplies ] = useState(replyComments.length > 0)
     const { subsocial, substrate } = useSubsocialApi();
 
     useEffect(() => {
       const loadComments = async () => {
         const replyIds = await substrate.getReplyIdsByPostId(parentId);
-        const comments = await subsocial.findPostsWithAllDetails(replyIds);
+        const comments = await subsocial.findPostsWithSomeDetails(replyIds, { withOwner: true }) as any as PostWithAllDetails[];
         setComments(comments)
         setIsCommentReplies(true);
       }

@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Comment, Menu, Dropdown, Icon } from 'antd';
-import { ProfileData, ExtendedPostData } from '@subsocial/types/dto';
+import { ProfileData, PostWithAllDetails } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { DfMd } from '../utils/DfMd';
 import { CommentContent } from '@subsocial/types';
@@ -22,7 +22,7 @@ type Props = {
   owner?: ProfileData,
   struct: Post,
   content?: CommentContent,
-  replies?: ExtendedPostData[],
+  replies?: PostWithAllDetails[],
   withShowReplies?: boolean
 }
 
