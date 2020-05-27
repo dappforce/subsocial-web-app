@@ -1,43 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { DfMd } from '../utils/DfMd';
+import { DfMd } from '../../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { nonEmptyStr, newLogger } from '@subsocial/utils';
-import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate, getBlogId, unwrapSubstrateId } from '../utils/utils';
-import { PostVoters } from '../voting/ListVoters';
-import NoData from '../utils/EmptyList';
-import Section from '../utils/Section';
-import { ViewBlog } from '../blogs/ViewBlog';
-import { DfBgImg } from '../utils/DfBgImg';
+import { HeadMeta } from '../../utils/HeadMeta';
+import { Loading, formatUnixDate, getBlogId, unwrapSubstrateId } from '../../utils/utils';
+import { PostVoters } from '../../voting/ListVoters';
+import NoData from '../../utils/EmptyList';
+import Section from '../../utils/Section';
+import { ViewBlog } from '../../blogs/ViewBlog';
+import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile, isBrowser } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { isMyAddress } from '../../utils/MyAccountContext';
 import { NextPage } from 'next';
-import BN from 'bn.js';
 import { Post } from '@subsocial/types/substrate/interfaces';
 import { PostData, PostWithAllDetails, ProfileData, BlogData } from '@subsocial/types/dto';
-import { loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import ViewTags from '../utils/ViewTags';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import AuthorPreview from '../profiles/address-views/AuthorPreview';
-import SummarizeMd from '../utils/md/SummarizeMd';
-import ViewPostLink from './ViewPostLink';
-import { HasBlogIdOrHandle, HasPostId, postUrl } from '../utils/urls';
-import SharePostAction from './SharePostAction';
-import { CommentSection } from './CommentsSection';
+import { loadContentFromIpfs, PostExtContent } from '../LoadPostUtils'
+import { getSubsocialApi } from '../../utils/SubsocialConnect';
+import ViewTags from '../../utils/ViewTags';
+import { useSubsocialApi } from '../../utils/SubsocialApiContext';
+import AuthorPreview from '../../profiles/address-views/AuthorPreview';
+import SummarizeMd from '../../utils/md/SummarizeMd';
+import ViewPostLink from '../ViewPostLink';
+import { HasBlogIdOrHandle, HasPostId, postUrl } from '../../utils/urls';
+import SharePostAction from '../SharePostAction';
+import { CommentSection } from '../CommentsSection';
 import partition from 'lodash.partition'
 import { useRouter } from 'next/router';
-
+import BN from 'bn.js';
 const log = newLogger('View Post')
 
-const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
-const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
+const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
+const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 type PostVariant = 'full' | 'preview' | 'name only';
 
