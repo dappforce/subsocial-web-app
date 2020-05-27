@@ -3,7 +3,6 @@ import { withCalls, withMulti } from '@subsocial/react-api';
 import { socialQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { ViewPost } from './ViewPost';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
 import { LabeledValue } from 'antd/lib/select';
@@ -19,6 +18,7 @@ import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray, newLogger } from '@subsocial/utils';
 import DfMdEditor from '../utils/DfMdEditor';
+import { DynamicRegularPreview } from './view-post';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -136,7 +136,7 @@ const InnerShareModal = (props: Props) => {
           <ErrorMessage errors={errors} name={Fields.body} />
         </div>
       </form>
-      <ViewPost id={postId} withStats={false} withActions={false} variant='preview' />
+      <DynamicRegularPreview id={postId} />
     </div>
   };
 
