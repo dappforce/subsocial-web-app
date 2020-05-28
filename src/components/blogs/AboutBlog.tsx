@@ -1,4 +1,3 @@
-import { GenericAccountId as AccountId } from '@polkadot/types';
 import { BlogContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
 import BN from 'bn.js';
@@ -97,7 +96,7 @@ AboutBlogPage.getInitialProps = async (props): Promise<Props> => {
     return return404(props)
   }
 
-  const ownerId = blogData?.struct.created.account as AccountId
+  const ownerId = blogData?.struct.owner
   const owner = await subsocial.findProfile(ownerId)
 
   return {

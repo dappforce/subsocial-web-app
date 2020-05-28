@@ -9,6 +9,7 @@ import { ProfileContent, ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { SummarizeMd } from 'src/components/utils/md';
 import ViewProfileLink from '../ViewProfileLink';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 
 type ProfilePreviewProps = AddressProps & {
   mini?: boolean,
@@ -41,7 +42,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
 
   return <div>
     <div className={`ProfileDetails`}>
-      <Avatar size={size || 44} address={address} avatar={avatar} style={{ marginTop: '.5rem' }}/>
+      <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
       <div className='content'>
         <NameDetails owner={owner} address={address} />
         {!mini && <>

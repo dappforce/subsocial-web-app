@@ -1,9 +1,9 @@
 import React from 'react';
 import ViewPostPage from '../posts/ViewPost';
-import { ExtendedPostData, BlogData } from '@subsocial/types';
+import { PostWithAllDetails, BlogData } from '@subsocial/types';
 
 type PostPreviewProps = {
-  post: ExtendedPostData
+  post: PostWithAllDetails
 }
 
 export function PostPreview (props: PostPreviewProps) {

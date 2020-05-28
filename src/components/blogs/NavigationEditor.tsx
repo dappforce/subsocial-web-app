@@ -19,8 +19,8 @@ import { validationSchema } from './NavValidation';
 import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
 import { Blog, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { BlogContent, NavTab } from '@subsocial/types/offchain';
-import { BlogUpdate, OptionText, OptionOptionText } from '@subsocial/types/substrate/classes';
-import { withMulti, withCalls, registry } from '@subsocial/react-api';
+import { BlogUpdate, OptionText, OptionOptionText, OptionBool } from '@subsocial/types/substrate/classes';
+import { withMulti, withCalls } from '@subsocial/react-api';
 import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';
@@ -148,9 +148,9 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     if (!isValid || !struct) return [];
 
     const update = new BlogUpdate({
-      writers: new Option(registry, 'Vec<AccountId>', []),
       handle: new OptionOptionText(null),
-      ipfs_hash: new OptionText(hash)
+      ipfs_hash: new OptionText(hash),
+      hidden: new OptionBool(false) // TODO has no implementation on UI
     });
     return [ struct.id, update ];
   };
@@ -342,7 +342,7 @@ function LoadStruct (props: LoadStructProps) {
     return <Loading />;
   }
 
-  if (!struct || !struct.created.account.eq(myAddress)) {
+  if (!struct || !struct.owner.eq(myAddress)) {
     return <em>You have no rights to edit this blog</em>;
   }
 

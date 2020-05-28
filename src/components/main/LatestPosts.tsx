@@ -1,10 +1,10 @@
 import React from 'react';
 import ListData from '../utils/DataList';
-import { ExtendedPostData } from '@subsocial/types';
+import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from '../posts/PostPreview';
 
 type Props = {
-  postsData: ExtendedPostData[]
+  postsData: PostWithAllDetails[]
 }
 
 export const LatestPosts = (props: Props) => {

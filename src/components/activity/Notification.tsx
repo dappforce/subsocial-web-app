@@ -114,7 +114,7 @@ export function Notification (props: NotificationType) {
   const { address, notificationMessage, details, image = '', owner } = props;
   const avatar = owner?.content?.avatar;
   return <div className='DfNotificationItem'>
-    <Avatar address={address} avatar={avatar} size={30}/>
+    <Avatar address={address} avatar={avatar} />
     <div className="DfNotificationContent">
       <div className="DfTextActivity">
         <Name owner={owner} address={address}/>

@@ -53,7 +53,6 @@ const resultToPreview = (res: DataResults, i: number) => {
         <ProfilePreviewWithOwner
           key={res._id}
           address={new AccountId(registry, res._id)}
-          size={30}
         />
       </Segment>;
     default:
@@ -111,12 +110,12 @@ const Tabs = () => {
         return blogId === undefined
           ? null
           : {
-              query: {
-                term: {
-                  blog_id: blogId
-                }
+            query: {
+              term: {
+                blog_id: blogId
               }
-            };
+            }
+          };
       }}
     />
 
@@ -126,12 +125,12 @@ const Tabs = () => {
         return tags === undefined
           ? null
           : {
-              query: {
-                terms: {
-                  tags: (tags as string).split(',')
-                }
+            query: {
+              terms: {
+                tags: (tags as string).split(',')
               }
-            };
+            }
+          };
       }}
     />
 

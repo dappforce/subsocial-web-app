@@ -99,6 +99,7 @@
 
   .ProfilePreviews,
   .ui.modal {
+
     button.ui.tiny {
       padding: .6rem;
       font-size: $font_tiny;
@@ -106,6 +107,24 @@
   }
 
   .ui.modal {
+    .ProfileDetails {
+      padding-bottom: $space_tiny
+    }
+
+    .content {
+      line-height: $space_normal;
+    }
+
+    .ui.segment {
+      box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+      margin: 1rem 0;
+      border-radius: .28571429rem;
+      border: 1px solid rgba(34,36,38,.15);
+    }
+
+    .actions {
+      padding-top: 0;
+    }
 
     button.ui.tiny.primary,
     button.ui.tiny.basic {
@@ -126,6 +145,10 @@
     }
   }
 
+  .Df--AddressComponents-details {
+    font-size: $font_small;
+  }
+
   .ui.modal.transition.visible.active {
 
     .scrolling.content,
@@ -143,10 +166,11 @@
     }
 
     .ui--AddressComponents-info {
-      max-width: 11rem;
+      max-width: 13rem;
 
       .Df--AddressComponents-details {
         margin-top: $space_mini;
+        font-size: $font_small;
       }
     }
 
@@ -228,8 +252,7 @@
 
   .ProfileDetails {
     .content {
-      padding-left: 0;
-      padding-right: .5rem;
+      padding: 0 $space_tiny;
     }
   }
 

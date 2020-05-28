@@ -4,7 +4,7 @@ import { ViewComment } from './ViewComment';
 import { NewComment } from './NewComment';
 import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
-import { PostData, ExtendedPostData } from '@subsocial/types/dto';
+import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
 import { NextPage } from 'next';
 import { getProfileName } from '../utils/utils';
 import { Pluralize } from '../utils/Plularize';
@@ -16,7 +16,7 @@ import Section from '../utils/Section';
 type CommentSectionProps = {
   blog: Blog,
   post: Post,
-  replies?: ExtendedPostData[],
+  replies?: PostWithAllDetails[],
   hashId?: string
 }
 
@@ -45,10 +45,10 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
 })
 
 type CommentPageProps = {
-  comment: ExtendedPostData,
+  comment: PostWithAllDetails,
   parentPost: PostData,
   blog: Blog,
-  replies: ExtendedPostData[]
+  replies: PostWithAllDetails[]
 }
 
 export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, blog }) => {

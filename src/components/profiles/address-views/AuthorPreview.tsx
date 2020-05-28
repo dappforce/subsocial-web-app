@@ -58,7 +58,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     style={style}
   >
     <div className='ui--AddressComponents-info'>
-      <Avatar size={size || 36} address={address} avatar={avatar} />
+      <Avatar size={size} address={address} avatar={avatar} />
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='hover'

@@ -7,14 +7,14 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { LatestBlogs } from './LatestBlogs';
 import { LatestPosts } from './LatestPosts';
-import { BlogData, ExtendedPostData } from '@subsocial/types';
+import { BlogData, PostWithAllDetails } from '@subsocial/types';
 
 const ZERO = new BN(0);
 const FIVE = new BN(5);
 
 type Props = {
   blogsData: BlogData[]
-  postsData: ExtendedPostData[]
+  postsData: PostWithAllDetails[]
 }
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {

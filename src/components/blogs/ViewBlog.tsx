@@ -34,7 +34,8 @@ import SpaceNav from './SpaceNav';
 import { ViewBlogProps } from './ViewBlogProps';
 import withLoadBlogDataById from './withLoadBlogDataById';
 import AboutBlogLink from './AboutBlogLink';
-import ViewBlogLink from './ViewBlogLink';
+import ViewBlogLink from './ViewBlogLink'
+import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
@@ -62,7 +63,7 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
     withFollowButton = false,
     dropdownPreview = false,
     posts = [],
-    imageSize = 36,
+    imageSize = DEFAULT_AVATAR_SIZE,
     onClick
   } = props;
 
@@ -190,10 +191,7 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
         <ViewPostPage
           key={item.post.struct.id.toString()}
           variant='preview'
-          postData={item.post}
-          postExtData={item.ext}
-          owner={item.owner}
-          blog={blog}
+          postStruct={item}
         />
       }
     />
@@ -247,7 +245,7 @@ ViewBlogPage.getInitialProps = async (props): Promise<Props> => {
     return return404(props)
   }
 
-  const ownerId = blogData?.struct.created.account as AccountId
+  const ownerId = blogData?.struct.owner as AccountId
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsByBlogId(id as BN)
