@@ -9,7 +9,11 @@ import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 import { postUrl } from '../utils/urls';
 
-export type EventsName = 'AccountFollowed' | 'PostShared' | 'CommentShared' | 'BlogFollowed' | 'BlogCreated' | 'CommentCreated' | 'CommentReplyCreated' | 'PostReactionCreated' | 'PostReactionCreated' | 'CommentReactionCreated'
+export type EventsName = 'AccountFollowed'|
+'PostShared' | 'CommentShared' |
+'BlogFollowed' | 'BlogCreated' |
+'CommentCreated' | 'CommentReplyCreated'
+| 'PostReactionCreated' | 'CommentReactionCreated'
 
 export type EventsMsg = {
   [key in EventsName]: string;
@@ -36,9 +40,9 @@ export type NotificationType = {
 }
 
 export type ActivityStore = {
-  blogByBlogIdMap: Map<string, BlogData>,
-  postByPostIdMap: Map<string, PostData>,
-  ownerDataByOwnerIdMap: Map<string, ProfileData>
+  blogById: Map<string, BlogData>,
+  postById: Map<string, PostData>,
+  ownerById: Map<string, ProfileData>
 }
 
 type PreviewNotification = {
@@ -89,16 +93,16 @@ const getCommentPreview = (commentId: BN, blogMap: Map<string, BlogData>, postMa
 
 const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
   const { event, blog_id, post_id, comment_id } = activity;
-  const { blogByBlogIdMap, postByPostIdMap } = store;
+  const { blogById, postById } = store;
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
-    getCommentPreview(hexToBn(comment_id), blogByBlogIdMap, postByPostIdMap)
+    getCommentPreview(hexToBn(comment_id), blogById, postById)
 
   const getPostPreviewWithMaps = (post_id: string) =>
-    getPostPreview(hexToBn(post_id), blogByBlogIdMap, postByPostIdMap)
+    getPostPreview(hexToBn(post_id), blogById, postById)
 
   const getBlogPreviewWithMaps = (blog_id: string) =>
-    getBlogPreview(hexToBn(blog_id), blogByBlogIdMap)
+    getBlogPreview(hexToBn(blog_id), blogById)
 
   switch (event) {
     case 'BlogFollowed': return getBlogPreviewWithMaps(blog_id)
@@ -122,7 +126,7 @@ const getNotificationMessage = (msg: string, aggregationCount: number, preview: 
 export const getNotification = (activity: Activity, store: ActivityStore): NotificationType | undefined => {
   const { account, event, date, agg_count } = activity;
   const formatDate = moment(date).format('lll');
-  const owner = store.ownerDataByOwnerIdMap.get(account);
+  const owner = store.ownerById.get(account);
   const activityPreview = getAtivityPreview(activity, store)
 
   if (!activityPreview) return undefined;

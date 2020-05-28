@@ -7,7 +7,6 @@ type PostPreviewProps = {
 }
 
 export function PostPreview (props: PostPreviewProps) {
-  console.log('PostData-Blog', props.post)
   const { post, ext, owner, blog = {} as BlogData } = props.post
 
   return <ViewPostPage postData={post} blog={blog.struct} postExtData={ext} owner={owner} variant='preview' withBlogName />

@@ -27,9 +27,9 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     const { activities } = props;
     const { subsocial } = useSubsocialApi()
     const [ loaded, setLoaded ] = useState(false)
-    const [ blogByBlogIdMap, setBlogByBlogIdMap ] = useState(new Map<string, BlogData>())
-    const [ postByPostIdMap, setPostByPostIdMap ] = useState(new Map<string, PostData>())
-    const [ ownerDataByOwnerIdMap, setOwnerDataByOwnerIdMap ] = useState(new Map<string, ProfileData>())
+    const [ blogById, setBlogByIdMap ] = useState(new Map<string, BlogData>())
+    const [ postById, setPostByIdMap ] = useState(new Map<string, PostData>())
+    const [ ownerById, setOwnerByIdMap ] = useState(new Map<string, ProfileData>())
 
     useEffect(() => {
       setLoaded(false);
@@ -69,7 +69,6 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
               default : {
                 id = (x.struct as Struct).id
               }
-
             }
 
             if (id) {
@@ -78,11 +77,11 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
           })
           return dataByIdMap;
         }
-        setPostByPostIdMap(createMap<PostData>(postsData, 'post'))
-        setOwnerDataByOwnerIdMap(createMap<ProfileData>(ownersData, 'profile'))
+        setPostByIdMap(createMap<PostData>(postsData, 'post'))
+        setOwnerByIdMap(createMap<ProfileData>(ownersData, 'profile'))
 
         const blogsData = await subsocial.findBlogs(blogIds)
-        setBlogByBlogIdMap(createMap<BlogData>(blogsData))
+        setBlogByIdMap(createMap<BlogData>(blogsData))
 
         setLoaded(true);
       }
@@ -92,9 +91,9 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     }, [ false ])
 
     const activityStore: ActivityStore = {
-      blogByBlogIdMap,
-      postByPostIdMap,
-      ownerDataByOwnerIdMap
+      blogById,
+      postById,
+      ownerById
     }
 
     if (loaded) {

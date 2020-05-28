@@ -38,11 +38,11 @@ export const Voter = (props: VoterProps) => {
   useEffect(() => {
     let isSubscribe = true;
 
-    async function loadStruct<T extends Post> (_: T) {
+    async function loadPost () {
       const _struct = await substrate.findPost(id)
       if (isSubscribe && _struct) setState(_struct);
     }
-    loadStruct(state).catch(err => log.error('Failed to load a post or comment. Error:', err));
+    loadPost().catch(err => log.error('Failed to load a post or comment. Error:', err));
 
     async function loadReaction () {
       if (!address) return
@@ -101,7 +101,7 @@ export const Voter = (props: VoterProps) => {
       const isActive = (reactionKind === reactionName) && 'active';
       const icon = isUpvote ? 'up' : 'down';
       return (<TxButton
-        icon={`thumbs ${typeIcon} outline`}
+        icon={`thumbs ${icon} outline`}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
         onSuccess={() => setUpdateTrigger(!updateTrigger)}
