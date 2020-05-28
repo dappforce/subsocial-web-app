@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
+// !!!
+// WARN: This component is deprecated and should be deleted once new comment editing components NewComment and EditComment are stable.
+// !!!
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';

@@ -75,7 +75,7 @@ export const InnerEditComment = (props: Props) => {
         throw new Error('Invalid hash')
       }
     } catch (err) {
-      log.error('Failed build tx params: %o', err)
+      log.error('Failed to build tx params: %o', err)
       return []
     }
   };

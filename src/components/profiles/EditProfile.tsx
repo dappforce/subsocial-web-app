@@ -135,7 +135,7 @@ const InnerForm = (props: FormProps) => {
       }
       return []
     } catch (err) {
-      log.error('Failed build tx params: %o', err)
+      log.error('Failed to build tx params: %o', err)
       return []
     }
   }
