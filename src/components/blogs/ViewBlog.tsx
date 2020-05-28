@@ -34,7 +34,7 @@ import SpaceNav from './SpaceNav';
 import { ViewBlogProps } from './ViewBlogProps';
 import withLoadBlogDataById from './withLoadBlogDataById';
 import AboutBlogLink from './AboutBlogLink';
-import ViewBlogLink from './ViewBlogLink';
+import ViewBlogLink from './ViewBlogLink'
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';

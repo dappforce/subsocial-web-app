@@ -11,7 +11,6 @@ import { ExtendedAddressProps } from './utils/types';
 import dynamic from 'next/dynamic';
 import { useApi } from '@subsocial/react-hooks';
 import ViewProfileLink from '../ViewProfileLink';
-import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 
@@ -59,7 +58,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     style={style}
   >
     <div className='ui--AddressComponents-info'>
-      <Avatar size={size || DEFAULT_AVATAR_SIZE} address={address} avatar={avatar} />
+      <Avatar size={size} address={address} avatar={avatar} />
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='hover'
