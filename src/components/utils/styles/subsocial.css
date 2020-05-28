@@ -334,12 +334,14 @@ body,
   margin: -1rem 0 0 $space_large;
 }
 
-.DfCommentContent, .DfComment {
+.DfCommentContent,
+.DfComment {
   .metadata {
     margin-left: 0 !important;
     font-size: $font_normal;
   }
-  .text, .ant-comment-content-detail {
+  .text,
+  .ant-comment-content-detail {
     display: inline-block;
     margin: $space_tiny 0 !important;
     padding: $space_small $space_normal;
@@ -1659,7 +1661,6 @@ a.DfStatItem {
     .DfVoter {
       margin-left: -$space_tiny
     }
-    
   }
 
   .ant-comment-content-author-name {
@@ -1719,6 +1720,7 @@ a.DfStatItem {
 
 .DfCommentSection {
   border-top: 1px solid $color_light_border;
+
   h3 {
     padding: $space_small 0;
   }

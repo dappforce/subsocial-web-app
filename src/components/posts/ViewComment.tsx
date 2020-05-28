@@ -49,7 +49,6 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
 
     substrate.findPost(id).then((post) => {
       if (post) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> I am here')
         setCount(post.direct_replies_count.toString())
       }
     })
@@ -79,7 +78,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     </>);
   };
 
-  const ViewRepliecesLink = () => {
+  const ViewRepliesLink = () => {
     const viewActionMessage = showReplices ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
     return <Link href={commentLink}>
       <a onClick={(event) => { event.preventDefault(); setShowReplices(!showReplices) }}>
@@ -97,9 +96,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     {showReplyForm &&
     <NewComment
       post={struct}
-      callback={() => {
-        setShowReplyForm(false);
-      }}
+      callback={() => setShowReplyForm(false)}
       withCancel
     />}
     {isReplies && <ViewRepliecesLink />}
