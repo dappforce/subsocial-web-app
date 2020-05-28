@@ -1,8 +1,8 @@
 import React from 'react'
 import { isBrowser } from 'react-device-detect';
-import BalanceDisplay from '@polkadot/react-components/Balance';
+import BalanceDisplay from '@subsocial/react-components/Balance';
 import { AnyAccountId } from '@subsocial/types/substrate';
-import { useApi } from '@polkadot/react-hooks';
+import { useApi } from '@subsocial/react-hooks';
 
 type BalanceProps = {
   address: AnyAccountId

@@ -5,12 +5,16 @@ import { SubmittableResult } from '@polkadot/api';
 import { Icon } from 'antd';
 import moment from 'moment-timezone';
 import AccountId from '@polkadot/types/generic/AccountId';
-import { registry } from '@polkadot/react-api';
+import { registry } from '@subsocial/react-api';
 import BN from 'bn.js';
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { getSubsocialApi } from './SubsocialConnect';
+import { AddressProps } from '../profiles/address-views/utils/types';
+import { toShortAddress } from '@subsocial/react-components/util';
+import { SubstrateId } from '@subsocial/types';
+import { Codec } from '@polkadot/types/types';
 
 type PaginationProps = {
   currentPage?: number;
@@ -116,4 +120,18 @@ export const getAccountId = async (addressOrHandle: string): Promise<AccountId |
 
 export function equalAddresses (addr1?: string | AccountId, addr2?: string | AccountId) {
   return addr1?.toString() === addr2?.toString()
+}
+
+type GetNameOptions = AddressProps & {
+  isShort?: boolean
+}
+
+export const getProfileName = (options: GetNameOptions) => {
+  const { owner, isShort = true, address } = options;
+  return (owner?.content?.fullname || owner?.profile?.username || (isShort ? toShortAddress(address) : address)).toString()
+}
+
+export const unwrapSubstrateId = (optId?: Option<Codec>): SubstrateId | undefined => {
+  if (typeof optId === 'string') return optId as SubstrateId;
+  return optId?.unwrapOr(undefined) as any
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { api as polkadotApi } from '@polkadot/react-api';
+import { api as polkadotApi } from '@subsocial/react-api';
 import { Api } from '@subsocial/api/substrateConnect'
 import { offchainUrl, substrateUrl, ipfsNodeUrl } from './env';
 import { ApiPromise } from '@polkadot/api';
@@ -25,7 +25,7 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
   return data;
 };
 
-let subsocial: SubsocialApi | undefined = undefined;
+let subsocial!: SubsocialApi;
 
 export const getSubsocialApi = async () => {
   if (!subsocial) {
@@ -35,12 +35,12 @@ export const getSubsocialApi = async () => {
   return subsocial
 }
 
-export let api: ApiPromise
+export let api: ApiPromise;
 
 export const getApi = async () => {
   if (polkadotApi) {
     log.debug('Get Substrate API: @polkadot api')
-    return polkadotApi.isReady
+    return (await polkadotApi.isReady) as unknown as ApiPromise
   } else {
     if (!api) {
       log.debug('Get Substrate API: DfApi.setup()')

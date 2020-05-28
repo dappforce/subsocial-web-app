@@ -1,15 +1,15 @@
 import React from 'react'
 import { ProfileData } from '@subsocial/types';
-import classes from '@polkadot/react-components/util/classes';
+import classes from '@subsocial/react-components/util/classes';
 import { Popover } from 'antd';
 import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
-import { toShortAddress } from '@polkadot/react-components/util';
+import { toShortAddress } from '@subsocial/react-components/util';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
 import dynamic from 'next/dynamic';
-import { useApi } from '@polkadot/react-hooks';
+import { useApi } from '@subsocial/react-hooks';
 import ViewProfileLink from '../ViewProfileLink';
 
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });

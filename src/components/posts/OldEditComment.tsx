@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
+// !!!
+// WARN: This component is deprecated and should be deleted once new comment editing components NewComment and EditComment are stable.
+// !!!
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@subsocial/react-api';
 import * as DfForms from '../utils/forms';
 
 import { createType } from '@polkadot/types';
@@ -19,7 +22,7 @@ import NoData from '../utils/EmptyList';
 import { ValidationProps, buildValidationSchema } from './CommentValidation';
 
 import { Comment, IpfsHash } from '@subsocial/types/substrate/interfaces/subsocial'
-import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxFailedCallback } from '@subsocial/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { CommentContent } from '@subsocial/types/offchain';
 import { CommentUpdate } from '@subsocial/types/substrate/classes';

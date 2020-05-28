@@ -173,14 +173,14 @@ const InnerForm = (props: FormProps) => {
           </LabelledField>
 
           <LabelledField name={Fields.endDate} label='End Date' {...props}>
-          {showEndDate
-            ? <div>Present</div>
-            : <DatePicker name={Fields.endDate}
+            {showEndDate
+              ? <div>Present</div>
+              : <DatePicker name={Fields.endDate}
                 value={endDate}
                 onChange={(date) => setFieldValue(Fields.endDate, date)}
                 disabledDate={disabledStartEndDate}
               />
-          }
+            }
           </LabelledField>
         </div>
 

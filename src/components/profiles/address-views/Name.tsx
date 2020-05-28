@@ -1,5 +1,5 @@
 import React from 'react'
-import { toShortAddress } from '@polkadot/react-components/util';
+import { toShortAddress } from '@subsocial/react-components/util';
 import { AddressProps } from './utils/types';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';

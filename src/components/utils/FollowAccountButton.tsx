@@ -1,15 +1,14 @@
-import { registry } from '@polkadot/react-api';
-import { Button$Sizes } from '@polkadot/react-components/Button/types';
-import { GenericAccountId } from '@polkadot/types';
-import { AccountId } from '@polkadot/types/interfaces';
-import { newLogger, notDef } from '@subsocial/utils';
 import React, { useEffect, useState } from 'react';
-
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
-import { isMyAddress, useMyAddress } from './MyAccountContext';
+import { GenericAccountId } from '@polkadot/types';
+import { useMyAddress, isMyAddress } from './MyAccountContext';
+import { registry } from '@subsocial/react-api';
+import { Button$Sizes } from '@subsocial/react-components/Button/types';
+import { newLogger, notDef } from '@subsocial/utils';
 import { useSubsocialApi } from './SubsocialApiContext';
 import TxButton from './TxButton';
 import { Loading } from './utils';
+import AccountId from '@polkadot/types/generic/AccountId';
+import { TX_BUTTON_SIZE } from 'src/config/Size.config';
 
 const log = newLogger('FollowAccountButton')
 

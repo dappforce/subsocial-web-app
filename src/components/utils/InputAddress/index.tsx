@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { KeyringSectionOption, KeyringOption$Type } from '@polkadot/ui-keyring/options/types';
-import { BareProps } from '@polkadot/react-components/types';
-import { Option } from '@polkadot/react-components/InputAddress/types';
+import { BareProps } from '@subsocial/react-components/types';
+import { Option } from '@subsocial/react-components/InputAddress/types';
 
 import React, { useState } from 'react';
 import { useMyAccount } from '../MyAccountContext';
-import InputAddress from '@polkadot/react-components/InputAddress';
+import InputAddress from '@subsocial/react-components/InputAddress';
 
 interface Props extends BareProps {
   defaultValue?: Uint8Array | string | null;

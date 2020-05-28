@@ -1,6 +1,6 @@
 import React from 'react'
-import { Icon } from 'antd'
 import BN from 'bn.js'
+import Icon from 'antd/lib/icon'
 
 export type SpaceContent = {
   blogId: BN,
@@ -28,7 +28,6 @@ const SpacePreview = (props: SpacePreviewProps) => {
       ))}
     </div>
   </div>
-  
 }
 
 export default SpacePreview

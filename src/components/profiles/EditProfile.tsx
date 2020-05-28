@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps } from 'formik';
-import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
+import { withCalls, withMulti } from '@subsocial/react-api';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
@@ -14,11 +13,11 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxFailedCallback } from '@subsocial/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { ProfileUpdate } from '@subsocial/types/substrate/classes';
+import { ProfileUpdate, OptionText } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 import { ProfileData } from '@subsocial/types';
@@ -84,28 +83,6 @@ const InnerForm = (props: FormProps) => {
   const { ipfs } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
 
-  const onSubmit = (sendTx: () => void) => {
-    if (isValid) {
-      const json = {
-        fullname,
-        avatar,
-        email,
-        personalSite,
-        about,
-        facebook,
-        twitter,
-        linkedIn,
-        medium,
-        github,
-        instagram
-      };
-      ipfs.saveContent(json).then(cid => {
-        setIpfsCid(cid);
-        sendTx();
-      }).catch(err => new Error(err));
-    }
-  };
-
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
     ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => new Error(err));
     setSubmitting(false);
@@ -116,21 +93,52 @@ const InnerForm = (props: FormProps) => {
     goToView();
   };
 
-  const buildTxParams = () => {
+  const newTxParams = (hash: IpfsHash) => {
     if (!isValid) return [];
 
     if (!profile) {
-      return [ username, ipfsCid ];
+      return [ username, hash ];
     } else {
       // TODO update only dirty values.
       const update = new ProfileUpdate(
         {
-          username: new Option(registry, 'Text', username),
-          ipfs_hash: new Option(registry, 'Text', ipfsCid)
+          username: new OptionText(username),
+          ipfs_hash: new OptionText(hash)
         });
       return [ update ];
     }
   };
+
+  const buildTxParams = async () => {
+    try {
+      if (isValid) {
+        const json = {
+          fullname,
+          avatar,
+          email,
+          personalSite,
+          about,
+          facebook,
+          twitter,
+          linkedIn,
+          medium,
+          github,
+          instagram
+        };
+        const hash = await ipfs.saveContent(json)
+        if (hash) {
+          setIpfsCid(hash);
+          return newTxParams(hash)
+        } else {
+          throw new Error('Invalid hash')
+        }
+      }
+      return []
+    } catch (err) {
+      log.error('Failed to build tx params: %o', err)
+      return []
+    }
+  }
 
   const title = profile ? `Edit profile` : `New profile`;
   const shouldBeValidUrlText = `Should be a valid URL.`;
@@ -224,7 +232,6 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledField {...props}>
           <TxButton
-            type='submit'
             size='medium'
             icon='send'
             label={profile
@@ -232,12 +239,11 @@ const InnerForm = (props: FormProps) => {
               : 'Create my profile'
             }
             isDisabled={!dirty || isSubmitting}
-            params={buildTxParams()}
+            params={buildTxParams}
             tx={profile
               ? 'social.updateProfile'
               : 'social.createProfile'
             }
-            onClick={onSubmit}
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
           />
@@ -260,7 +266,6 @@ const EditForm = withFormik<OuterProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props): FormValues => {
     const { owner } = props;
-    console.log(owner)
     const content = owner?.content
     const profile = owner?.profile
     if (profile && content) {

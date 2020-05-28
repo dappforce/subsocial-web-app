@@ -1,4 +1,4 @@
-import { toShortAddress } from '@polkadot/react-components/util';
+import { toShortAddress } from '@subsocial/react-components/util';
 import { ProfileData } from '@subsocial/types';
 import { nonEmptyStr } from '@subsocial/utils';
 import dynamic from 'next/dynamic';

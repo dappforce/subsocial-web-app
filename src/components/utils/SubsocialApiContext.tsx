@@ -5,7 +5,7 @@ import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { getApi } from './SubsocialConnect';
 import { ipfsNodeUrl, offchainUrl } from './env'
 import { ApiPromise } from '@polkadot/api';
-import { useApi } from '@polkadot/react-hooks';
+import { useApi } from '@subsocial/react-hooks';
 import { newLogger } from '@subsocial/utils';
 
 const log = newLogger('SubsocialApiContext')

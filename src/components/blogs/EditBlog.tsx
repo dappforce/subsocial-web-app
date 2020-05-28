@@ -6,7 +6,7 @@ import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
+import { withCalls, withMulti, registry } from '@subsocial/react-api';
 import * as DfForms from '../utils/forms';
 import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils/utils';
@@ -14,9 +14,9 @@ import { useMyAddress } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback } from '@polkadot/react-components/Status/types';
+import { TxFailedCallback } from '@subsocial/react-components/Status/types';
 import { TxCallback } from '../utils/types';
-import { Blog } from '@subsocial/types/substrate/interfaces';
+import { Blog, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { BlogContent } from '@subsocial/types/offchain';
 import { BlogUpdate, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils'
@@ -76,18 +76,6 @@ const InnerForm = (props: FormProps) => {
 
   const [ ipfsCid, setIpfsCid ] = useState('');
 
-  const onSubmit = (sendTx: () => void) => {
-    if (isValid) {
-      const json = { name, desc, image, tags, navTabs };
-      ipfs.saveBlog(json).then(cid => {
-        if (cid) {
-          setIpfsCid(cid.toString());
-          sendTx();
-        }
-      }).catch(err => new Error(err));
-    }
-  };
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onTxFailed: TxFailedCallback = (txResult: SubmittableResult | null) => {
     ipfs.removeContent(ipfsCid).catch(err => new Error(err));
@@ -101,20 +89,39 @@ const InnerForm = (props: FormProps) => {
     _id && goToView(_id);
   };
 
-  const buildTxParams = () => {
+  const newTxParams = (hash: IpfsHash) => {
     if (!isValid) return [];
     if (!struct) {
-      return [ new OptionText(handle), ipfsCid ];
+      return [ new OptionText(handle), hash ];
     } else {
       // TODO update only dirty values.
       const update = new BlogUpdate({
         writers: new Option(registry, 'Vec<AccountId>', (struct.writers)),
         handle: new OptionOptionText(handle),
-        ipfs_hash: new OptionText(ipfsCid)
+        ipfs_hash: new OptionText(hash)
       });
       return [ struct.id, update ];
     }
   };
+
+  const buildTxParams = async () => {
+    try {
+      if (isValid) {
+        const json = { name, desc, image, tags, navTabs };
+        const hash = await ipfs.saveBlog(json)
+        if (hash) {
+          setIpfsCid(hash.toString());
+          return newTxParams(hash)
+        } else {
+          throw new Error('Invalid hash')
+        }
+      }
+      return []
+    } catch (err) {
+      log.error('Failed build tx params: %o', err)
+      return []
+    }
+  }
 
   const title = struct ? `Edit blog` : `New blog`;
 
@@ -137,19 +144,17 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledField {...props}>
           <TxButton
-            type='submit'
             size='medium'
             label={struct
               ? 'Update blog'
               : 'Create new blog'
             }
             isDisabled={!dirty || isSubmitting}
-            params={buildTxParams()}
+            params={buildTxParams}
             tx={struct
               ? 'social.updateBlog'
               : 'social.createBlog'
             }
-            onClick={onSubmit}
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
           />

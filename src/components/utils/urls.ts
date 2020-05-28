@@ -1,4 +1,4 @@
-import { Blog, Post, Comment, BlogId } from '@subsocial/types/substrate/interfaces'
+import { Blog, Post, BlogId } from '@subsocial/types/substrate/interfaces'
 import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from './substrate'
 import { newLogger, nonEmptyStr, notDef, nonEmptyArr } from '@subsocial/utils'
 
@@ -100,27 +100,6 @@ export function postUrl (blog: HasBlogIdOrHandle, post: HasPostId, ...subUrls: s
 /** /blogs/[blogId]/posts/[postId]/edit */
 export function editPostUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
   return postUrl(blog, post, 'edit')
-}
-
-// Comment URLs
-// --------------------------------------------------
-
-export type HasCommentId = Pick<Comment, 'id'>
-
-/** /blogs/[blogId]/posts/[postId]/comments */
-export function postCommentsUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
-  return postUrl(blog, post, 'comments')
-}
-
-/** /blogs/[blogId]/posts/[postId]/comments/[commentId] */
-export function commentUrl (blog: HasBlogIdOrHandle, post: HasPostId, comment: HasCommentId): string {
-  if (notDef(comment.id)) {
-    log.warn(`${commentUrl.name}: Comment id is undefined`)
-    return ''
-  }
-
-  const commentId = stringifyNumber(comment.id) as string
-  return postUrl(blog, post, 'comments', commentId)
 }
 
 // Account URLs

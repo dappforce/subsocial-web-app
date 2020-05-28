@@ -17,15 +17,18 @@ import dynamic from 'next/dynamic';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { validationSchema } from './NavValidation';
 import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
-import { Blog } from '@subsocial/types/substrate/interfaces';
+import { Blog, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { BlogContent, NavTab } from '@subsocial/types/offchain';
-import { BlogUpdate, OptionText } from '@subsocial/types/substrate/classes';
-import { withMulti, withCalls, registry } from '@polkadot/react-api';
+import { BlogUpdate, OptionText, OptionOptionText } from '@subsocial/types/substrate/classes';
+import { withMulti, withCalls, registry } from '@subsocial/react-api';
 import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';
+import { newLogger } from '@subsocial/utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+
+const log = newLogger('NavEditor')
 
 export interface FormValues {
   navTabs: NavTab[]
@@ -124,25 +127,6 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const { ipfs } = useSubsocialApi()
   const [ ipfsCid, setIpfsCid ] = useState('');
 
-  const onSubmit = (sendTx: () => void) => {
-    if (isValid) {
-      const json = {
-        navTabs,
-        name,
-        desc,
-        image,
-        tags: blogTags
-      };
-      ipfs.saveBlog(json).then(cid => {
-        if (cid) {
-          console.log('Nav editor IPFS CID:', cid)
-          setIpfsCid(cid.toString());
-          sendTx();
-        }
-      }).catch(err => new Error(err));
-    }
-  };
-
   const onTxFailed = () => {
     ipfs.removeContent(ipfsCid).catch(err => new Error(err));
     setSubmitting(false);
@@ -160,16 +144,41 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     Router.push('/blogs/' + id.toString()).catch(console.log);
   };
 
-  const buildTxParams = () => {
+  const newTxParams = (hash: IpfsHash) => {
     if (!isValid || !struct) return [];
 
     const update = new BlogUpdate({
       writers: new Option(registry, 'Vec<AccountId>', []),
-      handle: new Option(registry, 'Option<Text>', new Option(registry, 'Text', null)),
-      ipfs_hash: new OptionText(ipfsCid)
+      handle: new OptionOptionText(null),
+      ipfs_hash: new OptionText(hash)
     });
     return [ struct.id, update ];
   };
+
+  const buildTxParams = async () => {
+    try {
+      if (isValid) {
+        const json = {
+          navTabs,
+          name,
+          desc,
+          image,
+          tags: blogTags
+        };
+        const hash = await ipfs.saveBlog(json)
+        if (hash) {
+          setIpfsCid(hash.toString());
+          return newTxParams(hash)
+        } else {
+          throw new Error('Invalid hash')
+        }
+      }
+      return []
+    } catch (err) {
+      log.error('Failed build tx params: %o', err)
+      return []
+    }
+  }
 
   const pageTitle = `Edit blog navigation`
 
@@ -249,13 +258,11 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
           />
 
           <TxButton
-            type='button'
             size='medium'
             label={'Update Navigation'}
             isDisabled={!isValid || isSubmitting}
-            params={buildTxParams()}
+            params={buildTxParams}
             tx={'social.updateBlog'}
-            onClick={onSubmit}
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
           />

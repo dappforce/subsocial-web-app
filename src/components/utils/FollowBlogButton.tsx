@@ -3,7 +3,7 @@ import { useMyAddress } from './MyAccountContext';
 import TxButton from './TxButton';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
-import { Button$Sizes } from '@polkadot/react-components/Button/types';
+import { Button$Sizes } from '@subsocial/react-components/Button/types';
 import { newLogger } from '@subsocial/utils';
 import { Loading } from './utils';
 import { useSubsocialApi } from './SubsocialApiContext';

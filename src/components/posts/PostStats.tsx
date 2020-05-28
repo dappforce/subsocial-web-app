@@ -5,7 +5,7 @@ import { MutedSpan } from '../utils/MutedText';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import { Pluralize } from '../utils/Plularize';
 import BN from 'bn.js';
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti } from '@subsocial/react-api';
 import { socialQueryToProp } from '../utils';
 import { nonEmptyStr } from '@subsocial/utils';
 
@@ -30,12 +30,12 @@ const InnerStatsPanel = (props: StatsProps) => {
   if (!postById || postById.isNone) return null;
   const post = postById.unwrap();
 
-  const { upvotes_count, downvotes_count, comments_count, shares_count, score, id } = post;
+  const { upvotes_count, downvotes_count, total_replies_count, shares_count, score, id } = post;
   const reactionsCount = new BN(upvotes_count).add(new BN(downvotes_count));
   const showReactionsModal = () => reactionsCount && openVoters(ActiveVoters.All)
 
   const toggleCommentsSection = goToCommentsId ? undefined : () => setCommentsSection(!commentsSection)
-  const comments = <Pluralize count={comments_count} singularText='Comment' />
+  const comments = <Pluralize count={total_replies_count} singularText='Comment' />
 
   return <>
     <div className='DfCountsPreview'>

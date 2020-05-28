@@ -1,200 +1,68 @@
-import { Comment as SuiComment } from 'semantic-ui-react';
-import React, { useState, useEffect } from 'react';
-import { withCalls, withMulti } from '@polkadot/react-api';
-import Section from '../utils/Section';
-import { isMyAddress } from '../utils/MyAccountContext';
-import { ApiProps } from '@polkadot/react-api/types';
-import moment from 'moment-timezone';
-import mdToText from 'markdown-to-txt';
-import isEmpty from 'lodash.isempty';
-import partition from 'lodash.partition'
-import { NewComment } from './EditComment';
-import { socialQueryToProp } from '../utils/index';
-import { HeadMeta } from '../utils/HeadMeta';
-import { Voter } from '../voting/Voter';
-// import { CommentHistoryModal } from '../utils/ListsEditHistory';
+import React, { FunctionComponent, useState, useEffect } from 'react';
+import { Comment, Menu, Dropdown, Icon } from 'antd';
+import { ProfileData, ExtendedPostData } from '@subsocial/types/dto';
+import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { DfMd } from '../utils/DfMd';
-import { MutedDiv } from '../utils/MutedText';
+import { CommentContent } from '@subsocial/types';
+import { Post, Blog } from '@subsocial/types/substrate/interfaces';
+import Voter from '../voting/Voter';
+import { useMyAddress } from '../utils/MyAccountContext';
 import Link from 'next/link';
-import { Pluralize, pluralize } from '../utils/Plularize';
-import { Loading, formatUnixDate } from '../utils/utils';
-import { Icon, Menu, Dropdown } from 'antd';
-import { NextPage } from 'next';
-import BN from 'bn.js'
-import { CommentId, Post, Comment } from '@subsocial/types/substrate/interfaces';
-import { PostContent, CommentContent } from '@subsocial/types/offchain';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { newLogger, nonEmptyStr } from '@subsocial/utils';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { AuthorPreviewWithOwner } from '../profiles/address-views';
+import { pluralize, Pluralize } from '../utils/Plularize';
+import { formatUnixDate } from '../utils/utils';
+import moment from 'moment-timezone';
+import { EditComment, NewComment } from './NewComment';
+import { CommentsTree } from './CommentTree'
+import { postUrl } from '../utils/urls';
+import { useSubstrateApi } from '../utils/SubsocialApiContext';
+import SharePostAction from './SharePostAction';
 
-const log = newLogger('View comment')
-
-type Props = ApiProps & {
-  postId: BN;
-  commentIds?: CommentId[];
-  commentIdForPage?: CommentId;
-};
-
-const renderLevelOfComments = (parentComments: Comment[], childrenComments: Comment[]) => {
-  return parentComments.map((comment) =>
-    <ViewComment key={comment.id.toString()} comment={comment} commentsWithParentId={childrenComments} />);
-};
-
-export function CommentsTree (props: Props) {
-  const {
-    postId,
-    commentIds = [],
-    commentIdForPage
-  } = props;
-  // eslint-disable-next-line no-undef
-  const { substrate } = useSubsocialApi()
-  const commentsCount = commentIds.length;// post.comments_count.toNumber();
-  const [ loaded, setLoaded ] = useState(false);
-  const [ comments, setComments ] = useState(new Array<Comment>());
-
-  useEffect(() => {
-    let isSubscribe = true;
-
-    const loadComments = async () => {
-      if (!commentsCount) return;
-
-      const loadedComments = await substrate.findComments(commentIds);
-
-      if (isSubscribe) {
-        setComments(loadedComments);
-        setLoaded(true);
-      }
-    };
-
-    loadComments().catch(err => log.error('Failed to load comments:', err));
-
-    return () => { isSubscribe = false; };
-  }, [ commentsCount ]);// TODO change dependency to post.comments_counts or CommentCreated, CommentUpdated with the current postId
-
-  const isPage = !!commentIdForPage;
-
-  const renderComments = () => {
-    if (!commentsCount) {
-      return <></>;
-    }
-
-    if (!loaded) {
-      return <div style={{ marginTop: '1rem' }}><Loading /></div>;
-    }
-
-    const [ parentComments, childrenComments ] = partition(comments, e => e.parent_id.isNone);
-    if (commentIdForPage !== undefined) {
-      const [ comment, childrenComments ] = partition(comments, (e) => e.id.eq(commentIdForPage));
-      return <ViewComment comment={comment[0]} commentsWithParentId={childrenComments} isPage/>;
-    } else {
-      return <>{renderLevelOfComments(parentComments, childrenComments)}</>;
-    }
-  };
-
-  const RenderCommentsOnPost = () => (
-    <div className='DfCommentsByPost'>
-      <h3><Pluralize count={commentsCount} singularText='comment' /></h3>
-      <div id={`comments-on-post-${postId}`}>
-        {<NewComment postId={postId}/>}
-        {renderComments()}
-      </div>
-    </div>
-  );
-
-  const RenderCommentPage = () => (
-    <Section>
-      {renderComments()}
-    </Section>
-  );
-
-  return isPage ? <RenderCommentPage/> : <RenderCommentsOnPost/>;
+type Props = {
+  blog: Blog,
+  owner?: ProfileData,
+  struct: Post,
+  content?: CommentContent,
+  replies?: ExtendedPostData[],
+  withShowReplies?: boolean
 }
 
-export default withMulti(
-  CommentsTree,
-  withCalls<Props>(
-    socialQueryToProp('commentIdsByPostId', { paramName: 'postId', propName: 'commentIds' })
-  )
-);
+export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, blog, replies, withShowReplies }) => {
+  const myAddress = useMyAddress()
 
-type ViewCommentProps = {
-  comment: Comment;
-  commentsWithParentId: Comment[];
-  isPage?: boolean;
-  post?: Post;
-  postContent?: PostContent;
-  commentContent?: CommentContent;
-};
-
-export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps) => {
   const {
-    comment,
-    commentsWithParentId,
-    isPage = false,
-    post: initialPost = {} as Post,
-    postContent: initialPostContent = {} as PostContent,
-    commentContent = {} as CommentContent
-  } = props;
+    id,
+    created: { account, time },
+    score,
+    direct_replies_count
+  } = struct
 
-  const { substrate, ipfs } = useSubsocialApi()
-  const [ parentComments, childrenComments ] = partition(commentsWithParentId, (e) => e.parent_id.eq(comment.id));
-
-  const { id, score, created: { account, time }, post_id } = comment;
-  const [ struct, setStruct ] = useState(comment);
-  const [ post, setPost ] = useState(initialPost);
-  const [ postContent, setPostContent ] = useState(initialPostContent);
-  const [ content, setContent ] = useState(commentContent);
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
-  const [ doReloadComment, setDoReloadComment ] = useState(true);
+  const [ showReplies, setShowReplies ] = useState(withShowReplies);
+  const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
+  const substrate = useSubstrateApi()
 
-  // const reactionKind = reactionState ? reactionState.kind.toString() : 'None';
-  if (!comment || comment.isEmpty) {
-    return null;
-  }
+  const isMyStruct = myAddress === account.toString()
+  const commentLink = postUrl(blog, struct);
 
   useEffect(() => {
-    let isSubscribe = true;
 
-    ipfs.findComment(struct.ipfs_hash.toString()).then(json => {
-      isSubscribe && json && setContent(json);
-    }).catch(err => log.error('Failed to find a comment in IPFS:', err));
-
-    const loadComment = async () => {
-      const comment = await substrate.findComment(id);
-      if (isSubscribe) {
-        comment && setStruct(comment);
+    substrate.findPost(id).then((post) => {
+      if (post) {
+        setCount(post.direct_replies_count.toString())
       }
-    };
-    loadComment().catch(err => log.error('Failed to load comment:', err));
+    })
 
-    const loadPostContent = async () => {
-      if (isEmpty(post)) {
-        const post = await substrate.findPost(post_id);
-        isSubscribe && post && setPost(post);
-      }
-      const content = await ipfs.findPost(post.ipfs_hash.toString());
-      if (isSubscribe && content) {
-        setPostContent(content);
-      }
-    };
-    loadPostContent().catch(err => log.error('Failed to load post content:', err));
-
-    return () => { isSubscribe = false; };
-  }, [ doReloadComment ]);
-
-  const isMyComment = isMyAddress(account)
+  }, [ false ])
 
   const RenderDropDownMenu = () => {
-    // const [ open, setOpen ] = useState(false);
-    // const close = () => setOpen(false);
-    // console.log(open, close());
+
+    const showDropdown = isMyStruct || true;
 
     const menu = (
       <Menu>
-        {(isMyComment || showEditForm) && <Menu.Item key='0'>
-          <div onClick={() => setShowEditForm(true)} >Edit</div>
+        {(isMyStruct || true) && <Menu.Item key='0'>
+          <div onClick={() => setShowEditForm(true)}>Edit</div>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -202,132 +70,74 @@ export const ViewComment: NextPage<ViewCommentProps> = (props: ViewCommentProps)
       </Menu>
     );
 
-    return <>
-      {isMyComment &&
-        <Dropdown overlay={menu} placement='bottomRight'>
-          <Icon type='ellipsis' />
-        </Dropdown>
-      }
-      {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
-    </>
+    return (<>{showDropdown &&
+    <Dropdown overlay={menu} placement='bottomRight'>
+      <Icon type='ellipsis' />
+    </Dropdown>}
+    {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
+    </>);
   };
 
-  const replyButton = () => (
-    <span
-      onClick={() => setShowReplyForm(true)}
-      className='reply'
-    >
-      Reply
-    </span>
-  );
-
-  const componentContent = <div id={`comment-${id}`} className='DfComment'>
-    <SuiComment.Group threaded>
-      <SuiComment>
-        <div className='DfCommentContent'>
-          <SuiComment.Metadata>
-            <AuthorPreviewWithOwner
-              address={account}
-              isShort={true}
-              isPadded={false}
-              size={32}
-              details={
-                <span>
-                  <Link href={`/comment?postId=${struct.post_id.toString()}&commentId=${id.toString()}`}>
-                    <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
-                  </Link>
-                  {' · '}
-                  {pluralize(score, 'Point')}
-                </span>
-              }
-            />
-          </SuiComment.Metadata>
-          <SuiComment.Content>
-            {showEditForm
-              ? <NewComment
-                struct={struct}
-                id={struct.id}
-                postId={struct.post_id}
-                json={content.body}
-                onSuccess={() => {
-                  setShowEditForm(false)
-                  setDoReloadComment(!doReloadComment)
-                }}
-              />
-              : <>
-                {nonEmptyStr(content.body) &&
-                  <SuiComment.Text>
-                    <DfMd source={content.body} />
-                  </SuiComment.Text>
-                }
-                <SuiComment.Actions>
-                  {showReplyForm
-                    ? <SuiComment.Action>
-                      <NewComment
-                        postId={struct.post_id}
-                        parentId={struct.id}
-                        onSuccess={() => setShowReplyForm(false)}
-                        autoFocus={true}
-                      />
-                    </SuiComment.Action>
-                    : <>
-                      <SuiComment.Action>
-                        <Voter struct={struct} type={'Comment'} />
-                      </SuiComment.Action>
-                      <SuiComment.Action>
-                        {replyButton()}
-                      </SuiComment.Action>
-                      <SuiComment.Action>
-                        <RenderDropDownMenu />
-                      </SuiComment.Action>
-                    </>
-                  }
-                </SuiComment.Actions>
-              </>}
-          </SuiComment.Content>
-        </div>
-        <div className={'ChildComment'}>
-          {renderLevelOfComments(parentComments, childrenComments)}
-        </div>
-      </SuiComment>
-    </SuiComment.Group>
-  </div>
-
-  const renderResponseTitle = () => <>
-    In response to{' '}
-    <Link
-      href='/blogs/[blogId]/posts/[postId]'
-      as={`/blogs/${post.blog_id}/posts/${post_id.toString()}`}
-    >
-      <a>{postContent.title}</a>
+  const ViewRepliesLink = () => {
+    const viewActionMessage = showReplies ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
+    return <Link href={commentLink}>
+      <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
+        {viewActionMessage}
+        {' '}
+        <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
+      </a>
     </Link>
-  </>
+  }
 
-  const bodyAsText = mdToText(content.body);
+  const isReplies = repliesCount !== '0';
+  const isShowChild = showReplyForm || showReplies || isReplies;
 
-  return isPage
-    ? (
-      <Section>
-        <HeadMeta desc={bodyAsText} title={`${account} commented on ${postContent.title}`} />
-        <MutedDiv>{renderResponseTitle()}</MutedDiv>
-        <div className='mt-3'>{componentContent}</div>
-      </Section>
-    )
-    : componentContent
+  const ChildPanel = isShowChild ? <div className="DfCommentChild">
+    {showReplyForm &&
+    <NewComment
+      post={struct}
+      callback={() => setShowReplyForm(false)}
+      withCancel
+    />}
+    {isReplies && <ViewRepliesLink />}
+    {showReplies && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
+  </div> : null
+
+  return <Comment
+    className='DfNewComment'
+    actions={!showReplyForm
+      ? [
+        <Voter key={`voters-of-comments-${id}`} struct={struct} />,
+        <SharePostAction postId={id} className='DfShareAction' withIcon={false} />,
+        <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)} >Reply</span>
+      ]
+      : []}
+    author={<div className='DfAuthorBlock'>
+      <AuthorPreview
+        address={account}
+        owner={owner}
+        isShort={true}
+        isPadded={false}
+        size={32}
+        details={
+          <span>
+            <Link href={commentLink}>
+              <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
+            </Link>
+            {' · '}
+            {pluralize(score, 'Point')}
+          </span>
+        }
+      />
+      <RenderDropDownMenu key={`comment-dropdown-menu-${id}`} />
+    </div>}
+    content={showEditForm
+      ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
+      : <DfMd source={content?.body} />
+    }
+  >
+    {ChildPanel}
+  </Comment>
 };
 
-ViewComment.getInitialProps = async (props): Promise<ViewCommentProps> => {
-  const { query: { commentId } } = props;
-  const subsocial = await getSubsocialApi()
-  const commentData = await subsocial.findComment(new BN(commentId as string));
-  const postData = commentData?.struct && await subsocial.findPost(commentData.struct.post_id);
-
-  return {
-    post: postData?.struct,
-    postContent: postData?.content,
-    comment: commentData?.struct || {} as Comment,
-    commentContent: commentData?.content,
-    commentsWithParentId: [] as Comment[],
-    isPage: true
-  };
-};
+export default ViewComment;

@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-
 import { DfMd } from '../utils/DfMd';
 import { Segment } from 'semantic-ui-react';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import Error from 'next/error'
 import { nonEmptyStr, newLogger } from '@subsocial/utils';
 import { HeadMeta } from '../utils/HeadMeta';
-import { Loading, formatUnixDate, getBlogId } from '../utils/utils';
+import { Loading, formatUnixDate, getBlogId, unwrapSubstrateId } from '../utils/utils';
 import { PostVoters } from '../voting/ListVoters';
-import { ShareModal } from './ShareModal';
 import NoData from '../utils/EmptyList';
 import Section from '../utils/Section';
 import { ViewBlog } from '../blogs/ViewBlog';
@@ -21,7 +19,7 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { isMyAddress } from '../utils/MyAccountContext';
 import { NextPage } from 'next';
 import BN from 'bn.js';
-import { Post } from '@subsocial/types/substrate/interfaces';
+import { Post, Blog } from '@subsocial/types/substrate/interfaces';
 import { PostData, ExtendedPostData, ProfileData } from '@subsocial/types/dto';
 import { PostType, loadContentFromIpfs, PostExtContent } from './LoadPostUtils'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
@@ -30,11 +28,14 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import AuthorPreview from '../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../utils/md/SummarizeMd';
 import ViewPostLink from './ViewPostLink';
-import { HasBlogIdOrHandle, HasPostId, newBlogUrlFixture } from '../utils/urls';
+import { HasBlogIdOrHandle, HasPostId, postUrl } from '../utils/urls';
+import SharePostAction from './SharePostAction';
+import { CommentSection } from './CommentsSection';
+import { return404 } from '../utils/next';
+import partition from 'lodash.partition'
 
-const log = newLogger('View post')
+const log = newLogger('View Post')
 
-const CommentsByPost = dynamic(() => import('./ViewComment'), { ssr: false });
 const Voter = dynamic(() => import('../voting/Voter'), { ssr: false });
 const StatsPanel = dynamic(() => import('./PostStats'), { ssr: false });
 
@@ -62,13 +63,17 @@ type ViewPostPageProps = {
   owner?: ProfileData,
   postExtData?: PostData;
   commentIds?: BN[];
-  statusCode?: number
+  statusCode?: number,
+  blog: Blog,
+  replies?: ExtendedPostData[],
+  parentPost?: PostData
 };
 
 export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPageProps) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { struct, content: initialContent } = props.postData;
+  const { postData } = props
+  const { struct, content: initialContent } = postData;
 
   if (!struct) return <NoData description={<span>Post not found</span>} />;
 
@@ -82,7 +87,10 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     withStats = true,
     withCreatedBy = true,
     postExtData,
-    owner
+    owner,
+    replies,
+    blog,
+    parentPost
   } = props;
 
   const {
@@ -172,8 +180,8 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
         isPadded={false}
         size={size}
         details={<div>
-          {withBlogName && <><div className='DfGreyLink'><ViewBlog id={blog_id} nameOnly /></div>{' • '}</>}
-          <Link href='/blogs/[blogId]/posts/[postId]' as={`/blogs/${blog_id}/posts/${id}`} >
+          {withBlogName && <><div className='DfGreyLink'><ViewBlog id={unwrapSubstrateId(blog_id)} nameOnly /></div>{' • '}</>}
+          <Link href={postUrl(blog, post)}>
             <a className='DfGreyLink'>
               {formatUnixDate(time)}
             </a>
@@ -197,9 +205,6 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 
     const { title, body } = content;
 
-    // TODO Fix this hack
-    const blog = newBlogUrlFixture(post.blog_id)
-
     return <div className='DfContent'>
       {renderNameOnly(blog, post, title)}
       <SummarizeMd md={body} more={renderPostLink(blog, post, 'See More')} />
@@ -207,32 +212,25 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
   }
 
   const RenderActionsPanel = () => {
-    const [ open, setOpen ] = useState(false);
-    const close = () => setOpen(false);
     const postId = isRegularPost ? id : originalPost && originalPost.id
     const actionClass = 'ui tiny button basic DfAction'
 
     return (
       <div className='DfActionsPanel'>
         <div className='DfAction'>
-          <Voter struct={post} type={'Post'} />
+          <Voter struct={post} />
         </div>
         <div className={actionClass} onClick={() => setCommentsSection(!commentsSection)}>
           <Icon type='message' />
           Comment
         </div>
-        <div className={actionClass} onClick={() => setOpen(true)}>
-          <Icon type='share-alt' />
-          Share
-        </div>
-        {open && <ShareModal postId={postId} open={open} close={close} />}
+        <SharePostAction postId={postId} className={actionClass} />
       </div>
     );
   };
 
   const renderInfoPostPreview = (post: Post, content: PostExtContent, owner?: ProfileData) => {
     if (!content || !post) return null;
-
     return <div className='DfInfo'>
       <div className='DfRow'>
         <div>
@@ -256,16 +254,13 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
       <Segment className='DfPostPreview'>
         {renderInfoPostPreview(post, content, owner)}
         {withActions && <RenderActionsPanel/>}
-        {commentsSection && <CommentsByPost postId={post.id} post={post} />}
+        {commentsSection && <CommentSection post={post} replies={replies} blog={blog} />}
       </Segment>
     </>;
   };
 
   const renderSharedPreview = () => {
     if (!originalPost || !originalContent) return <></>;
-
-    // TODO Fix this hack
-    const blog = newBlogUrlFixture(originalPost.blog_id)
 
     return <>
       <Segment className={`DfPostPreview`}>
@@ -281,7 +276,7 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
         </Segment>
         {withActions && <RenderActionsPanel/>}
-        {commentsSection && <CommentsByPost postId={post.id} post={post} />}
+        {commentsSection && <CommentSection post={post} replies={replies} blog={blog} />}
         {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
       </Segment>
     </>;
@@ -292,11 +287,19 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
     const { title, body, image, canonical, tags } = content;
     const goToCommentsId = 'comments'
 
+    const renderResponseTitle = (parentPost: PostData) => <>
+      In response to{' '}
+      <ViewPostLink blog={blog} post={parentPost.struct} title={parentPost.content?.title} />
+    </>
+    const titleMsg = parentPost
+      ? renderResponseTitle(parentPost)
+      : title
+
     return <>
       <Section className='DfContentPage DfEntirePost'>
         <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
-          <h1 className='DfPostName'>{title}</h1>
+          {<h1 className='DfPostName'>{titleMsg}</h1>}
           <RenderDropDownMenu account={created.account}/>
         </div>
         <div className='DfRow'>
@@ -309,19 +312,17 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
           {/* {renderBlogPreview(post)} */}
         </div>
         <ViewTags tags={tags} />
-        <Voter struct={post} type={'Post'}/>
-        {/* <ShareButtonPost postId={post.id}/> */}
+        <div className='DfRow'>
+          <Voter struct={post} />
+          <SharePostAction postId={post.id} className='DfShareAction' />
+        </div>
       </Section>
-      <Section id={goToCommentsId}>
-        <CommentsByPost postId={post.id} post={post} />
-      </Section>
+      <CommentSection post={post} hashId={goToCommentsId} replies={replies} blog={blog} />
     </>
   };
 
   switch (variant) {
     case 'name only': {
-      // TODO Fix this hack
-      const blog = newBlogUrlFixture(blog_id)
       return renderNameOnly(blog, post, content?.title);
     }
     case 'preview': {
@@ -347,23 +348,27 @@ export const ViewPostPage: NextPage<ViewPostPageProps> = (props: ViewPostPagePro
 ViewPostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { blogId, postId }, res } = props;
   const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial;
   const idOrHandle = blogId as string
   const blogIdFromUrl = await getBlogId(idOrHandle)
-  const extPostData = await subsocial.findPostWithExt(new BN(postId as string))
+  const blog = blogIdFromUrl && await substrate.findBlog(blogIdFromUrl)
 
-  // Post was not found:
-  if (!extPostData?.post?.struct && res) {
-    res.statusCode = 404
-    return { statusCode: 404 }
+  if (!blog) {
+    return return404(props)
   }
 
-  const blogIdFromPost = extPostData?.post.struct?.blog_id
-  const ownerId = extPostData?.post.struct?.created.account as AccountId;
-  const owner = await subsocial.findProfile(ownerId);
-
+  const postIdFromUrl = new BN(postId as string)
+  const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
+  const comments = await subsocial.findPostsWithDetails([ ...replyIds, postIdFromUrl ])
+  const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
+  const extPostData = extPostsData.pop()
+  const isComment = extPostData?.post.struct.extension.isComment;
+  const parentPostId = isComment && extPostData?.post.struct.extension.asComment.root_post_id
+  const parentPost = parentPostId && await subsocial.findPost(parentPostId)
+  const blogIdFromPost = unwrapSubstrateId(extPostData?.post.struct.blog_id)
   // If a blog id of this post is not equal to the blog id/handle from URL,
   // then redirect to the URL with the blog id of this post.
-  if (blogIdFromPost && !blogIdFromPost.eq(blogIdFromUrl) && res) {
+  if (blogIdFromPost && blogIdFromUrl && !blogIdFromPost.eq(blogIdFromUrl) && res) {
     res.writeHead(301, { Location: `/blogs/${blogIdFromPost.toString()}/posts/${postId}` })
     res.end()
   }
@@ -371,7 +376,10 @@ ViewPostPage.getInitialProps = async (props): Promise<any> => {
   return {
     postData: extPostData?.post,
     postExtData: extPostData?.ext,
-    owner
+    owner: extPostData?.owner,
+    replies,
+    blog,
+    parentPost
   };
 };
 
@@ -382,7 +390,8 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
     const { id } = props;
     const [ extPostData, setExtData ] = useState<ExtendedPostData>();
     const [ owner, setOwner ] = useState<ProfileData>()
-    const { subsocial } = useSubsocialApi()
+    const [ blog, setBlog ] = useState<Blog>();
+    const { subsocial, substrate } = useSubsocialApi()
 
     useEffect(() => {
       let isSubscribe = true;
@@ -393,6 +402,9 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
           const ownerId = extPostData.post.struct.created.account
           const owner = await subsocial.findProfile(ownerId)
           setOwner(owner);
+          const blogId = unwrapSubstrateId(extPostData.post.struct.blog_id)
+          const blog = blogId && await substrate.findBlog(blogId);
+          setBlog(blog)
         }
       };
 
@@ -403,7 +415,7 @@ const withLoadedData = (Component: React.ComponentType<ViewPostPageProps>) => {
 
     if (isEmpty(extPostData)) return <Loading/>;
 
-    return extPostData ? <Component postData={extPostData.post} postExtData={extPostData.ext} owner={owner} {...props}/> : null;
+    return extPostData && blog ? <Component blog={blog} postData={extPostData.post} postExtData={extPostData.ext} owner={owner} {...props}/> : null;
   };
 };
 

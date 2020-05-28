@@ -1,6 +1,6 @@
 import BN from 'bn.js';
 import React from 'react';
-import { InputBalance, Bubble } from '@polkadot/react-components';
+import { InputBalance, Bubble } from '@subsocial/react-components';
 import { formatBalance } from '@polkadot/util';
 
 type Props = {

@@ -1,6 +1,6 @@
 /* eslint-disable no-mixed-operators */
 import BN from 'bn.js'
-import { Options as QueryOptions } from '@polkadot/react-api/hoc/types'
+import { Options as QueryOptions } from '@subsocial/react-api/hoc/types'
 import queryString from 'query-string'
 
 export const ZERO = new BN(0)
