@@ -24,7 +24,7 @@ const mockSendTx = () => {
   }
 }
 
-function MockTxButton (props: any) {
+function MockTxButton (props: TxButtonProps) {
   const { isBasic, isPrimary = isBasic !== true, icon = '', onClick } = props
 
   return (
@@ -33,8 +33,8 @@ function MockTxButton (props: any) {
       isPrimary={isPrimary}
       icon={icon as string}
       onClick={() => {
-        if (typeof onClick === 'function') onClick(mockSendTx)
-        else mockSendTx()
+        if (typeof onClick === 'function') onClick()
+        mockSendTx()
       }}
     />
   )
