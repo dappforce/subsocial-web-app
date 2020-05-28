@@ -8,7 +8,7 @@ import { TxFailedCallback, TxCallback } from '@subsocial/react-components/Status
 import { SubmittableResult } from '@polkadot/api';
 import SimpleMDEReact from 'react-simplemde-editor';
 import dynamic from 'next/dynamic';
-import { buildSharePostValidationSchema } from './PostValidation'
+import { buildSharePostValidationSchema } from '../posts/PostValidation'
 import { CommentContent } from '@subsocial/types';
 import { registry } from '@subsocial/react-api';
 import { Option } from '@polkadot/types/codec';

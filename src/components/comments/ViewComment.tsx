@@ -15,7 +15,7 @@ import { EditComment, NewComment } from './NewComment';
 import { CommentsTree } from './CommentTree'
 import { postUrl } from '../utils/urls';
 import { useSubstrateApi } from '../utils/SubsocialApiContext';
-import SharePostAction from './SharePostAction';
+import SharePostAction from '../posts/SharePostAction';
 
 type Props = {
   blog: Blog,

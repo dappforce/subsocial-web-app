@@ -5,7 +5,7 @@ import { Segment } from 'semantic-ui-react';
 
 import { PostVoters } from '../../voting/ListVoters';
 import SummarizeMd from '../../utils/md/SummarizeMd';
-import { CommentSection } from '../CommentsSection';
+import { CommentSection } from '../../comments/CommentsSection';
 import { PostCreator, PostDropDownMenu, renderPostLink, InfoPostPreview, PostActionsPanel } from './helpers';
 import { InnerPreviewProps } from '.';
 

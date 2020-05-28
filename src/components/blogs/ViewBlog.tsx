@@ -35,7 +35,7 @@ import withLoadBlogDataById from './withLoadBlogDataById';
 import AboutBlogLink from './AboutBlogLink';
 import ViewBlogLink from './ViewBlogLink';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
-import PostPreview from '../posts/PostPreview';
+import PostPreview from '../posts/view-post/PostPreview';
 
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
@@ -190,7 +190,7 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
       renderItem={(item) =>
         <PostPreview
           key={item.post.struct.id.toString()}
-          post={item}
+          postStruct={item}
         />
       }
     />

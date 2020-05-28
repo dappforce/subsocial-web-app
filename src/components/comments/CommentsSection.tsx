@@ -8,7 +8,7 @@ import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
 import { NextPage } from 'next';
 import { getProfileName } from '../utils/utils';
 import { Pluralize } from '../utils/Plularize';
-import ViewPostLink from './ViewPostLink';
+import ViewPostLink from '../posts/ViewPostLink';
 import { CommentsTree } from './CommentTree';
 import { useSubstrateApi } from '../utils/SubsocialApiContext';
 import Section from '../utils/Section';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Segment } from 'semantic-ui-react';
 import { BlogData } from '@subsocial/types/dto';
-import { CommentSection } from '../CommentsSection';
+import { CommentSection } from '../../comments/CommentsSection';
 import { InfoPostPreview, PostActionsPanel } from './helpers';
 import { PreviewProps } from './PostPreview';
 

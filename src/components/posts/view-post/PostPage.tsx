@@ -8,7 +8,7 @@ import { PostData, PostWithAllDetails, BlogData } from '@subsocial/types/dto';
 import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';
 import SharePostAction from '../SharePostAction';
-import { CommentSection } from '../CommentsSection';
+import { CommentSection } from '../../comments/CommentsSection';
 import { isRegularPost, PostDropDownMenu, PostCreator } from './helpers';
 import { PostExtension } from '@subsocial/types/substrate/classes';
 import Error from 'next/error'
