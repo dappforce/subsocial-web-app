@@ -10,7 +10,8 @@ import { isClientSide } from '.';
 import { useMyAccount } from './MyAccountContext';
 import { newLogger } from '@subsocial/utils';
 import { useApi } from '@subsocial/react-hooks';
-import TxButton, { TxButtonProps } from '@subsocial/react-components/TxButton';
+import TxButton from '@subsocial/react-components/TxButton';
+import { TxButtonProps } from '@subsocial/react-components/types';
 
 const log = newLogger('TxButton')
 
