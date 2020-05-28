@@ -1,8 +1,7 @@
 import React from 'react';
-import { Post } from '@subsocial/types/substrate/interfaces';
 import ListData from '../utils/DataList';
-import { ViewPostPage } from '../posts/ViewPost';
 import { ExtendedPostData } from '@subsocial/types';
+import PostPreview from '../posts/PostPreview';
 
 type Props = {
   postsData: ExtendedPostData[]
@@ -20,14 +19,7 @@ export const LatestPosts = (props: Props) => {
     title={`Latest posts`}
     dataSource={postsData}
     renderItem={(item) =>
-      <ViewPostPage
-        key={(item.post.struct as Post).id.toString()}
-        variant='preview'
-        postData={item.post}
-        postExtData={item.ext}
-        owner={item.owner}
-        blog={{} as any}
-      />
+      <PostPreview post={item} />
     }
   />
 }

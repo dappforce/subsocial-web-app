@@ -43,7 +43,7 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
     useEffect(() => {
       const loadComments = async () => {
         const replyIds = await substrate.getReplyIdsByPostId(parentId);
-        const comments = await subsocial.findPostsWithDetails(replyIds);
+        const comments = await subsocial.findPostsWithAllDetails(replyIds);
         setComments(comments)
         setIsCommentReplies(true);
       }

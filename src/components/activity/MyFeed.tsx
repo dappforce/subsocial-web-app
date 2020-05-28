@@ -10,7 +10,7 @@ import NotAuthorized from '../utils/NotAuthorized';
 import { getNewsFeed } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
-import { PostPreviewList } from '../posts/PostPreview';
+import { PostPreviewList } from '../posts/PostPreviewList';
 
 export const MyFeed = () => {
   const myAddress = useMyAddress()

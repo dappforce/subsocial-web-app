@@ -32,19 +32,19 @@ export const Voter = (props: VoterProps) => {
   const kind = reactionState ? reactionState && reactionState.kind.toString() : 'None';
   const [ reactionKind, setReactionKind ] = useState(kind);
   const [ state, setState ] = useState(struct);
-  const [ updateTrigger, setUpdateTrigger ] = useState(true);
+  const [ reloadTrigger, setReloadTrigger ] = useState(true);
   const { id } = state;
 
   useEffect(() => {
     let isSubscribe = true;
 
-    async function loadStruct<T extends Comment | Post> (_: T) {
+    async function reloadPost () {
       const _struct = await substrate.findPost(id)
       if (isSubscribe && _struct) setState(_struct);
     }
-    loadStruct(state).catch(err => log.error('Failed to load a post or comment. Error:', err));
+    reloadPost().catch(err => log.error('Failed to load a post or comment. Error:', err));
 
-    async function loadReaction () {
+    async function reloadReaction () {
       if (!address) return
 
       const reactionId = await substrate.getPostReactionIdByAccount(address, id)
@@ -55,10 +55,10 @@ export const Voter = (props: VoterProps) => {
       }
     }
 
-    loadReaction().catch(err => log.error('Failed to load a reaction. Error:', err));
+    reloadReaction().catch(err => log.error('Failed to load a reaction. Error:', err));
 
     return () => { isSubscribe = false; };
-  }, [ updateTrigger, address ]);
+  }, [ reloadTrigger, address ]);
 
   const buildTxParams = (param: 'Downvote' | 'Upvote') => {
     if (reactionState === undefined) {
@@ -101,10 +101,10 @@ export const Voter = (props: VoterProps) => {
       const isActive = (reactionKind === reactionName) && 'active';
       const icon = isUpvote ? 'up' : 'down';
       return (<TxButton
-        icon={`thumbs ${typeIcon} outline`}
+        icon={`thumbs ${icon} outline`}
         className={`${color} ${isActive}`}
         params={buildTxParams(reactionName)}
-        onSuccess={() => setUpdateTrigger(!updateTrigger)}
+        onSuccess={() => setReloadTrigger(!reloadTrigger)}
         tx={!reactionState
           ? `social.createPostReaction`
           : (reactionKind !== `${reactionName}`)

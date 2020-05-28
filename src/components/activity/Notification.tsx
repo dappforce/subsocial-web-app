@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { DfBgImg } from '../utils/DfBgImg';
 import { nonEmptyStr } from '@subsocial/utils';
 import Avatar from '../profiles/address-views/Avatar'
-import { ProfileData, PostData, CommentData, BlogData, AnySubsocialData, CommonStruct, Activity } from '@subsocial/types';
+import { ProfileData, PostData, BlogData, AnySubsocialData, CommonStruct, Activity } from '@subsocial/types';
 import Name from '../profiles/address-views/Name';
 import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
 import { hexToBn } from '@polkadot/util';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils/utils';
-import { SocialAccount } from '@subsocial/types/substrate/interfaces';
+import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
 
 type Struct = Exclude<CommonStruct, SocialAccount>;
@@ -27,10 +27,9 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     const { activities } = props;
     const { subsocial } = useSubsocialApi()
     const [ loaded, setLoaded ] = useState(false)
-    const [ blogByBlogIdMap, setBlogByBlogIdMap ] = useState(new Map<string, BlogData>())
-    const [ postByPostIdMap, setPostByPostIdMap ] = useState(new Map<string, PostData>())
-    const [ commentByCommentIdMap, setCommentByCommentIdMap ] = useState(new Map<string, CommentData>())
-    const [ ownerDataByOwnerIdMap, setOwnerDataByOwnerIdMap ] = useState(new Map<string, ProfileData>())
+    const [ blogById, setBlogByIdMap ] = useState(new Map<string, BlogData>())
+    const [ postById, setPostByIdMap ] = useState(new Map<string, PostData>())
+    const [ ownerById, setOwnerByIdMap ] = useState(new Map<string, ProfileData>())
 
     useEffect(() => {
       setLoaded(false);
@@ -38,35 +37,52 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
       const ownerIds: string[] = []
       const blogIds: BN[] = []
       const postIds: BN[] = []
-      const commentIds: BN[] = []
 
       activities.forEach(({ account, blog_id, post_id, comment_id }) => {
         nonEmptyStr(account) && ownerIds.push(account)
         nonEmptyStr(blog_id) && blogIds.push(hexToBn(blog_id))
         nonEmptyStr(post_id) && postIds.push(hexToBn(post_id))
-        nonEmptyStr(comment_id) && commentIds.push(hexToBn(comment_id))
+        nonEmptyStr(comment_id) && postIds.push(hexToBn(comment_id))
       })
 
       const loadData = async () => {
         const ownersData = await subsocial.findProfiles(ownerIds);
-        const blogsData = await subsocial.findBlogs(blogIds)
         const postsData = await subsocial.findPosts(postIds)
-        const commentsData = await subsocial.findComments(commentIds)
 
-        function createMap<T extends AnySubsocialData> (data: T[], owners: boolean = false) {
+        function createMap<T extends AnySubsocialData> (data: T[], structName?: 'profile' | 'post') {
           const dataByIdMap = new Map<string, T>()
           data.forEach(x => {
-            const id = owners ? (x as ProfileData).profile?.created.account : (x.struct as Struct).id;
+            let id;
+
+            switch (structName) {
+              case 'profile': {
+                id = (x as ProfileData).profile?.created.account;
+                break;
+              }
+              case 'post': {
+                const struct = (x.struct as Post)
+                id = struct.id;
+                const blogId = struct.blog_id.unwrapOr(undefined);
+                blogId && blogIds.push(blogId)
+                break;
+              }
+              default : {
+                id = (x.struct as Struct).id
+              }
+            }
+
             if (id) {
               dataByIdMap.set(id.toString(), x);
             }
           })
           return dataByIdMap;
         }
-        setOwnerDataByOwnerIdMap(createMap<ProfileData>(ownersData, true))
-        setBlogByBlogIdMap(createMap<BlogData>(blogsData))
-        setPostByPostIdMap(createMap<PostData>(postsData))
-        setCommentByCommentIdMap(createMap<CommentData>(commentsData))
+        setPostByIdMap(createMap<PostData>(postsData, 'post'))
+        setOwnerByIdMap(createMap<ProfileData>(ownersData, 'profile'))
+
+        const blogsData = await subsocial.findBlogs(blogIds)
+        setBlogByIdMap(createMap<BlogData>(blogsData))
+
         setLoaded(true);
       }
 
@@ -75,10 +91,9 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     }, [ false ])
 
     const activityStore: ActivityStore = {
-      blogByBlogIdMap,
-      postByPostIdMap,
-      commentByCommentIdMap,
-      ownerDataByOwnerIdMap
+      blogById,
+      postById,
+      ownerById
     }
 
     if (loaded) {
