@@ -5,7 +5,8 @@ import { PostExtension } from '@subsocial/types/substrate/classes';
 
 export type BarePreviewProps = {
   withActions?: boolean,
-  replies?: PostWithAllDetails[]
+  replies?: PostWithAllDetails[],
+  asRegularPost?: boolean
 }
 
 export type PreviewProps = BarePreviewProps & {
@@ -13,10 +14,9 @@ export type PreviewProps = BarePreviewProps & {
   blog?: BlogData
 }
 
-export function PostPreview (props: PreviewProps) {
-  const { postStruct, blog: externalBlog } = props
+export function PostPreview ({ postStruct, blog: externalBlog, asRegularPost }: PreviewProps) {
   const { blog, post: { struct: { extension } } } = postStruct
-  return isRegularPost(extension as PostExtension)
+  return asRegularPost || isRegularPost(extension as PostExtension)
     ? <RegularPreview postStruct={postStruct} blog={externalBlog || blog} withActions />
     : <SharedPreview postStruct={postStruct} blog={externalBlog || blog} withActions />
 }

@@ -14,7 +14,7 @@ export type DynamicPreviewProps = BarePreviewProps & {
   id: AnyPostId
 }
 
-export function DynamicPostPreview ({ id, withActions, replies }: DynamicPreviewProps) {
+export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }: DynamicPreviewProps) {
   const [ postStruct, setPostStruct ] = useState<PostWithAllDetails>();
   const { subsocial } = useSubsocialApi()
 
@@ -46,7 +46,7 @@ export function DynamicPostPreview ({ id, withActions, replies }: DynamicPreview
     replies: replies
   } as InnerPreviewProps
 
-  return isRegularPost(postStruct.post.struct.extension as PostExtension)
+  return asRegularPost || isRegularPost(postStruct.post.struct.extension as PostExtension)
     ? <RegularPreview {...props} />
     : <SharedPreview {...props} />
 }

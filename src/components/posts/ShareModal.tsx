@@ -18,7 +18,7 @@ import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray, newLogger } from '@subsocial/utils';
 import DfMdEditor from '../utils/DfMdEditor';
-import { DynamicRegularPreview } from './view-post';
+import { DynamicPostPreview } from './view-post/DynamicPostPreview';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -136,7 +136,7 @@ const InnerShareModal = (props: Props) => {
           <ErrorMessage errors={errors} name={Fields.body} />
         </div>
       </form>
-      <DynamicRegularPreview id={postId} withActions/>
+      <DynamicPostPreview id={postId} withActions asRegularPost/>
     </div>
   };
 
