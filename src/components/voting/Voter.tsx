@@ -99,7 +99,7 @@ export const Voter = (props: VoterProps) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
       const color = isUpvote ? 'green' : 'red';
       const isActive = (reactionKind === reactionName) && 'active';
-      const typeIcon = isUpvote ? 'up' : 'down';
+      const icon = isUpvote ? 'up' : 'down';
       return (<TxButton
         icon={`thumbs ${typeIcon} outline`}
         className={`${color} ${isActive}`}
@@ -121,7 +121,7 @@ export const Voter = (props: VoterProps) => {
         <Button content={ count === 0 ? count.toString() : count + '%' } variant='primary' className={`${countColor} active`} onClick={() => setOpen(true)}/>
         {renderTxButton(false)}
       </Button.Group>
-      {open && <PostVoters id={id} open={open} close={close}/>}
+      {open && <PostVoters id={id} open={open} close={close} />}
     </>;
   };
 

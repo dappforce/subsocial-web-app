@@ -48,7 +48,7 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
         setIsCommentReplies(true);
       }
 
-      loadComments().catch(err => log.error('Failed load comments: %o', err))
+      loadComments().catch(err => log.error('Failed to load comments: %o', err))
     }, [ false ]);
 
     return isCommentReplies ? <Component blog={blog} comments={replyComments} /> : null;

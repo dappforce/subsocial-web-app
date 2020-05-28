@@ -63,7 +63,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
   </>
 
   return <Section className='DfContentPage DfEntirePost'>
-    <HeadMeta desc={mdToText(content?.body)} title={`${profileName} commented on ${content?.title}`} />
+    <HeadMeta title={`${profileName} commented on ${content?.title}`} desc={mdToText(content?.body)} />
     {renderResponseTitle()}
     <ViewComment owner={owner} blog={blog} struct={struct} content={content} replies={replies} withShowReplies />
   </Section>

@@ -132,7 +132,7 @@ const InnerForm = (props: FormProps) => {
         // TODO update only dirty values.
         const update = new PostUpdate(
           {
-          // TODO setting new blog_id will move the post to another blog.
+          // If we provide a new blog_id in update, it will move this post to another blog.
             blog_id: new OptionId(),
             ipfs_hash: new OptionText(hash)
           });
@@ -157,7 +157,7 @@ const InnerForm = (props: FormProps) => {
       }
       return []
     } catch (err) {
-      log.error('Failed build tx params: %o', err)
+      log.error('Failed to build tx params: %o', err)
       return []
     }
   };
