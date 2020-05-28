@@ -38,7 +38,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
 
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
-  const [ showReplices, setShowReplices ] = useState(withShowReplies);
+  const [ showReplies, setShowReplies ] = useState(withShowReplies);
   const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
   const substrate = useSubstrateApi()
 
@@ -79,9 +79,9 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
   };
 
   const ViewRepliesLink = () => {
-    const viewActionMessage = showReplices ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
+    const viewActionMessage = showReplies ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
     return <Link href={commentLink}>
-      <a onClick={(event) => { event.preventDefault(); setShowReplices(!showReplices) }}>
+      <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
         {viewActionMessage}
         {' '}
         <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
@@ -90,7 +90,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
   }
 
   const isReplies = repliesCount !== '0';
-  const isShowChild = showReplyForm || showReplices || isReplies;
+  const isShowChild = showReplyForm || showReplies || isReplies;
 
   const ChildPanel = isShowChild ? <div className="DfCommentChild">
     {showReplyForm &&
@@ -100,7 +100,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
       withCancel
     />}
     {isReplies && <ViewRepliesLink />}
-    {showReplices && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
+    {showReplies && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
   </div> : null
 
   return <Comment
