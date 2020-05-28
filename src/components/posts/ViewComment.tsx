@@ -99,7 +99,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
       callback={() => setShowReplyForm(false)}
       withCancel
     />}
-    {isReplies && <ViewRepliecesLink />}
+    {isReplies && <ViewRepliesLink />}
     {showReplices && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
   </div> : null
 
