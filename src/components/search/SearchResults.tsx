@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
 import { ViewBlog } from '../blogs/ViewBlog';
-import { ViewPost } from '../posts/ViewPost';
 import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
@@ -12,6 +11,7 @@ import BN from 'bn.js';
 import { registry } from '@subsocial/react-api';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
 import { DEFAULT_AVATAR_SIZE } from '../../config/Size.config';
+import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
 
 type DataResults = {
   _id: string;
@@ -48,7 +48,7 @@ const resultToPreview = (res: DataResults, i: number) => {
     case ElasticIndex.blogs:
       return <ViewBlog id={new BN(res._id)} previewDetails withFollowButton />;
     case ElasticIndex.posts:
-      return <ViewPost key={i} id={new BN(res._id)} variant='preview' withLink={true} />;
+      return <DynamicPostPreview key={i} id={new BN(res._id)} withActions />;
     case ElasticIndex.profiles:
       return <Segment>
         <ProfilePreviewWithOwner

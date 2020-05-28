@@ -1,3 +1,3 @@
-import ViewPost from '../../../../../components/posts/ViewPost';// TODO redirect to /[blogId]
+import PostPage from '../../../../../components/posts/view-post/PostPage';// TODO redirect to /[blogId]
 
-export default ViewPost;
+export default PostPage;

@@ -4,22 +4,14 @@ import dynamic from 'next/dynamic';
 import { Segment } from 'semantic-ui-react';
 
 import { PostVoters } from '../../voting/ListVoters';
-import { PostWithAllDetails, BlogData } from '@subsocial/types/dto';
 import SummarizeMd from '../../utils/md/SummarizeMd';
 import { CommentSection } from '../CommentsSection';
 import { PostCreator, PostDropDownMenu, renderPostLink, InfoPostPreview, PostActionsPanel } from './helpers';
-import { withLoadedData } from './withLoadedPostData';
+import { InnerPreviewProps } from '.';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
-export type SharedPreviewProps = {
-  postStruct: PostWithAllDetails,
-  blog: BlogData,
-  withStats?: boolean,
-  withActions?: boolean
-}
-
-export const SharedPreview: React.FunctionComponent<SharedPreviewProps> = ({ postStruct, blog, withStats, withActions }) => {
+export const SharedPreview: React.FunctionComponent<InnerPreviewProps> = ({ postStruct, blog, withActions, replies }) => {
   if (!postStruct.ext) return null;
   const { post: { struct: originalPost, content: originalContent } } = postStruct.ext;
 
@@ -39,13 +31,11 @@ export const SharedPreview: React.FunctionComponent<SharedPreviewProps> = ({ pos
       </div>
       <Segment className='DfPostPreview'>
         <InfoPostPreview postStruct={postStruct.ext} blog={blog} />
-        {withStats && <StatsPanel id={originalPost.id}/> /* TODO params originPost */}
+        <StatsPanel id={originalPost.id}/>
       </Segment>
       {withActions && <PostActionsPanel postStruct={postStruct.ext} toogleCommentSection={() => setCommentsSection(!commentsSection)} />}
-      {commentsSection && <CommentSection post={struct} blog={blog.struct} />}
+      {commentsSection && <CommentSection post={struct} blog={blog.struct} replies={replies}/>}
       {postVotersOpen && <PostVoters id={struct.id} active={0} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
     </Segment>
   </>;
 };
-
-export const DynamicSharedPost = withLoadedData(SharedPreview)

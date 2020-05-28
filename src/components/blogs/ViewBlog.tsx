@@ -13,7 +13,6 @@ import React, { useState } from 'react';
 import { isBrowser } from 'react-device-detect';
 import { Segment } from 'semantic-ui-react';
 
-import { ViewPostPage } from '../posts/ViewPost';
 import { ZERO } from '../utils';
 import ListData from '../utils/DataList';
 import { DfBgImg } from '../utils/DfBgImg';
@@ -36,6 +35,7 @@ import withLoadBlogDataById from './withLoadBlogDataById';
 import AboutBlogLink from './AboutBlogLink';
 import ViewBlogLink from './ViewBlogLink';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
+import PostPreview from '../posts/PostPreview';
 
 // import { BlogHistoryModal } from '../utils/ListsEditHistory';
 const FollowBlogButton = dynamic(() => import('../utils/FollowBlogButton'), { ssr: false });
@@ -188,10 +188,9 @@ export const ViewBlogPage: NextPage<Props> = (props) => {
         : null
       }
       renderItem={(item) =>
-        <ViewPostPage
+        <PostPreview
           key={item.post.struct.id.toString()}
-          variant='preview'
-          postStruct={item}
+          post={item}
         />
       }
     />

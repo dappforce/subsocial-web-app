@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import { Segment } from 'semantic-ui-react';
-import { PostWithAllDetails, BlogData } from '@subsocial/types/dto';
+import { BlogData } from '@subsocial/types/dto';
 import { CommentSection } from '../CommentsSection';
 import { InfoPostPreview, PostActionsPanel } from './helpers';
-import { withLoadedData } from './withLoadedPostData';
+import { PreviewProps } from './PostPreview';
 
-export type RegularPreviewProps = {
-  postStruct: PostWithAllDetails,
-  blog: BlogData,
-  withActions?: boolean,
-  replies?: PostWithAllDetails[]
+export type InnerPreviewProps = PreviewProps & {
+  blog: BlogData
 }
 
-export const RegularPreview: React.FunctionComponent<RegularPreviewProps> = ({ postStruct, blog, replies, withActions = false }) => {
+export const RegularPreview: React.FunctionComponent<InnerPreviewProps> = ({ postStruct, blog, replies, withActions = false }) => {
   const [ commentsSection, setCommentsSection ] = useState(false)
   return <>
     <Segment className='DfPostPreview'>
@@ -22,5 +19,3 @@ export const RegularPreview: React.FunctionComponent<RegularPreviewProps> = ({ p
     </Segment>
   </>;
 }
-
-export const DynamicRegularPreview = withLoadedData(RegularPreview)
