@@ -7,8 +7,6 @@ import { AddressProps } from './utils/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { InfoDetails } from '.';
 import { isBrowser } from 'react-device-detect';
-import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
-
 export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   address,
   owner
@@ -25,7 +23,7 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   return <Dropdown overlay={menu} placement="bottomLeft">
     <span className="DfCurrentAddress">
       <div className='DfAddressIcon'>
-        <Avatar size={DEFAULT_AVATAR_SIZE} address={address} avatar={content?.avatar} />
+        <Avatar address={address} avatar={content?.avatar} />
       </div>
       <div className='DfAddressInfo ui--AddressComponents'>
         <Address asLink={isBrowser} owner={owner} address={address} />

@@ -54,7 +54,6 @@ const resultToPreview = (res: DataResults, i: number) => {
         <ProfilePreviewWithOwner
           key={res._id}
           address={new AccountId(registry, res._id)}
-          size={DEFAULT_AVATAR_SIZE}
         />
       </Segment>;
     default:

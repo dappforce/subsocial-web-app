@@ -10,7 +10,7 @@ export default {
 
 const ViewCommentMock: React.FunctionComponent = ({ children }) => <ViewComment address={mockAccountAlice} owner={mockProfileDataAlice} struct={mockPostStruct} content={mockPostJson}>{children}</ViewComment>
 
-export const _TreeComments = () => (
+export const CommentsTree = () => (
   <>
     <ViewCommentMock>
       <ViewCommentMock>

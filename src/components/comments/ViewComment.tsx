@@ -38,7 +38,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
 
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
-  const [ showReplices, setShowReplices ] = useState(withShowReplies);
+  const [ showReplies, setShowReplies ] = useState(withShowReplies);
   const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
   const substrate = useSubstrateApi()
 
@@ -49,7 +49,6 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
 
     substrate.findPost(id).then((post) => {
       if (post) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> I am here')
         setCount(post.direct_replies_count.toString())
       }
     })
@@ -79,10 +78,10 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     </>);
   };
 
-  const ViewRepliecesLink = () => {
-    const viewActionMessage = showReplices ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
+  const ViewRepliesLink = () => {
+    const viewActionMessage = showReplies ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
     return <Link href={commentLink}>
-      <a onClick={(event) => { event.preventDefault(); setShowReplices(!showReplices) }}>
+      <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
         {viewActionMessage}
         {' '}
         <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
@@ -91,19 +90,17 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
   }
 
   const isReplies = repliesCount !== '0';
-  const isShowChild = showReplyForm || showReplices || isReplies;
+  const isShowChild = showReplyForm || showReplies || isReplies;
 
   const ChildPanel = isShowChild ? <div className="DfCommentChild">
     {showReplyForm &&
     <NewComment
       post={struct}
-      callback={() => {
-        setShowReplyForm(false);
-      }}
+      callback={() => setShowReplyForm(false)}
       withCancel
     />}
-    {isReplies && <ViewRepliecesLink />}
-    {showReplices && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
+    {isReplies && <ViewRepliesLink />}
+    {showReplies && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
   </div> : null
 
   return <Comment

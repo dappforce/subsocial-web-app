@@ -11,6 +11,7 @@ import { useMyAccount } from './MyAccountContext';
 import { newLogger } from '@subsocial/utils';
 import { useApi } from '@subsocial/react-hooks';
 import TxButton from '@subsocial/react-components/TxButton';
+import { TxButtonProps } from '@subsocial/react-components/types';
 
 const log = newLogger('TxButton')
 
@@ -23,7 +24,7 @@ const mockSendTx = () => {
   }
 }
 
-function MockTxButton (props: any) {
+function MockTxButton (props: TxButtonProps) {
   const { isBasic, isPrimary = isBasic !== true, icon = '', onClick } = props
 
   return (
@@ -32,8 +33,8 @@ function MockTxButton (props: any) {
       isPrimary={isPrimary}
       icon={icon as string}
       onClick={() => {
-        if (typeof onClick === 'function') onClick(mockSendTx)
-        else mockSendTx()
+        if (typeof onClick === 'function') onClick()
+        mockSendTx()
       }}
     />
   )
