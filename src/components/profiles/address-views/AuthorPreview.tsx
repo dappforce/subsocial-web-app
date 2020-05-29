@@ -11,7 +11,6 @@ import { ExtendedAddressProps } from './utils/types';
 import dynamic from 'next/dynamic';
 import { useApi } from '@subsocial/react-hooks';
 import ViewProfileLink from '../ViewProfileLink';
-import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 

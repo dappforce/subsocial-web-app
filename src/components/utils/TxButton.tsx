@@ -40,7 +40,7 @@ function MockTxButton (props: TxButtonProps) {
   )
 }
 
-function ResolvedButton (props: any) {
+function ResolvedButton (props: TxButtonProps) {
   const { isStorybook = false } = useStorybookContext()
   const { isApiReady } = useApi()
   const { state: { address } } = useMyAccount();

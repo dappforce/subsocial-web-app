@@ -10,13 +10,13 @@ import ViewPostLink from '../ViewPostLink';
 import SharePostAction from '../SharePostAction';
 import { CommentSection } from '../../comments/CommentsSection';
 import { isRegularPost, PostDropDownMenu, PostCreator } from './helpers';
-import { PostExtension } from '@subsocial/types/substrate/classes';
 import Error from 'next/error'
 import { NextPage } from 'next';
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
-import { getBlogId, unwrapSubstrateId } from 'src/components/utils/utils';
+import { getBlogId, unwrapSubstrateId } from 'src/components/utils/substrate';
 import partition from 'lodash.partition';
 import BN from 'bn.js'
+import { RegularPreview } from '.';
 
 const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
@@ -31,9 +31,11 @@ export type PostDetailsProps = {
 export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, blog, replies, statusCode }) => {
   if (statusCode === 404) return <Error statusCode={statusCode} />
 
-  const { struct, content } = postStruct.post;
+  const { post, ext } = postStruct
+  const { struct, content } = post;
   if (!content) return null;
 
+  const isRegular = isRegularPost(struct.extension)
   const { title, body, image, canonical, tags } = content;
   const blogData = blog || postStruct.blog
   const blogStruct = blogData.struct;
@@ -44,7 +46,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, blog, replies
       In response to{' '}
     <ViewPostLink blog={blogStruct} post={parentPost.struct} title={parentPost.content?.title} />
   </>
-  const titleMsg = isRegularPost(struct.extension as PostExtension)
+  const titleMsg = isRegular
     ? renderResponseTitle(postStruct.ext?.post)
     : title
 
@@ -59,11 +61,14 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, blog, replies
         <PostCreator postStruct={postStruct} withBlogName blog={blogData} />
         {isBrowser && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
       </div>
-      <div className='DfPostContent'>
-        {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-        <DfMd source={body} />
-        {/* {renderBlogPreview(post)} */}
-      </div>
+      {image && body &&
+        <div className='DfPostContent'>
+          <img src={image} className='DfPostImage' /* add onError handler */ />
+          <DfMd source={body} />
+          {/* {renderBlogPreview(post)} */}
+        </div>}
+      {!isRegular &&
+          <RegularPreview postStruct={ext as any} blog={ext?.blog as any} /> }
       <ViewTags tags={tags} />
       <div className='DfRow'>
         <Voter struct={struct} />

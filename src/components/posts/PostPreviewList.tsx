@@ -3,7 +3,7 @@ import BN from 'bn.js';
 import { Loading } from '../utils/utils';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { PostWithAllDetails } from '@subsocial/types';
-import PostPreview from './PostPreview';
+import PostPreview from './view-post/PostPreview';
 
 type OuterProps = {
   postIds: BN[]
@@ -36,6 +36,6 @@ export function withLoadPostsWithBlogs<P extends OuterProps> (Component: React.C
 }
 
 const InnerPostPreviewList: React.FunctionComponent<ResolvedProps> = ({ posts }) =>
-  <>{posts.map(x => <PostPreview key={x.post.struct.id.toString()} post={x} />)}</>
+  <>{posts.map(x => <PostPreview key={x.post.struct.id.toString()} postStruct={x} />)}</>
 
 export const PostPreviewList = withLoadPostsWithBlogs(InnerPostPreviewList)

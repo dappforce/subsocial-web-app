@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { BlogId } from '@subsocial/types/substrate/interfaces';
 import BN from 'bn.js'
-import { getBlogId } from '../utils/utils';
+import { getBlogId } from '../utils/substrate';
 
 export function withBlogIdFromUrl<Props = { id: BlogId }>
   (Component: React.ComponentType<Props>) {

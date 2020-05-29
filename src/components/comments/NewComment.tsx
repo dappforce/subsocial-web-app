@@ -13,7 +13,7 @@ import { CommentContent } from '@subsocial/types';
 import { registry } from '@subsocial/react-api';
 import { Option } from '@polkadot/types/codec';
 import { Button } from 'antd';
-import { getNewIdFromEvent } from '../utils/utils';
+import { getNewIdFromEvent } from '../utils/substrate';
 import { newLogger } from '@subsocial/utils';
 import BN from 'bn.js'
 

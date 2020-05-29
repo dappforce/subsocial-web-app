@@ -14,7 +14,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { return404 } from '../utils/next';
 import Section from '../utils/Section';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { formatUnixDate, getBlogId } from '../utils/utils';
+import { formatUnixDate, getBlogId } from '../utils';
 import ViewTags from '../utils/ViewTags';
 import BlogStatsRow from './BlogStatsRow';
 import SpaceNav from './SpaceNav';

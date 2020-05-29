@@ -4,7 +4,7 @@ import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import { socialQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils/utils';
+import { getNewIdFromEvent, Loading } from '../utils';
 import { useMyAddress } from '../utils/MyAccountContext';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';

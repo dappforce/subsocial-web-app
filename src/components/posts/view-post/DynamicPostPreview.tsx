@@ -4,7 +4,6 @@ import { PostWithAllDetails, BlogData } from '@subsocial/types/dto';
 import { useSubsocialApi } from '../../utils/SubsocialApiContext';
 import { RegularPreview, InnerPreviewProps } from './ViewRegularPreview';
 import { isRegularPost } from './helpers';
-import { PostExtension } from '@subsocial/types/substrate/classes';
 import { SharedPreview } from './ViewSharedPreview';
 import { BarePreviewProps } from './PostPreview';
 import { AnyPostId } from '@subsocial/types';
@@ -46,7 +45,7 @@ export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }:
     replies: replies
   } as InnerPreviewProps
 
-  return asRegularPost || isRegularPost(postStruct.post.struct.extension as PostExtension)
+  return asRegularPost || isRegularPost(postStruct.post.struct.extension)
     ? <RegularPreview {...props} />
     : <SharedPreview {...props} />
 }

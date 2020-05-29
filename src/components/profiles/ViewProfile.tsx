@@ -28,7 +28,7 @@ import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
 import { useApi } from '@subsocial/react-hooks';
-import { getAccountId } from '../utils/utils';
+import { getAccountId } from '../utils/substrate';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
 import ViewProfileLink from './ViewProfileLink';

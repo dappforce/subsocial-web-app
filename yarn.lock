@@ -1233,7 +1233,7 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.3", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.3", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
   version "7.9.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.6.tgz#a9102eb5cadedf3f31d08a9ecf294af7827ea29f"
   integrity sha512-64AF1xY3OAkFHqOb9s4jpgk1Mm5vDZ4L3acHvAml+53nO1XbXLuDodsVpO4OIUsmemlUHMxNdYMNJmsvOwLrvQ==
@@ -2642,19 +2642,6 @@
   dependencies:
     "@types/node" ">= 8"
 
-"@polkadot/api-contract@^1.11.0-beta.32", "@polkadot/api-contract@^1.11.1", "@polkadot/api-contract@^1.2.0-beta.7":
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/api-contract/-/api-contract-1.13.1.tgz#28b314d9f11d28b36e2ad23c4778aab22c7fa1b2"
-  integrity sha512-HIHOH+ZpQFxXwgv2g3MLfK4FXwt3+EOr44nEnf45GIl/qHUL1Hvn/CXvlliVm0qnu1CtN+h8G2xdN3ib/SbM8Q==
-  dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/api" "1.13.1"
-    "@polkadot/rpc-core" "1.13.1"
-    "@polkadot/types" "1.13.1"
-    "@polkadot/util" "^2.9.1"
-    bn.js "^5.1.1"
-    rxjs "^6.5.5"
-
 "@polkadot/api-derive@1.13.1":
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/@polkadot/api-derive/-/api-derive-1.13.1.tgz#e52743291c64ae7f71624bb251bc5544785d9a33"
@@ -2671,7 +2658,7 @@
     memoizee "^0.4.14"
     rxjs "^6.5.5"
 
-"@polkadot/api@1.13.1", "@polkadot/api@^1.11.0-beta.32", "@polkadot/api@^1.11.1":
+"@polkadot/api@1.13.1", "@polkadot/api@^1.11.0-beta.32":
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/@polkadot/api/-/api-1.13.1.tgz#6e8cb2f59a230498811c9fd818e1756316188044"
   integrity sha512-q/dzklbTpshR58tpLmi7Z51ii6dtpbW6vmPu9PAJbFoFIe45Z09B8rczf6BgXi9mWMiO1Az9gxwtjuc1lnnobg==
@@ -2689,14 +2676,6 @@
     bn.js "^5.1.1"
     eventemitter3 "^4.0.0"
     rxjs "^6.5.5"
-
-"@polkadot/app-contracts@^0.40.0-beta.19":
-  version "0.40.0-beta.19"
-  resolved "https://registry.yarnpkg.com/@polkadot/app-contracts/-/app-contracts-0.40.0-beta.19.tgz#098685b297747de8dc2db21e37f195e4a81f4359"
-  integrity sha512-fQLI1QHKubkZe4qGNyF8B88MYxMxRiI2uXI2seP6I6hyVazBVW6m6gkeYBZVpEUeepwAJO4GxAyO4RS/J0wEbA==
-  dependencies:
-    "@babel/runtime" "^7.8.3"
-    "@polkadot/api-contract" "^1.2.0-beta.7"
 
 "@polkadot/dev-react@^0.30.0-beta.1":
   version "0.30.0-beta.30"
@@ -2912,7 +2891,7 @@
     "@polkadot/util" "^2.9.1"
     bn.js "^5.1.1"
 
-"@polkadot/types@1.13.1", "@polkadot/types@1.7.1", "@polkadot/types@^1.11.1":
+"@polkadot/types@1.13.1", "@polkadot/types@1.7.1":
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-1.13.1.tgz#4583b7773644fe777d8fa0b837d8d562f8172ac0"
   integrity sha512-cyANcVkDQmb3Ih5XggvLMWj7Gu9/VL/HYoebua50mecuYWa9eOn3iYGVmvvYG2rFcObikLwAwrUu8Dn1AZ5RoA==
@@ -3463,22 +3442,22 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.2.32":
-  version "0.2.32"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.32.tgz#2165a51af3bb2d910ca5dcef089deb0f2a965461"
-  integrity sha512-0yoHJNaoS+6TKN0aqLdeSoz5dId5jRzM7toXfIMriWmAmkuUdBZwj1Pdy7XhNr2vPnt67No5H1TBp8QJyJQi/Q==
+"@subsocial/api@^0.2.33":
+  version "0.2.33"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.33.tgz#a25b9e230b476602ba5d01a8b863d1b227192324"
+  integrity sha512-CRdm+oInKfYFlI/Tv9+aHF8DO/Scis/im89UQyCBS02kBsDP5o2TCSIR2OuNIEhB+KJ0cfVm/2efO7+N9dIexA==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "1.13.1"
-    "@subsocial/types" "^0.2.7"
+    "@subsocial/types" "^0.2.8"
     "@subsocial/utils" "^0.1.23"
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
 
-"@subsocial/apps-config@^0.41.18":
-  version "0.41.18"
-  resolved "https://registry.yarnpkg.com/@subsocial/apps-config/-/apps-config-0.41.18.tgz#c73b1a191a5edca84e49f5040fe128c95d56d658"
-  integrity sha512-BvcKQpPA3pG+Voz0CKkvekSucnCI55L/4AK/QQNG757TsGXpoNXg+JW4hPB4pK+8XZ2W56raxmRVgsffEpo03Q==
+"@subsocial/apps-config@^0.41.19":
+  version "0.41.19"
+  resolved "https://registry.yarnpkg.com/@subsocial/apps-config/-/apps-config-0.41.19.tgz#62e0b4e48f16957d0b65b32f54280d3472c115ca"
+  integrity sha512-Wx+4SRiT0XbZrl3ZqJ8/CJYTny9ElxupJk+3R4D/GfssdxN8v64+wO676UbbTKABEFO370T4+unl8BzixsImXQ==
   dependencies:
     "@babel/runtime" "^7.9.2"
     edgeware-node-types "^2.0.1"
@@ -3490,28 +3469,28 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/react-api@^0.41.18":
-  version "0.41.18"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-api/-/react-api-0.41.18.tgz#0d1751f9673c3d7fcc61065cbe2c2bf72c9ebd2f"
-  integrity sha512-kCFsPpcJaX+45kTorwzy6umzrkWJGRuWIzVKCO2bPXhkCGs08rS4/EV2P6F1K6UyZBklwRihprJdbv+94ML5xg==
+"@subsocial/react-api@^0.41.19":
+  version "0.41.19"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-api/-/react-api-0.41.19.tgz#532c03ee0dba76ab9410189f806ab8df902d9763"
+  integrity sha512-CQUW4slOrpDxcdpD8e5X7faRmcuDqr35xNBEVoj8/TvBwfTpF4GT2dLdZ++LSWyWaZ6KuyTfobpB3srWYl9vaQ==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@polkadot/api" "^1.11.0-beta.32"
     "@polkadot/extension-dapp" "^0.24.0-beta.17"
     rxjs-compat "^6.5.5"
 
-"@subsocial/react-components@^0.41.18":
-  version "0.41.18"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-components/-/react-components-0.41.18.tgz#398d66ed0b1f37974d04f1636080dba35b36b3ac"
-  integrity sha512-Oxo6PBVu/7J10alT9glmStghF9hy3kSVUmhk728tQ0KgCp0LyrEy6Hlesr6zyzyd50yuCSMx74IdsWyEi62F/g==
+"@subsocial/react-components@^0.41.19":
+  version "0.41.19"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-components/-/react-components-0.41.19.tgz#c0704b324f5b430f8c78f0dcb303e102279170f1"
+  integrity sha512-ax5xganG3FNqfE1unxyCgmyHh955G6Fo5gjFaTy0/mnJzbzuzZLi8r3+8rcu7f9fiBpr/KTfmGdSZrJo71zfWQ==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@polkadot/keyring" "^2.8.1"
     "@polkadot/react-identicon" "^0.52.1"
     "@polkadot/ui-keyring" "^0.52.1"
     "@polkadot/ui-settings" "^0.52.1"
-    "@subsocial/react-api" "^0.41.18"
-    "@subsocial/react-query" "^0.41.18"
+    "@subsocial/react-api" "^0.41.19"
+    "@subsocial/react-query" "^0.41.19"
     chart.js "^2.9.3"
     codeflask "^1.4.1"
     i18next "^19.4.2"
@@ -3534,42 +3513,42 @@
     store "^2.0.12"
     styled-theming "^2.2.0"
 
-"@subsocial/react-hooks@^0.41.18":
-  version "0.41.18"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-hooks/-/react-hooks-0.41.18.tgz#0cbc74870b6e09f0e79b4b0d0edbc2c7f78ef277"
-  integrity sha512-AXLFi5GnOZfwGzTu0oGg1qSccV7pQn8ijXaCBBMTsEEjErIghlqgT7YRVfkJdtorbW45XRTneqBL2ogohbYXeQ==
+"@subsocial/react-hooks@^0.41.19":
+  version "0.41.19"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-hooks/-/react-hooks-0.41.19.tgz#b13c46b99d2e4eed53e547e1b21159e7dfdbaf96"
+  integrity sha512-jX5LxObAWy5IWsGHoScLmQMJ35pGEsXoz2+5jbWw3wD7ats5mSaWpZkp/4xO1qwUDATBCMUdPsrx5QrSBLWLHw==
   dependencies:
     "@babel/runtime" "^7.9.2"
     memoizee "^0.4.14"
 
-"@subsocial/react-params@^0.41.18":
-  version "0.41.18"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-params/-/react-params-0.41.18.tgz#237be09aed9d3731d8e42c7b468aa707b5cf59e0"
-  integrity sha512-zYaLpE0GXG2Tgp0z+LVXOOZDnS+ys08gR1zapHfoyO7llVT1f1j69QEe27DlnjiKM+35d6F/27fBtdKYuIOlag==
+"@subsocial/react-params@^0.41.19":
+  version "0.41.19"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-params/-/react-params-0.41.19.tgz#ae8c4759c183500cd990c336b2606ba2ad717a9b"
+  integrity sha512-jfXDgTUjC6FPnv46roh8UBqizM3AGM+XTcEFsHH4GVnYqib71LKJ7tX1ffZZ9sbD5hD+9pP4rp2zA9dSNek3pw==
   dependencies:
     "@babel/runtime" "^7.9.2"
-    "@subsocial/react-components" "^0.41.18"
+    "@subsocial/react-components" "^0.41.19"
 
-"@subsocial/react-query@^0.41.18":
-  version "0.41.18"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-query/-/react-query-0.41.18.tgz#da97173e6cb08c24b3a1b648625766c97b358d1e"
-  integrity sha512-ezILcvx4WIyMufUDXtdTr8uZt0J9nuotV0Ert+gyxEOR4gPpCwDQWL9qJtqkmc2khrOf64qyxRBkVPzRz9xmfg==
+"@subsocial/react-query@^0.41.19":
+  version "0.41.19"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-query/-/react-query-0.41.19.tgz#393cb49f63d7a3abc6af3a2bc189b412ace99d7a"
+  integrity sha512-ec9ZSG4Ir0dalLsWcKHNDVv6WP2uTRMUu3UiYefkdQo0ZFUi6PWE9W0luLpFZhJxW64wAbWlJKdibm9WxhbaTA==
   dependencies:
     "@babel/runtime" "^7.9.2"
 
-"@subsocial/react-signer@^0.41.18":
-  version "0.41.18"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-signer/-/react-signer-0.41.18.tgz#7e12ecb0d069fc880933f9200392c992e8d8365d"
-  integrity sha512-k5gde4aEEnYS+ZGtf+s4TPMSHuHPdvBRLKehYvFWfgbcYftn9vvxg2sE8SswSwELWZeplwIUc9FhtkZhDDjvlg==
+"@subsocial/react-signer@^0.41.19":
+  version "0.41.19"
+  resolved "https://registry.yarnpkg.com/@subsocial/react-signer/-/react-signer-0.41.19.tgz#a10ad02b39c6adee47e9ec51e3c21393746515b4"
+  integrity sha512-z37c41F9ieOv3bQrXolL2M0paSBmHRohmuypfZ3YhOcORTzTjjCcJg7pORAJDCsBRacG1XVkJk7snxiOWTdWNA==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@polkadot/react-qr" "^0.52.1"
-    "@subsocial/react-components" "^0.41.18"
+    "@subsocial/react-components" "^0.41.19"
 
-"@subsocial/types@^0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.2.7.tgz#4ea4d0b5a42cd1a4c5a83f281c85a3b0b8036cbe"
-  integrity sha512-siPSCpevuxYHTJOg7Rm6I4vs1v69tZ/vH1wWOKgFl3jCgBccBMh13VJqMRThChBaiznKQbZazgPsjTZBhrIcFg==
+"@subsocial/types@^0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.2.8.tgz#1e1a9be16aeee522554c67e2c973b9a66407ed5d"
+  integrity sha512-vCDRG9UvH4gVss9+Qiq+JCYxGVLabdh+39FH1iseX92wUm/GjWMzwyOcV36F7K9o5EsucWOpTYgGJcG3K4zY8Q==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@subsocial/utils" "^0.1.23"

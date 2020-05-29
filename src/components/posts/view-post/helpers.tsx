@@ -10,7 +10,7 @@ import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
 import { isMyAddress } from '../../utils/MyAccountContext';
-import { Post, Blog } from '@subsocial/types/substrate/interfaces';
+import { Post, Blog, PostExtension } from '@subsocial/types/substrate/interfaces';
 import { BlogData, PostWithSomeDetails } from '@subsocial/types/dto';
 import { PostExtContent } from '../LoadPostUtils'
 import ViewTags from '../../utils/ViewTags';
@@ -19,7 +19,6 @@ import SummarizeMd from '../../utils/md/SummarizeMd';
 import ViewPostLink from '../ViewPostLink';
 import { HasBlogIdOrHandle, HasPostId, postUrl } from '../../utils/urls';
 import SharePostAction from '../SharePostAction';
-import { PostExtension } from '@subsocial/types/substrate/classes';
 
 const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 
@@ -134,7 +133,7 @@ export const PostContent: React.FunctionComponent<PostContentProps> = ({ postStr
   const { title, body } = postContent;
   return <div className='DfContent'>
     <PostName blog={blog} post={post} title={title} withLink />
-    <SummarizeMd md={body} limit={300} more={renderPostLink(blog, post, 'See More')} />
+    <SummarizeMd md={body} more={renderPostLink(blog, post, 'See More')} />
   </div>
 }
 

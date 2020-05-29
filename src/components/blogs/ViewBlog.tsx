@@ -26,7 +26,7 @@ import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { editBlogUrl } from '../utils/urls';
-import { getBlogId } from '../utils/utils';
+import { getBlogId } from '../utils/substrate';
 import ViewTags from '../utils/ViewTags';
 import BlogStatsRow from './BlogStatsRow';
 import SpaceNav from './SpaceNav';

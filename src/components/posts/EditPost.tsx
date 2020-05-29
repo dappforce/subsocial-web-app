@@ -12,7 +12,7 @@ import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
 import { useMyAddress } from '../utils/MyAccountContext';
 import { socialQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils/utils';
+import { getNewIdFromEvent, Loading } from '../utils';
 import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
