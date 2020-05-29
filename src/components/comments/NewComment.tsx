@@ -13,12 +13,10 @@ import { CommentContent } from '@subsocial/types';
 import { registry } from '@subsocial/react-api';
 import { Option } from '@polkadot/types/codec';
 import { Button } from 'antd';
-import { getNewIdFromEvent } from '../utils/substrate';
-import { newLogger } from '@subsocial/utils';
+import { getNewIdFromEvent, getTxParams } from '../utils/substrate';
 import BN from 'bn.js'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-const log = newLogger('New Comment');
 
 type FCallback = (id?: BN) => void
 
@@ -65,26 +63,16 @@ export const InnerEditComment = (props: Props) => {
     callback && callback(id)
   };
 
-  const buildTxParams = async (): Promise<any[]> => {
-    try {
-      const hash = await ipfs.saveContent({ body })
-      if (hash) {
-        setIpfsHash(hash);
-        return newTxParams(hash)
-      } else {
-        throw new Error('Invalid hash')
-      }
-    } catch (err) {
-      log.error('Failed to build tx params: %o', err)
-      return []
-    }
-  };
-
   const renderTxButton = () => (
     <TxButton
       label={label}
       isDisabled={isSubmitting || !dirty}
-      params={buildTxParams}
+      params={() => getTxParams({
+        json: { body },
+        buildTxParamsCallback: newTxParams,
+        setIpfsHash,
+        ipfs
+      })}
       tx={extrinsic}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}

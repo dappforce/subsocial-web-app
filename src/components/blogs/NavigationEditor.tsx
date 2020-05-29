@@ -24,11 +24,9 @@ import { withMulti, withCalls } from '@subsocial/react-api';
 import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';
-import { newLogger } from '@subsocial/utils';
+import { getTxParams } from '../utils/substrate/getTxParams'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-
-const log = newLogger('NavEditor')
 
 export interface FormValues {
   navTabs: NavTab[]
@@ -125,10 +123,10 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   }
 
   const { ipfs } = useSubsocialApi()
-  const [ ipfsCid, setIpfsCid ] = useState('');
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
   const onTxFailed = () => {
-    ipfs.removeContent(ipfsCid).catch(err => new Error(err));
+    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     setSubmitting(false);
   };
 
@@ -154,31 +152,6 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     });
     return [ struct.id, update ];
   };
-
-  const buildTxParams = async () => {
-    try {
-      if (isValid) {
-        const json = {
-          navTabs,
-          name,
-          desc,
-          image,
-          tags: blogTags
-        };
-        const hash = await ipfs.saveBlog(json)
-        if (hash) {
-          setIpfsCid(hash.toString());
-          return newTxParams(hash)
-        } else {
-          throw new Error('Invalid hash')
-        }
-      }
-      return []
-    } catch (err) {
-      log.error('Failed build tx params: %o', err)
-      return []
-    }
-  }
 
   const pageTitle = `Edit blog navigation`
 
@@ -261,7 +234,12 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             size='medium'
             label={'Update Navigation'}
             isDisabled={!isValid || isSubmitting}
-            params={buildTxParams}
+            params={() => getTxParams({
+              json: { name, desc, image, tags: blogTags, navTabs },
+              buildTxParamsCallback: newTxParams,
+              setIpfsHash,
+              ipfs
+            })}
             tx={'social.updateBlog'}
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}

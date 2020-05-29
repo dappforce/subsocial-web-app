@@ -8,7 +8,7 @@ import { withCalls, withMulti } from '@subsocial/react-api';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
-import { socialQueryToProp } from '../utils/index';
+import { socialQueryToProp, getTxParams } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import Router from 'next/router';
@@ -81,10 +81,10 @@ const InnerForm = (props: FormProps) => {
     }
   };
   const { ipfs } = useSubsocialApi()
-  const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => new Error(err));
+    ipfsHash && ipfs.removeContent(ipfsHash.toString()).catch(err => new Error(err));
     setSubmitting(false);
   };
 
@@ -108,37 +108,6 @@ const InnerForm = (props: FormProps) => {
       return [ update ];
     }
   };
-
-  const buildTxParams = async () => {
-    try {
-      if (isValid) {
-        const json = {
-          fullname,
-          avatar,
-          email,
-          personalSite,
-          about,
-          facebook,
-          twitter,
-          linkedIn,
-          medium,
-          github,
-          instagram
-        };
-        const hash = await ipfs.saveContent(json)
-        if (hash) {
-          setIpfsCid(hash);
-          return newTxParams(hash)
-        } else {
-          throw new Error('Invalid hash')
-        }
-      }
-      return []
-    } catch (err) {
-      log.error('Failed to build tx params: %o', err)
-      return []
-    }
-  }
 
   const title = profile ? `Edit profile` : `New profile`;
   const shouldBeValidUrlText = `Should be a valid URL.`;
@@ -239,7 +208,24 @@ const InnerForm = (props: FormProps) => {
               : 'Create my profile'
             }
             isDisabled={!dirty || isSubmitting}
-            params={buildTxParams}
+            params={() => getTxParams({
+              json: {
+                fullname,
+                avatar,
+                email,
+                personalSite,
+                about,
+                facebook,
+                twitter,
+                linkedIn,
+                medium,
+                github,
+                instagram
+              },
+              buildTxParamsCallback: newTxParams,
+              setIpfsHash,
+              ipfs
+            })}
             tx={profile
               ? 'social.updateProfile'
               : 'social.createProfile'

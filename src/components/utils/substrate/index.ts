@@ -105,3 +105,5 @@ export const unwrapSubstrateId = (optId?: Option<Codec>): SubstrateId | undefine
 
   return optId && optId as SubstrateId
 }
+
+export * from './getTxParams'

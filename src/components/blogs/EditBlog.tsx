@@ -9,7 +9,7 @@ import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@subsocial/react-api';
 import * as DfForms from '../utils/forms';
 import { socialQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils/utils';
+import { getNewIdFromEvent, Loading } from '../utils';
 import { useMyAddress } from '../utils/MyAccountContext';
 import BN from 'bn.js';
 import Router from 'next/router';
@@ -26,6 +26,7 @@ import EditableTagGroup from '../utils/EditableTagGroup';
 import { withBlogIdFromUrl } from './withBlogIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './BlogValidation';
 import DfMdEditor from '../utils/DfMdEditor';
+import { getTxParams } from '../utils/substrate/getTxParams';
 
 const log = newLogger('Edit blog')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -74,11 +75,11 @@ const InnerForm = (props: FormProps) => {
     Router.push('/blogs/' + id.toString()).catch(err => log.error('Failed to redirect to blog page. Error:', err));
   };
 
-  const [ ipfsCid, setIpfsCid ] = useState('');
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onTxFailed: TxFailedCallback = (txResult: SubmittableResult | null) => {
-    ipfs.removeContent(ipfsCid).catch(err => new Error(err));
+    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     setSubmitting(false);
   };
 
@@ -103,25 +104,6 @@ const InnerForm = (props: FormProps) => {
       return [ struct.id, update ];
     }
   };
-
-  const buildTxParams = async () => {
-    try {
-      if (isValid) {
-        const json = { name, desc, image, tags, navTabs };
-        const hash = await ipfs.saveBlog(json)
-        if (hash) {
-          setIpfsCid(hash.toString());
-          return newTxParams(hash)
-        } else {
-          throw new Error('Invalid hash')
-        }
-      }
-      return []
-    } catch (err) {
-      log.error('Failed build tx params: %o', err)
-      return []
-    }
-  }
 
   const title = struct ? `Edit blog` : `New blog`;
 
@@ -150,7 +132,13 @@ const InnerForm = (props: FormProps) => {
               : 'Create new blog'
             }
             isDisabled={!dirty || isSubmitting}
-            params={buildTxParams}
+            params={() => getTxParams({
+              json: { name, desc, image, tags, navTabs },
+              buildTxParamsCallback: newTxParams,
+              setIpfsHash,
+              ipfs
+            })
+            }
             tx={struct
               ? 'social.updateBlog'
               : 'social.createBlog'

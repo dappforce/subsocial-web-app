@@ -11,7 +11,7 @@ import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
 import { useMyAddress } from '../utils/MyAccountContext';
-import { socialQueryToProp } from '../utils/index';
+import { socialQueryToProp, getTxParams } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils';
 import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
@@ -144,25 +144,6 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const buildTxParams = async () => {
-    try {
-      if (isValid || !isRegularPost) {
-        const json = { title, body, image, tags, canonical };
-        const hash = await ipfs.savePost(json)
-        if (hash) {
-          setIpfsHash(hash);
-          return newTxParams(hash)
-        } else {
-          throw new Error('Invalid hash')
-        }
-      }
-      return []
-    } catch (err) {
-      log.error('Failed to build tx params: %o', err)
-      return []
-    }
-  };
-
   const renderTxButton = () => (
     <TxButton
       label={!struct
@@ -170,7 +151,12 @@ const InnerForm = (props: FormProps) => {
         : `Update a post`
       }
       isDisabled={isSubmitting || (isRegularPost && !dirty)}
-      params={buildTxParams}
+      params={() => getTxParams({
+        json: { title, body, image, tags, canonical },
+        buildTxParamsCallback: newTxParams,
+        setIpfsHash,
+        ipfs
+      })}
       tx={struct
         ? 'social.updatePost'
         : 'social.createPost'

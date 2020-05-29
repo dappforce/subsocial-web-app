@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withCalls, withMulti } from '@subsocial/react-api';
-import { socialQueryToProp } from '../utils/index';
+import { socialQueryToProp, getTxParams } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import Link from 'next/link';
@@ -16,13 +16,11 @@ import { TxFailedCallback, TxCallback } from '@subsocial/react-components/Status
 import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
-import { isEmptyArray, newLogger } from '@subsocial/utils';
+import { isEmptyArray } from '@subsocial/utils';
 import DfMdEditor from '../utils/DfMdEditor';
 import { DynamicPostPreview } from './view-post/DynamicPostPreview';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
-
-const log = newLogger('ShareModal')
 
 type Props = MyAccountProps & {
   postId: BN
@@ -86,26 +84,16 @@ const InnerShareModal = (props: Props) => {
     return [ blogId, extension, hash ];
   };
 
-  const buildTxParams = async (): Promise<any[]> => {
-    try {
-      const hash = await ipfs.saveContent({ body })
-      if (hash) {
-        setIpfsHash(hash);
-        return newTxParams(hash)
-      } else {
-        throw new Error('Invalid hash')
-      }
-    } catch (err) {
-      log.error('Failed to build tx params: %o', err)
-      return []
-    }
-  };
-
   const renderTxButton = () => (
     <TxButton
       label={`Create a post`}
       isDisabled={isSubmitting}
-      params={buildTxParams}
+      params={() => getTxParams({
+        json: { body },
+        buildTxParamsCallback: newTxParams,
+        setIpfsHash,
+        ipfs
+      })}
       tx={'social.createPost'}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
