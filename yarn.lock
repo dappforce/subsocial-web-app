@@ -3442,14 +3442,14 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.2.33":
-  version "0.2.33"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.2.33.tgz#a25b9e230b476602ba5d01a8b863d1b227192324"
-  integrity sha512-CRdm+oInKfYFlI/Tv9+aHF8DO/Scis/im89UQyCBS02kBsDP5o2TCSIR2OuNIEhB+KJ0cfVm/2efO7+N9dIexA==
+"@subsocial/api@^0.3.1-beta":
+  version "0.3.1-beta"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.3.1-beta.tgz#ca7636af7d66e72f3c903f6cacb746e5c7cefb2d"
+  integrity sha512-jPgAjYXANTrjSGxQyW8DtG01bkg5SUsPN2a/mrNgcBdx1ovDIA0ODyOmU/PMgeEAOIlmpfdvAykBaKBxzSVy8w==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "1.13.1"
-    "@subsocial/types" "^0.2.8"
+    "@subsocial/types" "^0.3.1-beta"
     "@subsocial/utils" "^0.1.23"
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
@@ -3545,10 +3545,10 @@
     "@polkadot/react-qr" "^0.52.1"
     "@subsocial/react-components" "^0.41.19"
 
-"@subsocial/types@^0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.2.8.tgz#1e1a9be16aeee522554c67e2c973b9a66407ed5d"
-  integrity sha512-vCDRG9UvH4gVss9+Qiq+JCYxGVLabdh+39FH1iseX92wUm/GjWMzwyOcV36F7K9o5EsucWOpTYgGJcG3K4zY8Q==
+"@subsocial/types@^0.3.1-beta":
+  version "0.3.1-beta"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.3.1-beta.tgz#b79715dcd8361a2791abc58d2112ebdd1773af6e"
+  integrity sha512-V/6NnSvyCwPwmPBvvu0/URl6kaTRAo1kIQ63Z8S3cSu6fF7yqZbe/BPjlEhjkgy3h/YI2DasZOuo//LD8EWl3A==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@subsocial/utils" "^0.1.23"
