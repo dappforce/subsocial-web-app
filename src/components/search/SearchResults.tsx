@@ -10,7 +10,6 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import BN from 'bn.js';
 import { registry } from '@subsocial/react-api';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
-import { DEFAULT_AVATAR_SIZE } from '../../config/Size.config';
 import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
 
 type DataResults = {

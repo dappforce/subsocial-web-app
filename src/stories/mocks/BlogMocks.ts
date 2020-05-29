@@ -45,7 +45,7 @@ function newBlogStructMock ({
       time: new BN(1586523823996) as Moment
     } as WhoAndWhen,
     updated: new Option(registry, 'Null', null),
-    writers: writers as unknown as Vec<AccountId>,
+    owner: account,
     handle: new Option(registry, 'Text', handle),
     ipfs_hash: ipfs_hash as unknown as IpfsHash,
     posts_count: new BN(posts_count) as u16,

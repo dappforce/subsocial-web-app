@@ -11,7 +11,6 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils/utils';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
-import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 type Struct = Exclude<CommonStruct, SocialAccount>;
 

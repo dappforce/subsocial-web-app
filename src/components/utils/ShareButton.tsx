@@ -38,7 +38,6 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   };
 
   return <TxButton
-    type='submit'
     isBasic={true}
     isPrimary={false}
     label={isFollow
