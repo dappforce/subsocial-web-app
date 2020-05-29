@@ -53,7 +53,6 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const latestPostIds = getLastNIds(nextPostId, FIVE);
   const postsData = await subsocial.findPostsWithAllDetails(latestPostIds as PostId[]);
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>', postsData)
   return {
     blogsData,
     postsData
