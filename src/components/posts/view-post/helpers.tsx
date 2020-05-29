@@ -37,7 +37,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
   const menu = (
     <Menu>
       {isMyPost && <Menu.Item key='0'>
-        <Link href='/blogs/[blogId]/posts/[postId]/edit' as={postUrl(blog, post)}>
+        <Link href='/blogs/[blogId]/posts/[postId]/edit' as={postUrl(blog, post, '/edit')}>
           <a className='item'>Edit</a>
         </Link>
       </Menu.Item>}
@@ -124,14 +124,17 @@ type PostContentProps = {
 }
 
 export const PostContent: React.FunctionComponent<PostContentProps> = ({ postStruct, content, blog }) => {
-  if (!postStruct || !content) return null;
+  if (!postStruct) return null;
 
   const { post: { struct: post } } = postStruct
-  const { title, body } = content || postStruct.post.content;
+  const postContent = content || postStruct.post.content;
 
+  if (!postContent) return null;
+
+  const { title, body } = postContent;
   return <div className='DfContent'>
-    <PostName blog={blog} post={post} title={title} />
-    <SummarizeMd md={body} more={renderPostLink(blog, post, 'See More')} />
+    <PostName blog={blog} post={post} title={title} withLink />
+    <SummarizeMd md={body} limit={300} more={renderPostLink(blog, post, 'See More')} />
   </div>
 }
 

@@ -151,6 +151,7 @@ body,
 }
 
 .DfSummary {
+  word-break: break-word;
   margin: $space_small 0;
   /* white-space: pre-wrap; */
 }
@@ -1638,7 +1639,7 @@ a.DfStatItem {
   padding-bottom: 0;
 
   .ui.segment.DfPostPreview {
-    padding-bottom: 1rem;
+    padding-bottom: 0;
   }
 }
 
