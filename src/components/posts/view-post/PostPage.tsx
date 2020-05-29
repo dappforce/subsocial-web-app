@@ -67,8 +67,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, blog, replies
           <DfMd source={body} />
           {/* {renderBlogPreview(post)} */}
         </div>}
-      {!isRegular &&
-          <RegularPreview postStruct={ext as any} blog={ext?.blog as any} /> }
+      {!isRegular && ext &&
+          <RegularPreview postStruct={ext as PostWithAllDetails} blog={ext?.blog} /> }
       <ViewTags tags={tags} />
       <div className='DfRow'>
         <Voter struct={struct} />
