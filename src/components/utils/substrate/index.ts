@@ -45,11 +45,11 @@ export function stringifyAddress<DFT> (value?: AnyAddress, _default?: DFT): stri
   return stringifyAny(value, _default)
 }
 
-export const getBlogId = async (idOrHandle: string): Promise<BN | undefined> => {
+export const getSpaceId = async (idOrHandle: string): Promise<BN | undefined> => {
   if (idOrHandle.startsWith('@')) {
     const handle = idOrHandle.substring(1) // Drop '@'
     const { substrate } = await getSubsocialApi()
-    return substrate.getBlogIdByHandle(handle)
+    return substrate.getSpaceIdByHandle(handle)
   } else {
     return new BN(idOrHandle)
   }

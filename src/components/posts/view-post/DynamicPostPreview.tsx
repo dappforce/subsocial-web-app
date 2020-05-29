@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { newLogger } from '@subsocial/utils';
-import { PostWithAllDetails, BlogData } from '@subsocial/types/dto';
+import { PostWithAllDetails, SpaceData } from '@subsocial/types/dto';
 import { useSubsocialApi } from '../../utils/SubsocialApiContext';
 import { RegularPreview, InnerPreviewProps } from './ViewRegularPreview';
 import { isRegularPost } from './helpers';
@@ -25,7 +25,7 @@ export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }:
         const extension = extPostData.post.struct.extension
         if (extension.isComment) {
           const rootPostData = await subsocial.findPostWithAllDetails(extension.asComment.root_post_id)
-          extPostData.blog = rootPostData?.blog || {} as BlogData
+          extPostData.space = rootPostData?.space || {} as SpaceData
         }
         setPostStruct(extPostData)
       }
@@ -40,7 +40,7 @@ export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }:
 
   const props = {
     postStruct: postStruct,
-    blog: postStruct.blog,
+    space: postStruct.space,
     withActions: withActions,
     replies: replies
   } as InnerPreviewProps

@@ -133,8 +133,8 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
   const newTxParams = (hash: IpfsHash) => {
     const update = new PostUpdate(
       {
-      // TODO setting new blog_id will move the post to another blog.
-        blog_id: new Option(registry, 'u64', null),
+      // TODO setting new space_id will move the post to another space.
+        space_id: new Option(registry, 'u64', null),
         ipfs_hash: new Option(registry, 'Text', hash),
         hidden: new OptionBool(false) // TODO has no implementation on UI
       });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { RegularPreview, SharedPreview, isRegularPost } from '.';
-import { PostWithAllDetails, BlogData } from '@subsocial/types';
+import { PostWithAllDetails, SpaceData } from '@subsocial/types';
 import { PostExtension } from '@subsocial/types/substrate/classes';
 
 export type BarePreviewProps = {
@@ -11,14 +11,14 @@ export type BarePreviewProps = {
 
 export type PreviewProps = BarePreviewProps & {
   postStruct: PostWithAllDetails,
-  blog?: BlogData
+  space?: SpaceData
 }
 
-export function PostPreview ({ postStruct, blog: externalBlog, asRegularPost }: PreviewProps) {
-  const { blog, post: { struct: { extension } } } = postStruct
+export function PostPreview ({ postStruct, space: externalSpace, asRegularPost }: PreviewProps) {
+  const { space, post: { struct: { extension } } } = postStruct
   return asRegularPost || isRegularPost(extension as PostExtension)
-    ? <RegularPreview postStruct={postStruct} blog={externalBlog || blog} withActions />
-    : <SharedPreview postStruct={postStruct} blog={externalBlog || blog} withActions />
+    ? <RegularPreview postStruct={postStruct} space={externalSpace || space} withActions />
+    : <SharedPreview postStruct={postStruct} space={externalSpace || space} withActions />
 }
 
 export default PostPreview

@@ -163,7 +163,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const renderPreview = () => {
     return <div>
-      <div className={`ProfileDetails MyBlog`}>
+      <div className={`ProfileDetails MySpace`}>
         {hasAvatar
           ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
           : <IdentityIcon className='image' value={address} size={size} />

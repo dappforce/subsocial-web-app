@@ -13,7 +13,7 @@ type ResolvedProps = {
   posts: PostWithAllDetails[]
 }
 
-export function withLoadPostsWithBlogs<P extends OuterProps> (Component: React.ComponentType<ResolvedProps>) {
+export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.ComponentType<ResolvedProps>) {
   return function (props: P) {
     const { postIds } = props
     const [ posts, setPosts ] = useState<PostWithAllDetails[]>()
@@ -38,4 +38,4 @@ export function withLoadPostsWithBlogs<P extends OuterProps> (Component: React.C
 const InnerPostPreviewList: React.FunctionComponent<ResolvedProps> = ({ posts }) =>
   <>{posts.map(x => <PostPreview key={x.post.struct.id.toString()} postStruct={x} />)}</>
 
-export const PostPreviewList = withLoadPostsWithBlogs(InnerPostPreviewList)
+export const PostPreviewList = withLoadPostsWithSpaces(InnerPostPreviewList)

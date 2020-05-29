@@ -288,7 +288,7 @@
     }
   }
 
-  .DfBlogStats {
+  .DfSpaceStats {
     font-size: $font_tiny; /* TODO maybe delete */
 
     .DfStatItem {

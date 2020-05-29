@@ -4,7 +4,7 @@ import { ProfileData, PostWithAllDetails } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { DfMd } from '../utils/DfMd';
 import { CommentContent } from '@subsocial/types';
-import { Post, Blog } from '@subsocial/types/substrate/interfaces';
+import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import Voter from '../voting/Voter';
 import { useMyAddress } from '../utils/MyAccountContext';
 import Link from 'next/link';
@@ -18,7 +18,7 @@ import { useSubstrateApi } from '../utils/SubsocialApiContext';
 import SharePostAction from '../posts/SharePostAction';
 
 type Props = {
-  blog: Blog,
+  space: Space,
   owner?: ProfileData,
   struct: Post,
   content?: CommentContent,
@@ -26,7 +26,7 @@ type Props = {
   withShowReplies?: boolean
 }
 
-export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, blog, replies, withShowReplies }) => {
+export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, space, replies, withShowReplies }) => {
   const myAddress = useMyAddress()
 
   const {
@@ -43,7 +43,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
   const substrate = useSubstrateApi()
 
   const isMyStruct = myAddress === account.toString()
-  const commentLink = postUrl(blog, struct);
+  const commentLink = postUrl(space, struct);
 
   useEffect(() => {
 
@@ -100,7 +100,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
       withCancel
     />}
     {isReplies && <ViewRepliesLink />}
-    {showReplies && <CommentsTree parentId={id} replies={replies} blog={blog}/>}
+    {showReplies && <CommentsTree parentId={id} replies={replies} space={space}/>}
   </div> : null
 
   return <Comment

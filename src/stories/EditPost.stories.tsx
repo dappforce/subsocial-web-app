@@ -1,6 +1,6 @@
 import React from 'react';
 import { InnerEditPost } from '../components/posts/EditPost';
-import { mockBlogId } from './mocks/BlogMocks';
+import { mockSpaceId } from './mocks/SpaceMocks';
 import { mockPostJson, mockPostStruct, mockPostValidation } from './mocks/PostMocks';
 
 export default {
@@ -8,7 +8,7 @@ export default {
 }
 
 export const _NewPost = () =>
-  <InnerEditPost {...mockPostValidation} blogId={mockBlogId} />
+  <InnerEditPost {...mockPostValidation} spaceId={mockSpaceId} />
 
 export const _EditPost = () =>
-  <InnerEditPost {...mockPostValidation} blogId={mockBlogId} struct={mockPostStruct} json={mockPostJson} />
+  <InnerEditPost {...mockPostValidation} spaceId={mockSpaceId} struct={mockPostStruct} json={mockPostJson} />

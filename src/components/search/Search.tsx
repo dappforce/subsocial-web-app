@@ -21,9 +21,9 @@ const App = () => {
       <DataSearch
         componentId='q'
         dataField={[
-          ElasticFields.blog.name,
-          ElasticFields.blog.desc,
-          ElasticFields.blog.tags,
+          ElasticFields.space.name,
+          ElasticFields.space.desc,
+          ElasticFields.space.tags,
           ElasticFields.post.title,
           ElasticFields.post.body,
           ElasticFields.post.tags,
@@ -40,7 +40,7 @@ const App = () => {
           input = c._inputRef;
         }}
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
-        placeholder='Search for blogs, posts or comments'
+        placeholder='Search for spaces, posts or comments'
         iconPosition='left'
         icon={<Icon
           type='search'

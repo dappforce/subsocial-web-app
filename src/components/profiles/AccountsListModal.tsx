@@ -45,10 +45,10 @@ const InnerAccountsListModal = (props: Props) => {
   );
 };
 
-export const BlogFollowersModal = withMulti(
+export const SpaceFollowersModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    socialQueryToProp('blogFollowers', { paramName: 'id', propName: 'accounts' })
+    socialQueryToProp('spaceFollowers', { paramName: 'id', propName: 'accounts' })
   )
 );
 

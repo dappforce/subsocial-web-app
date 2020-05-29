@@ -201,7 +201,7 @@ body,
   margin-bottom: $space_normal;
 }
 
-.DfMenuBlogLink {
+.DfMenuSpaceLink {
   color: $color_menu_font;
   padding: $space_tiny;
   padding-left: $space_normal;
@@ -542,7 +542,7 @@ hr {
   color: #0d548a
 }
 
-.DfBlogStats {
+.DfSpaceStats {
   margin-top: $space_normal;
 
   .DfStatItem {
@@ -554,7 +554,7 @@ hr {
   }
 }
 
-.DfBlogBody {
+.DfSpaceBody {
   display: flex;
   width: 100%;
 
@@ -745,7 +745,7 @@ hr {
   color: $color_font_normal;
 }
 
-.DfSelectedBlog {
+.DfSelectedSpace {
   background-color: #e6f7ff;
   color: #1890fe;
   border-right: 2px solid #1890f3;
@@ -922,7 +922,7 @@ hr {
 
 .DfSection {
 
-  .viewblog-minipreview {
+  .viewspace-minipreview {
     display: flex;
     justify-content: space-between;
     width: 70%;
@@ -1203,7 +1203,7 @@ hr {
   width: 100%;
 }
 
-.DfSideMenu--FollowedBlogs {
+.DfSideMenu--FollowedSpaces {
   && .collapsed {
     .ant-menu-item-group-list {
       .content {
@@ -1238,7 +1238,7 @@ hr {
   }
 }
 
-.DfSideMenu--FollowedBlogs.collapsed {
+.DfSideMenu--FollowedSpaces.collapsed {
   .ant-menu-item-group-list {
     .content {
       display: none;
@@ -1343,7 +1343,7 @@ a.DfStatItem {
   margin-left: 3rem;
 }
 
-.DfBlogTitle {
+.DfSpaceTitle {
   margin-bottom: $space_small;
 
   a {
@@ -1498,7 +1498,7 @@ a.DfStatItem {
   color: #fff;
 }
 
-.ViewBlogWrapper {
+.ViewSpaceWrapper {
   display: flex;
   justify-content: space-between;
   width: 100%;

@@ -1,8 +1,8 @@
 import React from 'react'
 import moment from 'moment-timezone';
-import ViewBlogPage from '../blogs/ViewBlog';
+import ViewSpacePage from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
-import { ProfileData, BlogData, PostData, Activity } from '@subsocial/types';
+import { ProfileData, SpaceData, PostData, Activity } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
@@ -11,7 +11,7 @@ import { postUrl } from '../utils/urls';
 
 export type EventsName = 'AccountFollowed'|
 'PostShared' | 'CommentShared' |
-'BlogFollowed' | 'BlogCreated' |
+'SpaceFollowed' | 'SpaceCreated' |
 'CommentCreated' | 'CommentReplyCreated'
 | 'PostReactionCreated' | 'CommentReactionCreated'
 
@@ -23,8 +23,8 @@ export const eventsMsg: EventsMsg = {
   AccountFollowed: 'followed your account',
   PostShared: 'shared your post',
   CommentShared: 'shared your comment',
-  BlogFollowed: 'followed your blog',
-  BlogCreated: 'created a new blog',
+  SpaceFollowed: 'followed your space',
+  SpaceCreated: 'created a new space',
   CommentCreated: 'commented on your post',
   CommentReplyCreated: 'replied to your comment',
   PostReactionCreated: 'reacted to your post',
@@ -40,7 +40,7 @@ export type NotificationType = {
 }
 
 export type ActivityStore = {
-  blogById: Map<string, BlogData>,
+  spaceById: Map<string, SpaceData>,
   postById: Map<string, PostData>,
   ownerById: Map<string, ProfileData>
 }
@@ -54,22 +54,22 @@ type PreviewNotification = {
 const renderSubjectPreview = (title?: string, href: string = '') =>
   nonEmptyStr(title) || nonEmptyStr(href) ? <Link href={href} ><a>{title}</a></Link> : null;
 
-const getBlogPreview = (blogId: BN, map: Map<string, BlogData>): PreviewNotification => {
-  const data = map.get(blogId.toString())
-  return { preview: <ViewBlogPage blogData={data} nameOnly withLink /> }
+const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification => {
+  const data = map.get(spaceId.toString())
+  return { preview: <ViewSpacePage spaceData={data} nameOnly withLink /> }
 }
 
-const getPostPreview = (postId: BN, blogMap: Map<string, BlogData>, postMap: Map<string, PostData>): PreviewNotification => {
+const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification => {
   const data = postMap.get(postId.toString())
-  const blogId = data?.struct.blog_id.unwrapOr(undefined);
-  const blog = blogId && blogMap.get(blogId.toString())?.struct
-  const postLink = blog && data && postUrl(blog, data.struct)
+  const spaceId = data?.struct.space_id.unwrapOr(undefined);
+  const space = spaceId && spaceMap.get(spaceId.toString())?.struct
+  const postLink = space && data && postUrl(space, data.struct)
   const preview = renderSubjectPreview(data?.content?.title, postLink)
   const image = data?.content?.image;
   return { preview, image }
 }
 
-const getCommentPreview = (commentId: BN, blogMap: Map<string, BlogData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
+const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
   const comment = postMap.get(commentId.toString());
   const commentStruct = comment?.struct;
   const isCommentExt = commentStruct?.extension.isComment
@@ -83,30 +83,30 @@ const getCommentPreview = (commentId: BN, blogMap: Map<string, BlogData>, postMa
       // const commentPreview = renderSubjectPreview(commentTitle, `/comment?postId=${commentStruct.post_id}&commentId=${commentStruct.id}`)
       // const { preview: postPreview, image } = getPostPreview(postId, postMap);
       // const preview = <>{commentPreview} in {postPreview}</>
-      return { ...getPostPreview(root_post_id, blogMap, postMap), msg }
+      return { ...getPostPreview(root_post_id, spaceMap, postMap), msg }
     } */
 
-    return getPostPreview(root_post_id, blogMap, postMap);
+    return getPostPreview(root_post_id, spaceMap, postMap);
   }
   return undefined;
 }
 
 const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
-  const { event, blog_id, post_id, comment_id } = activity;
-  const { blogById, postById } = store;
+  const { event, space_id, post_id, comment_id } = activity;
+  const { spaceById, postById } = store;
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
-    getCommentPreview(hexToBn(comment_id), blogById, postById)
+    getCommentPreview(hexToBn(comment_id), spaceById, postById)
 
   const getPostPreviewWithMaps = (post_id: string) =>
-    getPostPreview(hexToBn(post_id), blogById, postById)
+    getPostPreview(hexToBn(post_id), spaceById, postById)
 
-  const getBlogPreviewWithMaps = (blog_id: string) =>
-    getBlogPreview(hexToBn(blog_id), blogById)
+  const getSpacePreviewWithMaps = (space_id: string) =>
+    getSpacePreview(hexToBn(space_id), spaceById)
 
   switch (event) {
-    case 'BlogFollowed': return getBlogPreviewWithMaps(blog_id)
-    case 'BlogCreated': return getBlogPreviewWithMaps(blog_id)
+    case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
+    case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
     case 'CommentCreated': return getCommentPreviewWithMaps(comment_id)
     case 'CommentReplyCreated': return getCommentPreviewWithMaps(comment_id)
     case 'PostShared': return getPostPreviewWithMaps(post_id)

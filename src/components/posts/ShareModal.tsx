@@ -6,7 +6,7 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
 import { LabeledValue } from 'antd/lib/select';
-import SelectBlogPreview from '../utils/SelectBlogPreview';
+import SelectSpacePreview from '../utils/SelectSpacePreview';
 import BN from 'bn.js';
 import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
@@ -24,7 +24,7 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type Props = MyAccountProps & {
   postId: BN
-  blogIds?: BN[]
+  spaceIds?: BN[]
   open: boolean
   close: () => void
 }
@@ -34,7 +34,7 @@ const Fields = {
 }
 
 const InnerShareModal = (props: Props) => {
-  const { open, close, postId, blogIds } = props;
+  const { open, close, postId, spaceIds } = props;
 
   const renderModal = (children: React.ReactElement) =>
     <Modal
@@ -46,7 +46,7 @@ const InnerShareModal = (props: Props) => {
       {children}
     </Modal>
 
-  if (!blogIds) {
+  if (!spaceIds) {
     return renderModal(
       <div className='p-4 text-center'>
         <Loading />
@@ -58,7 +58,7 @@ const InnerShareModal = (props: Props) => {
 
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
-  const [ blogId, setBlogId ] = useState(blogIds[0]);
+  const [ spaceId, setSpaceId ] = useState(spaceIds[0]);
 
   const { control, errors, formState, watch } = useForm({
     validationSchema: buildSharePostValidationSchema(),
@@ -81,7 +81,7 @@ const InnerShareModal = (props: Props) => {
   };
 
   const newTxParams = (hash: IpfsHash) => {
-    return [ blogId, extension, hash ];
+    return [ spaceId, extension, hash ];
   };
 
   const renderTxButton = () => (
@@ -101,11 +101,11 @@ const InnerShareModal = (props: Props) => {
   );
 
   const renderShareView = () => {
-    if (isEmptyArray(blogIds)) {
+    if (isEmptyArray(spaceIds)) {
       return (
-        <Link href='/blogs/new'>
+        <Link href='/spaces/new'>
           <a className='ui button primary'>
-            Create your first blog
+            Create your first space
           </a>
         </Link>
       )
@@ -128,18 +128,18 @@ const InnerShareModal = (props: Props) => {
     </div>
   };
 
-  const saveBlog = (value: string | number | LabeledValue) => {
-    setBlogId(new BN(value as string));
+  const saveSpace = (value: string | number | LabeledValue) => {
+    setSpaceId(new BN(value as string));
   };
 
   return renderModal(<>
     <Modal.Header>
-      <span className='mr-3'>Share the post to your blog:</span>
-      <SelectBlogPreview
-        blogIds={blogIds}
-        onSelect={saveBlog}
+      <span className='mr-3'>Share the post to your space:</span>
+      <SelectSpacePreview
+        spaceIds={spaceIds}
+        onSelect={saveSpace}
         imageSize={24}
-        defaultValue={blogId?.toString()}
+        defaultValue={spaceId?.toString()}
       />
     </Modal.Header>
     <Modal.Content scrolling className='DfShareModalPadding'>
@@ -156,6 +156,6 @@ export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    socialQueryToProp(`blogIdsByOwner`, { paramName: 'address', propName: 'blogIds' })
+    socialQueryToProp(`spaceIdsByOwner`, { paramName: 'address', propName: 'spaceIds' })
   )
 );

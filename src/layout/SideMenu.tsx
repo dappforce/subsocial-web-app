@@ -5,10 +5,10 @@ import { useIsLoggedIn, useMyAddress } from '../components/utils/MyAccountContex
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils/utils';
-import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
+import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';
 import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
-import { BlogData } from '@subsocial/types/dto';
+import { SpaceData } from '@subsocial/types/dto';
 import { newLogger } from '@subsocial/utils';
 import { useNotifCounter } from '../components/utils/NotifCounter';
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems';
@@ -23,7 +23,7 @@ const InnerMenu = () => {
   const isLoggedIn = useIsLoggedIn();
   const { unreadCount } = useNotifCounter()
 
-  const [ followedBlogsData, setFollowedBlogsData ] = useState<BlogData[]>([]);
+  const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
 
   useEffect(() => {
@@ -31,18 +31,18 @@ const InnerMenu = () => {
 
     let isSubscribe = true;
 
-    const loadBlogsData = async () => {
+    const loadSpacesData = async () => {
       setLoaded(false);
-      const ids = await substrate.blogIdsFollowedByAccount(myAddress)
-      const blogsData = await subsocial.findBlogs(ids);
+      const ids = await substrate.spaceIdsFollowedByAccount(myAddress)
+      const spacesData = await subsocial.findSpaces(ids);
       if (isSubscribe) {
-        setFollowedBlogsData(blogsData);
+        setFollowedSpacesData(spacesData);
         setLoaded(true);
       }
     };
 
-    loadBlogsData().catch(err =>
-      log.error('Failed to load blogs followed by the current user:', err));
+    loadSpacesData().catch(err =>
+      log.error('Failed to load spaces followed by the current user:', err));
 
     return () => { isSubscribe = false; };
   }, [ triggerFollowed, myAddress ]);
@@ -86,12 +86,12 @@ const InnerMenu = () => {
 
   const renderSubscriptions = () =>
     <Menu.ItemGroup
-      className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`}
+      className={`DfSideMenu--FollowedSpaces ${collapsed && 'collapsed'}`}
       key='followed'
       title='My subscriptions'
     >
       {loaded
-        ? <RenderFollowedList followedBlogsData={followedBlogsData} />
+        ? <RenderFollowedList followedSpacesData={followedSpacesData} />
         : <div className='text-center m-2'><Loading /></div>
       }
     </Menu.ItemGroup>

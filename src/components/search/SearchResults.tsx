@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
-import { ViewBlog } from '../blogs/ViewBlog';
+import { ViewSpace } from '../spaces/ViewSpace';
 import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
@@ -25,8 +25,8 @@ const panes = [
     menuItem: 'All'
   },
   {
-    key: 'blogs',
-    menuItem: 'Blogs'
+    key: 'spaces',
+    menuItem: 'Spaces'
   },
   {
     key: 'posts',
@@ -44,8 +44,8 @@ type Props = {
 
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
-    case ElasticIndex.blogs:
-      return <ViewBlog id={new BN(res._id)} previewDetails withFollowButton />;
+    case ElasticIndex.spaces:
+      return <ViewSpace id={new BN(res._id)} previewDetails withFollowButton />;
     case ElasticIndex.posts:
       return <DynamicPostPreview key={i} id={new BN(res._id)} withActions />;
     case ElasticIndex.profiles:
@@ -84,7 +84,7 @@ const Tabs = () => {
 
   const initialTabIndex = getTabIndexFromUrl();
   const initialTabKey = panes[initialTabIndex].key;
-  const { tags, blogId } = router.query;
+  const { tags, spaceId } = router.query;
   const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
 
   const handleTabChange: OnTabChangeFn = (_event, data) => {
@@ -105,14 +105,14 @@ const Tabs = () => {
   return <>
     <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex}/>
     <ReactiveComponent
-      componentId='blogId'
+      componentId='spaceId'
       customQuery={() => {
-        return blogId === undefined
+        return spaceId === undefined
           ? null
           : {
             query: {
               term: {
-                blog_id: blogId
+                space_id: spaceId
               }
             }
           };
@@ -157,7 +157,7 @@ const App = () => {
       <ReactiveList
         componentId='page'
         dataField='id'
-        react={{ and: [ 'q', 'tab', 'tags', 'blogId' ] }}
+        react={{ and: [ 'q', 'tab', 'tags', 'spaceId' ] }}
         showResultStats={false}
         URLParams={true}
         loader={' '}

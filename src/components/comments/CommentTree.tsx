@@ -1,4 +1,4 @@
-import { PostId, Blog } from '@subsocial/types/substrate/interfaces';
+import { PostId, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithAllDetails } from '@subsocial/types';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import React, { useState, useEffect } from 'react'
@@ -10,31 +10,31 @@ const log = newLogger('CommentTree')
 
 type LoadProps = {
   parentId: PostId,
-  blog: Blog,
+  space: Space,
   replies?: PostWithAllDetails[],
   newCommentId?: PostId
 }
 
 type CommentsTreeProps = {
-  blog: Blog,
+  space: Space,
   comments: PostWithAllDetails[]
 }
 
-const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, blog }) => {
+const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, space }) => {
   return nonEmptyArr(comments) ? <ListData
     dataSource={comments}
     paginationOff
     renderItem={(item) => {
       const { post: { struct, content }, owner } = item;
 
-      return <ViewComment key={struct.id.toString()} blog={blog} struct={struct} content={content} owner={owner} />
+      return <ViewComment key={struct.id.toString()} space={space} struct={struct} content={content} owner={owner} />
     }}
   /> : null;
 }
 
 export const withLoadedComments = (Component: React.ComponentType<CommentsTreeProps>) => {
   return (props: LoadProps) => {
-    const { parentId, blog, replies = [] } = props;
+    const { parentId, space, replies = [] } = props;
 
     const [ replyComments, setComments ] = useState<PostWithAllDetails[]>(replies);
     const [ isCommentReplies, setIsCommentReplies ] = useState(replyComments.length > 0)
@@ -51,7 +51,7 @@ export const withLoadedComments = (Component: React.ComponentType<CommentsTreePr
       loadComments().catch(err => log.error('Failed to load comments: %o', err))
     }, [ false ]);
 
-    return isCommentReplies ? <Component blog={blog} comments={replyComments} /> : null;
+    return isCommentReplies ? <Component space={space} comments={replyComments} /> : null;
   }
 }
 

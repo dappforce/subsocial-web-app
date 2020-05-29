@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Post, Blog } from '@subsocial/types/substrate/interfaces'
+import { Post, Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './NewComment';
 import mdToText from 'markdown-to-txt';
@@ -14,13 +14,13 @@ import { useSubstrateApi } from '../utils/SubsocialApiContext';
 import Section from '../utils/Section';
 
 type CommentSectionProps = {
-  blog: Blog,
+  space: Space,
   post: Post,
   replies?: PostWithAllDetails[],
   hashId?: string
 }
 
-export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, blog, replies = [] }) => {
+export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [] }) => {
   const { total_replies_count, id } = post;
   const [ totalCount, setCount ] = useState(total_replies_count.toString())
   const substrate = useSubstrateApi();
@@ -40,18 +40,18 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
     <NewComment
       post={post}
     />
-    <CommentsTree parentId={post.id} blog={blog} replies={replies} />
+    <CommentsTree parentId={post.id} space={space} replies={replies} />
   </Section>
 })
 
 type CommentPageProps = {
   comment: PostWithAllDetails,
   parentPost: PostData,
-  blog: Blog,
+  space: Space,
   replies: PostWithAllDetails[]
 }
 
-export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, blog }) => {
+export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, space }) => {
   const { post: { struct, content }, owner } = comment;
   const { content: postContent } = parentPost;
   const address = struct.created.account.toString()
@@ -59,13 +59,13 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
 
   const renderResponseTitle = () => <>
     In response to{' '}
-    <ViewPostLink blog={blog} post={parentPost.struct} title={postContent?.title} />
+    <ViewPostLink space={space} post={parentPost.struct} title={postContent?.title} />
   </>
 
   return <Section className='DfContentPage DfEntirePost'>
     <HeadMeta title={`${profileName} commented on ${content?.title}`} desc={mdToText(content?.body)} />
     {renderResponseTitle()}
-    <ViewComment owner={owner} blog={blog} struct={struct} content={content} replies={replies} withShowReplies />
+    <ViewComment owner={owner} space={space} struct={struct} content={content} replies={replies} withShowReplies />
   </Section>
 
 }
