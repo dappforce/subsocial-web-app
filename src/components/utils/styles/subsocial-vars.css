@@ -15,6 +15,8 @@ $space_large: 1.25rem;
 $space_big: 1.5rem;
 $space_huge: 2rem;
 
+$width_panel: 300px;
+
 /*-------------Colors----------*/
 $color_page_bg: #fafafa;
 $color_font_normal: #222222;

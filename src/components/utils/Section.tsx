@@ -17,7 +17,7 @@ export class Section extends React.PureComponent<Props> {
       <div className='DfSectionOuter'>
         <section id={id} className={className}>
           {this.renderTitle()}
-          <div>{children}</div>
+          {children}
         </section>
       </div>
     );

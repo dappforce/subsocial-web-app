@@ -5,7 +5,7 @@ import '@storybook/addon-console';
 import StoryRouter from 'storybook-react-router';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import { mockNextRouter } from '../src/stories/mockNextRouter';
-import Section from '../src/components/utils/Section';
+
 import { withStorybookContext } from '../src/stories/withStorybookContext';
 
 import '../src/components/utils/styles';
@@ -33,7 +33,7 @@ addDecorator(withStorybookContext)
 
 addDecorator(story => (
   <div className='DfPageContent'>
-    <Section>{story()}</Section>
+    {story()}
   </div>
 ))
 

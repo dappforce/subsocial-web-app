@@ -16,7 +16,7 @@ import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { withSpaceIdFromUrl } from './withSpaceIdFromUrl';
 import { validationSchema } from './NavValidation';
-import SpacegedSectionTitle from '../spaces/SpacegedSectionTitle';
+import SpacegedSectionTitle from './SpacedSectionTitle';
 import { Space, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { SpaceContent, NavTab } from '@subsocial/types/offchain';
 import { SpaceUpdate, OptionText, OptionOptionText, OptionBool } from '@subsocial/types/substrate/classes';

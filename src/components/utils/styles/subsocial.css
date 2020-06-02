@@ -946,15 +946,11 @@ hr {
 
 @media (min-width: 560px) {
   .DfSectionOuter {
-    margin-left: auto;
-    margin-right: auto;
     min-width: 428px;
     max-width: calc(680px + $space_normal * 2);
     width: calc(680px + $space_normal * 2);
-
-    .DfSectionOuter {
-      width: 100%;
-    }
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .DfSection {
@@ -1505,11 +1501,9 @@ a.DfStatItem {
 }
 
 .SpaceNav {
-  margin-left: $space_big;
-  margin-bottom: $space_big;
-  width: 300px;
-
+  @extend .DfPanel;
   .SNhead {
+    @extend .DfCard;
     display: flex;
     flex-direction: column;
     padding: $space_big;
@@ -1733,4 +1727,34 @@ a.DfStatItem {
   .DfActionButtonsBlock {
     padding: $space_small 0;
   }
+}
+
+/* .DfMainContent {
+  min-width: 428px;
+  max-width: calc(680px + $space_normal * 2);
+  width: calc(680px + $space_normal * 2);
+} */
+
+.DfPanel {
+  margin: $space_big;
+  width: $width_panel;
+}
+
+.DfCard {
+  display: flex;
+  flex-direction: column;
+  padding: $space_big;
+  background-color: #fff;
+  border: 1px solid $color_light_border;
+  box-sizing: border-box;
+  border-radius: $border_radius_normal;
+  margin-bottom: $space_big;
+}
+
+.DfMobileOnBoarding {
+  background: #fff;
+  line-height: 0.6rem;
+  padding: 1rem;
+  margin: 0 -1rem;
+  border-top: 1px solid $color_muted
 }
