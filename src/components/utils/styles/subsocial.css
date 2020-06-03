@@ -1752,6 +1752,9 @@ a.DfStatItem {
 }
 
 .DfMobileOnBoarding {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: #fff;
   line-height: 0.6rem;
   padding: 1rem;

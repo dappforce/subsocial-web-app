@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import { newLogger } from '@subsocial/utils';
 import { isHomePage } from 'src/components/utils';
 import { ElasticNodeURL } from 'src/components/utils/env';
+import { PageWithOnBoarding } from 'src/components/main/PageWrapper';
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 
 const log = newLogger('Navigation')
@@ -55,7 +56,11 @@ const DefaultNav: FunctionComponent = ({ children }) => {
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props;
 
-  const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
+  const MainContent = () => <Content className='DfPageContent'>
+    <PageWithOnBoarding>
+      {children}
+    </PageWithOnBoarding>
+  </Content>;
 
   return <ReactiveBase
     className='fontSizeNormal'

@@ -1,5 +1,5 @@
 import React from 'react'
-import OnBoardingCard, { OnBoarding, OnBoardingMobileCard } from '../docs/onboarding'
+import OnBoardingCard, { OnBoardingMobileCard, useBoarding } from '../docs/onboarding'
 import Section from '../utils/Section'
 import { isBrowser } from 'react-device-detect'
 import { Affix } from 'antd'
@@ -16,16 +16,17 @@ export const PageWrapper: React.FunctionComponent<Props> = ({ leftPanel, rightPa
   </div>
 )
 
-export const PageWithOnBoarding: React.FunctionComponent<Props> = ({ leftPanel, children }) => {
+export const PageWithOnBoarding: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, children }) => {
+  const { state: { showOnBoarding } } = useBoarding()
   return isBrowser
     ? <PageWrapper
       leftPanel={leftPanel}
-      rightPanel={<OnBoardingCard />}
+      rightPanel={showOnBoarding ? <OnBoardingCard /> : rightPanel}
     >
       {children}
     </PageWrapper>
     : <>
       <PageWrapper>{children}</PageWrapper>
-      <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>
+      {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>}
     </>
 }

@@ -10,4 +10,4 @@ export default () => (
 
 export * from './OnBoarding'
 export * from './OnBoardingContex'
-export * from './OnBoardingModal'
+export * from './OnBoardingPage'
