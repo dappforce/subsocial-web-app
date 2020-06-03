@@ -37,6 +37,7 @@ export enum StepsEnum {
 }
 
 export const OnBoardingContext = createContext<OnBoardingContextProps>(contextStub)
+
 export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
   const [ currentStep, setCurrentStep ] = useState(StepsEnum.Login)
   const [ showOnBoarding, setShowOnBoarding ] = useState(false)

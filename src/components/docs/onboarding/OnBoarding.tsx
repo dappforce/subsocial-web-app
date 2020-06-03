@@ -61,5 +61,3 @@ export const OnBoardingMobileCard = () => {
     <Button type='primary' href='/get-started'>{stepsContent[currentStep].title}</Button>
   </div>
 }
-/* margin-left: -4.5rem;
-zoom: .7; */
