@@ -3,7 +3,7 @@ import React from 'react';
 import settings from '../components/settings';
 import '../components/utils/styles';
 
-import Api from '@subsocial/react-api/Api'
+import Api from '../components/utils/Api'
 import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import Queue from '@subsocial/react-components/Status/Queue';
 import Signer from '@subsocial/react-signer';
