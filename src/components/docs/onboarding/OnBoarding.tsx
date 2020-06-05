@@ -54,10 +54,7 @@ export const OnBoardingMobileCard = () => {
   if (!showOnBoarding) return null;
 
   return <div className='DfMobileOnBoarding'>
-    <div>
-      {onBoadingTitle}
-      <OnBoarding direction='horizontal' size='small' progressDot/>
-    </div>
+    <span><b>Join Subsocial.</b> Step {currentStep + 1}/3</span>
     <Button type='primary' href='/get-started'>{stepsContent[currentStep].title}</Button>
   </div>
 }

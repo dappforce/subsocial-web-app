@@ -1752,6 +1752,10 @@ a.DfStatItem {
 }
 
 .DfMobileOnBoarding {
+  @extend .DfBoxShadow;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1759,5 +1763,4 @@ a.DfStatItem {
   line-height: 0.6rem;
   padding: 1rem;
   margin: 0 -1rem;
-  border-top: 1px solid $color_muted
 }
