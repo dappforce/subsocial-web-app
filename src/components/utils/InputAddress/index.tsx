@@ -37,13 +37,13 @@ const MULTI_DEFAULT: string[] = [];
 
 export const DfInputAddress = (props: Props) => {
   const { className, help, hideAddress = false, isDisabled = false, isError, isMultiple, label, labelExtra, options, optionsAll, placeholder, type = DEFAULT_TYPE, style, withEllipsis, withLabel, onChange, onChangeMulti } = props;
-  const { state: { address }, set: setCurrentAccount } = useMyAccount();
+  const { state: { address }, setAddress } = useMyAccount();
   const [ value, setValue ] = useState(address !== undefined ? address : null);
 
   const DfOnChange = (value: string | null): void => {
     onChange && value && onChange(value);
     value && setValue(value);
-    value && setCurrentAccount(value);
+    value && setAddress(value);
   }
 
   return <InputAddress

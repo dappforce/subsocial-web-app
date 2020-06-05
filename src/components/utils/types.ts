@@ -105,3 +105,11 @@ export type QueueProps = {
   queueRpc: QueueTx$RpcAdd;
   queueSetTxStatus: QueueTx$MessageSetStatus;
 };
+
+export interface InjectedAccountExt {
+  address: string;
+  meta: {
+    name: string;
+    source: string;
+  };
+}
