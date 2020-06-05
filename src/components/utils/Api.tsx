@@ -8,7 +8,7 @@ import { ApiProps, ApiState } from '@subsocial/react-api/types';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import ApiPromise from '@polkadot/api/promise';
 import { typesChain, typesSpec } from '@subsocial/apps-config/api';
-import { web3Enable } from '@polkadot/extension-dapp';
+import { web3Enable, web3Accounts } from '@polkadot/extension-dapp';
 import { WsProvider } from '@polkadot/rpc-provider';
 import { StatusContext } from '@subsocial/react-components/Status';
 import { TokenUnit } from '@subsocial/react-components/InputNumber';
@@ -22,6 +22,7 @@ import ApiContext from '@subsocial/react-api/ApiContext';
 import registry from '@subsocial/react-api/typeRegistry';
 import { InjectedAccountExt } from './types';
 import { useMyAccount } from './MyAccountContext';
+export * from '@polkadot/extension-dapp'
 
 const isWindow = typeof window !== 'undefined';
 
@@ -43,6 +44,28 @@ export const injectedPromise = new Promise<InjectedExtension[]>((resolve): void 
     resolve(web3Enable('polkadot-js/apps'));
   });
 });
+
+export const getAccountFromExtension = async (setInjectedAccounts: (data: InjectedAccountExt[]) => void) => {
+  console.log('injectedAccounts')
+
+  const injectedAccounts = await injectedPromise
+    .then(() => web3Accounts())
+    .then((accounts) => accounts.map(({ address, meta }): InjectedAccountExt => ({
+      address,
+      meta: {
+        ...meta,
+        name: `${meta.name} (${meta.source === 'polkadot-js' ? 'extension' : meta.source})`
+      }
+    })))
+    .catch((error): InjectedAccountExt[] => {
+      console.error('web3Enable', error);
+
+      return [];
+    })
+
+  setInjectedAccounts(injectedAccounts)
+  return injectedAccounts.map(item => item.address)
+}
 
 const DEFAULT_DECIMALS = registry.createType('u32', 12);
 export const DEFAULT_SS58 = registry.createType('u32', addressDefaults.prefix);

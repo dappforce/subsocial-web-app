@@ -7,12 +7,27 @@ import { AddressProps } from './utils/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { InfoDetails } from '.';
 import { isBrowser } from 'react-device-detect';
+
+export const SelectAddressPreview: React.FunctionComponent<AddressProps> = ({
+  address,
+  owner
+}) => (
+  <>
+    <div className='DfAddressIcon'>
+      <Avatar address={address} avatar={owner?.content?.avatar} />
+    </div>
+    <div className='DfAddressInfo ui--AddressComponents'>
+      <Address asLink={isBrowser} owner={owner} address={address} />
+      <InfoDetails address={address} />
+    </div>
+  </>
+)
+
 export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   address,
   owner
 }) => {
   const struct = owner?.struct;
-  const content = owner?.content
   const reputation = struct?.reputation
   const menu = (
     <Menu>
@@ -22,17 +37,11 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
 
   return <Dropdown overlay={menu} placement="bottomLeft">
     <span className="DfCurrentAddress">
-      <div className='DfAddressIcon'>
-        <Avatar address={address} avatar={content?.avatar} />
-      </div>
-      <div className='DfAddressInfo ui--AddressComponents'>
-        <Address asLink={isBrowser} owner={owner} address={address} />
-        <InfoDetails address={address} />
-      </div>
+      <SelectAddressPreview address={address} owner={owner} />
     </span>
   </Dropdown>
 }
 
 export const AddressPopupWithOwner = withLoadedOwner(AddressPopup);
-
+export const AddressPreviewWithOwner = withLoadedOwner(SelectAddressPreview)
 export default AddressPopupWithOwner;

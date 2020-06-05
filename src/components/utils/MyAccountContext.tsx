@@ -66,13 +66,13 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 
     case 'setInjectedAccounts':
       injectedAccounts = action.injectedAccounts;
-      if (injectedAccounts !== state.injectedAccounts) {
+      if (state.injectedAccounts.length === 0) {
         if (injectedAccounts) {
           log.info('Set new injected accounts:', injectedAccounts);
           store.set(INJECT_ACCOUNT, injectedAccounts);
           return { ...state, injectedAccounts };
         } else {
-          return forget();
+          return state
         }
       }
       return state;

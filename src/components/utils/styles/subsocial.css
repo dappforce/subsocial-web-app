@@ -1579,6 +1579,30 @@ a.DfStatItem {
   }
 }
 
+.DfChooseAccountList {
+  @extend .DfBoxShadow;
+  margin-top: $space_tiny;
+  border-radius: $space_tiny;
+}
+
+.DfChooseAccount {
+  display: flex;
+  padding: $space_small;
+  border-bottom: 1px solid $color_light_border;
+
+  .DfAddressInfo {
+    display: block
+  }
+}
+
+.DfChooseAccount:last-of-type {
+  border-bottom: none;
+}
+
+.DfChooseAccount:hover {
+  background-color: #e6f7ff;
+}
+
 .DfCurrentAddress {
   display: flex;
   margin: 0 1rem;
