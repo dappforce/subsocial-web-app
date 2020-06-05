@@ -1,5 +1,5 @@
 import React from 'react'
-import { OnBoarding, stepsContent } from './OnBoarding';
+import { OnBoarding, stepItems } from './OnBoarding';
 import { useBoarding } from '.';
 import { Button } from 'antd';
 import HeadMeta from 'src/components/utils/HeadMeta';
@@ -15,7 +15,7 @@ export const OnBoardingPage = ({
 }: Props) => {
   const { state: { currentStep } } = useBoarding()
   const step = onlyStep || currentStep
-  const desc = stepsContent[step].content
+  const desc = stepItems[step].content
   return (
     <div className='DfOnBoardingPage'>
       <HeadMeta title={title} desc={desc} />
@@ -23,7 +23,7 @@ export const OnBoardingPage = ({
       {!onlyStep && <OnBoarding direction='horizontal' />}
       <div className='DfCard mt-4'>{desc}</div>
       <div className="justify-content-center d-flex">
-        <Button type='primary' href=''>{stepsContent[step].title}</Button>
+        <Button type='primary' href=''>{stepItems[step].title}</Button>
       </div>
     </div>
   );

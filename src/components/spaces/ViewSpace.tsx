@@ -184,7 +184,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
       noDataDesc='No posts yet'
       noDataExt={isMySpace
         // TODO replace with Next Link + URL builder
-        ? <Button href={`/spaces/${id}/posts/new`}>Create post</Button>
+        ? <Button type='primary' ghost href={`/spaces/${id}/posts/new`}>Create post</Button>
         : null
       }
       renderItem={(item) =>

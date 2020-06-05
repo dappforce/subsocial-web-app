@@ -91,7 +91,7 @@ export const RenderFollowedList = (props: { followedSpacesData: SpaceData[] }) =
   if (isEmptyArray(followedSpacesData)) {
     return (
       <div className='text-center m-2'>
-        <Button type='primary' href='/spaces/all'>Explore Spaces</Button>
+        <Button href='/spaces/all'>Explore Spaces</Button>
       </div>
     )
   }

@@ -17,7 +17,7 @@ export const LatestSpaces = (props: Props) => {
     title={`Latest spaces`}
     dataSource={spaces}
     noDataDesc='No spaces created yet'
-    noDataExt={<Button href='/spaces/new'>Create space</Button>}
+    noDataExt={<Button type='primary' ghost href='/spaces/new'>Create space</Button>}
     renderItem={(item) =>
       <ViewSpacePage
         {...props}

@@ -10,9 +10,9 @@ type Props = {
 }
 export const PageWrapper: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, children }) => (
   <div className='d-flex'>
-    {isBrowser && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
+    {isBrowser && leftPanel && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
     <Section className='DfMainContent'>{children}</Section>
-    {isBrowser && <div className='DfRightPanel DfPanel'>{rightPanel}</div>}
+    {isBrowser && rightPanel && <div className='DfRightPanel DfPanel'>{rightPanel}</div>}
   </div>
 )
 
