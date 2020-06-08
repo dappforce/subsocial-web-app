@@ -1,6 +1,6 @@
 import React from 'react'
 import { Steps, Button } from 'antd';
-import { useBoarding } from './OnBoardingContex';
+import { useBoarding, StepsEnum } from './OnBoardingContex';
 import { isMobile } from 'react-device-detect';
 import { LogInButton } from 'src/components/utils/LogIn';
 
@@ -17,34 +17,49 @@ const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobile &
 type StepItem = {
   title: string,
   key: string,
-  content: string,
-  actionButton: (title: string) => JSX.Element
+  content: string
+}
+
+type ActionButtonProps = {
+  step: StepItem,
+  index: number
+  asLink?: boolean
+}
+
+const ActionButton = (props: ActionButtonProps) => {
+  const { step: { title }, asLink, index } = props
+
+  const buttons = [
+    <LogInButton title={title} link={asLink} />,
+    <Button type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>,
+    <Button type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>
+  ]
+
+  return buttons[index]
 }
 
 export const stepItems: StepItem[] = [
   {
     title: getMobilyFriendlyText('Sign in'),
     key: 'login',
-    content: 'Sign in',
-    actionButton: (title: string) => <LogInButton title={title} />
+    content: 'Sign in'
   },
   {
     title: getMobilyFriendlyText('Get free tokens', 'Get tokens'),
     key: 'tokens',
-    content: 'Get first tokens',
-    actionButton: (title: string) => <Button type='primary' href='/get-free-tokens'>{title}</Button>
+    content: 'Get first tokens'
   },
   {
     title: getMobilyFriendlyText('Create your space', 'Create space'),
     key: 'spaces',
-    content: 'Get first tokens',
-    actionButton: (title: string) => <Button type='primary' href='/spaces/new'>{title}</Button>
+    content: 'Get first tokens'
   }
 ]
 
 export const OnBoarding = ({ direction = 'vertical', size = 'default', progressDot }: Props) => {
   const { state: { currentStep } } = useBoarding()
-  const steps = stepItems.map((step) => <Step key={step.key} title={step.title}/>)
+  const steps = stepItems.map((step, index) =>
+    <Step className='DfStep' disabled={currentStep !== index} key={step.key} title={step.title}/>)
 
   return (
     <div>
@@ -61,23 +76,26 @@ export const OnBoarding = ({ direction = 'vertical', size = 'default', progressD
 }
 
 const onBoadingTitle = <h3 className='mb-3'>Get started with Subsocial</h3>
-const renderActionButton = (stepItem: StepItem) => stepItem.actionButton(stepItem.title)
+
 export const OnBoardingCard = () => {
-  const { state: { currentStep } } = useBoarding()
-  return <div className='DfCard'>
+  const { state: { currentStep, showOnBoarding } } = useBoarding()
+
+  if (!showOnBoarding || currentStep >= StepsEnum.Finish) return null;
+
+  return <div className='DfCard DfActiveBorder'>
     {onBoadingTitle}
     <OnBoarding direction='vertical' />
-    {renderActionButton(stepItems[currentStep])}
+    <ActionButton step={stepItems[currentStep]} index={currentStep} />
   </div>
 }
 
 export const OnBoardingMobileCard = () => {
   const { state: { currentStep, showOnBoarding } } = useBoarding()
 
-  if (!showOnBoarding) return null;
+  if (!showOnBoarding || currentStep >= StepsEnum.Finish) return null;
 
   return <div className='DfMobileOnBoarding'>
     <span><b>Join Subsocial.</b> Step {currentStep + 1}/3</span>
-    {renderActionButton(stepItems[currentStep])}
+    <ActionButton step={stepItems[currentStep]} index={currentStep} />
   </div>
 }

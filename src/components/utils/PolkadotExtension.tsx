@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { getAccountFromExtension, isWeb3Injected } from './Api';
+import { getAccountFromExtension } from './Api';
 import { useMyAccount } from './MyAccountContext';
 import { AddressPreviewWithOwner } from '../profiles/address-views';
 import { Loading } from '.';
-import { Button, Avatar, Divider } from 'antd';
+import { Button, Avatar } from 'antd';
+import { useApi } from '@subsocial/react-hooks';
 
 export const ChooseAccountFromExtension = () => {
   const [ accounts, setAccounts ] = useState<string[]>()
   const [ loading, setLoading ] = useState(true)
   const { setAddress, setInjectedAccounts } = useMyAccount()
+  const { extensions } = useApi()
 
   useEffect(() => {
     const loadAddress = async () => {
@@ -19,44 +21,44 @@ export const ChooseAccountFromExtension = () => {
 
     loadAddress().catch(err => console.error(err))
 
-  }, [ isWeb3Injected ])
+  }, [ false ])
 
   const NoExtension = () => (
-    <div>
-      <div className='mb-4'>Extension is not found, please download her:</div>
-      <Button type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
-        <Avatar size={20} src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Chrome_icon_%28September_2014%29.svg/1200px-Google_Chrome_icon_%28September_2014%29.svg.png' />
+    <>
+      <div className='mb-4'>Polkadot extension was not found. You can install it if you are using Chrome or Firefox browser.</div>
+      <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
+        <Avatar size={20} src='chrome.svg' />
         <span className='ml-2'>Polkadot extension for Chrome</span>
       </Button>
-      <Divider>or</Divider>
-      <Button type='default' href='https://addons.mozilla.org/ru/firefox/addon/polkadot-js-extension/' target='_blank' >
-        <Avatar size={20} src='https://www.mozilla.org/media/protocol/img/logos/firefox/browser/logo-lg-high-res.fbc7ffbb50fd.png' />
-        <span className='ml-2'>Polkadot extension for Mozila</span>
+      <Button block type='default' href='https://addons.mozilla.org/ru/firefox/addon/polkadot-js-extension/' target='_blank' >
+        <Avatar size={20} src='firefox.svg' />
+        <span className='ml-2'>Polkadot extension for Firefox</span>
       </Button>
-    </div>
+    </>
   )
 
   const NoAccounts = () => (
-    <span>Account is not found, please click on extension</span>
+    <span>No account found. Please open your Polkadot extension and create a new account or import existing.</span>
   )
 
   const SelectAccounts = () => (
     <>
-      <h4>Select acount for log in:</h4>
+      <div>Click on your account to sign in:</div>
       <div className='text-left DfChooseAccountList'>
-        {accounts?.map(item => <div
+        {accounts?.map(item => <Button
+          block
           key={item.toString()}
-          className='DfChooseAccount'
-          style={{ cursor: 'pointer' }}
+          className='DfChooseAccount mt-2'
+          style={{ cursor: 'pointer', height: 'auto' }}
           onClick={() => setAddress(item)}
         >
           <AddressPreviewWithOwner address={item} mini />
-        </div>)}
+        </Button>)}
       </div>
     </>
   )
 
-  if (!isWeb3Injected) return <NoExtension />;
+  if (!extensions) return <NoExtension />;
 
   if (loading) return <Loading />
 

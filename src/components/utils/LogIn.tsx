@@ -8,15 +8,15 @@ import { ChooseAccountFromExtension } from './PolkadotExtension';
 
 type LogInButtonProps = {
   size?: string,
-  ghost?: boolean,
+  link?: boolean
   title?: string
 };
 
-export function LogInButton ({ ghost, title = 'Log In' }: LogInButtonProps) {
+export function LogInButton ({ link, title = 'Sign in' }: LogInButtonProps) {
   const [ open, setOpen ] = useState(false);
 
   return <>
-    <Button size={isMobile ? 'small' : 'default'} type='primary' ghost={ghost} onClick={() => setOpen(true)}>{title}</Button>
+    <Button size={isMobile ? 'small' : 'default'} type={link ? 'link' : 'primary'} className={link ? 'DfBlackLink' : ''} onClick={() => setOpen(true)}>{title}</Button>
     {open && <LogInModal open={open} hide={() => setOpen(false)} />}
   </>;
 }
@@ -28,43 +28,25 @@ type ModalProps = {
 
 const LogInModal = (props: ModalProps) => {
   const { open = false, hide } = props;
-  const [ currentContent, changeContent ] = useState(0)
-
-  const SignInVariant = () => (
-    <>
-      <Button type='default' onClick={() => changeContent(1)}>
-        <Avatar size={20} src='https://addons.cdn.mozilla.net/user-media/addon_icons/2585/2585880-64.png?modified=3f638f7c' />
-        <span className='ml-2'>Sign in with polkadot extension</span>
-      </Button>
-      <Divider>or</Divider>
-      <Button type='default' href='/bc/#/accounts' target='_blank' >
-        <Avatar size={20} src='http://dapp.subsocial.network/bc/static/substrate-hexagon.d3f5a498.svg' />
-        <span className='ml-2'>Create account on apps</span>
-      </Button>
-    </>
-  )
-
-  const content = [
-    <SignInVariant />,
-    <ChooseAccountFromExtension />
-  ]
 
   return <Modal
     visible={open}
+    title={<h3 style={{ fontWeight: 'bold' }}>{`Sign in with Polkadot{.js} extension`}</h3>}
     onOk={hide}
+    footer={null}
+    width={428}
     className='text-center'
     onCancel={hide}
-    footer={[
-      currentContent > 0 &&
-        <Button key='back' className='DfGreyLink' type='link' onClick={() => changeContent(0)}>
-          Back
-        </Button>,
-      <Button key='close' className='DfGreyLink' type='link' onClick={hide}>
-        Close
-      </Button> ]
-    }
   >
-    {content[currentContent]}
+    <div className='p-4 pt-0'>
+      <ChooseAccountFromExtension />
+      <Divider>or</Divider>
+      <div className='mb-2'>Alternatively, you can create a new account right here on the site.</div>
+      <Button block type='default' href='/bc/#/accounts' target='_blank' >
+        <Avatar size={18} src='substrate.svg' />
+        <span className='ml-2'>Create account</span>
+      </Button>
+    </div>
   </Modal>;
 };
 

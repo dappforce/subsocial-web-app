@@ -29,6 +29,11 @@ export const DefaultMenu: MenuItem[] = [
     image: 'global'
   },
   {
+    name: 'Get free tokens',
+    page: [ '/get-free-tokens' ],
+    image: 'dollar'
+  },
+  {
     name: 'Advanced',
     page: [ '/bc' ],
     image: 'block',

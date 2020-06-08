@@ -40,20 +40,20 @@ export const OnBoardingContext = createContext<OnBoardingContextProps>(contextSt
 
 export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
   const [ currentStep, setCurrentStep ] = useState(StepsEnum.Login)
-  const [ showOnBoarding, setShowOnBoarding ] = useState(false)
+  const [ showOnBoarding, setShowOnBoarding ] = useState(true)
   const [ actions, setAction ] = useState(false)
   const { api, isApiReady } = useApi()
   const { state: { address } } = useMyAccount()
   const isLogged = useIsLoggedIn()
 
   useEffect(() => {
-    if (!isApiReady) return;
-
     let unsubBalance: (() => void) | undefined
     let unsubBlog: (() => void) | undefined
     if (!isLogged) {
       return setCurrentStep(0)
     }
+
+    if (!isApiReady) return setCurrentStep(1);
 
     const subBlog = async (isBalanse: boolean) => {
       unsubBlog = await api.query.social.spaceIdsByOwner(address, (data) => {

@@ -1579,8 +1579,16 @@ a.DfStatItem {
   }
 }
 
+.DfStep {
+  button, a {
+    padding: 0;
+    font-size: 1.15;
+    font-weight: bolder;
+    color: #222
+  }
+}
+
 .DfChooseAccountList {
-  @extend .DfBoxShadow;
   margin-top: $space_tiny;
   border-radius: $space_tiny;
 }
@@ -1588,16 +1596,15 @@ a.DfStatItem {
 .DfChooseAccount {
   display: flex;
   padding: $space_small;
-  border-bottom: 1px solid $color_light_border;
 
   .DfAddressInfo {
     display: block
   }
 }
 
-.DfChooseAccount:last-of-type {
+/* .DfChooseAccount:last-of-type {
   border-bottom: none;
-}
+} */
 
 .DfChooseAccount:hover {
   background-color: #e6f7ff;

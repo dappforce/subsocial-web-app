@@ -1,32 +1,26 @@
 import React from 'react'
-import OnBoardingCard, { OnBoardingMobileCard, useBoarding } from '../docs/onboarding'
+import OnBoardingCard, { OnBoardingMobileCard, useBoarding } from '../onboarding'
 import Section from '../utils/Section'
 import { isBrowser } from 'react-device-detect'
 import { Affix } from 'antd'
 
 type Props = {
   leftPanel?: React.ReactNode,
-  rightPanel?: React.ReactNode
+  rightPanel?: React.ReactNode,
+  withOnBoarding?: boolean,
+  className?: string
 }
-export const PageWrapper: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, children }) => (
-  <div className='d-flex'>
-    {isBrowser && leftPanel && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
-    <Section className='DfMainContent'>{children}</Section>
-    {isBrowser && rightPanel && <div className='DfRightPanel DfPanel'>{rightPanel}</div>}
-  </div>
-)
-
-export const PageWithOnBoarding: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, children }) => {
+export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, withOnBoarding, className, children }) => {
   const { state: { showOnBoarding } } = useBoarding()
+  const rightContent = withOnBoarding && showOnBoarding ? <OnBoardingCard /> : rightPanel
   return isBrowser
-    ? <PageWrapper
-      leftPanel={leftPanel}
-      rightPanel={showOnBoarding ? <OnBoardingCard /> : rightPanel}
-    >
-      {children}
-    </PageWrapper>
+    ? <div className='d-flex'>
+      {leftPanel && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
+      <Section className={`DfMainContent ${className}`}>{children}</Section>
+      {rightContent && <div className='DfRightPanel DfPanel'>{rightContent}</div>}
+    </div>
     : <>
-      <PageWrapper>{children}</PageWrapper>
+      {children}
       {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>}
     </>
 }
