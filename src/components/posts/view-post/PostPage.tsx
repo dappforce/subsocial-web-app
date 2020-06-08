@@ -17,6 +17,7 @@ import { getSpaceId, unwrapSubstrateId } from 'src/components/utils/substrate';
 import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { RegularPreview } from '.';
+import { PageContent } from 'src/components/main/PageWrapper';
 
 const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
@@ -50,8 +51,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, space, replie
     ? renderResponseTitle(postStruct.ext?.post)
     : title
 
-  return <>
-    <Section className='DfContentPage DfEntirePost'>
+  return <PageContent withOnBoarding>
+    <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
       <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
       <div className='DfRow'>
         {<h1 className='DfPostName'>{titleMsg}</h1>}
@@ -76,7 +77,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, space, replie
       </div>
     </Section>
     <CommentSection post={struct} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
-  </>
+  </PageContent>
 };
 
 PostPage.getInitialProps = async (props): Promise<any> => {

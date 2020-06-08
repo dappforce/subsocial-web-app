@@ -36,6 +36,7 @@ import AboutSpaceLink from './AboutSpaceLink';
 import ViewSpaceLink from './ViewSpaceLink';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 import PostPreview from '../posts/view-post/PostPreview';
+import { PageContent } from '../main/PageWrapper';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -211,17 +212,19 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   // TODO extract WithSpaceNav
 
   return <div className='ViewSpaceWrapper'>
-    {isBrowser &&
+    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
+    <PageContent withOnBoarding leftPanel={isBrowser &&
       <SpaceNav
         {...content}
         spaceId={new BN(id)}
         creator={account}
       />
-    }
-    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-    <Section className='DfContentPage'>
-      {renderPostPreviews()}
-    </Section>
+    }>
+      <Section className='DfContentPage'>
+        {renderPostPreviews()}
+      </Section>
+    </PageContent>
+
   </div>
 }
 

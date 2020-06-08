@@ -8,6 +8,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { LatestSpaces } from './LatestSpaces';
 import { LatestPosts } from './LatestPosts';
 import { SpaceData, PostWithAllDetails } from '@subsocial/types';
+import { PageContent } from './PageWrapper';
 
 const ZERO = new BN(0);
 const FIVE = new BN(5);
@@ -21,15 +22,17 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
   const { spacesData, postsData } = props;
 
   return (
-    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta
-        title='Latest posts and spaces'
-        desc='Subsocial is an open decentralized social network'
-      />
-      <LatestPosts {...props} postsData={postsData} />
-      {/* TODO Show latest comments */}
-      <LatestSpaces {...props} spacesData={spacesData} />
-    </div>
+    <PageContent withOnBoarding>
+      <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+        <HeadMeta
+          title='Latest posts and spaces'
+          desc='Subsocial is an open decentralized social network'
+        />
+        <LatestPosts {...props} postsData={postsData} />
+        <LatestSpaces {...props} spacesData={spacesData} />
+      </div>
+    </PageContent>
+
   );
 }
 
