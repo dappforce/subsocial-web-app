@@ -2,6 +2,9 @@ import React, { useState, createContext, useContext, useEffect } from 'react';
 import { useIsLoggedIn, useMyAccount } from 'src/components/utils/MyAccountContext';
 import { useApi } from '@subsocial/react-hooks';
 import { useRouter } from 'next/router';
+import store from 'store'
+
+const KEY = 'df.onboarded'
 
 export type OnBoardingState = {
   currentStep: number,
@@ -40,10 +43,13 @@ export const OnBoardingContext = createContext<OnBoardingContextProps>(contextSt
 
 export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
   const [ currentStep, setCurrentStep ] = useState(StepsEnum.Login)
-  const [ showOnBoarding, setShowOnBoarding ] = useState(true)
+  const { state: { address } } = useMyAccount()
+  const [ onBoardedAccounts ] = useState<string[]>(store.get(KEY) || [])
+
+  const noOnBoarded = !address || !onBoardedAccounts.includes(address)
+  const [ showOnBoarding, setShowOnBoarding ] = useState(noOnBoarded)
   const [ actions, setAction ] = useState(false)
   const { api, isApiReady } = useApi()
-  const { state: { address } } = useMyAccount()
   const isLogged = useIsLoggedIn()
 
   useEffect(() => {
@@ -59,6 +65,8 @@ export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
       unsubBlog = await api.query.social.spaceIdsByOwner(address, (data) => {
         if (isBalanse && data.isEmpty) {
           step = StepsEnum.CreateSpace
+        } else if (step === StepsEnum.Finish) {
+          noOnBoarded && store.set(KEY, address)
         }
         setShowOnBoarding(step !== StepsEnum.Finish)
         setCurrentStep(step)
