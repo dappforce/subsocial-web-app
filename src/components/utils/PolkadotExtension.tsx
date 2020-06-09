@@ -6,10 +6,14 @@ import { Loading } from '.';
 import { Button, Avatar } from 'antd';
 import { useApi } from '@subsocial/react-hooks';
 
-export const ChooseAccountFromExtension = () => {
+type Props = {
+  setAddress: (address: string) => void
+}
+
+export const ChooseAccountFromExtension = ({ setAddress }: Props) => {
   const [ accounts, setAccounts ] = useState<string[]>()
   const [ loading, setLoading ] = useState(true)
-  const { setAddress, setInjectedAccounts } = useMyAccount()
+  const { setInjectedAccounts } = useMyAccount()
   const { extensions } = useApi()
 
   useEffect(() => {
