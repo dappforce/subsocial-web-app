@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, Icon, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { useIsLoggedIn, useMyAddress } from '../components/utils/MyAccountContext';
+import { useIsSignIn, useMyAddress } from '../components/utils/MyAccountContext';
 import { isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils/utils';
@@ -20,7 +20,7 @@ const InnerMenu = () => {
   const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
   const { pathname } = useRouter();
   const myAddress = useMyAddress();
-  const isLoggedIn = useIsLoggedIn();
+  const isLoggedIn = useIsSignIn();
   const { unreadCount } = useNotifCounter()
 
   const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);

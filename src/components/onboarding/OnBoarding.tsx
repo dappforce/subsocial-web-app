@@ -2,7 +2,7 @@ import React from 'react'
 import { Steps, Button } from 'antd';
 import { useBoarding, StepsEnum } from './OnBoardingContex';
 import { isMobile } from 'react-device-detect';
-import { LogInButton } from 'src/components/utils/LogIn';
+import { AuthorizationPanel } from 'src/components/utils/LogIn';
 
 const { Step } = Steps;
 
@@ -21,21 +21,24 @@ type StepItem = {
 }
 
 type ActionButtonProps = {
-  step: StepItem,
-  index: number
-  asLink?: boolean
+  asLink?: boolean,
+  block?: boolean
 }
 
-const ActionButton = (props: ActionButtonProps) => {
-  const { step: { title }, asLink, index } = props
+export const OnBoardingButton = (props: ActionButtonProps) => {
+  const { asLink, block } = props
+  const { state: { currentStep } } = useBoarding()
 
+  if (currentStep === StepsEnum.Disable) return null;
+
+  const { title } = stepItems[currentStep]
   const buttons = [
-    <LogInButton title={title} link={asLink} />,
-    <Button type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>,
-    <Button type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>
+    <AuthorizationPanel />,
+    <Button block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>,
+    <Button block={block} type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>
   ]
 
-  return buttons[index]
+  return buttons[currentStep]
 }
 
 export const stepItems: StepItem[] = [
@@ -80,22 +83,23 @@ const onBoadingTitle = <h3 className='mb-3'>Get started with Subsocial</h3>
 export const OnBoardingCard = () => {
   const { state: { currentStep, showOnBoarding } } = useBoarding()
 
-  if (!showOnBoarding || currentStep >= StepsEnum.Finish) return null;
+  const initialized = currentStep !== StepsEnum.Disable
+  if (!showOnBoarding) return null;
 
-  return <div className='DfCard DfActiveBorder'>
+  return <div className={`DfCard ${initialized && 'active'}`}>
     {onBoadingTitle}
     <OnBoarding direction='vertical' />
-    <ActionButton step={stepItems[currentStep]} index={currentStep} />
+    <OnBoardingButton />
   </div>
 }
 
 export const OnBoardingMobileCard = () => {
   const { state: { currentStep, showOnBoarding } } = useBoarding()
 
-  if (!showOnBoarding || currentStep >= StepsEnum.Finish) return null;
+  if (!showOnBoarding || currentStep === StepsEnum.Disable) return null;
 
   return <div className='DfMobileOnBoarding'>
     <span><b>Join Subsocial.</b> Step {currentStep + 1}/3</span>
-    <ActionButton step={stepItems[currentStep]} index={currentStep} />
+    <OnBoardingButton />
   </div>
 }

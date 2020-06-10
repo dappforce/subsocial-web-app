@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
-import { useIsLoggedIn, useMyAccount } from 'src/components/utils/MyAccountContext';
+import { useIsSignIn, useMyAccount } from 'src/components/utils/MyAccountContext';
 import { useApi } from '@subsocial/react-hooks';
 import { useRouter } from 'next/router';
 import store from 'store'
@@ -33,16 +33,16 @@ const contextStub: OnBoardingContextProps = {
 }
 
 export enum StepsEnum {
+  Disable = -1,
   Login,
   GetTokens,
-  CreateSpace,
-  Finish
+  CreateSpace
 }
 
 export const OnBoardingContext = createContext<OnBoardingContextProps>(contextStub)
 
 export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
-  const [ currentStep, setCurrentStep ] = useState(StepsEnum.Login)
+  const [ currentStep, setCurrentStep ] = useState(StepsEnum.Disable)
   const { state: { address } } = useMyAccount()
   const [ onBoardedAccounts ] = useState<string[]>(store.get(KEY) || [])
 
@@ -50,7 +50,7 @@ export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
   const [ showOnBoarding, setShowOnBoarding ] = useState(noOnBoarded)
   const [ actions, setAction ] = useState(false)
   const { api, isApiReady } = useApi()
-  const isLogged = useIsLoggedIn()
+  const isLogged = useIsSignIn()
 
   useEffect(() => {
     let unsubBalance: (() => void) | undefined
@@ -59,21 +59,21 @@ export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
       return setCurrentStep(0)
     }
 
-    if (!isApiReady) return setCurrentStep(1);
+    if (!isApiReady) return setCurrentStep(StepsEnum.Disable);
 
     const subBlog = async (isBalanse: boolean) => {
       unsubBlog = await api.query.social.spaceIdsByOwner(address, (data) => {
         if (isBalanse && data.isEmpty) {
           step = StepsEnum.CreateSpace
-        } else if (step === StepsEnum.Finish) {
+        } else if (step === StepsEnum.Disable) {
           noOnBoarded && store.set(KEY, address)
         }
-        setShowOnBoarding(step !== StepsEnum.Finish)
+        setShowOnBoarding(step !== StepsEnum.Disable)
         setCurrentStep(step)
       });
     }
 
-    let step = StepsEnum.Finish;
+    let step = StepsEnum.Disable;
     const subBalance = async () => {
       console.log(api.query.system)
       if (!address) return

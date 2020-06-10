@@ -7,11 +7,12 @@ import { Button, Avatar } from 'antd';
 import { useApi } from '@subsocial/react-hooks';
 
 type Props = {
-  setAddress: (address: string) => void
+  setCurrentAddress: (address: string) => void
 }
 
-export const ChooseAccountFromExtension = ({ setAddress }: Props) => {
+export const ChooseAccountFromExtension = ({ setCurrentAddress }: Props) => {
   const [ accounts, setAccounts ] = useState<string[]>()
+  const { setAddress } = useMyAccount()
   const [ loading, setLoading ] = useState(true)
   const { setInjectedAccounts } = useMyAccount()
   const { extensions } = useApi()
@@ -54,7 +55,7 @@ export const ChooseAccountFromExtension = ({ setAddress }: Props) => {
           key={item.toString()}
           className='DfChooseAccount mt-2'
           style={{ cursor: 'pointer', height: 'auto' }}
-          onClick={() => setAddress(item)}
+          onClick={() => { setCurrentAddress(item); setAddress(item) }}
         >
           <AddressPreviewWithOwner address={item} mini />
         </Button>)}

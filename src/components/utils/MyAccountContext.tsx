@@ -153,12 +153,12 @@ export function isMyAddress (anotherAddress?: string | AccountId) {
   return equalAddresses(useMyAddress(), anotherAddress)
 }
 
-export function useIsLoggedIn () {
+export function useIsSignIn () {
   return nonEmptyStr(useMyAddress())
 }
 
 export function notLoggedIn () {
-  return !useIsLoggedIn()
+  return !useIsSignIn()
 }
 
 export default MyAccountProvider;
