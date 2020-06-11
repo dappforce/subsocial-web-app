@@ -10,7 +10,7 @@ import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
-import { useMyAddress } from '../utils/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import { socialQueryToProp, getTxParams } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils';
 import BN from 'bn.js';

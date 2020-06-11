@@ -5,10 +5,10 @@ import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { Activity } from '@subsocial/types/offchain';
 import { getNotifications } from '../utils/OffchainUtils';
 import NoData from '../utils/EmptyList';
-import NotAuthorized from '../utils/NotAuthorized';
+import NotAuthorized from '../auth/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
-import { useMyAddress } from '../utils/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import { Notifications } from './Notification';
 import { Loading } from '../utils/utils';
 

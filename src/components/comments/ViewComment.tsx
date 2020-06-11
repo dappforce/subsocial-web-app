@@ -6,7 +6,7 @@ import { DfMd } from '../utils/DfMd';
 import { CommentContent } from '@subsocial/types';
 import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import Voter from '../voting/Voter';
-import { useMyAddress } from '../utils/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
 import { formatUnixDate } from '../utils/utils';

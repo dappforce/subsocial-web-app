@@ -11,7 +11,7 @@ import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModa
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { isMyAddress } from '../auth/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';

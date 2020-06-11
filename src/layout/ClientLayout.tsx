@@ -7,7 +7,7 @@ import Api from '../components/utils/Api'
 import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import Queue from '@subsocial/react-components/Status/Queue';
 import Signer from '@subsocial/react-signer';
-import { MyAccountProvider } from '../components/utils/MyAccountContext';
+import { MyAccountProvider } from '../components/auth/MyAccountContext';
 import { BlockAuthors, Events } from '@subsocial/react-query';
 import { substrateUrl } from '../components/utils/env';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
@@ -23,9 +23,9 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
       {children}
     </Content>
     : <Queue>
-      <MyAccountProvider>
-        <Api url={url}>
-          <SubsocialApiProvider>
+      <Api url={url}>
+        <SubsocialApiProvider>
+          <MyAccountProvider>
             <BlockAuthors>
               <Events>
                 <NotifCounterProvider>
@@ -37,9 +37,9 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
                 </NotifCounterProvider>
               </Events>
             </BlockAuthors>
-          </SubsocialApiProvider>
-        </Api>
-      </MyAccountProvider>
+          </MyAccountProvider>
+        </SubsocialApiProvider>
+      </Api>
     </Queue>;
 };
 

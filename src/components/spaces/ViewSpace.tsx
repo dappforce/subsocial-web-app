@@ -19,7 +19,7 @@ import { DfBgImg } from '../utils/DfBgImg';
 import NoData from '../utils/EmptyList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { isMyAddress } from '../auth/MyAccountContext';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { return404 } from '../utils/next';
 import { Pluralize } from '../utils/Plularize';

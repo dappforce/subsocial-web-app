@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
-import { useIsSignIn, useMyAccount } from 'src/components/utils/MyAccountContext';
+import { useIsSignIn, useMyAccount } from 'src/components/auth/MyAccountContext';
 import { useApi } from '@subsocial/react-hooks';
 import { useRouter } from 'next/router';
 import store from 'store'
@@ -98,7 +98,7 @@ export function OnBoardingProvider (props: React.PropsWithChildren<any>) {
   console.log(useRouter().pathname)
   const contextValue = {
     state: {
-      showOnBoarding: useRouter().pathname === '/get-started' ? false : showOnBoarding,
+      showOnBoarding: showOnBoarding,
       currentStep,
       actions
     },

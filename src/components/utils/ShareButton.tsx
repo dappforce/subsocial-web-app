@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useMyAddress } from './MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import TxButton from './TxButton';
 import BN from 'bn.js';
 import { useSubsocialApi } from './SubsocialApiContext';

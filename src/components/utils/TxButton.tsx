@@ -7,7 +7,7 @@ import React from 'react';
 import Button from '@subsocial/react-components/Button';
 import { useStorybookContext } from './StorybookContext';
 import { isClientSide } from '.';
-import { useMyAccount } from './MyAccountContext';
+import { useMyAccount } from '../auth/MyAccountContext';
 import { newLogger } from '@subsocial/utils';
 import { useApi } from '@subsocial/react-hooks';
 import TxButton from '@subsocial/react-components/TxButton';
@@ -40,13 +40,13 @@ function MockTxButton (props: TxButtonProps) {
   )
 }
 
-function ResolvedButton (props: TxButtonProps) {
+function ResolvedButton (props: any) {
   const { isStorybook = false } = useStorybookContext()
   const { isApiReady } = useApi()
-  const { state: { address } } = useMyAccount();
+  const { state: { address }, openSignInModal } = useMyAccount();
   return isStorybook
     ? <MockTxButton {...props} />
-    : isApiReady ? <TxButton accountId={address} {...props} /> : null
+    : isApiReady ? <TxButton accountId={address} noAccountCallback={openSignInModal} {...props} /> : null
 }
 
 export default ResolvedButton

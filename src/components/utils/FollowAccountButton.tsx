@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GenericAccountId } from '@polkadot/types';
-import { useMyAddress, isMyAddress } from './MyAccountContext';
+import { useMyAddress, isMyAddress } from '../auth/MyAccountContext';
 import { registry } from '@subsocial/react-api';
 import { Button$Sizes } from '@subsocial/react-components/Button/types';
 import { newLogger, notDef } from '@subsocial/utils';

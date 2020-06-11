@@ -2,7 +2,7 @@ import React from 'react'
 import { Steps, Button } from 'antd';
 import { useBoarding, StepsEnum } from './OnBoardingContex';
 import { isMobile } from 'react-device-detect';
-import { AuthorizationPanel } from 'src/components/utils/LogIn';
+import SignInButton from '../auth/SingInButton';
 
 const { Step } = Steps;
 
@@ -29,16 +29,17 @@ export const OnBoardingButton = (props: ActionButtonProps) => {
   const { asLink, block } = props
   const { state: { currentStep } } = useBoarding()
 
-  if (currentStep === StepsEnum.Disable) return null;
+  const title = stepItems[currentStep]?.title
 
-  const { title } = stepItems[currentStep]
-  const buttons = [
-    <AuthorizationPanel />,
-    <Button block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>,
-    <Button block={block} type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>
-  ]
+  console.log('New current step: ', title, currentStep)
 
-  return buttons[currentStep]
+  switch (currentStep) {
+    case StepsEnum.Login: return <SignInButton />
+    case StepsEnum.GetTokens: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>
+    case StepsEnum.CreateSpace: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>
+    default: return null
+  }
+
 }
 
 export const stepItems: StepItem[] = [

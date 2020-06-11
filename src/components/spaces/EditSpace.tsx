@@ -10,7 +10,7 @@ import { withCalls, withMulti } from '@subsocial/react-api';
 import * as DfForms from '../utils/forms';
 import { socialQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils';
-import { useMyAddress } from '../utils/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import BN from 'bn.js';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
@@ -149,7 +149,7 @@ const InnerForm = (props: FormProps) => {
           <Button
             type='button'
             size='medium'
-            disabled={!dirty || isSubmitting}
+            disabled={!dirty}
             onClick={() => resetForm()}
             content='Reset form'
           />

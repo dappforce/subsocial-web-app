@@ -1,9 +1,10 @@
-import React, { useReducer, createContext, useContext, useEffect } from 'react';
+import React, { useReducer, createContext, useContext, useEffect, useState } from 'react';
 import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
-import { equalAddresses } from './substrate';
-import { InjectedAccountExt } from './types';
+import { equalAddresses } from '../utils/substrate';
+import { InjectedAccountExt } from '../utils/types';
+import SignInModal from './SignInModal'
 
 const log = newLogger('MyAccountContext')
 
@@ -103,6 +104,7 @@ const initialState = {
 export type MyAccountContextProps = {
   state: MyAccountState,
   dispatch: React.Dispatch<MyAccountAction>,
+  openSignInModal: () => void,
   setAddress: (address: string) => void,
   setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => void,
   forget: (address: string) => void
@@ -111,6 +113,7 @@ export type MyAccountContextProps = {
 const contextStub: MyAccountContextProps = {
   state: initialState,
   dispatch: functionStub,
+  openSignInModal: functionStub,
   setAddress: functionStub,
   setInjectedAccounts: functionStub,
   forget: functionStub
@@ -120,6 +123,7 @@ export const MyAccountContext = createContext<MyAccountContextProps>(contextStub
 
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState);
+  const [ showModal, setShowModal ] = useState<boolean>(false);
 
   useEffect(() => {
     if (!state.inited) {
@@ -130,6 +134,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const contextValue = {
     state,
     dispatch,
+    openSignInModal: () => setShowModal(true),
     setAddress: (address: string) => dispatch({ type: 'setAddress', address }),
     setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => dispatch({ type: 'setInjectedAccounts', injectedAccounts }),
     forget: (address: string) => dispatch({ type: 'forget', address })
@@ -137,6 +142,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   return (
     <MyAccountContext.Provider value={contextValue}>
       {props.children}
+      <SignInModal open={showModal} hide={() => setShowModal(false)} />
     </MyAccountContext.Provider>
   );
 }
@@ -157,7 +163,7 @@ export function useIsSignIn () {
   return nonEmptyStr(useMyAddress())
 }
 
-export function notLoggedIn () {
+export function notSignIn () {
   return !useIsSignIn()
 }
 

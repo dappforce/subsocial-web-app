@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { SpaceFollowersModal } from '../profiles/AccountsListModal';
 import { ZERO } from '../utils';
 import { MutedSpan } from '../utils/MutedText';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { isMyAddress } from '../auth/MyAccountContext';
 import { Pluralize } from '../utils/Plularize';
 import { spaceUrl } from '../utils/urls';
 

@@ -3,7 +3,7 @@ import { ProfileData } from '@subsocial/types';
 import { nonEmptyStr } from '@subsocial/utils';
 import dynamic from 'next/dynamic';
 import React from 'react';
-import { isMyAddress } from 'src/components/utils/MyAccountContext';
+import { isMyAddress } from 'src/components/auth/MyAccountContext';
 import MyEntityLabel from 'src/components/utils/MyEntityLabel';
 import { InfoDetails } from '../AuthorPreview';
 import { AddressProps } from './types';

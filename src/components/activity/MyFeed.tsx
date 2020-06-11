@@ -3,10 +3,10 @@ import { Loader } from 'semantic-ui-react'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { hexToBn } from '@polkadot/util';
-import { useMyAddress } from '../utils/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import { Activity } from '@subsocial/types/offchain';
 import NoData from '../utils/EmptyList';
-import NotAuthorized from '../utils/NotAuthorized';
+import NotAuthorized from '../auth/NotAuthorized';
 import { getNewsFeed } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';

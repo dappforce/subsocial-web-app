@@ -21,7 +21,7 @@ import addressDefaults from '@polkadot/util-crypto/address/defaults';
 import ApiContext from '@subsocial/react-api/ApiContext';
 import registry from '@subsocial/react-api/typeRegistry';
 import { InjectedAccountExt } from './types';
-import { useMyAccount } from './MyAccountContext';
+import { useMyAccount } from '../auth/MyAccountContext';
 export * from '@polkadot/extension-dapp'
 
 const isWindow = typeof window !== 'undefined';

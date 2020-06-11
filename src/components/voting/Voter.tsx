@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
 import dynamic from 'next/dynamic';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { useMyAccount } from '../auth/MyAccountContext';
 import { PostVoters } from './ListVoters';
 import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';

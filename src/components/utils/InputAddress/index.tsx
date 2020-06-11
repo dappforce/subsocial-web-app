@@ -7,7 +7,7 @@ import { BareProps } from '@subsocial/react-components/types';
 import { Option } from '@subsocial/react-components/InputAddress/types';
 
 import React, { useState } from 'react';
-import { useMyAccount } from '../MyAccountContext';
+import { useMyAccount } from '../../auth/MyAccountContext';
 import InputAddress from '@subsocial/react-components/InputAddress';
 
 interface Props extends BareProps {

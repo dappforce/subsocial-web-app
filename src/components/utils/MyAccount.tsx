@@ -1,7 +1,7 @@
 import React from 'react';
 import { withMulti } from '@subsocial/react-api';
 
-import { useMyAccount } from './MyAccountContext';
+import { useMyAccount } from '../auth/MyAccountContext';
 
 export type MyAddressProps = {
   address?: string

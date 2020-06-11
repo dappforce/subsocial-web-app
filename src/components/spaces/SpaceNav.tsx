@@ -12,7 +12,7 @@ import { SpaceContent } from '../spaces/SpacePreview';
 import { DfBgImg } from '../utils/DfBgImg';
 import FollowSpaceButton from '../utils/FollowSpaceButton';
 import { SummarizeMd } from '../utils/md';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { isMyAddress } from '../auth/MyAccountContext';
 import { aboutSpaceUrl, spaceUrl, newSpaceUrlFixture } from '../utils/urls';
 import AboutSpaceLink from './AboutSpaceLink';
 

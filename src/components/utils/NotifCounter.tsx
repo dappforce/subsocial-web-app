@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { offchainWs } from './env'
-import { useMyAccount } from './MyAccountContext';
+import { useMyAccount } from '../auth/MyAccountContext';
 
 export type NotifCounterContextProps = {
   unreadCount: number

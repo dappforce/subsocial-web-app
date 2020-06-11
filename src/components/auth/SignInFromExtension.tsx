@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { getAccountFromExtension } from './Api';
+import { getAccountFromExtension, isWeb3Injected } from '../utils/Api';
 import { useMyAccount } from './MyAccountContext';
 import { AddressPreviewWithOwner } from '../profiles/address-views';
-import { Loading } from '.';
+import { Loading } from '../utils';
 import { Button, Avatar } from 'antd';
-import { useApi } from '@subsocial/react-hooks';
 
-type Props = {
-  setCurrentAddress: (address: string) => void
-}
-
-export const ChooseAccountFromExtension = ({ setCurrentAddress }: Props) => {
+export const SignInFromExtension = () => {
   const [ accounts, setAccounts ] = useState<string[]>()
   const { setAddress } = useMyAccount()
   const [ loading, setLoading ] = useState(true)
   const { setInjectedAccounts } = useMyAccount()
-  const { extensions } = useApi()
 
   useEffect(() => {
     const loadAddress = async () => {
@@ -26,7 +20,7 @@ export const ChooseAccountFromExtension = ({ setCurrentAddress }: Props) => {
 
     loadAddress().catch(err => console.error(err))
 
-  }, [ false ])
+  }, [ isWeb3Injected ])
 
   const NoExtension = () => (
     <>
@@ -55,7 +49,7 @@ export const ChooseAccountFromExtension = ({ setCurrentAddress }: Props) => {
           key={item.toString()}
           className='DfChooseAccount mt-2'
           style={{ cursor: 'pointer', height: 'auto' }}
-          onClick={() => { setCurrentAddress(item); setAddress(item) }}
+          onClick={() => { setAddress(item) }}
         >
           <AddressPreviewWithOwner address={item} mini />
         </Button>)}
@@ -63,7 +57,7 @@ export const ChooseAccountFromExtension = ({ setCurrentAddress }: Props) => {
     </>
   )
 
-  if (!extensions) return <NoExtension />;
+  if (!isWeb3Injected) return <NoExtension />;
 
   if (loading) return <Loading />
 

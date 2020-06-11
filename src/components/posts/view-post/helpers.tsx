@@ -9,7 +9,7 @@ import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown } from 'antd';
-import { isMyAddress } from '../../utils/MyAccountContext';
+import { isMyAddress } from '../../auth/MyAccountContext';
 import { Post, Space, PostExtension } from '@subsocial/types/substrate/interfaces';
 import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto';
 import { PostExtContent } from '../LoadPostUtils'
