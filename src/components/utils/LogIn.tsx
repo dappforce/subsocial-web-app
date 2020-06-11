@@ -12,9 +12,8 @@ import { AddressPopupWithOwner } from '../profiles/address-views';
 export const AuthorizationPanel = () => {
   const [ open, setOpen ] = useState<boolean>(false);
   const { state: { address } } = useMyAccount()
-  const isSignIn = useIsSignIn()
   return <>
-    {isSignIn && address && !open ? <AddressPopupWithOwner
+    {address && !open ? <AddressPopupWithOwner
       className='profileName'
       address={address}
     /> : <LogInButton onClick={() => setOpen(true)} />}
@@ -48,7 +47,10 @@ const LogInModal = (props: ModalProps) => {
 
   return <Modal
     visible={open}
-    title={<h3 style={{ fontWeight: 'bold' }}>{isSignIn ? 'Success' : `Sign in with Polkadot{.js} extension`}</h3>}
+    title={<h3 style={{ fontWeight: 'bold' }}>
+      {isSignIn
+        ? <><span className='DfFlipH'>🎉</span> Success <span>🎉</span></>
+        : `Sign in with Polkadot{.js} extension`}</h3>}
     footer={null}
     width={428}
     className='text-center'
@@ -63,7 +65,7 @@ const LogInModal = (props: ModalProps) => {
       {currentAddress
         ? <>
           <div className='mb-4'>You have successfully signed in. Now you can:</div>
-          <OnBoardingButton block />
+          <OnBoardingButton />
         </>
         : <>
           <ChooseAccountFromExtension setCurrentAddress={(address) => setCurrentAddress(address)} />
