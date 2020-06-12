@@ -19,8 +19,11 @@ RUN yarn
 COPY localhost.env .env
 RUN NODE_ENV=production yarn build
 
-FROM node:10.13-slim
+FROM node:10-slim
 
 COPY --from=builder /app .
 
-CMD bash -c "yarn start"
+RUN yarn add pm2 -G
+
+ENTRYPOINT [ "yarn", "pm2", "start", "--no-daemon" ]
+CMD [ "yarn start" ]
