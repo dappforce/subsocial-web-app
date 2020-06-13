@@ -14,6 +14,7 @@ import { NotifCounterProvider } from '../components/utils/NotifCounter';
 import { Content } from '../components/main/Content';
 
 import { isServerSide } from 'src/components/utils';
+import { OnBoardingProvider } from 'src/components/onboarding';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = substrateUrl || settings.apiUrl || undefined;
@@ -24,21 +25,23 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
     </Content>
     : <Queue>
       <Api url={url}>
-        <SubsocialApiProvider>
-          <MyAccountProvider>
-            <BlockAuthors>
-              <Events>
-                <NotifCounterProvider>
-                  <Signer>
-                    <Content>
-                      {children}
-                    </Content>
-                  </Signer>
-                </NotifCounterProvider>
-              </Events>
-            </BlockAuthors>
-          </MyAccountProvider>
-        </SubsocialApiProvider>
+        <OnBoardingProvider>
+          <SubsocialApiProvider>
+            <MyAccountProvider>
+              <BlockAuthors>
+                <Events>
+                  <NotifCounterProvider>
+                    <Signer>
+                      <Content>
+                        {children}
+                      </Content>
+                    </Signer>
+                  </NotifCounterProvider>
+                </Events>
+              </BlockAuthors>
+            </MyAccountProvider>
+          </SubsocialApiProvider>
+        </OnBoardingProvider>
       </Api>
     </Queue>;
 };

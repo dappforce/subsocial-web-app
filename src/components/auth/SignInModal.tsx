@@ -16,6 +16,7 @@ type ModalProps = {
 export const SignInModal = (props: ModalProps) => {
   const { open = false, hide, warn } = props;
   const isSignIn = useIsSignIn()
+
   return <Modal
     visible={open}
     title={<h3 style={{ fontWeight: 'bold' }}>
