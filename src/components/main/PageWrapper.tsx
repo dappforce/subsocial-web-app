@@ -1,8 +1,9 @@
 import React from 'react'
-import OnBoardingCard, { OnBoardingMobileCard, useBoarding } from '../onboarding'
+import OnBoardingCard, { OnBoardingMobileCard } from '../onboarding'
 import Section from '../utils/Section'
 import { isBrowser } from 'react-device-detect'
 import { Affix } from 'antd'
+import { useAuth } from '../auth/AuthContext'
 
 type Props = {
   leftPanel?: React.ReactNode,
@@ -11,7 +12,7 @@ type Props = {
   className?: string
 }
 export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, withOnBoarding, className, children }) => {
-  const { state: { showOnBoarding } } = useBoarding()
+  const { state: { showOnBoarding } } = useAuth()
   const rightContent = withOnBoarding && showOnBoarding ? <OnBoardingCard /> : rightPanel
   return isBrowser
     ? <div className='d-flex'>

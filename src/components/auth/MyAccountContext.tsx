@@ -1,15 +1,14 @@
-import React, { useReducer, createContext, useContext, useEffect, useState } from 'react';
+import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
 import { equalAddresses } from '../utils/substrate';
 import { InjectedAccountExt } from '../utils/types';
-import SignInModal from './SignInModal'
 
 const log = newLogger('MyAccountContext')
 
-export const MY_ADDRESS = 'df.myAddress';
-const INJECT_ACCOUNT = 'df.injectAccounts';
+const MY_ADDRESS = 'df.myAddress';
+const INJECTED_ACCOUNTS = 'df.injectedAccounts';
 
 export function readMyAddress (): string | undefined {
   const myAddress: string | undefined = store.get(MY_ADDRESS);
@@ -18,7 +17,7 @@ export function readMyAddress (): string | undefined {
 }
 
 export function readInjectedAccounts (): InjectedAccountExt[] {
-  const injectedAccounts: InjectedAccountExt[] | undefined = store.get(INJECT_ACCOUNT);
+  const injectedAccounts: InjectedAccountExt[] | undefined = store.get(INJECTED_ACCOUNTS);
   log.info('Read injected accounts from the local storage:', injectedAccounts);
   return injectedAccounts || [];
 }
@@ -70,7 +69,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
       if (state.injectedAccounts.length === 0) {
         if (injectedAccounts) {
           log.info('Set new injected accounts:', injectedAccounts);
-          store.set(INJECT_ACCOUNT, injectedAccounts);
+          store.set(INJECTED_ACCOUNTS, injectedAccounts);
           return { ...state, injectedAccounts };
         } else {
           return state
@@ -104,7 +103,6 @@ const initialState = {
 export type MyAccountContextProps = {
   state: MyAccountState,
   dispatch: React.Dispatch<MyAccountAction>,
-  openSignInModal: () => void,
   setAddress: (address: string) => void,
   setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => void,
   forget: (address: string) => void
@@ -113,7 +111,6 @@ export type MyAccountContextProps = {
 const contextStub: MyAccountContextProps = {
   state: initialState,
   dispatch: functionStub,
-  openSignInModal: functionStub,
   setAddress: functionStub,
   setInjectedAccounts: functionStub,
   forget: functionStub
@@ -123,7 +120,6 @@ export const MyAccountContext = createContext<MyAccountContextProps>(contextStub
 
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState);
-  const [ showModal, setShowModal ] = useState<boolean>(false);
 
   useEffect(() => {
     if (!state.inited) {
@@ -134,7 +130,6 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const contextValue = {
     state,
     dispatch,
-    openSignInModal: () => setShowModal(true),
     setAddress: (address: string) => dispatch({ type: 'setAddress', address }),
     setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => dispatch({ type: 'setInjectedAccounts', injectedAccounts }),
     forget: (address: string) => dispatch({ type: 'forget', address })
@@ -142,7 +137,6 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   return (
     <MyAccountContext.Provider value={contextValue}>
       {props.children}
-      <SignInModal open={showModal} hide={() => setShowModal(false)} />
     </MyAccountContext.Provider>
   );
 }

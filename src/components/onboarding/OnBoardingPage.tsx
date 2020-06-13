@@ -1,6 +1,6 @@
 import React from 'react'
 import { OnBoarding, stepItems } from './OnBoarding';
-import { useBoarding } from '.';
+import { useAuth } from '../auth/AuthContext';
 import { Button } from 'antd';
 import HeadMeta from 'src/components/utils/HeadMeta';
 
@@ -13,7 +13,7 @@ export const OnBoardingPage = ({
   title = 'Get started with Subsocial',
   onlyStep
 }: Props) => {
-  const { state: { currentStep } } = useBoarding()
+  const { state: { currentStep } } = useAuth()
   const step = onlyStep || currentStep
   const desc = stepItems[step].content
   return (

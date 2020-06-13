@@ -63,6 +63,7 @@ export const getAccountFromExtension = async (setInjectedAccounts: (data: Inject
       return [];
     })
 
+  console.log(injectedAccounts)
   setInjectedAccounts(injectedAccounts)
   return injectedAccounts.map(item => item.address)
 }
@@ -74,7 +75,7 @@ let api: ApiPromise;
 export { api };
 
 async function retrieve (api: ApiPromise): Promise<ChainData> {
-  const [properties, systemChain, systemChainType, systemName, systemVersion ] = await Promise.all([
+  const [ properties, systemChain, systemChainType, systemName, systemVersion ] = await Promise.all([
     api.rpc.system.properties(),
     api.rpc.system.chain(),
     api.rpc.system.chainType
@@ -131,6 +132,7 @@ async function loadOnReady (api: ApiPromise, injectedAccounts: InjectedAccountEx
   });
   TokenUnit.setAbbr(tokenSymbol);
 
+  console.log('injectedAccounts', injectedAccounts)
   // finally load the keyring
   injectedAccounts.length && keyring.loadAll({
     genesisHash: api.genesisHash,
@@ -159,12 +161,12 @@ async function loadOnReady (api: ApiPromise, injectedAccounts: InjectedAccountEx
 
 function Api ({ children, url }: Props): React.ReactElement<Props> | null {
   const { queuePayload, queueSetTxStatus } = useContext(StatusContext);
-  const [state, setState] = useState<ApiState>({ isApiReady: false } as unknown as ApiState);
-  const [isApiConnected, setIsApiConnected] = useState(false);
-  const [isApiInitialized, setIsApiInitialized] = useState(false);
+  const [ state, setState ] = useState<ApiState>({ isApiReady: false } as unknown as ApiState);
+  const [ isApiConnected, setIsApiConnected ] = useState(false);
+  const [ isApiInitialized, setIsApiInitialized ] = useState(false);
   const { state: { injectedAccounts } } = useMyAccount()
 
-  const [extensions, setExtensions] = useState<InjectedExtension[] | undefined>();
+  const [ extensions, setExtensions ] = useState<InjectedExtension[] | undefined>();
   const props = useMemo<ApiProps>(
     () => ({ ...state, extensions, api, isApiConnected, isApiInitialized, isWaitingInjected: false }),
     [ isApiConnected, isApiInitialized, state ]

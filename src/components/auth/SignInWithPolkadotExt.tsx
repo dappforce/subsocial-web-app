@@ -24,7 +24,10 @@ export const SignInFromExtension = () => {
 
   const NoExtension = () => (
     <>
-      <div className='mb-4'>Polkadot extension was not found. You can install it if you are using Chrome or Firefox browser.</div>
+      <div className='mb-4'>
+        <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
+        was not found or disabled. You can install it if you are using Chrome or Firefox browser.
+      </div>
       <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
         <Avatar size={20} src='chrome.svg' />
         <span className='ml-2'>Polkadot extension for Chrome</span>

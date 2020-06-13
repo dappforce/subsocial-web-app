@@ -1,6 +1,6 @@
 import React from 'react'
 import { Steps, Button } from 'antd';
-import { useBoarding, StepsEnum } from './OnBoardingContex';
+import { useAuth, StepsEnum } from '../auth/AuthContext';
 import { isMobile } from 'react-device-detect';
 import SignInButton from '../auth/SingInButton';
 
@@ -27,7 +27,7 @@ type ActionButtonProps = {
 
 export const OnBoardingButton = (props: ActionButtonProps) => {
   const { asLink, block } = props
-  const { state: { currentStep } } = useBoarding()
+  const { state: { currentStep } } = useAuth()
 
   const title = stepItems[currentStep]?.title
 
@@ -61,7 +61,7 @@ export const stepItems: StepItem[] = [
 ]
 
 export const OnBoarding = ({ direction = 'vertical', size = 'default', progressDot }: Props) => {
-  const { state: { currentStep } } = useBoarding()
+  const { state: { currentStep } } = useAuth()
   const steps = stepItems.map((step, index) =>
     <Step className='DfStep' disabled={currentStep !== index} key={step.key} title={step.title}/>)
 
@@ -82,9 +82,9 @@ export const OnBoarding = ({ direction = 'vertical', size = 'default', progressD
 const onBoadingTitle = <h3 className='mb-3'>Get started with Subsocial</h3>
 
 export const OnBoardingCard = () => {
-  const { state: { currentStep, showOnBoarding } } = useBoarding()
+  const { state: { currentStep, showOnBoarding } } = useAuth()
 
-  const initialized = currentStep !== StepsEnum.Disable
+  const initialized = currentStep !== StepsEnum.Disabled
   if (!showOnBoarding) return null;
 
   return <div className={`DfCard ${initialized && 'active'}`}>
@@ -95,9 +95,9 @@ export const OnBoardingCard = () => {
 }
 
 export const OnBoardingMobileCard = () => {
-  const { state: { currentStep, showOnBoarding } } = useBoarding()
+  const { state: { currentStep, showOnBoarding } } = useAuth()
 
-  if (!showOnBoarding || currentStep === StepsEnum.Disable) return null;
+  if (!showOnBoarding || currentStep === StepsEnum.Disabled) return null;
 
   return <div className='DfMobileOnBoarding'>
     <span><b>Join Subsocial.</b> Step {currentStep + 1}/3</span>

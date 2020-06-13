@@ -8,13 +8,13 @@ import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import Queue from '@subsocial/react-components/Status/Queue';
 import Signer from '@subsocial/react-signer';
 import { MyAccountProvider } from '../components/auth/MyAccountContext';
-import { BlockAuthors, Events } from '@subsocial/react-query';
+import { Events } from '@subsocial/react-query';
 import { substrateUrl } from '../components/utils/env';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
 import { Content } from '../components/main/Content';
 
 import { isServerSide } from 'src/components/utils';
-import { OnBoardingProvider } from 'src/components/onboarding';
+import { AuthProvider } from 'src/components/auth/AuthContext';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = substrateUrl || settings.apiUrl || undefined;
@@ -24,25 +24,23 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
       {children}
     </Content>
     : <Queue>
-      <Api url={url}>
-        <OnBoardingProvider>
+      <MyAccountProvider>
+        <Api url={url}>
           <SubsocialApiProvider>
-            <MyAccountProvider>
-              <BlockAuthors>
-                <Events>
-                  <NotifCounterProvider>
-                    <Signer>
-                      <Content>
-                        {children}
-                      </Content>
-                    </Signer>
-                  </NotifCounterProvider>
-                </Events>
-              </BlockAuthors>
-            </MyAccountProvider>
+            <AuthProvider>
+              <Events>
+                <NotifCounterProvider>
+                  <Signer>
+                    <Content>
+                      {children}
+                    </Content>
+                  </Signer>
+                </NotifCounterProvider>
+              </Events>
+            </AuthProvider>
           </SubsocialApiProvider>
-        </OnBoardingProvider>
-      </Api>
+        </Api>
+      </MyAccountProvider>
     </Queue>;
 };
 

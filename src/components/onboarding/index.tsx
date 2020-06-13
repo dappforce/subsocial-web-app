@@ -1,13 +1,12 @@
 import React from 'react'
-import { OnBoardingProvider } from './OnBoardingContex'
 import { OnBoardingCard } from './OnBoarding'
+import { AuthProvider } from '../auth/AuthContext'
 
 export default () => (
-  <OnBoardingProvider>
+  <AuthProvider>
     <OnBoardingCard />
-  </OnBoardingProvider>
+  </AuthProvider>
 )
 
 export * from './OnBoarding'
-export * from './OnBoardingContex'
 export * from './OnBoardingPage'

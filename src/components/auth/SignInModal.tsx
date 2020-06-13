@@ -3,26 +3,87 @@ import React from 'react';
 import Button from 'antd/lib/button';
 import Modal from 'antd/lib/modal';
 import { Avatar, Divider, Alert } from 'antd';
-import { SignInFromExtension } from './SignInFromExtension';
+import { SignInFromExtension as SignInWithPolkadotExt } from './SignInWithPolkadotExt';
 import { OnBoardingButton } from '../onboarding';
-import { useIsSignIn } from './MyAccountContext';
+import { ModalKind, useAuth } from './AuthContext';
+
+type IsSteps = {
+  isSignIn: boolean,
+  isTokens: boolean,
+  isSpaces: boolean
+}
 
 type ModalProps = {
   open: boolean
   hide: () => void,
-  warn?: string
+  kind: ModalKind
 };
 
+type ModalContent = {
+  title: React.ReactNode,
+  body: React.ReactNode,
+  warn?: string
+}
+
+const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
+  const { isSignIn, isTokens } = isSteps
+  const content: ModalContent = {
+    title: null,
+    body: null
+  }
+
+  if (isSignIn) {
+    switch (kind) {
+      case 'OnBoarding': {
+        content.title = <><span className='flipH'>🎉</span> Success <span>🎉</span></>
+
+        content.body = <>
+          <div className='mb-4'>You have successfully signed in. Now you can:</div>
+          <OnBoardingButton />
+        </>
+        return content
+      }
+      case 'AuthRequired': {
+        content.title = 'Wait a sec...'
+        content.body = <OnBoardingButton />
+        content.warn = !isTokens ? 'You need some tokens to continue.' : undefined
+        return content
+      }
+    }
+  } else {
+    content.body = <>
+      <SignInWithPolkadotExt />
+      <Divider>or</Divider>
+      <div className='mb-2'>Alternatively, you can create a new account right here on the site.</div>
+      <Button block type='default' href='/bc/#/accounts' target='_blank' >
+        <Avatar size={18} src='substrate.svg' />
+        <span className='ml-2'>Create account</span>
+      </Button>
+    </>
+
+    switch (kind) {
+      case 'OnBoarding': {
+        content.title = `Sign in` // TODO maybe add ' with Polkadot{.js} extension' text
+        return content
+      }
+      case 'AuthRequired': {
+        content.title = 'Wait a sec...'
+        content.warn = 'You need to sign in to access this functionality.'
+        return content
+      }
+    }
+  }
+
+}
+
 export const SignInModal = (props: ModalProps) => {
-  const { open = false, hide, warn } = props;
-  const isSignIn = useIsSignIn()
+  const { open = false, hide, kind } = props;
+  const { state: { isSteps } } = useAuth()
+  const { warn, body, title } = getModalContent(kind, isSteps)
 
   return <Modal
     visible={open}
-    title={<h3 style={{ fontWeight: 'bold' }}>
-      {isSignIn
-        ? <><span className='flipH'>🎉</span> Success <span>🎉</span></>
-        : `Sign in with Polkadot{.js} extension`}</h3>}
+    title={ <h3 style={{ fontWeight: 'bold' }}>{title}</h3>}
     footer={null}
     width={428}
     className='text-center'
@@ -34,20 +95,7 @@ export const SignInModal = (props: ModalProps) => {
         type="warning"
         closable={false}
       />}
-      {isSignIn
-        ? <>
-          <div className='mb-4'>You have successfully signed in. Now you can:</div>
-          <OnBoardingButton />
-        </>
-        : <>
-          <SignInFromExtension />
-          <Divider>or</Divider>
-          <div className='mb-2'>Alternatively, you can create a new account right here on the site.</div>
-          <Button block type='default' href='/bc/#/accounts' target='_blank' >
-            <Avatar size={18} src='substrate.svg' />
-            <span className='ml-2'>Create account</span>
-          </Button>
-        </>}
+      {body}
     </div>
   </Modal>;
 };
