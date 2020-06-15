@@ -10,9 +10,7 @@ import { isClientSide } from '.';
 import { useMyAccount } from '../auth/MyAccountContext';
 import { newLogger } from '@subsocial/utils';
 import { useApi } from '@subsocial/react-hooks';
-import TxButton from '@subsocial/react-components/TxButton';
-import { TxButtonProps } from '@subsocial/react-components/types';
-import { useAuth } from '../auth/AuthContext';
+import TxButton, { TxButtonProps } from './AppsTxButton';
 
 const log = newLogger('TxButton')
 
@@ -42,20 +40,14 @@ function MockTxButton (props: TxButtonProps) {
 }
 
 function ResolvedButton (props: any) {
-  const { beforeNoAccountCallback } = props;
   const { isStorybook = false } = useStorybookContext()
   const { isApiReady } = useApi()
   const { state: { address } } = useMyAccount();
-  const { openSignInModal } = useAuth()
   return isStorybook
     ? <MockTxButton {...props} />
     : isApiReady
       ? <TxButton
         accountId={address}
-        noAccountCallback={() => {
-          beforeNoAccountCallback && beforeNoAccountCallback()
-          openSignInModal('AuthRequired')
-        }}
         {...props}
       />
       : null

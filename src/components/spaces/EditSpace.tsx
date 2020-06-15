@@ -132,7 +132,6 @@ const InnerForm = (props: FormProps) => {
               : 'Create new space'
             }
             isDisabled={!dirty || isSubmitting}
-            beforeNoAccountCallback={() => setSubmitting(false)}
             params={() => getTxParams({
               json: { name, desc, image, tags, navTabs },
               buildTxParamsCallback: newTxParams,
