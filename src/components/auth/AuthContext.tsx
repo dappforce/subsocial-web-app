@@ -50,10 +50,8 @@ export enum StepsEnum {
   CreateSpace
 }
 
-// TODO Rename to 'AuthContext'
 export const AuthContext = createContext<AuthContextProps>(contextStub)
 
-// TODO Rename to 'AuthProvider'
 export function AuthProvider (props: React.PropsWithChildren<any>) {
   const [ currentStep, setCurrentStep ] = useState(StepsEnum.Disabled)
   const { state: { address } } = useMyAccount()
@@ -72,14 +70,15 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
   useEffect(() => {
     let unsubBalance: (() => void) | undefined
     let unsubBlog: (() => void) | undefined
+
+    if (!isApiReady) return setCurrentStep(StepsEnum.Disabled);
+
     if (!isLogged) {
       setSignIn(false)
       return setCurrentStep(0)
     } else {
       setSignIn(true)
     }
-
-    if (!isApiReady) return setCurrentStep(StepsEnum.Disabled);
 
     const subBlog = async (isBalanse: boolean) => {
       unsubBlog = await api.query.social.spaceIdsByOwner(address, (data) => {
