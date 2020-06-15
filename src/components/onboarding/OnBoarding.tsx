@@ -2,7 +2,7 @@ import React from 'react'
 import { Steps, Button } from 'antd';
 import { useAuth, StepsEnum } from '../auth/AuthContext';
 import { isMobile } from 'react-device-detect';
-import SignInButton from '../auth/SingInButton';
+import { SignInButton } from '../auth/SingInButton';
 
 const { Step } = Steps;
 
@@ -34,7 +34,7 @@ export const OnBoardingButton = (props: ActionButtonProps) => {
   console.log('New current step: ', title, currentStep)
 
   switch (currentStep) {
-    case StepsEnum.Login: return <SignInButton />
+    case StepsEnum.Login: return <SignInButton isPrimary />
     case StepsEnum.GetTokens: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>
     case StepsEnum.CreateSpace: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>
     default: return null
