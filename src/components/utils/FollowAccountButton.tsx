@@ -27,9 +27,10 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
   const [ isFollow, setIsFollow ] = useState<boolean>();
 
   useEffect(() => {
-    if (!myAddress) return;
-
     let isSubscribe = true;
+
+    if (!myAddress) return isSubscribe && setIsFollow(false);
+
     const load = async () => {
       const _isFollow = await (substrate.isAccountFollower(myAddress, address))
       isSubscribe && setIsFollow(_isFollow);
@@ -39,7 +40,7 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
     return () => { isSubscribe = false; };
   }, [ myAddress ]);
 
-  if (!myAddress || isMyAddress(address)) return null;
+  if (isMyAddress(address)) return null;
 
   const buildTxParams = () => {
     return [ accountId ];

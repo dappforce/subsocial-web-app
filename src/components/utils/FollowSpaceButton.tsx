@@ -16,14 +16,11 @@ type FollowSpaceButtonProps = {
 };
 
 type InnerFollowSpaceButtonProps = FollowSpaceButtonProps & {
-  myAddress: string
+  myAddress?: string
 };
 
 export function FollowSpaceButton (props: FollowSpaceButtonProps) {
   const myAddress = useMyAddress()
-
-  // Account cannot follow itself
-  if (!myAddress) return null;
 
   return <InnerFollowSpaceButton {...props} myAddress={myAddress}/>;
 }
@@ -41,6 +38,8 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
 
   useEffect(() => {
     let isSubscribe = true;
+
+    if (!myAddress) return isSubscribe && setIsFollow(false)
 
     const load = async () => {
       const _isFollow = await (substrate.isSpaceFollower(myAddress, spaceId))

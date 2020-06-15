@@ -25,7 +25,7 @@ function TxButton ({ accountId, className, extrinsic: propsExtrinsic, icon, isBa
   const [ isSending, , setIsSending ] = useToggle(false);
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
   const noTx = (!isUnsigned && !accountId) || !isTokens;
-  console.log('No TX', noTx)
+
   const _onFailed = useCallback(
     (result: SubmittableResult | null): void => {
       setIsSending(false);
