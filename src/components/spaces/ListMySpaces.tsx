@@ -23,7 +23,7 @@ export const ListMySpaces: NextPage<Props> = (props) => {
         dataSource={spacesData}
         renderItem={(item, index) => <ViewSpacePage {...props} key={index} spaceData={item} previewDetails withFollowButton />}
         noDataDesc='You do not have your own spaces yet'
-        noDataExt={<Button href='/spaces/new'>Create my first space</Button>}
+        noDataExt={<Button href='/spaces/new' type='primary' ghost>Create my first space</Button>}
       />
     </div>
   </>

@@ -46,7 +46,7 @@ export const SignInFromExtension = () => {
   const SelectAccounts = () => (
     <>
       <div>Click on your account to sign in:</div>
-      <div className='text-left DfChooseAccountList'>
+      <div className='text-left DfChooseAccountList mt-4'>
         {accounts?.map(item => <Button
           block
           key={item.toString()}

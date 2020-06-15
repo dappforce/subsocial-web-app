@@ -525,8 +525,7 @@ hr {
 }
 
 .Profile--actions {
-  margin-top: $space_large;
-  margin-left: 4.75rem;
+  margin-left: 4rem;
 
   .DfCreateProfileButton {
     margin-top: $space_normal;
@@ -718,12 +717,12 @@ hr {
 .DfGreyLink:hover {
   a {
     color: $color_muted !important;
-    text-decoration: underline;
+    text-decoration: underline !important;
     cursor: pointer;
   }
 
   color: $color_muted !important;
-  text-decoration: underline;
+  text-decoration: underline !important;
   cursor: pointer;
 }
 

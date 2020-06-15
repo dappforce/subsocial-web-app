@@ -54,7 +54,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
     content.body = <>
       <SignInWithPolkadotExt />
       <Divider>or</Divider>
-      <div className='mb-2'>Alternatively, you can create a new account right here on the site.</div>
+      <div className='mb-4'>Alternatively, you can create a new account right here on the site.</div>
       <Button block type='default' href='/bc/#/accounts' target='_blank' >
         <Avatar size={18} src='substrate.svg' />
         <span className='ml-2'>Create account</span>
@@ -91,6 +91,7 @@ export const SignInModal = (props: ModalProps) => {
   >
     <div className='p-4 pt-0'>
       {warn && <Alert
+        className='mb-4'
         message={warn}
         type="warning"
         closable={false}

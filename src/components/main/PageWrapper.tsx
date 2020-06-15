@@ -15,7 +15,7 @@ export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPa
   const { state: { showOnBoarding } } = useAuth()
   const rightContent = withOnBoarding && showOnBoarding ? <OnBoardingCard /> : rightPanel
   return isBrowser
-    ? <div className='d-flex'>
+    ? <div className='d-flex w-100'>
       {leftPanel && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
       <Section className={`DfMainContent ${className}`}>{children}</Section>
       {rightContent && <div className='DfRightPanel DfPanel'>{rightContent}</div>}
