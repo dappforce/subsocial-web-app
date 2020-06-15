@@ -7,6 +7,7 @@ import { AddressProps } from './utils/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { InfoDetails } from '.';
 import { isBrowser } from 'react-device-detect';
+import { SignOutButton } from 'src/components/auth/SingInButton';
 
 export const SelectAddressPreview: React.FunctionComponent<AddressProps> = ({
   address,
@@ -32,6 +33,7 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   const menu = (
     <Menu>
       <SelectAccount reputation={reputation || 0}/>
+      <SignOutButton />
     </Menu>
   );
 
