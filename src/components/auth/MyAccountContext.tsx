@@ -4,6 +4,7 @@ import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
 import { equalAddresses } from '../utils/substrate';
 import { InjectedAccountExt } from '../utils/types';
+import { isWeb3Injected } from '../utils/Api';
 
 const log = newLogger('MyAccountContext')
 
@@ -36,8 +37,9 @@ type MyAccountAction = {
 
 function reducer (state: MyAccountState, action: MyAccountAction): MyAccountState {
   function forget () {
-    log.info('Forget my address');
+    log.info('Forget my address and injected accounts');
     store.remove(MY_ADDRESS);
+    store.remove(INJECTED_ACCOUNTS)
     return { ...state, address: undefined };
   }
 
@@ -47,7 +49,11 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
   switch (action.type) {
     case 'reload':
       address = readMyAddress();
-      injectedAccounts = readInjectedAccounts()
+      injectedAccounts = readInjectedAccounts();
+      const isSignInWithPolkadotExt = !!(injectedAccounts.find((x) => x.address === address))
+
+      if (isSignInWithPolkadotExt && !isWeb3Injected) { return forget() }
+
       log.info('Reload my address:', address);
       return { ...state, address, injectedAccounts, inited: true };
 
@@ -78,12 +84,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
       return state;
 
     case 'forget':
-      address = action.address;
-      const isMyAddress = address && address === readMyAddress();
-      if (!address || isMyAddress) {
-        return forget();
-      }
-      return state;
+      return forget();
 
     default:
       throw new Error('No action type provided');
@@ -105,7 +106,7 @@ export type MyAccountContextProps = {
   dispatch: React.Dispatch<MyAccountAction>,
   setAddress: (address: string) => void,
   setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => void,
-  forget: (address: string) => void
+  signOut: () => void
 };
 
 const contextStub: MyAccountContextProps = {
@@ -113,7 +114,7 @@ const contextStub: MyAccountContextProps = {
   dispatch: functionStub,
   setAddress: functionStub,
   setInjectedAccounts: functionStub,
-  forget: functionStub
+  signOut: functionStub
 };
 
 export const MyAccountContext = createContext<MyAccountContextProps>(contextStub);
@@ -132,7 +133,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
     dispatch,
     setAddress: (address: string) => dispatch({ type: 'setAddress', address }),
     setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => dispatch({ type: 'setInjectedAccounts', injectedAccounts }),
-    forget: (address: string) => dispatch({ type: 'forget', address })
+    signOut: () => dispatch({ type: 'forget' })
   };
   return (
     <MyAccountContext.Provider value={contextValue}>
