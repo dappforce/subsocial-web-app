@@ -2,7 +2,7 @@ import React from 'react'
 import { Steps, Button } from 'antd';
 import { useAuth, StepsEnum } from '../auth/AuthContext';
 import { isMobile } from 'react-device-detect';
-import { SignInButton } from '../auth/SingInButton';
+import { SignInButton } from '../auth/AuthButtons';
 
 const { Step } = Steps;
 
@@ -30,8 +30,6 @@ export const OnBoardingButton = (props: ActionButtonProps) => {
   const { state: { currentStep } } = useAuth()
 
   const title = stepItems[currentStep]?.title
-
-  console.log('New current step: ', title, currentStep)
 
   switch (currentStep) {
     case StepsEnum.Login: return <SignInButton isPrimary />

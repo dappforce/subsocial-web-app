@@ -6,6 +6,7 @@ import { Avatar, Divider, Alert } from 'antd';
 import { SignInFromExtension as SignInWithPolkadotExt } from './SignInWithPolkadotExt';
 import { OnBoardingButton } from '../onboarding';
 import { ModalKind, useAuth } from './AuthContext';
+import { AccountSelector } from '../profile-selector/AccountSelector';
 
 type IsSteps = {
   isSignIn: boolean,
@@ -49,6 +50,11 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         content.warn = !isTokens ? 'You need some tokens to continue.' : undefined
         return content
       }
+      case 'ChangeAccount': {
+        content.title = 'Change account'
+        content.body = <AccountSelector />
+        return content
+      }
     }
   } else {
     content.body = <>
@@ -72,6 +78,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         return content
       }
     }
+    return content
   }
 
 }
@@ -83,7 +90,7 @@ export const SignInModal = (props: ModalProps) => {
 
   return <Modal
     visible={open}
-    title={ <h3 style={{ fontWeight: 'bold' }}>{title}</h3>}
+    title={ <h3 style={{ fontWeight: 'bold', paddingTop: 0 }}>{title}</h3>}
     footer={null}
     width={428}
     className='text-center'
