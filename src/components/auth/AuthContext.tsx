@@ -21,7 +21,7 @@ function functionStub () {
   throw new Error('Function needs to be set in OnBoardingContext')
 }
 
-export type ModalKind = 'OnBoarding' | 'AuthRequired'
+export type ModalKind = 'OnBoarding' | 'AuthRequired' | 'ChangeAccount'
 
 export type AuthContextProps = {
   state: AuthState,
