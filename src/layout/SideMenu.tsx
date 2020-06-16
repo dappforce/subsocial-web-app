@@ -11,45 +11,20 @@ import Link from 'next/link';
 import { SpaceData } from '@subsocial/types/dto';
 import { newLogger } from '@subsocial/utils';
 import { useNotifCounter } from '../components/utils/NotifCounter';
-import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems';
+import { DefaultMenu, isDivider, PageLink, MenuItem } from './SideMenuItems';
 
 const log = newLogger('SideMenu')
 
-const InnerMenu = () => {
-  const { subsocial, substrate } = useSubsocialApi();
-  const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
+type Props = {
+  items: MenuItem[],
+  beforeItems?: React.ReactNode,
+  afterItems?: React.ReactNode
+}
+
+export const MenuItems = ({ items, beforeItems, afterItems }: Props) => {
+  const { toggle } = useSidebarCollapsed();
   const { pathname } = useRouter();
-  const myAddress = useMyAddress();
-  const isLoggedIn = useIsSignIn();
   const { unreadCount } = useNotifCounter()
-
-  const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);
-  const [ loaded, setLoaded ] = useState(false);
-
-  useEffect(() => {
-    if (!myAddress) return;
-
-    let isSubscribe = true;
-
-    const loadSpacesData = async () => {
-      setLoaded(false);
-      const ids = await substrate.spaceIdsFollowedByAccount(myAddress)
-      const spacesData = await subsocial.findSpaces(ids);
-      if (isSubscribe) {
-        setFollowedSpacesData(spacesData);
-        setLoaded(true);
-      }
-    };
-
-    loadSpacesData().catch(err =>
-      log.error('Failed to load spaces followed by the current user:', err));
-
-    return () => { isSubscribe = false; };
-  }, [ triggerFollowed, myAddress ]);
-
-  const menuItems = isLoggedIn && myAddress
-    ? buildAuthorizedMenu(myAddress)
-    : DefaultMenu
 
   const goToPage = ([ url, as ]: string[]) => {
     isMobile && toggle()
@@ -84,6 +59,53 @@ const InnerMenu = () => {
       )
   }
 
+  return (
+    <Menu
+      selectedKeys={[ pathname ]}
+      mode='inline'
+      theme='light'
+      style={{ height: '100%', borderRight: 0 }}
+    >
+      {beforeItems}
+      {items.map((item, i) => isDivider(item)
+        ? <Menu.Divider key={'divider-' + i} />
+        : renderPageLink(item)
+      )}
+      {afterItems}
+    </Menu>
+  );
+}
+
+const InnerMenu = () => {
+  const { subsocial, substrate } = useSubsocialApi();
+  const { state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
+  const { pathname } = useRouter();
+  const myAddress = useMyAddress();
+  const isLoggedIn = useIsSignIn();
+  const [ loaded, setLoaded ] = useState(false);
+  const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);
+
+  useEffect(() => {
+    if (!myAddress) return;
+
+    let isSubscribe = true;
+
+    const loadSpacesData = async () => {
+      setLoaded(false);
+      const ids = await substrate.spaceIdsFollowedByAccount(myAddress)
+      const spacesData = await subsocial.findSpaces(ids);
+      if (isSubscribe) {
+        setFollowedSpacesData(spacesData);
+        setLoaded(true);
+      }
+    };
+
+    loadSpacesData().catch(err =>
+      log.error('Failed to load spaces followed by the current user:', err));
+
+    return () => { isSubscribe = false; };
+  }, [ triggerFollowed, myAddress ]);
+
   const renderSubscriptions = () =>
     <Menu.ItemGroup
       className={`DfSideMenu--FollowedSpaces ${collapsed && 'collapsed'}`}
@@ -103,12 +125,13 @@ const InnerMenu = () => {
       theme='light'
       style={{ height: '100%', borderRight: 0 }}
     >
-      {menuItems.map((item, i) => isDivider(item)
-        ? <Menu.Divider key={'divider-' + i} />
-        : renderPageLink(item)
-      )}
-      {isLoggedIn && <Menu.Divider />}
-      {isLoggedIn && renderSubscriptions()}
+      <MenuItems items={DefaultMenu}
+        afterItems={<>
+          {isLoggedIn && <Menu.Divider />}
+          {isLoggedIn && renderSubscriptions}
+        </>
+        } />
+
     </Menu>
   );
 };

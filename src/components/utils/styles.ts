@@ -14,6 +14,7 @@ import './styles/rx.css';
 import './styles/components.css';
 import './styles/github-markdown.css';
 import './styles/subsocial.css';
+import './styles/utils.css';
 import './styles/subsocial-mobile.css';
 
 import 'easymde/dist/easymde.min.css';

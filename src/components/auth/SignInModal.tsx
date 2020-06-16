@@ -90,10 +90,10 @@ export const SignInModal = (props: ModalProps) => {
 
   return <Modal
     visible={open}
-    title={ <h3 style={{ fontWeight: 'bold', paddingTop: 0 }}>{title}</h3>}
+    title={ <h3 style={{ fontWeight: 'bold' }}>{title}</h3>}
     footer={null}
     width={428}
-    className='text-center'
+    className='text-center DfSignInModal'
     onCancel={hide}
   >
     <div className='p-4 pt-0'>

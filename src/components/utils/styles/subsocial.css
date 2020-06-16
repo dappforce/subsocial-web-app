@@ -137,7 +137,7 @@ body,
 
 .DfBrand {
   font-size: $font_big;
-  color: $color_menu_font;
+  color: $color_ant_grey;
   cursor: pointer;
 
   img {
@@ -147,7 +147,7 @@ body,
 }
 
 .DfBrand:hover {
-  color: $color_menu_font;
+  color: $color_ant_grey;
 }
 
 .DfSummary {
@@ -202,7 +202,7 @@ body,
 }
 
 .DfMenuSpaceLink {
-  color: $color_menu_font;
+  color: $color_ant_grey;
   padding: $space_tiny;
   padding-left: $space_normal;
   display: block;
@@ -1613,9 +1613,11 @@ a.DfStatItem {
   display: flex;
   margin: 0 1rem;
 
-  &:after {
-    content: '▼';
-    zoom: .8;
+  &.icon {
+    &:after {
+      content: '▼';
+      zoom: .8;
+    }
   }
 
   .DfAddressIcon {
@@ -1644,9 +1646,6 @@ a.DfStatItem {
 
 .DfSelectAccount {
   padding: $space_small $space_normal;
-  min-width: 385px;
-  max-width: 385px;
-  width: 385px;
 
   .DfProfileInfo{
       padding-bottom: $space_tiny;
@@ -1798,12 +1797,18 @@ a.DfStatItem {
   margin: 0 -1rem;
 }
 
-.flipH {
-  display: inline-block;
-  transform: scale(-1, 1) !important;
-  -moz-transform: scale(-1, 1) !important;
-  -webkit-transform: scale(-1, 1) !important;
-  -o-transform: scale(-1, 1) !important;
-  -ms-transform: scale(-1, 1) !important;
-  transform: scale(-1, 1) !important;
+.DfChangeAccountButton {
+  color: inherit !important;
+  padding-left: 0 !important;
+  transition: inherit !important
+}
+
+.DfSignInModal {
+  .ant-modal-body {
+    padding-top: 0;
+  }
+  .ant-divider-inner-text {
+    color: $color_ant_grey;
+    font-size: $font_normal;
+  }
 }

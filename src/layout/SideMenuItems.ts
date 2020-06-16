@@ -14,7 +14,7 @@ export type PageLink = {
   isAdvanced?: boolean
 }
 
-type MenuItem = PageLink | Divider
+export type MenuItem = PageLink | Divider
 
 export const isDivider = (item: MenuItem): item is Divider =>
   item === Divider
@@ -74,8 +74,6 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
       name: 'New space',
       page: [ '/spaces/new' ],
       image: 'plus'
-    },
-    Divider,
-    ...DefaultMenu
+    }
   ]
 }
