@@ -1800,7 +1800,8 @@ a.DfStatItem {
 .DfChangeAccountButton {
   color: inherit !important;
   padding-left: 0 !important;
-  transition: inherit !important
+  transition: none !important;
+  -webkit-transition: none !important;
 }
 
 .DfSignInModal {
@@ -1808,7 +1809,7 @@ a.DfStatItem {
     padding-top: 0;
   }
   .ant-divider-inner-text {
-    color: $color_ant_grey;
+    color: $color_muted;
     font-size: $font_normal;
   }
 }
