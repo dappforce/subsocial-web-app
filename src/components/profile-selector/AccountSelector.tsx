@@ -5,8 +5,9 @@ import { ProfileData } from '@subsocial/types';
 import { SelectAddressPreview } from '../profiles/address-views';
 import { Loading } from '../utils';
 import { Button, Avatar, Divider } from 'antd';
-import { useMyAccount } from '../auth/MyAccountContext';
+import { useMyAccount, useMyAddress } from '../auth/MyAccountContext';
 import { isWeb3Injected } from '../utils/Api';
+import { useAuth } from '../auth/AuthContext';
 
 type SelectAccountButtons = {
   accounts: string[],
@@ -15,14 +16,18 @@ type SelectAccountButtons = {
 
 const SelectAccountButtons = ({ accounts: addresses, profilesByAddressMap }: SelectAccountButtons) => {
   const { setAddress } = useMyAccount()
+  const { hideSignInModal } = useAuth()
 
   return <>
     {addresses.map(item => <Button
       block
       key={item.toString()}
-      className='DfChooseAccount mt-2'
+      className='DfChooseAccountButton mt-2'
       style={{ cursor: 'pointer', height: 'auto' }}
-      onClick={() => { setAddress(item) }}
+      onClick={async () => {
+        await hideSignInModal()
+        await setAddress(item)
+      }}
     >
       <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
     </Button>)}
@@ -34,6 +39,7 @@ export const AccountSelector = () => {
   const [ localAddresses, setLocalAddresses ] = useState<string[]>()
   const [ developAddresses, setDevelopAddresses ] = useState<string[]>()
   const [ profilesByAddressMap ] = useState(new Map<string, ProfileData>())
+  const currentAddress = useMyAddress()
   const { subsocial } = useSubsocialApi()
 
   useEffect(() => {
@@ -48,6 +54,9 @@ export const AccountSelector = () => {
 
       const addresses = accounts.map(account => {
         const { address, meta } = account;
+
+        if (address === currentAddress) return address
+
         if (meta.isInjected) {
           console.log(account)
           extensionAddresses.push(address)
@@ -74,7 +83,7 @@ export const AccountSelector = () => {
     }
 
     loadProfiles().catch(err => console.error(err))// TODO change on logger
-  }, [ false ])
+  }, [ currentAddress ])
 
   if (!extensionAddresses || !localAddresses || !developAddresses) return <Loading />
 
@@ -98,6 +107,15 @@ export const AccountSelector = () => {
   const NoAccounts = () => (
     <span>No account found. Please open your Polkadot extension and create a new account or import existing.</span>
   )
+
+  const CurrentAccount = () => {
+    if (!currentAddress) return <div>Click on your account to sign in:</div>
+
+    return <>
+      <Divider className='mt-0'>Current account:</Divider>
+      <div style={{ paddingLeft: '.75rem' }}><SelectAddressPreview address={currentAddress} owner={profilesByAddressMap.get(currentAddress)} /></div>
+    </>
+  }
 
   type AccountsPanelProps = {
     accounts: string[],
@@ -125,7 +143,7 @@ export const AccountSelector = () => {
       </>
     }
 
-    if (isWeb3Injected) {
+    if (!isWeb3Injected) {
       return renderContent(<NoExtension />)
     }
 
@@ -136,6 +154,7 @@ export const AccountSelector = () => {
   }
 
   return <div className='DfAccountSelector'>
+    <CurrentAccount />
     <ExtensionAccountPanel />
     <AccountPanel accounts={localAddresses} kind='Local' />
     <AccountPanel accounts={developAddresses} kind='Test'/>

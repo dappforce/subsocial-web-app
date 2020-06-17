@@ -1594,18 +1594,30 @@ a.DfStatItem {
 
 .DfChooseAccount {
   display: flex;
-  padding: $space_small;
 
   .DfAddressInfo {
     display: block
   }
 }
 
-/* .DfChooseAccount:last-of-type {
-  border-bottom: none;
-} */
+.DfChooseAccountButton {
+  padding: $space_small;
+  cursor: pointer; 
+  height: 'auto';
 
-.DfChooseAccount:hover {
+  .DfDisabled {
+    .ant-btn-disabled,
+    .ant-btn.disabled,
+    .ant-btn[disabled]{
+      cursor: default; 
+      border: none;
+      background-color: none;
+  }
+
+  }
+}
+
+.DfChooseAccountButton:hover {
   background-color: #e6f7ff;
 }
 
@@ -1621,6 +1633,8 @@ a.DfStatItem {
   }
 
   .DfAddressIcon {
+    display: flex;
+    align-items: center;
     margin: $space_normal 0;
 
     .ui--IdentityIcon {
@@ -1797,7 +1811,7 @@ a.DfStatItem {
   margin: 0 -1rem;
 }
 
-.DfChangeAccountButton {
+.DfButtonAsMenuItem {
   color: inherit !important;
   padding-left: 0 !important;
   transition: none !important;
@@ -1805,7 +1819,8 @@ a.DfStatItem {
 }
 
 .DfSignInModal {
-  .ant-modal-body {
+  .ant-divider-inner-text:first-of-type {
+    margin-top: 0;
     padding-top: 0;
   }
   .ant-divider-inner-text {

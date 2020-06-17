@@ -16,7 +16,7 @@ export const Balance: React.FunctionComponent<BalanceProps> = ({ address }) => {
   return (
     <BalanceDisplay
       label={isBrowser ? 'Balance: ' : ''}
-      className='ui--AddressSummary-balance'
+      className='ui--AddressSummary-balance w-100'
       params={address}
     />
   );

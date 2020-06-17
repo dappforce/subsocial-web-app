@@ -53,36 +53,33 @@ export const SignInButton = ({
   />
 )
 
-type ChangeAccountButtonProps = InnerAuthButtonProps
+type SwitchAccountButtonProps = InnerAuthButtonProps
 
-export const ChangeAccountButton = ({
+export const SwitchAccountButton = ({
   size,
-  title = 'Change account'
-}: ChangeAccountButtonProps) => (
+  title = 'Switch account'
+}: SwitchAccountButtonProps) => (
   <OpenAuthButton
     kind={'ChangeAccount'}
     type={'link'}
     size={size}
     title={title}
-    className='DfChangeAccountButton'
+    className='DfButtonAsMenuItem'
   />
 )
 
-type SignOutButtonProps = InnerAuthButtonProps & {
-
-};
+type SignOutButtonProps = InnerAuthButtonProps
 
 export function SignOutButton ({
   size = isMobile ? 'small' : 'default',
   title = 'Sign out'
 }: SignOutButtonProps) {
   const { signOut } = useMyAccount()
-  return <div className='m-3'>
-    <Button
-      block
-      size={size}
-      onClick={() => signOut()}>
-      {title}
-    </Button>
-  </div>
+  return <Button
+    type='link'
+    size={size}
+    className='DfButtonAsMenuItem'
+    onClick={() => signOut()}>
+    {title}
+  </Button>
 }

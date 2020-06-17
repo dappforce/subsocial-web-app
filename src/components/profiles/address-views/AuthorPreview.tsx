@@ -24,7 +24,7 @@ export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, addre
   return <>
     <div className='Df--AddressComponents-details'>
       {address && isApiReady &&
-        <div><Balance address={address.toString()} /></div>
+        <Balance address={address.toString()} />
       }
       {details && <div>{details}</div>}
     </div>

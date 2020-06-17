@@ -51,7 +51,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         return content
       }
       case 'ChangeAccount': {
-        content.title = 'Change account'
+        content.title = 'Switch account'
         content.body = <AccountSelector />
         return content
       }

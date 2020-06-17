@@ -26,6 +26,7 @@ export type ModalKind = 'OnBoarding' | 'AuthRequired' | 'ChangeAccount'
 export type AuthContextProps = {
   state: AuthState,
   openSignInModal: (kind?: ModalKind) => void,
+  hideSignInModal: () => void,
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
 }
 
@@ -40,6 +41,7 @@ const contextStub: AuthContextProps = {
     showOnBoarding: false
   },
   openSignInModal: functionStub,
+  hideSignInModal: functionStub,
   setCurrentStep: functionStub
 }
 
@@ -134,10 +136,11 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       }
     },
     openSignInModal: (kind?: ModalKind) => {
-      console.log('set warn')
       setKind(kind || 'OnBoarding')
-      console.log('Open modal 1')
       setShowModal(true)
+    },
+    hideSignInModal: () => {
+      address && setShowModal(false)
     },
     setCurrentStep
   }

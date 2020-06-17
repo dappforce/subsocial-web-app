@@ -19,12 +19,9 @@ export const SignInFromExtension = () => {
   }, [ isWeb3Injected ])
 
   const SelectAccounts = () => (
-    <>
-      <div>Click on your account to sign in:</div>
-      <div className='text-left DfChooseAccountList mt-4'>
-        <AccountSelector />
-      </div>
-    </>
+    <div className='text-left DfChooseAccountList mt-4'>
+      <AccountSelector />
+    </div>
   )
 
   return loading ? <Loading/> : <SelectAccounts />
