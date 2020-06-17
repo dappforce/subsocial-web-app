@@ -18,11 +18,5 @@ export const SignInFromExtension = () => {
 
   }, [ isWeb3Injected ])
 
-  const SelectAccounts = () => (
-    <div className='text-left DfChooseAccountList mt-4'>
-      <AccountSelector />
-    </div>
-  )
-
-  return loading ? <Loading/> : <SelectAccounts />
+  return loading ? <Loading/> : <AccountSelector />
 }
