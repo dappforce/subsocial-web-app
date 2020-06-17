@@ -8,7 +8,7 @@ import { withCalls, withMulti } from '@subsocial/react-api';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
-import { socialQueryToProp, getTxParams } from '../utils/index';
+import { getTxParams, profilesQueryToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import Router from 'next/router';
@@ -227,8 +227,8 @@ const InnerForm = (props: FormProps) => {
               ipfs
             })}
             tx={profile
-              ? 'social.updateProfile'
-              : 'social.createProfile'
+              ? 'profiles.updateProfile'
+              : 'profiles.createProfile'
             }
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
@@ -288,8 +288,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
 export const EditFormWithValidation = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    socialQueryToProp('usernameMinLen', { propName: 'usernameMinLen' }),
-    socialQueryToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
+    profilesQueryToProp('minUsernameLen', { propName: 'usernameMinLen' }),
+    profilesQueryToProp('maxUsernameLen', { propName: 'usernameMaxLen' })
   )
 );
 

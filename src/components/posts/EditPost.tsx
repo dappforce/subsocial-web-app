@@ -11,7 +11,7 @@ import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
 import { useMyAddress } from '../auth/MyAccountContext';
-import { socialQueryToProp, getTxParams } from '../utils/index';
+import { getTxParams, postsQueryToProp, spacesQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils';
 import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
@@ -158,8 +158,8 @@ const InnerForm = (props: FormProps) => {
         ipfs
       })}
       tx={struct
-        ? 'social.updatePost'
-        : 'social.createPost'
+        ? 'posts.updatePost'
+        : 'posts.createPost'
       }
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
@@ -360,10 +360,10 @@ export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
   withIdFromUrl,
   withCalls<OuterProps>(
-    socialQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
+    postsQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
   LoadStruct,
   withCalls<OuterProps>(
-    socialQueryToProp(`spaceIdsByOwner`, { paramName: 'myAddress', propName: 'spaceIds' })
+    spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'myAddress', propName: 'spaceIds' })
   )
 );

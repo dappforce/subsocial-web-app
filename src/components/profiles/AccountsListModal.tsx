@@ -2,7 +2,7 @@ import React from 'react';
 
 import { withCalls, withMulti } from '@subsocial/react-api';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { socialQueryToProp } from '../utils/index';
+import { spaceFollowsQueryToProp, profileFollowsQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { ProfilePreviewWithOwner } from './address-views';
@@ -48,20 +48,20 @@ const InnerAccountsListModal = (props: Props) => {
 export const SpaceFollowersModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    socialQueryToProp('spaceFollowers', { paramName: 'id', propName: 'accounts' })
+    spaceFollowsQueryToProp('spaceFollowers', { paramName: 'id', propName: 'accounts' })
   )
 );
 
 export const AccountFollowersModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    socialQueryToProp('accountFollowers', { paramName: 'id', propName: 'accounts' })
+    profileFollowsQueryToProp('accountFollowers', { paramName: 'id', propName: 'accounts' })
   )
 );
 
 export const AccountFollowingModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    socialQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'accounts' })
+    profileFollowsQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'accounts' })
   )
 );

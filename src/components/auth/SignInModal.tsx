@@ -5,7 +5,7 @@ import Modal from 'antd/lib/modal';
 import { Avatar, Divider, Alert } from 'antd';
 import { SignInFromExtension as SignInWithPolkadotExt } from './SignInWithPolkadotExt';
 import { OnBoardingButton } from '../onboarding';
-import { ModalKind, useAuth } from './AuthContext';
+import { ModalKind, useAuth, StepsEnum } from './AuthContext';
 import { AccountSelector } from '../profile-selector/AccountSelector';
 
 type IsSteps = {
@@ -45,10 +45,13 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         return content
       }
       case 'AuthRequired': {
-        content.title = 'Wait a sec...'
-        content.body = <OnBoardingButton />
-        content.warn = !isTokens ? 'You need some tokens to continue.' : undefined
-        return content
+        if (!isTokens) {
+          content.title = 'Wait a sec...'
+          content.body = <OnBoardingButton onlyStep={StepsEnum.GetTokens} />
+          content.warn = 'You need some tokens to continue.'
+          return content
+        }
+        return content;
       }
       case 'ChangeAccount': {
         content.title = 'Switch account'

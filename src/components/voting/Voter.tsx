@@ -106,10 +106,10 @@ export const Voter = (props: VoterProps) => {
         params={buildTxParams(reactionName)}
         onSuccess={() => setReloadTrigger(!reloadTrigger)}
         tx={!reactionState
-          ? `social.createPostReaction`
+          ? `reactions.createPostReaction`
           : (reactionKind !== `${reactionName}`)
-            ? `social.updatePostReaction`
-            : `social.deletePostReaction`}
+            ? `reactions.updatePostReaction`
+            : `reactions.deletePostReaction`}
       />);
     };
 

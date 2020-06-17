@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '@subsocial/react-api';
 import * as DfForms from '../utils/forms';
-import { socialQueryToProp } from '../utils/index';
+import { spacesQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils';
 import { useMyAddress } from '../auth/MyAccountContext';
 import BN from 'bn.js';
@@ -140,8 +140,8 @@ const InnerForm = (props: FormProps) => {
             })
             }
             tx={struct
-              ? 'social.updateSpace'
-              : 'social.createSpace'
+              ? 'spaces.updateSpace'
+              : 'spaces.createSpace'
             }
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
@@ -235,8 +235,8 @@ function LoadStruct (props: LoadStructProps) {
 }
 
 const commonSubstrateQueries = [
-  socialQueryToProp('handleMinLen', { propName: 'handleMinLen' }),
-  socialQueryToProp('handleMaxLen', { propName: 'handleMaxLen' })
+  spacesQueryToProp('minHandleLen', { propName: 'handleMinLen' }),
+  spacesQueryToProp('maxHandleLen', { propName: 'handleMaxLen' })
 ]
 
 export const NewSpace = withMulti(
@@ -250,7 +250,7 @@ export const EditSpace = withMulti(
   LoadStruct,
   withSpaceIdFromUrl,
   withCalls<OuterProps>(
-    socialQueryToProp('spaceById', { paramName: 'id', propName: 'structOpt' }),
+    spacesQueryToProp('spaceById', { paramName: 'id', propName: 'structOpt' }),
     ...commonSubstrateQueries
   )
 );

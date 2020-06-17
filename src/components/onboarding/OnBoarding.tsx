@@ -22,16 +22,19 @@ type StepItem = {
 
 type ActionButtonProps = {
   asLink?: boolean,
-  block?: boolean
+  block?: boolean,
+  onlyStep?: StepsEnum
 }
 
 export const OnBoardingButton = (props: ActionButtonProps) => {
-  const { asLink, block } = props
+  const { asLink, block, onlyStep } = props
   const { state: { currentStep } } = useAuth()
 
-  const title = stepItems[currentStep]?.title
+  const step = onlyStep || currentStep
 
-  switch (currentStep) {
+  const title = stepItems[step]?.title
+
+  switch (step) {
     case StepsEnum.Login: return <SignInButton isPrimary />
     case StepsEnum.GetTokens: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>
     case StepsEnum.CreateSpace: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>

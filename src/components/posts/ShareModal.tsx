@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withCalls, withMulti } from '@subsocial/react-api';
-import { socialQueryToProp, getTxParams } from '../utils/index';
+import { getTxParams, spacesQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import Link from 'next/link';
@@ -94,7 +94,7 @@ const InnerShareModal = (props: Props) => {
         setIpfsHash,
         ipfs
       })}
-      tx={'social.createPost'}
+      tx={'posts.createPost'}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
     />
@@ -156,6 +156,6 @@ export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    socialQueryToProp(`spaceIdsByOwner`, { paramName: 'address', propName: 'spaceIds' })
+    spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'address', propName: 'spaceIds' })
   )
 );

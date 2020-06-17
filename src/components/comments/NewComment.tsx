@@ -119,7 +119,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
 
   const newTxParams = (hash: IpfsHash) => [ new OptionId(), newExtension, hash ];
 
-  return <InnerEditComment newTxParams={newTxParams} label='Comment' extrinsic='social.createPost' callback={callback} withCancel={withCancel} />;
+  return <InnerEditComment newTxParams={newTxParams} label='Comment' extrinsic='posts.createPost' callback={callback} withCancel={withCancel} />;
 }
 
 type EditCommentProps = {
@@ -141,5 +141,5 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
     return [ struct.id, update ];
   }
 
-  return <InnerEditComment newTxParams={newTxParams} label='Edit' extrinsic='social.updatePost' callback={callback} content={content} withCancel />;
+  return <InnerEditComment newTxParams={newTxParams} label='Edit' extrinsic='posts.updatePost' callback={callback} content={content} withCancel />;
 }

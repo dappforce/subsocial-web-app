@@ -83,7 +83,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
     }
 
     const subBlog = async (isBalanse: boolean) => {
-      unsubBlog = await api.query.social.spaceIdsByOwner(address, (data) => {
+      unsubBlog = await api.query.spaces.spaceIdsByOwner(address, (data) => {
         if (data.isEmpty) {
           setSpaces(false)
           if (isBalanse) {

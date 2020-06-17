@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { withCalls, withMulti } from '@subsocial/react-api';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { socialQueryToProp } from '../utils/index';
+import { profileFollowsQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';
 import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { ProfilePreviewWithOwner } from './address-views';
@@ -52,6 +52,6 @@ const InnerFollowingModal = (props: Props) => {
 export const AccountFollowingModal = withMulti(
   InnerFollowingModal,
   withCalls<Props>(
-    socialQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'following' })
+    profileFollowsQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'following' })
   )
 );

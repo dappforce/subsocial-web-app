@@ -3,7 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
-import { socialQueryToProp } from '../utils/index';
+import { spacesQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils';
 import { useMyAddress } from '../auth/MyAccountContext';
 import Router from 'next/router';
@@ -240,7 +240,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
               setIpfsHash,
               ipfs
             })}
-            tx={'social.updateSpace'}
+            tx={'spaces.updateSpace'}
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
           />
@@ -335,7 +335,7 @@ export const EditNavigation = withMulti(
   LoadStruct,
   withSpaceIdFromUrl,
   withCalls<OuterProps>(
-    socialQueryToProp('spaceById', { paramName: 'id', propName: 'structOpt' })
+    spacesQueryToProp('spaceById', { paramName: 'id', propName: 'structOpt' })
   )
 );
 

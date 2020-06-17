@@ -6,7 +6,7 @@ import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import { Pluralize } from '../utils/Plularize';
 import BN from 'bn.js';
 import { withCalls, withMulti } from '@subsocial/react-api';
-import { socialQueryToProp } from '../utils';
+import { postsQueryToProp } from '../utils';
 import { nonEmptyStr } from '@subsocial/utils';
 
 type StatsProps = {
@@ -60,6 +60,6 @@ const InnerStatsPanel = (props: StatsProps) => {
 export default withMulti<StatsProps>(
   InnerStatsPanel,
   withCalls(
-    socialQueryToProp('postById', 'id')
+    postsQueryToProp('postById', 'id')
   )
 );

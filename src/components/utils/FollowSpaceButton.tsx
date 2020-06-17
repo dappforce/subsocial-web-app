@@ -63,8 +63,8 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
     }
     params={buildTxParams()}
     tx={isFollow
-      ? `social.unfollowSpace`
-      : `social.followSpace`
+      ? `spaceFollows.unfollowSpace`
+      : `spaceFollows.followSpace`
     }
     onSuccess={TxSuccess}
   /> : <Loading/>;

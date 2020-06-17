@@ -57,8 +57,8 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
         : 'Follow'}
       params={buildTxParams()}
       tx={isFollow
-        ? `social.unfollowAccount`
-        : `social.followAccount`}
+        ? `profileFollows.unfollowAccount`
+        : `profileFollows.followAccount`}
       onSuccess={() => setIsFollow(!isFollow)}
       withSpinner
     />

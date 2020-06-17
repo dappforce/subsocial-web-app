@@ -2,6 +2,7 @@
 import BN from 'bn.js'
 import { Options as QueryOptions } from '@subsocial/react-api/hoc/types'
 import queryString from 'query-string'
+import { PalletName } from '@subsocial/types'
 
 export * from './substrate'
 export * from './utils'
@@ -35,8 +36,32 @@ export function queryToProp (
   return [ apiQuery, { paramName, propName } ];
 }
 
-export const socialQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
-  return queryToProp(`query.social.${storageItem}`, paramNameOrOpts)
+const palletQueryToProp = (pallet: PalletName, storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
+  return queryToProp(`query.${pallet}.${storageItem}`, paramNameOrOpts)
+}
+
+export const postsQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
+  return palletQueryToProp('posts', storageItem, paramNameOrOpts)
+}
+
+export const spacesQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
+  return palletQueryToProp('spaces', storageItem, paramNameOrOpts)
+}
+
+export const spaceFollowsQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
+  return palletQueryToProp('spaceFollows', storageItem, paramNameOrOpts)
+}
+
+export const profilesQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
+  return palletQueryToProp('profiles', storageItem, paramNameOrOpts)
+}
+
+export const profileFollowsQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
+  return palletQueryToProp('profileFollows', storageItem, paramNameOrOpts)
+}
+
+export const reactionsQueryToProp = (storageItem: string, paramNameOrOpts?: string | QueryOptions) => {
+  return palletQueryToProp('reactions', storageItem, paramNameOrOpts)
 }
 
 // Parse URLs

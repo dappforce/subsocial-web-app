@@ -45,8 +45,8 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
       : 'Share post'}
     params={buildTxParams()}
     tx={isFollow
-      ? `social.unsharePost`
-      : `social.sharePost`}
+      ? `posts.unsharePost`
+      : `posts.sharePost`}
     onSuccess={() => setTriggerReload(!triggerReload) }
   />;
 }
