@@ -60,7 +60,7 @@ export const SwitchAccountButton = ({
   title = 'Switch account'
 }: SwitchAccountButtonProps) => (
   <OpenAuthButton
-    kind={'ChangeAccount'}
+    kind={'SwitchAccount'}
     type={'link'}
     size={size}
     title={title}

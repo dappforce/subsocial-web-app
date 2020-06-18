@@ -34,59 +34,15 @@ const SelectAccountButtons = ({ accounts: addresses, profilesByAddressMap }: Sel
   </>
 }
 
-export const AccountSelector = () => {
-  const [ extensionAddresses, setExtensionAddresses ] = useState<string[]>()
-  const [ localAddresses, setLocalAddresses ] = useState<string[]>()
-  const [ developAddresses, setDevelopAddresses ] = useState<string[]>()
-  const [ profilesByAddressMap ] = useState(new Map<string, ProfileData>())
-  const currentAddress = useMyAddress()
-  const { subsocial } = useSubsocialApi()
+type AccountSelectorViewProps = {
+  currentAddress?: string,
+  extensionAddresses: string[],
+  localAddresses: string[],
+  developAddresses: string[],
+  profilesByAddressMap: Map<string, ProfileData>
+}
 
-  useEffect(() => {
-    const accounts = keyring.getAccounts()
-
-    if (!accounts) return
-
-    const loadProfiles = async () => {
-      const extensionAddresses: string[] = []
-      const developAddresses: string[] = []
-      const localAddresses: string[] = []
-
-      const addresses = accounts.map(account => {
-        const { address, meta } = account;
-
-        if (address === currentAddress) return address
-
-        if (meta.isInjected) {
-          console.log(account)
-          extensionAddresses.push(address)
-        } else if (meta.isTesting) {
-          console.log(address)
-          developAddresses.push(address)
-        } else {
-          console.log(address)
-          localAddresses.push(address)
-        }
-        return address
-      })
-      setExtensionAddresses(extensionAddresses)
-      setLocalAddresses(localAddresses)
-      setDevelopAddresses(developAddresses)
-
-      const profiles = await subsocial.findProfiles(addresses)
-
-      profiles.forEach((item) => {
-        const address = item.profile?.created.account.toString()
-        address && profilesByAddressMap.set(address, item)
-      })
-      console.log(extensionAddresses, developAddresses)
-    }
-
-    loadProfiles().catch(err => console.error(err))// TODO change on logger
-  }, [ currentAddress ])
-
-  if (!extensionAddresses || !localAddresses || !developAddresses) return <Loading />
-
+export const AccountSelectorView = ({ currentAddress, extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
   const NoExtension = () => (
     <>
       <div className='mb-4'>
@@ -159,4 +115,65 @@ export const AccountSelector = () => {
     <AccountPanel accounts={localAddresses} kind='Local' />
     <AccountPanel accounts={developAddresses} kind='Test'/>
   </div>
+}
+
+export const AccountSelector = () => {
+  const [ extensionAddresses, setExtensionAddresses ] = useState<string[]>()
+  const [ localAddresses, setLocalAddresses ] = useState<string[]>()
+  const [ developAddresses, setDevelopAddresses ] = useState<string[]>()
+  const [ profilesByAddressMap ] = useState(new Map<string, ProfileData>())
+  const currentAddress = useMyAddress()
+  const { subsocial } = useSubsocialApi()
+
+  useEffect(() => {
+    const accounts = keyring.getAccounts()
+
+    if (!accounts) return
+
+    const loadProfiles = async () => {
+      const extensionAddresses: string[] = []
+      const developAddresses: string[] = []
+      const localAddresses: string[] = []
+
+      const addresses = accounts.map(account => {
+        const { address, meta } = account;
+
+        if (address === currentAddress) return address
+
+        if (meta.isInjected) {
+          console.log(account)
+          extensionAddresses.push(address)
+        } else if (meta.isTesting) {
+          console.log(address)
+          developAddresses.push(address)
+        } else {
+          console.log(address)
+          localAddresses.push(address)
+        }
+        return address
+      })
+      setExtensionAddresses(extensionAddresses)
+      setLocalAddresses(localAddresses)
+      setDevelopAddresses(developAddresses)
+
+      const profiles = await subsocial.findProfiles(addresses)
+
+      profiles.forEach((item) => {
+        const address = item.profile?.created.account.toString()
+        address && profilesByAddressMap.set(address, item)
+      })
+      console.log(extensionAddresses, developAddresses)
+    }
+
+    loadProfiles().catch(err => console.error(err))// TODO change on logger
+  }, [ currentAddress ])
+
+  if (!extensionAddresses || !localAddresses || !developAddresses) return <Loading />
+
+  return <AccountSelectorView
+    extensionAddresses={extensionAddresses}
+    localAddresses={localAddresses}
+    developAddresses={developAddresses}
+    profilesByAddressMap={profilesByAddressMap}
+    currentAddress={currentAddress} />
 }

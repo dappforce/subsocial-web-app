@@ -6,6 +6,10 @@ import { SignInButton } from '../auth/AuthButtons';
 
 const { Step } = Steps;
 
+export type CurrentStep = {
+  currentStep: StepsEnum
+}
+
 type Props = {
   direction?: 'horizontal' | 'vertical',
   size?: 'small' | 'default';
@@ -61,8 +65,11 @@ export const stepItems: StepItem[] = [
   }
 ]
 
-export const OnBoarding = ({ direction = 'vertical', size = 'default', progressDot }: Props) => {
-  const { state: { currentStep } } = useAuth()
+type ViewProps = Props & {
+  currentStep: StepsEnum
+}
+
+export const OnBoardingView = ({ direction = 'vertical', size = 'default', progressDot, currentStep }: ViewProps) => {
   const steps = stepItems.map((step, index) =>
     <Step className='DfStep' disabled={currentStep !== index} key={step.key} title={step.title}/>)
 
@@ -80,28 +87,7 @@ export const OnBoarding = ({ direction = 'vertical', size = 'default', progressD
   );
 }
 
-const onBoadingTitle = <h3 className='mb-3'>Get started with Subsocial</h3>
-
-export const OnBoardingCard = () => {
-  const { state: { currentStep, showOnBoarding } } = useAuth()
-
-  const initialized = currentStep !== StepsEnum.Disabled
-  if (!showOnBoarding) return null;
-
-  return <div className={`DfCard ${initialized && 'active'}`}>
-    {onBoadingTitle}
-    <OnBoarding direction='vertical' />
-    <OnBoardingButton />
-  </div>
-}
-
-export const OnBoardingMobileCard = () => {
-  const { state: { currentStep, showOnBoarding } } = useAuth()
-
-  if (!showOnBoarding || currentStep === StepsEnum.Disabled) return null;
-
-  return <div className='DfMobileOnBoarding'>
-    <span><b>Join Subsocial.</b> Step {currentStep + 1}/3</span>
-    <OnBoardingButton />
-  </div>
+export const OnBoarding = (props: Props) => {
+  const { state: { currentStep } } = useAuth()
+  return <OnBoardingView currentStep={currentStep} {...props} />
 }

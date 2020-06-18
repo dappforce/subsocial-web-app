@@ -21,7 +21,7 @@ function functionStub () {
   throw new Error('Function needs to be set in OnBoardingContext')
 }
 
-export type ModalKind = 'OnBoarding' | 'AuthRequired' | 'ChangeAccount'
+export type ModalKind = 'OnBoarding' | 'AuthRequired' | 'SwitchAccount'
 
 export type AuthContextProps = {
   state: AuthState,
@@ -152,6 +152,12 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
 
 export function useAuth () {
   return useContext(AuthContext)
+}
+
+export function MockAuthProvider (props: React.PropsWithChildren<AuthState>) {
+  return <AuthContext.Provider value={{ ...contextStub, state: { showOnBoarding: true, ...props } }}>
+    {props.children}
+  </AuthContext.Provider>
 }
 
 export function withAuthContext (Component: React.ComponentType<any>) {

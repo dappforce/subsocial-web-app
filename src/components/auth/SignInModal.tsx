@@ -27,7 +27,7 @@ type ModalContent = {
 }
 
 const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
-  const { isSignIn, isTokens } = isSteps
+  const { isSignIn = false, isTokens = false } = isSteps
   const content: ModalContent = {
     title: null,
     body: null
@@ -53,7 +53,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         }
         return content;
       }
-      case 'ChangeAccount': {
+      case 'SwitchAccount': {
         content.title = 'Switch account'
         content.body = <AccountSelector />
         return content
@@ -86,9 +86,15 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
 
 }
 
-export const SignInModal = (props: ModalProps) => {
-  const { open = false, hide, kind } = props;
-  const { state: { isSteps } } = useAuth()
+type ModalViewProps = ModalProps & {
+  isSteps: {
+    isSignIn: boolean;
+    isTokens: boolean;
+    isSpaces: boolean;
+  }
+}
+
+export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) => {
   const { warn, body, title } = getModalContent(kind, isSteps)
 
   return <Modal
@@ -109,6 +115,12 @@ export const SignInModal = (props: ModalProps) => {
       {body}
     </div>
   </Modal>;
+}
+
+export const SignInModal = (props: ModalProps) => {
+  const { state: { isSteps } } = useAuth()
+
+  return <SignInModalView isSteps={isSteps} {...props} />
 };
 
 export default SignInModal;

@@ -1,5 +1,5 @@
 import React from 'react'
-import OnBoardingCard, { OnBoardingMobileCard } from '../onboarding'
+import { OnBoardingCard, OnBoardingMobileCard } from '../onboarding'
 import Section from '../utils/Section'
 import { isBrowser } from 'react-device-detect'
 import { Affix } from 'antd'
