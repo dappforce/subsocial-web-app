@@ -100,7 +100,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
       withCancel
     />}
     {isReplies && <ViewRepliesLink />}
-    <CommentsTree parentId={id} replies={replies} space={space}/>}
+    {showReplies && <CommentsTree parentId={id} replies={replies} space={space}/>}
   </div> : null
 
   return <Comment

@@ -28,8 +28,8 @@ export const addCommentReducer: ReducerType = (state, { payload: { replies, post
   }
 
   comments[postIdStr] = currentComments
-  console.log('Comments state: ', comments)
-  state = { comments }
+  console.log('Comments state: ', currentComments, postIdStr)
+  state.comments = comments
 }
 
 export const editCommentReducer: ReducerSingleType = (state, { payload: { replies, postId } }) => {
@@ -67,7 +67,7 @@ export const removeCommentReducer: ReducerSingleType = (state, { payload: { repl
 
 export const commentSlice = createSlice({
   name: 'comments',
-  initialState: { comments: new Map<string, PostWithAllDetails[]>() } as CommentsState,
+  initialState: { comments: {} } as CommentsState,
   reducers: {
     addCommentReducer,
     editCommentReducer,

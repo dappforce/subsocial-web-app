@@ -117,8 +117,12 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
   </div>
 }
 
-export const AccountSelector = () => {
-  const [ extensionAddresses, setExtensionAddresses ] = useState<string[]>()
+type AccountSelectorProps = {
+  injectedAddresses?: string[]
+}
+
+export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => {
+  const [ extensionAddresses, setExtensionAddresses ] = useState<string[]>(injectedAddresses || [])
   const [ localAddresses, setLocalAddresses ] = useState<string[]>()
   const [ developAddresses, setDevelopAddresses ] = useState<string[]>()
   const [ profilesByAddressMap ] = useState(new Map<string, ProfileData>())
@@ -152,7 +156,8 @@ export const AccountSelector = () => {
         }
         return address
       })
-      setExtensionAddresses(extensionAddresses)
+      const uniqExtAddresses = new Set(extensionAddresses).values()
+      setExtensionAddresses([ ...uniqExtAddresses ])
       setLocalAddresses(localAddresses)
       setDevelopAddresses(developAddresses)
 

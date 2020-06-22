@@ -5,18 +5,18 @@ import { Loading } from '../utils';
 import { AccountSelector } from '../profile-selector/AccountSelector';
 
 export const SignInFromExtension = () => {
-  const [ loading, setLoading ] = useState(true)
   const { setInjectedAccounts } = useMyAccount()
-
+  const [ addresses, setAddresses ] = useState<string[]>()
   useEffect(() => {
     const loadAddress = async () => {
-      getAccountFromExtension(setInjectedAccounts)
-      setLoading(false)
+      const accounts = await getAccountFromExtension(setInjectedAccounts)
+      console.log('Acccounts:', accounts)
+      setAddresses(accounts)
     }
 
     loadAddress().catch(err => console.error(err))
 
   }, [ isWeb3Injected ])
 
-  return loading ? <Loading/> : <AccountSelector />
+  return !addresses ? <Loading/> : <AccountSelector injectedAddresses={addresses} />
 }

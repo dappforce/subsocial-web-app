@@ -91,6 +91,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
           }
         } else if (step === StepsEnum.Disabled) {
           setSpaces(true)
+          setShowModal(false)
           noOnBoarded && store.set(ONBOARDED_ACCS, address)
         }
 
@@ -144,6 +145,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
     },
     setCurrentStep
   }
+
   return <AuthContext.Provider value={contextValue}>
     {props.children}
     {kind && <SignInModal open={showModal} kind={kind} hide={() => setShowModal(false)} />}
@@ -155,7 +157,7 @@ export function useAuth () {
 }
 
 export function MockAuthProvider (props: React.PropsWithChildren<AuthState>) {
-  return <AuthContext.Provider value={{ ...contextStub, state: { showOnBoarding: true, ...props } }}>
+  return <AuthContext.Provider value={{ ...contextStub, state: { ...props, showOnBoarding: true } }}>
     {props.children}
   </AuthContext.Provider>
 }
