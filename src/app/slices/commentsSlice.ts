@@ -1,65 +1,65 @@
 import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit';
-import { PostWithAllDetails } from '@subsocial/types';
 import { Store } from '../types';
+import { PostWithAllDetails } from '@subsocial/types';
 
-export type CommentsState = {
-  comments: Record<string, any>
-}
+export type CommentsState = Record<string, string[]>
 
 type ActionType<T> = {
   postId: string,
-  replies: T
+  replyId: T
 }
 
-type ReducerSingleType = CaseReducer<CommentsState, PayloadAction<ActionType<PostWithAllDetails>>>
-type ReducerType = CaseReducer<CommentsState, PayloadAction<ActionType<PostWithAllDetails | PostWithAllDetails[]>>>
+type ReducerSingleType = CaseReducer<CommentsState, PayloadAction<ActionType<string>>>
+type ReducerType = CaseReducer<CommentsState, PayloadAction<ActionType<string | string[]>>>
 
-export const addCommentReducer: ReducerType = (state, { payload: { replies, postId } }) => {
-  const { comments } = state
-  const newComments = Array.isArray(replies) ? replies : [ replies ]
+export const addCommentReducer: ReducerType = (state, { payload: { replyId, postId } }) => {
+  const ids = Array.isArray(replyId)
+    ? replyId
+    : [ replyId ]
 
-  const postIdStr = postId.toString()
-  let currentComments: PostWithAllDetails[] | undefined = comments[postIdStr]
+  let currentReplyIds: string[] | undefined = state[postId]
 
-  if (currentComments) {
-    currentComments.push(...newComments)
+  if (currentReplyIds) {
+    currentReplyIds.push(...ids)
   } else {
-    currentComments = newComments
+    currentReplyIds = ids
   }
 
-  comments[postIdStr] = currentComments
-  console.log('Comments state: ', currentComments, postIdStr)
-  state.comments = comments
-}
-
-export const editCommentReducer: ReducerSingleType = (state, { payload: { replies, postId } }) => {
-  const { comments } = state
-
-  const postIdStr = postId.toString()
-  let currentComments: PostWithAllDetails[] | undefined = comments[postIdStr]
-
-  if (currentComments) {
-    currentComments = currentComments.map(item =>
-      item.post.struct.id.toString() === replies.post.struct.id.toString() ? replies : item)
-  } else {
-    currentComments = [ replies ]
-  }
-
-  comments[postIdStr] = currentComments
+  state[postId] = currentReplyIds
+  console.log('Comments state: ', currentReplyIds, postId)
 
   return state
 }
 
-export const removeCommentReducer: ReducerSingleType = (state, { payload: { replies, postId } }) => {
-  const { comments } = state
+export const editCommentReducer: ReducerSingleType = (state, { payload: { replyId, postId } }) => {
+  const postIdStr = postId.toString()
+  let currentComments: string[] | undefined = state[postIdStr]
+
+  const replyIdStr = replyId.toString()
+
+  if (currentComments) {
+    currentComments = currentComments.map(item =>
+      item === replyIdStr ? replyIdStr : item)
+  } else {
+    currentComments = [replyIdStr]
+  }
+
+  state[postIdStr] = currentComments
+
+  return state
+}
+
+export const removeCommentReducer: ReducerSingleType = (state, { payload: { replyId, postId } }) => {
 
   const postIdStr = postId.toString()
-  let currentComments: PostWithAllDetails[] | undefined = comments[postIdStr]
+  let currentComments: string[] | undefined = state[postIdStr]
+
+  const replyIdStr = replyId.toString()
 
   if (currentComments) {
     currentComments = currentComments.filter(item =>
-      item.post.struct.id.toString() !== replies.post.struct.id.toString())
-    comments[postIdStr] = currentComments
+      item !== replyIdStr)
+    state[postIdStr] = currentComments
   }
 
   return state
@@ -67,7 +67,7 @@ export const removeCommentReducer: ReducerSingleType = (state, { payload: { repl
 
 export const commentSlice = createSlice({
   name: 'comments',
-  initialState: { comments: {} } as CommentsState,
+  initialState: {} as CommentsState,
   reducers: {
     addCommentReducer,
     editCommentReducer,
@@ -75,7 +75,23 @@ export const commentSlice = createSlice({
   }
 });
 
-export const getComments = (state: Store) => state.comments;
+export const getComments = (store: Store, parentId: string): PostWithAllDetails[] => {
+  const { comments, posts } = store
+  console.log('Posts store', store, parentId)
+  const commentIds = comments[parentId]
+  console.log('Comments ids', commentIds)
+  const res = commentIds && posts
+    ? commentIds
+      .map(x => {
+        return posts[x]
+      })
+      .filter(x => x !== undefined)
+    : []
+  console.log(res)
+  return res
+};
+
+export const getCommentsStore = (state: Store) => state.comments;
 
 export const {
   addCommentReducer: addComments,

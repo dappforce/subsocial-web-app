@@ -13,37 +13,32 @@ import { substrateUrl } from '../components/utils/env';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
 import { Content } from '../components/main/Content';
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext';
-import { isServerSide } from 'src/components/utils';
 import { AuthProvider } from 'src/components/auth/AuthContext';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = substrateUrl || settings.apiUrl || undefined;
 
-  return isServerSide()
-    ? <Content>
-      {children}
-    </Content>
-    : <Queue>
-      <SidebarCollapsedProvider>
-        <MyAccountProvider>
-          <Api url={url}>
-            <SubsocialApiProvider>
-              <AuthProvider>
-                <Events>
-                  <NotifCounterProvider>
-                    <Signer>
-                      <Content>
-                        {children}
-                      </Content>
-                    </Signer>
-                  </NotifCounterProvider>
-                </Events>
-              </AuthProvider>
-            </SubsocialApiProvider>
-          </Api>
-        </MyAccountProvider>
-      </SidebarCollapsedProvider>
-    </Queue>;
+  return <Queue>
+    <SidebarCollapsedProvider>
+      <MyAccountProvider>
+        <Api url={url}>
+          <SubsocialApiProvider>
+            <AuthProvider>
+              <Events>
+                <NotifCounterProvider>
+                  <Signer>
+                    <Content>
+                      {children}
+                    </Content>
+                  </Signer>
+                </NotifCounterProvider>
+              </Events>
+            </AuthProvider>
+          </SubsocialApiProvider>
+        </Api>
+      </MyAccountProvider>
+    </SidebarCollapsedProvider>
+  </Queue>;
 };
 
 export default ClientLayout;

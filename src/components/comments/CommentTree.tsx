@@ -5,8 +5,10 @@ import React, { useState, useEffect } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
 import ListData from '../utils/DataList';
 import ViewComment from './ViewComment';
-import { useSelector } from 'react-redux';
-import { getComments } from 'src/app/slices/commentsSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { getComments, addComments } from 'src/app/slices/commentsSlice';
+import { Store } from 'src/app/types';
+import { addPost } from 'src/app/slices/postSlice';
 
 const log = newLogger('CommentTree')
 
@@ -34,27 +36,39 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
   /> : null;
 }
 
-export const withLoadedComments = (Component: React.ComponentType<CommentsTreeProps>) => {
-  return (props: LoadProps) => {
-    const { parentId, space, replies } = props;
+export const CommentsTree = (props: LoadProps) => {
+  const { parentId, space, replies } = props;
 
-    const comments = useSelector(getComments).comments[parentId.toString()];
+  const comments = useSelector((store: Store) => getComments(store, parentId.toString()));
 
-    const [ replyComments, setComments ] = useState<PostWithAllDetails[]>(comments || replies || []);
-    const { subsocial, substrate } = useSubsocialApi();
+  console.log('Comments >>>>>>>>>', comments)
 
-    useEffect(() => {
-      const loadComments = async () => {
+  if (nonEmptyArr(comments)) return <ViewCommentsTree space={space} comments={comments} />
+
+  const [ replyComments, setComments ] = useState<PostWithAllDetails[]>(replies || []);
+  const { subsocial, substrate } = useSubsocialApi();
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+
+    const loadComments = async () => {
+      let comments: PostWithAllDetails[] = []
+      if (!replyComments || !replyComments.length) {
         const replyIds = await substrate.getReplyIdsByPostId(parentId);
-        const comments = await subsocial.findPostsWithSomeDetails(replyIds, { withOwner: true }) as any as PostWithAllDetails[];
+        comments = await subsocial.findPostsWithSomeDetails(replyIds, { withOwner: true }) as any;
+        console.log('UseEffect', comments)
+        const replyIdsStr = replyIds.map(x => x.toString())
+        dispatch(addComments({ replyId: replyIdsStr, postId: parentId.toString() }))
+        console.log('Finish useEffect')
         setComments(comments)
       }
+      console.log('Comments in use effect:', comments)
+      dispatch(addPost({ posts: comments }))
+      console.log('Set posts')
+    }
 
-      loadComments().catch(err => log.error('Failed to load comments: %o', err))
-    }, [ false ]);
+    loadComments().catch(err => log.error('Failed to load comments: %o', err))
+  }, [ parentId ]);
 
-    return <Component space={space} comments={replyComments} />;
-  }
+  return <ViewCommentsTree space={space} comments={replyComments} />;
 }
-
-export const CommentsTree = React.memo(withLoadedComments(ViewCommentsTree));
