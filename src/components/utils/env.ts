@@ -3,8 +3,13 @@ function getEnv (varName: string): string | undefined {
   return env[varName]
 }
 
+export const nodeEnv = getEnv('NODE_ENV')
+export const appName = getEnv('APP_NAME') || 'Subsocial'
 export const offchainUrl = getEnv('OFFCHAIN_URL') || 'http://localhost:3001'
 export const offchainWs = getEnv('OFFCHAIN_WS') || 'http://localhost:3011'
 export const ipfsNodeUrl = getEnv('IPFS_URL') || 'http://localhost:8080'
 export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944'
 export const ElasticNodeURL = getEnv('ELASTIC_URL') || 'http://localhost:9200'
+
+export const isProdMode = nodeEnv === 'production'
+export const isDevMode = !isProdMode

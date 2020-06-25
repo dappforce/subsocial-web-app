@@ -26,7 +26,7 @@
     "export": "next export",
     "export-env": "node export-env.js",
     "patch": "./patch.sh",
-    "start": "yarn patch && next start -p 3003",
+    "start": "NODE_ENV=production yarn patch && next start -p 3003",
     "storybook": "yarn patch && start-storybook -s ./public -p 3002"
   },
   "devDependencies": {
