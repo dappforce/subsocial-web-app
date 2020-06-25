@@ -1,24 +1,68 @@
+import { useEffect } from 'react'
 import { newLogger } from '@subsocial/utils'
 import { useSubstrate } from './useSubstrate'
+import { ApiPromise } from '@polkadot/api'
+import { Keyring } from '@polkadot/ui-keyring'
 
 const log = newLogger(SubstrateWebConsole.name)
 
+type WindowSubstrate = {
+  api?: ApiPromise
+  keyring?: Keyring
+  util?: any
+  crypto?: any
+}
+
+const getWindowSubstrate = (): WindowSubstrate => {
+  let substrate = (window as any)?.substrate
+  if (!substrate) {
+    substrate = {} as WindowSubstrate
+    (window as any).substrate = substrate
+  }
+  return substrate
+}
+
 /** This component will simply add Substrate utility functions to your web developer console. */
 export default function SubstrateWebConsole () {
-  if (!window) return null
+  const { endpoint, api, apiState, keyring, keyringState } = useSubstrate()
 
-  const { api, apiState, keyring, keyringState } = useSubstrate()
-  const substrate: any = {}
-  if (apiState === 'READY') {
-    substrate.api = api
+  const addApi = () => {
+    if (window && apiState === 'READY') {
+      getWindowSubstrate().api = api
+      log.info('Exported window.substrate.api')
+    }
   }
-  if (keyringState === 'READY') {
-    substrate.keyring = keyring
+
+  const addKeyring = () => {
+    if (window && keyringState === 'READY') {
+      getWindowSubstrate().keyring = keyring
+      log.info('Exported window.substrate.keyring')
+    }
   }
-  substrate.util = require('@polkadot/util')
-  substrate.crypto = require('@polkadot/util-crypto');
-  (window as any).substrate = substrate
-  log.info('Exported Substrate helpers. Check out window.substrate')
+
+  const addUtilAndCrypto = () => {
+    if (window) {
+      const substrate = getWindowSubstrate()
+
+      substrate.util = require('@polkadot/util')
+      log.info('Exported window.substrate.util')
+
+      substrate.crypto = require('@polkadot/util-crypto');
+      log.info('Exported window.substrate.crypto')
+    }
+  }
+
+  useEffect(() => {
+    addApi()
+  }, [ endpoint?.toString(), apiState ])
+
+  useEffect(() => {
+    addKeyring()
+  }, [ keyringState ])
+
+  useEffect(() => {
+    addUtilAndCrypto()
+  }, [ true ])
 
   return null
 }
