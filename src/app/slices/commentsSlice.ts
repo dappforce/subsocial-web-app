@@ -5,34 +5,32 @@ import { PostWithAllDetails } from '@subsocial/types';
 export type CommentsState = Record<string, string[]>
 
 type ActionType<T> = {
-  postId: string,
+  parentId: string,
   replyId: T
 }
 
 type ReducerSingleType = CaseReducer<CommentsState, PayloadAction<ActionType<string>>>
 type ReducerType = CaseReducer<CommentsState, PayloadAction<ActionType<string | string[]>>>
 
-export const addCommentReducer: ReducerType = (state, { payload: { replyId, postId } }) => {
+export const addCommentReducer: ReducerType = (state, { payload: { replyId, parentId } }) => {
   const ids = Array.isArray(replyId)
     ? replyId
     : [ replyId ]
 
-  let currentReplyIds: string[] | undefined = state[postId]
+  let currentReplyIds: string[] | undefined = state[parentId]
 
   if (currentReplyIds) {
     currentReplyIds.push(...ids)
+    currentReplyIds = [ ...(new Set(currentReplyIds)) ]
   } else {
     currentReplyIds = ids
   }
 
-  state[postId] = currentReplyIds
-  console.log('Comments state: ', currentReplyIds, postId)
-
-  return state
+  state[parentId] = currentReplyIds
 }
 
-export const editCommentReducer: ReducerSingleType = (state, { payload: { replyId, postId } }) => {
-  const postIdStr = postId.toString()
+export const editCommentReducer: ReducerSingleType = (state, { payload: { replyId, parentId } }) => {
+  const postIdStr = parentId.toString()
   let currentComments: string[] | undefined = state[postIdStr]
 
   const replyIdStr = replyId.toString()
@@ -41,17 +39,15 @@ export const editCommentReducer: ReducerSingleType = (state, { payload: { replyI
     currentComments = currentComments.map(item =>
       item === replyIdStr ? replyIdStr : item)
   } else {
-    currentComments = [replyIdStr]
+    currentComments = [ replyIdStr ]
   }
 
   state[postIdStr] = currentComments
-
-  return state
 }
 
-export const removeCommentReducer: ReducerSingleType = (state, { payload: { replyId, postId } }) => {
+export const removeCommentReducer: ReducerSingleType = (state, { payload: { replyId, parentId } }) => {
 
-  const postIdStr = postId.toString()
+  const postIdStr = parentId.toString()
   let currentComments: string[] | undefined = state[postIdStr]
 
   const replyIdStr = replyId.toString()
@@ -59,10 +55,9 @@ export const removeCommentReducer: ReducerSingleType = (state, { payload: { repl
   if (currentComments) {
     currentComments = currentComments.filter(item =>
       item !== replyIdStr)
-    state[postIdStr] = currentComments
+    state[postIdStr] = [ ...currentComments ]
   }
 
-  return state
 }
 
 export const commentSlice = createSlice({
@@ -77,9 +72,7 @@ export const commentSlice = createSlice({
 
 export const getComments = (store: Store, parentId: string): PostWithAllDetails[] => {
   const { comments, posts } = store
-  console.log('Posts store', store, parentId)
   const commentIds = comments[parentId]
-  console.log('Comments ids', commentIds)
   const res = commentIds && posts
     ? commentIds
       .map(x => {
@@ -87,7 +80,6 @@ export const getComments = (store: Store, parentId: string): PostWithAllDetails[
       })
       .filter(x => x !== undefined)
     : []
-  console.log(res)
   return res
 };
 

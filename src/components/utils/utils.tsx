@@ -69,3 +69,5 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
 };
+
+export const fakeClientId = () => new Date().getTime().toString()

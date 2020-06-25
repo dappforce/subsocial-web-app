@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { MyAccountProps } from '../utils/MyAccount';
 import { PostExtension, PostUpdate, CommentExt, OptionId, OptionBool } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
@@ -9,34 +9,72 @@ import { SubmittableResult } from '@polkadot/api';
 import SimpleMDEReact from 'react-simplemde-editor';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
-import { CommentContent } from '@subsocial/types';
+import { CommentContent, PostWithSomeDetails } from '@subsocial/types';
 import { registry } from '@subsocial/react-api';
 import { Option } from '@polkadot/types/codec';
 import { Button } from 'antd';
 import { getNewIdFromEvent, getTxParams } from '../utils/substrate';
 import BN from 'bn.js'
+import { useDispatch } from 'react-redux';
+import { fakeClientId } from '../utils';
+import { useMyAddress } from '../auth/MyAccountContext';
+import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore } from './utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type FCallback = (id?: BN) => void
 
+type FSetCommentToStore = (fakeId: string, account: string, content: CommentContent) => void
+
 type Props = MyAccountProps & {
   newTxParams: (hash: IpfsHash) => any[]
   content?: CommentContent,
+  parentId?: string,
   extrinsic: string,
   label: string,
   callback?: FCallback
-  withCancel?: boolean
+  withCancel?: boolean,
+  useSetCommentToStore?: FSetCommentToStore
 };
 
 const Fields = {
   body: 'body'
 }
 
+type MockComment = {
+  fakeId: string,
+  account: string,
+  content: CommentContent
+}
+
+const buildMockComment = ({ fakeId, account, content }: MockComment) => {
+  return {
+    post: {
+      struct: {
+        id: fakeId,
+        created: {
+          account: account,
+          time: new Date().getTime()
+        },
+        score: 0,
+        shares_count: 0,
+        direct_replies_count: 0,
+        space_id: null,
+        extension: null
+
+      },
+      content: content
+    }
+  } as any as PostWithSomeDetails
+}
+
 export const InnerEditComment = (props: Props) => {
-  const { callback, newTxParams, content, label, extrinsic, withCancel = false } = props;
-  const { ipfs } = useSubsocialApi()
+  const { callback, newTxParams, content, label, extrinsic, parentId, withCancel = false } = props;
+  const { ipfs, subsocial } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
+  const account = useMyAddress()
+  const dispatch = useDispatch();
+  const [ fakeId ] = useState(fakeClientId())
 
   const { control, errors, formState, watch, reset } = useForm({
     validationSchema: buildSharePostValidationSchema(),
@@ -46,10 +84,22 @@ export const InnerEditComment = (props: Props) => {
 
   const cancelCallback = () => {
     callback && callback()
+    parentId && useRemoveReplyFromStore(dispatch, { replyId: fakeId, parentId })
     reset(Fields)
   }
 
   const body = watch(Fields.body, content?.body || '');
+
+  const onTxClick = useCallback(
+    (body) => {
+      account && parentId && useSetReplyToStore(dispatch,
+        {
+          reply: { replyId: fakeId, parentId },
+          comment: buildMockComment({ fakeId, account, content: { body } })
+        })
+    },
+    [ account ]
+  )
 
   const { isSubmitting, dirty } = formState;
 
@@ -60,7 +110,18 @@ export const InnerEditComment = (props: Props) => {
 
   const onTxSuccess: TxCallback = (txResult: SubmittableResult) => {
     const id = getNewIdFromEvent(txResult);
-    callback && callback(id)
+    console.log(id)
+    id && subsocial.findPostWithSomeDetails(id).then(comment => {
+      comment && parentId && useChangeReplyToStore(
+        dispatch,
+        { replyId: fakeId, parentId },
+        { reply: { replyId: id.toString(), parentId },
+          comment
+        }
+      )
+    })
+
+    callback && callback()
   };
 
   const renderTxButton = () => (
@@ -76,6 +137,7 @@ export const InnerEditComment = (props: Props) => {
       tx={extrinsic}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
+      onClick={() => onTxClick(body)}
     />
   );
 
@@ -119,7 +181,12 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
 
   const newTxParams = (hash: IpfsHash) => [ new OptionId(), newExtension, hash ];
 
-  return <InnerEditComment newTxParams={newTxParams} label='Comment' extrinsic='posts.createPost' callback={callback} withCancel={withCancel} />;
+  return <InnerEditComment
+    newTxParams={newTxParams}
+    parentId={id.toString()}
+    label='Comment' extrinsic='posts.createPost'
+    callback={callback}
+    withCancel={withCancel} />;
 }
 
 type EditCommentProps = {

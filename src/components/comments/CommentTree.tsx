@@ -6,9 +6,9 @@ import { nonEmptyArr, newLogger } from '@subsocial/utils';
 import ListData from '../utils/DataList';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
-import { getComments, addComments } from 'src/app/slices/commentsSlice';
+import { getComments } from 'src/app/slices/commentsSlice';
 import { Store } from 'src/app/types';
-import { addPost } from 'src/app/slices/postSlice';
+import { useSetReplyToStore } from './utils';
 
 const log = newLogger('CommentTree')
 
@@ -36,15 +36,9 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
   /> : null;
 }
 
-export const CommentsTree = (props: LoadProps) => {
+export const DynamicCommentsTree = (props: LoadProps) => {
   const { parentId, space, replies } = props;
-
-  const comments = useSelector((store: Store) => getComments(store, parentId.toString()));
-
-  console.log('Comments >>>>>>>>>', comments)
-
-  if (nonEmptyArr(comments)) return <ViewCommentsTree space={space} comments={comments} />
-
+  const parentIdStr = parentId.toString()
   const [ replyComments, setComments ] = useState<PostWithAllDetails[]>(replies || []);
   const { subsocial, substrate } = useSubsocialApi();
   const dispatch = useDispatch()
@@ -52,23 +46,31 @@ export const CommentsTree = (props: LoadProps) => {
   useEffect(() => {
 
     const loadComments = async () => {
-      let comments: PostWithAllDetails[] = []
-      if (!replyComments || !replyComments.length) {
-        const replyIds = await substrate.getReplyIdsByPostId(parentId);
-        comments = await subsocial.findPostsWithSomeDetails(replyIds, { withOwner: true }) as any;
-        console.log('UseEffect', comments)
-        const replyIdsStr = replyIds.map(x => x.toString())
-        dispatch(addComments({ replyId: replyIdsStr, postId: parentId.toString() }))
-        console.log('Finish useEffect')
-        setComments(comments)
-      }
-      console.log('Comments in use effect:', comments)
-      dispatch(addPost({ posts: comments }))
-      console.log('Set posts')
+      const replyIds = await substrate.getReplyIdsByPostId(parentId);
+      const comments = await subsocial.findPostsWithSomeDetails(replyIds, { withOwner: true }) as any;
+      const replyIdsStr = replyIds.map(x => x.toString())
+      setComments(comments)
+      useSetReplyToStore(dispatch, { reply: { replyId: replyIdsStr, parentId: parentIdStr }, comment: comments })
     }
 
-    loadComments().catch(err => log.error('Failed to load comments: %o', err))
-  }, [ parentId ]);
+    if (nonEmptyArr(replyComments)) {
+      const replyId = replyComments.map(x => x.post.struct.id.toString())
+      useSetReplyToStore(dispatch, { reply: { replyId: replyId, parentId: parentIdStr }, comment: replyComments })
+    } else {
+      loadComments().catch(err => log.error('Failed to load comments: %o', err))
+    }
+
+  }, [ dispatch ]);
 
   return <ViewCommentsTree space={space} comments={replyComments} />;
+}
+
+export const CommentsTree = (props: LoadProps) => {
+  const { parentId, space } = props;
+
+  const comments = useSelector((store: Store) => getComments(store, parentId.toString()));
+
+  return nonEmptyArr(comments)
+    ? <ViewCommentsTree space={space} comments={comments} />
+    : <DynamicCommentsTree {...props} />
 }

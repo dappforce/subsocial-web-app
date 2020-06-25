@@ -1,22 +1,39 @@
 import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit';
-import { PostWithAllDetails } from '@subsocial/types';
-import { Store } from '../types';
+import { PostWithAllDetails, PostData, PostWithSomeDetails } from '@subsocial/types';
+import { Store, PostsStoreType } from '../types';
 
 export type PostState = Record<string, any>
 
 type AddActionType = {
-  posts: PostWithAllDetails | PostWithAllDetails[],
+  posts: PostsStoreType,
 }
 
 type AddReducerType = CaseReducer<PostState, PayloadAction<AddActionType>>
 
+const serializePostWithExt = (item: PostWithSomeDetails): PostWithSomeDetails => {
+  const { post, ext } = item
+
+  return {
+    ...item,
+    post: serializePost(post),
+    ext: ext ? serializePostWithExt(ext) : undefined
+  }
+}
+
+const serializePost = ({ struct, content }: PostData): PostData => {
+  return {
+    struct: { ...struct, extension: JSON.parse(JSON.stringify(struct.extension)) },
+    content
+  } as PostData
+}
+
 export const addPostReducer: AddReducerType = (state, { payload: { posts } }) => {
-  console.log('Post state: ', state, posts)
-  const newPost = Array.isArray(posts) ? posts[0] : posts
-  const id = newPost.post.struct.id.toString();
-  console.log('Post state: ', state, id)
-  state[id] = newPost
-  return state
+  const postsData = Array.isArray(posts) ? posts : [ posts ]
+
+  postsData.forEach(x => {
+    const id = x.post.struct.id.toString()
+    state[id] = serializePostWithExt(x)
+  })
 }
 
 type EditActionType = {
