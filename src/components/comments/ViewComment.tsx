@@ -26,7 +26,7 @@ type Props = {
   withShowReplies?: boolean
 }
 
-export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, space, replies, withShowReplies }) => {
+export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, space = { id: 0 } as any as Space, replies, withShowReplies }) => {
   const myAddress = useMyAddress()
 
   const {

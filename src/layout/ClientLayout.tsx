@@ -9,36 +9,41 @@ import Queue from '@subsocial/react-components/Status/Queue';
 import Signer from '@subsocial/react-signer';
 import { MyAccountProvider } from '../components/auth/MyAccountContext';
 import { Events } from '@subsocial/react-query';
-import { substrateUrl } from '../components/utils/env';
+import { substrateUrl, isDevelop } from '../components/utils/env';
 import { NotifCounterProvider } from '../components/utils/NotifCounter';
 import { Content } from '../components/main/Content';
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext';
 import { AuthProvider } from 'src/components/auth/AuthContext';
+import { isServerSide } from 'src/components/utils';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   const url = substrateUrl || settings.apiUrl || undefined;
 
-  return <Queue>
-    <SidebarCollapsedProvider>
-      <MyAccountProvider>
-        <Api url={url}>
-          <SubsocialApiProvider>
-            <AuthProvider>
-              <Events>
-                <NotifCounterProvider>
-                  <Signer>
-                    <Content>
-                      {children}
-                    </Content>
-                  </Signer>
-                </NotifCounterProvider>
-              </Events>
-            </AuthProvider>
-          </SubsocialApiProvider>
-        </Api>
-      </MyAccountProvider>
-    </SidebarCollapsedProvider>
-  </Queue>;
+  return isServerSide() && !isDevelop
+    ? <Content>
+      {children}
+    </Content>
+    : <Queue>
+      <SidebarCollapsedProvider>
+        <MyAccountProvider>
+          <Api url={url}>
+            <SubsocialApiProvider>
+              <AuthProvider>
+                <Events>
+                  <NotifCounterProvider>
+                    <Signer>
+                      <Content>
+                        {children}
+                      </Content>
+                    </Signer>
+                  </NotifCounterProvider>
+                </Events>
+              </AuthProvider>
+            </SubsocialApiProvider>
+          </Api>
+        </MyAccountProvider>
+      </SidebarCollapsedProvider>
+    </Queue>;
 };
 
 export default ClientLayout;

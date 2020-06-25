@@ -63,11 +63,10 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
   const [ showOnBoarding, setShowOnBoarding ] = useState(noOnBoarded)
   const [ showModal, setShowModal ] = useState<boolean>(false);
   const [ kind, setKind ] = useState<ModalKind>()
-  const [ isSignIn, setSignIn ] = useState(false)
   const [ isTokens, setTokens ] = useState(false)
   const [ isSpaces, setSpaces ] = useState(false)
   const { api, isApiReady } = useApi()
-  const isLogged = useIsSignIn()
+  const isSignIn = useIsSignIn()
 
   useEffect(() => {
     let unsubBalance: (() => void) | undefined
@@ -75,11 +74,8 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
 
     if (!isApiReady) return setCurrentStep(StepsEnum.Disabled);
 
-    if (!isLogged) {
-      setSignIn(false)
+    if (!isSignIn) {
       return setCurrentStep(0)
-    } else {
-      setSignIn(true)
     }
 
     const subBlog = async (isBalanse: boolean) => {
@@ -123,7 +119,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       unsubBlog && unsubBlog()
       unsubBalance && unsubBalance()
     }
-  }, [ currentStep, address, isApiReady ])
+  }, [ currentStep, address, isApiReady, isSignIn ])
 
   console.log(useRouter().pathname)
   const contextValue = {
