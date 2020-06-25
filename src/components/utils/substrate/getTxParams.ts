@@ -15,12 +15,11 @@ type BuildTxParams = {
 export const getTxParams = async ({ json, setIpfsHash, ipfs, buildTxParamsCallback }: BuildTxParams) => {
   try {
     const hash = await ipfs.saveContent(json)
-    console.log('SSSS', hash)
     if (hash) {
       setIpfsHash(hash);
       return buildTxParamsCallback(hash)
     } else {
-      throw new Error('Invalid hash')
+      throw new Error('IPFS CID is undefined')
     }
   } catch (err) {
     log.error('Failed build tx params: %o', err)
