@@ -61,7 +61,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
   )
 
   const NoAccounts = () => (
-    <span>No account found. Please open your Polkadot extension and create a new account or import existing.</span>
+    <span>No accounts found. Please open your Polkadot extension and create a new account or import existing.</span>
   )
 
   const CurrentAccount = () => {
