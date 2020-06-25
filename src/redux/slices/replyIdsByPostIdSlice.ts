@@ -61,7 +61,7 @@ export const removeCommentReducer: ReducerSingleType = (state, { payload: { repl
 }
 
 export const commentSlice = createSlice({
-  name: 'comments',
+  name: 'replyIdsByPostId',
   initialState: {} as CommentsState,
   reducers: {
     addCommentReducer,
@@ -71,19 +71,19 @@ export const commentSlice = createSlice({
 });
 
 export const getComments = (store: Store, parentId: string): PostWithAllDetails[] => {
-  const { comments, posts } = store
-  const commentIds = comments[parentId]
-  const res = commentIds && posts
+  const { replyIdsByPostId, postById } = store
+  const commentIds = replyIdsByPostId[parentId]
+  const res = commentIds && postById
     ? commentIds
       .map(x => {
-        return posts[x]
+        return postById[x]
       })
       .filter(x => x !== undefined)
     : []
   return res
 };
 
-export const getCommentsStore = (state: Store) => state.comments;
+export const getCommentsStore = (state: Store) => state.replyIdsByPostId;
 
 export const {
   addCommentReducer: addComments,

@@ -6,8 +6,8 @@ import { nonEmptyArr, newLogger } from '@subsocial/utils';
 import ListData from '../utils/DataList';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
-import { getComments } from 'src/app/slices/commentsSlice';
-import { Store } from 'src/app/types';
+import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice';
+import { Store } from 'src/redux/types';
 import { useSetReplyToStore } from './utils';
 
 const log = newLogger('CommentTree')

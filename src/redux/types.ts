@@ -1,10 +1,10 @@
-import { CommentsState } from './slices/commentsSlice';
-import { PostState } from './slices/postSlice';
+import { CommentsState } from './slices/replyIdsByPostIdSlice';
+import { PostState } from './slices/postByIdSlice';
 import { PostWithAllDetails, PostWithSomeDetails } from '@subsocial/types';
 
 export type Store = {
-  comments: CommentsState
-  posts: PostState
+  replyIdsByPostId: CommentsState
+  postById: PostState
 }
 
 export type PostsStoreType = PostWithAllDetails | PostWithSomeDetails | (PostWithAllDetails | PostWithSomeDetails)[]

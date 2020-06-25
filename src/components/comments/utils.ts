@@ -1,7 +1,7 @@
-import { addComments, removeComment } from 'src/app/slices/commentsSlice';
-import { addPost, removePost, editPost } from 'src/app/slices/postSlice';
+import { addComments, removeComment } from 'src/redux/slices/replyIdsByPostIdSlice';
+import { addPost, removePost, editPost } from 'src/redux/slices/postByIdSlice';
 import { Dispatch } from '@reduxjs/toolkit';
-import { PostsStoreType } from 'src/app/types';
+import { PostsStoreType } from 'src/redux/types';
 import { PostData, PostWithSomeDetails, CommentContent, PostContent } from '@subsocial/types';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';

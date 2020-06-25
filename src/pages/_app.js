@@ -3,7 +3,7 @@ import App from 'next/app';
 import Head from 'next/head';
 import MainPage from '../layout/MainPage'
 import { Provider } from 'react-redux';
-import store from 'src/app/store';
+import store from 'src/redux/store';
 
 function MyApp (props) {
   const { Component, pageProps } = props

@@ -28,9 +28,9 @@ const serializePost = ({ struct, content }: PostData): PostData => {
 }
 
 export const addPostReducer: AddReducerType = (state, { payload: { posts } }) => {
-  const postsData = Array.isArray(posts) ? posts : [ posts ]
+  const postByIdData = Array.isArray(posts) ? posts : [ posts ]
 
-  postsData.forEach(x => {
+  postByIdData.forEach(x => {
     const id = x.post.struct.id.toString()
     state[id] = serializePostWithExt(x)
   })
@@ -65,7 +65,7 @@ export const removePostReducer: DeleteReducerType = (state, { payload: { postId 
 }
 
 export const postSlice = createSlice({
-  name: 'posts',
+  name: 'postById',
   initialState: { } as PostState,
   reducers: {
     addPostReducer,
@@ -74,7 +74,7 @@ export const postSlice = createSlice({
   }
 });
 
-export const getPost = (state: Store) => state.posts;
+export const getPost = (state: Store) => state.postById;
 
 export const {
   addPostReducer: addPost,

@@ -2,13 +2,13 @@ import {
   configureStore,
   getDefaultMiddleware
 } from '@reduxjs/toolkit'
-import commentReducer from './slices/commentsSlice';
-import postReducer from './slices/postSlice';
+import replyIdsByPostIdReducer from './slices/replyIdsByPostIdSlice';
+import postByIdReducer from './slices/postByIdSlice';
 
 export default configureStore({
   reducer: {
-    comments: commentReducer,
-    posts: postReducer
+    replyIdsByPostId: replyIdsByPostIdReducer,
+    postById: postByIdReducer
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false

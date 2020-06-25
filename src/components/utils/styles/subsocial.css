@@ -1500,7 +1500,6 @@ a.DfStatItem {
 }
 
 .SpaceNav {
-  @extend .DfPanel;
   .SNhead {
     @extend .DfCard;
     display: flex;
