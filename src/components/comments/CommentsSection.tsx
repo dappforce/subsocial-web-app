@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Post, Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
-import { NewComment } from './NewComment';
+import { NewComment } from './CreateComment';
 import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
 import { PostData, PostWithAllDetails } from '@subsocial/types/dto';

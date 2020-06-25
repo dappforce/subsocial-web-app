@@ -11,11 +11,12 @@ import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
 import { formatUnixDate } from '../utils/utils';
 import moment from 'moment-timezone';
-import { EditComment, NewComment } from './NewComment';
+import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
 import { postUrl } from '../utils/urls';
 import { useSubstrateApi } from '../utils/SubsocialApiContext';
 import SharePostAction from '../posts/SharePostAction';
+import { NewComment } from './CreateComment';
 
 type Props = {
   space: Space,
@@ -42,6 +43,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
   const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
   const substrate = useSubstrateApi()
 
+  const isFake = id.toString().startsWith('fake')
   const isMyStruct = myAddress === account.toString()
   const commentLink = postUrl(space, struct);
 
@@ -103,41 +105,43 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
     {showReplies && <CommentsTree parentId={id} replies={replies} space={space}/>}
   </div> : null
 
-  return <Comment
-    className='DfNewComment'
-    actions={!showReplyForm
-      ? [
-        <Voter key={`voters-of-comments-${id}`} struct={struct} />,
-        <SharePostAction postId={id} className='DfShareAction' withIcon={false} />,
-        <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)} >Reply</span>
-      ]
-      : []}
-    author={<div className='DfAuthorBlock'>
-      <AuthorPreview
-        address={account}
-        owner={owner}
-        isShort={true}
-        isPadded={false}
-        size={32}
-        details={
-          <span>
-            <Link href={commentLink}>
-              <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
-            </Link>
-            {' · '}
-            {pluralize(score, 'Point')}
-          </span>
-        }
-      />
-      <RenderDropDownMenu key={`comment-dropdown-menu-${id}`} />
-    </div>}
-    content={showEditForm
-      ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
-      : <DfMd source={content?.body} />
-    }
-  >
-    {ChildPanel}
-  </Comment>
+  return <div className={isFake ? 'DfDisableLayout' : ''}>
+    <Comment
+      className='DfNewComment'
+      actions={!showReplyForm
+        ? [
+          <Voter key={`voters-of-comments-${id}`} struct={struct} />,
+          <SharePostAction postId={id} className='DfShareAction' withIcon={false} />,
+          <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)} >Reply</span>
+        ]
+        : []}
+      author={<div className='DfAuthorBlock'>
+        <AuthorPreview
+          address={account}
+          owner={owner}
+          isShort={true}
+          isPadded={false}
+          size={32}
+          details={
+            <span>
+              <Link href={commentLink}>
+                <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
+              </Link>
+              {' · '}
+              {pluralize(score, 'Point')}
+            </span>
+          }
+        />
+        <RenderDropDownMenu key={`comment-dropdown-menu-${id}`} />
+      </div>}
+      content={showEditForm
+        ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
+        : <DfMd source={content?.body} />
+      }
+    >
+      {ChildPanel}
+    </Comment>
+  </div>
 };
 
 export default ViewComment;

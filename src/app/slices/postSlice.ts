@@ -1,5 +1,5 @@
 import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit';
-import { PostWithAllDetails, PostData, PostWithSomeDetails } from '@subsocial/types';
+import { PostData, PostWithSomeDetails } from '@subsocial/types';
 import { Store, PostsStoreType } from '../types';
 
 export type PostState = Record<string, any>
@@ -36,15 +36,22 @@ export const addPostReducer: AddReducerType = (state, { payload: { posts } }) =>
   })
 }
 
-type EditActionType = {
+export type EditActionType = {
   postId: string,
-  post: PostWithAllDetails
+  post: PostData
 }
 
 type EditReducerType = CaseReducer<PostState, PayloadAction<EditActionType>>
 
 export const editPostReducer: EditReducerType = (state, { payload: { postId, post } }) => {
-  state[postId] = post
+  let oldPost: PostWithSomeDetails | undefined = state[postId]
+
+  if (!oldPost) {
+    oldPost = { post }
+  }
+  oldPost = { ...oldPost, post }
+
+  state[postId] = oldPost
 }
 
 type DeleteActionType = {

@@ -7,3 +7,10 @@
     -ms-transform: scale(-1, 1) !important;
     transform: scale(-1, 1) !important;
   }
+
+.DfDisableLayout {
+  pointer-events: none;
+
+  /* for "disabled" effect */
+  opacity: 0.9;
+}

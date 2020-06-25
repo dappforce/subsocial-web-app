@@ -113,3 +113,5 @@ export interface InjectedAccountExt {
     source: string;
   };
 }
+
+export type FVoid = () => void
