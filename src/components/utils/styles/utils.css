@@ -1,3 +1,5 @@
+@import './subsocial-vars.css';
+
 .flipH {
     display: inline-block;
     transform: scale(-1, 1) !important;
@@ -10,7 +12,14 @@
 
 .DfDisableLayout {
   pointer-events: none;
-
-  /* for "disabled" effect */
   opacity: 0.9;
+}
+
+.DfSubTitle {
+  font-weight: bolder;
+  background-color: $color_light_border;
+  padding: .25rem;
+  margin-top: .75rem;
+  padding-left: 1rem;
+  color: $color_ant_grey;
 }
