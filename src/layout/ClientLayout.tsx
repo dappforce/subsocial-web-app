@@ -25,8 +25,8 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
     </Content>
     : <Queue>
       <SidebarCollapsedProvider>
-        <MyAccountProvider>
-          <Api url={url}>
+        <Api url={url}>
+          <MyAccountProvider>
             <SubsocialApiProvider>
               <AuthProvider>
                 <Events>
@@ -40,8 +40,8 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
                 </Events>
               </AuthProvider>
             </SubsocialApiProvider>
-          </Api>
-        </MyAccountProvider>
+          </MyAccountProvider>
+        </Api>
       </SidebarCollapsedProvider>
     </Queue>;
 };

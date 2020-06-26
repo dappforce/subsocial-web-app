@@ -213,7 +213,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   return <div className='ViewSpaceWrapper'>
     <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-    <PageContent withOnBoarding leftPanel={isBrowser &&
+    <PageContent leftPanel={isBrowser &&
       <SpaceNav
         {...content}
         spaceId={new BN(id)}

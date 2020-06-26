@@ -22,7 +22,7 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
   const { spacesData, postsData } = props;
 
   return (
-    <PageContent withOnBoarding>
+    <PageContent>
       <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
         <HeadMeta
           title='Latest posts and spaces'

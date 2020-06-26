@@ -75,11 +75,13 @@ export function SignOutButton ({
   title = 'Sign out'
 }: SignOutButtonProps) {
   const { signOut } = useMyAccount()
-  return <Button
-    type='link'
-    size={size}
-    className='DfButtonAsMenuItem'
-    onClick={() => signOut()}>
-    {title}
-  </Button>
+
+  return <div className='m-3'>
+    <Button
+      block
+      size={size}
+      onClick={() => signOut()}>
+      {title}
+    </Button>
+  </div>
 }

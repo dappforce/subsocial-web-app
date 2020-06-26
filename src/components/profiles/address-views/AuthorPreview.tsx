@@ -11,20 +11,23 @@ import { ExtendedAddressProps } from './utils/types';
 import dynamic from 'next/dynamic';
 import { useApi } from '@subsocial/react-hooks';
 import ViewProfileLink from '../ViewProfileLink';
+import BN from 'bn.js'
 
 const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
 
 export type InfoProps = {
-  address?: string | AccountId
+  address?: string | AccountId,
+  balance?: string | BN | number,
   details?: JSX.Element
 }
 
-export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
+export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, balance, address }) => {
   const { isApiReady } = useApi()
   return <>
     <div className='Df--AddressComponents-details'>
-      {address && isApiReady &&
-        <Balance address={address.toString()} />
+      {balance ||
+        (address && isApiReady &&
+          <Balance address={address.toString()} />)
       }
       {details && <div>{details}</div>}
     </div>
@@ -62,7 +65,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='hover'
-          content={<ProfilePreview address={address} owner={owner}/>}
+          content={<ProfilePreview address={address} owner={owner} />}
         >
           <span>
             <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />

@@ -13,10 +13,12 @@ import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 
 type ProfilePreviewProps = AddressProps & {
   mini?: boolean,
+  withAbout?: boolean,
+  withLabel?: boolean,
   size?: number
 }
 
-export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ address, owner = {} as ProfileData, size, mini = false }) => { // TODO fix CSS style
+export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ address, withLabel, className, withAbout = false, owner = {} as ProfileData, size, mini = false }) => { // TODO fix CSS style
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
 
@@ -40,29 +42,27 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
     setFollowingOpen(true);
   };
 
-  return <div>
-    <div className={`ProfileDetails`}>
-      <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
-      <div className='content'>
-        <NameDetails owner={owner} address={address} />
-        {!mini && <>
-          {nonEmptyStr(about) &&
+  return <div className={`ProfileDetails ${className}`}>
+    <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
+    <div className='content'>
+      <NameDetails owner={owner} address={address} withLabel={withLabel} />
+      {!mini && <>
+        {withAbout && nonEmptyStr(about) &&
             <div className='DfPopup-about'>
               <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
             </div>
-          }
-          <div className='DfPopup-links'>
-            <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
-              <Pluralize count={followers} singularText='Follower'/>
-            </div>
-            <div onClick={openFollowingModal} className={`DfPopup-link ${following ? '' : 'disable'}`}>
-              <Pluralize count={following} singularText='Following'/>
-            </div>
+        }
+        <div className='DfPopup-links'>
+          <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
+            <Pluralize count={followers} singularText='Follower'/>
           </div>
-          {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
-          {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
-        </>}
-      </div>
+          <div onClick={openFollowingModal} className={`DfPopup-link ${following ? '' : 'disable'}`}>
+            <Pluralize count={following} singularText='Following'/>
+          </div>
+        </div>
+        {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
+        {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
+      </>}
     </div>
   </div>;
 };

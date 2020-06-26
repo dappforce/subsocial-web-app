@@ -5,7 +5,6 @@ import Avatar from '../profiles/address-views/Avatar'
 import { AddressProps } from '../profiles/address-views/utils/types';
 import { withLoadedOwner } from '../profiles/address-views/utils/withLoadedOwner';
 import { InfoDetails } from '../profiles/address-views';
-import { isBrowser } from 'react-device-detect';
 import { AccountMenu } from 'src/components/profile-selector/AccountMenu';
 
 export const SelectAddressPreview: React.FunctionComponent<AddressProps> = ({
@@ -17,7 +16,7 @@ export const SelectAddressPreview: React.FunctionComponent<AddressProps> = ({
       <Avatar address={address} avatar={owner?.content?.avatar} />
     </div>
     <div className='DfAddressInfo ui--AddressComponents'>
-      <Address asLink={isBrowser} owner={owner} address={address} />
+      <Address asLink={false} owner={owner} address={address} />
       <InfoDetails address={address} />
     </div>
   </div>

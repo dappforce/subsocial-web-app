@@ -2,27 +2,27 @@ import React, { useState, useEffect } from 'react'
 import keyring from '@polkadot/ui-keyring';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { ProfileData } from '@subsocial/types';
-import { SelectAddressPreview } from '../profiles/address-views';
+import { SelectAddressPreview, ProfilePreview } from '../profiles/address-views';
 import { Loading } from '../utils';
-import { Button, Avatar, Divider } from 'antd';
+import { Button, Avatar } from 'antd';
 import { useMyAccount, useMyAddress } from '../auth/MyAccountContext';
 import { isWeb3Injected } from '../utils/Api';
 import { useAuth } from '../auth/AuthContext';
+import SubTitle from '../utils/SubTitle';
 
-type SelectAccountButtons = {
+type SelectAccountItems = {
   accounts: string[],
   profilesByAddressMap: Map<string, ProfileData>
 }
 
-const SelectAccountButtons = ({ accounts: addresses, profilesByAddressMap }: SelectAccountButtons) => {
+const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap }: SelectAccountItems) => {
   const { setAddress } = useMyAccount()
   const { hideSignInModal } = useAuth()
 
   return <>
-    {addresses.map(item => <Button
-      block
+    {addresses.map(item => <div
       key={item.toString()}
-      className='DfChooseAccountButton mt-2'
+      className='SelectAccountItem'
       style={{ cursor: 'pointer', height: 'auto' }}
       onClick={async () => {
         await hideSignInModal()
@@ -30,7 +30,7 @@ const SelectAccountButtons = ({ accounts: addresses, profilesByAddressMap }: Sel
       }}
     >
       <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
-    </Button>)}
+    </div>)}
   </>
 }
 
@@ -44,32 +44,40 @@ type AccountSelectorViewProps = {
 
 export const AccountSelectorView = ({ currentAddress, extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
   const NoExtension = () => (
-    <>
-      <div className='mb-4'>
+    <div className='p-3'>
+      <div className='mb-4 mt-2'>
         <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
         was not found or disabled. You can install it if you are using Chrome or Firefox browser.
       </div>
-      <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
-        <Avatar size={20} src='chrome.svg' />
-        <span className='ml-2'>Polkadot extension for Chrome</span>
-      </Button>
-      <Button block type='default' href='https://addons.mozilla.org/ru/firefox/addon/polkadot-js-extension/' target='_blank' >
-        <Avatar size={20} src='firefox.svg' />
-        <span className='ml-2'>Polkadot extension for Firefox</span>
-      </Button>
-    </>
+      <div className='mx-5'>
+        <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
+          <Avatar size={20} src='chrome.svg' />
+          <span className='ml-2'>Polkadot extension for Chrome</span>
+        </Button>
+        <Button block type='default' href='https://addons.mozilla.org/ru/firefox/addon/polkadot-js-extension/' target='_blank' >
+          <Avatar size={20} src='firefox.svg' />
+          <span className='ml-2'>Polkadot extension for Firefox</span>
+        </Button>
+      </div>
+    </div>
   )
 
   const NoAccounts = () => (
-    <span>No account found. Please open your Polkadot extension and create a new account or import existing.</span>
+    <div className='p-3'>No account found. Please open your Polkadot extension and create a new account or import existing.</div>
   )
 
   const CurrentAccount = () => {
-    if (!currentAddress) return <div>Click on your account to sign in:</div>
+    if (!currentAddress) return <div className='mt-2'>Click on your account to sign in:</div>
 
     return <>
-      <Divider className='mt-0'>Current account:</Divider>
-      <div style={{ paddingLeft: '.75rem' }}><SelectAddressPreview address={currentAddress} owner={profilesByAddressMap.get(currentAddress)} /></div>
+      <div className='p-3'>
+        <ProfilePreview
+          size={100}
+          className='justify-content-center'
+          address={currentAddress}
+          owner={profilesByAddressMap.get(currentAddress)}
+        />
+      </div>
     </>
   }
 
@@ -84,8 +92,8 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
     if (!count) return null
 
     return <>
-      <Divider>{kind} accounts:</Divider>
-      <SelectAccountButtons accounts={accounts} profilesByAddressMap={profilesByAddressMap} />
+      <SubTitle title={`${kind} accounts:`} />
+      <SelectAccountItems accounts={accounts} profilesByAddressMap={profilesByAddressMap} />
     </>
   }
 
@@ -94,7 +102,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
 
     const renderContent = (content: JSX.Element) => {
       return <>
-        <Divider>Extension accounts:</Divider>
+        <SubTitle title={'Extension accounts:'} />
         {content}
       </>
     }
@@ -105,7 +113,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
 
     if (!count) return renderContent(<NoAccounts />)
 
-    return renderContent(<SelectAccountButtons accounts={extensionAddresses} profilesByAddressMap={profilesByAddressMap} />)
+    return renderContent(<SelectAccountItems accounts={extensionAddresses} profilesByAddressMap={profilesByAddressMap} />)
 
   }
 
@@ -121,7 +129,7 @@ type AccountSelectorProps = {
   injectedAddresses?: string[]
 }
 
-export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => {
+export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) => {
   const [ extensionAddresses, setExtensionAddresses ] = useState<string[]>(injectedAddresses || [])
   const [ localAddresses, setLocalAddresses ] = useState<string[]>()
   const [ developAddresses, setDevelopAddresses ] = useState<string[]>()
@@ -172,6 +180,24 @@ export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => 
 
     loadProfiles().catch(err => console.error(err))// TODO change on logger
   }, [ currentAddress ])
+
+  return {
+    extensionAddresses,
+    localAddresses,
+    developAddresses,
+    profilesByAddressMap,
+    currentAddress
+  }
+}
+
+export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => {
+  const {
+    extensionAddresses,
+    localAddresses,
+    developAddresses,
+    profilesByAddressMap,
+    currentAddress
+  } = useAccountSelector({ injectedAddresses })
 
   if (!extensionAddresses || !localAddresses || !developAddresses) return <Loading />
 

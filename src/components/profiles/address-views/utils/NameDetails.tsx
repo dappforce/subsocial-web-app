@@ -12,13 +12,15 @@ import ViewProfileLink from '../../ViewProfileLink';
 const FollowAccountButton = dynamic(() => import('../../../utils/FollowAccountButton'), { ssr: false });
 
 type Props = AddressProps & {
-  withFollowButton?: boolean
+  withFollowButton?: boolean,
+  withLabel?: boolean
 }
 
 export const NameDetails = ({
   owner = {} as ProfileData,
   address,
-  withFollowButton = true
+  withFollowButton = true,
+  withLabel
 }: Props) => {
 
   const { profile, content, struct } = owner
@@ -42,7 +44,7 @@ export const NameDetails = ({
   return <>
     <div className='header DfAccountTitle'>
       <ViewProfileLink account={{ address, username }} title={title} className='ui--AddressComponents-address' />
-      <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+      {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
     </div>
     {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}

@@ -1,10 +1,12 @@
-import React, { useReducer, createContext, useContext, useEffect } from 'react';
+import React, { useReducer, createContext, useContext, useEffect, useState } from 'react';
 import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
 import { equalAddresses } from '../utils/substrate';
 import { InjectedAccountExt } from '../utils/types';
 import { isWeb3Injected } from '../utils/Api';
+import keyring from '@polkadot/ui-keyring';
+import { useApi } from '@subsocial/react-hooks';
 
 const log = newLogger('MyAccountContext')
 
@@ -121,12 +123,33 @@ export const MyAccountContext = createContext<MyAccountContextProps>(contextStub
 
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState);
+  const { injectedAccounts, inited } = state;
+  const { isDevelopment, isApiReady } = useApi()
+  const [ isLoad, setLoad ] = useState(false)
+
+  const keytingLoadAll = (injectedAccounts?: InjectedAccountExt[]) => {
+    keyring.loadAll({
+      isDevelopment,
+      type: 'ed25519'
+    }, injectedAccounts)
+    setLoad(true)
+  }
 
   useEffect(() => {
     if (!state.inited) {
       dispatch({ type: 'reload' });
+      !isLoad && keytingLoadAll()
     }
-  }, [ state.inited ]); // Don't call this effect if `invited` is not changed
+  }, [ inited ]); // Don't call this effect if `invited` is not changed
+
+  useEffect(() => {
+    if (!injectedAccounts.length || !isApiReady) return
+
+    isLoad
+      ? injectedAccounts.forEach(x => keyring.addExternal(x.address, x.meta))
+      : keytingLoadAll(injectedAccounts)
+
+  }, [ injectedAccounts.length ])
 
   const contextValue = {
     state,

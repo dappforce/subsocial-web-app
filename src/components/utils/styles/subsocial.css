@@ -1247,7 +1247,7 @@ hr {
   background: #fff;
   border-right: 1px solid $color_light_border;
   overflow-y: auto;
-  height: 100vh;
+  height: 100%;
   left: 0;
 
   .ant-menu-item:not(:last-child) {
@@ -1510,6 +1510,7 @@ a.DfStatItem {
     box-sizing: border-box;
     border-radius: $border_radius_normal;
     margin-bottom: $space_big;
+    padding: $space_big;
 
     .SNavatar {
       margin: auto;
@@ -1580,10 +1581,14 @@ a.DfStatItem {
 .DfStep {
   button, a {
     padding: 0;
-    font-size: 1.15;
+    font-size: 1rem;
     font-weight: bolder;
     color: #222
   }
+}
+
+.ant-steps-item-title {
+  font-size: 1rem;
 }
 
 .DfChooseAccountList {
@@ -1599,8 +1604,9 @@ a.DfStatItem {
   }
 }
 
-.DfChooseAccountButton {
-  padding: $space_small;
+.SelectAccountItem {
+  padding: $space_normal;
+  padding-left: 2rem;
   cursor: pointer; 
   height: 'auto';
 
@@ -1616,7 +1622,7 @@ a.DfStatItem {
   }
 }
 
-.DfChooseAccountButton:hover {
+.SelectAccountItem:hover {
   background-color: #e6f7ff;
 }
 
@@ -1785,12 +1791,12 @@ a.DfStatItem {
 .DfCard {
   display: flex;
   flex-direction: column;
-  padding: $space_big;
+  padding: $space_normal;
+  margin: $space_small;
   background-color: #fff;
   border: 1px solid $color_light_border;
   box-sizing: border-box;
   border-radius: $border_radius_normal;
-  margin-bottom: $space_big;
   &.active {
     border-color: $color_link
   }
@@ -1825,5 +1831,9 @@ a.DfStatItem {
   .ant-divider-inner-text {
     color: $color_muted;
     font-size: $font_normal;
+  }
+
+  .ant-modal-body {
+    padding: 0;
   }
 }

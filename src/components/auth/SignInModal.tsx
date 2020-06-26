@@ -62,12 +62,14 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
   } else {
     content.body = <>
       <SignInWithPolkadotExt />
-      <Divider>or</Divider>
-      <div className='mb-4'>Alternatively, you can create a new account right here on the site.</div>
-      <Button block type='default' href='/bc/#/accounts' target='_blank' >
-        <Avatar size={18} src='substrate.svg' />
-        <span className='ml-2'>Create account</span>
-      </Button>
+      <Divider className='m-0 mb-3' />
+      <div className='px-3'>
+        <div className='mb-3'>Alternatively, you can create a new account right here on the site.</div>
+        <Button block type='default' href='/bc/#/accounts' target='_blank' >
+          <Avatar size={18} src='substrate.svg' />
+          <span className='ml-2'>Create account</span>
+        </Button>
+      </div>
     </>
 
     switch (kind) {
@@ -97,7 +99,7 @@ type ModalViewProps = ModalProps & {
 export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) => {
   const { warn, body, title } = getModalContent(kind, isSteps)
 
-  return <Modal
+  return title ? <Modal
     visible={open}
     title={ <h3 style={{ fontWeight: 'bold' }}>{title}</h3>}
     footer={null}
@@ -105,7 +107,7 @@ export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) =
     className='text-center DfSignInModal'
     onCancel={hide}
   >
-    <div className='p-4 pt-0'>
+    <>
       {warn && <Alert
         className='mb-4'
         message={warn}
@@ -113,8 +115,14 @@ export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) =
         closable={false}
       />}
       {body}
-    </div>
-  </Modal>;
+      <Divider className='my-3' />
+      <div className='d-flex justify-content-center pb-3'>
+        <a className='mr-1'>Privacy Policy</a>
+        {' · '}
+        <a className='ml-1'>Terms of Servise</a>
+      </div>
+    </>
+  </Modal> : null;
 }
 
 export const SignInModal = (props: ModalProps) => {

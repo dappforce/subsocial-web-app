@@ -24,7 +24,7 @@ function TxButton ({ accountId, className, extrinsic: propsExtrinsic, icon, isBa
   const { queueExtrinsic } = useContext(StatusContext);
   const [ isSending, , setIsSending ] = useToggle(false);
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-  const noTx = (!isUnsigned && !accountId) || !isTokens;
+  const noTx = !accountId || !isTokens;
 
   const _onFailed = useCallback(
     (result: SubmittableResult | null): void => {
@@ -47,11 +47,6 @@ function TxButton ({ accountId, className, extrinsic: propsExtrinsic, icon, isBa
   const _onSend = useCallback(
     async (): Promise<void> => {
       onClick && onClick();
-
-      if (noTx) {
-        openSignInModal('AuthRequired')
-        return setIsSending(false);
-      }
 
       let extrinsic: any;
 
@@ -109,7 +104,17 @@ function TxButton ({ accountId, className, extrinsic: propsExtrinsic, icon, isBa
           : isPrimary
       }
       label={label || isIcon}
-      onClick={_onSend}
+      onClick={() => {
+        console.log('noTx', noTx, !accountId, !isTokens, !accountId || !isTokens)
+        if (noTx) {
+          console.log('In no Tx if', noTx, !accountId, !isTokens, !accountId || !isTokens)
+          openSignInModal('AuthRequired')
+          return setIsSending(false);
+        }
+
+        console.log('Out no Tx if', noTx, !accountId, !isTokens, !accountId || !isTokens)
+        _onSend()
+      }}
       size={size}
       tooltip={tooltip}
     />

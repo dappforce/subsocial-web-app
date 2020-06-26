@@ -51,7 +51,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, space, replie
     ? renderResponseTitle(postStruct.ext?.post)
     : title
 
-  return <PageContent withOnBoarding>
+  return <PageContent>
     <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
       <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
       <div className='DfRow'>

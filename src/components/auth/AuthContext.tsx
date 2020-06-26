@@ -142,6 +142,8 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
     setCurrentStep
   }
 
+  console.log('contextValue', contextValue)
+
   return <AuthContext.Provider value={contextValue}>
     {props.children}
     {kind && <SignInModal open={showModal} kind={kind} hide={() => setShowModal(false)} />}
