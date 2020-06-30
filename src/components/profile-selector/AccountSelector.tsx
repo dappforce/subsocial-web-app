@@ -67,12 +67,12 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
   )
 
   const CurrentAccount = () => {
-    if (!currentAddress) return <div className='mt-2'>Click on your account to sign in:</div>
+    if (!currentAddress) return <div className='m-3'>Click on your account to sign in:</div>
 
     return <>
       <div className='p-3'>
         <ProfilePreview
-          size={100}
+          size={60}
           className='justify-content-center'
           address={currentAddress}
           owner={profilesByAddressMap.get(currentAddress)}

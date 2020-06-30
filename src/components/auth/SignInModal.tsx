@@ -7,6 +7,7 @@ import { SignInFromExtension as SignInWithPolkadotExt } from './SignInWithPolkad
 import { OnBoardingButton } from '../onboarding';
 import { ModalKind, useAuth, StepsEnum } from './AuthContext';
 import { AccountSelector } from '../profile-selector/AccountSelector';
+import PrivacyPolicyLinks from '../utils/PrivacyPoliceLinks';
 
 type IsSteps = {
   isSignIn: boolean,
@@ -103,7 +104,7 @@ export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) =
     visible={open}
     title={ <h3 style={{ fontWeight: 'bold' }}>{title}</h3>}
     footer={null}
-    width={428}
+    width={325}
     className='text-center DfSignInModal'
     onCancel={hide}
   >
@@ -115,12 +116,8 @@ export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) =
         closable={false}
       />}
       {body}
-      <Divider className='my-3' />
-      <div className='d-flex justify-content-center pb-3'>
-        <a className='mr-1'>Privacy Policy</a>
-        {' · '}
-        <a className='ml-1'>Terms of Servise</a>
-      </div>
+      <Divider className='mt-3 m-0' />
+      <PrivacyPolicyLinks />
     </>
   </Modal> : null;
 }

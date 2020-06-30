@@ -110,7 +110,7 @@ const InnerMenu = () => {
         ? <Menu.Divider key={'divider-' + i} />
         : renderPageLink(item)
       )}
-      {isBrowser && showOnBoarding && <OnBoardingCard />}
+      {isBrowser && showOnBoarding && !collapsed && <OnBoardingCard />}
       {isLoggedIn && <Menu.Divider />}
       {isLoggedIn && renderSubscriptions()}
     </Menu>

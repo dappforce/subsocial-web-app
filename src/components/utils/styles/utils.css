@@ -17,9 +17,8 @@
 
 .DfSubTitle {
   font-weight: bolder;
-  background-color: $color_light_border;
+  background-color: #eee;
   padding: .25rem;
-  margin-top: .75rem;
   padding-left: 1rem;
   color: $color_ant_grey;
 }

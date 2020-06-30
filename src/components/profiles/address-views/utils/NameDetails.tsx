@@ -29,11 +29,16 @@ export const NameDetails = ({
   const username = profile?.username?.toString()
 
   let title = ''
-  let subtitle = ''
+  let subtitle = null
 
   if (content && nonEmptyStr(content.fullname)) {
     title = content.fullname
-    subtitle = nonEmptyStr(username) ? `@${username} · ${shortAddress}` : shortAddress
+    subtitle = username
+      ? <>
+        <div>{username}</div>
+        <div>{shortAddress}</div>
+      </>
+      : shortAddress
   } else if (nonEmptyStr(username)) {
     title = `@${username}`
     subtitle = shortAddress
@@ -47,7 +52,7 @@ export const NameDetails = ({
       {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
     </div>
-    {nonEmptyStr(subtitle) && <div className='DfPopup-username'>{subtitle}</div>}
+    {subtitle && <div className='DfPopup-username'>{subtitle}</div>}
     <InfoDetails address={address} details={<>Reputation: {struct?.reputation?.toString() || 0}</>} />
   </>
 }

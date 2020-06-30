@@ -76,7 +76,7 @@ export function SignOutButton ({
 }: SignOutButtonProps) {
   const { signOut } = useMyAccount()
 
-  return <div className='m-3'>
+  return <div className='mx-5'>
     <Button
       block
       size={size}

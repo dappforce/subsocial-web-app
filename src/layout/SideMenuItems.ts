@@ -14,7 +14,7 @@ export type PageLink = {
   isAdvanced?: boolean
 }
 
-export type MenuItem = PageLink | Divider
+type MenuItem = PageLink | Divider
 
 export const isDivider = (item: MenuItem): item is Divider =>
   item === Divider
@@ -25,13 +25,8 @@ export const isPageLink = (item: MenuItem): item is PageLink =>
 export const DefaultMenu: MenuItem[] = [
   {
     name: 'Explore',
-    page: [ '/spaces/all' ],
+    page: [ '/blogs/all' ],
     image: 'global'
-  },
-  {
-    name: 'Get free tokens',
-    page: [ '/get-free-tokens' ],
-    image: 'dollar'
   },
   {
     name: 'Advanced',
@@ -57,7 +52,7 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     },
     {
       name: 'My subscriptions',
-      page: [ '/spaces/following/[address]', spacesFollowedByAccountUrl(account) ],
+      page: [ '/blogs/following/[address]', spacesFollowedByAccountUrl(account) ],
       image: 'book'
     },
     {
@@ -66,14 +61,16 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
       image: 'user'
     },
     {
-      name: 'My spaces',
-      page: [ '/spaces/my/[address]', spacesOwnedByAccountUrl(account) ],
+      name: 'My blogs',
+      page: [ '/blogs/my/[address]', spacesOwnedByAccountUrl(account) ],
       image: 'book'
     },
     {
-      name: 'New space',
-      page: [ '/spaces/new' ],
+      name: 'New blog',
+      page: [ '/blogs/new' ],
       image: 'plus'
-    }
+    },
+    Divider,
+    ...DefaultMenu
   ]
 }
