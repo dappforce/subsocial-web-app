@@ -19,7 +19,7 @@ const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap }: Selec
   const { setAddress } = useMyAccount()
   const { hideSignInModal } = useAuth()
 
-  return <>
+  return <div className='SelectAccountSection'>
     {addresses.map(item => <div
       key={item.toString()}
       className='SelectAccountItem'
@@ -31,7 +31,7 @@ const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap }: Selec
     >
       <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
     </div>)}
-  </>
+  </div>
 }
 
 type AccountSelectorViewProps = {

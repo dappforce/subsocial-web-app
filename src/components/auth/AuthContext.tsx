@@ -70,7 +70,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
 
   useEffect(() => {
     let unsubBalance: (() => void) | undefined
-    let unsubBlog: (() => void) | undefined
+    let unsubSpace: (() => void) | undefined
 
     if (!isApiReady) return setCurrentStep(StepsEnum.Disabled);
 
@@ -78,8 +78,8 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       return setCurrentStep(0)
     }
 
-    const subBlog = async (isBalanse: boolean) => {
-      unsubBlog = await api.query.spaces.spaceIdsByOwner(address, (data) => {
+    const subSpace = async (isBalanse: boolean) => {
+      unsubSpace = await api.query.spaces.spaceIdsByOwner(address, (data) => {
         if (data.isEmpty) {
           setSpaces(false)
           if (isBalanse) {
@@ -109,14 +109,14 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
         } else {
           setTokens(true)
         }
-        subBlog(!isEmptyBalanse)
+        subSpace(!isEmptyBalanse)
       });
     }
 
     subBalance();
 
     return () => {
-      unsubBlog && unsubBlog()
+      unsubSpace && unsubSpace()
       unsubBalance && unsubBalance()
     }
   }, [ currentStep, address, isApiReady, isSignIn ])

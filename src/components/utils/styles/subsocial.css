@@ -1604,27 +1604,33 @@ a.DfStatItem {
   }
 }
 
-.SelectAccountItem {
-  padding: $space_tiny;
-  padding-left: $space_normal;
-  cursor: pointer; 
-  height: 'auto';
+.SelectAccountSection {
+  max-height: 16rem;
+  overflow-y: auto;
 
-  .DfDisabled {
-    .ant-btn-disabled,
-    .ant-btn.disabled,
-    .ant-btn[disabled]{
-      cursor: default; 
-      border: none;
-      background-color: none;
+  .SelectAccountItem {
+    padding: $space_tiny;
+    padding-left: $space_normal;
+    cursor: pointer; 
+    height: 'auto';
+  
+    .DfDisabled {
+      .ant-btn-disabled,
+      .ant-btn.disabled,
+      .ant-btn[disabled]{
+        cursor: default; 
+        border: none;
+        background-color: none;
+    }
+  
+    }
   }
-
+  
+  .SelectAccountItem:hover {
+    background-color: #e6f7ff;
   }
 }
 
-.SelectAccountItem:hover {
-  background-color: #e6f7ff;
-}
 
 .DfCurrentAddress {
   display: flex;
@@ -1841,5 +1847,4 @@ a.DfStatItem {
 .DfAccountMenu {
   @extend .DfCard;
   padding: 0;
-  min-width: 316px;
 }
