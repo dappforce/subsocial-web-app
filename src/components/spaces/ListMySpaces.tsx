@@ -34,7 +34,7 @@ ListMySpaces.getInitialProps = async (props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-  const spacesData = await subsocial.findSpaces(mySpaceIds);
+  const spacesData = await subsocial.findVisibleSpaces(mySpaceIds);
 
   return {
     spacesData

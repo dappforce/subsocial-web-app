@@ -37,7 +37,7 @@ const InnerMenu = () => {
     const loadSpacesData = async () => {
       setLoaded(false);
       const ids = await substrate.spaceIdsFollowedByAccount(myAddress)
-      const spacesData = await subsocial.findSpaces(ids);
+      const spacesData = await subsocial.findVisibleSpaces(ids);
       if (isSubscribe) {
         setFollowedSpacesData(spacesData);
         setLoaded(true);

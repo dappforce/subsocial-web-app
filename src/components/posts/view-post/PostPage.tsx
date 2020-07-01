@@ -89,7 +89,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const postIdFromUrl = new BN(postId as string)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findPostsWithAllDetails([ ...replyIds, postIdFromUrl ])
+  const comments = await subsocial.findVisiblePostsWithAllDetails({ ids: [ ...replyIds, postIdFromUrl ] })
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
   const extPostData = extPostsData.pop()
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id)

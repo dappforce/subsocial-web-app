@@ -37,6 +37,7 @@ import ViewSpaceLink from './ViewSpaceLink';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 import PostPreview from '../posts/view-post/PostPreview';
 import { PageContent } from '../main/PageWrapper';
+import HiddenSpaceButton from './HiddenSpaceButton';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -84,12 +85,17 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const renderDropDownMenu = () => {
+    const spaceKey = `space-${id.toString()}`
     const menu =
       <Menu>
-        {isMySpace && <Menu.Item key='0'>
-          <Link href={`/spaces/[id]/edit`} as={editSpaceUrl(space)}>
-            <a className='item'>Edit</a>
-          </Link>
+        {isMySpace &&
+          <Menu.Item key={`edit-${spaceKey}`}>
+            <Link href={`/spaces/[id]/edit`} as={editSpaceUrl(space)}>
+              <a className='item'>Edit</a>
+            </Link>
+          </Menu.Item>}
+        {isMySpace && <Menu.Item key={`hidden-${spaceKey}`}>
+          <HiddenSpaceButton space={space} />
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -242,7 +248,7 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
 
-  const spaceData = id && await subsocial.findSpace(id)
+  const spaceData = id && await subsocial.findSpace({ id: id })
   if (!spaceData?.struct) {
     return return404(props)
   }
@@ -251,7 +257,7 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const posts = await subsocial.findPostsWithAllDetails(postIds.reverse())
+  const posts = await subsocial.findVisiblePostsWithAllDetails({ ids: postIds.reverse() })
 
   return {
     spaceData,

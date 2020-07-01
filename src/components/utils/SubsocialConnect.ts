@@ -7,7 +7,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Activity } from '@subsocial/types/offchain';
 // import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { newLogger } from '@subsocial/utils';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 
 const log = newLogger('SubsocialConnect')
 

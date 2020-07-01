@@ -23,7 +23,7 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
     useEffect(() => {
       setLoaded(false)
       const loadData = async () => {
-        const extPostData = await subsocial.findPostsWithAllDetails(postIds)
+        const extPostData = await subsocial.findVisiblePostsWithAllDetails(postIds)
         extPostData && setPosts(extPostData)
         setLoaded(true)
       };

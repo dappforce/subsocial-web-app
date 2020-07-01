@@ -20,6 +20,7 @@ import SpaceStatsRow from './SpaceStatsRow';
 import SpaceNav from './SpaceNav';
 import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
+import { PageContent } from '../main/PageWrapper';
 
 type Props = ViewSpaceProps
 
@@ -53,14 +54,13 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   // TODO extract WithSpaceNav
 
-  return <div className='ViewSpaceWrapper'>
-    {isBrowser &&
-      <SpaceNav
-        {...content}
-        spaceId={new BN(id)}
-        creator={account}
-      />
-    }
+  return <PageContent leftPanel={isBrowser &&
+    <SpaceNav
+      {...content}
+      spaceId={new BN(id)}
+      creator={account}
+    />
+  }>
     <HeadMeta title={title} desc={mdToText(desc)} image={image} />
     <Section className='DfContentPage' level={1} title={title}>
 
@@ -76,7 +76,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
       }
       <ViewTags tags={tags} />
     </Section>
-  </div>
+  </PageContent>
 }
 
 // TODO extract getInitialProps, this func is similar in ViewSpace
@@ -91,7 +91,7 @@ AboutSpacePage.getInitialProps = async (props): Promise<Props> => {
   }
 
   const subsocial = await getSubsocialApi()
-  const spaceData = id && await subsocial.findSpace(id)
+  const spaceData = id && await subsocial.findSpace({ id })
   if (!spaceData?.struct) {
     return return404(props)
   }

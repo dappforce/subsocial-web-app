@@ -40,7 +40,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
   const newTxParams = (hash: IpfsHash) => [ new OptionId(), newExtension, hash ];
 
   const onFailedReduxAction = (id: string) => useRemoveReplyFromStore(dispatch, { replyId: id, parentId: parentIdStr })
-  const onSuccessReduxAction = (id: BN, fakeId: string) => subsocial.findPostWithSomeDetails(id).then(comment => {
+  const onSuccessReduxAction = (id: BN, fakeId: string) => subsocial.findPostWithSomeDetails({ id }).then(comment => {
     comment && useChangeReplyToStore(
       dispatch,
       { replyId: fakeId, parentId: parentIdStr },

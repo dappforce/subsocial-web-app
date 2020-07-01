@@ -49,7 +49,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
 
   useEffect(() => {
 
-    substrate.findPost(id).then((post) => {
+    substrate.findPost({ id }).then((post) => {
       if (post) {
         setCount(post.direct_replies_count.toString())
       }

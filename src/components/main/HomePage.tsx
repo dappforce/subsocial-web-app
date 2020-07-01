@@ -51,10 +51,10 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const nextPostId = await substrate.nextPostId()
 
   const latestSpaceIds = getLastNIds(nextSpaceId, FIVE);
-  const spacesData = await subsocial.findSpaces(latestSpaceIds)
+  const spacesData = await subsocial.findVisibleSpaces(latestSpaceIds)
 
   const latestPostIds = getLastNIds(nextPostId, FIVE);
-  const postsData = await subsocial.findPostsWithAllDetails(latestPostIds as PostId[]);
+  const postsData = await subsocial.findVisiblePostsWithAllDetails({ ids: latestPostIds as PostId[] });
 
   return {
     spacesData,

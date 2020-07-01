@@ -1,5 +1,5 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { getApi } from './SubsocialConnect';

@@ -27,7 +27,7 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
 
   useEffect(() => {
 
-    substrate.findPost(id).then((post) => {
+    substrate.findPost({ id }).then((post) => {
       if (post) {
         setCount(post.total_replies_count.toString())
       }

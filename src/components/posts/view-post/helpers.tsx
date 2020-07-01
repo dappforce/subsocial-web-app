@@ -19,6 +19,7 @@ import SummarizeMd from '../../utils/md/SummarizeMd';
 import ViewPostLink from '../ViewPostLink';
 import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../../utils/urls';
 import SharePostAction from '../SharePostAction';
+import HiddenPostButton from '../HiddenPostButton';
 
 const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 
@@ -32,13 +33,17 @@ export const isRegularPost = (extension: PostExtension) => !(extension.isSharedP
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ account, space, post }) => {
   const isMyPost = isMyAddress(account);
+  const postKey = `post-${post.id.toString}`
 
   const menu = (
     <Menu>
-      {isMyPost && <Menu.Item key='0'>
+      {isMyPost && <Menu.Item key={`edit-${postKey}`}>
         <Link href='/spaces/[spaceId]/posts/[postId]/edit' as={postUrl(space, post, '/edit')}>
           <a className='item'>Edit</a>
         </Link>
+      </Menu.Item>}
+      {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
+        <HiddenPostButton post={post} />
       </Menu.Item>}
       {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>

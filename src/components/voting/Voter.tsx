@@ -39,7 +39,7 @@ export const Voter = (props: VoterProps) => {
     let isSubscribe = true;
 
     async function reloadPost () {
-      const _struct = await substrate.findPost(id)
+      const _struct = await substrate.findPost({ id })
       if (isSubscribe && _struct) setState(_struct);
     }
     reloadPost().catch(err => log.error('Failed to load a post or comment. Error:', err));

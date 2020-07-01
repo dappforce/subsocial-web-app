@@ -57,7 +57,7 @@ ListAllSpaces.getInitialProps = async (_props): Promise<Props> => {
     for (let id = totalCount; id.gte(firstSpaceId); id = id.sub(ONE)) {
       spaceIds.push(id)
     }
-    spacesData = await subsocial.findSpaces(spaceIds)
+    spacesData = await subsocial.findVisibleSpaces(spaceIds)
   }
 
   return {

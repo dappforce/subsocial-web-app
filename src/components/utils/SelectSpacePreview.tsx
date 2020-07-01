@@ -63,7 +63,7 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
 
     useEffect(() => {
       const loadSpaces = async () => {
-        const spacesData = await subsocial.findSpaces(spaceIds)
+        const spacesData = await subsocial.findVisibleSpaces(spaceIds)
         setCurrentSpacesData(spacesData)
       }
 

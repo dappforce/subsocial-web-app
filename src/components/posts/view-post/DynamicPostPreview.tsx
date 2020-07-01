@@ -20,11 +20,11 @@ export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }:
   useEffect(() => {
     let isSubscribe = true;
     const loadPost = async () => {
-      const extPostData = id && await subsocial.findPostWithAllDetails(id)
+      const extPostData = id && await subsocial.findPostWithAllDetails({ id })
       if (isSubscribe && extPostData) {
         const extension = extPostData.post.struct.extension
         if (extension.isComment) {
-          const rootPostData = await subsocial.findPostWithAllDetails(extension.asComment.root_post_id)
+          const rootPostData = await subsocial.findPostWithAllDetails({ id: extension.asComment.root_post_id })
           extPostData.space = rootPostData?.space || {} as SpaceData
         }
         setPostStruct(extPostData)

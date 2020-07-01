@@ -47,7 +47,7 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
 
       const loadData = async () => {
         const ownersData = await subsocial.findProfiles(ownerIds);
-        const postsData = await subsocial.findPosts(postIds)
+        const postsData = await subsocial.findVisiblePosts(postIds)
 
         function createMap<T extends AnySubsocialData> (data: T[], structName?: 'profile' | 'post') {
           const dataByIdMap = new Map<string, T>()
@@ -80,7 +80,7 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
         setPostByIdMap(createMap<PostData>(postsData, 'post'))
         setOwnerByIdMap(createMap<ProfileData>(ownersData, 'profile'))
 
-        const spacesData = await subsocial.findSpaces(spaceIds)
+        const spacesData = await subsocial.findVisibleSpaces(spaceIds)
         setSpaceByIdMap(createMap<SpaceData>(spacesData))
 
         setLoaded(true);

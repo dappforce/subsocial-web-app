@@ -19,7 +19,7 @@ export const withLoadSpaceDataById = (Component: React.ComponentType<Props>) => 
 
     useEffect(() => {
       const loadData = async () => {
-        const spaceData = await subsocial.findSpace(id)
+        const spaceData = await subsocial.findSpace({ id })
         if (spaceData) {
           setSpaceData(spaceData)
           const ownerId = spaceData.struct.owner

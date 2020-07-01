@@ -47,7 +47,7 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
     const loadComments = async () => {
       const replyIds = await substrate.getReplyIdsByPostId(parentId);
-      const comments = await subsocial.findPostsWithSomeDetails(replyIds, { withOwner: true }) as any;
+      const comments = await subsocial.findVisiblePostsWithSomeDetails({ ids: replyIds, withOwner: true }) as any;
       const replyIdsStr = replyIds.map(x => x.toString())
       setComments(comments)
       useSetReplyToStore(dispatch, { reply: { replyId: replyIdsStr, parentId: parentIdStr }, comment: comments })
