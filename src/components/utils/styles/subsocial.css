@@ -374,7 +374,7 @@ form.ui.form.DfForm.EditEntityForm {
 }
 
 .ui.basic.button:not(.disabled) {
-  background-color: #fff !important;
+  background-color: #fff;
 }
 
 .editor-statusbar {
@@ -1509,7 +1509,7 @@ a.DfStatItem {
     border: 1px solid $color_light_border;
     box-sizing: border-box;
     border-radius: $border_radius_normal;
-    margin-bottom: $space_big;
+    margin: 0 0 $space_big 0;
     padding: $space_big;
 
     .SNavatar {
@@ -1847,4 +1847,9 @@ a.DfStatItem {
 .DfAccountMenu {
   @extend .DfCard;
   padding: 0;
+}
+
+.DfHiddenButton {
+  margin-left: $space_normal;
+  border-color: yellow;
 }
