@@ -6,7 +6,7 @@ import { Segment } from 'semantic-ui-react';
 import { PostVoters } from '../../voting/ListVoters';
 import SummarizeMd from '../../utils/md/SummarizeMd';
 import { CommentSection } from '../../comments/CommentsSection';
-import { PostCreator, PostDropDownMenu, renderPostLink, InfoPostPreview, PostActionsPanel } from './helpers';
+import { PostCreator, PostDropDownMenu, renderPostLink, InfoPostPreview, PostActionsPanel, HiddenPostAlert } from './helpers';
 import { InnerPreviewProps } from '.';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
@@ -21,7 +21,8 @@ export const SharedPreview: React.FunctionComponent<InnerPreviewProps> = ({ post
 
   const { struct, content } = postStruct.post
   return <>
-    <Segment className={`DfPostPreview`}>
+    <Segment className='DfPostPreview'>
+      <HiddenPostAlert post={struct} space={space?.struct} />
       <div className='DfRow'>
         <PostCreator postStruct={postStruct} space={space} withSpaceName />
         <PostDropDownMenu account={struct.created.account} space={space.struct} post={struct}/>

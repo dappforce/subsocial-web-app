@@ -38,6 +38,7 @@ import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 import PostPreview from '../posts/view-post/PostPreview';
 import { PageContent } from '../main/PageWrapper';
 import HiddenSpaceButton from './HiddenSpaceButton';
+import HiddenAlert from '../utils/HiddenAlert';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -84,6 +85,8 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   const hasImage = nonEmptyStr(image);
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
+  const HiddenSpaceAlert = <HiddenAlert struct={space} type='space' />
+
   const renderDropDownMenu = () => {
     const spaceKey = `space-${id.toString()}`
     const menu =
@@ -95,7 +98,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
             </Link>
           </Menu.Item>}
         {isMySpace && <Menu.Item key={`hidden-${spaceKey}`}>
-          <HiddenSpaceButton space={space} />
+          <HiddenSpaceButton space={space} asLink />
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -156,7 +159,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
           <span className='header DfSpaceTitle'>
             <SpaceNameAsLink />
             <MyEntityLabel isMy={isMySpace}>My space</MyEntityLabel>
-            {!previewDetails && renderDropDownMenu()}
+            {renderDropDownMenu()}
           </span>
 
           {nonEmptyStr(desc) &&
@@ -181,7 +184,10 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   } else if (miniPreview) {
     return renderMiniPreview();
   } else if (preview || previewDetails) {
-    return <Segment>{renderPreview()}</Segment>;
+    return <Segment>
+      {HiddenSpaceAlert}
+      {renderPreview()}
+    </Segment>;
   }
 
   const renderPostPreviews = () =>
@@ -217,21 +223,23 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   // TODO extract WithSpaceNav
 
-  return <div className='ViewSpaceWrapper'>
-    <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-    <PageContent leftPanel={isBrowser &&
+  return <>
+    {HiddenSpaceAlert}
+    <div className='ViewSpaceWrapper'>
+      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
+      <PageContent leftPanel={isBrowser &&
       <SpaceNav
         {...content}
         spaceId={new BN(id)}
         creator={account}
       />
-    }>
-      <Section className='DfContentPage'>
-        {renderPostPreviews()}
-      </Section>
-    </PageContent>
+      }>
+        <Section className='DfContentPage'>
+          {renderPostPreviews()}
+        </Section>
+      </PageContent>
 
-  </div>
+    </div></>
 }
 
 // TODO extract getInitialProps, this func is similar in AboutSpace
