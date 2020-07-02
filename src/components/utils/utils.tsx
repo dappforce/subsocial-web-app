@@ -63,7 +63,7 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
   };
 }
 
-export const Loading = () => <Icon type='loading' />;
+export const Loading = () => <div className='d-flex justify-content-center align-items-center w-100 h-100'><Icon type='loading' /></div>;
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
