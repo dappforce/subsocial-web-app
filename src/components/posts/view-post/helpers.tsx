@@ -20,6 +20,7 @@ import ViewPostLink from '../ViewPostLink';
 import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../../utils/urls';
 import SharePostAction from '../SharePostAction';
 import HiddenPostButton from '../HiddenPostButton';
+import HiddenAlert from 'src/components/utils/HiddenAlert';
 
 const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 
@@ -43,7 +44,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
         </Link>
       </Menu.Item>}
       {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
-        <HiddenPostButton post={post} />
+        <HiddenPostButton post={post} asLink />
       </Menu.Item>}
       {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -60,6 +61,18 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
     {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
   </>
 };
+
+type HiddenPostAlertProps = {
+  post: Post,
+  space?: Space
+}
+
+export const HiddenPostAlert = ({ post, space }: HiddenPostAlertProps) => (
+  <div className='position-sticky'>
+    {space ? <HiddenAlert struct={space} type='space' showEveryone /> : null}
+    <HiddenAlert struct={post} type='post' />
+  </div>
+)
 
 export const renderPostLink = (space: HasSpaceIdOrHandle, post: HasPostId, title?: string) =>
   <ViewPostLink space={space} post={post} title={title} className='DfBlackLink' />
