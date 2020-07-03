@@ -24,7 +24,7 @@ export function HiddenSpaceButton (props: HiddenSpaceButtonProps) {
     return [ space.id, update ];
   };
 
-  return <HiddenButton type='spaces' newTxParams={newTxParams} struct={space} {...props} />
+  return <HiddenButton type='space' newTxParams={newTxParams} struct={space} {...props} />
 }
 
 export default HiddenSpaceButton;

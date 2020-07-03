@@ -10,7 +10,7 @@ export type FSetVisible = (visible: boolean) => void
 type HiddenButtonProps = {
   struct: Space | Post,
   newTxParams: () => any[]
-  type: 'posts' | 'spaces',
+  type: 'post' | 'space',
   setVisibility?: FSetVisible
   size?: Button$Sizes,
   label?: string,
@@ -20,6 +20,8 @@ type HiddenButtonProps = {
 export function HiddenButton (props: HiddenButtonProps) {
   const { struct, newTxParams, label, type, asLink, size = 'small', setVisibility } = props;
   const hidden = struct.hidden.valueOf()
+
+  const extrinsic = type === 'space' ? 'spaces.updateSpace' : 'posts.updatePost'
 
   const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
     setVisibility && setVisibility(!hidden);
@@ -34,7 +36,7 @@ export function HiddenButton (props: HiddenButtonProps) {
       : 'Hidden'
     }
     params={newTxParams}
-    tx={`${type}.updateSpace`}
+    tx={extrinsic}
     onSuccess={onTxSuccess}
   />
 }

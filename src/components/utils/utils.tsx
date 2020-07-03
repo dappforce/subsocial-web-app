@@ -4,9 +4,11 @@ import { Option } from '@polkadot/types';
 import { Icon } from 'antd';
 import moment from 'moment-timezone';
 import BN from 'bn.js';
-import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces';
+import { Profile, SocialAccount, Post, Space } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
+import { isMyAddress } from '../auth/MyAccountContext';
+import { AnyAccountId } from '@subsocial/types';
 
 type PaginationProps = {
   currentPage?: number;
@@ -71,3 +73,11 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
 };
 
 export const fakeClientId = () => `fake-${new Date().getTime().toString()}`
+
+type VisibilityProps = {
+  struct: Post | Space,
+  address?: AnyAccountId
+}
+
+export const isVisible = ({ struct, address }: VisibilityProps) => !struct.hidden.valueOf() || !isMyAddress(address)
+export const isHidden = (props: VisibilityProps) => !isVisible(props)

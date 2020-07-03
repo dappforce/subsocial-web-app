@@ -25,7 +25,7 @@ export function HiddenPostButton (props: HiddenPostButtonProps) {
     return [ post.id, update ];
   };
 
-  return <HiddenButton type='spaces' newTxParams={newTxParams} struct={post} {...props} />
+  return <HiddenButton type='post' newTxParams={newTxParams} struct={post} {...props} />
 }
 
 export default HiddenPostButton;

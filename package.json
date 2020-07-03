@@ -93,7 +93,7 @@
     "@polkadot/util": "^2.8.1",
     "@polkadot/util-crypto": "^2.8.1",
     "@reduxjs/toolkit": "^1.3.4",
-    "@subsocial/api": "^0.3.5",
+    "@subsocial/api": "^0.3.7",
     "@subsocial/apps-config": "^0.41.19",
     "@subsocial/react-api": "^0.41.19",
     "@subsocial/react-components": "^0.41.19",

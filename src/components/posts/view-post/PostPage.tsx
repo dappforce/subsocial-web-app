@@ -9,7 +9,7 @@ import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';
 import SharePostAction from '../SharePostAction';
 import { CommentSection } from '../../comments/CommentsSection';
-import { isRegularPost, PostDropDownMenu, PostCreator, HiddenPostAlert } from './helpers';
+import { isRegularPost, PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound } from './helpers';
 import Error from 'next/error'
 import { NextPage } from 'next';
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
@@ -18,7 +18,6 @@ import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { RegularPreview } from '.';
 import { PageContent } from 'src/components/main/PageWrapper';
-import NoData from 'src/components/utils/EmptyList';
 
 const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
@@ -33,7 +32,7 @@ export type PostDetailsProps = {
 export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, space, replies, statusCode }) => {
   if (statusCode === 404) return <Error statusCode={statusCode} />
 
-  if (!postStruct || !space) return <NoData description='This post not found or deleted' />
+  if (!postStruct || !space) return <PostNotFound />
 
   const { post, ext } = postStruct
   const { struct, content } = post;
@@ -55,7 +54,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, space, replie
     : title
 
   return <>
-    <HiddenPostAlert post={post.struct} space={space?.struct} />
+    <HiddenPostAlert post={postStruct} />
     <PageContent>
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
         <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />

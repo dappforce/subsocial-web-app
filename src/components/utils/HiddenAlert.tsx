@@ -8,14 +8,14 @@ import { isMyAddress } from '../auth/MyAccountContext'
 type HiddenAlertProps = {
   type: 'post' | 'space',
   struct: Post | Space,
-  showEveryone?: boolean
+  desc?: React.ReactNode
 }
 
-export const HiddenAlert = ({ struct, type, showEveryone }: HiddenAlertProps) => {
+export const HiddenAlert = ({ struct, type }: HiddenAlertProps) => {
   const isSpace = type === 'space';
   const address = isSpace ? (struct as Space).owner : struct.created.account
 
-  if (!struct.hidden.valueOf() || (!showEveryone && !isMyAddress(address))) return null;
+  if (!struct.hidden.valueOf() || !isMyAddress(address)) return null;
 
   const HiddenButton = () => isSpace ? <HiddenSpaceButton space={struct as Space} /> : <HiddenPostButton post={struct as Post} />
   return <Alert
@@ -28,7 +28,6 @@ export const HiddenAlert = ({ struct, type, showEveryone }: HiddenAlertProps) =>
       </div>
     }
     banner
-    closable
     type="warning"
   />
 }

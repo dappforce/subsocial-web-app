@@ -265,7 +265,7 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const posts = await subsocial.findVisiblePostsWithAllDetails({ ids: postIds.reverse() })
+  const posts = await subsocial.findPostsWithAllDetails({ ids: postIds.reverse() })
 
   return {
     spaceData,

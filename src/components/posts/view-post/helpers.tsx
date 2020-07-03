@@ -21,6 +21,7 @@ import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../../utils/urls';
 import SharePostAction from '../SharePostAction';
 import HiddenPostButton from '../HiddenPostButton';
 import HiddenAlert from 'src/components/utils/HiddenAlert';
+import NoData from 'src/components/utils/EmptyList';
 
 const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 
@@ -63,16 +64,17 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
 };
 
 type HiddenPostAlertProps = {
-  post: Post,
-  space?: Space
+  post: PostWithSomeDetails,
+  onSpacePage?: boolean
 }
 
-export const HiddenPostAlert = ({ post, space }: HiddenPostAlertProps) => (
-  <div className='position-sticky'>
-    {space ? <HiddenAlert struct={space} type='space' showEveryone /> : null}
-    <HiddenAlert struct={post} type='post' />
-  </div>
-)
+export const HiddenPostAlert = ({ post: { post, ext, space }, onSpacePage = false }: HiddenPostAlertProps) => {
+  const PostAlert = () => <HiddenAlert struct={post.struct} type='post' />
+  const ParentPostAlert = () => ext ? <HiddenAlert struct={ext.post.struct} type='post' desc='This post is not visible because parent post is hidden.' /> : null
+  const SpaceAlert = () => space && !onSpacePage ? <HiddenAlert struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
+
+  return <PostAlert /> || <ParentPostAlert /> || <SpaceAlert />
+}
 
 export const renderPostLink = (space: HasSpaceIdOrHandle, post: HasPostId, title?: string) =>
   <ViewPostLink space={space} post={post} title={title} className='DfBlackLink' />
@@ -205,3 +207,5 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
     </div>
   </div>
 }
+
+export const PostNotFound = () => <NoData description='Post not found' />
