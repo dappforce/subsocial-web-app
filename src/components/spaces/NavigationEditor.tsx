@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
@@ -211,7 +211,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                           Don't show this tab in space navigation
                         </div>
                         <div className="NERemoveButton">
-                          <Button type="default" onClick={() => arrayHelpers.remove(index)}>Delete tab</Button>
+                          <Button onClick={() => arrayHelpers.remove(index)}>Delete tab</Button>
                         </div>
                       </div>
 
@@ -231,9 +231,8 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
           />
 
           <TxButton
-            size='medium'
             label={'Update Navigation'}
-            isDisabled={!isValid || isSubmitting}
+            disabled={!isValid || isSubmitting}
             params={() => getTxParams({
               json: { name, desc, image, tags: spaceTags, navTabs },
               buildTxParamsCallback: newTxParams,

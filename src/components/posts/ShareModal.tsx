@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { withCalls, withMulti } from '@subsocial/react-api';
 import { getTxParams, spacesQueryToProp } from '../utils/index';
-import { Modal, Button } from 'semantic-ui-react';
+import { Modal } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import Link from 'next/link';
 import { Loading } from '../utils/utils';
@@ -86,8 +87,9 @@ const InnerShareModal = (props: Props) => {
 
   const renderTxButton = () => (
     <TxButton
+      type='primary'
       label={`Create a post`}
-      isDisabled={isSubmitting}
+      disabled={isSubmitting}
       params={() => getTxParams({
         json: { body },
         buildTxParamsCallback: newTxParams,
@@ -146,7 +148,7 @@ const InnerShareModal = (props: Props) => {
       {renderShareView()}
     </Modal.Content>
     <Modal.Actions>
-      <Button size='medium' onClick={close}>Cancel</Button>
+      <Button onClick={close}>Cancel</Button>
       {renderTxButton()}
     </Modal.Actions>
   </>)

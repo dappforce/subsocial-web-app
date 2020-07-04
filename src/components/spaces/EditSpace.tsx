@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 
 import { Option } from '@polkadot/types';
@@ -107,7 +107,7 @@ const InnerForm = (props: FormProps) => {
 
   const title = struct ? `Edit space` : `New space`;
 
-  return (<>
+  return <>
     <HeadMeta title={title}/>
     <Section className='EditEntityBox' title={title}>
       <Form className='ui form DfForm EditEntityForm'>
@@ -126,19 +126,18 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledField {...props}>
           <TxButton
-            size='medium'
+            type='primary'
             label={struct
               ? 'Update space'
               : 'Create new space'
             }
-            isDisabled={!dirty || isSubmitting}
+            disabled={!dirty || isSubmitting}
             params={() => getTxParams({
               json: { name, desc, image, tags, navTabs },
               buildTxParamsCallback: newTxParams,
               setIpfsHash,
               ipfs
-            })
-            }
+            })}
             tx={struct
               ? 'spaces.updateSpace'
               : 'spaces.createSpace'
@@ -147,17 +146,13 @@ const InnerForm = (props: FormProps) => {
             onSuccess={onTxSuccess}
           />
           <Button
-            type='button'
-            size='medium'
             disabled={!dirty}
             onClick={() => resetForm()}
-            content='Reset form'
-          />
+          >Reset form</Button>
         </LabelledField>
       </Form>
     </Section>
   </>
-  );
 };
 
 export const EditForm = withFormik<OuterProps, FormValues>({
