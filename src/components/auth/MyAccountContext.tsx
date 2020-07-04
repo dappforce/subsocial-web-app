@@ -8,18 +8,22 @@ import { isWeb3Injected } from '../utils/Api';
 
 const log = newLogger('MyAccountContext')
 
+function print (x?: any): string {
+  return typeof x?.toString === 'function' ? x.toString() : ''
+}
+
 const MY_ADDRESS = 'df.myAddress';
 const INJECTED_ACCOUNTS = 'df.injectedAccounts';
 
 export function readMyAddress (): string | undefined {
   const myAddress: string | undefined = store.get(MY_ADDRESS);
-  log.info('Read my address from the local storage:', myAddress);
+  log.info(`Read my address from the local storage: ${print(myAddress)}`);
   return myAddress;
 }
 
 export function readInjectedAccounts (): InjectedAccountExt[] {
   const injectedAccounts: InjectedAccountExt[] | undefined = store.get(INJECTED_ACCOUNTS);
-  log.info('Read injected accounts from the local storage:', injectedAccounts);
+  log.info(`Read injected accounts from the local storage: ${print(injectedAccounts)}`);
   return injectedAccounts || [];
 }
 
@@ -54,14 +58,14 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 
       if (isSignInWithPolkadotExt && !isWeb3Injected) { return forget() }
 
-      log.info('Reload my address:', address);
+      log.info(`Reload my address: ${print(address)}`);
       return { ...state, address, injectedAccounts, inited: true };
 
     case 'setAddress':
       address = action.address;
       if (address !== state.address) {
         if (address) {
-          log.info('Set my new address:', address);
+          log.info(`Set my new address: ${print(address)}`);
           store.set(MY_ADDRESS, address);
           return { ...state, address, inited: true };
         } else {
@@ -74,7 +78,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
       injectedAccounts = action.injectedAccounts;
       if (state.injectedAccounts.length === 0) {
         if (injectedAccounts) {
-          log.info('Set new injected accounts:', injectedAccounts);
+          log.info(`Set injected accounts: ${print(injectedAccounts)}`);
           store.set(INJECTED_ACCOUNTS, injectedAccounts);
           return { ...state, injectedAccounts };
         } else {
@@ -92,7 +96,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 }
 
 function functionStub () {
-  log.error('Function needs to be set in MyAccountProvider');
+  log.error(`Function needs to be set in ${MyAccountProvider.name}`);
 }
 
 const initialState = {
