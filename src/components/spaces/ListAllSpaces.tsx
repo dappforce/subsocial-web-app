@@ -1,7 +1,7 @@
 import React from 'react';
 import { ViewSpacePage } from './ViewSpace';
 import ListData from '../utils/DataList';
-import { Button } from 'antd';
+import Button from 'antd/lib/button';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import BN from 'bn.js';

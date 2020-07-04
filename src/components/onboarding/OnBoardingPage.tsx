@@ -1,7 +1,7 @@
 import React from 'react'
 import { OnBoarding, stepItems } from './OnBoarding';
 import { useAuth } from '../auth/AuthContext';
-import { Button } from 'antd';
+import Button from 'antd/lib/button';
 import HeadMeta from 'src/components/utils/HeadMeta';
 import { PageContent } from '../main/PageWrapper';
 

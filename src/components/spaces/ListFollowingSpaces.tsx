@@ -1,6 +1,6 @@
 import { SpaceData } from '@subsocial/types/dto';
 import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
-import { Button } from 'antd';
+import Button from 'antd/lib/button';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
