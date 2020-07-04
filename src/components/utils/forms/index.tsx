@@ -1,7 +1,6 @@
 import React from 'react';
 import { Field, ErrorMessage, FormikErrors, FormikTouched } from 'formik';
 import { nonEmptyStr } from '@subsocial/utils';
-import { BareProps } from '@subsocial/react-api/types';
 
 type FormValuesType = {
   [s: string]: string
@@ -11,7 +10,9 @@ export type FieldNames<FormValues = FormValuesType> = {
   [s: string]: keyof FormValues
 }
 
-type LabelledProps<FormValues = FormValuesType> = BareProps & {
+type LabelledProps<FormValues = FormValuesType> = {
+  className?: string
+  style?: Record<string, any>
   name?: keyof FormValues,
   label?: React.ReactNode,
   invisibleLabel?: boolean,
