@@ -1,8 +1,9 @@
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { ProfileData } from '@subsocial/types'
-import { BareProps } from '@subsocial/react-api/types'
 
-export type AddressProps = BareProps & {
+export type AddressProps = {
+  className?: string
+  style?: Record<string, any>
   address: AnyAccountId,
   owner?: ProfileData
 }
