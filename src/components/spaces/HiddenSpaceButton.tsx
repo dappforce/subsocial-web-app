@@ -1,12 +1,10 @@
 import React from 'react';
-import { Button$Sizes } from '@subsocial/react-components/Button/types';
 import { Space } from '@subsocial/types/substrate/interfaces';
 import HiddenButton from '../utils/HiddenButton';
 import { SpaceUpdate, OptionOptionText, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
 
 type HiddenSpaceButtonProps = {
   space: Space,
-  size?: Button$Sizes,
   asLink?: boolean
 };
 

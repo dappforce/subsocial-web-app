@@ -38,8 +38,6 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   };
 
   return <TxButton
-    isBasic={true}
-    isPrimary={false}
     label={isFollow
       ? 'Unshare post'
       : 'Share post'}
@@ -47,6 +45,6 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
     tx={isFollow
       ? `posts.unsharePost`
       : `posts.sharePost`}
-    onSuccess={() => setTriggerReload(!triggerReload) }
+    onSuccess={() => setTriggerReload(!triggerReload)}
   />;
 }

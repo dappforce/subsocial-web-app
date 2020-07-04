@@ -57,10 +57,11 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
       })
   }
 
-  const buildTxButton = ({ isDisabled, json, fakeId, ipfs, setIpfsHash, onClick, onFailed, onSuccess }: CommentTxButtonType) => (
+  const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsHash, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
     <TxButton
+      type='primary'
       label='Comment'
-      isDisabled={isDisabled}
+      disabled={disabled}
       params={() => getTxParams({
         json: json,
         buildTxParamsCallback: newTxParams,
@@ -82,7 +83,6 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
         onClick && onClick()
       }}
     />
-  );
 
   return <InnerEditComment
     callback={callback}

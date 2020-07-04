@@ -1,5 +1,5 @@
 import React, { useReducer, createContext, useContext, useEffect, useState } from 'react';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { newSubsocialApi } from './SubsocialConnect';
@@ -14,7 +14,7 @@ export type SubsocialApiState = {
   subsocial: SubsocialApi,
   substrate: SubsocialSubstrateApi,
   ipfs: SubsocialIpfsApi,
-  isApiReady?: boolean
+  isApiReady: boolean
 }
 
 type SubsocialApiAction = {
@@ -45,7 +45,7 @@ const emptyState = {
   subsocial: {} as SubsocialApi,
   substrate: {} as SubsocialSubstrateApi,
   ipfs: {} as SubsocialIpfsApi,
-  isReady: false
+  isApiReady: false
 }
 
 export type SubsocialApiContextProps = {
@@ -72,7 +72,7 @@ const createSubsocialState = (api?: ApiPromise) => {
     subsocial,
     substrate,
     ipfs,
-    isReady: true
+    isApiReady: true
   }
 }
 
@@ -112,7 +112,7 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
   </SubsocialApiContext.Provider>
 }
 
-export function useSubsocialApi () {
+export function useSubsocialApi (): SubsocialApiState {
   return { ...useContext(SubsocialApiContext).state }
 }
 

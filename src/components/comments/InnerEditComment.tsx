@@ -60,7 +60,7 @@ export const InnerEditComment = (props: Props) => {
       setIpfsHash={setIpfsHash}
       json={{ body }}
       fakeId={fakeId}
-      isDisabled={isSubmitting || !dirty}
+      disabled={isSubmitting || !dirty}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
     />

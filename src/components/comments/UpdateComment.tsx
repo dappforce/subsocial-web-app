@@ -41,11 +41,11 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
 
   const updatePostToStore = (content: PostContent) => useEditReplyToStore(dispatch, { replyId: id, comment: { struct, content } })
 
-  const buildTxButton = ({ isDisabled, json, ipfs, setIpfsHash, onClick, onFailed }: CommentTxButtonType) => {
-
-    return <TxButton
+  const buildTxButton = ({ disabled, json, ipfs, setIpfsHash, onClick, onFailed }: CommentTxButtonType) =>
+    <TxButton
+      type='primary'
       label='Edit'
-      isDisabled={isDisabled}
+      disabled={disabled}
       params={() => getTxParams({
         json: json,
         buildTxParamsCallback: newTxParams,
@@ -62,7 +62,6 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
         onClick && onClick()
       }}
     />
-  };
 
   return <InnerEditComment
     callback={callback}

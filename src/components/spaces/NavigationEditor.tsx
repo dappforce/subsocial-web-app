@@ -231,6 +231,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
           />
 
           <TxButton
+            type='primary'
             label={'Update Navigation'}
             disabled={!isValid || isSubmitting}
             params={() => getTxParams({

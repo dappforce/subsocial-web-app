@@ -54,7 +54,7 @@ export type CommentTxButtonType = {
   setIpfsHash: (hash: IpfsHash) => void
   json: CommentContent | PostContent,
   fakeId?: string,
-  isDisabled?: boolean,
+  disabled?: boolean,
   onClick?: FVoid,
   onSuccess?: TxCallback,
   onFailed?: TxFailedCallback

@@ -43,7 +43,7 @@ const InnerFollowingModal = (props: Props) => {
         {renderFollowing()}
       </Modal.Content>
       <Modal.Actions>
-        <Button content='Close'size={TX_BUTTON_SIZE} onClick={() => setOpen(false)} />
+        <Button content='Close' size={TX_BUTTON_SIZE} onClick={() => setOpen(false)} />
       </Modal.Actions>
     </Modal>
   );

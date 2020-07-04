@@ -85,7 +85,7 @@ const InnerShareModal = (props: Props) => {
     return [ spaceId, extension, hash ];
   };
 
-  const renderTxButton = () => (
+  const renderTxButton = () =>
     <TxButton
       type='primary'
       label={`Create a post`}
@@ -100,7 +100,6 @@ const InnerShareModal = (props: Props) => {
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
     />
-  );
 
   const renderShareView = () => {
     if (isEmptyArray(spaceIds)) {

@@ -39,6 +39,7 @@ export type TxButtonProps = Omit<ButtonProps, 'onClick'> & {
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
   label?: React.ReactNode
   unsigned?: boolean
+  onClick?: () => void
   onSuccess?: TxCallback
   onFailed?: TxFailedCallback
   withSpinner?: boolean
@@ -57,6 +58,7 @@ export function TxButton ({
   label,
   disabled,
   unsigned,
+  onClick,
   onSuccess,
   onFailed,
   successMessage,
@@ -246,6 +248,8 @@ export function TxButton ({
   // TODO can optimize this fn by wrapping it with useCallback. See TxButton from Apps.
   const sendTx = async () => {
     unsubscribe()
+
+    isFunction(onClick) && onClick()
 
     const txType = unsigned ? 'unsigned' : 'signed'
     logStatus(`Sending ${txType} tx...`)

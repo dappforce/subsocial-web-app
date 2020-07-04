@@ -1,12 +1,10 @@
 import React from 'react';
-import { Button$Sizes } from '@subsocial/react-components/Button/types';
 import { Post } from '@subsocial/types/substrate/interfaces';
 import HiddenButton from '../utils/HiddenButton';
 import { PostUpdate, OptionId, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
 
 type HiddenPostButtonProps = {
   post: Post,
-  size?: Button$Sizes,
   asLink?: boolean
 };
 
