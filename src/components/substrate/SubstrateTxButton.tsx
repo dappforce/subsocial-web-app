@@ -9,6 +9,7 @@ import { web3FromSource } from '@polkadot/extension-dapp'
 import { newLogger, isEmptyStr, nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import { useSubstrate } from '.'
 import useToggle from './useToggle'
+import { Message, showSuccessMessage, showErrorMessage } from '../utils/Message'
 
 const log = newLogger('TxButton')
 
@@ -26,23 +27,27 @@ export type TxFailedCallback = (status: SubmittableResult | null) => void
 
 const DefaultStatusLogger = (status: string) => log.debug(status)
 
+type SuccessMessageFn = (status: SubmittableResult) => Message
+type FailedMessageFn = (status: SubmittableResult | null) => Message
+
+type SuccessMessage = Message | SuccessMessageFn
+type FailedMessage = Message | FailedMessageFn
+
 export type TxButtonProps = Omit<ButtonProps, 'onClick'> & {
   accountId?: AddressOrPair
   tx?: string
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
   label?: React.ReactNode
-
-  // TODO replace with using 'disabled'
-  /** Deprecated. Use `disabled`. */
-  isDisabled?: boolean
-
-  isUnsigned?: boolean
-  onFailed?: TxFailedCallback
+  unsigned?: boolean
   onSuccess?: TxCallback
+  onFailed?: TxFailedCallback
   withSpinner?: boolean
 
   // TODO maybe delete
   logStatus?: (status: string) => void
+
+  successMessage?: SuccessMessage
+  failedMessage?: FailedMessage
 }
 
 export function TxButton ({
@@ -51,10 +56,11 @@ export function TxButton ({
   params,
   label,
   disabled,
-  isDisabled,
-  isUnsigned,
-  onFailed,
+  unsigned,
   onSuccess,
+  onFailed,
+  successMessage,
+  failedMessage,
   withSpinner,
   logStatus = DefaultStatusLogger,
 
@@ -67,7 +73,7 @@ export function TxButton ({
   const [ isSending, , setIsSending ] = useToggle(false)
 
   const buttonLabel = label || children
-  const needsAccount = !isUnsigned && !accountId
+  const needsAccount = !unsigned && !accountId
 
   if (!api || !api.isReady) {
     return (
@@ -147,6 +153,26 @@ export function TxButton ({
     return api.tx[pallet][method](...(resultParams))
   }
 
+  const doOnSuccess: TxCallback = (result) => {
+    isFunction(onSuccess) && onSuccess(result)
+
+    const message: Message = isFunction(successMessage)
+      ? successMessage(result)
+      : successMessage
+
+    message && showSuccessMessage(message)
+  }
+
+  const doOnFailed: TxFailedCallback = (result) => {
+    isFunction(onFailed) && onFailed(result)
+
+    const message: Message = isFunction(failedMessage)
+      ? failedMessage(result)
+      : failedMessage
+
+    message && showErrorMessage(message)
+  }
+
   const onSuccessHandler = (result: SubmittableResult) => {
     setIsSending(false)
 
@@ -168,24 +194,21 @@ export function TxButton ({
       result.events
         .filter(({ event: { section } }): boolean => section === 'system')
         .forEach(({ event: { method } }): void => {
-          if (isFunction(onFailed) && method === 'ExtrinsicFailed') {
-            onFailed(result)
-          } else if (isFunction(onSuccess) && method === 'ExtrinsicSuccess') {
-            onSuccess(result)
+          if (method === 'ExtrinsicSuccess') {
+            doOnSuccess(result)
+          } else if (method === 'ExtrinsicFailed') {
+            doOnFailed(result)
           }
         })
-    } else if (result.isError && isFunction(onFailed)) {
-      onFailed(result)
+    } else if (result.isError) {
+      doOnFailed(result)
     }
   }
 
   const onFailedHandler = (err: Error) => {
     setIsSending(false)
     err && logStatus(`❌ Tx failed: ${err.toString()}`)
-
-    // TODO show antd error notification here
-
-    isFunction(onFailed) && onFailed(null)
+    doOnFailed(null)
   }
 
   const sendSignedTx = async () => {
@@ -224,12 +247,12 @@ export function TxButton ({
   const sendTx = async () => {
     unsubscribe()
 
-    const txType = isUnsigned ? 'unsigned' : 'signed'
+    const txType = unsigned ? 'unsigned' : 'signed'
     logStatus(`Sending ${txType} tx...`)
 
     withSpinner && setIsSending(true)
 
-    if (isUnsigned) {
+    if (unsigned) {
       sendUnsignedTx()
     } else {
       sendSignedTx()
@@ -238,7 +261,6 @@ export function TxButton ({
 
   const _disabled =
     disabled ||
-    isDisabled ||
     isSending ||
     needsAccount ||
     isEmptyStr(tx)
@@ -248,7 +270,7 @@ export function TxButton ({
       {...antdProps}
       onClick={sendTx}
       disabled={_disabled}
-      loading={isSending}
+      loading={withSpinner && isSending}
     >{buttonLabel}</Button>
   )
 }
