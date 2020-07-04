@@ -6,7 +6,7 @@ import { SelectAddressPreview, ProfilePreview } from '../profiles/address-views'
 import { Loading } from '../utils';
 import { Button, Avatar } from 'antd';
 import { useMyAccount, useMyAddress } from '../auth/MyAccountContext';
-import { isWeb3Injected } from '../utils/Api';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useAuth } from '../auth/AuthContext';
 import SubTitle from '../utils/SubTitle';
 
