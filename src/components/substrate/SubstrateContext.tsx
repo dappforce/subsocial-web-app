@@ -103,6 +103,10 @@ type SubstrateProviderProps = React.PropsWithChildren<{
   types?: RegistryTypes
 }>
 
+let _api: ApiPromise
+
+export { _api as api }
+
 export const SubstrateProvider = (props: SubstrateProviderProps) => {
   const initState: State = {
     ...INIT_STATE,
@@ -129,7 +133,7 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
 
     // console.log(`>>> METADATA key: ${Object.keys(metadata || {})}`)
 
-    const _api = new ApiPromise({ provider, types, rpc, metadata })
+    _api = new ApiPromise({ provider, types, rpc, metadata })
 
     const onConnectSuccess = async () => {
       dispatch({ type: 'CONNECT_SUCCESS', payload: connectTime })
