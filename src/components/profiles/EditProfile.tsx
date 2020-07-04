@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
@@ -201,13 +201,12 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledField {...props}>
           <TxButton
-            size='medium'
-            icon='send'
+            type='primary'
             label={profile
               ? 'Update my profile'
               : 'Create my profile'
             }
-            isDisabled={!dirty || isSubmitting}
+            disabled={!dirty || isSubmitting}
             params={() => getTxParams({
               json: {
                 fullname,
@@ -234,12 +233,9 @@ const InnerForm = (props: FormProps) => {
             onSuccess={onTxSuccess}
           />
           <Button
-            type='button'
-            size='medium'
             disabled={!dirty || isSubmitting}
             onClick={() => resetForm()}
-            content='Reset form'
-          />
+          >Reset form</Button>
         </LabelledField>
       </Form>
     </Section>

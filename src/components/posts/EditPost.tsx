@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -79,12 +79,9 @@ const InnerForm = (props: FormProps) => {
 
   const renderResetButton = () => (
     <Button
-      type='button'
-      size='medium'
       disabled={isSubmitting || (isRegularPost && !dirty)}
       onClick={() => resetForm()}
-      content='Reset form'
-    />
+    >Reset form</Button>
   );
 
   const {
@@ -146,11 +143,12 @@ const InnerForm = (props: FormProps) => {
 
   const renderTxButton = () => (
     <TxButton
+      type='primary'
       label={!struct
         ? `Create a post`
         : `Update a post`
       }
-      isDisabled={isSubmitting || (isRegularPost && !dirty)}
+      disabled={isSubmitting || (isRegularPost && !dirty)}
       params={() => getTxParams({
         json: { title, body, image, tags, canonical },
         buildTxParamsCallback: newTxParams,

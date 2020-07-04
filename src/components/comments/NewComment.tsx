@@ -66,7 +66,7 @@ export const InnerEditComment = (props: Props) => {
   const renderTxButton = () => (
     <TxButton
       label={label}
-      isDisabled={isSubmitting || !dirty}
+      disabled={isSubmitting || !dirty}
       params={() => getTxParams({
         json: { body },
         buildTxParamsCallback: newTxParams,
