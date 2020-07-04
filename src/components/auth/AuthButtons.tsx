@@ -4,7 +4,7 @@ import Button from 'antd/lib/button';
 import { isMobile } from 'react-device-detect';
 import { useAuth, ModalKind } from './AuthContext';
 import { useMyAccount } from './MyAccountContext';
-import { useApi } from '@subsocial/react-hooks';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 type InnerAuthButtonProps = {
   type?: 'default' | 'primary' | 'link'
@@ -24,7 +24,7 @@ export function OpenAuthButton ({
   kind = 'OnBoarding',
   className
 }: OpenAuthButton) {
-  const { isApiReady } = useApi()
+  const { isApiReady } = useSubsocialApi()
   const { openSignInModal } = useAuth()
   return <Button
     size={size}

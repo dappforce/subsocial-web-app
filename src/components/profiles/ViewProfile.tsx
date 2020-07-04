@@ -27,7 +27,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
-import { useApi } from '@subsocial/react-hooks';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { getAccountId } from '../utils/substrate';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
@@ -58,7 +58,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { isApiReady } = useApi()
+  const { isApiReady } = useSubsocialApi()
 
   const address = id.toString();
   const isMyAccount = isMyAddress(address);
