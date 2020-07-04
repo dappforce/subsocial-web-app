@@ -23,7 +23,7 @@ const getWindowSubstrate = (): WindowSubstrate => {
 }
 
 /** This component will simply add Substrate utility functions to your web developer console. */
-export default function SubstrateWebConsole () {
+export function SubstrateWebConsole () {
   const { endpoint, api, apiState, keyring, keyringState } = useSubstrate()
 
   const addApi = () => {
@@ -66,3 +66,5 @@ export default function SubstrateWebConsole () {
 
   return null
 }
+
+export default SubstrateWebConsole
