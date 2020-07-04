@@ -9,7 +9,7 @@ import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
 import dynamic from 'next/dynamic';
-import { useApi } from '@subsocial/react-hooks';
+import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext';
 import ViewProfileLink from '../ViewProfileLink';
 import BN from 'bn.js'
 
@@ -22,7 +22,7 @@ export type InfoProps = {
 }
 
 export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, balance, address }) => {
-  const { isApiReady } = useApi()
+  const { isApiReady } = useSubsocialApi()
   return <>
     <div className='Df--AddressComponents-details'>
       {balance ||
