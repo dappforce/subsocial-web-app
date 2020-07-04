@@ -5,7 +5,6 @@ import { Api } from '@subsocial/api/substrateConnect'
 import { offchainUrl, substrateUrl, ipfsNodeUrl } from './env';
 import { ApiPromise } from '@polkadot/api';
 import { Activity } from '@subsocial/types/offchain';
-// import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { newLogger } from '@subsocial/utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 
@@ -41,11 +40,12 @@ export const getApi = async () => {
   if (polkadotApi) {
     log.debug('Get Substrate API: @polkadot api')
     return (await polkadotApi.isReady) as unknown as ApiPromise
-  } else {
-    if (!api) {
-      log.debug('Get Substrate API: DfApi.setup()')
-      api = await Api.connect(substrateUrl)
-    }
-    return api
   }
+
+  if (!api) {
+    log.debug('Get Substrate API: Api.connect(substrateUrl)')
+    api = await Api.connect(substrateUrl)
+  }
+
+  return api
 }
