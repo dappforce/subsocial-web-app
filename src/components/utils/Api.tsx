@@ -19,7 +19,7 @@ import { formatBalance, isTestChain } from '@polkadot/util';
 import { setSS58Format } from '@polkadot/util-crypto';
 import addressDefaults from '@polkadot/util-crypto/address/defaults';
 import ApiContext from '@subsocial/react-api/ApiContext';
-import registry from '@subsocial/react-api/typeRegistry';
+import { registry } from '@subsocial/types/substrate/registry';
 import { InjectedAccountExt } from './types';
 import { useMyAccount } from '../auth/MyAccountContext';
 export * from '@polkadot/extension-dapp'

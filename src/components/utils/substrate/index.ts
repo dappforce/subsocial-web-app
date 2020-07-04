@@ -3,7 +3,7 @@ import { Text, GenericAccountId, Option } from '@polkadot/types'
 import { AccountId } from '@polkadot/types/interfaces'
 import AbstractInt from '@polkadot/types/codec/AbstractInt'
 import { getSubsocialApi } from '../SubsocialConnect'
-import { registry } from '@subsocial/react-api'
+import { registry } from '@subsocial/types/substrate/registry';
 import { AddressProps } from 'src/components/profiles/address-views/utils/types'
 import { toShortAddress } from '@subsocial/react-components/util'
 import { Codec } from '@polkadot/types/types'

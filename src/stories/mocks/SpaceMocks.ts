@@ -1,6 +1,6 @@
 import { mockNavTabs } from './NavTabsMocks'
 import U32 from '@polkadot/types/primitive/U32'
-import { registry } from '@subsocial/react-api'
+import { registry } from '@subsocial/types/substrate/registry';
 import BN from 'bn.js'
 import { i32, Option, u16, u32 } from '@polkadot/types'
 import { SpaceContent } from '@subsocial/types/offchain'

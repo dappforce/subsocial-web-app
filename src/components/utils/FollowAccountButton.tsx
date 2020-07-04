@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GenericAccountId } from '@polkadot/types';
 import { useMyAddress, isMyAddress } from '../auth/MyAccountContext';
-import { registry } from '@subsocial/react-api';
+import { registry } from '@subsocial/types/substrate/registry';
 import { newLogger, notDef } from '@subsocial/utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import TxButton from './TxButton';
