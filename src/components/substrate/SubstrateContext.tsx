@@ -1,15 +1,15 @@
-import React, { useReducer } from 'react'
-
-import { Keyring } from '@polkadot/ui-keyring'
-import { RegistryTypes, DefinitionRpcExt } from '@polkadot/types/types'
+import React, { useCallback, useEffect, useReducer } from 'react'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
-import { ApiPromise } from '@polkadot/api'
-
+import { DefinitionRpcExt, RegistryTypes } from '@polkadot/types/types'
+import keyring, { Keyring } from '@polkadot/ui-keyring'
 import { registryTypes as SubsocialTypes } from '@subsocial/types'
-import { substrateUrl } from '../utils/env'
-// import { newLogger } from '@subsocial/utils'
+import { newLogger, isNum, isDef } from '@subsocial/utils'
+import { appName, isDevMode, substrateUrl } from '../utils/env'
+import { cacheSubstrateMetadata, getSubstrateMetadataRecord as getCachedSubstrateMetadata } from '../../storage/substrate'
 
-// const log = newLogger('SubstrateContext')
+const log = newLogger('SubstrateContext')
 
 type ActionType =
   'RESET_SOCKET' |
@@ -30,7 +30,7 @@ type KeyringState = 'READY' | 'ERROR'
 
 type JsonRpc = Record<string, Record<string, DefinitionRpcExt>>
 
-type State = {
+export type State = {
   endpoint?: string | string[]
   types?: RegistryTypes
   rpc: JsonRpc
@@ -39,6 +39,7 @@ type State = {
   apiState?: ApiState
   keyring?: Keyring
   keyringState?: KeyringState
+  keyringError?: Error
 }
 
 const INIT_STATE: State = {
@@ -49,31 +50,48 @@ const INIT_STATE: State = {
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'RESET_SOCKET':
+    case 'RESET_SOCKET': {
       const endpoint = action.payload || state.endpoint
       return { ...state, endpoint, api: undefined, apiState: undefined }
-
-    case 'CONNECT':
+    }
+    case 'CONNECT': {
+      log.info(`Connected to Substrate node ${state.endpoint?.toString()}`)
       return { ...state, api: action.payload, apiState: 'CONNECTING' }
-
-    case 'CONNECT_SUCCESS':
+    }
+    case 'CONNECT_SUCCESS': {
+      if (state.apiState !== 'CONNECTING') {
+        const { payload } = action
+        let tookTimeLog: string | undefined
+        if (isNum(payload)) {
+          const startTime = payload
+          const tookTime = window.performance.now() - startTime
+          tookTimeLog = `Took ${tookTime / 1000} seconds`
+        }
+        log.info(`✅ Substrate API is ready. ${tookTimeLog}`)
+      }
       return { ...state, apiState: 'READY' }
-
-    case 'CONNECT_ERROR':
-      return { ...state, apiState: 'ERROR', apiError: action.payload }
-
-    case 'SET_KEYRING':
+    }
+    case 'CONNECT_ERROR': {
+      const err = action.payload
+      log.error(`❌ Failed to connect to Substrate node ${state.endpoint?.toString()} . ${err}`)
+      return { ...state, apiState: 'ERROR', apiError: err }
+    }
+    case 'SET_KEYRING': {
+      log.info(`✅ Loaded accounts with Keyring`)
       return { ...state, keyring: action.payload, keyringState: 'READY' }
-
-    case 'KEYRING_ERROR':
-      return { ...state, keyring: undefined, keyringState: 'ERROR' }
-
-    default:
-      throw new Error(`Unknown type: ${action.type}`)
+    }
+    case 'KEYRING_ERROR': {
+      const err = action.payload
+      log.error(`❌ Failed to load accounts with Keyring. ${err}`)
+      return { ...state, keyring: undefined, keyringState: 'ERROR', keyringError: err }
+    }
+    default: {
+      throw new Error(`Unknown type of action: ${action.type}`)
+    }
   }
 }
 
-type Dispatch = (action: Action) => void
+export type Dispatch = (action: Action) => void
 
 type ContextValue = [ State, Dispatch ]
 
@@ -93,6 +111,72 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
   }
 
   const [ state, dispatch ] = useReducer(reducer, initState)
+
+  const { api, endpoint, rpc, types } = state
+
+  // `useCallback` so that returning memoized function and not created
+  //   everytime, and thus re-render.
+  const connect = useCallback(async () => {
+    if (api) return
+
+    log.info(`Connecting to Substrate node ${endpoint} ...`)
+    const connectTime = window.performance.now()
+
+    const provider = new WsProvider(endpoint)
+
+    const metadata = await getCachedSubstrateMetadata()
+    let isMetadataCached = isDef(metadata)
+
+    // console.log(`>>> METADATA key: ${Object.keys(metadata || {})}`)
+
+    const _api = new ApiPromise({ provider, types, rpc, metadata })
+
+    const onConnectSuccess = async () => {
+      dispatch({ type: 'CONNECT_SUCCESS', payload: connectTime })
+      if (!isMetadataCached) {
+        isMetadataCached = true
+        await cacheSubstrateMetadata(_api)
+      }
+    }
+
+    // We want to listen to event for disconnection and reconnection.
+    //  That's why we set for listeners.
+    _api.on('connected', () => {
+      dispatch({ type: 'CONNECT', payload: _api })
+      // `ready` event is not emitted upon reconnection. So we check explicitly here.
+      _api.isReady.then((_api) => onConnectSuccess())
+    })
+    _api.on('ready', () => onConnectSuccess())
+    _api.on('error', err => dispatch({ type: 'CONNECT_ERROR', payload: err }))
+  }, [ api, endpoint, rpc, types, dispatch ])
+
+  // hook to get injected accounts
+  const { keyringState } = state
+  const loadAccounts = useCallback(async () => {
+    // Ensure the method only run once.
+    if (keyringState) return
+
+    try {
+      await web3Enable(appName)
+      let allAccounts = await web3Accounts()
+      allAccounts = allAccounts.map(({ address, meta }) =>
+        ({ address, meta: { ...meta, name: `${meta.name} (${meta.source})` } }))
+
+      keyring.loadAll({ isDevelopment: isDevMode }, allAccounts)
+      dispatch({ type: 'SET_KEYRING', payload: keyring })
+    } catch (err) {
+      console.error(err)
+      dispatch({ type: 'KEYRING_ERROR', payload: err })
+    }
+  }, [ keyringState, dispatch ])
+
+  useEffect(() => {
+    connect()
+  }, [ connect ])
+
+  useEffect(() => {
+    loadAccounts()
+  }, [ loadAccounts ])
 
   return (
     <SubstrateContext.Provider value={[ state, dispatch ]}>
