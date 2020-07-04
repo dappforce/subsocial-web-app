@@ -1,6 +1,6 @@
-import React, { useState, createContext, useContext, useEffect } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { useIsSignIn, useMyAccount } from 'src/components/auth/MyAccountContext';
-import { useApi } from '@subsocial/react-hooks';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { useRouter } from 'next/router';
 import store from 'store'
 import SignInModal from './SignInModal';
@@ -65,20 +65,18 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
   const [ kind, setKind ] = useState<ModalKind>()
   const [ isTokens, setTokens ] = useState(false)
   const [ isSpaces, setSpaces ] = useState(false)
-  const { api, isApiReady } = useApi()
   const isSignIn = useIsSignIn()
 
-  useEffect(() => {
-    let unsubBalance: (() => void) | undefined
-    let unsubSpace: (() => void) | undefined
-
-    if (!isApiReady) return setCurrentStep(StepsEnum.Disabled);
-
+  useSubsocialEffect(({ substrate }) => {
     if (!isSignIn) {
       return setCurrentStep(0)
     }
 
+    let unsubBalance: (() => void) | undefined
+    let unsubSpace: (() => void) | undefined
+
     const subSpace = async (isBalanse: boolean) => {
+      const api = await substrate.api
       unsubSpace = await api.query.spaces.spaceIdsByOwner(address, (data) => {
         if (data.isEmpty) {
           setSpaces(false)
@@ -93,13 +91,15 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
 
         setShowOnBoarding(step !== StepsEnum.Disabled)
         setCurrentStep(step)
-      });
+      })
     }
 
     let step = StepsEnum.Disabled;
     const subBalance = async () => {
-      console.log(api.query.system)
+      // console.log(api.query.system)
       if (!address) return
+
+      const api = await substrate.api
       unsubBalance = await api.derive.balances.all(address, (data) => {
         const balance = data.freeBalance.toString()
         const isEmptyBalanse = balance === '0'
@@ -119,7 +119,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       unsubSpace && unsubSpace()
       unsubBalance && unsubBalance()
     }
-  }, [ currentStep, address, isApiReady, isSignIn ])
+  }, [ currentStep, address, isSignIn ])
 
   console.log(useRouter().pathname)
   const contextValue = {

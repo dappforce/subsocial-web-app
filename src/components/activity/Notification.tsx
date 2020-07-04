@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { DfBgImg } from '../utils/DfBgImg';
 import { nonEmptyStr } from '@subsocial/utils';
 import Avatar from '../profiles/address-views/Avatar'
@@ -7,7 +7,7 @@ import Name from '../profiles/address-views/Name';
 import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
 import { hexToBn } from '@polkadot/util';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { Loading } from '../utils/utils';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
@@ -25,13 +25,12 @@ type NotificationsProps = {
 export function withLoadNotifications<P extends LoadProps> (Component: React.ComponentType<NotificationsProps>) {
   return function (props: P) {
     const { activities } = props;
-    const { subsocial } = useSubsocialApi()
     const [ loaded, setLoaded ] = useState(false)
     const [ spaceById, setSpaceByIdMap ] = useState(new Map<string, SpaceData>())
     const [ postById, setPostByIdMap ] = useState(new Map<string, PostData>())
     const [ ownerById, setOwnerByIdMap ] = useState(new Map<string, ProfileData>())
 
-    useEffect(() => {
+    useSubsocialEffect(({ subsocial }) => {
       setLoaded(false);
 
       const ownerIds: string[] = []
@@ -66,7 +65,7 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
                 spaceId && spaceIds.push(spaceId)
                 break;
               }
-              default : {
+              default: {
                 id = (x.struct as Struct).id
               }
             }
@@ -97,7 +96,9 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     }
 
     if (loaded) {
-      const notifications = activities.map(x => getNotification(x, activityStore)).filter(x => x !== undefined) as NotificationType[]
+      const notifications = activities
+        .map(x => getNotification(x, activityStore))
+        .filter(x => x !== undefined) as NotificationType[]
       return <Component notifications={notifications} />
     } else {
       return <Loading />

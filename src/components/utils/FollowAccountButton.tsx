@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { GenericAccountId } from '@polkadot/types';
 import { useMyAddress, isMyAddress } from '../auth/MyAccountContext';
 import { registry } from '@subsocial/react-api';
 import { newLogger, notDef } from '@subsocial/utils';
-import { useSubsocialApi } from './SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import TxButton from './TxButton';
 import { Loading } from './utils';
 import AccountId from '@polkadot/types/generic/AccountId';
@@ -18,10 +18,9 @@ type FollowAccountButtonProps = {
 function FollowAccountButton (props: FollowAccountButtonProps) {
   const { address, className = '' } = props;
   const myAddress = useMyAddress()
-  const { substrate } = useSubsocialApi()
   const [ isFollower, setIsFollower ] = useState<boolean>();
 
-  useEffect(() => {
+  useSubsocialEffect(({ substrate }) => {
     let isSubscribe = true;
 
     if (!myAddress) return isSubscribe && setIsFollower(false);
@@ -32,7 +31,7 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
     };
 
     load().catch(err => log.error(
-      `Failed to check if account is a follower of another account ${address?.toString()}. Error:`, err));
+      `Failed to check if account is a follower of another account ${address?.toString()}. ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ myAddress ]);

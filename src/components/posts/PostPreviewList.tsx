@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import BN from 'bn.js';
 import { Loading } from '../utils/utils';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from './view-post/PostPreview';
 
@@ -18,12 +18,10 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
     const { postIds } = props
     const [ posts, setPosts ] = useState<PostWithAllDetails[]>()
     const [ loaded, setLoaded ] = useState(false)
-    const { subsocial } = useSubsocialApi()
 
-    useEffect(() => {
-      setLoaded(false)
+    useSubsocialEffect(({ subsocial }) => {
       const loadData = async () => {
-        const extPostData = await subsocial.findVisiblePostsWithAllDetails(postIds)
+        const extPostData = await subsocial.findVisiblePostsWithAllDetails({ ids: postIds })
         extPostData && setPosts(extPostData)
         setLoaded(true)
       };
@@ -31,7 +29,9 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
       loadData().catch(console.log)
     }, [ false ])
 
-    return loaded && posts ? <Component posts={posts} /> : <Loading />
+    return loaded && posts
+      ? <Component posts={posts} />
+      : <Loading />
   }
 }
 

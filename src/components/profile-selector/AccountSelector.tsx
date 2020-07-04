@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import keyring from '@polkadot/ui-keyring';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
 import { SelectAddressPreview, ProfilePreview } from '../profiles/address-views';
 import { Loading } from '../utils';
@@ -63,7 +63,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
   )
 
   const NoAccounts = () => (
-    <div className='p-3'>No account found. Please open your Polkadot extension and create a new account or import existing.</div>
+    <div className='p-3'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
   )
 
   const CurrentAccount = () => {
@@ -107,14 +107,16 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
       </>
     }
 
-    if (!isWeb3Injected) {
-      return renderContent(<NoExtension />)
-    }
+    if (!isWeb3Injected) return renderContent(<NoExtension />)
 
     if (!count) return renderContent(<NoAccounts />)
 
-    return renderContent(<SelectAccountItems accounts={extensionAddresses} profilesByAddressMap={profilesByAddressMap} />)
-
+    return renderContent(
+      <SelectAccountItems
+        accounts={extensionAddresses}
+        profilesByAddressMap={profilesByAddressMap}
+      />
+    )
   }
 
   return <div className='DfAccountSelector'>
@@ -135,9 +137,8 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
   const [ developAddresses, setDevelopAddresses ] = useState<string[]>()
   const [ profilesByAddressMap ] = useState(new Map<string, ProfileData>())
   const currentAddress = useMyAddress()
-  const { subsocial } = useSubsocialApi()
 
-  useEffect(() => {
+  useSubsocialEffect(({ subsocial }) => {
     const accounts = keyring.getAccounts()
 
     if (!accounts) return
@@ -164,6 +165,7 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
         }
         return address
       })
+
       const uniqExtAddresses = new Set(extensionAddresses).values()
       setExtensionAddresses([ ...uniqExtAddresses ])
       setLocalAddresses(localAddresses)
@@ -206,5 +208,6 @@ export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => 
     localAddresses={localAddresses}
     developAddresses={developAddresses}
     profilesByAddressMap={profilesByAddressMap}
-    currentAddress={currentAddress} />
+    currentAddress={currentAddress}
+  />
 }

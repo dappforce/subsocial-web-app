@@ -1,34 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'antd/lib/button';
 import Icon from 'antd/lib/icon';
-
+import BN from 'bn.js';
 import dynamic from 'next/dynamic';
+
+import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial';
+import { ReactionKind } from '@subsocial/types/substrate/classes';
+import { newLogger } from '@subsocial/utils';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { useMyAccount } from '../auth/MyAccountContext';
 import { PostVoters } from './ListVoters';
-import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial';
-import BN from 'bn.js';
-import { ReactionKind } from '@subsocial/types/substrate/classes';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { newLogger } from '@subsocial/utils';
+import { ZERO } from '../utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const log = newLogger('Voter')
-
-const ZERO = new BN(0);
 
 type VoterProps = {
   struct: Post
 };
 
 export const Voter = (props: VoterProps) => {
-  const {
-    struct
-  } = props;
+  const { struct } = props;
 
-  const { substrate } = useSubsocialApi()
-  const [ reactionState, setReactionState ] = useState(undefined as (Reaction | undefined));
-
+  const [ reactionState, setReactionState ] = useState<Reaction>();
   const { state: { address } } = useMyAccount();
 
   const kind = reactionState ? reactionState && reactionState.kind.toString() : 'None';
@@ -37,14 +32,16 @@ export const Voter = (props: VoterProps) => {
   const [ reloadTrigger, setReloadTrigger ] = useState(true);
   const { id } = state;
 
-  useEffect(() => {
+  useSubsocialEffect(({ substrate }) => {
     let isSubscribe = true;
 
     async function reloadPost () {
       const _struct = await substrate.findPost({ id })
       if (isSubscribe && _struct) setState(_struct);
     }
-    reloadPost().catch(err => log.error('Failed to load a post or comment. Error:', err));
+
+    reloadPost().catch(err =>
+      log.error(`Failed to load a post or comment. ${err}`));
 
     async function reloadReaction () {
       if (!address) return
@@ -57,7 +54,8 @@ export const Voter = (props: VoterProps) => {
       }
     }
 
-    reloadReaction().catch(err => log.error('Failed to load a reaction. Error:', err));
+    reloadReaction().catch(err =>
+      log.error(`Failed to load a reaction. ${err}`));
 
     return () => { isSubscribe = false; };
   }, [ reloadTrigger, address ]);

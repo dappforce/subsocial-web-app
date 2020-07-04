@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useMyAddress } from '../auth/MyAccountContext';
 import TxButton from './TxButton';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
 import { newLogger, notDef } from '@subsocial/utils';
 import { Loading } from './utils';
-import { useSubsocialApi } from './SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 
 const log = newLogger('FollowSpaceButton')
 
@@ -25,7 +25,6 @@ export function FollowSpaceButton (props: FollowSpaceButtonProps) {
 
 export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
   const { spaceId, myAddress } = props;
-  const { substrate } = useSubsocialApi()
   const { reloadFollowed } = useSidebarCollapsed();
   const [ isFollower, setIsFollower ] = useState<boolean>();
 
@@ -34,7 +33,7 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
     setIsFollower(!isFollower);
   };
 
-  useEffect(() => {
+  useSubsocialEffect(({ substrate }) => {
     let isSubscribe = true;
 
     if (!myAddress) return isSubscribe && setIsFollower(false)
