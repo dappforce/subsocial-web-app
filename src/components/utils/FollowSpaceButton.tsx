@@ -3,8 +3,7 @@ import { useMyAddress } from '../auth/MyAccountContext';
 import TxButton from './TxButton';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
-import { Button$Sizes } from '@subsocial/react-components/Button/types';
-import { newLogger } from '@subsocial/utils';
+import { newLogger, notDef } from '@subsocial/utils';
 import { Loading } from './utils';
 import { useSubsocialApi } from './SubsocialApiContext';
 
@@ -12,7 +11,6 @@ const log = newLogger('FollowSpaceButton')
 
 type FollowSpaceButtonProps = {
   spaceId: BN,
-  size?: Button$Sizes
 };
 
 type InnerFollowSpaceButtonProps = FollowSpaceButtonProps & {
@@ -26,48 +24,49 @@ export function FollowSpaceButton (props: FollowSpaceButtonProps) {
 }
 
 export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
-  const { spaceId, size = 'small', myAddress } = props;
+  const { spaceId, myAddress } = props;
   const { substrate } = useSubsocialApi()
   const { reloadFollowed } = useSidebarCollapsed();
-  const [ isFollow, setIsFollow ] = useState<boolean>();
+  const [ isFollower, setIsFollower ] = useState<boolean>();
 
-  const TxSuccess = () => {
+  const onTxSuccess = () => {
     reloadFollowed();
-    setIsFollow(!isFollow);
+    setIsFollower(!isFollower);
   };
 
   useEffect(() => {
     let isSubscribe = true;
 
-    if (!myAddress) return isSubscribe && setIsFollow(false)
+    if (!myAddress) return isSubscribe && setIsFollower(false)
 
     const load = async () => {
-      const _isFollow = await (substrate.isSpaceFollower(myAddress, spaceId))
-      isSubscribe && setIsFollow(_isFollow)
+      const res = await (substrate.isSpaceFollower(myAddress, spaceId))
+      isSubscribe && setIsFollower(res)
     };
-    load().catch(err => log.error(`Failed to check if the current account is following a space with id ${spaceId.toString()}. Error:`, err));
+
+    load().catch(err => log.error(
+      `Failed to check if the current account is following a space with id ${spaceId.toString()}. Error:`, err));
 
     return () => { isSubscribe = false; };
   }, [ myAddress ]);
 
-  const buildTxParams = () => {
-    return [ spaceId ];
-  };
+  const buildTxParams = () => [ spaceId ]
 
-  return isFollow !== undefined ? <TxButton
-    size={size}
-    isBasic={isFollow}
-    label={isFollow
-      ? 'Unfollow'
-      : 'Follow'
-    }
-    params={buildTxParams()}
-    tx={isFollow
-      ? `spaceFollows.unfollowSpace`
-      : `spaceFollows.followSpace`
-    }
-    onSuccess={TxSuccess}
-  /> : <Loading/>;
+  return notDef(isFollower)
+    ? <Loading />
+    : <TxButton
+      type='primary'
+      ghost={isFollower}
+      label={isFollower
+        ? 'Unfollow'
+        : 'Follow'}
+      tx={isFollower
+        ? `spaceFollows.unfollowSpace`
+        : `spaceFollows.followSpace`}
+      params={buildTxParams}
+      onSuccess={onTxSuccess}
+      withSpinner
+    />
 }
 
 export default FollowSpaceButton;
