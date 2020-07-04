@@ -4,7 +4,7 @@ import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
 import { equalAddresses } from '../utils/substrate';
 import { InjectedAccountExt } from '../utils/types';
-import { isWeb3Injected } from '../utils/Api';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
 
 const log = newLogger('MyAccountContext')
 

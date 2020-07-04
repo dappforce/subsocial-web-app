@@ -6,7 +6,7 @@ import { SelectAddressPreview } from '../profiles/address-views';
 import { Loading } from '../utils';
 import { Button, Avatar, Divider } from 'antd';
 import { useMyAccount, useMyAddress } from '../auth/MyAccountContext';
-import { isWeb3Injected } from '../utils/Api';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useAuth } from '../auth/AuthContext';
 
 type SelectAccountButtons = {
