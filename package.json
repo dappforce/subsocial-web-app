@@ -10,10 +10,13 @@
     "@polkadot/api": "1.13.1",
     "@polkadot/keyring": "^2.8.1",
     "@polkadot/types": "1.13.1",
+    "**/@polkadot/types": "1.13.1",
     "@polkadot/util": "^2.8.1",
     "@polkadot/util-crypto": "^2.8.1",
     "@polkadot/extension-dapp": "0.24.1",
     "babel-core": "^7.0.0-bridge.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "typescript": "^3.8.3"
   },
   "scripts": {
@@ -108,6 +111,7 @@
     "axios": "^0.18.0",
     "dotenv-webpack": "^1.7.0",
     "formik": "^1.5.0",
+    "localforage": "^1.7.4",
     "lodash.isempty": "^4.4.0",
     "lodash.partition": "^4.6.0",
     "lodash.truncate": "^4.4.2",
