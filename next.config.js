@@ -36,6 +36,10 @@ module.exports = withPlugins([ withImages, withCSS({
       config.node = {
         fs: 'empty'
       }
+    } else {
+      config.node = {
+        'node-hid': 'empty'
+      }
     }
 
     config.plugins = config.plugins || []

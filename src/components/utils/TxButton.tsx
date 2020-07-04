@@ -1,22 +1,16 @@
+import React from 'react'
+import AntdButton from 'antd/lib/button'
+import { newLogger } from '@subsocial/utils'
 
-// Copyright 2017-2020 @polkadot/app-123code authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
-
-import Button from '@subsocial/react-components/Button';
-import { useStorybookContext } from './StorybookContext';
-import { isClientSide } from '.';
-import { useMyAccount } from './MyAccountContext';
-import { newLogger } from '@subsocial/utils';
-import { useApi } from '@subsocial/react-hooks';
-import TxButton from '@subsocial/react-components/TxButton';
-import { TxButtonProps } from '@subsocial/react-components/types';
+import { isClientSide } from '.'
+import { useStorybookContext } from './StorybookContext'
+import { useMyAddress } from '../auth/MyAccountContext'
+import SubstrateTxButton, { TxButtonProps } from '../substrate/SubstrateTxButton'
 
 const log = newLogger('TxButton')
 
 const mockSendTx = () => {
-  const msg = 'Cannot send a Substrate tx in a mock mode'
+  const msg = 'Cannot send a Substrate tx in a mock mode (e.g. in Stoorybook)'
   if (isClientSide()) {
     window.alert(`WARN: ${msg}`)
   } else {
@@ -24,29 +18,14 @@ const mockSendTx = () => {
   }
 }
 
-function MockTxButton (props: TxButtonProps) {
-  const { isBasic, isPrimary = isBasic !== true, icon = '', onClick } = props
-
-  return (
-    <Button
-      {...props}
-      isPrimary={isPrimary}
-      icon={icon as string}
-      onClick={() => {
-        if (typeof onClick === 'function') onClick()
-        mockSendTx()
-      }}
-    />
-  )
-}
-
-function ResolvedButton (props: TxButtonProps) {
+function ResolvedTxButton (props: TxButtonProps) {
   const { isStorybook = false } = useStorybookContext()
-  const { isApiReady } = useApi()
-  const { state: { address } } = useMyAccount();
+  const myAddress = useMyAddress()
+
   return isStorybook
-    ? <MockTxButton {...props} />
-    : isApiReady ? <TxButton accountId={address} {...props} /> : null
+    ? <AntdButton {...props} onClick={mockSendTx} />
+    : <SubstrateTxButton {...props} accountId={myAddress} />
 }
 
-export default ResolvedButton
+// TODO use React.memo() ??
+export default ResolvedTxButton

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
+import Icon from 'antd/lib/icon';
 
 import dynamic from 'next/dynamic';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { useMyAccount } from '../auth/MyAccountContext';
 import { PostVoters } from './ListVoters';
 import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial';
 import BN from 'bn.js';
 import { ReactionKind } from '@subsocial/types/substrate/classes';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { newLogger } from '@subsocial/utils';
+
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 const log = newLogger('Voter')
@@ -39,7 +41,7 @@ export const Voter = (props: VoterProps) => {
     let isSubscribe = true;
 
     async function reloadPost () {
-      const _struct = await substrate.findPost(id)
+      const _struct = await substrate.findPost({ id })
       if (isSubscribe && _struct) setState(_struct);
     }
     reloadPost().catch(err => log.error('Failed to load a post or comment. Error:', err));
@@ -73,7 +75,7 @@ export const Voter = (props: VoterProps) => {
   const VoterRender = () => {
     let countColor = '';
 
-    const calcVotingPercentage = () => {
+    const calcVotingPercentage = (): number => {
       const { downvotes_count, upvotes_count } = state;
       const upvotesCount = new BN(upvotes_count);
       const downvotesCount = new BN(downvotes_count);
@@ -97,28 +99,41 @@ export const Voter = (props: VoterProps) => {
 
     const renderTxButton = (isUpvote: boolean) => {
       const reactionName = isUpvote ? 'Upvote' : 'Downvote';
-      const color = isUpvote ? 'green' : 'red';
-      const isActive = (reactionKind === reactionName) && 'active';
-      const icon = isUpvote ? 'up' : 'down';
-      return (<TxButton
-        icon={`thumbs ${icon} outline`}
-        className={`${color} ${isActive}`}
+      const isActive = reactionKind === reactionName
+      const color = isUpvote ? '#00a500' : '#ff0000'
+
+      const changeReactionTx = reactionKind !== reactionName
+        ? `reactions.updatePostReaction`
+        : `reactions.deletePostReaction`
+
+      return <TxButton
+        tx={!reactionState
+          ? `reactions.createPostReaction`
+          : changeReactionTx
+        }
         params={buildTxParams(reactionName)}
         onSuccess={() => setReloadTrigger(!reloadTrigger)}
-        tx={!reactionState
-          ? `social.createPostReaction`
-          : (reactionKind !== `${reactionName}`)
-            ? `social.updatePostReaction`
-            : `social.deletePostReaction`}
-      />);
+      >
+        <Icon
+          type={isUpvote ? 'like' : 'dislike'}
+          theme={isActive ? 'twoTone' : 'outlined'}
+          twoToneColor={isActive ? color : undefined }
+        />
+      </TxButton>
     };
 
     const count = calcVotingPercentage();
 
+    const percentageButton =
+      <span
+        className={`${countColor} active`}
+        onClick={() => setOpen(true)}
+      >{count}%</span>
+
     return <>
       <Button.Group className={`DfVoter`}>
         {renderTxButton(true)}
-        <Button content={ count === 0 ? count.toString() : count + '%' } variant='primary' className={`${countColor} active`} onClick={() => setOpen(true)}/>
+        {percentageButton}
         {renderTxButton(false)}
       </Button.Group>
       {open && <PostVoters id={id} open={open} close={close} />}

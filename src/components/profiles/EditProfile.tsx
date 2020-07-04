@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
@@ -8,7 +8,7 @@ import { withCalls, withMulti } from '@subsocial/react-api';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
-import { socialQueryToProp } from '../utils/index';
+import { getTxParams, profilesQueryToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import Router from 'next/router';
@@ -81,10 +81,10 @@ const InnerForm = (props: FormProps) => {
     }
   };
   const { ipfs } = useSubsocialApi()
-  const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
   const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => new Error(err));
+    ipfsHash && ipfs.removeContent(ipfsHash.toString()).catch(err => new Error(err));
     setSubmitting(false);
   };
 
@@ -108,37 +108,6 @@ const InnerForm = (props: FormProps) => {
       return [ update ];
     }
   };
-
-  const buildTxParams = async () => {
-    try {
-      if (isValid) {
-        const json = {
-          fullname,
-          avatar,
-          email,
-          personalSite,
-          about,
-          facebook,
-          twitter,
-          linkedIn,
-          medium,
-          github,
-          instagram
-        };
-        const hash = await ipfs.saveContent(json)
-        if (hash) {
-          setIpfsCid(hash);
-          return newTxParams(hash)
-        } else {
-          throw new Error('Invalid hash')
-        }
-      }
-      return []
-    } catch (err) {
-      log.error('Failed to build tx params: %o', err)
-      return []
-    }
-  }
 
   const title = profile ? `Edit profile` : `New profile`;
   const shouldBeValidUrlText = `Should be a valid URL.`;
@@ -232,28 +201,41 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledField {...props}>
           <TxButton
-            size='medium'
-            icon='send'
+            type='primary'
             label={profile
               ? 'Update my profile'
               : 'Create my profile'
             }
-            isDisabled={!dirty || isSubmitting}
-            params={buildTxParams}
+            disabled={!dirty || isSubmitting}
+            params={() => getTxParams({
+              json: {
+                fullname,
+                avatar,
+                email,
+                personalSite,
+                about,
+                facebook,
+                twitter,
+                linkedIn,
+                medium,
+                github,
+                instagram
+              },
+              buildTxParamsCallback: newTxParams,
+              setIpfsHash,
+              ipfs
+            })}
             tx={profile
-              ? 'social.updateProfile'
-              : 'social.createProfile'
+              ? 'profiles.updateProfile'
+              : 'profiles.createProfile'
             }
             onFailed={onTxFailed}
             onSuccess={onTxSuccess}
           />
           <Button
-            type='button'
-            size='medium'
             disabled={!dirty || isSubmitting}
             onClick={() => resetForm()}
-            content='Reset form'
-          />
+          >Reset form</Button>
         </LabelledField>
       </Form>
     </Section>
@@ -302,8 +284,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
 export const EditFormWithValidation = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    socialQueryToProp('usernameMinLen', { propName: 'usernameMinLen' }),
-    socialQueryToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
+    profilesQueryToProp('minUsernameLen', { propName: 'usernameMinLen' }),
+    profilesQueryToProp('maxUsernameLen', { propName: 'usernameMaxLen' })
   )
 );
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useMyAddress } from './MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import TxButton from './TxButton';
 import BN from 'bn.js';
 import { useSubsocialApi } from './SubsocialApiContext';
@@ -38,16 +38,13 @@ export function ShareButtonPost (props: PropsShareButtonPost) {
   };
 
   return <TxButton
-    type='submit'
-    isBasic={true}
-    isPrimary={false}
     label={isFollow
       ? 'Unshare post'
       : 'Share post'}
     params={buildTxParams()}
     tx={isFollow
-      ? `social.unsharePost`
-      : `social.sharePost`}
-    onSuccess={() => setTriggerReload(!triggerReload) }
+      ? `posts.unsharePost`
+      : `posts.sharePost`}
+    onSuccess={() => setTriggerReload(!triggerReload)}
   />;
 }

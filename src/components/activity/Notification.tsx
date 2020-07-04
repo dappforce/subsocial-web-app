@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DfBgImg } from '../utils/DfBgImg';
 import { nonEmptyStr } from '@subsocial/utils';
 import Avatar from '../profiles/address-views/Avatar'
-import { ProfileData, PostData, BlogData, AnySubsocialData, CommonStruct, Activity } from '@subsocial/types';
+import { ProfileData, PostData, SpaceData, AnySubsocialData, CommonStruct, Activity } from '@subsocial/types';
 import Name from '../profiles/address-views/Name';
 import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
@@ -27,7 +27,7 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     const { activities } = props;
     const { subsocial } = useSubsocialApi()
     const [ loaded, setLoaded ] = useState(false)
-    const [ blogById, setBlogByIdMap ] = useState(new Map<string, BlogData>())
+    const [ spaceById, setSpaceByIdMap ] = useState(new Map<string, SpaceData>())
     const [ postById, setPostByIdMap ] = useState(new Map<string, PostData>())
     const [ ownerById, setOwnerByIdMap ] = useState(new Map<string, ProfileData>())
 
@@ -35,19 +35,19 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
       setLoaded(false);
 
       const ownerIds: string[] = []
-      const blogIds: BN[] = []
+      const spaceIds: BN[] = []
       const postIds: BN[] = []
 
-      activities.forEach(({ account, blog_id, post_id, comment_id }) => {
+      activities.forEach(({ account, space_id, post_id, comment_id }) => {
         nonEmptyStr(account) && ownerIds.push(account)
-        nonEmptyStr(blog_id) && blogIds.push(hexToBn(blog_id))
+        nonEmptyStr(space_id) && spaceIds.push(hexToBn(space_id))
         nonEmptyStr(post_id) && postIds.push(hexToBn(post_id))
         nonEmptyStr(comment_id) && postIds.push(hexToBn(comment_id))
       })
 
       const loadData = async () => {
         const ownersData = await subsocial.findProfiles(ownerIds);
-        const postsData = await subsocial.findPosts(postIds)
+        const postsData = await subsocial.findVisiblePosts(postIds)
 
         function createMap<T extends AnySubsocialData> (data: T[], structName?: 'profile' | 'post') {
           const dataByIdMap = new Map<string, T>()
@@ -62,8 +62,8 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
               case 'post': {
                 const struct = (x.struct as Post)
                 id = struct.id;
-                const blogId = struct.blog_id.unwrapOr(undefined);
-                blogId && blogIds.push(blogId)
+                const spaceId = struct.space_id.unwrapOr(undefined);
+                spaceId && spaceIds.push(spaceId)
                 break;
               }
               default : {
@@ -80,8 +80,8 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
         setPostByIdMap(createMap<PostData>(postsData, 'post'))
         setOwnerByIdMap(createMap<ProfileData>(ownersData, 'profile'))
 
-        const blogsData = await subsocial.findBlogs(blogIds)
-        setBlogByIdMap(createMap<BlogData>(blogsData))
+        const spacesData = await subsocial.findVisibleSpaces(spaceIds)
+        setSpaceByIdMap(createMap<SpaceData>(spacesData))
 
         setLoaded(true);
       }
@@ -91,7 +91,7 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     }, [ false ])
 
     const activityStore: ActivityStore = {
-      blogById,
+      spaceById,
       postById,
       ownerById
     }

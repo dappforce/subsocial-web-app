@@ -1,46 +1,29 @@
 import React from 'react';
-
-import settings from '../components/settings';
 import '../components/utils/styles';
-
-import Api from '@subsocial/react-api/Api'
 import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
-import Queue from '@subsocial/react-components/Status/Queue';
-import Signer from '@subsocial/react-signer';
-import { MyAccountProvider } from '../components/utils/MyAccountContext';
-import { BlockAuthors, Events } from '@subsocial/react-query';
-import { substrateUrl } from '../components/utils/env';
-import { NotifCounterProvider } from '../components/utils/NotifCounter';
-import { Content } from '../components/main/Content';
-
-import { isServerSide } from 'src/components/utils';
+import { MyAccountProvider } from '../components/auth/MyAccountContext';
+import { Navigation } from './Navigation'
+import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext';
+import { AuthProvider } from '../components/auth/AuthContext';
+import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
-  const url = substrateUrl || settings.apiUrl || undefined;
-
-  return isServerSide()
-    ? <Content>
-      {children}
-    </Content>
-    : <Queue>
-      <Api url={url}>
-        <SubsocialApiProvider>
-          <BlockAuthors>
-            <Events>
-              <MyAccountProvider>
-                <NotifCounterProvider>
-                  <Signer>
-                    <Content>
-                      {children}
-                    </Content>
-                  </Signer>
-                </NotifCounterProvider>
-              </MyAccountProvider>
-            </Events>
-          </BlockAuthors>
-        </SubsocialApiProvider>
-      </Api>
-    </Queue>;
+  return (
+    <SidebarCollapsedProvider>
+      <MyAccountProvider>
+        <SubstrateProvider>
+          <SubstrateWebConsole />
+          <SubsocialApiProvider>
+            <AuthProvider>
+              <Navigation>
+                {children}
+              </Navigation>
+            </AuthProvider>
+          </SubsocialApiProvider>
+        </SubstrateProvider>
+      </MyAccountProvider>
+    </SidebarCollapsedProvider>
+  )
 };
 
 export default ClientLayout;

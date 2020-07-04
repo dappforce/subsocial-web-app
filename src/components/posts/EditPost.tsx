@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react';
+import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
@@ -10,30 +10,30 @@ import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
-import { useMyAddress } from '../utils/MyAccountContext';
-import { socialQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils/utils';
+import { useMyAddress } from '../auth/MyAccountContext';
+import { getTxParams, postsQueryToProp, spacesQueryToProp } from '../utils/index';
+import { getNewIdFromEvent, Loading } from '../utils';
 import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback } from '@subsocial/react-components/Status/types';
 import { TxCallback } from '../utils/types';
 import { PostExtension, PostUpdate, OptionId, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
-import { Post, IpfsHash, BlogId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
+import { Post, IpfsHash, SpaceId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
 import { buildValidationSchema } from './PostValidation';
 import { LabeledValue } from 'antd/lib/select';
-import SelectBlogPreview from '../utils/SelectBlogPreview';
+import SelectSpacePreview from '../utils/SelectSpacePreview';
 import { Icon } from 'antd';
-import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
+import SpacegedSectionTitle from '../spaces/SpacedSectionTitle';
 import DfMdEditor from '../utils/DfMdEditor';
 
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type OuterProps = {
-  blogId?: BN,
+  spaceId?: BN,
   id?: BN,
   extension?: IPostExtension,
   struct?: Post
@@ -42,7 +42,7 @@ type OuterProps = {
   closeModal?: () => void,
   withButtons?: boolean,
   myAddress?: string,
-  blogIds?: BlogId[]
+  spaceIds?: SpaceId[]
 };
 
 const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
@@ -58,7 +58,7 @@ const LabelledText = DfForms.LabelledText<FormValues>();
 const InnerForm = (props: FormProps) => {
   const {
     id,
-    blogId,
+    spaceId,
     struct,
     extension = DefaultPostExt,
     values,
@@ -72,19 +72,16 @@ const InnerForm = (props: FormProps) => {
     onlyTxButton = false,
     withButtons = true,
     closeModal,
-    blogIds
+    spaceIds
   } = props;
 
   const isRegularPost = extension.isRegularPost
 
   const renderResetButton = () => (
     <Button
-      type='button'
-      size='medium'
       disabled={isSubmitting || (isRegularPost && !dirty)}
       onClick={() => resetForm()}
-      content='Reset form'
-    />
+    >Reset form</Button>
   );
 
   const {
@@ -95,14 +92,14 @@ const InnerForm = (props: FormProps) => {
     canonical
   } = values;
 
-  const initialBlogId = blogId
+  const initialSpaceId = spaceId
 
   const goToView = (id: BN) => {
-    Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
+    Router.push(`/spaces/${currentSpaceId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
   };
 
   const { ipfs } = useSubsocialApi()
-  const [ currentBlogId, setCurrentBlogId ] = useState(initialBlogId)
+  const [ currentSpaceId, setCurrentSpaceId ] = useState(initialSpaceId)
   const [ showAdvanced, setShowAdvanced ] = useState(false)
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
@@ -127,13 +124,13 @@ const InnerForm = (props: FormProps) => {
   const newTxParams = (hash: IpfsHash) => {
     if (isValid || !isRegularPost) {
       if (!struct) {
-        return [ currentBlogId, extension, hash ];
+        return [ currentSpaceId, extension, hash ];
       } else {
         // TODO update only dirty values.
         const update = new PostUpdate(
           {
-          // If we provide a new blog_id in update, it will move this post to another blog.
-            blog_id: new OptionId(),
+          // If we provide a new space_id in update, it will move this post to another space.
+            space_id: new OptionId(),
             ipfs_hash: new OptionText(hash),
             hidden: new OptionBool(false) // TODO has no implementation on UI
           });
@@ -144,56 +141,43 @@ const InnerForm = (props: FormProps) => {
     }
   };
 
-  const buildTxParams = async () => {
-    try {
-      if (isValid || !isRegularPost) {
-        const json = { title, body, image, tags, canonical };
-        const hash = await ipfs.savePost(json)
-        if (hash) {
-          setIpfsHash(hash);
-          return newTxParams(hash)
-        } else {
-          throw new Error('Invalid hash')
-        }
-      }
-      return []
-    } catch (err) {
-      log.error('Failed to build tx params: %o', err)
-      return []
-    }
-  };
-
   const renderTxButton = () => (
     <TxButton
+      type='primary'
       label={!struct
         ? `Create a post`
         : `Update a post`
       }
-      isDisabled={isSubmitting || (isRegularPost && !dirty)}
-      params={buildTxParams}
+      disabled={isSubmitting || (isRegularPost && !dirty)}
+      params={() => getTxParams({
+        json: { title, body, image, tags, canonical },
+        buildTxParamsCallback: newTxParams,
+        setIpfsHash,
+        ipfs
+      })}
       tx={struct
-        ? 'social.updatePost'
-        : 'social.createPost'
+        ? 'posts.updatePost'
+        : 'posts.createPost'
       }
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
     />
   );
 
-  const handleBlogSelect = (value: string | number | LabeledValue) => {
+  const handleSpaceSelect = (value: string | number | LabeledValue) => {
     if (!value) return;
 
-    setCurrentBlogId(new BN(value as string))
+    setCurrentSpaceId(new BN(value as string))
   };
 
-  const renderBlogsPreviewDropdown = () => {
-    if (!blogIds) return;
+  const renderSpacesPreviewDropdown = () => {
+    if (!spaceIds) return;
 
-    return <SelectBlogPreview
-      blogIds={blogIds}
-      onSelect={handleBlogSelect}
+    return <SelectSpacePreview
+      spaceIds={spaceIds}
+      onSelect={handleSpaceSelect}
       imageSize={24}
-      defaultValue={currentBlogId?.toString()} />
+      defaultValue={currentSpaceId?.toString()} />
   }
 
   const form =
@@ -201,7 +185,7 @@ const InnerForm = (props: FormProps) => {
 
       {isRegularPost
         ? <>
-          {renderBlogsPreviewDropdown()}
+          {renderSpacesPreviewDropdown()}
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
@@ -236,7 +220,7 @@ const InnerForm = (props: FormProps) => {
 
   const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
 
-  const sectionTitle = currentBlogId && <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
+  const sectionTitle = currentSpaceId && <SpacegedSectionTitle spaceId={currentSpaceId} title={pageTitle} />
 
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={sectionTitle}>
@@ -301,14 +285,14 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
   };
 }
 
-function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
+function withSpaceIdFromUrl (Component: React.ComponentType<OuterProps>) {
   return function () {
     const router = useRouter();
-    const { blogId } = router.query;
+    const { spaceId } = router.query;
     try {
-      return <Component blogId={new BN(blogId as string)} />;
+      return <Component spaceId={new BN(spaceId as string)} />;
     } catch (err) {
-      return <em>Invalid blog ID: {blogId}</em>;
+      return <em>Invalid space ID: {spaceId}</em>;
     }
   };
 }
@@ -365,7 +349,7 @@ export const InnerFormWithValidation = withMulti(
 
 export const NewPost = withMulti(
   InnerFormWithValidation,
-  withBlogIdFromUrl
+  withSpaceIdFromUrl
 );
 
 export const NewSharePost = InnerFormWithValidation;
@@ -374,10 +358,10 @@ export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
   withIdFromUrl,
   withCalls<OuterProps>(
-    socialQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
+    postsQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
   LoadStruct,
   withCalls<OuterProps>(
-    socialQueryToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+    spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'myAddress', propName: 'spaceIds' })
   )
 );

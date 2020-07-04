@@ -4,7 +4,7 @@ import { HasAddressOrUsername, accountUrl } from '../utils/urls'
 
 type Props = {
   account: HasAddressOrUsername
-  title?: string
+  title?: React.ReactNode
   hint?: string
   className?: string
 }

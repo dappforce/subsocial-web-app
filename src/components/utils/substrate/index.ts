@@ -2,6 +2,13 @@ import BN from 'bn.js'
 import { Text, GenericAccountId, Option } from '@polkadot/types'
 import { AccountId } from '@polkadot/types/interfaces'
 import AbstractInt from '@polkadot/types/codec/AbstractInt'
+import { getSubsocialApi } from '../SubsocialConnect'
+import { registry } from '@subsocial/react-api'
+import { AddressProps } from 'src/components/profiles/address-views/utils/types'
+import { toShortAddress } from '@subsocial/react-components/util'
+import { Codec } from '@polkadot/types/types'
+import { SubstrateId } from '@subsocial/types'
+import { SubmittableResult } from '@polkadot/api'
 
 function toString<DFT> (value?: { toString: () => string }, _default?: DFT): string | DFT | undefined {
   return value && typeof value.toString === 'function'
@@ -37,3 +44,66 @@ export function stringifyNumber<DFT> (value?: AnyNumber, _default?: DFT): string
 export function stringifyAddress<DFT> (value?: AnyAddress, _default?: DFT): string | DFT | undefined {
   return stringifyAny(value, _default)
 }
+
+export const getSpaceId = async (idOrHandle: string): Promise<BN | undefined> => {
+  if (idOrHandle.startsWith('@')) {
+    const handle = idOrHandle.substring(1) // Drop '@'
+    const { substrate } = await getSubsocialApi()
+    return substrate.getSpaceIdByHandle(handle)
+  } else {
+    return new BN(idOrHandle)
+  }
+}
+
+export function getNewIdFromEvent (
+  _txResult: SubmittableResult
+): BN | undefined {
+  let id: BN | undefined;
+
+  _txResult.events.find(event => {
+    const {
+      event: { data, method }
+    } = event;
+    if (method.indexOf(`Created`) >= 0) {
+      const [ /* owner */, newId ] = data.toArray();
+      id = newId as unknown as BN;
+      return true;
+    }
+    return false;
+  });
+
+  return id;
+}
+
+export const getAccountId = async (addressOrHandle: string): Promise<AccountId | undefined> => {
+  if (addressOrHandle.startsWith('@')) {
+    const handle = addressOrHandle.substring(1) // Drop '@'
+    const { substrate } = await getSubsocialApi()
+    return substrate.getAccountIdByHandle(handle)
+  } else {
+    return new GenericAccountId(registry, addressOrHandle)
+  }
+}
+
+export function equalAddresses (addr1?: string | AccountId, addr2?: string | AccountId) {
+  return addr1?.toString() === addr2?.toString()
+}
+
+type GetNameOptions = AddressProps & {
+  isShort?: boolean
+}
+
+export const getProfileName = (options: GetNameOptions) => {
+  const { owner, isShort = true, address } = options;
+  return (owner?.content?.fullname || owner?.profile?.username || (isShort ? toShortAddress(address) : address)).toString()
+}
+
+export const unwrapSubstrateId = (optId?: Option<Codec>): SubstrateId | undefined => {
+  if (optId instanceof Option) {
+    return optId.unwrapOr(undefined) as any
+  }
+
+  return optId && optId as SubstrateId
+}
+
+export * from './getTxParams'

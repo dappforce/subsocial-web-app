@@ -9,7 +9,7 @@
   -webkit-overflow-scrolling: touch;
 
   .ant-menu-inline {
-    width: 200px;
+    width: 255px;
   }
 }
 
@@ -20,7 +20,7 @@
 }
 
 .DfMobileSideBar .am-drawer-sidebar .am-list {
-  width: 200px;
+  width: 255px;
   padding: 0;
 }
 
@@ -288,7 +288,7 @@
     }
   }
 
-  .DfBlogStats {
+  .DfSpaceStats {
     font-size: $font_tiny; /* TODO maybe delete */
 
     .DfStatItem {

@@ -11,7 +11,7 @@ import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModa
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { isMyAddress } from '../auth/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
@@ -27,8 +27,8 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
-import { useApi } from '@subsocial/react-hooks';
-import { getAccountId } from '../utils/utils';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { getAccountId } from '../utils/substrate';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
 import ViewProfileLink from './ViewProfileLink';
@@ -58,7 +58,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { isApiReady } = useApi()
+  const { isApiReady } = useSubsocialApi()
 
   const address = id.toString();
   const isMyAccount = isMyAddress(address);
@@ -163,7 +163,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const renderPreview = () => {
     return <div>
-      <div className={`ProfileDetails MyBlog`}>
+      <div className={`ProfileDetails MySpace`}>
         {hasAvatar
           ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
           : <IdentityIcon className='image' value={address} size={size} />

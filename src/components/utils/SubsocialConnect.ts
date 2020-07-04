@@ -1,17 +1,14 @@
 import axios from 'axios';
 
-import { api as polkadotApi } from '@subsocial/react-api';
-import { Api } from '@subsocial/api/substrateConnect'
+import { api as apiFromContext } from '../substrate';
+import { Api as SubstrateApi } from '@subsocial/api/substrateConnect'
 import { offchainUrl, substrateUrl, ipfsNodeUrl } from './env';
 import { ApiPromise } from '@polkadot/api';
 import { Activity } from '@subsocial/types/offchain';
-// import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { newLogger } from '@subsocial/utils';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 
 const log = newLogger('SubsocialConnect')
-
-export const ipfs = {} as any
 
 export const getNewsFeed = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> => {
   const res = await axios.get(`${offchainUrl}/offchain/feed/${myAddress}?offset=${offset}&limit=${limit}`);
@@ -26,26 +23,37 @@ export const getNotifications = async (myAddress: string, offset: number, limit:
 };
 
 let subsocial!: SubsocialApi;
+let isLoadingSubsocial = false
+
+export const newSubsocialApi = (substrateApi: ApiPromise) => {
+  return new SubsocialApi({ substrateApi, ipfsNodeUrl, offchainUrl })
+}
 
 export const getSubsocialApi = async () => {
-  if (!subsocial) {
-    const api = await getApi()
-    subsocial = new SubsocialApi({ substrateApi: api, ipfsNodeUrl, offchainUrl })
+  if (!subsocial && !isLoadingSubsocial) {
+    isLoadingSubsocial = true
+    const api = await getSubstrateApi()
+    isLoadingSubsocial = false
+    subsocial = newSubsocialApi(api)
   }
   return subsocial
 }
 
-export let api: ApiPromise;
+let api: ApiPromise;
+let isLoadingSubstrate = false
 
-export const getApi = async () => {
-  if (polkadotApi) {
-    log.debug('Get Substrate API: @polkadot api')
-    return (await polkadotApi.isReady) as unknown as ApiPromise
-  } else {
-    if (!api) {
-      log.debug('Get Substrate API: DfApi.setup()')
-      api = await Api.connect(substrateUrl)
-    }
-    return api
+const getSubstrateApi = async () => {
+  if (apiFromContext) {
+    log.debug('Get Substrate API from context')
+    return apiFromContext.isReady
   }
+
+  if (!api && !isLoadingSubstrate) {
+    isLoadingSubstrate = true
+    log.debug('Get Substrate API as Api.connect()')
+    api = await SubstrateApi.connect(substrateUrl)
+    isLoadingSubstrate = false
+  }
+
+  return api
 }

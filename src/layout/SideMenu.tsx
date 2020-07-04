@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, Icon, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { useIsLoggedIn, useMyAddress } from '../components/utils/MyAccountContext';
-import { isMobile } from 'react-device-detect';
+import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
+import { isMobile, isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils/utils';
-import { RenderFollowedList } from '../components/blogs/ListFollowingBlogs';
+import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';
 import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
 import Link from 'next/link';
-import { BlogData } from '@subsocial/types/dto';
+import { SpaceData } from '@subsocial/types/dto';
 import { newLogger } from '@subsocial/utils';
 import { useNotifCounter } from '../components/utils/NotifCounter';
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems';
+import { OnBoardingCard } from 'src/components/onboarding';
+import { useAuth } from 'src/components/auth/AuthContext';
 
 const log = newLogger('SideMenu')
 
@@ -20,10 +22,11 @@ const InnerMenu = () => {
   const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
   const { pathname } = useRouter();
   const myAddress = useMyAddress();
-  const isLoggedIn = useIsLoggedIn();
+  const isLoggedIn = useIsSignIn();
   const { unreadCount } = useNotifCounter()
+  const { state: { showOnBoarding } } = useAuth()
 
-  const [ followedBlogsData, setFollowedBlogsData ] = useState<BlogData[]>([]);
+  const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
 
   useEffect(() => {
@@ -31,18 +34,18 @@ const InnerMenu = () => {
 
     let isSubscribe = true;
 
-    const loadBlogsData = async () => {
+    const loadSpacesData = async () => {
       setLoaded(false);
-      const ids = await substrate.blogIdsFollowedByAccount(myAddress)
-      const blogsData = await subsocial.findBlogs(ids);
+      const ids = await substrate.spaceIdsFollowedByAccount(myAddress)
+      const spacesData = await subsocial.findVisibleSpaces(ids);
       if (isSubscribe) {
-        setFollowedBlogsData(blogsData);
+        setFollowedSpacesData(spacesData);
         setLoaded(true);
       }
     };
 
-    loadBlogsData().catch(err =>
-      log.error('Failed to load blogs followed by the current user:', err));
+    loadSpacesData().catch(err =>
+      log.error('Failed to load spaces followed by the current user:', err));
 
     return () => { isSubscribe = false; };
   }, [ triggerFollowed, myAddress ]);
@@ -86,12 +89,12 @@ const InnerMenu = () => {
 
   const renderSubscriptions = () =>
     <Menu.ItemGroup
-      className={`DfSideMenu--FollowedBlogs ${collapsed && 'collapsed'}`}
+      className={`DfSideMenu--FollowedSpaces ${collapsed && 'collapsed'}`}
       key='followed'
       title='My subscriptions'
     >
       {loaded
-        ? <RenderFollowedList followedBlogsData={followedBlogsData} />
+        ? <RenderFollowedList followedSpacesData={followedSpacesData} />
         : <div className='text-center m-2'><Loading /></div>
       }
     </Menu.ItemGroup>
@@ -107,6 +110,7 @@ const InnerMenu = () => {
         ? <Menu.Divider key={'divider-' + i} />
         : renderPageLink(item)
       )}
+      {isBrowser && showOnBoarding && !collapsed && <OnBoardingCard />}
       {isLoggedIn && <Menu.Divider />}
       {isLoggedIn && renderSubscriptions()}
     </Menu>

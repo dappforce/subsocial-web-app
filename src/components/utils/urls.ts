@@ -1,4 +1,4 @@
-import { Blog, Post, BlogId } from '@subsocial/types/substrate/interfaces'
+import { Space, Post, SpaceId } from '@subsocial/types/substrate/interfaces'
 import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from './substrate'
 import { newLogger, nonEmptyStr, notDef, nonEmptyArr } from '@subsocial/utils'
 
@@ -31,49 +31,49 @@ function stringifySubUrls (...subUrls: string[]): string {
   return ''
 }
 
-// Blog URLs
+// Space URLs
 // --------------------------------------------------
 
-export type HasBlogIdOrHandle = Pick<Blog, 'id' | 'handle'>
+export type HasSpaceIdOrHandle = Pick<Space, 'id' | 'handle'>
 
 /**
  * WARN: It's not recommended to use this hack.
- * You should pass both blog's id and handle in order to construct
- * good looking URLs for blogs and posts that support a blog handle.
+ * You should pass both space's id and handle in order to construct
+ * good looking URLs for spaces and posts that support a space handle.
  */
-export function newBlogUrlFixture (id: BlogId): HasBlogIdOrHandle {
-  return { id } as HasBlogIdOrHandle
+export function newSpaceUrlFixture (id: SpaceId): HasSpaceIdOrHandle {
+  return { id } as HasSpaceIdOrHandle
 }
 
-export function blogIdForUrl ({ id, handle }: HasBlogIdOrHandle): string {
+export function spaceIdForUrl ({ id, handle }: HasSpaceIdOrHandle): string {
   if (notDef(id) && notDef(handle)) {
-    log.warn(`${blogIdForUrl.name}: Both id and handle are undefined`)
+    log.warn(`${spaceIdForUrl.name}: Both id and handle are undefined`)
     return ''
   }
 
   return slugify(handle) || stringifyNumber(id) as string
 }
 
-/** /blogs/[blogId] */
-export function blogUrl (blog: HasBlogIdOrHandle, ...subUrls: string[]): string {
-  const idForUrl = blogIdForUrl(blog)
+/** /spaces/[spaceId] */
+export function spaceUrl (space: HasSpaceIdOrHandle, ...subUrls: string[]): string {
+  const idForUrl = spaceIdForUrl(space)
   const ending = stringifySubUrls(...subUrls)
-  return '/blogs/' + idForUrl + ending
+  return '/spaces/' + idForUrl + ending
 }
 
-/** /blogs/[blogId]/new */
-export function newBlogUrl (blog: HasBlogIdOrHandle): string {
-  return blogUrl(blog, 'new')
+/** /spaces/[spaceId]/new */
+export function newSpaceUrl (space: HasSpaceIdOrHandle): string {
+  return spaceUrl(space, 'new')
 }
 
-/** /blogs/[blogId]/edit */
-export function editBlogUrl (blog: HasBlogIdOrHandle): string {
-  return blogUrl(blog, 'edit')
+/** /spaces/[spaceId]/edit */
+export function editSpaceUrl (space: HasSpaceIdOrHandle): string {
+  return spaceUrl(space, 'edit')
 }
 
-/** /blogs/[blogId]/about */
-export function aboutBlogUrl (blog: HasBlogIdOrHandle): string {
-  return blogUrl(blog, 'about')
+/** /spaces/[spaceId]/about */
+export function aboutSpaceUrl (space: HasSpaceIdOrHandle): string {
+  return spaceUrl(space, 'about')
 }
 
 // Post URLs
@@ -81,25 +81,25 @@ export function aboutBlogUrl (blog: HasBlogIdOrHandle): string {
 
 export type HasPostId = Pick<Post, 'id'>
 
-/** /blogs/[blogId]/posts/new */
-export function newPostUrl (blog: HasBlogIdOrHandle): string {
-  return blogUrl(blog, 'posts', 'new')
+/** /spaces/[spaceId]/posts/new */
+export function newPostUrl (space: HasSpaceIdOrHandle): string {
+  return spaceUrl(space, 'posts', 'new')
 }
 
-/** /blogs/[blogId]/posts/[postId] */
-export function postUrl (blog: HasBlogIdOrHandle, post: HasPostId, ...subUrls: string[]): string {
+/** /spaces/[spaceId]/posts/[postId] */
+export function postUrl (space: HasSpaceIdOrHandle, post: HasPostId, ...subUrls: string[]): string {
   if (notDef(post.id)) {
     log.warn(`${postUrl.name}: Post id is undefined`)
     return ''
   }
 
   const postId = stringifyNumber(post.id) as string
-  return blogUrl(blog, 'posts', postId, ...subUrls)
+  return spaceUrl(space, 'posts', postId, ...subUrls)
 }
 
-/** /blogs/[blogId]/posts/[postId]/edit */
-export function editPostUrl (blog: HasBlogIdOrHandle, post: HasPostId): string {
-  return postUrl(blog, post, 'edit')
+/** /spaces/[spaceId]/posts/[postId]/edit */
+export function editPostUrl (space: HasSpaceIdOrHandle, post: HasPostId): string {
+  return postUrl(space, post, 'edit')
 }
 
 // Account URLs
@@ -128,12 +128,12 @@ export function accountUrl (account: HasAddressOrUsername, ...subUrls: string[])
   return urlWithAccount('profile', account, ...subUrls)
 }
 
-/** /blogs/my/[address] */
-export function blogsOwnedByAccountUrl (account: HasAddressOrUsername, ...subUrls: string[]): string {
-  return urlWithAccount('blogs/my', account, ...subUrls)
+/** /spaces/my/[address] */
+export function spacesOwnedByAccountUrl (account: HasAddressOrUsername, ...subUrls: string[]): string {
+  return urlWithAccount('spaces/my', account, ...subUrls)
 }
 
-/** /blogs/following/[address] */
-export function blogsFollowedByAccountUrl (account: HasAddressOrUsername, ...subUrls: string[]): string {
-  return urlWithAccount('blogs/following', account, ...subUrls)
+/** /spaces/following/[address] */
+export function spacesFollowedByAccountUrl (account: HasAddressOrUsername, ...subUrls: string[]): string {
+  return urlWithAccount('spaces/following', account, ...subUrls)
 }

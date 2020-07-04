@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { offchainWs } from './env'
-import { useMyAccount } from './MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 
 export type NotifCounterContextProps = {
   unreadCount: number
@@ -9,7 +9,7 @@ export type NotifCounterContextProps = {
 export const NotifCounterContext = createContext<NotifCounterContextProps>({ unreadCount: 0 });
 
 export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
-  const { state: { address: myAddress } } = useMyAccount()
+  const myAddress = useMyAddress()
 
   const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })
   const [ wsConnected, setWsConnected ] = useState(false)

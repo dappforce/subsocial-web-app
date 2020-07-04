@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { withCalls, withMulti } from '@subsocial/react-api';
-import { socialQueryToProp } from '../utils/index';
+import { reactionsQueryToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
@@ -116,13 +116,13 @@ const InnerModalVoters = (props: VotersProps) => {
 export const PostVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
-    socialQueryToProp(`reactionIdsByPostId`, { paramName: 'id', propName: 'reactions' })
+    reactionsQueryToProp(`reactionIdsByPostId`, { paramName: 'id', propName: 'reactions' })
   )
 );
 
 export const CommentVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
-    socialQueryToProp(`reactionIdsByCommentId`, { paramName: 'id', propName: 'reactions' })
+    reactionsQueryToProp(`reactionIdsByCommentId`, { paramName: 'id', propName: 'reactions' })
   )
 );

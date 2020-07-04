@@ -3,16 +3,12 @@ import { Button, Icon } from 'antd';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { useMyAccount, useIsLoggedIn } from '../components/utils/MyAccountContext';
-import LogInButton from '../components/utils/LogIn';
+import { AuthorizationPanel } from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
-import { AddressPopupWithOwner } from 'src/components/profiles/address-views';
 
 const InnerMenu = () => {
   const { toggle, show: open } = useSidebarCollapsed();
-  const { state: { address } } = useMyAccount();
   const [ show, setShow ] = useState(isBrowser);
-  const isLoggedIn = useIsLoggedIn();
 
   const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
 
@@ -38,13 +34,9 @@ const InnerMenu = () => {
           {isMobile &&
           <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        {isLoggedIn && address
-          ? <AddressPopupWithOwner
-            className='profileName'
-            address={address}
-          /> : <LogInButton/>}
+        <AuthorizationPanel />
       </div>
-    </div>;
+    </div>
 };
 
 export default InnerMenu;

@@ -1,4 +1,4 @@
-import { accountUrl, blogsFollowedByAccountUrl, blogsOwnedByAccountUrl } from 'src/components/utils/urls'
+import { accountUrl, spacesFollowedByAccountUrl, spacesOwnedByAccountUrl } from 'src/components/utils/urls'
 
 export type Divider = 'Divider'
 
@@ -25,7 +25,7 @@ export const isPageLink = (item: MenuItem): item is PageLink =>
 export const DefaultMenu: MenuItem[] = [
   {
     name: 'Explore',
-    page: [ '/blogs/all' ],
+    page: [ '/spaces/all' ],
     image: 'global'
   },
   {
@@ -52,7 +52,7 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     },
     {
       name: 'My subscriptions',
-      page: [ '/blogs/following/[address]', blogsFollowedByAccountUrl(account) ],
+      page: [ '/spaces/following/[address]', spacesFollowedByAccountUrl(account) ],
       image: 'book'
     },
     {
@@ -61,13 +61,13 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
       image: 'user'
     },
     {
-      name: 'My blogs',
-      page: [ '/blogs/my/[address]', blogsOwnedByAccountUrl(account) ],
+      name: 'My spaces',
+      page: [ '/spaces/my/[address]', spacesOwnedByAccountUrl(account) ],
       image: 'book'
     },
     {
-      name: 'New blog',
-      page: [ '/blogs/new' ],
+      name: 'New space',
+      page: [ '/spaces/new' ],
       image: 'plus'
     },
     Divider,

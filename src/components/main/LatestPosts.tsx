@@ -1,7 +1,7 @@
 import React from 'react';
 import ListData from '../utils/DataList';
 import { PostWithAllDetails } from '@subsocial/types';
-import PostPreview from '../posts/PostPreview';
+import PostPreview from '../posts/view-post/PostPreview';
 
 type Props = {
   postsData: PostWithAllDetails[]
@@ -19,7 +19,7 @@ export const LatestPosts = (props: Props) => {
     title={`Latest posts`}
     dataSource={postsData}
     renderItem={(item) =>
-      <PostPreview post={item} />
+      <PostPreview postStruct={item} />
     }
   />
 }

@@ -1,64 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import { GenericAccountId } from '@polkadot/types';
-import { useMyAddress, isMyAddress } from './MyAccountContext';
+import { useMyAddress, isMyAddress } from '../auth/MyAccountContext';
 import { registry } from '@subsocial/react-api';
-import { Button$Sizes } from '@subsocial/react-components/Button/types';
 import { newLogger, notDef } from '@subsocial/utils';
 import { useSubsocialApi } from './SubsocialApiContext';
 import TxButton from './TxButton';
 import { Loading } from './utils';
 import AccountId from '@polkadot/types/generic/AccountId';
-import { TX_BUTTON_SIZE } from 'src/config/Size.config';
 
 const log = newLogger('FollowAccountButton')
 
 type FollowAccountButtonProps = {
   address: string | AccountId
-  size?: Button$Sizes
   className?: string
 }
 
 function FollowAccountButton (props: FollowAccountButtonProps) {
-  const { address, size = TX_BUTTON_SIZE, className = '' } = props;
+  const { address, className = '' } = props;
   const myAddress = useMyAddress()
-  const accountId = new GenericAccountId(registry, address);
   const { substrate } = useSubsocialApi()
-
-  const [ isFollow, setIsFollow ] = useState<boolean>();
+  const [ isFollower, setIsFollower ] = useState<boolean>();
 
   useEffect(() => {
-    if (!myAddress) return;
-
     let isSubscribe = true;
+
+    if (!myAddress) return isSubscribe && setIsFollower(false);
+
     const load = async () => {
-      const _isFollow = await (substrate.isAccountFollower(myAddress, address))
-      isSubscribe && setIsFollow(_isFollow);
+      const res = await substrate.isAccountFollower(myAddress, address)
+      isSubscribe && setIsFollower(res);
     };
-    load().catch(err => log.error('Failed to check isFollow:', err));
+
+    load().catch(err => log.error(
+      `Failed to check if account is a follower of another account ${address?.toString()}. Error:`, err));
 
     return () => { isSubscribe = false; };
   }, [ myAddress ]);
 
-  if (!myAddress || isMyAddress(address)) return null;
+  if (!address || isMyAddress(address)) return null;
 
-  const buildTxParams = () => {
-    return [ accountId ];
-  };
+  const accountId = new GenericAccountId(registry, address)
 
-  return <span className={className}>{notDef(isFollow)
+  const buildTxParams = () => [ accountId ]
+
+  return <span className={className}>{notDef(isFollower)
     ? <Loading />
     : <TxButton
-      className="DfFollowAccountButton"
-      size={size}
-      isBasic={isFollow}
-      label={isFollow
+      className='DfFollowAccountButton'
+      type='primary'
+      ghost={isFollower}
+      label={isFollower
         ? 'Unfollow'
         : 'Follow'}
-      params={buildTxParams()}
-      tx={isFollow
-        ? `social.unfollowAccount`
-        : `social.followAccount`}
-      onSuccess={() => setIsFollow(!isFollow)}
+      tx={isFollower
+        ? `profileFollows.unfollowAccount`
+        : `profileFollows.followAccount`}
+      params={buildTxParams}
+      onSuccess={() => setIsFollower(!isFollower)}
       withSpinner
     />
   }</span>

@@ -4,6 +4,8 @@ const { writeFileSync } = require('fs');
 require('dotenv').config();
 
 const varsToExport = [
+  'NODE_ENV',
+  'APP_NAME',
   'SUBSTRATE_URL',
   'ELASTIC_URL',
   'OFFCHAIN_URL',
