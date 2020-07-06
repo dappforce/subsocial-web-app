@@ -117,7 +117,6 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
   const [ state, dispatch ] = useReducer(reducer, initState)
 
   const { api, endpoint, rpc, types } = state
-
   // `useCallback` so that returning memoized function and not created
   //   everytime, and thus re-render.
   const connect = useCallback(async () => {
@@ -143,14 +142,22 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
       }
     }
 
-    // We want to listen to event for disconnection and reconnection.
-    //  That's why we set for listeners.
-    _api.on('connected', () => {
+    const onReady = () => {
+      dispatch({ type: 'CONNECT', payload: _api })
+      onConnectSuccess()
+    }
+
+    const onConnect = () => {
       dispatch({ type: 'CONNECT', payload: _api })
       // `ready` event is not emitted upon reconnection. So we check explicitly here.
       _api.isReady.then((_api) => onConnectSuccess())
-    })
-    _api.on('ready', () => onConnectSuccess())
+    }
+
+    // We want to listen to event for disconnection and reconnection.
+    //  That's why we set for listeners.
+    _api.on('connected', onConnect)
+    _api.on('ready', onReady)
+
     _api.on('error', err => dispatch({ type: 'CONNECT_ERROR', payload: err }))
   }, [ api, endpoint, rpc, types, dispatch ])
 
@@ -169,7 +176,7 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
       keyring.loadAll({ isDevelopment: isDevMode }, allAccounts)
       dispatch({ type: 'SET_KEYRING', payload: keyring })
     } catch (err) {
-      console.error(err)
+      log.error(`Keyring failed to load accounts. ${err}`)
       dispatch({ type: 'KEYRING_ERROR', payload: err })
     }
   }, [ keyringState, dispatch ])

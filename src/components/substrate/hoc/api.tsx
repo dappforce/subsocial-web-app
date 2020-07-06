@@ -14,8 +14,6 @@ export default function withApi <P extends ApiProps> (
     const component = useRef()
     const { api } = useSubstrate()
 
-    console.log('withApi', api)
-
     return !api ? null : <Inner
       {...defaultProps as any}
       {...props}

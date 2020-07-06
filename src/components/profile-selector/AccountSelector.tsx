@@ -44,7 +44,7 @@ type AccountSelectorViewProps = {
 
 export const AccountSelectorView = ({ currentAddress, extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
   const NoExtension = () => (
-    <div className='p-3'>
+    <div>
       <div className='mb-4 mt-2'>
         <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
         was not found or disabled. You can install it if you are using Chrome or Firefox browser.
@@ -63,7 +63,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
   )
 
   const NoAccounts = () => (
-    <div className='p-3'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
+    <div>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
   )
 
   const CurrentAccount = () => {
@@ -154,13 +154,10 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
         if (address === currentAddress) return address
 
         if (meta.isInjected) {
-          console.log(account)
           extensionAddresses.push(address)
         } else if (meta.isTesting) {
-          console.log(address)
           developAddresses.push(address)
         } else {
-          console.log(address)
           localAddresses.push(address)
         }
         return address
@@ -177,7 +174,6 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
         const address = item.profile?.created.account.toString()
         address && profilesByAddressMap.set(address, item)
       })
-      console.log(extensionAddresses, developAddresses)
     }
 
     loadProfiles().catch(err => console.error(err))// TODO change on logger

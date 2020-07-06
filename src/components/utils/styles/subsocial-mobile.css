@@ -1,6 +1,6 @@
 @import './subsocial-vars.css';
 
-.DfMobileSideBar {
+.DfSideBar {
   position: fixed;
   z-index: 10;
   top: $height_top_menu;
@@ -13,13 +13,13 @@
   }
 }
 
-.DfMobileSideBar .am-drawer-sidebar {
+.DfSideBar .am-drawer-sidebar {
   background-color: #fff;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.DfMobileSideBar .am-drawer-sidebar .am-list {
+.DfSideBar .am-drawer-sidebar .am-list {
   width: 255px;
   padding: 0;
 }

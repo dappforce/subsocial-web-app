@@ -257,7 +257,7 @@ const Component: NextPage<Props> = (props: Props) => {
           <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{following.toString()} Following </span>
           <div className='mt-3'>
             {createProfileButton}
-            <FollowAccountButton address={address} size={TX_BUTTON_SIZE} />
+            <FollowAccountButton address={address} />
           </div>
         </div>
       </div>

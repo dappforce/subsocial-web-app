@@ -34,7 +34,6 @@ export const useSetReplyToStore = (dispatch: Dispatch, { reply, comment }: SetCo
 }
 
 export const useChangeReplyToStore = (dispatch: Dispatch, oldReply: Reply<string>, newStore: SetCommentStore<string>) => {
-  console.log('useChangeReplyToStore >>>', newStore, oldReply)
   useRemoveReplyFromStore(dispatch, oldReply)
   useSetReplyToStore(dispatch, newStore)
 }

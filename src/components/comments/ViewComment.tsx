@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Comment, Menu, Dropdown, Icon } from 'antd';
 import { ProfileData, PostWithAllDetails } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
@@ -14,9 +14,9 @@ import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
 import { postUrl } from '../utils/urls';
-import { useSubstrateApi } from '../utils/SubsocialApiContext';
 import SharePostAction from '../posts/SharePostAction';
 import { NewComment } from './CreateComment';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 
 type Props = {
   space: Space,
@@ -41,22 +41,20 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies, setShowReplies ] = useState(withShowReplies);
   const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
-  const substrate = useSubstrateApi()
 
   const isFake = id.toString().startsWith('fake')
   const isMyStruct = myAddress === account.toString()
   const commentLink = postUrl(space, struct);
 
-  useEffect(() => {
+  useSubsocialEffect(({ substrate }) => {
 
     substrate.findPost({ id }).then((post) => {
       if (post) {
-        setCount(post.direct_replies_count.toString())
+        setCount(post.total_replies_count.toString())
       }
     })
 
   }, [ false ])
-
   const RenderDropDownMenu = () => {
 
     const showDropdown = isMyStruct || true;

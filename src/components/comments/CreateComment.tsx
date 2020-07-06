@@ -9,8 +9,8 @@ import BN from 'bn.js'
 import { useDispatch } from 'react-redux';
 import { useMyAddress } from '../auth/MyAccountContext';
 import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils';
-import { InnerEditComment } from './InnerEditComment';
 
+const InnerEditComment = dynamic(() => import('./InnerEditComment'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type NewCommentProps = {

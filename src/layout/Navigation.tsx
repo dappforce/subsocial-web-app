@@ -2,14 +2,15 @@ import React, { FunctionComponent, useEffect } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout } from 'antd';
-import Menu from './SideMenu';
 import { isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Drawer } from 'antd-mobile';
-import dynamic from 'next/dynamic';
 import { newLogger } from '@subsocial/utils';
 import { isHomePage } from 'src/components/utils';
 import { ElasticNodeURL } from 'src/components/utils/env';
+
+import Menu from './SideMenu';
+import dynamic from 'next/dynamic';
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 
 const log = newLogger('Navigation')
@@ -24,7 +25,7 @@ log.debug('Are we in a browser?', isBrowser);
 
 const HomeNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();
-  return <div><Sider
+  return <Sider
     className='DfSider'
     width='255'
     trigger={null}
@@ -33,7 +34,7 @@ const HomeNav = () => {
     defaultCollapsed={false}
   >
     <Menu />
-  </Sider></div>;
+  </Sider>;
 };
 
 const DefaultNav: FunctionComponent = ({ children }) => {
@@ -42,7 +43,7 @@ const DefaultNav: FunctionComponent = ({ children }) => {
   useEffect(() => hide(), [ false ])
 
   return <Drawer
-    className='DfMobileSideBar'
+    className='DfSideBar'
     enableDragHandle
     contentStyle={{ color: '#a6a6a6', textAlign: 'center', paddingTop: 42 }}
     sidebar={<div onMouseLeave={hide}><Menu /></div>}

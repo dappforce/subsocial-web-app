@@ -601,7 +601,6 @@ hr {
   }
 
   .DfSharedSummary {
-    margin-left: calc($space_huge + 1rem);
     margin-top: $space_tiny;
     font-size: $font_large;
     width: 95%;
