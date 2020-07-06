@@ -16,7 +16,7 @@ export default function withApi <P extends ApiProps> (
 
     console.log('withApi', api)
 
-    return !api ? <b>HOHOHJO</b> : <Inner
+    return !api ? null : <Inner
       {...defaultProps as any}
       {...props}
       api={api}

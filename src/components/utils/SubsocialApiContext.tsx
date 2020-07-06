@@ -10,6 +10,7 @@ import { useSubstrate } from '../substrate';
 
 const log = newLogger('SubsocialApiContext')
 
+// TODO make apis optional
 export type SubsocialApiState = {
   subsocial: SubsocialApi,
   substrate: SubsocialSubstrateApi,
