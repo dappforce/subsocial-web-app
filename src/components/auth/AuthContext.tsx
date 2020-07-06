@@ -1,7 +1,6 @@
 import React, { useState, createContext, useContext } from 'react';
 import { useIsSignIn, useMyAccount } from 'src/components/auth/MyAccountContext';
 import useSubsocialEffect from '../api/useSubsocialEffect';
-import { useRouter } from 'next/router';
 import store from 'store'
 import SignInModal from './SignInModal';
 
@@ -96,7 +95,6 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
 
     let step = StepsEnum.Disabled;
     const subBalance = async () => {
-      // console.log(api.query.system)
       if (!address) return
 
       const api = await substrate.api
@@ -121,7 +119,6 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
     }
   }, [ currentStep, address, isSignIn ])
 
-  console.log(useRouter().pathname)
   const contextValue = {
     state: {
       showOnBoarding: showOnBoarding,
@@ -141,8 +138,6 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
     },
     setCurrentStep
   }
-
-  console.log('contextValue', contextValue)
 
   return <AuthContext.Provider value={contextValue}>
     {props.children}
