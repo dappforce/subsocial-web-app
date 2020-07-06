@@ -8,7 +8,7 @@ import ListData from '../utils/DataList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import BN from 'bn.js';
-import { registry } from '@subsocial/react-api';
+import { registry } from '@subsocial/types/substrate/registry';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
 import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
 

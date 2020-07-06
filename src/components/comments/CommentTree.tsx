@@ -1,7 +1,6 @@
 import { PostId, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithAllDetails } from '@subsocial/types';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
 import ListData from '../utils/DataList';
 import ViewComment from './ViewComment';
@@ -9,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice';
 import { Store } from 'src/redux/types';
 import { useSetReplyToStore } from './utils';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 
 const log = newLogger('CommentTree')
 
@@ -40,10 +40,9 @@ export const DynamicCommentsTree = (props: LoadProps) => {
   const { parentId, space, replies } = props;
   const parentIdStr = parentId.toString()
   const [ replyComments, setComments ] = useState<PostWithAllDetails[]>(replies || []);
-  const { subsocial, substrate } = useSubsocialApi();
   const dispatch = useDispatch()
 
-  useEffect(() => {
+  useSubsocialEffect(({ subsocial, substrate }) => {
 
     const loadComments = async () => {
       const replyIds = await substrate.getReplyIdsByPostId(parentId);

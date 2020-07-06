@@ -4,7 +4,8 @@ import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
 import EditableTagGroup from '../utils/EditableTagGroup'
-import { withCalls, withMulti, registry } from '@subsocial/react-api';
+import { registry } from '@subsocial/types/substrate/registry';
+import { withCalls, withMulti } from '../substrate';
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';

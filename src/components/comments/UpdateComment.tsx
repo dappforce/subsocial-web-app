@@ -4,7 +4,7 @@ import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
 import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { CommentContent, PostContent } from '@subsocial/types';
-import { registry } from '@subsocial/react-api';
+import { registry } from '@subsocial/types/substrate/registry';
 import { Option } from '@polkadot/types/codec';
 import { getTxParams } from '../utils/substrate';
 import BN from 'bn.js'

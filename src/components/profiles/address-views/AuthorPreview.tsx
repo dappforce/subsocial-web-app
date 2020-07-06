@@ -21,7 +21,9 @@ export type InfoProps = {
   details?: JSX.Element
 }
 
-export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, balance, address }) => {
+export const InfoDetails: React.FunctionComponent<InfoProps> = ({
+  details, balance, address
+}) => {
   const { isApiReady } = useSubsocialApi()
   return <>
     <div className='Df--AddressComponents-details'>
@@ -68,7 +70,11 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
           content={<ProfilePreview address={address} owner={owner} />}
         >
           <span>
-            <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
+            <ViewProfileLink
+              account={{ address, username }}
+              title={name}
+              className={nameClass}
+            />
           </span>
         </Popover>
         <InfoDetails details={details}/>

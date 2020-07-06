@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useSubsocialApi } from '../utils/SubsocialApiContext'
+import React, { useState } from 'react';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { Loading } from '../utils/utils';
 import NoData from '../utils/EmptyList';
 import { SpaceData, ProfileData } from '@subsocial/types/dto'
@@ -13,11 +13,10 @@ export const withLoadSpaceDataById = (Component: React.ComponentType<Props>) => 
 
     if (!id) return <NoData description={<span>Space id is undefined</span>} />
 
-    const { subsocial } = useSubsocialApi()
     const [ spaceData, setSpaceData ] = useState<SpaceData>()
     const [ owner, setOwner ] = useState<ProfileData>()
 
-    useEffect(() => {
+    useSubsocialEffect(({ subsocial }) => {
       const loadData = async () => {
         const spaceData = await subsocial.findSpace({ id })
         if (spaceData) {

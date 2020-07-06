@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ViewSpacePage } from './ViewSpace';
 import ListData from '../utils/DataList';
 import Button from 'antd/lib/button';
@@ -7,33 +7,32 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
 import { SpaceId } from '@subsocial/types/substrate/interfaces'
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { useRouter } from 'next/router';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { Loading } from '../utils';
 
 type Props = {
-  spacesData: SpaceData[];
+  spacesData: SpaceData[]
   mySpaceIds: SpaceId[]
 };
 
 const useLoadHiddenSpaces = (mySpaceIds: SpaceId[]) => {
-  const { subsocial } = useSubsocialApi();
   const { query: { address } } = useRouter()
   const isMySpaces = isMyAddress(address as string)
+  const [ myHiddenSpaces, setMyHiddenSpaces ] = useState<SpaceData[]>()
 
-  const [ myHiddenSpaces, setSpaces ] = useState<SpaceData[]>()
+  useSubsocialEffect(({ subsocial }) => {
+    if (!isMySpaces) return setMyHiddenSpaces([])
 
-  useEffect(() => {
-    if (!isMySpaces) return setSpaces([])
-
-    subsocial.findHiddenSpaces(mySpaceIds).then(spaces => setSpaces(spaces));
+    subsocial.findHiddenSpaces(mySpaceIds)
+      .then(setMyHiddenSpaces)
 
   }, [ mySpaceIds.length, isMySpaces ])
 
   return {
-    myHiddenSpaces: myHiddenSpaces || [],
-    isLoading: !myHiddenSpaces
+    isLoading: !myHiddenSpaces,
+    myHiddenSpaces: myHiddenSpaces || []
   }
 }
 
@@ -41,7 +40,6 @@ const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.st
 
 export const ListMySpaces: NextPage<Props> = (props) => {
   const { spacesData, mySpaceIds } = props;
-
   const { myHiddenSpaces, isLoading } = useLoadHiddenSpaces(mySpaceIds)
 
   const VisibleSpacesList = () => <ListData

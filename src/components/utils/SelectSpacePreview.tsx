@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
 import { DfBgImg } from './DfBgImg';
 import BN from 'bn.js'
 import { IdentityIcon } from '@subsocial/react-components';
-import { useSubsocialApi } from './SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { isEmptyArray, nonEmptyStr } from '@subsocial/utils';
 import { SpaceData } from '@subsocial/types/dto';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
@@ -55,13 +55,9 @@ const SelectSpacePreview = (props: Props) => {
 const GetSpaceData = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { spaceIds } = props
-
-    if (isEmptyArray(spaceIds)) return null
-
-    const { subsocial } = useSubsocialApi()
     const [ currentSpacesData, setCurrentSpacesData ] = useState<SpaceData[]>([])
 
-    useEffect(() => {
+    useSubsocialEffect(({ subsocial }) => {
       const loadSpaces = async () => {
         const spacesData = await subsocial.findVisibleSpaces(spaceIds)
         setCurrentSpacesData(spacesData)
@@ -69,6 +65,8 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
 
       loadSpaces();
     }, [ spaceIds ])
+
+    if (isEmptyArray(spaceIds)) return null
 
     const preparedSpacesData = currentSpacesData.map((x) => {
       const { struct, content } = x

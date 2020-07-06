@@ -1,15 +1,14 @@
 import React from 'react';
-
-import Button from 'antd/lib/button';
+import Button, { ButtonSize, ButtonType } from 'antd/lib/button';
 import { isMobile } from 'react-device-detect';
 import { useAuth, ModalKind } from './AuthContext';
 import { useMyAccount } from './MyAccountContext';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
 type InnerAuthButtonProps = {
-  type?: 'default' | 'primary' | 'link'
-  size?: 'small' | 'default' | 'large',
-  title?: string,
+  type?: ButtonType
+  size?: ButtonSize
+  title?: string
   className?: string
 }
 
@@ -26,14 +25,16 @@ export function OpenAuthButton ({
 }: OpenAuthButton) {
   const { isApiReady } = useSubsocialApi()
   const { openSignInModal } = useAuth()
+
   return <Button
     size={size}
     className={className}
     disabled={!isApiReady}
     type={type}
-    onClick={() => openSignInModal(kind)}>
+    onClick={() => openSignInModal(kind)}
+  >
     {title}
-  </Button>;
+  </Button>
 }
 
 type SignInButtonProps = InnerAuthButtonProps & {
@@ -80,7 +81,8 @@ export function SignOutButton ({
     <Button
       block
       size={size}
-      onClick={() => signOut()}>
+      onClick={signOut}
+    >
       {title}
     </Button>
   </div>

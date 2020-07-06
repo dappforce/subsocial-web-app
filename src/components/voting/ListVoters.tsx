@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { withCalls, withMulti } from '@subsocial/react-api';
+import React, { useState } from 'react';
+import { withCalls, withMulti } from '../substrate';
 import { reactionsQueryToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
 import partition from 'lodash.partition';
 import { MutedDiv, MutedSpan } from '../utils/MutedText';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 import { newLogger } from '@subsocial/utils';
 import { AuthorPreviewWithOwner } from '../profiles/address-views';
 
@@ -33,7 +33,6 @@ function isUpvote (reaction: Reaction): boolean {
 const InnerModalVoters = (props: VotersProps) => {
   const { reactions, open, close, active = ActiveVoters.All } = props;
   const votersCount = reactions ? reactions.length : 0;
-  const { substrate } = useSubsocialApi()
   const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
   const [ trigger, setTrigger ] = useState(false);
   const [ upvoters, downvoters ] = partition(reactionView, (x) => isUpvote(x))
@@ -42,7 +41,7 @@ const InnerModalVoters = (props: VotersProps) => {
     reactions === undefined && setTrigger(!trigger);
   };
 
-  useEffect(() => {
+  useSubsocialEffect(({ substrate }) => {
     if (!open) return toggleTrigger();
 
     let isSubscribe = true;

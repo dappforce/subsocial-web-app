@@ -6,7 +6,7 @@ import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
 import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti } from '@subsocial/react-api';
+import { withCalls, withMulti } from '../substrate';
 import * as DfForms from '../utils/forms';
 import { spacesQueryToProp } from '../utils/index';
 import { getNewIdFromEvent, Loading } from '../utils';

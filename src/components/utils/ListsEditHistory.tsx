@@ -1,5 +1,5 @@
 import React from 'react';
-// import { withMulti, withCalls } from '@subsocial/react-api';
+// import { withMulti, withCalls } from '../substrate';
 // import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
 // import { Post, Space, PostId, SpaceId, CommentId, Comment, SpaceHistoryRecord, CommentHistoryRecord, PostHistoryRecord, ProfileHistoryRecord, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '@subsocial/types/substrate/interfaces/subsocial';
 // import { PostContent, SpaceContent, CommentContent, ProfileContent } from '../types';

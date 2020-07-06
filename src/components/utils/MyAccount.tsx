@@ -1,6 +1,5 @@
 import React from 'react';
-import { withMulti } from '@subsocial/react-api';
-
+import { withMulti } from '../substrate';
 import { useMyAccount } from '../auth/MyAccountContext';
 
 export type MyAddressProps = {

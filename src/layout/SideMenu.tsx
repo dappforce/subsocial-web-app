@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Menu, Icon, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
@@ -6,7 +6,7 @@ import { isMobile, isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils/utils';
 import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';
-import { useSubsocialApi } from '../components/utils/SubsocialApiContext'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import Link from 'next/link';
 import { SpaceData } from '@subsocial/types/dto';
 import { newLogger } from '@subsocial/utils';
@@ -15,10 +15,9 @@ import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMen
 import { OnBoardingCard } from 'src/components/onboarding';
 import { useAuth } from 'src/components/auth/AuthContext';
 
-const log = newLogger('SideMenu')
+const log = newLogger(SideMenu.name)
 
-const InnerMenu = () => {
-  const { subsocial, substrate } = useSubsocialApi();
+function SideMenu () {
   const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
   const { pathname } = useRouter();
   const myAddress = useMyAddress();
@@ -29,7 +28,7 @@ const InnerMenu = () => {
   const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
 
-  useEffect(() => {
+  useSubsocialEffect(({ subsocial, substrate }) => {
     if (!myAddress) return;
 
     let isSubscribe = true;
@@ -45,7 +44,7 @@ const InnerMenu = () => {
     };
 
     loadSpacesData().catch(err =>
-      log.error('Failed to load spaces followed by the current user:', err));
+      log.error(`Failed to load spaces followed by the current user. ${err}`))
 
     return () => { isSubscribe = false; };
   }, [ triggerFollowed, myAddress ]);
@@ -57,7 +56,7 @@ const InnerMenu = () => {
   const goToPage = ([ url, as ]: string[]) => {
     isMobile && toggle()
     Router.push(url, as).catch(err =>
-      log.error('Failed to navigate to a selected page:', err))
+      log.error(`Failed to navigate to a selected page. ${err}`))
   }
 
   const renderNotificationsBadge = () => {
@@ -115,6 +114,6 @@ const InnerMenu = () => {
       {isLoggedIn && renderSubscriptions()}
     </Menu>
   );
-};
+}
 
-export default InnerMenu;
+export default SideMenu

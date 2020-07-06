@@ -3,7 +3,7 @@ import { Text, GenericAccountId, Option } from '@polkadot/types'
 import { AccountId } from '@polkadot/types/interfaces'
 import AbstractInt from '@polkadot/types/codec/AbstractInt'
 import { getSubsocialApi } from '../SubsocialConnect'
-import { registry } from '@subsocial/react-api'
+import { registry } from '@subsocial/types/substrate/registry';
 import { AddressProps } from 'src/components/profiles/address-views/utils/types'
 import { toShortAddress } from '@subsocial/react-components/util'
 import { Codec } from '@polkadot/types/types'
@@ -55,12 +55,10 @@ export const getSpaceId = async (idOrHandle: string): Promise<BN | undefined> =>
   }
 }
 
-export function getNewIdFromEvent (
-  _txResult: SubmittableResult
-): BN | undefined {
+export function getNewIdFromEvent (txResult: SubmittableResult): BN | undefined {
   let id: BN | undefined;
 
-  _txResult.events.find(event => {
+  txResult.events.find(event => {
     const {
       event: { data, method }
     } = event;
@@ -77,7 +75,7 @@ export function getNewIdFromEvent (
 
 export const getAccountId = async (addressOrHandle: string): Promise<AccountId | undefined> => {
   if (addressOrHandle.startsWith('@')) {
-    const handle = addressOrHandle.substring(1) // Drop '@'
+    const handle = addressOrHandle.substring(1) // Drop '@' char.
     const { substrate } = await getSubsocialApi()
     return substrate.getAccountIdByHandle(handle)
   } else {
@@ -94,8 +92,12 @@ type GetNameOptions = AddressProps & {
 }
 
 export const getProfileName = (options: GetNameOptions) => {
-  const { owner, isShort = true, address } = options;
-  return (owner?.content?.fullname || owner?.profile?.username || (isShort ? toShortAddress(address) : address)).toString()
+  const { owner, isShort = true, address } = options
+  return (
+    owner?.content?.fullname ||
+    owner?.profile?.username ||
+    (isShort ? toShortAddress(address) : address)
+  ).toString()
 }
 
 export const unwrapSubstrateId = (optId?: Option<Codec>): SubstrateId | undefined => {
