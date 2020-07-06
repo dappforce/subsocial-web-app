@@ -20,7 +20,7 @@ import SpacegedSectionTitle from './SpacedSectionTitle';
 import { Space, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { SpaceContent, NavTab } from '@subsocial/types/offchain';
 import { SpaceUpdate, OptionText, OptionOptionText, OptionBool } from '@subsocial/types/substrate/classes';
-import { withMulti, withCalls } from '@subsocial/react-api';
+import { withMulti, withCalls } from '../substrate';
 import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';

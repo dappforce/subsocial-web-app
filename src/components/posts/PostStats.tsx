@@ -5,7 +5,7 @@ import { MutedSpan } from '../utils/MutedText';
 import { PostVoters, ActiveVoters } from '../voting/ListVoters';
 import { Pluralize } from '../utils/Plularize';
 import BN from 'bn.js';
-import { withCalls, withMulti } from '@subsocial/react-api';
+import { withCalls, withMulti } from '../substrate';
 import { postsQueryToProp } from '../utils';
 import { nonEmptyStr } from '@subsocial/utils';
 

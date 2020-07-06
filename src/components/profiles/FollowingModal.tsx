@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti } from '@subsocial/react-api';
+import { withCalls, withMulti } from '../substrate';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { profileFollowsQueryToProp } from '../utils/index';
 import { Modal, Button } from 'semantic-ui-react';

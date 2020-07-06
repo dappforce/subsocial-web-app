@@ -1,6 +1,6 @@
 /* eslint-disable no-mixed-operators */
 import BN from 'bn.js'
-import { Options as QueryOptions } from '@subsocial/react-api/hoc/types'
+import { Options as QueryOptions } from '../substrate/hoc/types'
 import queryString from 'query-string'
 import { PalletName } from '@subsocial/types'
 

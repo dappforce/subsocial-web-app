@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti } from '@subsocial/react-api';
+import { withCalls, withMulti } from '../substrate';
 import { getTxParams, spacesQueryToProp } from '../utils/index';
 import { Modal } from 'semantic-ui-react';
 import Button from 'antd/lib/button';

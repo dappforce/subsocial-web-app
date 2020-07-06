@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti } from '@subsocial/react-api';
+import { withCalls, withMulti } from '../substrate';
 import { reactionsQueryToProp } from '../utils/index';
 import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
 import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
