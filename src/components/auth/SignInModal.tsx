@@ -3,7 +3,6 @@ import React from 'react';
 import Button from 'antd/lib/button';
 import Modal from 'antd/lib/modal';
 import { Avatar, Divider, Alert } from 'antd';
-import { SignInFromExtension as SignInWithPolkadotExt } from './SignInWithPolkadotExt';
 import { OnBoardingButton } from '../onboarding';
 import { ModalKind, useAuth, StepsEnum } from './AuthContext';
 import { AccountSelector } from '../profile-selector/AccountSelector';
@@ -62,7 +61,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
     }
   } else {
     content.body = <>
-      <SignInWithPolkadotExt />
+      <AccountSelector />
       <Divider className='m-0 mb-3' />
       <div className='px-3'>
         <div className='mb-3'>Alternatively, you can create a new account right here on the site.</div>

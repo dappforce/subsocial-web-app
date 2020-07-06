@@ -3,8 +3,6 @@ import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
 import { equalAddresses } from '../utils/substrate';
-import { InjectedAccountExt } from '../utils/types';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
 
 const log = newLogger('MyAccountContext')
 
@@ -13,7 +11,6 @@ function print (x?: any): string {
 }
 
 const MY_ADDRESS = 'df.myAddress';
-const INJECTED_ACCOUNTS = 'df.injectedAccounts';
 
 export function readMyAddress (): string | undefined {
   const myAddress: string | undefined = store.get(MY_ADDRESS);
@@ -21,45 +18,30 @@ export function readMyAddress (): string | undefined {
   return myAddress;
 }
 
-export function readInjectedAccounts (): InjectedAccountExt[] {
-  const injectedAccounts: InjectedAccountExt[] | undefined = store.get(INJECTED_ACCOUNTS);
-  log.info(`Read injected accounts from the local storage: ${print(injectedAccounts)}`);
-  return injectedAccounts || [];
-}
-
 type MyAccountState = {
   inited: boolean,
   address?: string,
-  injectedAccounts: InjectedAccountExt[]
 };
 
 type MyAccountAction = {
-  type: 'reload' | 'setAddress' | 'setInjectedAccounts' | 'forget' | 'forgetExact',
+  type: 'reload' | 'setAddress' | 'forget' | 'forgetExact',
   address?: string,
-  injectedAccounts?: InjectedAccountExt[]
 };
 
 function reducer (state: MyAccountState, action: MyAccountAction): MyAccountState {
   function forget () {
     log.info('Forget my address and injected accounts');
     store.remove(MY_ADDRESS);
-    store.remove(INJECTED_ACCOUNTS)
     return { ...state, address: undefined };
   }
 
   let address: string | undefined;
-  let injectedAccounts: InjectedAccountExt[] | undefined;
 
   switch (action.type) {
     case 'reload':
       address = readMyAddress();
-      injectedAccounts = readInjectedAccounts();
-      const isSignInWithPolkadotExt = !!(injectedAccounts.find((x) => x.address === address))
-
-      if (isSignInWithPolkadotExt && !isWeb3Injected) { return forget() }
-
       log.info(`Reload my address: ${print(address)}`);
-      return { ...state, address, injectedAccounts, inited: true };
+      return { ...state, address, inited: true };
 
     case 'setAddress':
       address = action.address;
@@ -70,19 +52,6 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
           return { ...state, address, inited: true };
         } else {
           return forget();
-        }
-      }
-      return state;
-
-    case 'setInjectedAccounts':
-      injectedAccounts = action.injectedAccounts;
-      if (state.injectedAccounts.length === 0) {
-        if (injectedAccounts) {
-          log.info(`Set injected accounts: ${print(injectedAccounts)}`);
-          store.set(INJECTED_ACCOUNTS, injectedAccounts);
-          return { ...state, injectedAccounts };
-        } else {
-          return state
         }
       }
       return state;
@@ -101,15 +70,13 @@ function functionStub () {
 
 const initialState = {
   inited: false,
-  address: undefined,
-  injectedAccounts: []
+  address: undefined
 };
 
 export type MyAccountContextProps = {
   state: MyAccountState,
   dispatch: React.Dispatch<MyAccountAction>,
   setAddress: (address: string) => void,
-  setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => void,
   signOut: () => void
 };
 
@@ -117,7 +84,6 @@ const contextStub: MyAccountContextProps = {
   state: initialState,
   dispatch: functionStub,
   setAddress: functionStub,
-  setInjectedAccounts: functionStub,
   signOut: functionStub
 };
 
@@ -136,7 +102,6 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
     state,
     dispatch,
     setAddress: (address: string) => dispatch({ type: 'setAddress', address }),
-    setInjectedAccounts: (injectedAccounts: InjectedAccountExt[]) => dispatch({ type: 'setInjectedAccounts', injectedAccounts }),
     signOut: () => dispatch({ type: 'forget' })
   };
   return (
