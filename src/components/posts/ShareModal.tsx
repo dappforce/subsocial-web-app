@@ -125,7 +125,7 @@ const InnerShareModal = (props: Props) => {
           <ErrorMessage errors={errors} name={Fields.body} />
         </div>
       </form>
-      <DynamicPostPreview id={postId} withActions asRegularPost/>
+      <DynamicPostPreview id={postId} withActions asRegularPost />
     </div>
   };
 

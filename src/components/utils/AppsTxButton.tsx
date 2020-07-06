@@ -105,14 +105,11 @@ function TxButton ({ accountId, className, extrinsic: propsExtrinsic, icon, isBa
       }
       label={label || isIcon}
       onClick={() => {
-        console.log('noTx', noTx, !accountId, !isTokens, !accountId || !isTokens)
         if (noTx) {
-          console.log('In no Tx if', noTx, !accountId, !isTokens, !accountId || !isTokens)
           openSignInModal('AuthRequired')
           return setIsSending(false);
         }
 
-        console.log('Out no Tx if', noTx, !accountId, !isTokens, !accountId || !isTokens)
         _onSend()
       }}
       size={size}

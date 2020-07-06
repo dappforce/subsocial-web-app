@@ -134,7 +134,6 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     setSubmitting(false);
 
     const _id = id || getNewIdFromEvent(_txResult);
-    console.log('onTxSuccess _id:', _id)
     _id && goToView(_id);
   };
 
@@ -310,7 +309,6 @@ function LoadStruct (props: LoadStructProps) {
 
     if (struct === undefined) return toggleTrigger();
 
-    console.log('Loading space JSON from IPFS');
     ipfs.findSpace(struct.ipfs_hash.toString()).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
