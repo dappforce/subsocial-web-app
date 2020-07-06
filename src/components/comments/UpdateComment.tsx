@@ -10,8 +10,8 @@ import { getTxParams } from '../utils/substrate';
 import BN from 'bn.js'
 import { useDispatch } from 'react-redux';
 import { useEditReplyToStore, CommentTxButtonType } from './utils';
-import { InnerEditComment } from './InnerEditComment';
 
+const InnerEditComment = dynamic(() => import('./InnerEditComment'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type FCallback = (id?: BN) => void
