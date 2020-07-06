@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Post, Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
@@ -10,8 +10,8 @@ import { getProfileName } from '../utils/substrate';
 import { Pluralize } from '../utils/Plularize';
 import ViewPostLink from '../posts/ViewPostLink';
 import { CommentsTree } from './CommentTree';
-import { useSubstrateApi } from '../utils/SubsocialApiContext';
 import Section from '../utils/Section';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 
 type CommentSectionProps = {
   space: Space,
@@ -23,9 +23,8 @@ type CommentSectionProps = {
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [] }) => {
   const { total_replies_count, id } = post;
   const [ totalCount, setCount ] = useState(total_replies_count.toString())
-  const substrate = useSubstrateApi();
 
-  useEffect(() => {
+  useSubsocialEffect(({ substrate }) => {
 
     substrate.findPost({ id }).then((post) => {
       if (post) {
