@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { newLogger } from '@subsocial/utils';
 import { PostWithAllDetails, SpaceData } from '@subsocial/types/dto';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { RegularPreview, InnerPreviewProps } from './ViewRegularPreview';
-import { isRegularPost } from './helpers';
-import { SharedPreview } from './ViewSharedPreview';
-import { BarePreviewProps } from './PostPreview';
+import { InnerPreviewProps } from './ViewRegularPreview';
+import PostPreview, { BarePreviewProps } from './PostPreview';
 import { AnyPostId } from '@subsocial/types';
 
 const log = newLogger(DynamicPostPreview.name)
@@ -44,10 +42,9 @@ export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }:
     postStruct: postStruct,
     space: postStruct.space,
     withActions: withActions,
-    replies: replies
+    replies: replies,
+    asRegularPost: asRegularPost
   } as InnerPreviewProps
 
-  return asRegularPost || isRegularPost(postStruct.post.struct.extension)
-    ? <RegularPreview {...props} />
-    : <SharedPreview {...props} />
+  return <PostPreview {...props} />
 }

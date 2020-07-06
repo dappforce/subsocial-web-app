@@ -24,17 +24,16 @@ const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 export type PostDetailsProps = {
   postStruct: PostWithAllDetails,
-  space?: SpaceData,
   statusCode?: number,
   replies: PostWithAllDetails[]
 }
 
-export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, space, replies, statusCode }) => {
+export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, statusCode }) => {
   if (statusCode === 404) return <Error statusCode={statusCode} />
+  const { post, ext, space } = postStruct
 
-  if (!postStruct || !space) return <PostNotFound />
+  if (!post || !space) return <PostNotFound />
 
-  const { post, ext } = postStruct
   const { struct, content } = post;
   if (!content) return null;
 
@@ -66,12 +65,11 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, space, replie
           <PostCreator postStruct={postStruct} withSpaceName space={spaceData} />
           {isBrowser && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
-        {image && body &&
         <div className='DfPostContent'>
-          <img src={image} className='DfPostImage' /* add onError handler */ />
-          <DfMd source={body} />
+          {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
+          {body && <DfMd source={body} />}
           {/* {renderSpacePreview(post)} */}
-        </div>}
+        </div>
         {!isRegular && ext &&
           <RegularPreview postStruct={ext as PostWithAllDetails} space={ext.space as SpaceData} /> }
         <ViewTags tags={tags} />
