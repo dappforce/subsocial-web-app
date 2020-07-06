@@ -1,3 +1,5 @@
 export * from './SubstrateContext'
 export * from './useSubstrate'
 export * from './SubstrateWebConsole'
+export * from './hoc'
+export * from './util'
