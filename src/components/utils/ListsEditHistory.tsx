@@ -6,7 +6,7 @@ import React from 'react';
 // import { socialQueryToProp } from './index';
 // import { Option } from '@polkadot/types';
 // import { DfMd } from './DfMd';
-// import { IdentityIcon } from '@subsocial/react-components';
+// import IdentityIcon from 'src/components/utils/IdentityIcon';
 // import Link from 'next/link';
 // import { getJsonFromIpfs } from './OffchainUtils';
 // import { withRequireProfile, withSocialAccount, Loading } from './utils';
