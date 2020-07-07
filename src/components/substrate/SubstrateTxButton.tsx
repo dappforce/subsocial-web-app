@@ -10,6 +10,7 @@ import { newLogger, isEmptyStr, nonEmptyArr, nonEmptyStr } from '@subsocial/util
 import { useSubstrate } from '.'
 import useToggle from './useToggle'
 import { Message, showSuccessMessage, showErrorMessage } from '../utils/Message'
+import { useAuth } from '../auth/AuthContext'
 
 const log = newLogger('TxButton')
 
@@ -73,7 +74,8 @@ export function TxButton ({
   const { api, keyring, keyringState } = useSubstrate()
   const [ unsub, setUnsub ] = useState<() => void>()
   const [ isSending, , setIsSending ] = useToggle(false)
-
+  const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
+  const noTx = !accountId || !isTokens;
   const buttonLabel = label || children
   const needsAccount = !unsigned && !accountId
 
@@ -272,7 +274,14 @@ export function TxButton ({
   return (
     <Button
       {...antdProps}
-      onClick={sendTx}
+      onClick={() => {
+        if (noTx) {
+          openSignInModal('AuthRequired')
+          return setIsSending(false);
+        }
+
+        sendTx()
+      }}
       disabled={_disabled}
       loading={withSpinner && isSending}
     >{buttonLabel}</Button>
