@@ -1,8 +1,6 @@
-import 'semantic-ui-css/semantic.min.css';
 import 'antd/dist/antd.css';
 import 'antd-mobile/dist/antd-mobile.css';
 
-import './styles/semantic.css';
 import './styles/theme/polkadot.css'; // TODO Maybe delete?
 import './styles/theme/substrate.css';
 
