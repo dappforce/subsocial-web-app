@@ -1,7 +1,7 @@
 import React from 'react';
 import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import TxButton from './TxButton';
-import { TxCallback } from '@subsocial/react-components/Status/types';
+import { TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import { SubmittableResult } from '@polkadot/api';
 
 export type FSetVisible = (visible: boolean) => void

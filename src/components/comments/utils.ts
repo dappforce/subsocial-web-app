@@ -5,7 +5,7 @@ import { PostsStoreType } from 'src/redux/types';
 import { PostData, PostWithSomeDetails, CommentContent, PostContent } from '@subsocial/types';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
-import { TxCallback, TxFailedCallback } from '@subsocial/react-components/Status/types';
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import { FVoid } from '../utils/types';
 
 type Reply<T> = {
