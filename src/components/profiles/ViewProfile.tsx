@@ -16,7 +16,6 @@ import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
 import { Menu, Dropdown, Icon } from 'antd';
 import { NextPage } from 'next';
 import BN from 'bn.js';
@@ -105,7 +104,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const createProfileButton = noProfile && isMyAccount &&
     <Link href={`/profile/new`}>
-      <a className={'DfCreateProfileButton ui button primary ' + TX_BUTTON_SIZE}>
+      <a className='DfCreateProfileButton ui button primary'>
         <i className='plus icon' />
         Create profile
       </a>
