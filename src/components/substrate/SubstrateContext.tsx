@@ -176,7 +176,7 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
       keyring.loadAll({ isDevelopment: isDevMode }, allAccounts)
       dispatch({ type: 'SET_KEYRING', payload: keyring })
     } catch (err) {
-      log.error('KEYRING_ERROR', err)
+      log.error(`Keyring failed to load accounts. ${err}`)
       dispatch({ type: 'KEYRING_ERROR', payload: err })
     }
   }, [ keyringState, dispatch ])
