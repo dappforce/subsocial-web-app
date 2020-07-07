@@ -1,10 +1,9 @@
 import React from 'react'
 import { ProfileData } from '@subsocial/types';
-import classes from '@subsocial/react-components/util/classes';
 import { Popover } from 'antd';
 import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
-import { toShortAddress } from '@subsocial/react-components/util';
+import { toShortAddress } from 'src/components/utils';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
@@ -59,7 +58,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return <div
-    className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
+    className={`ui--AddressComponents' ${isPadded ? 'padded' : ''} ${className}`}
     style={style}
   >
     <div className='ui--AddressComponents-info'>
