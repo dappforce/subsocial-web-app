@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Segment } from 'semantic-ui-react';
+import { Segment } from 'src/components/utils/Segment';
 
 import { PostVoters } from '../../voting/ListVoters';
 import SummarizeMd from '../../utils/md/SummarizeMd';

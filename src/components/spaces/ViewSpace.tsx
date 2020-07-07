@@ -1,4 +1,4 @@
-import IdentityIcon from '@subsocial/react-components/IdentityIcon';
+import IdentityIcon from 'src/components/utils/IdentityIcon';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
@@ -11,7 +11,7 @@ import Error from 'next/error';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { isBrowser } from 'react-device-detect';
-import { Segment } from 'semantic-ui-react';
+import { Segment } from 'src/components/utils/Segment';
 
 import { ZERO } from '../utils';
 import ListData from '../utils/DataList';
