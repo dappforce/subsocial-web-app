@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { withCalls, withMulti } from '../substrate';
-import { reactionsQueryToProp } from '../utils/index';
-import { Modal, Button, Tab, Menu } from 'semantic-ui-react';
+import { reactionsQueryToProp, Loading } from '../utils/index';
+import { Modal, Button, Tabs } from 'antd';
 import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
 import partition from 'lodash.partition';
-import { MutedDiv, MutedSpan } from '../utils/MutedText';
+import { MutedDiv } from '../utils/MutedText';
 import useSubsocialEffect from '../api/useSubsocialEffect';
-import { newLogger } from '@subsocial/utils';
+import { newLogger, nonEmptyArr, isEmptyArray } from '@subsocial/utils';
 import { AuthorPreviewWithOwner } from '../profiles/address-views';
-
+const { TabPane } = Tabs;
 const log = newLogger('List voters')
 
 type VotersProps = {
@@ -30,10 +30,36 @@ function isUpvote (reaction: Reaction): boolean {
   return reaction && reaction.kind.toString() === 'Upvote'
 }
 
+const renderVoters = (state: Array<Reaction>) => {
+  return state.map(reaction => {
+    return <div key={reaction.id.toNumber()} className="ReactionsItem" >
+      <AuthorPreviewWithOwner
+        address={reaction.created.account}
+        isPadded={false}
+        isShort={false}
+        size={28}
+        details={isUpvote(reaction)
+          ? <span style={{ color: 'green' }}>Upvoted</span>
+          : <span style={{ color: 'red' }}>Downvoted</span>
+        }
+        withFollowButton
+      />
+    </div>;
+  });
+};
+
+type TabPaneType = {
+  title: string,
+  key: string,
+  voters: Array<Reaction>
+}
+
+const renderTitle = (title: string, voters: Array<Reaction>) => nonEmptyArr(voters) ? `${title} (${voters.length})` : title
+
 const InnerModalVoters = (props: VotersProps) => {
   const { reactions, open, close, active = ActiveVoters.All } = props;
   const votersCount = reactions ? reactions.length : 0;
-  const [ reactionView, setReactionView ] = useState(undefined as (Array<Reaction> | undefined));
+  const [ reactionView, setReactionView ] = useState<Array<Reaction>>();
   const [ trigger, setTrigger ] = useState(false);
   const [ upvoters, downvoters ] = partition(reactionView, (x) => isUpvote(x))
 
@@ -42,13 +68,11 @@ const InnerModalVoters = (props: VotersProps) => {
   };
 
   useSubsocialEffect(({ substrate }) => {
-    if (!open) return toggleTrigger();
+    if (!reactions) return toggleTrigger();
 
     let isSubscribe = true;
 
     const loadVoters = async () => {
-      if (!reactions) return toggleTrigger();
-
       const loadedReaction = await substrate.findReactions(reactions)
       isSubscribe && setReactionView(loadedReaction);
     };
@@ -57,57 +81,37 @@ const InnerModalVoters = (props: VotersProps) => {
     return () => { isSubscribe = false; };
   }, [ trigger ]);
 
-  if (!reactionView) return null;
+  const renderContent = () => {
+    if (!reactionView) return <Loading />;
 
-  const renderVoters = (state: Array<Reaction>) => {
-    return state.map(reaction => {
-      return <div key={reaction.id.toNumber()} className="ReactionsItem" >
-        <AuthorPreviewWithOwner
-          address={reaction.created.account}
-          isPadded={false}
-          isShort={false}
-          size={28}
-          details={isUpvote(reaction)
-            ? <span style={{ color: 'green' }}>Upvoted</span>
-            : <span style={{ color: 'red' }}>Downvoted</span>
-          }
-          withFollowButton
-        />
-      </div>;
-    });
-  };
+    const panes: TabPaneType[] = [
+      { key: 'all', title: 'All', voters: reactionView },
+      { key: 'upvote', title: 'Upvoters', voters: upvoters },
+      { key: 'downvote', title: 'Downvoters', voters: downvoters }
+    ];
 
-  const TabContent = (voters: Array<Reaction>) => {
-    return voters && voters.length
-      ? <Tab.Pane>{renderVoters(voters)}</Tab.Pane>
-      : <MutedDiv className='DfNoVoters'><em>No reactions yet</em></MutedDiv>
+    if (isEmptyArray(reactionView)) return <MutedDiv className='DfNoVoters'><em>No reactions yet</em></MutedDiv>
+
+    return <Tabs defaultActiveKey={active.toString()}>
+      {panes.map(({ key, title, voters }) => <TabPane
+        key={key}
+        tab={renderTitle(title, voters)}
+        disabled={isEmptyArray(voters)}
+      >
+        {renderVoters(voters)}
+      </TabPane>)}
+    </Tabs>
   }
-
-  const TabTitle = (title: string, voters: Array<Reaction>) => {
-    return <Menu.Item>{title}<MutedSpan style={{ marginLeft: '.5rem' }}>({voters.length})</MutedSpan></Menu.Item>
-  }
-
-  const panes = [
-    { key: 'all', menuItem: TabTitle('All', reactionView), render: () => TabContent(reactionView) },
-    { key: 'upvote', menuItem: TabTitle('Upvoters', upvoters), render: () => TabContent(upvoters) },
-    { key: 'downvote', menuItem: TabTitle('Downvoters', downvoters), render: () => TabContent(downvoters) }
-  ];
 
   return (
     <Modal
-      size='small'
-      onClose={close}
-      open={open}
-      centered={true}
+      onCancel={close}
+      visible={open}
+      title={<Pluralize count={votersCount} singularText='Reaction'/>}
+      footer={<Button onClick={close} >Close</Button>}
       style={{ marginTop: '3rem' }}
     >
-      <Modal.Header><Pluralize count={votersCount} singularText='Reaction'/></Modal.Header>
-      <Modal.Content scrolling>
-        <Tab panes={panes} defaultActiveIndex={active}/>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button content='Close' onClick={close} />
-      </Modal.Actions>
+      {renderContent()}
     </Modal>
   );
 };
