@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
 import { ViewSpace } from '../spaces/ViewSpace';
-import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
+import { Segment } from 'src/components/utils/Segment';
+import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
@@ -11,6 +12,8 @@ import BN from 'bn.js';
 import { registry } from '@subsocial/types/substrate/registry';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
 import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
+
+const { TabPane } = Tabs
 
 type DataResults = {
   _id: string;
@@ -22,19 +25,19 @@ const AllTabKey = 'all';
 const panes = [
   {
     key: AllTabKey,
-    menuItem: 'All'
+    title: 'All'
   },
   {
     key: 'spaces',
-    menuItem: 'Spaces'
+    title: 'Spaces'
   },
   {
     key: 'posts',
-    menuItem: 'Posts'
+    title: 'Posts'
   },
   {
     key: 'profiles',
-    menuItem: 'Profiles'
+    title: 'Profiles'
   }
 ];
 
@@ -71,9 +74,9 @@ const Previews = (props: Props) => {
   </div>;
 };
 
-type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
+type OnTabChangeFn = (key: string) => void;
 
-const Tabs = () => {
+const ResultsTabs = () => {
   const router = useRouter();
 
   const getTabIndexFromUrl = (): number => {
@@ -87,15 +90,10 @@ const Tabs = () => {
   const { tags, spaceId } = router.query;
   const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
 
-  const handleTabChange: OnTabChangeFn = (_event, data) => {
-    if (!data || !data.panes) return;
+  const handleTabChange: OnTabChangeFn = (key) => {
+    setActiveTabKey(key);
 
-    const activeTab = data.panes[data.activeIndex as number];
-    const activeKey = (activeTab as unknown as { key: string }).key;
-
-    setActiveTabKey(activeKey);
-
-    router.query.tab = activeKey;
+    router.query.tab = key;
     Router.push({
       pathname: router.pathname,
       query: router.query
@@ -103,7 +101,9 @@ const Tabs = () => {
   };
 
   return <>
-    <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex}/>
+    <Tabs onChange={handleTabChange} activeKey={activeTabKey.toString()}>
+      {panes.map(({ key, title }) => <TabPane key={key} tab={title} />)}
+    </Tabs>
     <ReactiveComponent
       componentId='spaceId'
       customQuery={() => {
@@ -162,7 +162,7 @@ const App = () => {
         URLParams={true}
         loader={' '}
         render={res => <>
-          <Tabs />
+          <ResultsTabs />
           <Previews results={res.data} />
         </>}
         renderNoResults={() => null}
