@@ -343,7 +343,7 @@ body,
 }
 
 .ui--AddressComponents-info div {
-  vertical-align: initial;
+  vertical-align: top;
 }
 
 .ui.threaded.comments .comment .comments {
@@ -681,6 +681,7 @@ hr {
     width: 33.33%;
     display: flex;
     justify-content: center;
+    align-items: center;
     margin: .25rem 0;
     font-weight: bold;
     font-size: $font_normal;

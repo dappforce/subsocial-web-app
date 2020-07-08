@@ -61,20 +61,20 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     className={`ui--AddressComponents' ${isPadded ? 'padded' : ''} ${className}`}
     style={style}
   >
-    <div className='ui--AddressComponents-info'>
+    <div className='ui--AddressComponents-info d-flex'>
       <Avatar size={size} address={address} avatar={avatar} />
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='hover'
           content={<ProfilePreview address={address} owner={owner} />}
         >
-          <span>
+          <div className='d-block'>
             <ViewProfileLink
               account={{ address, username }}
               title={name}
               className={nameClass}
             />
-          </span>
+          </div>
         </Popover>
         <InfoDetails details={details}/>
       </div>
