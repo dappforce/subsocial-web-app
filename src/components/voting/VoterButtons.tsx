@@ -81,7 +81,6 @@ export const VoterButtons = ({ post, className, style, only }: VoterButtonsProps
     async function reloadPost () {
       if (post.id.toString() === id.toString()) return
 
-      console.log('Load post')
       const _struct = await substrate.findPost({ id })
       if (isSubscribe && _struct) setState(_struct);
     }
@@ -90,14 +89,10 @@ export const VoterButtons = ({ post, className, style, only }: VoterButtonsProps
       log.error(`Failed to load a post or comment. ${err}`));
 
     async function reloadReaction () {
-      console.log('Load post1')
       if (!address) return
-      console.log('Load post2', address, id)
       const reactionId = await substrate.getPostReactionIdByAccount(address, id)
-      console.log('Load post3', reactionId)
       const reaction = await substrate.findReaction(reactionId)
       if (isSubscribe) {
-        console.log('Load post4', reaction)
         setReactionState(reaction);
       }
     }
@@ -107,8 +102,6 @@ export const VoterButtons = ({ post, className, style, only }: VoterButtonsProps
 
     return () => { isSubscribe = false; };
   }, [ reloadTrigger, address, state ]);
-
-  console.log(reactionState, address)
 
   if (!reactionState) return null
 
