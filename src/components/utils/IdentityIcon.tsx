@@ -4,35 +4,31 @@
 
 import { IdentityProps as Props } from '@polkadot/react-identicon/types';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import BaseIdentityIcon from '@polkadot/react-identicon';
-import { ValidatorsContext } from '@subsocial/react-query';
+import ViewProfileLink from '../profiles/ViewProfileLink';
 
 export function getIdentityTheme (): 'substrate' {
   return 'substrate';
 }
 
 function IdentityIcon ({ className, prefix, size, theme, value }: Props): React.ReactElement<Props> {
-  const validators = useContext(ValidatorsContext);
-  const [ isValidator, setIsValidator ] = useState(false);
-  const [ address ] = useState(value?.toString());
+  const [ address ] = useState(value?.toString() || '');
   const thisTheme = theme || getIdentityTheme();
-
-  useEffect((): void => {
-    value && setIsValidator(
-      validators.includes(value.toString())
-    );
-  }, [ value, validators ]);
 
   return (
     <span className={`ui--IdentityIcon-Outer ${className}`}>
-      <BaseIdentityIcon
-        isHighlight={isValidator}
-        prefix={prefix}
-        size={size}
-        theme={thisTheme as 'substrate'}
-        value={address}
+      <ViewProfileLink
+        account={{ address }}
+        title={<BaseIdentityIcon
+          isHighlight
+          prefix={prefix}
+          size={size}
+          theme={thisTheme as 'substrate'}
+          value={address}
+          style={{ cursor: 'pointer', marginRight: '.5rem' }}
+        />}
       />
     </span>
   );
