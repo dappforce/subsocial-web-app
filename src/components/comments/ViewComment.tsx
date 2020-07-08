@@ -5,7 +5,6 @@ import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { DfMd } from '../utils/DfMd';
 import { CommentContent } from '@subsocial/types';
 import { Post, Space } from '@subsocial/types/substrate/interfaces';
-import Voter from '../voting/Voter';
 import { useMyAddress } from '../auth/MyAccountContext';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
@@ -17,6 +16,7 @@ import { postUrl } from '../utils/urls';
 import SharePostAction from '../posts/SharePostAction';
 import { NewComment } from './CreateComment';
 import useSubsocialEffect from '../api/useSubsocialEffect';
+import { VoterButtons } from '../voting/VoterButtons';
 
 type Props = {
   space: Space,
@@ -108,7 +108,7 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
       className='DfNewComment'
       actions={!showReplyForm
         ? [
-          <Voter key={`voters-of-comments-${id}`} struct={struct} />,
+          <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfShareAction' />,
           <SharePostAction postId={id} className='DfShareAction' withIcon={false} />,
           <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)} >Reply</span>
         ]

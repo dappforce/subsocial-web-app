@@ -129,7 +129,7 @@ export function TxButton ({
 
     // Get signer is from Polkadot-js browser extension
     if (isInjected) {
-      const injected = await web3FromSource(source)
+      const injected = await web3FromSource(source as string)
       fromAccount = address
       api.setSigner(injected.signer)
     }
