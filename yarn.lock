@@ -2652,7 +2652,7 @@
     memoizee "^0.4.14"
     rxjs "^6.5.5"
 
-"@polkadot/api@1.13.1", "@polkadot/api@1.23.1", "@polkadot/api@^1.11.0-beta.32":
+"@polkadot/api@1.13.1", "@polkadot/api@1.23.1":
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/@polkadot/api/-/api-1.13.1.tgz#6e8cb2f59a230498811c9fd818e1756316188044"
   integrity sha512-q/dzklbTpshR58tpLmi7Z51ii6dtpbW6vmPu9PAJbFoFIe45Z09B8rczf6BgXi9mWMiO1Az9gxwtjuc1lnnobg==
@@ -2756,7 +2756,7 @@
     typescript "^3.5.3"
     vuepress "^1.0.3"
 
-"@polkadot/extension-dapp@^0.24.0-beta.17", "@polkadot/extension-dapp@^0.24.1":
+"@polkadot/extension-dapp@^0.24.1":
   version "0.24.1"
   resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.24.1.tgz#a980ebdfc25fc0c0297deff6d5a13e186bb01c0d"
   integrity sha512-Df0GYMOVSmHP2r86YOIMUkSXPJ7Lg4BNdaHBkxA0bxVZrQwlEhn/Kr8EDk8KIJAEBd+Wehil6mQcgBj/FW+9/w==
@@ -3458,45 +3458,12 @@
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
 
-"@subsocial/apps-config@^0.41.19":
-  version "0.41.19"
-  resolved "https://registry.yarnpkg.com/@subsocial/apps-config/-/apps-config-0.41.19.tgz#62e0b4e48f16957d0b65b32f54280d3472c115ca"
-  integrity sha512-Wx+4SRiT0XbZrl3ZqJ8/CJYTny9ElxupJk+3R4D/GfssdxN8v64+wO676UbbTKABEFO370T4+unl8BzixsImXQ==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    edgeware-node-types "^2.0.1"
-
 "@subsocial/config@0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.1.4.tgz#0e6fc5dba91f242f95a304f03c1aa45afb7b5b6f"
   integrity sha512-GyRh1ne82oEEJazqG0P1H1yK4W/LbtZ0vIGNV/e3anaHlPuRsyQP4f8ExlK+Z5NxwecUySWYNFqu3YtqjqI9Bw==
   dependencies:
     "@babel/runtime" "^7.8.4"
-
-"@subsocial/react-api@^0.41.19":
-  version "0.41.30"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-api/-/react-api-0.41.30.tgz#2340baacab66dcc7eb7e2b9aca221e2af72d5735"
-  integrity sha512-fzjL0ww3aopndGYy7yKun4suQLX6zoaw8skfXad97TJ8J0SNfsHKm78X7q7hbbwTAICcLDMQBXq+RpLKl7SFdQ==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@polkadot/api" "^1.11.0-beta.32"
-    "@polkadot/extension-dapp" "^0.24.0-beta.17"
-    rxjs-compat "^6.5.5"
-
-"@subsocial/react-hooks@^0.41.30":
-  version "0.41.30"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-hooks/-/react-hooks-0.41.30.tgz#47f9ad327821f29a477aa534399a9f128b1bfe91"
-  integrity sha512-ZaLAoukQwHFEX0rEYkMUTmzq401iLA9ja8yz0a2Pkwvkbdp+dA+gHB7O8UV3Vy8qWR7/Ugemp/fC7kC82gjy1g==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    memoizee "^0.4.14"
-
-"@subsocial/react-query@^0.41.30":
-  version "0.41.30"
-  resolved "https://registry.yarnpkg.com/@subsocial/react-query/-/react-query-0.41.30.tgz#302790333d74d9eef22cd79afe26b12adb395b7b"
-  integrity sha512-rQRuVz2Juw+a9KUMvEoBZaIAFwbk4pRIvop802leicbfY5aQL7BAe01bNvrPRbWP8WtbRkkw+DtqhLUkP7ALHQ==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
 
 "@subsocial/types@^0.3.6":
   version "0.3.6"
@@ -8306,11 +8273,6 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
-
-edgeware-node-types@^2.0.1:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/edgeware-node-types/-/edgeware-node-types-2.3.3.tgz#d062377a9936da0ac4cc2e9c7b179ebc5a46157f"
-  integrity sha512-sucK/kpAaKqFS/Q67qQ5/LEPDykFFiT+InGbM0TDHhPitQ87OkbAhQqyacnIXPy0+LZk1E52wIq7DLAQg6hIOA==
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -17921,11 +17883,6 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   integrity sha1-6Eg5bwV9Ij8kOGkkYY4laUFh7Ec=
   dependencies:
     aproba "^1.1.1"
-
-rxjs-compat@^6.5.5:
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.6.0.tgz#fb86908ca9ea385befd25f6d4e451d1b0154fe5c"
-  integrity sha512-XvW8LM/3QnoehC74BAbC3bSiaSsfdZHC21QErD50TmdjNQhpQ6s3bM5PjcdcZWbX7mNgC3zi3BcbI9dWGJ6fsA==
 
 rxjs@^6.4.0, rxjs@^6.5.5, rxjs@^6.6.0:
   version "6.6.0"
