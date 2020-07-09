@@ -53,7 +53,7 @@ const InnerStatsPanel = (props: StatsProps) => {
       <MutedSpan><Pluralize count={shares_count} singularText='Share' /></MutedSpan>
       <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan>
     </div>
-    {postVotersOpen && <PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)} />}
+    {<PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)} />}
   </>;
 };
 
