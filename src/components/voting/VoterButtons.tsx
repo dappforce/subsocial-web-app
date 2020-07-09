@@ -12,7 +12,7 @@ import { IconWithLabel } from '../utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const log = newLogger('Voter')
+const log = newLogger('VoterButtons')
 
 type VoterProps = BareProps & {
   post: Post,

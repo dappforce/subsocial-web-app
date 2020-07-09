@@ -23,15 +23,14 @@ export const SharePostAction = ({
 }: Props) => {
 
   const [ open, setOpen ] = useState<boolean>()
-  const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
-  return (
-    <>
-      <Button className={className} onClick={() => setOpen(true)}>
-        <IconWithLabel icon='share-alt' count={shares_count} title='Share' withTitle={!preview} />
-      </Button>
-      <ShareModal postId={postId} open={open} close={() => setOpen(false)} />
-    </>
-  )
+
+  return <>
+    <span className={className} onClick={() => setOpen(true)}>
+      {withIcon && <><Icon type='share-alt' /> {' '}</>}
+      {title}
+    </span>
+    <ShareModal postId={postId} open={open} onClose={() => setOpen(false)} />
+  </>
 }
 
 export default SharePostAction
