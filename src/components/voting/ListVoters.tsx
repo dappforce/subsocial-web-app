@@ -32,7 +32,7 @@ function isUpvote (reaction: Reaction): boolean {
 
 const renderVoters = (state: Array<Reaction>) => {
   return state.map(reaction => {
-    return <div key={reaction.id.toNumber()} className="ReactionsItem" >
+    return <div key={reaction.id.toString()} className="ReactionsItem" >
       <AuthorPreviewWithOwner
         address={reaction.created.account}
         isPadded={false}
@@ -108,7 +108,7 @@ const InnerModalVoters = (props: VotersProps) => {
       onCancel={close}
       visible={open}
       title={<Pluralize count={votersCount} singularText='Reaction'/>}
-      footer={<Button onClick={close} >Close</Button>}
+      footer={<Button onClick={close}>Close</Button>}
       style={{ marginTop: '3rem' }}
     >
       {renderContent()}

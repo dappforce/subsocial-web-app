@@ -75,7 +75,7 @@ export function TxButton ({
   const [ unsub, setUnsub ] = useState<() => void>()
   const [ isSending, , setIsSending ] = useToggle(false)
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-  const noTx = !accountId || !isTokens;
+  const isAuthRequired = !accountId || !isTokens;
   const buttonLabel = label || children
   const needsAccount = !unsigned && !accountId
 
