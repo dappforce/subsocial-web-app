@@ -656,6 +656,29 @@ hr {
   justify-content: space-between;
 }
 
+.DfActionsPanel {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(34, 36, 38, .15);
+}
+
+.DfAction {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: .25rem 0;
+  font-weight: bold;
+  font-size: $font_normal;
+  background-color: transparent;
+  border: none;
+  @extend .DfNoBoxShadow;
+
+  &:hover, &:active, &:focus {
+    cursor: pointer;
+  }
+}
+
 .DfSegment.DfPostPreview {
   padding-bottom: 0;
 
@@ -668,34 +691,14 @@ hr {
     margin: $space_small 0;
   }
 
+  .DfActionsPanel {
+    justify-content: space-around;
+  }
+
   .DfPostImagePreview {
     margin-left: $space_normal
   }
 
-  .DfActionsPanel {
-    display: flex;
-    border-top: 1px solid rgba(34, 36, 38, .15);
-  }
-
-  .DfAction {
-    width: 33.33%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: .25rem 0;
-    font-weight: bold;
-    font-size: $font_normal;
-    @extend .DfNoBoxShadow;
-
-    &:hover {
-      background-color: #f0f0f0 !important;
-      border-radius: $border_radius_normal;
-    }
-
-    i:not(.DfVoter) {
-      margin-right: .35rem;
-    }
-  }
 }
 
 .DfShareModalBody {
@@ -1717,9 +1720,21 @@ a.DfStatItem {
 
   .ant-comment-actions {
     li {
-      span {
+      span, button {
         font-size: $font_small;
       }
+      button, button:hover, button:active, button:focus {
+          cursor: pointer;
+          background: transparent;
+          border: none;
+          @extend .DfNoBoxShadow
+      }
+    }
+  
+    margin: $space_tiny 0;
+
+    span {
+      margin-left: $space_tiny;
     }
 
     .DfVoter {
@@ -1752,14 +1767,6 @@ a.DfStatItem {
 
     .DfMdEditor {
       margin-top: $space_small;
-    }
-  }
-
-  .ant-comment-actions {
-    margin: $space_tiny 0;
-
-    span {
-      margin-left: $space_tiny;
     }
   }
 

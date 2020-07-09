@@ -2,12 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { nonEmptyStr } from '@subsocial/utils';
-import { formatUnixDate } from '../../utils/utils';
+import { formatUnixDate, IconWithLabel } from '../../utils/utils';
 import ViewSpacePage from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
-import { Icon, Menu, Dropdown } from 'antd';
+import { Icon, Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
 import { Post, Space, PostExtension } from '@subsocial/types/substrate/interfaces';
 import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto';
@@ -157,24 +157,31 @@ export const PostContent: React.FunctionComponent<PostContentProps> = ({ postStr
 
 type PostActionsPanelProps = {
   postStruct: PostWithSomeDetails,
-  toogleCommentSection?: () => void
+  toogleCommentSection?: () => void,
+  preview?: boolean
 }
 
-const Action: React.FunctionComponent<{ onClick?: () => void }> = ({ children, onClick }) => <div onClick={onClick} className='DfAction'>{children}</div>
+const ShowCommentsAction = ({ postStruct: { post: { struct: { total_replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => (
+  <Action onClick={toogleCommentSection}>
+    <IconWithLabel icon='message' count={total_replies_count} title='Comment' withTitle={!preview} />
+  </Action>
+)
 
-export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = ({ postStruct, toogleCommentSection }) => {
-  const { post: { struct }, ext } = postStruct;
-  const { extension, id } = struct
-  const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
+const Action: React.FunctionComponent<{ onClick?: () => void }> = ({ children, onClick }) => <Button onClick={onClick} className='DfAction'>{children}</Button>
 
+export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
+  const { postStruct, preview } = props
+  const { post: { struct } } = postStruct;
+  const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' preview={preview} />
   return (
     <div className='DfActionsPanel'>
-      <VoterButtons post={struct} className='DfAction' />
-      <Action onClick={toogleCommentSection}>
-        <Icon type='message' />
-          Comment
-      </Action>
-      <SharePostAction postId={postId} className='DfAction' />
+      {preview
+        ? <ReactionsAction />
+        : <div className='d-flex'>
+          <ReactionsAction />
+        </div>}
+      {preview && <ShowCommentsAction {...props} />}
+      <SharePostAction postStruct={postStruct} className='DfAction' preview={preview} />
     </div>
   );
 };

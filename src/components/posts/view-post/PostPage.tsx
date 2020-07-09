@@ -7,18 +7,16 @@ import { isBrowser } from 'react-device-detect';
 import { PostData, PostWithAllDetails, SpaceData } from '@subsocial/types/dto';
 import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';
-import SharePostAction from '../SharePostAction';
 import { CommentSection } from '../../comments/CommentsSection';
-import { isRegularPost, PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound } from './helpers';
+import { isRegularPost, PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel } from './helpers';
 import Error from 'next/error'
 import { NextPage } from 'next';
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
 import { getSpaceId, unwrapSubstrateId } from 'src/components/utils/substrate';
 import partition from 'lodash.partition';
 import BN from 'bn.js'
-import { RegularPreview } from '.';
 import { PageContent } from 'src/components/main/PageWrapper';
-import { VoterButtons } from 'src/components/voting/VoterButtons';
+import PostPreview from './PostPreview';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
@@ -71,14 +69,13 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, stat
           {/* {renderSpacePreview(post)} */}
         </div>
         {!isRegular && ext &&
-          <RegularPreview postStruct={ext as PostWithAllDetails} space={ext.space as SpaceData} /> }
+          <PostPreview postStruct={ext as PostWithAllDetails} space={ext.space as SpaceData} asRegularPost /> }
         <ViewTags tags={tags} />
         <div className='DfRow'>
-          <VoterButtons post={struct} />
-          <SharePostAction postId={struct.id} className='DfShareAction' />
+          <PostActionsPanel postStruct={postStruct} />
         </div>
       </Section>
-      <CommentSection post={struct} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
+      <CommentSection post={postStruct} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
     </PageContent>
   </>
 };

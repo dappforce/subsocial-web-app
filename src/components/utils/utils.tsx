@@ -48,3 +48,28 @@ export const toShortAddress = (_address: AnyAccountId) => {
 
   return address.length > 13 ? `${address.slice(0, 6)}…${address.slice(-6)}` : address;
 }
+
+type IconWithTitleProps = {
+  icon: JSX.Element | string,
+  count: BN,
+  title?: string,
+  withTitle?: boolean
+}
+
+export const IconWithLabel = ({ icon, title, count, withTitle }: IconWithTitleProps) => {
+  const renderIcon = () => typeof icon === 'string' ? <Icon type={icon} /> : icon;
+  const countStr = count ? count.toString() : undefined
+  const renderText = () => <span className='ml-2'>
+    {withTitle && title
+      ? <>
+        {title}
+        {countStr && ` (${countStr})`}
+      </>
+      : countStr}
+  </span>
+
+  return <>
+    {renderIcon()}
+    {renderText()}
+  </>
+}
