@@ -66,6 +66,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='hover'
+          mouseEnterDelay={0.3}
           content={<ProfilePreview address={address} owner={owner} />}
         >
           <div className='d-block'>
