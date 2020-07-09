@@ -10,12 +10,15 @@ import { useSubstrate } from '../substrate';
 
 const log = newLogger('SubsocialApiContext')
 
-// TODO make apis optional
 export type SubsocialApiState = {
-  subsocial: SubsocialApi,
-  substrate: SubsocialSubstrateApi,
-  ipfs: SubsocialIpfsApi,
+  subsocial?: SubsocialApi,
+  substrate?: SubsocialSubstrateApi,
+  ipfs?: SubsocialIpfsApi,
   isApiReady: boolean
+}
+
+const emptyState: SubsocialApiState = {
+  isApiReady: false
 }
 
 type SubsocialApiAction = {
@@ -39,14 +42,6 @@ function reducer (_state: SubsocialApiState, action: SubsocialApiAction): Subsoc
 
 function functionStub () {
   throw new Error('Function needs to be set in SubsocialApiProvider')
-}
-
-// TODO maybe this is wrong to use "{} as ..." - check it
-const emptyState = {
-  subsocial: {} as SubsocialApi,
-  substrate: {} as SubsocialSubstrateApi,
-  ipfs: {} as SubsocialIpfsApi,
-  isApiReady: false
 }
 
 export type SubsocialApiContextProps = {
@@ -100,8 +95,6 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
     state,
     dispatch
   }
-
-  // console.log('SubsocialApiProvider.api', api)
 
   return <SubsocialApiContext.Provider value={contextValue}>
     {/* {isDevMode &&

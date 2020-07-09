@@ -33,8 +33,8 @@ export const getSubsocialApi = async () => {
   if (!subsocial && !isLoadingSubsocial) {
     isLoadingSubsocial = true
     const api = await getSubstrateApi()
-    isLoadingSubsocial = false
     subsocial = newSubsocialApi(api)
+    isLoadingSubsocial = false
   }
   return subsocial
 }
