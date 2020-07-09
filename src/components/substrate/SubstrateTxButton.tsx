@@ -77,7 +77,6 @@ export function TxButton ({
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
   const isAuthRequired = !accountId || !isTokens;
   const buttonLabel = label || children
-  const needsAccount = !unsigned && !accountId
 
   if (!api || !api.isReady) {
     return (
@@ -268,14 +267,13 @@ export function TxButton ({
   const _disabled =
     disabled ||
     isSending ||
-    needsAccount ||
     isEmptyStr(tx)
 
   return (
     <Button
       {...antdProps}
       onClick={() => {
-        if (noTx) {
+        if (isAuthRequired) {
           openSignInModal('AuthRequired')
           return setIsSending(false);
         }
