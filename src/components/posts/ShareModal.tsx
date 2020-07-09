@@ -26,7 +26,7 @@ type Props = MyAccountProps & {
   postId: BN
   spaceIds?: BN[]
   open: boolean
-  close: () => void
+  onClose: () => void
 }
 
 const Fields = {
@@ -34,7 +34,7 @@ const Fields = {
 }
 
 const InnerShareModal = (props: Props) => {
-  const { open, close, postId, spaceIds } = props;
+  const { open, onClose, postId, spaceIds } = props;
 
   if (!spaceIds) {
     return null
@@ -119,7 +119,7 @@ const InnerShareModal = (props: Props) => {
   };
 
   return <Modal
-    onCancel={close}
+    onCancel={onClose}
     visible={open}
     title={<>
       <span className='mr-3'>Share the post to your space:</span>
