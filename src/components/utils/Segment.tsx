@@ -5,7 +5,8 @@ export const Segment: React.FunctionComponent<BareProps> =
     ({ children, style, className }) =>
       <div
         className={`DfSegment ${className}`}
-        style={style}>
+        style={style}
+      >
         {children}
       </div>
 

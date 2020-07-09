@@ -12,7 +12,7 @@ import { IconWithLabel } from '../utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
-const log = newLogger('Voter')
+const log = newLogger('VoterButtons')
 
 type VoterProps = BareProps & {
   post: Post,
@@ -107,6 +107,7 @@ export const VoterButtons = (props: VoterButtonsProps) => {
 
     async function reloadReaction () {
       if (!address) return
+
       const reactionId = await substrate.getPostReactionIdByAccount(address, id)
       const reaction = await substrate.findReaction(reactionId)
       if (isSubscribe) {

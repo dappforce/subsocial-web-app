@@ -104,7 +104,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const createProfileButton = noProfile && isMyAccount &&
     <Link href={`/profile/new`}>
-      <a className='DfCreateProfileButton ui button primary'>
+      <a className='DfCreateProfileButton'>
         <i className='plus icon' />
         Create profile
       </a>
