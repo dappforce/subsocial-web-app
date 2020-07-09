@@ -132,7 +132,7 @@ const InnerShareModal = (props: Props) => {
     style={{ marginTop: '3rem' }}
     footer={
       <>
-        <Button onClick={close}>Cancel</Button>
+        <Button onClick={onClose}>Cancel</Button>
         {renderTxButton()}
       </>
     }
