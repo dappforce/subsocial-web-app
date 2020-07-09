@@ -29,9 +29,9 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
     dataSource={comments}
     paginationOff
     renderItem={(item) => {
-      const { post: { struct, content }, owner } = item;
+      const { post: { struct } } = item;
       const { id } = struct
-      return <ViewComment key={`comment-${id.toString()}`} space={space} struct={struct} content={content} owner={owner} />
+      return <ViewComment key={`comment-${id.toString()}`} space={space} comment={item} />
     }}
   /> : null;
 }

@@ -32,8 +32,8 @@ export const SharedPreview: React.FunctionComponent<InnerPreviewProps> = ({ post
         ? <RegularPreview postStruct={postStruct.ext as PostWithAllDetails} space={space} />
         : <PostNotFound />}
     </Segment>
-    {withActions && <PostActionsPanel postStruct={postStruct.ext} toogleCommentSection={() => setCommentsSection(!commentsSection)} />}
-    {commentsSection && <CommentSection post={struct} space={space.struct} replies={replies}/>}
+    {withActions && <PostActionsPanel postStruct={postStruct.ext} toogleCommentSection={() => setCommentsSection(!commentsSection)} preview />}
+    {commentsSection && <CommentSection post={postStruct} space={space.struct} replies={replies}/>}
     {postVotersOpen && <PostVoters id={struct.id} active={0} open={postVotersOpen} close={() => setPostVotersOpen(false)}/>}
   </>;
 };

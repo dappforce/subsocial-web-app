@@ -1,10 +1,10 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Comment, Menu, Dropdown, Icon } from 'antd';
-import { ProfileData, PostWithAllDetails } from '@subsocial/types/dto';
+import { PostWithAllDetails } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { DfMd } from '../utils/DfMd';
 import { CommentContent } from '@subsocial/types';
-import { Post, Space } from '@subsocial/types/substrate/interfaces';
+import { Space } from '@subsocial/types/substrate/interfaces';
 import { useMyAddress } from '../auth/MyAccountContext';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
@@ -20,15 +20,21 @@ import { VoterButtons } from '../voting/VoterButtons';
 
 type Props = {
   space: Space,
-  owner?: ProfileData,
-  struct: Post,
-  content?: CommentContent,
+  comment: PostWithAllDetails,
   replies?: PostWithAllDetails[],
   withShowReplies?: boolean
 }
 
-export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, space = { id: 0 } as any as Space, replies, withShowReplies }) => {
+export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0 } as any as Space, replies, withShowReplies }) => {
   const myAddress = useMyAddress()
+
+  const {
+    post: {
+      struct,
+      content
+    },
+    owner
+  } = comment
 
   const {
     id,
@@ -109,8 +115,8 @@ export const ViewComment: FunctionComponent<Props> = ({ owner, struct, content, 
       actions={!showReplyForm
         ? [
           <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfShareAction' />,
-          <SharePostAction postId={id} className='DfShareAction' withIcon={false} />,
-          <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)} >Reply</span>
+          <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)} >Reply</span>,
+          <SharePostAction postStruct={comment} className='DfShareAction' preview />
         ]
         : []}
       author={<div className='DfAuthorBlock'>
