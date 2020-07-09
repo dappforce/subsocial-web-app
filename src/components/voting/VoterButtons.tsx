@@ -90,6 +90,7 @@ export const VoterButtons = ({ post, className, style, only }: VoterButtonsProps
 
     async function reloadReaction () {
       if (!address) return
+
       const reactionId = await substrate.getPostReactionIdByAccount(address, id)
       const reaction = await substrate.findReaction(reactionId)
       if (isSubscribe) {
