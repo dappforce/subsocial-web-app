@@ -17,16 +17,15 @@ export const SharePostAction = ({
   withIcon = true
 }: Props) => {
 
-  const [ open, setOpen ] = useState(false)
-  const close = () => setOpen(false)
+  const [ open, setOpen ] = useState<boolean>()
 
-  return (
+  return <>
     <span className={className} onClick={() => setOpen(true)}>
       {withIcon && <><Icon type='share-alt' /> {' '}</>}
       {title}
-      {open && <ShareModal postId={postId} open={open} close={close} />}
     </span>
-  )
+    <ShareModal postId={postId} open={open} onClose={() => setOpen(false)} />
+  </>
 }
 
 export default SharePostAction

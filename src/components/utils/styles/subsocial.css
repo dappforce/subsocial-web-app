@@ -10,6 +10,22 @@ body,
 /* Common Resusable Classes */
 /* ---------------------------------------- */
 
+.DfSegment {
+  background-color: #fff;
+  padding: $space_large;
+  position: relative;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  margin: $space_normal 0;
+  border-radius: .28571429rem;
+  border: 1px solid rgba(34,36,38,.15);
+}
+
+.ant-modal-body {
+  padding: $space_small;
+  padding-top: 0;
+}
+
 .DfLinkOnHover {
   &:hover {
     color: $color_link;
@@ -327,7 +343,7 @@ body,
 }
 
 .ui--AddressComponents-info div {
-  vertical-align: initial;
+  vertical-align: top;
 }
 
 .ui.threaded.comments .comment .comments {
@@ -640,7 +656,7 @@ hr {
   justify-content: space-between;
 }
 
-.ui.segment.DfPostPreview {
+.DfSegment.DfPostPreview {
   padding-bottom: 0;
 
   .DfInfo {
@@ -665,6 +681,7 @@ hr {
     width: 33.33%;
     display: flex;
     justify-content: center;
+    align-items: center;
     margin: .25rem 0;
     font-weight: bold;
     font-size: $font_normal;
@@ -698,7 +715,7 @@ hr {
     width: 100%;
   }
 
-  .ui.segment.DfPostPreview {
+  .DfSegment.DfPostPreview {
     text-align: left;
   }
 }
@@ -1171,11 +1188,6 @@ hr {
   &.ant-layout-has-sider {
     margin-top: $height_top_menu;
   }
-}
-
-.ui.segment {
-  background-color: #fff;
-  padding: $space_large;
 }
 
 .DfDataList {
@@ -1687,7 +1699,7 @@ a.DfStatItem {
 .DfShareModalPadding.scrolling.content {
   padding-bottom: 0;
 
-  .ui.segment.DfPostPreview {
+  .DfSegment.DfPostPreview {
     padding-bottom: 0;
   }
 }

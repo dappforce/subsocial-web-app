@@ -18,8 +18,8 @@ import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { RegularPreview } from '.';
 import { PageContent } from 'src/components/main/PageWrapper';
+import { VoterButtons } from 'src/components/voting/VoterButtons';
 
-const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 export type PostDetailsProps = {
@@ -74,7 +74,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, stat
           <RegularPreview postStruct={ext as PostWithAllDetails} space={ext.space as SpaceData} /> }
         <ViewTags tags={tags} />
         <div className='DfRow'>
-          <Voter struct={struct} />
+          <VoterButtons post={struct} />
           <SharePostAction postId={struct.id} className='DfShareAction' />
         </div>
       </Section>

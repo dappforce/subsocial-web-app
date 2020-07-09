@@ -10,6 +10,7 @@ import { newLogger, isEmptyStr, nonEmptyArr, nonEmptyStr } from '@subsocial/util
 import { useSubstrate } from '.'
 import useToggle from './useToggle'
 import { Message, showSuccessMessage, showErrorMessage } from '../utils/Message'
+import { useAuth } from '../auth/AuthContext'
 
 const log = newLogger('TxButton')
 
@@ -73,9 +74,9 @@ export function TxButton ({
   const { api, keyring, keyringState } = useSubstrate()
   const [ unsub, setUnsub ] = useState<() => void>()
   const [ isSending, , setIsSending ] = useToggle(false)
-
+  const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
+  const isAuthRequired = !accountId || !isTokens;
   const buttonLabel = label || children
-  const needsAccount = !unsigned && !accountId
 
   if (!api || !api.isReady) {
     return (
@@ -127,7 +128,7 @@ export function TxButton ({
 
     // Get signer is from Polkadot-js browser extension
     if (isInjected) {
-      const injected = await web3FromSource(source)
+      const injected = await web3FromSource(source as string)
       fromAccount = address
       api.setSigner(injected.signer)
     }
@@ -266,13 +267,19 @@ export function TxButton ({
   const _disabled =
     disabled ||
     isSending ||
-    needsAccount ||
     isEmptyStr(tx)
 
   return (
     <Button
       {...antdProps}
-      onClick={sendTx}
+      onClick={() => {
+        if (isAuthRequired) {
+          openSignInModal('AuthRequired')
+          return setIsSending(false);
+        }
+
+        sendTx()
+      }}
       disabled={_disabled}
       loading={withSpinner && isSending}
     >{buttonLabel}</Button>

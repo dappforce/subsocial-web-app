@@ -1,10 +1,9 @@
 import React from 'react'
 import { ProfileData } from '@subsocial/types';
-import classes from '@subsocial/react-components/util/classes';
 import { Popover } from 'antd';
 import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
-import { toShortAddress } from '@subsocial/react-components/util';
+import { toShortAddress } from 'src/components/utils';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
@@ -59,23 +58,23 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return <div
-    className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
+    className={`ui--AddressComponents' ${isPadded ? 'padded' : ''} ${className}`}
     style={style}
   >
-    <div className='ui--AddressComponents-info'>
+    <div className='ui--AddressComponents-info d-flex'>
       <Avatar size={size} address={address} avatar={avatar} />
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='hover'
           content={<ProfilePreview address={address} owner={owner} />}
         >
-          <span>
+          <div className='d-block'>
             <ViewProfileLink
               account={{ address, username }}
               title={name}
               className={nameClass}
             />
-          </span>
+          </div>
         </Popover>
         <InfoDetails details={details}/>
       </div>

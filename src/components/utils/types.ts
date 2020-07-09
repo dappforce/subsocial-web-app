@@ -6,6 +6,7 @@ import { SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { RpcMethod } from '@polkadot/jsonrpc/types';
 import { SignatureOptions } from '@polkadot/types/types';
+import { TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import AccountId from '@polkadot/types/generic/AccountId';
 import Address from '@polkadot/types/generic/Address';
 
@@ -25,8 +26,6 @@ export type AccountInfo = {
 export type QueueTx$Status = 'future' | 'ready' | 'finalized' | 'usurped' | 'dropped' | 'invalid' | 'broadcast' | 'cancelled' | 'completed' | 'error' | 'incomplete' | 'queued' | 'sending' | 'sent' | 'blocked';
 
 export type SignerCallback = (id: number, isSigned: boolean) => void;
-
-export type TxCallback = (status: SubmittableResult) => void;
 
 export type QueueTx = AccountInfo & {
   error?: Error;
@@ -115,3 +114,8 @@ export interface InjectedAccountExt {
 }
 
 export type FVoid = () => void
+
+export interface BareProps {
+  className?: string;
+  style?: Record<string, string | number>;
+}

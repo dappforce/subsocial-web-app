@@ -5,7 +5,7 @@ import AbstractInt from '@polkadot/types/codec/AbstractInt'
 import { getSubsocialApi } from '../SubsocialConnect'
 import { registry } from '@subsocial/types/substrate/registry';
 import { AddressProps } from 'src/components/profiles/address-views/utils/types'
-import { toShortAddress } from '@subsocial/react-components/util'
+import { toShortAddress } from 'src/components/utils'
 import { Codec } from '@polkadot/types/types'
 import { SubstrateId } from '@subsocial/types'
 import { SubmittableResult } from '@polkadot/api'

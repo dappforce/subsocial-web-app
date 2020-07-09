@@ -2,7 +2,7 @@ import React from 'react';
 import { RegularPreview, SharedPreview, isRegularPost, HiddenPostAlert } from '.';
 import { PostWithAllDetails, SpaceData } from '@subsocial/types';
 import { PostExtension } from '@subsocial/types/substrate/classes';
-import { Segment } from 'semantic-ui-react';
+import { Segment } from 'src/components/utils/Segment';
 export type BarePreviewProps = {
   withActions?: boolean,
   replies?: PostWithAllDetails[],

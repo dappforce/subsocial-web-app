@@ -1,5 +1,5 @@
 import React from 'react';
-import { BareProps } from '@subsocial/react-components/types';
+import { BareProps } from 'src/components/utils/types';
 
 type Props = BareProps & {
   id?: string,

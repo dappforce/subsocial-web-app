@@ -115,7 +115,7 @@
       line-height: $space_normal;
     }
 
-    .ui.segment {
+    .DfSegment {
       box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
       margin: 1rem 0;
       border-radius: .28571429rem;
@@ -140,7 +140,7 @@
   }
 
   .infinite-scroll-component {
-    .ui.segment {
+    .DfSegment {
       margin-top: .5rem;
     }
   }
@@ -283,7 +283,7 @@
       margin-top: 0;
       font-size: $font_large;
     }
-    &.ui.segment {
+    &.DfSegment {
       padding-bottom: 0 !important;
     }
   }
@@ -296,7 +296,7 @@
     }
   }
 
-  .ui.segment {
+  .DfSegment {
     z-index: 1;
     border-radius: 0;
     margin: 0 -1rem;
@@ -305,7 +305,7 @@
     border-right: 0;
     box-shadow: none;
 
-    .ui.segment {
+    .DfSegment {
       margin: 0;
     }
   }

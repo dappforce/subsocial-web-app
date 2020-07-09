@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Loader } from 'semantic-ui-react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { Activity } from '@subsocial/types/offchain';
@@ -57,7 +56,7 @@ export const MyNotifications = () => {
       next={getNextPage}
       hasMore={hasNextPage}
       // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
-      loader={<Loader active inline='centered' />}
+      loader={<Loading />}
     >
       <Notifications activities={items} />
     </InfiniteScroll>

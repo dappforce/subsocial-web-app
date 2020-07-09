@@ -42,3 +42,9 @@ type VisibilityProps = {
 
 export const isVisible = ({ struct, address }: VisibilityProps) => !struct.hidden.valueOf() || !isMyAddress(address)
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
+
+export const toShortAddress = (_address: AnyAccountId) => {
+  const address = (_address || '').toString();
+
+  return address.length > 13 ? `${address.slice(0, 6)}…${address.slice(-6)}` : address;
+}

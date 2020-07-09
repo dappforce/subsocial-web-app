@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { withCalls, withMulti } from '../substrate';
 import { getTxParams, spacesQueryToProp } from '../utils/index';
-import { Modal } from 'semantic-ui-react';
+import { Modal } from 'antd';
 import Button from 'antd/lib/button';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import Link from 'next/link';
-import { Loading } from '../utils/utils';
 import { LabeledValue } from 'antd/lib/select';
 import SelectSpacePreview from '../utils/SelectSpacePreview';
 import BN from 'bn.js';
@@ -13,7 +12,7 @@ import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
-import { TxFailedCallback, TxCallback } from '@subsocial/react-components/Status/types';
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
@@ -27,7 +26,7 @@ type Props = MyAccountProps & {
   postId: BN
   spaceIds?: BN[]
   open: boolean
-  close: () => void
+  onClose: () => void
 }
 
 const Fields = {
@@ -35,24 +34,10 @@ const Fields = {
 }
 
 const InnerShareModal = (props: Props) => {
-  const { open, close, postId, spaceIds } = props;
-
-  const renderModal = (children: React.ReactElement) =>
-    <Modal
-      onClose={close}
-      open={open}
-      size='small'
-      style={{ marginTop: '3rem' }}
-    >
-      {children}
-    </Modal>
+  const { open, onClose, postId, spaceIds } = props;
 
   if (!spaceIds) {
-    return renderModal(
-      <div className='p-4 text-center'>
-        <Loading />
-      </div>
-    )
+    return null
   }
 
   const extension = new PostExtension({ SharedPost: postId as SharedPost });
@@ -133,24 +118,27 @@ const InnerShareModal = (props: Props) => {
     setSpaceId(new BN(value as string));
   };
 
-  return renderModal(<>
-    <Modal.Header>
+  return <Modal
+    onCancel={onClose}
+    visible={open}
+    title={<>
       <span className='mr-3'>Share the post to your space:</span>
       <SelectSpacePreview
         spaceIds={spaceIds}
         onSelect={saveSpace}
         imageSize={24}
         defaultValue={spaceId?.toString()}
-      />
-    </Modal.Header>
-    <Modal.Content scrolling className='DfShareModalPadding'>
-      {renderShareView()}
-    </Modal.Content>
-    <Modal.Actions>
-      <Button onClick={close}>Cancel</Button>
-      {renderTxButton()}
-    </Modal.Actions>
-  </>)
+      /></>}
+    style={{ marginTop: '3rem' }}
+    footer={
+      <>
+        <Button onClick={onClose}>Cancel</Button>
+        {renderTxButton()}
+      </>
+    }
+  >
+    {renderShareView()}
+  </Modal>
 }
 
 export const ShareModal = withMulti(

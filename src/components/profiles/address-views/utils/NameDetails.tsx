@@ -1,4 +1,4 @@
-import { toShortAddress } from '@subsocial/react-components/util';
+import { toShortAddress } from 'src/components/utils';
 import { ProfileData } from '@subsocial/types';
 import { nonEmptyStr } from '@subsocial/utils';
 import dynamic from 'next/dynamic';

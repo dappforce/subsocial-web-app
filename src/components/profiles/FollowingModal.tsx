@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { withCalls, withMulti } from '../substrate';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { profileFollowsQueryToProp } from '../utils/index';
-import { Modal, Button } from 'semantic-ui-react';
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
+import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 
@@ -30,22 +29,18 @@ const InnerFollowingModal = (props: Props) => {
   };
 
   return (
-    <Modal
-      size='small'
-      onClose={close}
-      open={open}
-      trigger={<Button basic onClick={() => setOpen(true)}>Following ({followingCount})</Button>}
-      centered={true}
-      style={{ marginTop: '3rem' }}
-    >
-      <Modal.Header>Following ({followingCount})</Modal.Header>
-      <Modal.Content scrolling>
+    <>
+      <Button onClick={() => setOpen(true)}>Following ({followingCount})</Button>
+      <Modal
+        onCancel={close}
+        visible={open}
+        title={`Following (${followingCount})`}
+        style={{ marginTop: '3rem' }}
+        footer={<Button onClick={() => setOpen(false)}>Close</Button>}
+      >
         {renderFollowing()}
-      </Modal.Content>
-      <Modal.Actions>
-        <Button content='Close' size={TX_BUTTON_SIZE} onClick={() => setOpen(false)} />
-      </Modal.Actions>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 

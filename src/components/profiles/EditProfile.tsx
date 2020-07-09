@@ -13,8 +13,7 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback } from '@subsocial/react-components/Status/types';
-import { TxCallback } from '../utils/types';
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { ProfileUpdate, OptionText } from '@subsocial/types/substrate/classes';

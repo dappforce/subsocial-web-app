@@ -1,5 +1,4 @@
 import React from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { nonEmptyStr } from '@subsocial/utils';
@@ -22,8 +21,7 @@ import SharePostAction from '../SharePostAction';
 import HiddenPostButton from '../HiddenPostButton';
 import HiddenAlert from 'src/components/utils/HiddenAlert';
 import NoData from 'src/components/utils/EmptyList';
-
-const Voter = dynamic(() => import('../../voting/Voter'), { ssr: false });
+import { VoterButtons } from 'src/components/voting/VoterButtons';
 
 type DropdownProps = {
   account: string | AccountId;
@@ -162,22 +160,21 @@ type PostActionsPanelProps = {
   toogleCommentSection?: () => void
 }
 
+const Action: React.FunctionComponent<{ onClick?: () => void }> = ({ children, onClick }) => <div onClick={onClick} className='DfAction'>{children}</div>
+
 export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = ({ postStruct, toogleCommentSection }) => {
   const { post: { struct }, ext } = postStruct;
   const { extension, id } = struct
   const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
-  const actionClass = 'ui tiny button basic DfAction'
 
   return (
     <div className='DfActionsPanel'>
-      <div className='DfAction'>
-        <Voter struct={struct} />
-      </div>
-      <div className={actionClass} onClick={toogleCommentSection}>
+      <VoterButtons post={struct} className='DfAction' />
+      <Action onClick={toogleCommentSection}>
         <Icon type='message' />
           Comment
-      </div>
-      <SharePostAction postId={postId} className={actionClass} />
+      </Action>
+      <SharePostAction postId={postId} className='DfAction' />
     </div>
   );
 };
