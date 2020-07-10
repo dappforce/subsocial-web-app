@@ -20,6 +20,11 @@ body,
   border: 1px solid rgba(34,36,38,.15);
 }
 
+.DfBalance {
+  font-size: $font_small;
+  color: $color_muted
+}
+
 .ant-modal-body {
   padding: $space_small;
 }
@@ -188,15 +193,20 @@ body,
 .DfEntirePost {
   /* padding: 0 $space_tiny; */
 
-  .DfVoter {
-    margin-left: -$space_tiny;
+  .DfCommentSection {
+    margin-top: $space_small
   }
-  
+
   .DfTags {
     margin: $space_big 0;
   }
   .DfPostContent {
     @extend .DfBookPage;
+    margin-bottom: $space_small;
+
+    .DfSharedSummary {
+      margin-top: -$space_normal;
+    }
   }
   .DfShareAction {
     padding: $space_small $space_normal;
@@ -630,6 +640,13 @@ hr {
   justify-content: space-between;
   &.DfActionBorder {
     border-top: 1px solid rgba(34, 36, 38, .15);
+  }
+
+  .DfReactionsAction {
+    button:first-of-type {
+      margin-left: -$space_normal;
+      margin-right: $space_normal;
+    }
   }
 }
 

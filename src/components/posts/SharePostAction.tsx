@@ -7,14 +7,14 @@ import { isRegularPost } from './view-post';
 import { IconWithLabel } from '../utils';
 
 type Props = {
-  postStruct: PostWithSomeDetails
+  postDetails: PostWithSomeDetails
   title?: React.ReactNode
   className?: string,
   preview?: boolean
 }
 
 export const SharePostAction = ({
-  postStruct: {
+  postDetails: {
     post: { struct: { id, shares_count, extension } },
     ext
   },
@@ -28,8 +28,13 @@ export const SharePostAction = ({
 
   return (
     <>
-      <Button className={className} onClick={() => setOpen(true)} title={preview ? title : undefined}>
-        <IconWithLabel icon='share-alt' count={shares_count} label={title} withTitle={!preview} />
+      <Button
+        className={className}
+        onClick={() => setOpen(true)}
+        title={preview ? title : undefined}
+        style={{ marginRight: !preview ? '-1rem' : '' }}
+      >
+        <IconWithLabel icon='share-alt' count={shares_count} label={!preview ? title : undefined} />
       </Button>
       <ShareModal postId={postId} open={open} onClose={() => setOpen(false)} />
     </>

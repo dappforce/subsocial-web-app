@@ -59,7 +59,10 @@ const VoterButton = ({
 
   return <TxButton
     className={`DfVoterButton ${className}`}
-    style={{ color: isActive ? color : '', ...style }}
+    style={{
+      color: isActive ? color : '',
+      ...style
+    }}
     tx={!reaction
       ? `reactions.createPostReaction`
       : changeReactionTx
@@ -75,8 +78,7 @@ const VoterButton = ({
         twoToneColor={isActive ? color : undefined }
       />}
       count={count}
-      label={reactionType}
-      withTitle={!preview}
+      label={!preview ? reactionType : undefined}
     />
   </TxButton>
 }
