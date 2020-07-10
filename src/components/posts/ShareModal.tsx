@@ -98,7 +98,18 @@ const InnerShareModal = (props: Props) => {
     }
 
     return <div className='DfShareModalBody'>
-      <form>
+      <span className='mr-3'>
+        Share the post to your space:
+        {' '}
+        <SelectSpacePreview
+          spaceIds={spaceIds}
+          onSelect={saveSpace}
+          imageSize={24}
+          defaultValue={spaceId?.toString()}
+        />
+      </span>
+
+      <form className='my-2'>
         <Controller
           as={<DfMdEditor />}
           name={Fields.body}
@@ -121,14 +132,7 @@ const InnerShareModal = (props: Props) => {
   return <Modal
     onCancel={onClose}
     visible={open}
-    title={<>
-      <span className='mr-3'>Share the post to your space:</span>
-      <SelectSpacePreview
-        spaceIds={spaceIds}
-        onSelect={saveSpace}
-        imageSize={24}
-        defaultValue={spaceId?.toString()}
-      /></>}
+    title={'Share post'}
     style={{ marginTop: '3rem' }}
     footer={
       <>
