@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { AnyAccountId } from '@subsocial/types';
-import useSubsocialEffect from '../api/useSubsocialEffect'
-import { gtZero } from '.';
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { newLogger } from '@subsocial/utils';
+import { formatBalance } from '@polkadot/util';
+import BN from 'bn.js'
 
 const log = newLogger('useGetBallance')
 
 const useGetBalance = (address: AnyAccountId) => {
-  const [ balance, setBalance ] = useState<string>()
-
+  const [ balance, setBalance ] = useState<BN>()
+  // const [ currency ] = useState(formatBalance.getDefaults().unit);
   useSubsocialEffect(({ substrate }) => {
     let unsub: (() => void) | undefined;
 
@@ -17,7 +18,7 @@ const useGetBalance = (address: AnyAccountId) => {
 
       unsub = await api.derive.balances.all(address, (data) => {
         const balance = data.freeBalance
-        gtZero(balance) && setBalance(balance.toString())
+        setBalance(balance)
       });
     }
 
@@ -26,7 +27,9 @@ const useGetBalance = (address: AnyAccountId) => {
     return () => unsub && unsub()
   })
 
-  return balance
+  if (!balance) return null
+
+  return formatBalance(balance)
 }
 
 type BalanceProps = {
