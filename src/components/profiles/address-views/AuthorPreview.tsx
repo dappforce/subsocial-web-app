@@ -7,12 +7,9 @@ import { toShortAddress } from 'src/components/utils';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
-import dynamic from 'next/dynamic';
-import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext';
 import ViewProfileLink from '../ViewProfileLink';
 import BN from 'bn.js'
-
-const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
+import { Balance } from './utils/Balance';
 
 export type InfoProps = {
   address?: string | AccountId,
@@ -23,11 +20,10 @@ export type InfoProps = {
 export const InfoDetails: React.FunctionComponent<InfoProps> = ({
   details, balance, address
 }) => {
-  const { isApiReady } = useSubsocialApi()
   return <>
     <div className='Df--AddressComponents-details'>
       {balance ||
-        (address && isApiReady &&
+        (address &&
           <Balance address={address.toString()} />)
       }
       {details && <div>{details}</div>}
