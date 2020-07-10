@@ -4,40 +4,38 @@ import { DfMd } from '../../utils/DfMd';
 import { HeadMeta } from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
 import { isBrowser } from 'react-device-detect';
-import { PostData, PostWithAllDetails, SpaceData } from '@subsocial/types/dto';
+import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
 import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';
 import { CommentSection } from '../../comments/CommentsSection';
-import { isRegularPost, PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel } from './helpers';
+import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, isComment, SharePostContent } from './helpers';
 import Error from 'next/error'
 import { NextPage } from 'next';
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
-import { getSpaceId, unwrapSubstrateId } from 'src/components/utils/substrate';
+import { getSpaceId, unwrapSubstrateId } from 'src/components/substrate';
 import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
-import PostPreview from './PostPreview';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 export type PostDetailsProps = {
-  postStruct: PostWithAllDetails,
+  postDetails: PostWithAllDetails,
   statusCode?: number,
   replies: PostWithAllDetails[]
 }
 
-export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, statusCode }) => {
+export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, statusCode }) => {
   if (statusCode === 404) return <Error statusCode={statusCode} />
-  const { post, ext, space } = postStruct
+  const { post, ext, space } = postDetails
 
   if (!post || !space) return <PostNotFound />
 
   const { struct, content } = post;
   if (!content) return null;
 
-  const isRegular = isRegularPost(struct.extension)
   const { title, body, image, canonical, tags } = content;
-  const spaceData = space || postStruct.space
+  const spaceData = space || postDetails.space
   const spaceStruct = spaceData.struct;
 
   const goToCommentsId = 'comments'
@@ -46,12 +44,13 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, stat
       In response to{' '}
     <ViewPostLink space={spaceStruct} post={parentPost.struct} title={parentPost.content?.title} />
   </>
-  const titleMsg = isRegular
-    ? renderResponseTitle(postStruct.ext?.post)
+
+  const titleMsg = isComment(struct.extension)
+    ? renderResponseTitle(postDetails.ext?.post)
     : title
 
   return <>
-    <HiddenPostAlert post={postStruct} />
+    <HiddenPostAlert post={postDetails} />
     <PageContent>
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
         <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
@@ -60,22 +59,23 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, stat
           <PostDropDownMenu account={struct.created.account} post={struct} space={spaceStruct} />
         </div>
         <div className='DfRow'>
-          <PostCreator postStruct={postStruct} withSpaceName space={spaceData} />
+          <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
           {isBrowser && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
         <div className='DfPostContent'>
-          {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
-          {body && <DfMd source={body} />}
-          {/* {renderSpacePreview(post)} */}
+          {ext
+            ? <SharePostContent postDetails={postDetails} space={space} />
+            : <>
+              {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
+              {body && <DfMd source={body} />}
+            </>}
         </div>
-        {!isRegular && ext &&
-          <PostPreview postStruct={ext as PostWithAllDetails} space={ext.space as SpaceData} asRegularPost /> }
         <ViewTags tags={tags} />
         <div className='DfRow'>
-          <PostActionsPanel postStruct={postStruct} />
+          <PostActionsPanel postDetails={postDetails} />
         </div>
+        <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
       </Section>
-      <CommentSection post={postStruct} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
     </PageContent>
   </>
 };
@@ -89,7 +89,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const postIdFromUrl = new BN(postId as string)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findVisiblePostsWithAllDetails({ ids: [ ...replyIds, postIdFromUrl ] })
+  const comments = await subsocial.findVisiblePostsWithAllDetails([ ...replyIds, postIdFromUrl ])
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
   const extPostData = extPostsData.pop()
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id)
@@ -101,7 +101,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   }
 
   return {
-    postStruct: extPostData,
+    postDetails: extPostData,
     replies
   }
 };

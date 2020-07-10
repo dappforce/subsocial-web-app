@@ -8,14 +8,13 @@ import { Space } from '@subsocial/types/substrate/interfaces';
 import { useMyAddress } from '../auth/MyAccountContext';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
-import { formatUnixDate } from '../utils/utils';
+import { formatUnixDate } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
 import { postUrl } from '../utils/urls';
 import SharePostAction from '../posts/SharePostAction';
 import { NewComment } from './CreateComment';
-import useSubsocialEffect from '../api/useSubsocialEffect';
 import { VoterButtons } from '../voting/VoterButtons';
 
 type Props = {
@@ -46,21 +45,12 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies, setShowReplies ] = useState(withShowReplies);
-  const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
+  const repliesCount = direct_replies_count.toString()
 
   const isFake = id.toString().startsWith('fake')
   const isMyStruct = myAddress === account.toString()
   const commentLink = postUrl(space, struct);
 
-  useSubsocialEffect(({ substrate }) => {
-
-    substrate.findPost({ id }).then((post) => {
-      if (post) {
-        setCount(post.total_replies_count.toString())
-      }
-    })
-
-  }, [ false ])
   const RenderDropDownMenu = () => {
 
     const showDropdown = isMyStruct || true;
@@ -116,7 +106,7 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
         ? [
           <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfShareAction' />,
           <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)}>Reply</span>,
-          <SharePostAction postStruct={comment} className='DfShareAction' preview />
+          <SharePostAction postDetails={comment} className='DfShareAction' preview />
         ]
         : []}
       author={<div className='DfAuthorBlock'>

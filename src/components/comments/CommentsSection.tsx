@@ -1,21 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
 import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
-import { PostWithAllDetails, PostData } from '@subsocial/types/dto';
+import { PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto';
 import { NextPage } from 'next';
-import { getProfileName } from '../utils/substrate';
+import { getProfileName } from '../substrate';
 import { Pluralize } from '../utils/Plularize';
 import ViewPostLink from '../posts/ViewPostLink';
 import { CommentsTree } from './CommentTree';
 import Section from '../utils/Section';
-import useSubsocialEffect from '../api/useSubsocialEffect';
 
 type CommentSectionProps = {
   space: Space,
-  post: PostWithAllDetails,
+  post: PostWithSomeDetails,
   replies?: PostWithAllDetails[],
   hashId?: string
 }
@@ -23,17 +22,7 @@ type CommentSectionProps = {
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [] }) => {
   const { post: { struct } } = post;
   const { total_replies_count, id } = struct
-  const [ totalCount, setCount ] = useState(total_replies_count.toString())
-
-  useSubsocialEffect(({ substrate }) => {
-
-    substrate.findPost({ id }).then((post) => {
-      if (post) {
-        setCount(post.total_replies_count.toString())
-      }
-    })
-
-  }, [ false ])
+  const totalCount = total_replies_count.toString()
 
   return <Section id={hashId} className='DfCommentSection'>
     <h3><Pluralize count={totalCount} singularText='comment' /></h3>

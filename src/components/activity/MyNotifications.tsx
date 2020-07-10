@@ -9,7 +9,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
 import { useMyAddress } from '../auth/MyAccountContext';
 import { Notifications } from './Notification';
-import { Loading } from '../utils/utils';
+import { Loading } from '../utils';
 
 export const MyNotifications = () => {
   const myAddress = useMyAddress()

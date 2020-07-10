@@ -3446,10 +3446,10 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.3.7":
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.3.7.tgz#2903371a97a48943d025a7f782f28bbf50acbe12"
-  integrity sha512-L466k2TMkm2bvAjmPAdblJn4ql3hLqsTuK7QtI1YZ0w/N0xO++2MUK2hE8AI0OSGUnNb7rTMhUB5Z1YVDUnFnw==
+"@subsocial/api@^0.3.9":
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.3.9.tgz#1fc67a9585c0a24508ba7f92b1c0482092ab8222"
+  integrity sha512-7O4/Lk7veeZykC/nU4oLqypvESbtrxwKDCwHGFOpPY3LR419quv4N0Jd56IpPldt6/xknK+4qT7aOGY6iIXoyw==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "1.13.1"

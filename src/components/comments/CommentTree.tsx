@@ -46,15 +46,15 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
     const loadComments = async () => {
       const replyIds = await substrate.getReplyIdsByPostId(parentId);
-      const comments = await subsocial.findVisiblePostsWithSomeDetails({ ids: replyIds, withOwner: true }) as any;
+      const comments = await subsocial.findVisiblePostsWithAllDetails(replyIds) as any;
       const replyIdsStr = replyIds.map(x => x.toString())
       setComments(comments)
       useSetReplyToStore(dispatch, { reply: { replyId: replyIdsStr, parentId: parentIdStr }, comment: comments })
     }
 
     if (nonEmptyArr(replyComments)) {
-      const replyId = replyComments.map(x => x.post.struct.id.toString())
-      useSetReplyToStore(dispatch, { reply: { replyId: replyId, parentId: parentIdStr }, comment: replyComments })
+      const replyIds = replyComments.map(x => x.post.struct.id.toString())
+      useSetReplyToStore(dispatch, { reply: { replyId: replyIds, parentId: parentIdStr }, comment: replyComments })
     } else {
       loadComments().catch(err => log.error('Failed to load comments: %o', err))
     }

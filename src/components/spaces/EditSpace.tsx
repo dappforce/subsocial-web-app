@@ -5,10 +5,10 @@ import { Form, Field, withFormik, FormikProps } from 'formik';
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
-import { withCalls, withMulti } from '../substrate';
+import { withCalls, withMulti, spacesQueryToProp, getNewIdFromEvent, getTxParams } from '../substrate';
 import * as DfForms from '../utils/forms';
-import { spacesQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils';
+
+import { Loading } from 'src/components/utils';
 import { useMyAddress } from '../auth/MyAccountContext';
 import BN from 'bn.js';
 import Router from 'next/router';
@@ -24,7 +24,7 @@ import EditableTagGroup from '../utils/EditableTagGroup';
 import { withSpaceIdFromUrl } from './withSpaceIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './SpaceValidation';
 import DfMdEditor from '../utils/DfMdEditor';
-import { getTxParams } from '../utils/substrate/getTxParams';
+
 import useSubsocialEffect from '../api/useSubsocialEffect';
 
 const log = newLogger('Edit space')

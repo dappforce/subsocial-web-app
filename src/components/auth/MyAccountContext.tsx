@@ -2,7 +2,7 @@ import React, { useReducer, createContext, useContext, useEffect } from 'react';
 import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
-import { equalAddresses } from '../utils/substrate';
+import { equalAddresses } from '../substrate';
 
 const log = newLogger('MyAccountContext')
 

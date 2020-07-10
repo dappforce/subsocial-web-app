@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti } from '../substrate';
-import { reactionsQueryToProp, Loading } from '../utils/index';
+import { withCalls, withMulti, reactionsQueryToProp } from '../substrate';
+import { Loading } from '../utils';
 import { Modal, Button, Tabs } from 'antd';
 import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';
@@ -14,7 +14,7 @@ const log = newLogger('List voters')
 
 type VotersProps = {
   id: PostId,
-  reactions?: ReactionId[],
+  reactionIds?: ReactionId[],
   active?: number
   open: boolean,
   close: () => void
@@ -57,23 +57,23 @@ type TabPaneType = {
 const renderTitle = (title: string, voters: Array<Reaction>) => nonEmptyArr(voters) ? `${title} (${voters.length})` : title
 
 const InnerModalVoters = (props: VotersProps) => {
-  const { reactions, open, close, active = ActiveVoters.All } = props;
-  const votersCount = reactions ? reactions.length : 0;
+  const { reactionIds, open, close, active = ActiveVoters.All } = props;
+  const votersCount = reactionIds ? reactionIds.length : 0;
   const [ reactionView, setReactionView ] = useState<Array<Reaction>>();
   const [ trigger, setTrigger ] = useState(false);
   const [ upvoters, downvoters ] = partition(reactionView, (x) => isUpvote(x))
 
   const toggleTrigger = () => {
-    reactions === undefined && setTrigger(!trigger);
+    reactionIds === undefined && setTrigger(!trigger);
   };
 
   useSubsocialEffect(({ substrate }) => {
-    if (!reactions) return toggleTrigger();
+    if (!reactionIds) return toggleTrigger();
 
     let isSubscribe = true;
 
     const loadVoters = async () => {
-      const loadedReaction = await substrate.findReactions(reactions)
+      const loadedReaction = await substrate.findReactions(reactionIds)
       isSubscribe && setReactionView(loadedReaction);
     };
     loadVoters().catch(err => log.error('Failed to load voters:', err));
@@ -119,13 +119,13 @@ const InnerModalVoters = (props: VotersProps) => {
 export const PostVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
-    reactionsQueryToProp(`reactionIdsByPostId`, { paramName: 'id', propName: 'reactions' })
+    reactionsQueryToProp(`reactionIdsByPostId`, { paramName: 'id', propName: 'reactionIds' })
   )
 );
 
 export const CommentVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
-    reactionsQueryToProp(`reactionIdsByCommentId`, { paramName: 'id', propName: 'reactions' })
+    reactionsQueryToProp(`reactionIdsByCommentId`, { paramName: 'id', propName: 'reactionIds' })
   )
 );

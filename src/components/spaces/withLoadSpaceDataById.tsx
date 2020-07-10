@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useSubsocialEffect from '../api/useSubsocialEffect';
-import { Loading } from '../utils/utils';
+import { Loading } from '../utils';
 import NoData from '../utils/EmptyList';
 import { SpaceData, ProfileData } from '@subsocial/types/dto'
 import { ViewSpaceProps } from './ViewSpaceProps';

@@ -70,7 +70,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
     if (!currentAddress) return <div className='m-3'>Click on your account to sign in:</div>
 
     return <>
-      <div className='p-3'>
+      <div className='p-3 pb-0'>
         <ProfilePreview
           size={60}
           className='justify-content-center'

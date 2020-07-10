@@ -3,11 +3,10 @@ import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
-import { withCalls, withMulti } from '../substrate';
+import { withCalls, withMulti, getTxParams, profilesQueryToProp } from '../substrate';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
-import { getTxParams, profilesQueryToProp } from '../utils/index';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 
 import Router from 'next/router';

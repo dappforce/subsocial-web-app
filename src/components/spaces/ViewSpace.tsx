@@ -26,7 +26,7 @@ import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { editSpaceUrl } from '../utils/urls';
-import { getSpaceId } from '../utils/substrate';
+import { getSpaceId } from '../substrate';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
 import SpaceNav from './SpaceNav';
@@ -203,7 +203,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
       renderItem={(item) =>
         <PostPreview
           key={item.post.struct.id.toString()}
-          postStruct={item}
+          postDetails={item}
           withActions
         />
       }

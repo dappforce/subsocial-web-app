@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { nonEmptyStr } from '@subsocial/utils';
-import { formatUnixDate, IconWithLabel } from '../../utils/utils';
+import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import ViewSpacePage from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
 import { Icon, Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
-import { Post, Space, PostExtension } from '@subsocial/types/substrate/interfaces';
-import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto';
+import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces';
+import { SpaceData, PostWithSomeDetails, PostWithAllDetails } from '@subsocial/types/dto';
 import { PostContent as PostContentType } from '@subsocial/types';
 import ViewTags from '../../utils/ViewTags';
 import AuthorPreview from '../../profiles/address-views/AuthorPreview';
@@ -22,6 +22,9 @@ import HiddenPostButton from '../HiddenPostButton';
 import HiddenAlert from 'src/components/utils/HiddenAlert';
 import NoData from 'src/components/utils/EmptyList';
 import { VoterButtons } from 'src/components/voting/VoterButtons';
+import Segment from 'src/components/utils/Segment';
+import { RegularPreview } from '.';
+import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters';
 
 type DropdownProps = {
   account: string | AccountId;
@@ -29,11 +32,27 @@ type DropdownProps = {
   post: Post
 };
 
-export const isRegularPost = (extension: PostExtension) => !(extension.isSharedPost || (extension as any).SharedPost); // hack because SSR don`t undestand methods, only object
+export const isRegularPost = (extension: PostExtension) => extension.isRegularPost || (extension as any).RegularPost === null; // Hack because SSR serializes objects and this drops all methods.
+export const isSharedPost = (extension: PostExtension) => extension.isSharedPost || (extension as any).SharedPost;
+export const isComment = (extension: PostExtension) => extension.isComment || (extension as any).Comment;
+
+type ReactionModalProps = {
+  postId: PostId
+}
+
+const ReactionModal = ({ postId }: ReactionModalProps) => {
+  const [ open, setOpen ] = useState(false)
+
+  return <>
+    <span onClick={() => setOpen(true)}>View reactions</span>
+    <PostVoters id={postId} active={ActiveVoters.All} open={open} close={() => setOpen(false)} />
+  </>
+}
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ account, space, post }) => {
   const isMyPost = isMyAddress(account);
-  const postKey = `post-${post.id.toString}`
+  const postId = post.id
+  const postKey = `post-${postId.toString()}`
 
   const menu = (
     <Menu>
@@ -45,6 +64,9 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
       {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
         <HiddenPostButton post={post} asLink />
       </Menu.Item>}
+      <Menu.Item key={`view-reaction-${postKey}`} >
+        <ReactionModal postId={postId} />
+      </Menu.Item>
       {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
         </Menu.Item>} */}
@@ -94,15 +116,15 @@ export const PostName: React.FunctionComponent<PostNameProps> = ({ space, post, 
 }
 
 type PostCreatorProps = {
-  postStruct: PostWithSomeDetails,
+  postDetails: PostWithSomeDetails,
   withSpaceName: boolean,
   space?: SpaceData
   size?: number,
 }
 
-export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postStruct, size, withSpaceName, space }) => {
-  if (isEmpty(postStruct.post)) return null;
-  const { post: { struct }, owner } = postStruct;
+export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDetails, size, withSpaceName, space }) => {
+  if (isEmpty(postDetails.post)) return null;
+  const { post: { struct }, owner } = postDetails;
   const { created: { account, time } } = struct;
   // TODO replace on loaded space after refactor this components
   return <>
@@ -135,16 +157,16 @@ const renderPostImage = (content?: PostContentType) => {
 }
 
 type PostContentProps = {
-  postStruct: PostWithSomeDetails,
+  postDetails: PostWithSomeDetails,
   space: Space,
   content?: PostContentType
 }
 
-export const PostContent: React.FunctionComponent<PostContentProps> = ({ postStruct, content, space }) => {
-  if (!postStruct) return null;
+export const PostContent: React.FunctionComponent<PostContentProps> = ({ postDetails, content, space }) => {
+  if (!postDetails) return null;
 
-  const { post: { struct: post } } = postStruct
-  const postContent = content || postStruct.post.content;
+  const { post: { struct: post } } = postDetails
+  const postContent = content || postDetails.post.content;
 
   if (!postContent) return null;
 
@@ -156,52 +178,78 @@ export const PostContent: React.FunctionComponent<PostContentProps> = ({ postStr
 }
 
 type PostActionsPanelProps = {
-  postStruct: PostWithSomeDetails,
+  postDetails: PostWithSomeDetails,
   toogleCommentSection?: () => void,
-  preview?: boolean
+  preview?: boolean,
+  withBorder?: boolean
 }
 
-const ShowCommentsAction = ({ postStruct: { post: { struct: { total_replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => (
-  <Action onClick={toogleCommentSection}>
-    <IconWithLabel icon='message' count={total_replies_count} title='Comment' withTitle={!preview} />
-  </Action>
-)
+const ShowCommentsAction = ({ postDetails: { post: { struct: { total_replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => {
+  const title = 'Comment'
 
-const Action: React.FunctionComponent<{ onClick?: () => void }> = ({ children, onClick }) => <Button onClick={onClick} className='DfAction'>{children}</Button>
+  return <Action onClick={toogleCommentSection} title={title}>
+    <IconWithLabel icon='message' count={total_replies_count} label={!preview ? title : undefined} />
+  </Action>
+}
+
+const Action: React.FunctionComponent<{ onClick?: () => void, title?: string }> =
+  ({ children, onClick, title }) =>
+    <Button onClick={onClick} title={title} className='DfAction'>{children}</Button>
 
 export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
-  const { postStruct, preview } = props
-  const { post: { struct } } = postStruct;
+  const { postDetails, preview, withBorder } = props
+  const { post: { struct } } = postDetails;
   const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' preview={preview} />
   return (
-    <div className='DfActionsPanel'>
+    <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'}`}>
       {preview
         ? <ReactionsAction />
-        : <div className='d-flex'>
+        : <div className='d-flex DfReactionsAction'>
           <ReactionsAction />
         </div>}
       {preview && <ShowCommentsAction {...props} />}
-      <SharePostAction postStruct={postStruct} className='DfAction' preview={preview} />
+      <SharePostAction postDetails={postDetails} className='DfAction' preview={preview} />
     </div>
   );
 };
 
 type InfoForPostPreviewProps = {
-  postStruct: PostWithSomeDetails,
+  postDetails: PostWithSomeDetails,
   space: SpaceData
 }
 
-export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> = ({ postStruct, space }) => {
-  const { post: { struct, content } } = postStruct;
+type SharePostContentProps = {
+  postDetails: PostWithAllDetails,
+  space: SpaceData
+}
+
+export const SharePostContent = ({ postDetails: { post: { content }, ext }, space }: SharePostContentProps) => {
+  if (!ext) return null
+
+  const { post: { struct: originalPost } } = ext;
+
+  return <> <div className='DfSharedSummary'>
+    <SummarizeMd md={content?.body} more={renderPostLink(space.struct, originalPost, 'See More')} />
+  </div>
+  <Segment className='DfPostPreview'>
+    {isVisible({ struct: originalPost, address: originalPost.created.account })
+      ? <RegularPreview postDetails={ext as PostWithAllDetails} space={space} />
+      : <PostNotFound />}
+  </Segment>
+  </>
+}
+
+export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> = ({ postDetails, space }) => {
+  const { post: { struct, content } } = postDetails;
   if (!struct || !content) return null;
   return <div className='DfInfo'>
     <div className='DfRow'>
       <div>
         <div className='DfRow'>
-          <PostCreator postStruct={postStruct} space={space} withSpaceName />
+          <PostCreator postDetails={postDetails} space={space} withSpaceName />
           <PostDropDownMenu account={struct.created.account} post={struct} space={space.struct} />
         </div>
-        <PostContent postStruct={postStruct} space={space.struct} />
+        <PostContent postDetails={postDetails} space={space.struct} />
         <ViewTags tags={content?.tags} />
         {/* {withStats && <StatsPanel id={post.id}/>} */}
       </div>

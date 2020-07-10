@@ -3,7 +3,7 @@ import { newLogger } from '@subsocial/utils';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
 import { ExtendedAddressProps } from './types'
-import { Loading } from '../../../utils/utils';
+import { Loading } from '../../../utils';
 
 const log = newLogger(withLoadedOwner.name)
 

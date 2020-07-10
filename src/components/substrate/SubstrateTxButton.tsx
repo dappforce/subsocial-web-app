@@ -34,6 +34,7 @@ export type TxButtonProps = Omit<ButtonProps, 'onClick'> & {
   tx?: string
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
   label?: React.ReactNode
+  title?: string,
   unsigned?: boolean
   onClick?: () => void
   onSuccess?: TxCallback
