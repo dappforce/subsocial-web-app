@@ -8,6 +8,7 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
+import { ZERO } from '.';
 
 type PropsWithSocialAccount = {
   profile?: Profile;
@@ -49,6 +50,21 @@ export const toShortAddress = (_address: AnyAccountId) => {
   return address.length > 13 ? `${address.slice(0, 6)}…${address.slice(-6)}` : address;
 }
 
+export const gtZero = (n?: BN | number | string): boolean => {
+  if (typeof n === 'undefined') return false
+
+  if (typeof n === 'number') {
+    return n > 0
+  } else {
+    try {
+      const bn = new BN(n)
+      return bn.gt(ZERO)
+    } catch {
+      return false
+    }
+  }
+}
+
 type IconWithTitleProps = {
   icon: JSX.Element | string,
   count: BN,
@@ -58,7 +74,7 @@ type IconWithTitleProps = {
 
 export const IconWithLabel = ({ icon, title, count, withTitle }: IconWithTitleProps) => {
   const renderIcon = () => typeof icon === 'string' ? <Icon type={icon} /> : icon;
-  const countStr = count ? count.toString() : undefined
+  const countStr = gtZero(count) ? count.toString() : undefined
   const renderText = () => <span className='ml-2'>
     {withTitle && title
       ? <>
