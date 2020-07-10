@@ -19,19 +19,13 @@ const InnerStatsPanel = (props: StatsProps) => {
 
   const [ commentsSection, setCommentsSection ] = useState(false);
   const [ postVotersOpen, setPostVotersOpen ] = useState(false);
-  const [ activeVoters, setActiveVoters ] = useState(0);
-
-  const openVoters = (type: ActiveVoters) => {
-    setPostVotersOpen(true);
-    setActiveVoters(type);
-  };
 
   if (!postById || postById.isNone) return null;
   const post = postById.unwrap();
 
   const { upvotes_count, downvotes_count, total_replies_count, shares_count, score, id } = post;
   const reactionsCount = new BN(upvotes_count).add(new BN(downvotes_count));
-  const showReactionsModal = () => reactionsCount && openVoters(ActiveVoters.All)
+  const showReactionsModal = () => reactionsCount && setPostVotersOpen(true);
 
   const toggleCommentsSection = goToCommentsId ? undefined : () => setCommentsSection(!commentsSection)
   const comments = <Pluralize count={total_replies_count} singularText='Comment' />
@@ -52,7 +46,7 @@ const InnerStatsPanel = (props: StatsProps) => {
       <MutedSpan><Pluralize count={shares_count} singularText='Share' /></MutedSpan>
       <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan>
     </div>
-    {<PostVoters id={id} active={activeVoters} open={postVotersOpen} close={() => setPostVotersOpen(false)} />}
+    <PostVoters id={id} active={ActiveVoters.All} open={postVotersOpen} close={() => setPostVotersOpen(false)} />
   </>;
 };
 
