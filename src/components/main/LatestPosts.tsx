@@ -19,7 +19,7 @@ export const LatestPosts = (props: Props) => {
     title={`Latest posts`}
     dataSource={postsData}
     renderItem={(item) =>
-      <PostPreview postStruct={item} withActions />
+      <PostPreview postDetails={item} withActions />
     }
   />
 }

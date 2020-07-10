@@ -203,7 +203,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
       renderItem={(item) =>
         <PostPreview
           key={item.post.struct.id.toString()}
-          postStruct={item}
+          postDetails={item}
           withActions
         />
       }

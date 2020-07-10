@@ -10,15 +10,15 @@ export type BarePreviewProps = {
 }
 
 export type PreviewProps = BarePreviewProps & {
-  postStruct: PostWithAllDetails,
+  postDetails: PostWithAllDetails,
   space?: SpaceData
 }
 
 export function PostPreview (props: PreviewProps) {
-  const { postStruct, space: externalSpace, asRegularPost } = props
-  const { space, post: { struct: { extension } } } = postStruct
+  const { postDetails, space: externalSpace, asRegularPost } = props
+  const { space, post: { struct: { extension } } } = postDetails
   return <Segment className='DfPostPreview'>
-    <HiddenPostAlert post={postStruct} />
+    <HiddenPostAlert post={postDetails} />
     {asRegularPost || isRegularPost(extension as PostExtension)
       ? <RegularPreview space={externalSpace || space} {...props} />
       : <SharedPreview space={externalSpace || space} {...props} />}
