@@ -4,15 +4,13 @@ import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
 import EditableTagGroup from '../utils/EditableTagGroup'
 import { registry } from '@subsocial/types/substrate/registry';
-import { withCalls, withMulti } from '../substrate';
+import { withCalls, withMulti, getNewIdFromEvent, getTxParams, postsQueryToProp, spacesQueryToProp } from '../substrate';
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
 import { useMyAddress } from '../auth/MyAccountContext';
-import { getTxParams, postsQueryToProp, spacesQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils';
 import BN from 'bn.js';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
@@ -28,6 +26,7 @@ import { Icon } from 'antd';
 import SpacegedSectionTitle from '../spaces/SpacedSectionTitle';
 import DfMdEditor from '../utils/DfMdEditor';
 import useSubsocialEffect from '../api/useSubsocialEffect';
+import { Loading } from '../utils';
 
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
