@@ -32,7 +32,7 @@ type DropdownProps = {
   post: Post
 };
 
-export const isRegularPost = (extension: PostExtension) => extension.isRegularPost || (extension as any).RegularPost === null; // hack because SSR don`t undestand methods, only object
+export const isRegularPost = (extension: PostExtension) => extension.isRegularPost || (extension as any).RegularPost === null; // Hack because SSR serializes objects and this drops all methods.
 export const isSharedPost = (extension: PostExtension) => extension.isSharedPost || (extension as any).SharedPost;
 export const isComment = (extension: PostExtension) => extension.isComment || (extension as any).Comment;
 
