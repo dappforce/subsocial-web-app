@@ -11,7 +11,7 @@ import { Icon, Menu, Dropdown } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
 import { Post, Space, PostExtension } from '@subsocial/types/substrate/interfaces';
 import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto';
-import { PostExtContent } from '../LoadPostUtils'
+import { PostContent as PostContentType } from '@subsocial/types';
 import ViewTags from '../../utils/ViewTags';
 import AuthorPreview from '../../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../../utils/md/SummarizeMd';
@@ -125,19 +125,19 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postStr
   </>;
 };
 
-const renderPostImage = (content?: PostExtContent) => {
+const renderPostImage = (content?: PostContentType) => {
   if (!content) return null;
 
   const { image } = content;
 
   return nonEmptyStr(image) &&
-      <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
+    <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
 }
 
 type PostContentProps = {
   postStruct: PostWithSomeDetails,
   space: Space,
-  content?: PostExtContent
+  content?: PostContentType
 }
 
 export const PostContent: React.FunctionComponent<PostContentProps> = ({ postStruct, content, space }) => {
