@@ -164,13 +164,17 @@ type PostActionsPanelProps = {
   withBorder?: boolean
 }
 
-const ShowCommentsAction = ({ postStruct: { post: { struct: { total_replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => (
-  <Action onClick={toogleCommentSection}>
-    <IconWithLabel icon='message' count={total_replies_count} label='Comment' withTitle={!preview} />
-  </Action>
-)
+const ShowCommentsAction = ({ postStruct: { post: { struct: { total_replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => {
+  const title = 'Comment'
 
-const Action: React.FunctionComponent<{ onClick?: () => void }> = ({ children, onClick }) => <Button onClick={onClick} className='DfAction'>{children}</Button>
+  return <Action onClick={toogleCommentSection} title={title}>
+    <IconWithLabel icon='message' count={total_replies_count} label={title} withTitle={!preview} />
+  </Action>
+}
+
+const Action: React.FunctionComponent<{ onClick?: () => void, title?: string }> =
+  ({ children, onClick, title }) =>
+    <Button onClick={onClick} title={title} className='DfAction'>{children}</Button>
 
 export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
   const { postStruct, preview, withBorder } = props

@@ -66,6 +66,7 @@ const VoterButton = ({
     }
     params={buildTxParams()}
     onSuccess={onSuccess}
+    title={preview ? reactionType : undefined}
   >
     <IconWithLabel
       icon={ <Icon
@@ -74,7 +75,7 @@ const VoterButton = ({
         twoToneColor={isActive ? color : undefined }
       />}
       count={count}
-      title={reactionType}
+      label={reactionType}
       withTitle={!preview}
     />
   </TxButton>
