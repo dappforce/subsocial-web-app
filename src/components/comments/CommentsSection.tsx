@@ -4,7 +4,7 @@ import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
 import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
-import { PostWithAllDetails, PostData } from '@subsocial/types/dto';
+import { PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto';
 import { NextPage } from 'next';
 import { getProfileName } from '../utils/substrate';
 import { Pluralize } from '../utils/Plularize';
@@ -14,7 +14,7 @@ import Section from '../utils/Section';
 
 type CommentSectionProps = {
   space: Space,
-  post: PostWithAllDetails,
+  post: PostWithSomeDetails,
   replies?: PostWithAllDetails[],
   hashId?: string
 }

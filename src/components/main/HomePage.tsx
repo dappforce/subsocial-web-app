@@ -2,7 +2,6 @@ import React from 'react';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 
-import { PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { LatestSpaces } from './LatestSpaces';
@@ -54,7 +53,7 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const spacesData = await subsocial.findVisibleSpaces(latestSpaceIds)
 
   const latestPostIds = getLastNIds(nextPostId, FIVE);
-  const postsData = await subsocial.findVisiblePostsWithAllDetails({ ids: latestPostIds as PostId[] });
+  const postsData = await subsocial.findVisiblePostsWithAllDetails(latestPostIds);
 
   return {
     spacesData,
