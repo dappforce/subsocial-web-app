@@ -53,17 +53,17 @@ export const toShortAddress = (_address: AnyAccountId) => {
 type IconWithTitleProps = {
   icon: JSX.Element | string,
   count: BN,
-  title?: string,
+  label?: string,
   withTitle?: boolean
 }
 
-export const IconWithLabel = ({ icon, title, count, withTitle }: IconWithTitleProps) => {
+export const IconWithLabel = ({ icon, label, count, withTitle }: IconWithTitleProps) => {
   const renderIcon = () => typeof icon === 'string' ? <Icon type={icon} /> : icon;
   const countStr = count ? count.toString() : undefined
   const renderText = () => <span className='ml-2'>
-    {withTitle && title
+    {withTitle && label
       ? <>
-        {title}
+        {label}
         {countStr && ` (${countStr})`}
       </>
       : countStr}
