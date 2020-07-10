@@ -47,8 +47,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, stat
     <ViewPostLink space={spaceStruct} post={parentPost.struct} title={parentPost.content?.title} />
   </>
   const titleMsg = isRegular
-    ? renderResponseTitle(postStruct.ext?.post)
-    : title
+    ? title
+    : renderResponseTitle(postStruct.ext?.post)
 
   return <>
     <HiddenPostAlert post={postStruct} />
@@ -68,7 +68,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postStruct, replies, stat
           {body && <DfMd source={body} />}
           {/* {renderSpacePreview(post)} */}
         </div>
-        {!isRegular && ext &&
+        {ext &&
           <PostPreview postStruct={ext as PostWithAllDetails} space={ext.space as SpaceData} asRegularPost /> }
         <ViewTags tags={tags} />
         <div className='DfRow'>
