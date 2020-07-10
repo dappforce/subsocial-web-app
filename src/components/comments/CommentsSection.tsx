@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
@@ -22,7 +22,7 @@ type CommentSectionProps = {
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [] }) => {
   const { post: { struct } } = post;
   const { total_replies_count, id } = struct
-  const [ totalCount ] = useState(total_replies_count.toString())
+  const totalCount = total_replies_count.toString()
 
   return <Section id={hashId} className='DfCommentSection'>
     <h3><Pluralize count={totalCount} singularText='comment' /></h3>

@@ -45,7 +45,7 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies, setShowReplies ] = useState(withShowReplies);
-  const [ repliesCount ] = useState(direct_replies_count.toString())
+  const repliesCount = direct_replies_count.toString()
 
   const isFake = id.toString().startsWith('fake')
   const isMyStruct = myAddress === account.toString()
