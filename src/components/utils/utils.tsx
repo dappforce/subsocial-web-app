@@ -8,6 +8,7 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
+import { ZERO } from '.';
 
 type PropsWithSocialAccount = {
   profile?: Profile;
@@ -73,3 +74,23 @@ export const IconWithLabel = ({ icon, title, count, withTitle }: IconWithTitlePr
     {renderText()}
   </>
 }
+
+export const calcVotingPercentage = (upvotesCount: BN, downvotesCount: BN) => {
+  const totalCount = upvotesCount.add(downvotesCount);
+  if (totalCount.eq(ZERO)) return 0;
+
+  const per = upvotesCount.toNumber() / totalCount.toNumber() * 100;
+  const ceilPer = Math.ceil(per);
+
+  if (per >= 50) {
+    return {
+      percantage: ceilPer,
+      color: 'green'
+    };
+  } else {
+    return {
+      percantage: 100 - ceilPer,
+      color: 'red'
+    };
+  }
+};
