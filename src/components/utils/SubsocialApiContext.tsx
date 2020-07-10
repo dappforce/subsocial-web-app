@@ -11,13 +11,16 @@ import { useSubstrate } from '../substrate';
 const log = newLogger('SubsocialApiContext')
 
 export type SubsocialApiState = {
-  subsocial?: SubsocialApi,
-  substrate?: SubsocialSubstrateApi,
-  ipfs?: SubsocialIpfsApi,
+  subsocial: SubsocialApi
+  substrate: SubsocialSubstrateApi
+  ipfs: SubsocialIpfsApi
   isApiReady: boolean
 }
 
 const emptyState: SubsocialApiState = {
+  subsocial: {} as SubsocialApi,
+  substrate: {} as SubsocialSubstrateApi,
+  ipfs: {} as SubsocialIpfsApi,
   isApiReady: false
 }
 
@@ -108,14 +111,6 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
 
 export function useSubsocialApi (): SubsocialApiState {
   return { ...useContext(SubsocialApiContext).state }
-}
-
-export function useSubstrateApi () {
-  return useSubsocialApi().substrate
-}
-
-export function useIpfsApi () {
-  return useSubsocialApi().ipfs
 }
 
 export default SubsocialApiProvider
