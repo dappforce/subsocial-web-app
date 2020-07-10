@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti } from '../substrate';
-import { getTxParams, spacesQueryToProp } from '../utils/index';
+import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../substrate';
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti } from '../substrate';
-import { reactionsQueryToProp, Loading } from '../utils/index';
+import { withCalls, withMulti, reactionsQueryToProp } from '../substrate';
+import { Loading } from '../utils';
 import { Modal, Button, Tabs } from 'antd';
 import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { Pluralize } from '../utils/Plularize';

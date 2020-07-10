@@ -4,7 +4,7 @@ import Router, { useRouter } from 'next/router';
 import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
 import { isMobile, isBrowser } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { Loading } from '../components/utils/utils';
+import { Loading } from '../components/utils';
 import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import Link from 'next/link';

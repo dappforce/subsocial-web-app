@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { nonEmptyStr } from '@subsocial/utils';
-import { formatUnixDate, IconWithLabel } from '../../utils/utils';
+import { formatUnixDate, IconWithLabel } from '../../utils';
 import ViewSpacePage from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';

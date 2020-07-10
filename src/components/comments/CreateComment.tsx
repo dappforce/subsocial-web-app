@@ -3,7 +3,7 @@ import { PostExtension, CommentExt, OptionId } from '@subsocial/types/substrate/
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
 import dynamic from 'next/dynamic';
-import { getNewIdFromEvent, getTxParams } from '../utils/substrate';
+import { getNewIdFromEvent, getTxParams } from '../substrate';
 import BN from 'bn.js'
 import { useDispatch } from 'react-redux';
 import { useMyAddress } from '../auth/MyAccountContext';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import BN from 'bn.js';
-import { Loading } from '../../utils/utils';
+import { Loading } from '../../utils';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from './PostPreview';

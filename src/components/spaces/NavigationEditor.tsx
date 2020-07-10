@@ -3,8 +3,8 @@ import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
-import { spacesQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils';
+import { spacesQueryToProp, getNewIdFromEvent, getTxParams, withMulti, withCalls } from '../substrate';
+import { Loading } from '../utils';
 import { useMyAddress } from '../auth/MyAccountContext';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
@@ -19,11 +19,9 @@ import SpacegedSectionTitle from './SpacedSectionTitle';
 import { Space, IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { SpaceContent, NavTab } from '@subsocial/types/offchain';
 import { SpaceUpdate, OptionText, OptionOptionText, OptionBool } from '@subsocial/types/substrate/classes';
-import { withMulti, withCalls } from '../substrate';
 import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';
-import { getTxParams } from '../utils/substrate/getTxParams'
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { TxFailedCallback, TxCallback } from '../substrate/SubstrateTxButton';
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
 import BN from 'bn.js'
-import { getSpaceId } from '../utils/substrate';
+import { getSpaceId } from '../substrate';
 
 export function withSpaceIdFromUrl<Props = { id: SpaceId }>
   (Component: React.ComponentType<Props>) {

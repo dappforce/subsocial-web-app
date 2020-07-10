@@ -8,7 +8,7 @@ import { Space } from '@subsocial/types/substrate/interfaces';
 import { useMyAddress } from '../auth/MyAccountContext';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
-import { formatUnixDate } from '../utils/utils';
+import { formatUnixDate } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'

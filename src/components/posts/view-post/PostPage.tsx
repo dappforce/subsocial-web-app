@@ -12,7 +12,7 @@ import { isRegularPost, PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotF
 import Error from 'next/error'
 import { NextPage } from 'next';
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
-import { getSpaceId, unwrapSubstrateId } from 'src/components/utils/substrate';
+import { getSpaceId, unwrapSubstrateId } from 'src/components/substrate';
 import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';

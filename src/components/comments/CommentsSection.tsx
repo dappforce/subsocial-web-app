@@ -6,7 +6,7 @@ import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
 import { PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto';
 import { NextPage } from 'next';
-import { getProfileName } from '../utils/substrate';
+import { getProfileName } from '../substrate';
 import { Pluralize } from '../utils/Plularize';
 import ViewPostLink from '../posts/ViewPostLink';
 import { CommentsTree } from './CommentTree';

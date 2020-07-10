@@ -8,7 +8,7 @@ import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
 import { hexToBn } from '@polkadot/util';
 import useSubsocialEffect from '../api/useSubsocialEffect';
-import { Loading } from '../utils/utils';
+import { Loading } from '../utils';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
 

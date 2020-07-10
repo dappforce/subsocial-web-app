@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { withCalls, withMulti } from '../substrate';
+import { withCalls, withMulti, spaceFollowsQueryToProp, profileFollowsQueryToProp } from '../substrate';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { spaceFollowsQueryToProp, profileFollowsQueryToProp } from '../utils/index';
 import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
 import ListData from '../utils/DataList';

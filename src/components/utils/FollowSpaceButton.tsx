@@ -4,7 +4,7 @@ import TxButton from './TxButton';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
 import { newLogger, notDef } from '@subsocial/utils';
-import { Loading } from './utils';
+import { Loading } from '.';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 
 const log = newLogger('FollowSpaceButton')

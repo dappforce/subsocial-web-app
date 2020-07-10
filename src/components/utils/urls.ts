@@ -1,5 +1,5 @@
 import { Space, Post, SpaceId } from '@subsocial/types/substrate/interfaces'
-import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from './substrate'
+import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from '../substrate'
 import { newLogger, nonEmptyStr, notDef, nonEmptyArr } from '@subsocial/utils'
 
 const log = newLogger('URLs')
