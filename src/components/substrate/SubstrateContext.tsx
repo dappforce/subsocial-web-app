@@ -153,12 +153,12 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
       _api.isReady.then((_api) => onConnectSuccess())
     }
 
-    // We want to listen to event for disconnection and reconnection.
-    //  That's why we set for listeners.
     _api.on('connected', onConnect)
     _api.on('ready', onReady)
-
     _api.on('error', err => dispatch({ type: 'CONNECT_ERROR', payload: err }))
+    _api.on('disconnected', () => log.info(`Disconnected from Substrate node ${endpoint}`))
+
+    return () => _api?.disconnect()
   }, [ api, endpoint, rpc, types, dispatch ])
 
   // hook to get injected accounts

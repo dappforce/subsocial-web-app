@@ -1,7 +1,6 @@
 import React from 'react';
 import { PostUpdate, OptionBool } from '@subsocial/types/substrate/classes';
 import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
-import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { CommentContent, PostContent } from '@subsocial/types';
 import { registry } from '@subsocial/types/substrate/registry';
@@ -53,7 +52,7 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
         setIpfsHash
       })}
       tx='posts.updatePost'
-      onFailed={(txResult: SubmittableResult | null) => {
+      onFailed={(txResult) => {
         updatePostToStore(content as PostContent)
         onFailed && onFailed(txResult)
       }}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps, FieldArray } from 'formik';
 import { Option } from '@polkadot/types';
@@ -12,7 +12,6 @@ import { AutoComplete, Switch, Affix, Alert } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
 import EditableTagGroup from '../utils/EditableTagGroup';
 import ReorderNavTabs from '../utils/ReorderNavTabs';
-import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { withSpaceIdFromUrl } from './withSpaceIdFromUrl';
 import { validationSchema } from './NavValidation';
@@ -25,6 +24,8 @@ import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';
 import { getTxParams } from '../utils/substrate/getTxParams'
+import useSubsocialEffect from '../api/useSubsocialEffect';
+import { TxFailedCallback, TxCallback } from '../substrate/SubstrateTxButton';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -125,15 +126,15 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
-  const onTxFailed = () => {
+  const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     setSubmitting(false);
   };
 
-  const onTxSuccess = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (txResult) => {
     setSubmitting(false);
 
-    const _id = id || getNewIdFromEvent(_txResult);
+    const _id = id || getNewIdFromEvent(txResult);
     _id && goToView(_id);
   };
 
@@ -291,7 +292,6 @@ type LoadStructProps = OuterProps & {
 // TODO refactor copypasta. See the same function in EditSpace
 function LoadStruct (props: LoadStructProps) {
   const myAddress = useMyAddress()
-  const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<SpaceContent>();
   const [ struct, setStruct ] = useState<Space>();
@@ -302,12 +302,12 @@ function LoadStruct (props: LoadStructProps) {
     json === undefined && setTrigger(!trigger);
   };
 
-  useEffect(() => {
+  useSubsocialEffect(({ ipfs }) => {
     if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
     setStruct(structOpt.unwrap());
 
-    if (struct === undefined) return toggleTrigger();
+    if (!struct) return toggleTrigger();
 
     ipfs.findSpace(struct.ipfs_hash.toString()).then(json => {
       setJson(json);
@@ -323,7 +323,7 @@ function LoadStruct (props: LoadStructProps) {
   }
 
   if (structOpt.isNone) {
-    return <em>Space not found...</em>;
+    return <em>Space not found</em>;
   }
 
   return <NavigationEditor {...props} struct={struct} json={json as SpaceContent} />;

@@ -3,7 +3,6 @@ import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
-import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '../substrate';
 
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
@@ -82,12 +81,12 @@ const InnerForm = (props: FormProps) => {
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
-  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+  const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash.toString()).catch(err => new Error(err));
     setSubmitting(false);
   };
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = () => {
     setSubmitting(false);
     goToView();
   };

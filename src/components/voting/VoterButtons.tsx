@@ -69,7 +69,7 @@ const VoterButton = ({
     title={preview ? reactionType : undefined}
   >
     <IconWithLabel
-      icon={ <Icon
+      icon={<Icon
         type={isUpvote ? 'like' : 'dislike'}
         theme={isActive ? 'twoTone' : 'outlined'}
         twoToneColor={isActive ? color : undefined }

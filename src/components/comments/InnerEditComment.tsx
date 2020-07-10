@@ -4,7 +4,6 @@ import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { SubmittableResult } from '@polkadot/api';
 import SimpleMDEReact from 'react-simplemde-editor';
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
 import { CommentContent } from '@subsocial/types';
@@ -46,7 +45,7 @@ export const InnerEditComment = (props: Props) => {
 
   const { isSubmitting, dirty } = formState;
 
-  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+  const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     cancelCallback()
   };

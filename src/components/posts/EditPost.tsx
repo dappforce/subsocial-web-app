@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
-import { SubmittableResult } from '@polkadot/api';
 import EditableTagGroup from '../utils/EditableTagGroup'
 import { registry } from '@subsocial/types/substrate/registry';
 import { withCalls, withMulti } from '../substrate';
@@ -28,6 +27,7 @@ import SelectSpacePreview from '../utils/SelectSpacePreview';
 import { Icon } from 'antd';
 import SpacegedSectionTitle from '../spaces/SpacedSectionTitle';
 import DfMdEditor from '../utils/DfMdEditor';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -103,17 +103,17 @@ const InnerForm = (props: FormProps) => {
   const [ showAdvanced, setShowAdvanced ] = useState(false)
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
-  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+  const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     setSubmitting(false);
   };
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (txResult) => {
     setSubmitting(false);
 
     closeModal && closeModal();
 
-    const _id = id || getNewIdFromEvent(_txResult);
+    const _id = id || getNewIdFromEvent(txResult);
     _id && isRegularPost && goToView(_id);
   };
 
@@ -304,7 +304,6 @@ type LoadStructProps = OuterProps & {
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
     const myAddress = useMyAddress()
-    const { ipfs } = useSubsocialApi()
     const { structOpt } = props;
     const [ json, setJson ] = useState<PostContent>();
     const [ struct, setStruct ] = useState<Post>();
@@ -315,12 +314,12 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       json === undefined && setTrigger(!trigger);
     };
 
-    useEffect(() => {
+    useSubsocialEffect(({ ipfs }) => {
       if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
       setStruct(structOpt.unwrap());
 
-      if (struct === undefined) return toggleTrigger();
+      if (!struct) return toggleTrigger();
 
       ipfs.findPost(struct.ipfs_hash).then(json => {
         setJson(json);
