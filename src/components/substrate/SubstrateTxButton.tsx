@@ -5,6 +5,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/promise/types'
 import { SubmittableResult } from '@polkadot/api'
 import { AddressOrPair } from '@polkadot/api/submittable/types'
 import { web3FromSource } from '@polkadot/extension-dapp'
+import { isFunction } from '@polkadot/util'
 
 import { newLogger, isEmptyStr, nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import { useSubstrate } from '.'
@@ -14,9 +15,7 @@ import { useAuth } from '../auth/AuthContext'
 
 const log = newLogger('TxButton')
 
-function isFunction (maybeFn?: any): maybeFn is Function {
-  return typeof maybeFn === 'function'
-}
+const logStatus = (status: string) => log.debug(status)
 
 export type GetTxParamsFn = () => any[]
 
@@ -25,8 +24,6 @@ export type GetTxParamsAsyncFn = () => Promise<any[]>
 export type TxCallback = (status: SubmittableResult) => void
 
 export type TxFailedCallback = (status: SubmittableResult | null) => void
-
-const DefaultStatusLogger = (status: string) => log.debug(status)
 
 type SuccessMessageFn = (status: SubmittableResult) => Message
 type FailedMessageFn = (status: SubmittableResult | null) => Message
@@ -43,13 +40,9 @@ export type TxButtonProps = Omit<ButtonProps, 'onClick'> & {
   onClick?: () => void
   onSuccess?: TxCallback
   onFailed?: TxFailedCallback
-  withSpinner?: boolean
-
-  // TODO maybe delete
-  logStatus?: (status: string) => void
-
   successMessage?: SuccessMessage
   failedMessage?: FailedMessage
+  withSpinner?: boolean
 }
 
 export function TxButton ({
@@ -65,8 +58,6 @@ export function TxButton ({
   successMessage,
   failedMessage,
   withSpinner,
-  logStatus = DefaultStatusLogger,
-
   children,
   ...antdProps
 }: TxButtonProps) {
@@ -75,7 +66,8 @@ export function TxButton ({
   const [ unsub, setUnsub ] = useState<() => void>()
   const [ isSending, , setIsSending ] = useToggle(false)
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-  const isAuthRequired = !accountId || !isTokens;
+
+  const isAuthRequired = !accountId || !isTokens
   const buttonLabel = label || children
 
   if (!api || !api.isReady) {
@@ -87,13 +79,6 @@ export function TxButton ({
       >{buttonLabel}</Button>
     )
   }
-
-  // TODO use Auth here. See in AppsTxButton component:
-  // const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-
-  // TODO used for debug
-  // let b: TxButtonProps = {} as TxButtonProps
-  // b.disabled
 
   // TODO Try to cache this with useCallback
   const requireKeyPair = () => {
@@ -138,9 +123,6 @@ export function TxButton ({
 
   const getExtrinsic = async (): Promise<SubmittableExtrinsic> => {
     const [ pallet, method ] = (tx || '').split('.')
-
-    // log.debug('Substrate api:', api)
-    // log.debug('Account id:', accountId)
 
     if (!api.tx[pallet]) {
       throw new Error(`Unable to find api.tx.${pallet}`)
@@ -264,7 +246,7 @@ export function TxButton ({
     }
   }
 
-  const _disabled =
+  const isDisabled =
     disabled ||
     isSending ||
     isEmptyStr(tx)
@@ -275,12 +257,12 @@ export function TxButton ({
       onClick={() => {
         if (isAuthRequired) {
           openSignInModal('AuthRequired')
-          return setIsSending(false);
+          return setIsSending(false)
         }
 
         sendTx()
       }}
-      disabled={_disabled}
+      disabled={isDisabled}
       loading={withSpinner && isSending}
     >{buttonLabel}</Button>
   )
