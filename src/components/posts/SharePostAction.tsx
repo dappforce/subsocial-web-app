@@ -1,31 +1,37 @@
 import React, { useState } from 'react'
-import { PostId } from '@subsocial/types/substrate/interfaces'
-import { Icon } from 'antd'
+import { PostWithSomeDetails } from '@subsocial/types/dto';
+import { PostExtension } from '@subsocial/types/substrate/classes';
+import { Button } from 'antd'
 import { ShareModal } from './ShareModal'
+import { isRegularPost } from './view-post';
+import { IconWithLabel } from '../utils';
 
 type Props = {
-  postId?: PostId
+  postStruct: PostWithSomeDetails
   title?: React.ReactNode
   className?: string,
-  withIcon?: boolean
+  preview?: boolean
 }
 
 export const SharePostAction = ({
-  postId,
-  title = 'Share',
-  className = '',
-  withIcon = true
+  postStruct: {
+    post: { struct: { id, shares_count, extension } },
+    ext
+  },
+  preview,
+  className = ''
 }: Props) => {
 
   const [ open, setOpen ] = useState<boolean>()
-
-  return <>
-    <span className={className} onClick={() => setOpen(true)}>
-      {withIcon && <><Icon type='share-alt' /> {' '}</>}
-      {title}
-    </span>
-    <ShareModal postId={postId} open={open} onClose={() => setOpen(false)} />
-  </>
+  const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
+  return (
+    <>
+      <Button className={className} onClick={() => setOpen(true)}>
+        <IconWithLabel icon='share-alt' count={shares_count} title='Share' withTitle={!preview} />
+      </Button>
+      <ShareModal postId={postId} open={open} close={() => setOpen(false)} />
+    </>
+  )
 }
 
 export default SharePostAction

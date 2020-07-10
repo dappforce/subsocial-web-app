@@ -8,6 +8,7 @@ import { newLogger } from '@subsocial/utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { useMyAccount } from '../auth/MyAccountContext';
 import { BareProps } from '../utils/types';
+import { IconWithLabel } from '../utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -15,20 +16,30 @@ const log = newLogger('VoterButtons')
 
 type VoterProps = BareProps & {
   post: Post,
+  preview?: boolean
 }
 
 type ReactionType = 'Upvote' | 'Downvote'
 
 type VoterButtonProps = VoterProps & {
   reactionType: ReactionType,
-  reaction: Reaction,
-  onSuccess?: () => void
+  reaction?: Reaction,
+  onSuccess?: () => void,
+  preview?: boolean
 };
 
-const VoterButton = ({ reactionType, reaction, post: { id }, className, style, onSuccess }: VoterButtonProps) => {
+const VoterButton = ({
+  reactionType,
+  reaction,
+  post: { id, upvotes_count, downvotes_count },
+  className,
+  style,
+  onSuccess,
+  preview
+}: VoterButtonProps) => {
   const kind = reaction ? reaction && reaction.kind.toString() : 'None';
   const isUpvote = reactionType === 'Upvote'
-
+  const count = isUpvote ? upvotes_count : downvotes_count
   const buildTxParams = () => {
     if (reaction === undefined) {
       return [ id, new ReactionKind(reactionType) ];
@@ -48,7 +59,7 @@ const VoterButton = ({ reactionType, reaction, post: { id }, className, style, o
 
   return <TxButton
     className={`DfVoterButton ${className}`}
-    style={style}
+    style={{ color: isActive ? color : '', ...style }}
     tx={!reaction
       ? `reactions.createPostReaction`
       : changeReactionTx
@@ -56,10 +67,15 @@ const VoterButton = ({ reactionType, reaction, post: { id }, className, style, o
     params={buildTxParams()}
     onSuccess={onSuccess}
   >
-    <Icon
-      type={isUpvote ? 'like' : 'dislike'}
-      theme={isActive ? 'twoTone' : 'outlined'}
-      twoToneColor={isActive ? color : undefined }
+    <IconWithLabel
+      icon={<Icon
+        type={isUpvote ? 'like' : 'dislike'}
+        theme={isActive ? 'twoTone' : 'outlined'}
+        twoToneColor={isActive ? color : undefined }
+      />}
+      count={count}
+      title={reactionType}
+      withTitle={!preview}
     />
   </TxButton>
 }
@@ -67,7 +83,8 @@ const VoterButton = ({ reactionType, reaction, post: { id }, className, style, o
 type VoterButtonsProps = VoterProps & {
   only?: 'Upvote' | 'Downvote',
 }
-export const VoterButtons = ({ post, className, style, only }: VoterButtonsProps) => {
+export const VoterButtons = (props: VoterButtonsProps) => {
+  const { post, only } = props
   const [ reactionState, setReactionState ] = useState<Reaction>();
   const { state: { address } } = useMyAccount();
 
@@ -104,15 +121,11 @@ export const VoterButtons = ({ post, className, style, only }: VoterButtonsProps
     return () => { isSubscribe = false; };
   }, [ reloadTrigger, address, state ]);
 
-  if (!reactionState) return null
-
   const renderVoterButton = (reactionType: ReactionType) => <VoterButton
-    post={post}
     reaction={reactionState}
     reactionType={reactionType}
-    className={className}
-    style={style}
     onSuccess={() => setReloadTrigger(!reloadTrigger)}
+    {...props}
   />
 
   const UpvoteButton = () => only !== 'Downvote' ? renderVoterButton('Upvote') : null

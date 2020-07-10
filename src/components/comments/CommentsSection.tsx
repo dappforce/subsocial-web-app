@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Post, Space } from '@subsocial/types/substrate/interfaces'
+import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
 import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
-import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
+import { PostWithAllDetails, PostData } from '@subsocial/types/dto';
 import { NextPage } from 'next';
 import { getProfileName } from '../utils/substrate';
 import { Pluralize } from '../utils/Plularize';
@@ -15,13 +15,14 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 
 type CommentSectionProps = {
   space: Space,
-  post: Post,
+  post: PostWithAllDetails,
   replies?: PostWithAllDetails[],
   hashId?: string
 }
 
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [] }) => {
-  const { total_replies_count, id } = post;
+  const { post: { struct } } = post;
+  const { total_replies_count, id } = struct
   const [ totalCount, setCount ] = useState(total_replies_count.toString())
 
   useSubsocialEffect(({ substrate }) => {
@@ -37,9 +38,9 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
   return <Section id={hashId} className='DfCommentSection'>
     <h3><Pluralize count={totalCount} singularText='comment' /></h3>
     <NewComment
-      post={post}
+      post={struct}
     />
-    <CommentsTree parentId={post.id} space={space} replies={replies} />
+    <CommentsTree parentId={id} space={space} replies={replies} />
   </Section>
 })
 
@@ -64,7 +65,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
   return <Section className='DfContentPage DfEntirePost'>
     <HeadMeta title={`${profileName} commented on ${content?.title}`} desc={mdToText(content?.body)} />
     {renderResponseTitle()}
-    <ViewComment owner={owner} space={space} struct={struct} content={content} replies={replies} withShowReplies />
+    <ViewComment space={space} comment={comment} replies={replies} withShowReplies />
   </Section>
 
 }
