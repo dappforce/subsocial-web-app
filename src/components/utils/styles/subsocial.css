@@ -4,7 +4,7 @@ body,
 #root {
   background-color: $color_page_bg !important;
   color: $color_font_normal !important;
-  font-size: 16px !important;
+  font-size: $font_normal !important;
 }
 
 /* Common Resusable Classes */
@@ -16,14 +16,12 @@ body,
   position: relative;
   -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
   box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
-  margin: $space_normal 0;
   border-radius: .28571429rem;
   border: 1px solid rgba(34,36,38,.15);
 }
 
 .ant-modal-body {
   padding: $space_small;
-  padding-top: 0;
 }
 
 .DfLinkOnHover {
@@ -167,6 +165,8 @@ body,
 }
 
 .DfSummary {
+  font-size: $font_normal;
+  color: $color_font_normal;
   word-break: break-word;
   margin: $space_small 0;
   /* white-space: pre-wrap; */
@@ -209,7 +209,7 @@ body,
   margin-bottom: $space_normal !important;
   margin-right: $space_normal;
   color: $color_font_normal;
-  font-size: 2.5rem;
+  font-size: $font_large;
 }
 
 .DfPostImage {
@@ -611,38 +611,6 @@ hr {
   }
 }
 
-.DfPostPreview {
-  h2 {
-    margin-top: $space_normal;
-  }
-
-  .DfSharedSummary {
-    margin-top: $space_tiny;
-    font-size: $font_large;
-    width: 95%;
-  }
-
-  .DfCountsPreview {
-    justify-content: flex-end;
-  }
-
-  .DfCommentsByPost {
-    margin: 0 !important;
-
-    .DfCommentContent {
-      .text {
-        background-color: #f5f5f5;
-        @extend .DfNoBoxShadow;
-      }
-    }
-  }
-
-  .ui.button {
-    min-width: initial;
-    max-height: initial;
-  }
-}
-
 .NotificationItem {
   border-bottom: 1px solid $color_light_border;
   padding: $space_small;
@@ -660,7 +628,9 @@ hr {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid rgba(34, 36, 38, .15);
+  &.DfActionBorder {
+    border-top: 1px solid rgba(34, 36, 38, .15);
+  }
 }
 
 .DfAction {
@@ -676,6 +646,7 @@ hr {
 
   &:hover, &:active, &:focus {
     cursor: pointer;
+    background-color: transparent;
   }
 }
 
@@ -969,10 +940,15 @@ hr {
     width: calc(680px + $space_normal * 2);
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 0;
+
+    .DfSectionOuter {
+      width: 100%;
+    }
   }
 
   .DfSection {
-    margin: $space_normal;
+    margin: 0;
   }
 }
 
@@ -1595,14 +1571,14 @@ a.DfStatItem {
 .DfStep {
   button, a {
     padding: 0;
-    font-size: 1rem;
+    font-size: $font_normal;
     font-weight: bolder;
     color: #222
   }
 }
 
 .ant-steps-item-title {
-  font-size: 1rem;
+  font-size: $font_normal;
 }
 
 .DfChooseAccountList {
@@ -1701,10 +1677,6 @@ a.DfStatItem {
 
 .DfShareModalPadding.scrolling.content {
   padding-bottom: 0;
-
-  .DfSegment.DfPostPreview {
-    padding-bottom: 0;
-  }
 }
 
 .DfNewComment {
