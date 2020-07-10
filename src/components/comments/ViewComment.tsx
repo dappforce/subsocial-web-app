@@ -15,7 +15,6 @@ import { CommentsTree } from './CommentTree'
 import { postUrl } from '../utils/urls';
 import SharePostAction from '../posts/SharePostAction';
 import { NewComment } from './CreateComment';
-import useSubsocialEffect from '../api/useSubsocialEffect';
 import { VoterButtons } from '../voting/VoterButtons';
 
 type Props = {
@@ -46,21 +45,12 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies, setShowReplies ] = useState(withShowReplies);
-  const [ repliesCount, setCount ] = useState(direct_replies_count.toString())
+  const [ repliesCount ] = useState(direct_replies_count.toString())
 
   const isFake = id.toString().startsWith('fake')
   const isMyStruct = myAddress === account.toString()
   const commentLink = postUrl(space, struct);
 
-  useSubsocialEffect(({ substrate }) => {
-
-    substrate.findPost({ id }).then((post) => {
-      if (post) {
-        setCount(post.total_replies_count.toString())
-      }
-    })
-
-  }, [ false ])
   const RenderDropDownMenu = () => {
 
     const showDropdown = isMyStruct || true;

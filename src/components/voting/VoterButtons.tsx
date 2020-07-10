@@ -87,28 +87,15 @@ export const VoterButtons = (props: VoterButtonsProps) => {
   const { post, only } = props
   const [ reactionState, setReactionState ] = useState<Reaction>();
   const { state: { address } } = useMyAccount();
-
-  const [ state, setState ] = useState(post);
   const [ reloadTrigger, setReloadTrigger ] = useState(true);
-  const { id } = state;
 
   useSubsocialEffect(({ substrate }) => {
     let isSubscribe = true;
 
-    async function reloadPost () {
-      if (post.id.toString() === id.toString()) return
-
-      const _struct = await substrate.findPost({ id })
-      if (isSubscribe && _struct) setState(_struct);
-    }
-
-    reloadPost().catch(err =>
-      log.error(`Failed to load a post or comment. ${err}`));
-
     async function reloadReaction () {
       if (!address) return
 
-      const reactionId = await substrate.getPostReactionIdByAccount(address, id)
+      const reactionId = await substrate.getPostReactionIdByAccount(address, post.id)
       const reaction = await substrate.findReaction(reactionId)
       if (isSubscribe) {
         setReactionState(reaction);
@@ -119,7 +106,7 @@ export const VoterButtons = (props: VoterButtonsProps) => {
       log.error(`Failed to load a reaction. ${err}`));
 
     return () => { isSubscribe = false; };
-  }, [ reloadTrigger, address, state ]);
+  }, [ reloadTrigger, address, post ]);
 
   const renderVoterButton = (reactionType: ReactionType) => <VoterButton
     reaction={reactionState}
