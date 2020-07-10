@@ -29,7 +29,9 @@ type DropdownProps = {
   post: Post
 };
 
-export const isRegularPost = (extension: PostExtension) => !(extension.isSharedPost || (extension as any).SharedPost); // hack because SSR don`t undestand methods, only object
+export const isRegularPost = (extension: PostExtension) => extension.isRegularPost || (extension as any).RegularPost === null; // hack because SSR don`t undestand methods, only object
+export const isSharedPost = (extension: PostExtension) => extension.isSharedPost || (extension as any).SharedPost;
+export const isComment = (extension: PostExtension) => extension.isComment || (extension as any).Comment;
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ account, space, post }) => {
   const isMyPost = isMyAddress(account);
@@ -158,23 +160,24 @@ export const PostContent: React.FunctionComponent<PostContentProps> = ({ postStr
 type PostActionsPanelProps = {
   postStruct: PostWithSomeDetails,
   toogleCommentSection?: () => void,
-  preview?: boolean
+  preview?: boolean,
+  withBorder?: boolean
 }
 
 const ShowCommentsAction = ({ postStruct: { post: { struct: { total_replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => (
   <Action onClick={toogleCommentSection}>
-    <IconWithLabel icon='message' count={total_replies_count} title='Comment' withTitle={!preview} />
+    <IconWithLabel icon='message' count={total_replies_count} label='Comment' withTitle={!preview} />
   </Action>
 )
 
 const Action: React.FunctionComponent<{ onClick?: () => void }> = ({ children, onClick }) => <Button onClick={onClick} className='DfAction'>{children}</Button>
 
 export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
-  const { postStruct, preview } = props
+  const { postStruct, preview, withBorder } = props
   const { post: { struct } } = postStruct;
   const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' preview={preview} />
   return (
-    <div className='DfActionsPanel'>
+    <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'}`}>
       {preview
         ? <ReactionsAction />
         : <div className='d-flex'>
