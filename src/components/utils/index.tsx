@@ -10,6 +10,7 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
+export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
 export const ONE = new BN(1)
@@ -92,31 +93,6 @@ export const gtZero = (n?: BN | number | string): boolean => {
       return false
     }
   }
-}
-
-type IconWithTitleProps = {
-  icon: JSX.Element | string,
-  count: BN,
-  label?: string,
-  withTitle?: boolean
-}
-
-export const IconWithLabel = ({ icon, label, count, withTitle }: IconWithTitleProps) => {
-  const renderIcon = () => typeof icon === 'string' ? <Icon type={icon} /> : icon;
-  const countStr = gtZero(count) ? count.toString() : undefined
-  const renderText = () => <span className='ml-2'>
-    {withTitle && label
-      ? <>
-        {label}
-        {countStr && ` (${countStr})`}
-      </>
-      : countStr}
-  </span>
-
-  return <>
-    {renderIcon()}
-    {renderText()}
-  </>
 }
 
 export const calcVotingPercentage = (upvotesCount: BN, downvotesCount: BN) => {
