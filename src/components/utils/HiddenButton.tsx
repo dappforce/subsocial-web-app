@@ -2,7 +2,6 @@ import React from 'react';
 import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import TxButton from './TxButton';
 import { TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { SubmittableResult } from '@polkadot/api';
 
 export type FSetVisible = (visible: boolean) => void
 
@@ -21,7 +20,7 @@ export function HiddenButton (props: HiddenButtonProps) {
 
   const extrinsic = type === 'space' ? 'spaces.updateSpace' : 'posts.updatePost'
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = () => {
     setVisibility && setVisibility(!hidden);
   };
 
@@ -29,7 +28,7 @@ export function HiddenButton (props: HiddenButtonProps) {
     className={`ml-3 ${asLink && 'DfButtonAsLink'}`}
     label={label || hidden
       ? 'Make visible'
-      : 'Hidden'
+      : 'Hide'
     }
     params={newTxParams}
     tx={extrinsic}

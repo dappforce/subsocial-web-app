@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 
 import { Option } from '@polkadot/types';
 import Section from '../utils/Section';
 import dynamic from 'next/dynamic';
-import { SubmittableResult } from '@polkadot/api';
 import { withCalls, withMulti } from '../substrate';
 import * as DfForms from '../utils/forms';
 import { spacesQueryToProp } from '../utils/index';
@@ -26,6 +25,7 @@ import { withSpaceIdFromUrl } from './withSpaceIdFromUrl';
 import { ValidationProps, buildValidationSchema } from './SpaceValidation';
 import DfMdEditor from '../utils/DfMdEditor';
 import { getTxParams } from '../utils/substrate/getTxParams';
+import useSubsocialEffect from '../api/useSubsocialEffect';
 
 const log = newLogger('Edit space')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -68,6 +68,7 @@ const InnerForm = (props: FormProps) => {
     tags,
     navTabs
   } = values;
+
   const { ipfs } = useSubsocialApi()
 
   const goToView = (id: BN) => {
@@ -76,13 +77,12 @@ const InnerForm = (props: FormProps) => {
 
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onTxFailed: TxFailedCallback = (txResult: SubmittableResult | null) => {
+  const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     setSubmitting(false);
   };
 
-  const onTxSuccess: TxCallback = (txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (txResult) => {
     setSubmitting(false);
 
     const _id = id || getNewIdFromEvent(txResult);
@@ -190,7 +190,6 @@ type LoadStructProps = OuterProps & {
 // TODO refactor copypasta. See the same function in NavigationEditor
 function LoadStruct (props: LoadStructProps) {
   const myAddress = useMyAddress()
-  const { ipfs } = useSubsocialApi()
   const { structOpt } = props;
   const [ json, setJson ] = useState<SpaceContent>();
   const [ struct, setStruct ] = useState<Space>();
@@ -201,12 +200,12 @@ function LoadStruct (props: LoadStructProps) {
     json === undefined && setTrigger(!trigger);
   };
 
-  useEffect(() => {
+  useSubsocialEffect(({ ipfs }) => {
     if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
     setStruct(structOpt.unwrap());
 
-    if (struct === undefined) return toggleTrigger();
+    if (!struct) return toggleTrigger();
 
     ipfs.findSpace(struct.ipfs_hash.toString()).then(json => {
       setJson(json);
@@ -222,7 +221,7 @@ function LoadStruct (props: LoadStructProps) {
   }
 
   if (structOpt.isNone) {
-    return <em>Space not found...</em>;
+    return <em>Space not found</em>;
   }
 
   return <EditForm {...props} struct={struct} json={json} />;

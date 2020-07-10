@@ -2,7 +2,6 @@ import React from 'react';
 import { PostExtension, CommentExt, OptionId } from '@subsocial/types/substrate/classes';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
-import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { getNewIdFromEvent, getTxParams } from '../utils/substrate';
 import BN from 'bn.js'
@@ -46,19 +45,19 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
         comment && useChangeReplyToStore(
           dispatch,
           { replyId: fakeId, parentId: parentIdStr },
-          { reply: { replyId: id.toString(), parentId: parentIdStr },
+          {
+            reply: { replyId: id.toString(), parentId: parentIdStr },
             comment
           }
         )
       })
 
-  const onTxReduxAction = (body: string, fakeId: string) => {
+  const onTxReduxAction = (body: string, fakeId: string) =>
     account && useSetReplyToStore(dispatch,
       {
         reply: { replyId: fakeId, parentId: parentIdStr },
         comment: buildMockComment({ fakeId, account, content: { body } })
       })
-  }
 
   const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsHash, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
     <TxButton
@@ -72,11 +71,11 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
         setIpfsHash
       })}
       tx='posts.createPost'
-      onFailed={(txResult: SubmittableResult | null) => {
+      onFailed={(txResult) => {
         fakeId && onFailedReduxAction(fakeId)
         onFailed && onFailed(txResult)
       }}
-      onSuccess={(txResult: SubmittableResult) => {
+      onSuccess={(txResult) => {
         const id = getNewIdFromEvent(txResult);
         id && fakeId && onSuccessReduxAction(id, fakeId)
         onSuccess && onSuccess(txResult)

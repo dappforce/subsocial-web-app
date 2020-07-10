@@ -13,7 +13,6 @@ import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { SubmittableResult } from '@polkadot/api';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
@@ -55,13 +54,13 @@ const InnerShareModal = (props: Props) => {
   const body = watch(Fields.body, '');
   const { isSubmitting } = formState;
 
-  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+  const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     // TODO show a failure message
     close()
   };
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = () => {
     // TODO show a success message
     close()
   };

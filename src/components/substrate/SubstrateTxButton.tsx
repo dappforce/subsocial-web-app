@@ -18,11 +18,9 @@ const log = newLogger('TxButton')
 const logStatus = (status: string) => log.debug(status)
 
 export type GetTxParamsFn = () => any[]
-
 export type GetTxParamsAsyncFn = () => Promise<any[]>
 
 export type TxCallback = (status: SubmittableResult) => void
-
 export type TxFailedCallback = (status: SubmittableResult | null) => void
 
 type SuccessMessageFn = (status: SubmittableResult) => Message
