@@ -14,13 +14,14 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { return404 } from '../utils/next';
 import Section from '../utils/Section';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { formatUnixDate, getSpaceId } from '../utils';
+import { formatUnixDate } from '../utils';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
 import SpaceNav from './SpaceNav';
 import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import { PageContent } from '../main/PageWrapper';
+import { getSpaceId } from '../substrate';
 
 type Props = ViewSpaceProps
 
