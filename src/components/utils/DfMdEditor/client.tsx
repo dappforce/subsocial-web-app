@@ -1,11 +1,12 @@
 import React from 'react'
 import SimpleMDEReact, { SimpleMDEEditorProps } from 'react-simplemde-editor'
+import { MdEditorProps } from './types'
 
-type Props = Omit<SimpleMDEEditorProps, 'onChange'> & {
-  onChange?: (value: string) => void | any
-}
+type Props =
+  Omit<SimpleMDEEditorProps, 'onChange'>
+  & MdEditorProps
 
-export const DfMdEditor = (props: Props) => {
+const MdEditor = (props: Props) => {
   const {
     className,
     options = {},
@@ -23,4 +24,4 @@ export const DfMdEditor = (props: Props) => {
   />
 }
 
-export default DfMdEditor
+export default MdEditor
