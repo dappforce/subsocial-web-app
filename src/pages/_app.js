@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import store from 'src/redux/store'
 
 // TODO remove global import of all AntD CSS, use modular LESS loading instead.
+// See .babelrc options: https://github.com/ant-design/babel-plugin-import#usage
 import 'antd/dist/antd.css'
 import 'antd-mobile/dist/antd-mobile.css'
 
