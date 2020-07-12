@@ -1,24 +1,21 @@
 /* eslint-disable node/no-deprecated-api */
 /* eslint-disable @typescript-eslint/no-var-requires */
 // const withBundleAnalyzer = require('@next/bundle-analyzer')
-// const withCSS = require('@zeit/next-css');
 const withImages = require('next-images')
 const withPlugins = require('next-compose-plugins')
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
 
 // Required by Docker
-require('dotenv').config();
+require('dotenv').config()
 
 // fix: prevents error when .css files are required by node
 if (typeof require !== 'undefined') {
-  require.extensions['.less'] = () => {};
-  // require.extensions['.sass'] = () => {};
-  // require.extensions['.scss'] = () => {};
-  require.extensions['.css'] = () => {};
-  require.extensions['.svg'] = () => {};
-  require.extensions['.gif'] = () => {};
-  require.extensions['.png'] = () => {};
+  require.extensions['.less'] = () => {}
+  require.extensions['.css'] = () => {}
+  require.extensions['.svg'] = () => {}
+  require.extensions['.gif'] = () => {}
+  require.extensions['.png'] = () => {}
 }
 
 const nextConfig = {
@@ -68,6 +65,6 @@ const nextConfig = {
 
     return config
   }
-};
+}
 
 module.exports = withPlugins([ withImages ], nextConfig)
