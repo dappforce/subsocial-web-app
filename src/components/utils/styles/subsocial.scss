@@ -1,4 +1,4 @@
-@import './subsocial-vars.css';
+@import './subsocial-vars.scss';
 
 body,
 #root {
@@ -1206,7 +1206,7 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
-  && .collapsed {
+  & .collapsed {
     .ant-menu-item-group-list {
       .content {
         display: none;
