@@ -71,7 +71,9 @@ type VisibilityProps = {
   address?: AnyAccountId
 }
 
-export const isVisible = ({ struct, address }: VisibilityProps) => !struct.hidden.valueOf() || !isMyAddress(address)
+export const isVisible = ({ struct: { hidden, created: { account } }, address }: VisibilityProps) =>
+  !hidden.valueOf() || isMyAddress(address || account.toString())
+
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
 
 export const toShortAddress = (_address: AnyAccountId) => {
