@@ -11,7 +11,7 @@ type HiddenAlertProps = {
   desc?: React.ReactNode
 }
 
-export const HiddenAlert = ({ struct, type }: HiddenAlertProps) => {
+export const HiddenAlert = ({ struct, type, desc }: HiddenAlertProps) => {
   const isSpace = type === 'space';
   const address = isSpace ? (struct as Space).owner : struct.created.account
 
@@ -23,7 +23,7 @@ export const HiddenAlert = ({ struct, type }: HiddenAlertProps) => {
     style={{ fontSize: '1.5rem' }}
     message={
       <div className='mx-2 d-flex justify-content-between' style={{ fontSize: '1.25rem' }}>
-        This {type} is hidden and only you can see it
+        {desc || `This ${type} is hidden and only you can see it`}
         <HiddenButton />
       </div>
     }
