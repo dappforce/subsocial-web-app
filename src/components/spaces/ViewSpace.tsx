@@ -2,20 +2,16 @@ import IdentityIcon from 'src/components/utils/IdentityIcon';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu } from 'antd';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Error from 'next/error';
-import Link from 'next/link';
 import React, { useState } from 'react';
 import { isBrowser } from 'react-device-detect';
 import { Segment } from 'src/components/utils/Segment';
 
-import { ZERO } from '../utils';
-import ListData from '../utils/DataList';
+import { isHidden } from '../utils';
 import { DfBgImg } from '../utils/DfBgImg';
 import NoData from '../utils/EmptyList';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -23,10 +19,8 @@ import { SummarizeMd } from '../utils/md';
 import { isMyAddress } from '../auth/MyAccountContext';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { return404 } from '../utils/next';
-import { Pluralize } from '../utils/Plularize';
 import Section from '../utils/Section';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { editSpaceUrl } from '../utils/urls';
 import { getSpaceId } from '../substrate';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
@@ -36,9 +30,8 @@ import withLoadSpaceDataById from './withLoadSpaceDataById';
 import AboutSpaceLink from './AboutSpaceLink';
 import ViewSpaceLink from './ViewSpaceLink';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
-import PostPreview from '../posts/view-post/PostPreview';
 import { PageContent } from '../main/PageWrapper';
-import HiddenSpaceButton from './HiddenSpaceButton';
+import { DropdownMenu, PostPreviewsOnSpace } from './helpers';
 import HiddenAlert from '../utils/HiddenAlert';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
@@ -54,7 +47,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   const { spaceData } = props;
 
-  if (!spaceData || !spaceData?.struct) {
+  if (!spaceData || !spaceData?.struct || isHidden({ struct: spaceData.struct })) {
     return <NoData description={<span>Space not found</span>} />
   }
 
@@ -66,6 +59,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     previewDetails = false,
     withFollowButton = false,
     dropdownPreview = false,
+    postIds = [],
     posts = [],
     imageSize = DEFAULT_AVATAR_SIZE,
     onClick
@@ -75,8 +69,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   const {
     id,
-    created: { account },
-    posts_count
+    created: { account }
   } = space;
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent);
@@ -84,37 +77,8 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   const isMySpace = isMyAddress(account);
   const hasImage = nonEmptyStr(image);
-  const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
 
   const HiddenSpaceAlert = <HiddenAlert struct={space} type='space' />
-
-  const renderDropDownMenu = () => {
-    const spaceKey = `space-${id.toString()}`
-    const menu =
-      <Menu>
-        {isMySpace &&
-          <Menu.Item key={`edit-${spaceKey}`}>
-            <Link href={`/spaces/[id]/edit`} as={editSpaceUrl(space)}>
-              <a className='item'>Edit</a>
-            </Link>
-          </Menu.Item>}
-        {isMySpace && <Menu.Item key={`hidden-${spaceKey}`}>
-          <HiddenSpaceButton space={space} asLink />
-        </Menu.Item>}
-        {/* {edit_history.length > 0 && <Menu.Item key='1'>
-          <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>} */}
-      </Menu>
-
-    return <>
-      {isMySpace &&
-        <Dropdown overlay={menu} placement='bottomRight'>
-          <EllipsisOutlined />
-        </Dropdown>
-      }
-      {/* open && <SpaceHistoryModal id={id} open={open} close={close} /> */}
-    </>
-  };
 
   const SpaceNameAsLink = () =>
     <ViewSpaceLink space={space} title={name} />
@@ -160,7 +124,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
           <span className='header DfSpaceTitle'>
             <SpaceNameAsLink />
             <MyEntityLabel isMy={isMySpace}>My space</MyEntityLabel>
-            {renderDropDownMenu()}
+            <DropdownMenu spaceData={spaceData} />
           </span>
 
           {nonEmptyStr(desc) &&
@@ -191,53 +155,17 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     </Segment>;
   }
 
-  const renderPostPreviews = () =>
-    <ListData
-      title={postsSectionTitle()}
-      dataSource={posts}
-      noDataDesc='No posts yet'
-      noDataExt={isMySpace
-        // TODO replace with Next Link + URL builder
-        ? <Button type='primary' ghost href={`/spaces/${id}/posts/new`}>Create post</Button>
-        : null
-      }
-      renderItem={(item) =>
-        <PostPreview
-          key={item.post.struct.id.toString()}
-          postDetails={item}
-          withActions
-        />
-      }
-    />
-
-  const NewPostButton = () => isMySpace
-    // TODO replace with Next Link + URL builder
-    ? <Button href={`/spaces/${id}/posts/new`} icon={<PlusOutlined />} size='small' className='DfGreyButton'>New post</Button>
-    : null
-
-  const postsSectionTitle = () =>
-    <div className='DfSection--withButton'>
-      <span style={{ marginRight: '1rem' }}>
-        <Pluralize count={postsCount} singularText='Post'/>
-      </span>
-      {posts.length > 0 && <NewPostButton />}
-    </div>
-
-  // TODO extract WithSpaceNav
-
   return <>
     {HiddenSpaceAlert}
     <div className='ViewSpaceWrapper'>
       <HeadMeta title={name} desc={mdToText(desc)} image={image} />
       <PageContent leftPanel={isBrowser &&
       <SpaceNav
-        {...content}
-        spaceId={new BN(id)}
-        creator={account}
+        spaceData={spaceData}
       />
       }>
         <Section className='DfContentPage'>
-          {renderPostPreviews()}
+          <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
         </Section>
       </PageContent>
 
@@ -267,11 +195,12 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const posts = await subsocial.findPostsWithAllDetails({ ids: postIds.reverse() })
+  const posts = await subsocial.findVisiblePostsWithSomeDetails({ ids: postIds.reverse(), withOwner: true })
 
   return {
     spaceData,
     posts,
+    postIds,
     owner
   }
 }

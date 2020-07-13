@@ -1,9 +1,6 @@
 import IdentityIcon from 'src/components/utils/IdentityIcon';
-import AccountId from '@polkadot/types/generic/AccountId';
 import { NavTab } from '@subsocial/types/offchain';
-import { SpaceId } from '@subsocial/types/substrate/interfaces';
 import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils';
-import { SettingOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import BN from 'bn.js';
 import Link from 'next/link';
@@ -12,9 +9,10 @@ import React from 'react';
 import { DfBgImg } from '../utils/DfBgImg';
 import FollowSpaceButton from '../utils/FollowSpaceButton';
 import { SummarizeMd } from '../utils/md';
-import { isMyAddress } from '../auth/MyAccountContext';
-import { aboutSpaceUrl, spaceUrl, newSpaceUrlFixture } from '../utils/urls';
+import { aboutSpaceUrl, spaceUrl } from '../utils/urls';
 import AboutSpaceLink from './AboutSpaceLink';
+import { DropdownMenu, EditMenuLink } from './helpers';
+import { SpaceData } from '@subsocial/types/dto'
 
 export type SpaceContent = {
   spaceId: BN,
@@ -23,15 +21,8 @@ export type SpaceContent = {
 }
 
 export interface SpaceNavProps {
-  spaceId: BN,
-  creator: AccountId,
-  name: string,
-  desc?: string,
-  image?: string,
+  spaceData: SpaceData,
   imageSize?: number,
-  followersCount?: number,
-  followingCount?: number,
-  navTabs?: NavTab[],
   linkedSpaces?: {
     teamMembers?: SpaceContent[]
     projects?: SpaceContent[]
@@ -40,14 +31,19 @@ export interface SpaceNavProps {
 
 export const SpaceNav = (props: SpaceNavProps) => {
   const {
-    spaceId,
-    creator,
-    name,
-    desc,
-    image,
-    imageSize = 100,
-    navTabs = []
+    spaceData,
+    imageSize = 100
   } = props;
+
+  const {
+    struct: space,
+    content
+  } = spaceData
+
+  if (!content) return null;
+
+  const { id, owner } = space
+  const { desc, image, navTabs, name } = content
 
   const renderMenuItem = (nt: NavTab) => {
     switch (nt.type) {
@@ -56,7 +52,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
         return (
           <Menu.Item key={nt.id}>
             {/* TODO replace with Next Link + URL builder */}
-            <a href={`/search?tab=posts&spaceId=${spaceId}&tags=${tags.join(',')}`}>{nt.title}</a>
+            <a href={`/search?tab=posts&spaceId=${id}&tags=${tags.join(',')}`}>{nt.title}</a>
           </Menu.Item>
         )
       }
@@ -76,22 +72,6 @@ export const SpaceNav = (props: SpaceNavProps) => {
     }
   }
 
-  const renderEditMenuLink = () => isMyAddress(creator) &&
-    <div className='SpaceNavSettings'>
-      <Link
-        href='/spaces/[spaceId]/space-navigation/edit'
-        as={`/spaces/${spaceId}/space-navigation/edit`}
-      >
-        <a className='text-secondary'>
-          <SettingOutlined className='mr-2' />
-          Edit Menu
-        </a>
-      </Link>
-    </div>
-
-  // TODO Fix this hack
-  const space = newSpaceUrlFixture(spaceId as SpaceId)
-
   return <div className="SpaceNav">
     <div className="SNhead">
       <div className="SNavatar">
@@ -99,7 +79,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
           <a className='DfBlackLink'>
             {nonEmptyStr(image)
               ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
-              : <IdentityIcon className='image' size={imageSize} value={creator} />
+              : <IdentityIcon className='image' size={imageSize} value={owner} />
             }
           </a>
         </Link>
@@ -111,7 +91,10 @@ export const SpaceNav = (props: SpaceNavProps) => {
         </Link>
       </div>
 
-      <FollowSpaceButton spaceId={spaceId} />
+      <span className='d-flex justify-content-center align-items-center'>
+        <FollowSpaceButton spaceId={id} block />
+        <DropdownMenu spaceData={spaceData} vertical />
+      </span>
 
       {nonEmptyStr(desc) &&
         <div className="SNheadDescription">
@@ -133,7 +116,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
       </Menu.Item>
     </Menu>
 
-    {renderEditMenuLink()}
+    <EditMenuLink space={space} withIcon />
   </div>
 }
 

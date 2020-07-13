@@ -1,6 +1,5 @@
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
-import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import { NextPage } from 'next';
 import Error from 'next/error';
@@ -36,7 +35,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const { owner } = props;
   const space = spaceData.struct;
-  const { id, created: { account, time } } = space;
+  const { created: { account, time } } = space;
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent);
   const { name, desc, image, tags } = content;
@@ -57,9 +56,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   return <PageContent leftPanel={isBrowser &&
     <SpaceNav
-      {...content}
-      spaceId={new BN(id)}
-      creator={account}
+      spaceData={spaceData}
     />
   }>
     <HeadMeta title={title} desc={mdToText(desc)} image={image} />
