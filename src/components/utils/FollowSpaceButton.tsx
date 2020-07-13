@@ -6,10 +6,11 @@ import BN from 'bn.js';
 import { newLogger, notDef } from '@subsocial/utils';
 import { Loading } from '.';
 import useSubsocialEffect from '../api/useSubsocialEffect';
+import { BaseTxButtonProps } from '../substrate/SubstrateTxButton';
 
 const log = newLogger('FollowSpaceButton')
 
-type FollowSpaceButtonProps = {
+type FollowSpaceButtonProps = BaseTxButtonProps & {
   spaceId: BN,
 };
 
@@ -24,7 +25,7 @@ export function FollowSpaceButton (props: FollowSpaceButtonProps) {
 }
 
 export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
-  const { spaceId, myAddress } = props;
+  const { spaceId, myAddress, ...otherProps } = props;
   const { reloadFollowed } = useSidebarCollapsed();
   const [ isFollower, setIsFollower ] = useState<boolean>();
 
@@ -65,6 +66,7 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
       params={buildTxParams}
       onSuccess={onTxSuccess}
       withSpinner
+      {...otherProps}
     />
 }
 
