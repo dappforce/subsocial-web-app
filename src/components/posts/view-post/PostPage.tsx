@@ -16,6 +16,7 @@ import { getSpaceId, unwrapSubstrateId } from 'src/components/substrate';
 import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
+import { isHidden } from 'src/components/utils';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
@@ -27,6 +28,8 @@ export type PostDetailsProps = {
 
 export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, statusCode }) => {
   if (statusCode === 404) return <Error statusCode={statusCode} />
+  if (!postDetails || isHidden({ struct: postDetails.post.struct })) return <PostNotFound />
+
   const { post, ext, space } = postDetails
 
   if (!post || !space) return <PostNotFound />
