@@ -91,8 +91,8 @@ type HiddenPostAlertProps = {
 
 export const HiddenPostAlert = ({ post: { post, ext, space }, onSpacePage = false }: HiddenPostAlertProps) => {
   const PostAlert = () => <HiddenAlert struct={post.struct} type='post' />
-  const ParentPostAlert = () => ext ? <HiddenAlert struct={ext.post.struct} type='post' desc='This post is not visible because parent post is hidden.' /> : null
-  const SpaceAlert = () => space && !onSpacePage ? <HiddenAlert struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
+  const ParentPostAlert = () => ext && isVisible(ext.post) ? <HiddenAlert struct={ext.post.struct} type='post' desc='This post is not visible because parent post is hidden.' /> : null
+  const SpaceAlert = () => space && isVisible(space) && !onSpacePage ? <HiddenAlert struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
 
   return <PostAlert /> || <ParentPostAlert /> || <SpaceAlert />
 }
@@ -224,24 +224,29 @@ type InfoForPostPreviewProps = {
 }
 
 type SharePostContentProps = {
-  postDetails: PostWithAllDetails,
+  postDetails: PostWithSomeDetails,
   space: SpaceData
 }
 
-export const SharePostContent = ({ postDetails: { post: { content }, ext }, space }: SharePostContentProps) => {
-  if (!ext) return null
+export const SharePostContent = ({ postDetails: { post: { struct, content }, ext }, space }: SharePostContentProps) => {
+  const OriginalPost = () => {
+    if (!ext) return <PostNotFound />
 
-  const { post: { struct: originalPost } } = ext;
+    const originalPost = ext.post.struct
 
-  return <> <div className='DfSharedSummary'>
-    <SummarizeMd md={content?.body} more={renderPostLink(space.struct, originalPost, 'See More')} />
+    return <>
+      {isVisible({ struct: originalPost, address: originalPost.created.account })
+        ? <RegularPreview postDetails={ext as PostWithAllDetails} space={space} />
+        : <PostNotFound />}
+    </>
+  }
+
+  return <div className='DfSharedSummary'>
+    <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+    <Segment className='DfPostPreview'>
+      <OriginalPost />
+    </Segment>
   </div>
-  <Segment className='DfPostPreview'>
-    {isVisible({ struct: originalPost, address: originalPost.created.account })
-      ? <RegularPreview postDetails={ext as PostWithAllDetails} space={space} />
-      : <PostNotFound />}
-  </Segment>
-  </>
 }
 
 export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> = ({ postDetails, space }) => {
