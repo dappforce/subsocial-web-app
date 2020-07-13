@@ -29,6 +29,10 @@ body,
   padding: $space_small;
 }
 
+.ant-list-lg.ant-list-item {
+  padding: 0;
+}
+
 .DfLinkOnHover {
   &:hover {
     color: $color_link;
@@ -156,7 +160,7 @@ body,
 
 .DfBrand {
   font-size: $font_big;
-  color: $color_ant_grey;
+  color: $secondary_color;
   cursor: pointer;
 
   img {
@@ -166,7 +170,7 @@ body,
 }
 
 .DfBrand:hover {
-  color: $color_ant_grey;
+  color: $secondary_color;
 }
 
 .DfSummary {
@@ -228,7 +232,7 @@ body,
 }
 
 .DfMenuSpaceLink {
-  color: $color_ant_grey;
+  color: $secondary_color;
   padding: $space_tiny;
   padding-left: $space_normal;
   display: block;
@@ -944,6 +948,7 @@ hr {
 
   li.ant-list-item.ant-list-item-no-flex {
     border: none;
+    padding: 0;
     padding-top: $space_tiny;
     padding-bottom: $space_tiny;
   }
@@ -1508,7 +1513,6 @@ a.DfStatItem {
 
 .SpaceNav {
   .SNhead {
-    @extend .DfCard;
     display: flex;
     flex-direction: column;
     padding: $space_big;
@@ -1797,7 +1801,7 @@ a.DfStatItem {
 } */
 
 .DfPanel {
-  margin: $space_big;
+  margin: 0 $space_normal;
   width: $width_panel;
 }
 

@@ -12,11 +12,12 @@ type Props = {
 }
 export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, className, children }) => {
   const { state: { showOnBoarding } } = useAuth()
+  const isPanels = leftPanel || rightPanel
   return isBrowser
     ? <div className='d-flex w-100'>
-      {leftPanel && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
+      {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
       <Section className={`DfMainContent ${className}`}>{children}</Section>
-      {rightPanel && <div className='DfRightPanel DfPanel'>{rightPanel}</div>}
+      {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>}
     </div>
     : <>
       {children}
