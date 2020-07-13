@@ -1,7 +1,7 @@
 import React from 'react';
 import { Space, Post } from '@subsocial/types/substrate/interfaces';
-import TxButton from './TxButton';
-import { TxCallback } from 'src/components/substrate/SubstrateTxButton';
+import { TxCallback, TxButton } from 'src/components/substrate/SubstrateTxButton';
+import { TxDiv } from '../substrate/SubstrateTxDiv';
 
 export type FSetVisible = (visible: boolean) => void
 
@@ -24,12 +24,15 @@ export function HiddenButton (props: HiddenButtonProps) {
     setVisibility && setVisibility(!hidden);
   };
 
-  return <TxButton
-    className={`ml-3 ${asLink && 'DfButtonAsLink'}`}
+  const TxComponents = asLink ? TxDiv : TxButton
+
+  return <TxComponents
+    className={'m-0'}
     label={label || hidden
       ? 'Make visible'
       : 'Hide'
     }
+    type='primary'
     params={newTxParams}
     tx={extrinsic}
     onSuccess={onTxSuccess}
