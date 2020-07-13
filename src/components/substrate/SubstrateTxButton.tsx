@@ -29,7 +29,9 @@ type FailedMessageFn = (status: SubmittableResult | null) => Message
 type SuccessMessage = Message | SuccessMessageFn
 type FailedMessage = Message | FailedMessageFn
 
-export type TxButtonProps = Omit<ButtonProps, 'onClick'> & {
+export type BaseTxButtonProps = Omit<ButtonProps, 'onClick'>
+
+export type TxButtonProps = BaseTxButtonProps & {
   accountId?: AddressOrPair
   tx?: string
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
@@ -41,7 +43,8 @@ export type TxButtonProps = Omit<ButtonProps, 'onClick'> & {
   onFailed?: TxFailedCallback
   successMessage?: SuccessMessage
   failedMessage?: FailedMessage
-  withSpinner?: boolean
+  withSpinner?: boolean,
+  component?: React.FunctionComponent
 }
 
 export function TxButton ({
@@ -57,6 +60,7 @@ export function TxButton ({
   successMessage,
   failedMessage,
   withSpinner,
+  component,
   children,
   ...antdProps
 }: TxButtonProps) {
@@ -68,14 +72,14 @@ export function TxButton ({
 
   const isAuthRequired = !accountId || !isTokens
   const buttonLabel = label || children
-
+  const Component = component || Button
   if (!api || !api.isReady) {
     return (
-      <Button
+      <Component
         {...antdProps}
         disabled={true}
         loading={true}
-      >{buttonLabel}</Button>
+      >{buttonLabel}</Component>
     )
   }
 
@@ -251,7 +255,7 @@ export function TxButton ({
     isEmptyStr(tx)
 
   return (
-    <Button
+    <Component
       {...antdProps}
       onClick={() => {
         if (isAuthRequired) {
@@ -263,7 +267,7 @@ export function TxButton ({
       }}
       disabled={isDisabled}
       loading={withSpinner && isSending}
-    >{buttonLabel}</Button>
+    >{buttonLabel}</Component>
   )
 }
 
