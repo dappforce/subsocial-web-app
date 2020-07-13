@@ -13,7 +13,7 @@ type PreparedSpaceData = {
   name: string,
   image: string,
   hasImage: boolean,
-  id?: string
+  id: string
 }
 
 type Props = {
@@ -75,7 +75,7 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
       const { name, image } = content
       const hasImage = nonEmptyStr(image)
       return {
-        id: struct?.id.toString(),
+        id: struct.id.toString(),
         name,
         image,
         hasImage

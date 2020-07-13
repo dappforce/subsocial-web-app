@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Comment, Menu, Dropdown, Icon } from 'antd';
+import { CaretDownOutlined, CaretUpOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { Comment, Menu, Dropdown } from 'antd';
 import { PostWithAllDetails } from '@subsocial/types/dto';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { DfMd } from '../utils/DfMd';
@@ -66,16 +67,16 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
       </Menu>
     );
 
-    return (<>{showDropdown &&
-    <Dropdown overlay={menu} placement='bottomRight'>
-      <Icon type='ellipsis' />
-    </Dropdown>}
-    {/* open && <CommentHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    return <>{showDropdown &&
+      <Dropdown overlay={menu} placement='bottomRight'>
+        <EllipsisOutlined />
+      </Dropdown>
+      /* open && <CommentHistoryModal id={id} open={open} close={close} /> */
+    }</>
   };
 
   const ViewRepliesLink = () => {
-    const viewActionMessage = showReplies ? <><Icon type="caret-up" /> {'Hide'}</> : <><Icon type="caret-down" /> {'View'}</>
+    const viewActionMessage = showReplies ? <><CaretUpOutlined /> {'Hide'}</> : <><CaretDownOutlined /> {'View'}</>
     return <Link href={commentLink}>
       <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
         {viewActionMessage}

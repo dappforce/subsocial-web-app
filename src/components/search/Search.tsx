@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { DataSearch } from '@appbaseio/reactivesearch';
 import Router from 'next/router';
-import { Icon } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { ElasticFields } from '../../config/ElasticConfig';
 import { isBrowser } from 'react-device-detect';
 
@@ -42,10 +42,7 @@ const App = () => {
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
         placeholder='Search for spaces, posts or comments'
         iconPosition='left'
-        icon={<Icon
-          type='search'
-          style={{ fontSize: '14px', position: 'relative', top: '-0.9rem' }}
-        />}
+        icon={<SearchOutlined style={{ position: 'relative', top: '-0.9rem' }} />}
       />
     </div>
   );

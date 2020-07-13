@@ -16,7 +16,19 @@ import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 
-import { Menu, Dropdown, Icon } from 'antd';
+import {
+  EllipsisOutlined,
+  FacebookOutlined,
+  GithubOutlined,
+  GlobalOutlined,
+  InstagramOutlined,
+  LinkedinOutlined,
+  MailOutlined,
+  MediumOutlined,
+  TwitterOutlined
+} from '@ant-design/icons';
+
+import { Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
@@ -127,7 +139,7 @@ const Component: NextPage<Props> = (props: Props) => {
     return <>
       {isMyAccount &&
         <Dropdown overlay={menu} placement='bottomRight'>
-          <Icon type='ellipsis' />
+          <EllipsisOutlined />
         </Dropdown>
       }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
@@ -161,80 +173,74 @@ const Component: NextPage<Props> = (props: Props) => {
   };
 
   const renderPreview = () => {
-    return <div>
-      <div className={`ProfileDetails MySpace`}>
-        {hasAvatar
-          ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
-          : <IdentityIcon className='image' value={address} size={size} />
-        }
-        <div className='content'>
-          <div className='header DfProfileTitle'>
-            <NameAsLink />
-            <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
-            {renderDropDownMenu()}
-          </div>
-          {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
-          <div className='about'>
-            <div>
-              {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
-              <div className='DfSocialLinks'>
-                {hasEmail &&
-                  <a target='_blank' href={`mailto:${email}`}>
-                    <Icon type='mail' />
-                  </a>
-                }
-
-                {/* TODO fix copypasta of social links. Implement via array. */}
-
-                {hasPersonalSite &&
-                  <a
-                    href={personalSite}
-                    target='_blank'
-                  >
-                    <Icon type='global' />
-                  </a>
-                }
-                {hasFacebookLink &&
-                  <a target='_blank' href={facebook}>
-                    <Icon type='facebook' />
-                  </a>
-                }
-                {hasTwitterLink &&
-                  <a target='_blank' href={twitter}>
-                    <Icon type='twitter' />
-                  </a>}
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasLinkedInLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='linkedin' />
-                  </a>
-                }
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasGitHubLink &&
-                  <a target='_blank' href={github}>
-                    <Icon type='github' />
-                  </a>
-                }
-                {hasInstagramLink &&
-                  <a target='_blank' href={instagram}>
-                    <Icon type='instagram' />
-                  </a>
-                }
-              </div>
+    return (
+      <div>
+        <div className={`ProfileDetails MySpace`}>
+          {hasAvatar
+            ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
+            : <IdentityIcon className='image' value={address} size={size} />
+          }
+          <div className='content'>
+            <div className='header DfProfileTitle'>
+              <NameAsLink />
+              <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+              {renderDropDownMenu()}
             </div>
-            {renderDescription()}
+            {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
+            <div className='about'>
+              <div>
+                {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
+                <div className='DfSocialLinks'>
+                  {hasEmail &&
+                    <a target='_blank' href={`mailto:${email}`}>
+                      <MailOutlined />
+                    </a>
+                  }
+
+                  {/* TODO fix copypasta of social links. Implement via array. */}
+
+                  {hasPersonalSite &&
+                    <a target='_blank' href={personalSite}>
+                      <GlobalOutlined />
+                    </a>
+                  }
+                  {hasFacebookLink &&
+                    <a target='_blank' href={facebook}>
+                      <FacebookOutlined />
+                    </a>
+                  }
+                  {hasTwitterLink &&
+                    <a target='_blank' href={twitter}>
+                      <TwitterOutlined />
+                    </a>}
+                  {hasLinkedInLink &&
+                    <a target='_blank' href={linkedIn}>
+                      <LinkedinOutlined />
+                    </a>
+                  }
+                  {hasMediumLink &&
+                    <a target='_blank' href={medium}>
+                      <MediumOutlined />
+                    </a>
+                  }
+                  {hasGitHubLink &&
+                    <a target='_blank' href={github}>
+                      <GithubOutlined />
+                    </a>
+                  }
+                  {hasInstagramLink &&
+                    <a target='_blank' href={instagram}>
+                      <InstagramOutlined />
+                    </a>
+                  }
+                </div>
+              </div>
+              {renderDescription()}
+            </div>
           </div>
         </div>
       </div>
-    </div>;
+    )
   };
 
   if (nameOnly) {

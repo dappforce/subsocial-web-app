@@ -1,9 +1,9 @@
 import React from 'react';
 import Button, { ButtonSize, ButtonType } from 'antd/lib/button';
-import { isMobile } from 'react-device-detect';
 import { useAuth, ModalKind } from './AuthContext';
 import { useMyAccount } from './MyAccountContext';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { ANT_BUTTON_SIZE } from 'src/config/Size.config';
 
 type InnerAuthButtonProps = {
   type?: ButtonType
@@ -18,7 +18,7 @@ type OpenAuthButton = InnerAuthButtonProps & {
 
 export function OpenAuthButton ({
   type = 'default',
-  size = isMobile ? 'small' : 'default',
+  size = ANT_BUTTON_SIZE,
   title = 'Click me',
   kind = 'OnBoarding',
   className
@@ -72,7 +72,7 @@ export const SwitchAccountButton = ({
 type SignOutButtonProps = InnerAuthButtonProps
 
 export function SignOutButton ({
-  size = isMobile ? 'small' : 'default',
+  size = ANT_BUTTON_SIZE,
   title = 'Sign out'
 }: SignOutButtonProps) {
   const { signOut } = useMyAccount()

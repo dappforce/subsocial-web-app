@@ -1,4 +1,5 @@
 import { accountUrl, spacesFollowedByAccountUrl, spacesOwnedByAccountUrl } from 'src/components/utils/urls'
+import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
 
 export type Divider = 'Divider'
 
@@ -7,7 +8,7 @@ export const Divider: Divider = 'Divider'
 export type PageLink = {
   name: string
   page: string[]
-  image: string
+  icon: React.ForwardRefExoticComponent<any>
 
   // Helpers
   isNotifications?: boolean
@@ -26,12 +27,12 @@ export const DefaultMenu: MenuItem[] = [
   {
     name: 'Explore',
     page: [ '/spaces/all' ],
-    image: 'global'
+    icon: GlobalOutlined
   },
   {
     name: 'Advanced',
     page: [ '/bc' ],
-    image: 'block',
+    icon: BlockOutlined,
     isAdvanced: true
   }
 ];
@@ -42,33 +43,33 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     {
       name: 'My feed',
       page: [ '/feed' ],
-      image: 'profile'
+      icon: ProfileOutlined
     },
     {
       name: 'My notifications',
       page: [ '/notifications' ],
-      image: 'notification',
+      icon: BellOutlined,
       isNotifications: true
     },
     {
       name: 'My subscriptions',
       page: [ '/spaces/following/[address]', spacesFollowedByAccountUrl(account) ],
-      image: 'book'
+      icon: StarOutlined
     },
     {
       name: 'My profile',
       page: [ '/profile/[address]', accountUrl(account) ],
-      image: 'user'
+      icon: UserOutlined
     },
     {
       name: 'My spaces',
       page: [ '/spaces/my/[address]', spacesOwnedByAccountUrl(account) ],
-      image: 'book'
+      icon: BookOutlined
     },
     {
       name: 'New space',
       page: [ '/spaces/new' ],
-      image: 'plus'
+      icon: PlusOutlined
     },
     Divider,
     ...DefaultMenu
