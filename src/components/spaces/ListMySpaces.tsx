@@ -54,7 +54,7 @@ export const ListMySpaces: NextPage<Props> = (props) => {
     const hiddenSpacesCount = myHiddenSpaces.length
     return hiddenSpacesCount ? <ListData
       title={`My hidden spaces (${hiddenSpacesCount})`}
-      dataSource={spacesData}
+      dataSource={myHiddenSpaces}
       renderItem={SpacePreview}
     /> : null
   }
