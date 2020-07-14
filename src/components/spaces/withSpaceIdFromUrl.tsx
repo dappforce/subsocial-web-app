@@ -5,7 +5,7 @@ import BN from 'bn.js'
 import { getSpaceId } from '../substrate';
 import NoData from '../utils/EmptyList';
 
-export function withSpaceIdFromUrl<Props = { id: SpaceId }>
+export function withSpaceIdFromUrl<Props = { spaceId: SpaceId }>
   (Component: React.ComponentType<Props>) {
 
   return function (props: Props) {
@@ -23,7 +23,7 @@ export function withSpaceIdFromUrl<Props = { id: SpaceId }>
         getId().catch(err => console.error(err))
       }, [ false ])
 
-      return !id ? null : <Component id={id} {...props} />;
+      return !id ? null : <Component spaceId={id} {...props} />;
     } catch (err) {
       return <NoData description={`Invalid space ID or handle: ${idOrHandle}`}/>
     }
