@@ -9,7 +9,7 @@ import { FieldNames } from '../../utils/forms';
 import HeadMeta from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
 
-import './index.css';
+import './index.module.css';
 import { buildValidationSchema } from './validation';
 import DfMdEditor from 'src/components/utils/DfMdEditor';
 

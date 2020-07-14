@@ -1,4 +1,4 @@
-@import './subsocial-vars.css';
+@import './subsocial-vars.scss';
 
 body,
 #root {
@@ -409,7 +409,7 @@ form.ui.form.DfForm.EditEntityForm {
 
 .DfSpacedButtons {
   margin-top: $space_normal;
-  margin-bottom: calc(2 * $space_normal);
+  margin-bottom: calc(2 * #{$space_normal});
 
   .button {
     margin-right: $space_tiny;
@@ -953,8 +953,8 @@ hr {
 @media (min-width: 560px) {
   .DfSectionOuter {
     min-width: 428px;
-    max-width: calc(680px + $space_normal * 2);
-    width: calc(680px + $space_normal * 2);
+    max-width: calc(680px + #{$space_normal} * 2);
+    width: calc(680px + #{$space_normal} * 2);
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 0;
@@ -1206,7 +1206,7 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
-  && .collapsed {
+  & .collapsed {
     .ant-menu-item-group-list {
       .content {
         display: none;
@@ -1792,8 +1792,8 @@ a.DfStatItem {
 
 /* .DfMainContent {
   min-width: 428px;
-  max-width: calc(680px + $space_normal * 2);
-  width: calc(680px + $space_normal * 2);
+  max-width: calc(680px + #{$space_normal} * 2);
+  width: calc(680px + #{$space_normal} * 2);
 } */
 
 .DfPanel {

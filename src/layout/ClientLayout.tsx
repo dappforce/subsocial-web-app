@@ -1,5 +1,4 @@
 import React from 'react';
-import '../components/utils/styles';
 import { SubsocialApiProvider } from '../components/utils/SubsocialApiContext';
 import { MyAccountProvider } from '../components/auth/MyAccountContext';
 import { Navigation } from './Navigation'

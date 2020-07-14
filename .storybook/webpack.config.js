@@ -24,29 +24,6 @@ config.module.rules.push(
     }
   },
 
-  // Post CSS loader for sources:
-  {
-    test: /\.css$/,
-    exclude: /(node_modules)/,
-    use: [
-      {
-        loader: require.resolve('postcss-loader'),
-        options: {
-          ident: 'postcss',
-          plugins: () => [
-            require('precss'),
-            require('autoprefixer'),
-            require('postcss-simple-vars'),
-            require('postcss-nested'),
-            require('postcss-import'),
-            require('postcss-clean')(),
-            require('postcss-flexbugs-fixes')
-          ]
-        }
-      }
-    ]
-  },
-
   // TypeScript loader
   {
     test: /\.(ts|tsx)$/,
