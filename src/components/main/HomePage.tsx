@@ -2,34 +2,36 @@ import React from 'react';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 
-import { PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
-import { LatestBlogs } from './LatestBlogs';
+import { LatestSpaces } from './LatestSpaces';
 import { LatestPosts } from './LatestPosts';
-import { BlogData, ExtendedPostData } from '@subsocial/types';
+import { SpaceData, PostWithAllDetails } from '@subsocial/types';
+import { PageContent } from './PageWrapper';
 
 const ZERO = new BN(0);
 const FIVE = new BN(5);
 
 type Props = {
-  blogsData: BlogData[]
-  postsData: ExtendedPostData[]
+  spacesData: SpaceData[]
+  postsData: PostWithAllDetails[]
 }
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {
-  const { blogsData, postsData } = props;
+  const { spacesData, postsData } = props;
 
   return (
-    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta
-        title='Subsocial latest updates'
-        desc='Subsocial home page with latest updates'
-      />
-      <LatestBlogs {...props} blogsData={blogsData} />
-      <LatestPosts {...props} postsData={postsData} />
-      {/* TODO Show latest comments */}
-    </div>
+    <PageContent>
+      <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+        <HeadMeta
+          title='Latest posts and spaces'
+          desc='Subsocial is an open decentralized social network'
+        />
+        <LatestPosts {...props} postsData={postsData} />
+        <LatestSpaces {...props} spacesData={spacesData} />
+      </div>
+    </PageContent>
+
   );
 }
 
@@ -44,18 +46,17 @@ const getLastNIds = (nextId: BN, size: BN): BN[] => {
 LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi();
   const { substrate } = subsocial
-  const nextBlogId = await substrate.nextBlogId()
+  const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const latestBlogIds = getLastNIds(nextBlogId, FIVE);
-  const blogsData = await subsocial.findBlogs(latestBlogIds)
+  const latestSpaceIds = getLastNIds(nextSpaceId, FIVE);
+  const spacesData = await subsocial.findVisibleSpaces(latestSpaceIds)
 
   const latestPostIds = getLastNIds(nextPostId, FIVE);
-  const postsData = await subsocial.findPostsWithDetails(latestPostIds as PostId[]);
-  console.log('Loaded posts on the home page:', postsData)
+  const postsData = await subsocial.findVisiblePostsWithAllDetails(latestPostIds);
 
   return {
-    blogsData,
+    spacesData,
     postsData
   }
 }

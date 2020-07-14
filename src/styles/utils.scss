@@ -1,0 +1,31 @@
+@import './subsocial-vars.scss';
+
+.flipH {
+    display: inline-block;
+    transform: scale(-1, 1) !important;
+    -moz-transform: scale(-1, 1) !important;
+    -webkit-transform: scale(-1, 1) !important;
+    -o-transform: scale(-1, 1) !important;
+    -ms-transform: scale(-1, 1) !important;
+    transform: scale(-1, 1) !important;
+  }
+
+.DfDisableLayout {
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.DfSubTitle {
+  font-weight: bolder;
+  background-color: #eee;
+  padding: .25rem;
+  padding-left: 1rem;
+  color: $secondary_color;
+}
+
+.DfSecondaryColor {
+  color: $secondary_color;
+  &:hover, :active {
+    color: $secondary_color;
+  }
+}

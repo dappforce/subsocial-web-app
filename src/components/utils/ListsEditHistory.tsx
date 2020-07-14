@@ -1,12 +1,12 @@
 import React from 'react';
-// import { withMulti, withCalls } from '@polkadot/react-api';
+// import { withMulti, withCalls } from '../substrate';
 // import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
-// import { Post, Blog, PostId, BlogId, CommentId, Comment, BlogHistoryRecord, CommentHistoryRecord, PostHistoryRecord, ProfileHistoryRecord, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '@subsocial/types/substrate/interfaces/subsocial';
-// import { PostContent, BlogContent, CommentContent, ProfileContent } from '../types';
+// import { Post, Space, PostId, SpaceId, CommentId, Comment, SpaceHistoryRecord, CommentHistoryRecord, PostHistoryRecord, ProfileHistoryRecord, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '@subsocial/types/substrate/interfaces/subsocial';
+// import { PostContent, SpaceContent, CommentContent, ProfileContent } from '../types';
 // import { socialQueryToProp } from './index';
 // import { Option } from '@polkadot/types';
 // import { DfMd } from './DfMd';
-// import { IdentityIcon } from '@polkadot/react-components';
+// import IdentityIcon from 'src/components/utils/IdentityIcon';
 // import Link from 'next/link';
 // import { getJsonFromIpfs } from './OffchainUtils';
 // import { withRequireProfile, withSocialAccount, Loading } from './utils';
@@ -23,7 +23,7 @@ export default <></>;
 //   close: () => void
 // };
 
-// function fillHistory<T extends (BlogHistoryRecord | ProfileHistoryRecord)[]> (historyLast: T) {
+// function fillHistory<T extends (SpaceHistoryRecord | ProfileHistoryRecord)[]> (historyLast: T) {
 //   if (historyLast[0] === undefined) return;
 
 //   const stringForHandleOrUsername = /* historyLast[0] instanceof ProfileHistoryRecord ? 'username' : */ 'handle'; // TODO fix after run;
@@ -252,23 +252,23 @@ export default <></>;
 //   )
 // );
 
-// type BlogHistoryProps = ModalController & {
-//   id: BlogId,
-//   blogOpt?: Option<Blog>
+// type SpaceHistoryProps = ModalController & {
+//   id: SpaceId,
+//   spaceOpt?: Option<Space>
 // };
 
-// type PropsBlogFromHistory = {
-//   history: BlogHistoryRecord,
+// type PropsSpaceFromHistory = {
+//   history: SpaceHistoryRecord,
 //   current_data: {
 //     ipfs_hash: string,
 //     handle: string
 //   }
 // };
 
-// const BlogFromHistory = (props: PropsBlogFromHistory) => {
+// const SpaceFromHistory = (props: PropsSpaceFromHistory) => {
 //   const { history: { old_data, edited }, current_data } = props;
 //   const { ipfs_hash, handle } = old_data;
-//   const [ content, setContent ] = useState({} as BlogContent);
+//   const [ content, setContent ] = useState({} as SpaceContent);
 //   const [ ipfsHash, setIpfsHash ] = useState('');
 //   const [ _handle, setHandle ] = useState('');
 
@@ -276,7 +276,7 @@ export default <></>;
 //     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
 //     handle.isNone ? setHandle(current_data.handle) : setHandle(handle.unwrap().toString());
 //     const loadData = async () => {
-//       const data = await getJsonFromIpfs<BlogContent>(ipfsHash);
+//       const data = await getJsonFromIpfs<SpaceContent>(ipfsHash);
 //       setContent(data);
 //     };
 //     loadData().catch(err => new Error(err));
@@ -284,7 +284,7 @@ export default <></>;
 
 //   return (<div className='DfModal'>
 //     <div className='ui massive relaxed middle aligned list FullProfile'>
-//       <div className={`item ProfileDetails MyBlog`}>
+//       <div className={`item ProfileDetails MySpace`}>
 //         {content.image
 //           ? <DfBgImg className='ui avatar image DfAvatar' src={content.image} size={40} rounded/>
 //           : <IdentityIcon className='image' value={edited.account} size={38} />
@@ -304,22 +304,22 @@ export default <></>;
 //   </div>);
 // };
 
-// const InnerBlogHistoryModal = (props: BlogHistoryProps) => {
-//   const { open, close, blogOpt } = props;
+// const InnerSpaceHistoryModal = (props: SpaceHistoryProps) => {
+//   const { open, close, spaceOpt } = props;
 
-//   if (blogOpt === undefined) return <Modal><Loading /></Modal>;
-//   else if (blogOpt.isNone) return <Modal><NoData description={<span>Blog not found</span>} /></Modal>;
+//   if (spaceOpt === undefined) return <Modal><Loading /></Modal>;
+//   else if (spaceOpt.isNone) return <Modal><NoData description={<span>Space not found</span>} /></Modal>;
 
-//   const blog = blogOpt.unwrap();
-//   const { edit_history } = blog;
+//   const space = spaceOpt.unwrap();
+//   const { edit_history } = space;
 
-//   const history = fillHistory<VecBlogHistoryRecord>(edit_history);
+//   const history = fillHistory<VecSpaceHistoryRecord>(edit_history);
 
-//   const renderBlogHistory = () => {
-//     return history && history.map((x, index) => <BlogFromHistory
+//   const renderSpaceHistory = () => {
+//     return history && history.map((x, index) => <SpaceFromHistory
 //       history={x}
 //       key={index}
-//       current_data={{ ipfs_hash: blog.ipfs_hash, handle: blog.handle.toString() }}
+//       current_data={{ ipfs_hash: space.ipfs_hash, handle: space.handle.toString() }}
 //     />);
 //   };
 
@@ -331,7 +331,7 @@ export default <></>;
 //     >
 //       <Modal.Header>Edit History</Modal.Header>
 //       <Modal.Content scrolling>
-//         {edit_history.length > 0 && renderBlogHistory()}
+//         {edit_history.length > 0 && renderSpaceHistory()}
 //       </Modal.Content>
 //       <Modal.Actions>
 //         <Button content='Close' onClick={close} />
@@ -340,10 +340,10 @@ export default <></>;
 //   );
 // };
 
-// export const BlogHistoryModal = withMulti(
-//   InnerBlogHistoryModal,
-//   withCalls<BlogHistoryProps>(
-//     socialQueryToProp('blogById', { paramName: 'id', propName: 'blogOpt' })
+// export const SpaceHistoryModal = withMulti(
+//   InnerSpaceHistoryModal,
+//   withCalls<SpaceHistoryProps>(
+//     socialQueryToProp('spaceById', { paramName: 'id', propName: 'spaceOpt' })
 //   )
 // );
 
@@ -382,7 +382,7 @@ export default <></>;
 
 //   return (<div className='DfModal'>
 //     <div className='ui massive relaxed middle aligned list FullProfile'>
-//       <div className={`item ProfileDetails MyBlog`}>
+//       <div className={`item ProfileDetails MySpace`}>
 //         {content.avatar
 //           ? <DfBgImg className='ui avatar image DfAvatar' src={content.avatar} size={40} rounded/>
 //           : <IdentityIcon className='image' value={edited.account} size={38} />

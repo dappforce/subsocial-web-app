@@ -1,3 +1,6 @@
+import { accountUrl, spacesFollowedByAccountUrl, spacesOwnedByAccountUrl } from 'src/components/utils/urls'
+import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
+
 export type Divider = 'Divider'
 
 export const Divider: Divider = 'Divider'
@@ -5,7 +8,7 @@ export const Divider: Divider = 'Divider'
 export type PageLink = {
   name: string
   page: string[]
-  image: string
+  icon: React.ForwardRefExoticComponent<any>
 
   // Helpers
   isNotifications?: boolean
@@ -23,49 +26,52 @@ export const isPageLink = (item: MenuItem): item is PageLink =>
 export const DefaultMenu: MenuItem[] = [
   {
     name: 'Explore',
-    page: [ '/blogs/all' ],
-    image: 'global'
+    page: [ '/spaces/all' ],
+    icon: GlobalOutlined
   },
   {
     name: 'Advanced',
     page: [ '/bc' ],
-    image: 'block',
+    icon: BlockOutlined,
     isAdvanced: true
   }
 ];
 
-export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => [
-  {
-    name: 'My feed',
-    page: [ '/feed' ],
-    image: 'profile'
-  },
-  {
-    name: 'My notifications',
-    page: [ '/notifications' ],
-    image: 'notification',
-    isNotifications: true
-  },
-  {
-    name: 'My subscriptions',
-    page: [ '/blogs/following/[address]', `/blogs/following/${myAddress}` ],
-    image: 'book'
-  },
-  {
-    name: 'My profile',
-    page: [ '/profile/[address]', `/profile/${myAddress}` ],
-    image: 'user'
-  },
-  {
-    name: 'My blogs',
-    page: [ '/blogs/my/[address]', `/blogs/my/${myAddress}` ],
-    image: 'book'
-  },
-  {
-    name: 'New blog',
-    page: [ '/blogs/new' ],
-    image: 'plus'
-  },
-  Divider,
-  ...DefaultMenu
-]
+export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
+  const account = { address: myAddress }
+  return [
+    {
+      name: 'My feed',
+      page: [ '/feed' ],
+      icon: ProfileOutlined
+    },
+    {
+      name: 'My notifications',
+      page: [ '/notifications' ],
+      icon: BellOutlined,
+      isNotifications: true
+    },
+    {
+      name: 'My subscriptions',
+      page: [ '/spaces/following/[address]', spacesFollowedByAccountUrl(account) ],
+      icon: StarOutlined
+    },
+    {
+      name: 'My profile',
+      page: [ '/profile/[address]', accountUrl(account) ],
+      icon: UserOutlined
+    },
+    {
+      name: 'My spaces',
+      page: [ '/spaces/my/[address]', spacesOwnedByAccountUrl(account) ],
+      icon: BookOutlined
+    },
+    {
+      name: 'New space',
+      page: [ '/spaces/new' ],
+      icon: PlusOutlined
+    },
+    Divider,
+    ...DefaultMenu
+  ]
+}

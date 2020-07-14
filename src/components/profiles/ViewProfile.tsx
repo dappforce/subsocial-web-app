@@ -2,23 +2,33 @@ import React, { useState } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
-import { registry } from '@polkadot/react-api';
-import { GenericAccountId as AccountId } from '@polkadot/types';
-import IdentityIcon from '@polkadot/react-components/IdentityIcon';
+import { AccountId } from '@polkadot/types/interfaces';
+import IdentityIcon from '@polkadot/react-identicon';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { nonEmptyStr, isEmptyStr, summarize } from '@subsocial/utils'
+import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
-import { useMyAccount } from '../utils/MyAccountContext';
+import { isMyAddress } from '../auth/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
-import { Menu, Dropdown, Icon } from 'antd';
+import {
+  EllipsisOutlined,
+  FacebookOutlined,
+  GithubOutlined,
+  GlobalOutlined,
+  InstagramOutlined,
+  LinkedinOutlined,
+  MailOutlined,
+  MediumOutlined,
+  TwitterOutlined
+} from '@ant-design/icons';
+
+import { Menu, Dropdown } from 'antd';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
@@ -28,8 +38,13 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
-import { useApi } from '@polkadot/react-hooks';
-// const BalanceDisplay = dynamic(() => import('@polkadot/react-components/Balance'), { ssr: false });
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { getAccountId } from '../substrate';
+import MyEntityLabel from '../utils/MyEntityLabel';
+import { SummarizeMd } from '../utils/md';
+import ViewProfileLink from './ViewProfileLink';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = {
@@ -48,28 +63,31 @@ const Component: NextPage<Props> = (props: Props) => {
     preview = false,
     nameOnly = false,
     withLink = false,
-    size = 48,
+    size = LARGE_AVATAR_SIZE,
     owner = {} as ProfileData
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { isApiReady } = useApi()
+  const { isApiReady } = useSubsocialApi()
 
   const address = id.toString();
-  const { state: { address: myAddress } } = useMyAccount();
-  const isMyAccount = address === myAddress;
+  const isMyAccount = isMyAddress(address);
 
-  const { profile = {} as Profile, struct, content = {} as ProfileContent } = owner;
+  const {
+    struct,
+    content = {} as ProfileContent,
+    profile = {} as Profile
+  } = owner;
 
-  const profileIsNone = isEmpty(profile);
+  const noProfile = isEmpty(profile);
   const followers = struct ? new BN(struct.followers_count) : ZERO;
   const following = struct ? new BN(struct.following_accounts_count) : ZERO;
   const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
     username
-  } = profile as Profile;
+  } = profile;
 
   const {
     fullname,
@@ -83,7 +101,7 @@ const Component: NextPage<Props> = (props: Props) => {
     medium,
     github,
     instagram
-  } = content as ProfileContent;
+  } = content;
 
   // TODO fix copypasta of social links. Implement via array.
   const hasEmail = email && nonEmptyStr(email);
@@ -96,18 +114,16 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasGitHubLink = github && nonEmptyStr(github);
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
-  const renderCreateProfileButton = profileIsNone && address === myAddress &&
+  const createProfileButton = noProfile && isMyAccount &&
     <Link href={`/profile/new`}>
-      <a style={{ marginTop: '.5rem', textAlign: 'initial' }} className={'ui button primary ' + TX_BUTTON_SIZE}>
+      <a className='DfCreateProfileButton'>
         <i className='plus icon' />
         Create profile
       </a>
     </Link>;
 
   const renderDropDownMenu = () => {
-    if (profileIsNone) return null;
-
-    const showDropdown = isMyAccount
+    if (noProfile) return null;
 
     const menu = (
       <Menu>
@@ -120,16 +136,19 @@ const Component: NextPage<Props> = (props: Props) => {
       </Menu>
     );
 
-    return (showDropdown && <>
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <Icon type='ellipsis' />
-      </Dropdown>
+    return <>
+      {isMyAccount &&
+        <Dropdown overlay={menu} placement='bottomRight'>
+          <EllipsisOutlined />
+        </Dropdown>
+      }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
-    </>);
+    </>
   };
 
   const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(username);
 
+  // TODO extract function: there is similar code in other files
   const getName = () => {
     if (isOnlyAddress) {
       return address;
@@ -138,15 +157,14 @@ const Component: NextPage<Props> = (props: Props) => {
     }
   };
 
-  const renderDescription = () => preview
-    ? summarize(about)
-    : <DfMd source={about} />;
+  const accountForUrl = { address, username }
 
-  const NameAsLink = () => (
-    <Link href='/profile/[address]' as={`/profile/${address}`}>
-      <a className='handle DfBoldBlackLink'>{getName()}</a>
-    </Link>
-  );
+  const renderDescription = () => preview
+    ? <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
+    : <DfMd className='mt-3' source={about} />
+
+  const NameAsLink = () =>
+    <ViewProfileLink account={accountForUrl} title={getName()} className='handle DfBoldBlackLink' />
 
   const renderNameOnly = () => {
     return withLink
@@ -155,79 +173,74 @@ const Component: NextPage<Props> = (props: Props) => {
   };
 
   const renderPreview = () => {
-    return <div>
-      <div className={`item ProfileDetails MyBlog`}>
-        {hasAvatar
-          ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
-          : <IdentityIcon className='image' value={address} size={size} />
-        }
-        <div className='content'>
-          <div className='header DfProfileTitle'>
-            <NameAsLink />
-            {renderDropDownMenu()}
-          </div>
-          {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
-          <div className='about'>
-            <div>
-              {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
-              <div className='DfSocialLinks'>
-                {hasEmail &&
-                  <a target='_blank' href={`mailto:${email}`}>
-                    <Icon type='mail' />
-                  </a>
-                }
-
-                {/* TODO fix copypasta of social links. Implement via array. */}
-
-                {hasPersonalSite &&
-                  <a
-                    href={personalSite}
-                    target='_blank'
-                  >
-                    <Icon type='global' />
-                  </a>
-                }
-                {hasFacebookLink &&
-                  <a target='_blank' href={facebook}>
-                    <Icon type='facebook' />
-                  </a>
-                }
-                {hasTwitterLink &&
-                  <a target='_blank' href={twitter}>
-                    <Icon type='twitter' />
-                  </a>}
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasLinkedInLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='linkedin' />
-                  </a>
-                }
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasGitHubLink &&
-                  <a target='_blank' href={github}>
-                    <Icon type='github' />
-                  </a>
-                }
-                {hasInstagramLink &&
-                  <a target='_blank' href={instagram}>
-                    <Icon type='instagram' />
-                  </a>
-                }
-              </div>
+    return (
+      <div>
+        <div className={`ProfileDetails MySpace`}>
+          {hasAvatar
+            ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
+            : <IdentityIcon className='image' value={address} size={size} />
+          }
+          <div className='content'>
+            <div className='header DfProfileTitle'>
+              <NameAsLink />
+              <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+              {renderDropDownMenu()}
             </div>
-            {renderDescription()}
+            {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
+            <div className='about'>
+              <div>
+                {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
+                <div className='DfSocialLinks'>
+                  {hasEmail &&
+                    <a target='_blank' href={`mailto:${email}`}>
+                      <MailOutlined />
+                    </a>
+                  }
+
+                  {/* TODO fix copypasta of social links. Implement via array. */}
+
+                  {hasPersonalSite &&
+                    <a target='_blank' href={personalSite}>
+                      <GlobalOutlined />
+                    </a>
+                  }
+                  {hasFacebookLink &&
+                    <a target='_blank' href={facebook}>
+                      <FacebookOutlined />
+                    </a>
+                  }
+                  {hasTwitterLink &&
+                    <a target='_blank' href={twitter}>
+                      <TwitterOutlined />
+                    </a>}
+                  {hasLinkedInLink &&
+                    <a target='_blank' href={linkedIn}>
+                      <LinkedinOutlined />
+                    </a>
+                  }
+                  {hasMediumLink &&
+                    <a target='_blank' href={medium}>
+                      <MediumOutlined />
+                    </a>
+                  }
+                  {hasGitHubLink &&
+                    <a target='_blank' href={github}>
+                      <GithubOutlined />
+                    </a>
+                  }
+                  {hasInstagramLink &&
+                    <a target='_blank' href={instagram}>
+                      <InstagramOutlined />
+                    </a>
+                  }
+                </div>
+              </div>
+              {renderDescription()}
+            </div>
           </div>
         </div>
       </div>
-    </div>;
+    )
   };
 
   if (nameOnly) {
@@ -245,24 +258,35 @@ const Component: NextPage<Props> = (props: Props) => {
       <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>
-          <FollowAccountButton address={address} size={TX_BUTTON_SIZE}/>
           <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
           <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{following.toString()} Following </span>
+          <div className='mt-3'>
+            {createProfileButton}
+            <FollowAccountButton address={address} />
+          </div>
         </div>
       </div>
       {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
       {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
-      {renderCreateProfileButton}
     </Section>
   </>;
 };
 
-Component.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address } } = props;
+Component.getInitialProps = async (props): Promise<any> => {
+  const { query: { address }, res } = props;
   const subsocial = await getSubsocialApi()
+  const accountId = await getAccountId(address as string);
+
+  // TODO resolve profile by accountId or handle (username)
+
+  if (!accountId && res) {
+    res.statusCode = 404
+    return { statusCode: 404 }
+  }
+
   const owner = await subsocial.findProfile(address as string)
   return {
-    id: new AccountId(registry, address as string),
+    id: accountId,
     owner
   };
 };

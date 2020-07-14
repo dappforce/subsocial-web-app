@@ -1,7 +1,6 @@
 import React from 'react';
-import { withMulti } from '@polkadot/react-api';
-
-import { useMyAccount } from './MyAccountContext';
+import { withMulti } from '../substrate';
+import { useMyAccount } from '../auth/MyAccountContext';
 
 export type MyAddressProps = {
   address?: string

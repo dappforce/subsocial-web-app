@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { List, Icon } from 'antd';
+import { PauseOutlined } from '@ant-design/icons';
+import { List } from 'antd';
 import { NavTab } from '@subsocial/types/offchain';
 
 export interface Props {
@@ -65,7 +66,7 @@ const ReorderNavTabs = (props: Props) => {
                       className={'RNTListItem'}
                     >
                       <List.Item>
-                        <Icon type="pause" className={'RNTIcon'} />
+                        <PauseOutlined className={'RNTIcon'} />
                         <List.Item.Meta title={tab.title} />
                       </List.Item>
                     </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import 'antd/dist/antd.css';
-import { Tag, Input, Tooltip, Icon, AutoComplete } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Tag, Input, Tooltip, AutoComplete } from 'antd';
 import { ErrorMessage } from 'formik';
 import { SelectValue } from 'antd/lib/select';
 import { nonEmptyStr } from '@subsocial/utils';
@@ -72,16 +72,16 @@ const EditableTagGroup = (props: Props) => {
             onBlur={handleInputConfirm}
             value={inputValue}
             dataSource={tagSuggestions}
-            filterOption={(inputValue, option) =>
-              option.props.children?.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-            }
+            // filterOption={(inputValue, option) =>
+            //   option.props.children?.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+            // }
           >
             <Input onPressEnter={handleInputConfirm} />
           </AutoComplete>
         )}
         {!inputVisible && (
           <Tag onClick={showInput} className={'ETGtag'}>
-            <Icon type="plus" /> New Tag
+            <PlusOutlined /> New tag
           </Tag>
         )}
         {name && <ErrorMessage name={name} component='div' className='ui pointing red label' />}

@@ -1,40 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from 'semantic-ui-react';
+import React, { useState } from 'react';
+import Button from 'antd/lib/button';
 import { Form, Field, withFormik, FormikProps } from 'formik';
 import dynamic from 'next/dynamic';
-import { SubmittableResult } from '@polkadot/api';
 import EditableTagGroup from '../utils/EditableTagGroup'
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
-
+import { registry } from '@subsocial/types/substrate/registry';
+import { withCalls, withMulti, getNewIdFromEvent, getTxParams, postsQueryToProp, spacesQueryToProp } from '../substrate';
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import * as DfForms from '../utils/forms';
 import { Null } from '@polkadot/types';
 import { Option } from '@polkadot/types/codec';
 import Section from '../utils/Section';
-import { useMyAccount } from '../utils/MyAccountContext';
-import { socialQueryToProp } from '../utils/index';
-import { getNewIdFromEvent, Loading } from '../utils/utils';
+import { useMyAddress } from '../auth/MyAccountContext';
 import BN from 'bn.js';
-import SimpleMDEReact from 'react-simplemde-editor';
 import Router, { useRouter } from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback } from '@polkadot/react-components/Status/types';
-import { TxCallback } from '../utils/types';
-import { PostExtension, PostUpdate } from '@subsocial/types/substrate/classes';
-import { Post, IpfsHash, BlogId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
+import { PostExtension, PostUpdate, OptionId, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
+import { Post, IpfsHash, SpaceId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
 import { PostContent } from '@subsocial/types/offchain';
 import { newLogger } from '@subsocial/utils'
 import { buildValidationSchema } from './PostValidation';
 import { LabeledValue } from 'antd/lib/select';
-import SelectBlogPreview from '../utils/SelectBlogPreview';
-import { Icon } from 'antd';
-import BloggedSectionTitle from '../blogs/BloggedSectionTitle';
+import SelectSpacePreview from '../utils/SelectSpacePreview';
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
+import SpacegedSectionTitle from '../spaces/SpacedSectionTitle';
+import DfMdEditor from '../utils/DfMdEditor';
+import useSubsocialEffect from '../api/useSubsocialEffect';
+import { Loading } from '../utils';
+import NoData from '../utils/EmptyList';
+import { PostNotFound } from './view-post';
+import { withSpaceIdFromUrl } from '../spaces/withSpaceIdFromUrl';
 
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type OuterProps = {
-  blogId?: BN,
+  spaceId?: BN,
   id?: BN,
   extension?: IPostExtension,
   struct?: Post
@@ -43,7 +44,7 @@ type OuterProps = {
   closeModal?: () => void,
   withButtons?: boolean,
   myAddress?: string,
-  blogIds?: BlogId[]
+  spaceIds?: SpaceId[]
 };
 
 const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
@@ -59,7 +60,7 @@ const LabelledText = DfForms.LabelledText<FormValues>();
 const InnerForm = (props: FormProps) => {
   const {
     id,
-    blogId,
+    spaceId,
     struct,
     extension = DefaultPostExt,
     values,
@@ -73,19 +74,16 @@ const InnerForm = (props: FormProps) => {
     onlyTxButton = false,
     withButtons = true,
     closeModal,
-    blogIds
+    spaceIds
   } = props;
 
-  const { isRegularPost } = extension
+  const isRegularPost = extension.isRegularPost
 
   const renderResetButton = () => (
     <Button
-      type='button'
-      size='medium'
       disabled={isSubmitting || (isRegularPost && !dirty)}
       onClick={() => resetForm()}
-      content='Reset form'
-    />
+    >Reset form</Button>
   );
 
   const {
@@ -96,39 +94,28 @@ const InnerForm = (props: FormProps) => {
     canonical
   } = values;
 
-  const initialBlogId = struct?.blog_id || blogId
+  const initialSpaceId = spaceId
 
   const goToView = (id: BN) => {
-    Router.push(`/blogs/${currentBlogId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
+    Router.push(`/spaces/${currentSpaceId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
   };
 
   const { ipfs } = useSubsocialApi()
-  const [ currentBlogId, setCurrentBlogId ] = useState(initialBlogId)
+  const [ currentSpaceId, setCurrentSpaceId ] = useState(initialSpaceId)
   const [ showAdvanced, setShowAdvanced ] = useState(false)
-  const [ ipfsHash, setIpfsCid ] = useState<IpfsHash>();
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
 
-  const onSubmit = (sendTx: () => void) => {
-    if (isValid || !isRegularPost) {
-      const json = { title, body, image, tags, canonical };
-      ipfs.savePost(json).then(hash => {
-        if (hash) {
-          setIpfsCid(hash);
-          sendTx();
-        }
-      }).catch(err => new Error(err));
-    }
-  };
-
-  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+  const onTxFailed: TxFailedCallback = () => {
+    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     setSubmitting(false);
   };
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = (txResult) => {
     setSubmitting(false);
 
     closeModal && closeModal();
 
-    const _id = id || getNewIdFromEvent(_txResult);
+    const _id = id || getNewIdFromEvent(txResult);
     _id && isRegularPost && goToView(_id);
   };
 
@@ -136,17 +123,18 @@ const InnerForm = (props: FormProps) => {
     setShowAdvanced(!showAdvanced)
   }
 
-  const buildTxParams = () => {
+  const newTxParams = (hash: IpfsHash) => {
     if (isValid || !isRegularPost) {
       if (!struct) {
-        return [ blogId, ipfsHash, extension ];
+        return [ currentSpaceId, extension, hash ];
       } else {
         // TODO update only dirty values.
         const update = new PostUpdate(
           {
-          // TODO setting new blog_id will move the post to another blog.
-            blog_id: new Option(registry, 'u64', null),
-            ipfs_hash: new Option(registry, 'Text', ipfsHash)
+          // If we provide a new space_id in update, it will move this post to another space.
+            space_id: new OptionId(),
+            ipfs_hash: new OptionText(hash),
+            hidden: new OptionBool(false) // TODO has no implementation on UI
           });
         return [ struct.id, update ];
       }
@@ -157,38 +145,41 @@ const InnerForm = (props: FormProps) => {
 
   const renderTxButton = () => (
     <TxButton
-      type='submit'
-      size='medium'
+      type='primary'
       label={!struct
         ? `Create a post`
         : `Update a post`
       }
-      isDisabled={isSubmitting || (isRegularPost && !dirty)}
-      params={buildTxParams()}
+      disabled={isSubmitting || (isRegularPost && !dirty)}
+      params={() => getTxParams({
+        json: { title, body, image, tags, canonical },
+        buildTxParamsCallback: newTxParams,
+        setIpfsHash,
+        ipfs
+      })}
       tx={struct
-        ? 'social.updatePost'
-        : 'social.createPost'
+        ? 'posts.updatePost'
+        : 'posts.createPost'
       }
-      onClick={onSubmit}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
     />
   );
 
-  const handleBlogSelect = (value: string | number | LabeledValue) => {
+  const handleSpaceSelect = (value: string | number | LabeledValue) => {
     if (!value) return;
 
-    setCurrentBlogId(new BN(value as string))
+    setCurrentSpaceId(new BN(value as string))
   };
 
-  const renderBlogsPreviewDropdown = () => {
-    if (!blogIds) return;
+  const renderSpacesPreviewDropdown = () => {
+    if (!spaceIds) return;
 
-    return <SelectBlogPreview
-      blogIds={blogIds}
-      onSelect={handleBlogSelect}
+    return <SelectSpacePreview
+      spaceIds={spaceIds}
+      onSelect={handleSpaceSelect}
       imageSize={24}
-      defaultValue={currentBlogId?.toString()} />
+      defaultValue={currentSpaceId?.toString()} />
   }
 
   const form =
@@ -196,22 +187,23 @@ const InnerForm = (props: FormProps) => {
 
       {isRegularPost
         ? <>
-          {renderBlogsPreviewDropdown()}
+          {renderSpacesPreviewDropdown()}
           <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
 
           <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
 
           {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
-          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
-          <LabelledField name='body' label='Description' {...props}>
-            <Field component={SimpleMDEReact} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
+          <LabelledField name='body' label='Post' {...props}>
+            <Field component={DfMdEditor} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
           </LabelledField>
+
+          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
 
           <div className="EPadvanced">
             <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
-              {!showAdvanced ? 'Show' : 'Hide'} Advanced Settings
-              <Icon type={showAdvanced ? 'up' : 'down'} />
+              {showAdvanced ? <><CaretUpOutlined /> Show</> : <><CaretDownOutlined /> Hide</>}
+              {' '}advanced settings
             </div>
             {showAdvanced &&
               <LabelledText name='canonical' label='Original post URL' placeholder={`Set a URL of original post`} {...props} />
@@ -219,7 +211,7 @@ const InnerForm = (props: FormProps) => {
           </div>
         </>
         : <>
-          <SimpleMDEReact value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
+          <DfMdEditor value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
         </>
       }
       {withButtons && <LabelledField {...props}>
@@ -230,7 +222,7 @@ const InnerForm = (props: FormProps) => {
 
   const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
 
-  const sectionTitle = currentBlogId && <BloggedSectionTitle blogId={currentBlogId} title={pageTitle} />
+  const sectionTitle = currentSpaceId && <SpacegedSectionTitle spaceId={currentSpaceId} title={pageTitle} />
 
   const editRegularPost = () =>
     <Section className='EditEntityBox' title={sectionTitle}>
@@ -290,19 +282,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     try {
       return <Component id={new BN(postId as string)} {...props}/>;
     } catch (err) {
-      return <em>Invalid post ID: {postId}</em>;
-    }
-  };
-}
-
-function withBlogIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function () {
-    const router = useRouter();
-    const { blogId } = router.query;
-    try {
-      return <Component blogId={new BN(blogId as string)} />;
-    } catch (err) {
-      return <em>Invalid blog ID: {blogId}</em>;
+      return <NoData description={`Post not found because this post id: ${postId} is invalid`}/>
     }
   };
 }
@@ -313,8 +293,7 @@ type LoadStructProps = OuterProps & {
 
 function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
   return function (props: LoadStructProps) {
-    const { state: { address: myAddress } } = useMyAccount(); // TODO maybe remove, because useless
-    const { ipfs } = useSubsocialApi()
+    const myAddress = useMyAddress()
     const { structOpt } = props;
     const [ json, setJson ] = useState<PostContent>();
     const [ struct, setStruct ] = useState<Post>();
@@ -325,12 +304,12 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
       json === undefined && setTrigger(!trigger);
     };
 
-    useEffect(() => {
+    useSubsocialEffect(({ ipfs }) => {
       if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
       setStruct(structOpt.unwrap());
 
-      if (struct === undefined) return toggleTrigger();
+      if (!struct) return toggleTrigger();
 
       ipfs.findPost(struct.ipfs_hash).then(json => {
         setJson(json);
@@ -342,11 +321,11 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     }
 
     if (structOpt.isNone) {
-      return <em>Post not found</em>;
+      return <PostNotFound />
     }
 
     if (!struct || !struct.created.account.eq(myAddress)) {
-      return <em>You have no rights to edit this post</em>;
+      return <NoData description={'You have no rights to edit this post'}/>
     }
 
     return <Component {...props} struct={struct} json={json} myAddress={myAddress} />;
@@ -359,19 +338,20 @@ export const InnerFormWithValidation = withMulti(
 
 export const NewPost = withMulti(
   InnerFormWithValidation,
-  withBlogIdFromUrl
+  withSpaceIdFromUrl
 );
 
 export const NewSharePost = InnerFormWithValidation;
 
 export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
+  withSpaceIdFromUrl,
   withIdFromUrl,
   withCalls<OuterProps>(
-    socialQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
+    postsQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
   ),
   LoadStruct,
   withCalls<OuterProps>(
-    socialQueryToProp(`blogIdsByOwner`, { paramName: 'myAddress', propName: 'blogIds' })
+    spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'myAddress', propName: 'spaceIds' })
   )
 );

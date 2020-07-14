@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
-import { ViewBlog } from '../blogs/ViewBlog';
-import { ViewPost } from '../posts/ViewPost';
-import { Tab, StrictTabProps, Segment } from 'semantic-ui-react';
+import { ViewSpace } from '../spaces/ViewSpace';
+import { Segment } from 'src/components/utils/Segment';
+import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
 import ListData from '../utils/DataList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import BN from 'bn.js';
-import { registry } from '@polkadot/react-api';
+import { registry } from '@subsocial/types/substrate/registry';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
+import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
+
+const { TabPane } = Tabs
 
 type DataResults = {
   _id: string;
@@ -22,19 +25,19 @@ const AllTabKey = 'all';
 const panes = [
   {
     key: AllTabKey,
-    menuItem: 'All'
+    title: 'All'
   },
   {
-    key: 'blogs',
-    menuItem: 'Blogs'
+    key: 'spaces',
+    title: 'Spaces'
   },
   {
     key: 'posts',
-    menuItem: 'Posts'
+    title: 'Posts'
   },
   {
     key: 'profiles',
-    menuItem: 'Profiles'
+    title: 'Profiles'
   }
 ];
 
@@ -44,16 +47,15 @@ type Props = {
 
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
-    case ElasticIndex.blogs:
-      return <ViewBlog id={new BN(res._id)} previewDetails withFollowButton />;
+    case ElasticIndex.spaces:
+      return <ViewSpace id={new BN(res._id)} previewDetails withFollowButton />;
     case ElasticIndex.posts:
-      return <ViewPost key={i} id={new BN(res._id)} variant='preview' withLink={true} />;
+      return <DynamicPostPreview key={i} id={new BN(res._id)} withActions />;
     case ElasticIndex.profiles:
       return <Segment>
         <ProfilePreviewWithOwner
           key={res._id}
           address={new AccountId(registry, res._id)}
-          size={30}
         />
       </Segment>;
     default:
@@ -72,9 +74,9 @@ const Previews = (props: Props) => {
   </div>;
 };
 
-type OnTabChangeFn = (event: React.MouseEvent<HTMLDivElement>, data: StrictTabProps) => void;
+type OnTabChangeFn = (key: string) => void;
 
-const Tabs = () => {
+const ResultsTabs = () => {
   const router = useRouter();
 
   const getTabIndexFromUrl = (): number => {
@@ -85,18 +87,13 @@ const Tabs = () => {
 
   const initialTabIndex = getTabIndexFromUrl();
   const initialTabKey = panes[initialTabIndex].key;
-  const { tags, blogId } = router.query;
+  const { tags, spaceId } = router.query;
   const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
 
-  const handleTabChange: OnTabChangeFn = (_event, data) => {
-    if (!data || !data.panes) return;
+  const handleTabChange: OnTabChangeFn = (key) => {
+    setActiveTabKey(key);
 
-    const activeTab = data.panes[data.activeIndex as number];
-    const activeKey = (activeTab as unknown as { key: string }).key;
-
-    setActiveTabKey(activeKey);
-
-    router.query.tab = activeKey;
+    router.query.tab = key;
     Router.push({
       pathname: router.pathname,
       query: router.query
@@ -104,19 +101,21 @@ const Tabs = () => {
   };
 
   return <>
-    <Tab panes={panes} onTabChange={handleTabChange} activeIndex={initialTabIndex}/>
+    <Tabs onChange={handleTabChange} activeKey={activeTabKey.toString()}>
+      {panes.map(({ key, title }) => <TabPane key={key} tab={title} />)}
+    </Tabs>
     <ReactiveComponent
-      componentId='blogId'
+      componentId='spaceId'
       customQuery={() => {
-        return blogId === undefined
+        return spaceId === undefined
           ? null
           : {
-              query: {
-                term: {
-                  blog_id: blogId
-                }
+            query: {
+              term: {
+                space_id: spaceId
               }
-            };
+            }
+          };
       }}
     />
 
@@ -126,12 +125,12 @@ const Tabs = () => {
         return tags === undefined
           ? null
           : {
-              query: {
-                terms: {
-                  tags: (tags as string).split(',')
-                }
+            query: {
+              terms: {
+                tags: (tags as string).split(',')
               }
-            };
+            }
+          };
       }}
     />
 
@@ -158,12 +157,12 @@ const App = () => {
       <ReactiveList
         componentId='page'
         dataField='id'
-        react={{ and: [ 'q', 'tab', 'tags', 'blogId' ] }}
+        react={{ and: [ 'q', 'tab', 'tags', 'spaceId' ] }}
         showResultStats={false}
         URLParams={true}
         loader={' '}
         render={res => <>
-          <Tabs />
+          <ResultsTabs />
           <Previews results={res.data} />
         </>}
         renderNoResults={() => null}

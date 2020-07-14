@@ -1,10 +1,8 @@
 import React from 'react';
 
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, spaceFollowsQueryToProp, profileFollowsQueryToProp } from '../substrate';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { socialQueryToProp } from '../utils/index';
-import { Modal, Button } from 'semantic-ui-react';
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
+import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
 import ListData from '../utils/DataList';
 
@@ -23,45 +21,40 @@ const InnerAccountsListModal = (props: Props) => {
 
   return (
     <Modal
-      size='small'
-      onClose={close}
-      open={open}
-      centered={true}
+      onCancel={close}
+      visible={open}
+      title={title}
+      className='DfAccountsModal'
       style={{ marginTop: '3rem' }}
+      footer={<Button onClick={close}>Close</Button>}
     >
-      <Modal.Header>{title}</Modal.Header>
-      <Modal.Content scrolling className='DfAccountsModal'>
-        <ListData
-          dataSource={accounts}
-          renderItem={(item) =>
-            <ProfilePreviewWithOwner key={item.toString()} address={item} mini />}
-          noDataDesc='No followers yet'
-        />
-      </Modal.Content>
-      <Modal.Actions>
-        <Button content='Close' size={TX_BUTTON_SIZE} onClick={close} />
-      </Modal.Actions>
+      <ListData
+        dataSource={accounts}
+        renderItem={(item) =>
+          <ProfilePreviewWithOwner key={item.toString()} address={item} mini />}
+        noDataDesc='No followers yet'
+      />
     </Modal>
   );
 };
 
-export const BlogFollowersModal = withMulti(
+export const SpaceFollowersModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    socialQueryToProp('blogFollowers', { paramName: 'id', propName: 'accounts' })
+    spaceFollowsQueryToProp('spaceFollowers', { paramName: 'id', propName: 'accounts' })
   )
 );
 
 export const AccountFollowersModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    socialQueryToProp('accountFollowers', { paramName: 'id', propName: 'accounts' })
+    profileFollowsQueryToProp('accountFollowers', { paramName: 'id', propName: 'accounts' })
   )
 );
 
 export const AccountFollowingModal = withMulti(
   InnerAccountsListModal,
   withCalls<Props>(
-    socialQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'accounts' })
+    profileFollowsQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'accounts' })
   )
 );

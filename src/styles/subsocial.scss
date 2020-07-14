@@ -1,0 +1,1866 @@
+@import './subsocial-vars.scss';
+
+body,
+#root {
+  background-color: $color_page_bg !important;
+  color: $color_font_normal !important;
+  font-size: $font_normal !important;
+}
+
+/* Common Resusable Classes */
+/* ---------------------------------------- */
+
+.DfSegment {
+  background-color: #fff;
+  padding: $space_large;
+  position: relative;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  border-radius: .28571429rem;
+  border: 1px solid rgba(34,36,38,.15);
+}
+
+.DfBalance {
+  font-size: $font_small;
+  color: $color_muted
+}
+
+.ant-modal-body {
+  padding: $space_small;
+}
+
+.ant-list-lg.ant-list-item {
+  padding: 0;
+}
+
+.DfLinkOnHover {
+  &:hover {
+    color: $color_link;
+    cursor: pointer;
+    text-decoration: none;
+  }
+}
+
+.DfBlackLink {
+  color: $color_font_normal;
+  @extend .DfLinkOnHover;
+}
+
+.DfBoldBlackLink {
+  @extend .DfBlackLink;
+  font-weight: 600;
+}
+
+.DfSeeMoreLink,
+.DfSeeMore a {
+  @extend .DfBoldBlackLink;
+  white-space: nowrap;
+  color: $color_muted;
+}
+
+.DfBoxShadow {
+  $shadow: 0 0 5px 2px #eeecec !important;
+  -moz-box-shadow: $shadow;
+  -webkit-box-shadow: $shadow;
+  box-shadow: $shadow;
+}
+
+.DfNoBoxShadow {
+  $shadow: none !important;
+  -moz-box-shadow: $shadow;
+  -webkit-box-shadow: $shadow;
+  box-shadow: $shadow;
+}
+
+.DfProfileModalLink {
+  @extend .DfGreyLink;
+  margin-right: $space_huge
+}
+
+/* Other Styles */
+/* ---------------------------------------- */
+
+.DfMdEditor--preview {
+  .markdown-body {
+    background-color: #fff !important;
+    padding: $space_normal !important;
+  }
+}
+
+.ant-comment-content-author {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.am-drawer-content {
+  padding-top: 0 !important;
+  text-align: left !important;
+}
+
+.ant-layout-sider-children {
+  overflow: auto;
+}
+
+/* Used as a hack to fix ReactBase font-size */
+.fontSizeNormal {
+  font-size: $font_normal !important;
+}
+
+.DfPageContent {
+  padding: $space_big 0;
+  overflow-wrap: break-word;
+  margin: 0 auto;
+  color: $color_font_normal;
+}
+
+.DfTags {
+  margin: $space_normal 0;
+  text-align: end;
+  font-size: $font_small;
+
+  .anticon {
+    color: #bbb !important;
+    margin-right: .35rem !important;
+  }
+
+  .ant-tag:hover {
+    background-color: #fff;
+  }
+
+  a {
+    @extend .DfLinkOnHover;
+  }
+}
+
+.ui.search.selection.dropdown > .text {
+  margin-left: 0;
+
+  .ui--KeyPair {
+    margin-left: 14.5%;
+    width: 85.5%;
+
+    .ui--IdentityIcon-Outer {
+      left: -3.1rem !important;
+      top: -.7rem !important;
+    }
+  }
+}
+
+
+
+@media (min-width: 1200px) {
+  .DfBrand {
+    font-size: $font_large;
+
+    img {
+      max-width: 160px;
+    }
+  }
+}
+
+.DfBrand {
+  font-size: $font_big;
+  color: $secondary_color;
+  cursor: pointer;
+
+  img {
+    max-width: 200px;
+    margin-top: -5px;
+  }
+}
+
+.DfBrand:hover {
+  color: $secondary_color;
+}
+
+.DfSummary {
+  font-size: $font_normal;
+  color: $color_font_normal;
+  word-break: break-word;
+  margin: $space_small 0;
+  /* white-space: pre-wrap; */
+}
+
+.DfBookPage {
+  @extend .DfBoxShadow;
+  margin: $space_big 0;
+  padding: $space_big;
+  background-color: #fff;
+  border-radius: $border_radius_normal;
+}
+
+.DfPostTitle--preview {
+  @extend .DfBoldBlackLink;
+  margin-bottom: $space_small;
+}
+
+.DfEntirePost {
+  /* padding: 0 $space_tiny; */
+
+  .DfCommentSection {
+    margin-top: $space_small
+  }
+
+  .DfTags {
+    margin: $space_big 0;
+  }
+  .DfPostContent {
+    @extend .DfBookPage;
+    margin-bottom: $space_small;
+
+    .DfSharedSummary {
+      margin-top: -$space_normal;
+    }
+  }
+  .DfShareAction {
+    padding: $space_small $space_normal;
+    cursor: pointer;
+    @extend .DfBlackLink;
+  }
+}
+
+.DfPostName {
+  margin-bottom: $space_normal !important;
+  margin-right: $space_normal;
+  color: $color_font_normal;
+  font-size: $font_large;
+}
+
+.DfPostImage {
+  max-width: 100%;
+  margin-bottom: $space_normal;
+}
+
+.DfMenuSpaceLink {
+  color: $secondary_color;
+  padding: $space_tiny;
+  padding-left: $space_normal;
+  display: block;
+
+  .ProfileDetails {
+    .DfAvatar.space {
+      margin-right: 0;
+    }
+    .content {
+      padding: 0;
+      padding-left: .5rem;
+    }
+    .handle {
+      margin-right: 0;
+    }
+  }
+}
+
+.ProfilePreviews,
+.FullProfile {
+  .item {
+    .image {
+      padding: 0 !important;
+    }
+
+    .description {
+      font-size: $font_normal;
+    }
+  }
+
+  .ant-dropdown-trigger {
+    margin-left: $space_tiny;
+    height: min-content;
+  }
+}
+
+.ant-dropdown-trigger {
+  height: min-content;
+}
+
+.ProfilePreviews {
+  &.ui.list>.item:first-child {
+    padding-top: $space_small;
+  }
+
+  &.ui.list>.item:last-child {
+    padding-bottom: $space_small;
+  }
+}
+
+.DfPreview {
+  .content {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.header {
+  display: flex !important;
+  align-items: center;
+  font-size: $font_big;
+  font-weight: 600;
+}
+
+.ProfileDetails {
+  display: flex !important;
+
+  .content {
+    padding: 0 $space_small;
+  }
+
+  .button {
+    max-height: 2.5rem;
+  }
+
+  .handle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    margin-right: $space_tiny;
+
+    .button {
+      padding: $space_tiny $space_small;
+    }
+  }
+}
+
+.ant-popover {
+  .ProfileDetails {
+    .content {
+      max-width: 330px;
+      padding: 0;
+      padding-left: $space_mini;
+    }
+    .DfPopup-about {
+      color: $color_font_normal;
+    }
+  }
+}
+
+.ProfileDetailsTable {
+  font-size: $font_normal !important;
+
+  tr td:first-child {
+    width: 1%;
+    white-space: nowrap;
+  }
+}
+
+.EditEntityBox {
+  width: 100%;
+  /* max-width: 600px; */
+
+  .EditEntityForm {
+    width: 100%;
+  }
+
+  .editor-statusbar {
+    display: none;
+  }
+}
+
+.ui--AddressComponents-info div {
+  vertical-align: top;
+}
+
+.ui.threaded.comments .comment .comments {
+  padding: 0 0 0 $space_large;
+  margin: -1rem 0 0 $space_large;
+}
+
+.DfCommentContent,
+.DfComment {
+  .metadata {
+    margin-left: 0 !important;
+    font-size: $font_normal;
+  }
+  .text,
+  .ant-comment-content-detail {
+    display: inline-block;
+    margin: $space_tiny 0 !important;
+    padding: $space_small $space_normal;
+    border-radius: 15px;
+    border-top-left-radius: 0;
+    background-color: #fff;
+    @extend .DfBoxShadow;
+  }
+}
+
+form.ui.form.DfForm.EditEntityForm {
+  margin-bottom: $space_huge;
+
+  .EPadvanced {
+    margin-bottom: $space_normal;
+    padding-bottom: $space_normal;
+
+    .EPadvacedTitle {
+      cursor: pointer;
+      font-size: $font_normal;
+      font-weight: 700;
+    }
+  }
+
+  .ETGtag{
+    background: '#fff';
+    border-style: dashed;
+  }
+}
+
+.ui.basic.button:not(.disabled) {
+  background-color: #fff;
+}
+
+.editor-statusbar {
+  float: right;
+}
+
+.DfSpacedButtons {
+  margin-top: $space_normal;
+  margin-bottom: calc(2 * #{$space_normal});
+
+  .button {
+    margin-right: $space_tiny;
+  }
+}
+
+.DfVoter {
+  i.icon {
+    margin: 0 .5rem !important;
+  }
+
+  &.vertical {
+    margin-right: $space_tiny;
+  }
+
+  .ui.button {
+    background-color: transparent !important;
+    color: $color_muted;
+    min-width: initial;
+    max-height: initial;
+    padding: $space_tiny;
+
+    &.red {
+      &:hover,
+      &.active {
+        color: red !important;
+      }
+    }
+
+    &.green {
+      &:hover,
+      &.active {
+        color: green !important;
+      }
+    }
+  }
+}
+
+.DfNoVoters {
+  text-align: center;
+  background-color: #fff;
+  padding: 1rem;
+}
+
+.ui.img.avatar {
+  width: initial;
+  height: initial;
+}
+
+.DfCommentsByPost {
+  border-top: $color_light_border 1px solid;
+
+  h3 {
+    font-size: $font_large;
+    font-weight: 400;
+    color: $color_muted;
+    padding-top: $space_normal;
+  }
+
+  .ui.comments {
+    max-width: 100%;
+  }
+}
+
+.DfCommentContent {
+  margin-bottom: $space_huge;
+
+  .reply {
+    color: $color_muted;
+  }
+}
+
+.ChildComment {
+  .DfComment {
+    padding-top: $space_normal;
+  }
+}
+
+.ui.dropdown {
+  margin: 0;
+  display: flex;
+  width: auto;
+  height: min-content;
+  width: initial;
+
+  i {
+    color: $color_muted;
+  }
+
+  .ui.selection.dropdown.menu {
+    padding: .5rem .75rem !important;
+  }
+}
+
+hr {
+  border: 0;
+  border-bottom: 1px solid $color_light_border;
+}
+
+.DfFollowButton {
+  margin-top: $space_tiny;
+}
+
+.disable,
+.disable:hover {
+  color: $color_muted;
+  text-decoration: none !important;
+  cursor: default !important;
+}
+
+.DfActivityStreamItem {
+
+  .handle,
+  a {
+    font-weight: bold;
+  }
+
+  .header {
+    font-size: $font_normal;
+  }
+
+  .name {
+    text-transform: uppercase;
+  }
+}
+
+.DfDate {
+  width: 100%;
+  font-size: $font_small
+}
+
+.DfSocialLinks {
+  margin-top: $space_small;
+  font-size: $font_big;
+
+  a {
+    margin-right: $space_small;
+  }
+}
+
+.Profile--actions {
+  margin-left: 4rem;
+
+  .DfCreateProfileButton {
+    margin-top: $space_normal;
+    text-align: initial;
+  }
+}
+
+.asLink {
+  @extend .DfLinkOnHover;
+}
+
+.asLink:hover {
+  color: #0d548a
+}
+
+.DfSpaceStats {
+  margin-top: $space_normal;
+
+  .DfStatItem {
+    margin-right: $space_normal;
+
+    &::last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.DfSpaceBody {
+  display: flex;
+  width: 100%;
+
+  .handle {
+    max-width: 30rem;
+  }
+
+  .description {
+    color: $color_font_normal;
+  }
+}
+
+.ui.attached:not(.message)+.ui.attached.segment:not(.top) {
+  border: none;
+}
+
+.DfCountsPreview {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: $space_normal;
+
+  & > a,
+  & > span {
+    color: rgba(34, 36, 38, .8) !important;
+    font-size: $font_small;
+    margin-left: $space_normal;
+  }
+}
+
+.ui--AddressComponents-address {
+  @extend .DfBoldBlackLink;
+}
+
+.DfPostPreview,
+.DfPost {
+  .ui.button {
+    min-width: initial;
+    max-height: initial;
+  }
+}
+
+.NotificationItem {
+  border-bottom: 1px solid $color_light_border;
+  padding: $space_small;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.DfRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.DfActionsPanel {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  &.DfActionBorder {
+    border-top: 1px solid rgba(34, 36, 38, .15);
+  }
+
+  .DfReactionsAction {
+    button:first-of-type {
+      margin-left: -$space_normal;
+      margin-right: $space_normal;
+    }
+  }
+}
+
+.DfAction {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: .25rem 0;
+  font-weight: bold;
+  font-size: $font_normal;
+  background-color: transparent;
+  border: none;
+  @extend .DfNoBoxShadow;
+
+  &:hover, &:active, &:focus {
+    cursor: pointer;
+    background-color: transparent;
+  }
+}
+
+.DfSegment.DfPostPreview {
+  padding-bottom: 0;
+
+  .DfInfo {
+    width: -webkit-fill-available;
+  }
+
+  .DfContent {
+    color: $color_font_normal;
+    margin: $space_small 0;
+  }
+
+  .DfActionsPanel {
+    justify-content: space-around;
+  }
+
+  .DfPostImagePreview {
+    margin-left: $space_normal
+  }
+
+}
+
+.DfShareModalBody {
+  .DfSection {
+    margin-top: $space_huge;
+    margin-bottom: 0;
+    width: auto;
+  }
+
+  .EditEntityBox {
+    width: 100%;
+    max-width: none;
+  }
+
+  .ui.input>input,
+  .ui.selection.dropdown {
+    width: 100%;
+  }
+
+  .DfSegment.DfPostPreview {
+    text-align: left;
+  }
+}
+
+.DfGreyLink {
+  color: $color_muted !important;
+  cursor: pointer;
+
+  a {
+    color: $color_muted !important;
+    cursor: pointer;
+  }
+}
+
+.DfGreyLink:hover {
+  a {
+    color: $color_muted !important;
+    text-decoration: underline !important;
+    cursor: pointer;
+  }
+
+  color: $color_muted !important;
+  text-decoration: underline !important;
+  cursor: pointer;
+}
+
+.DfScore {
+  font-size: $font_normal
+}
+
+.editor-statusbar {
+  display: none;
+}
+
+.DfGreyButton {
+  background-color: #ddd;
+}
+
+.DfGreyButton:hover {
+  background-color: #ccc;
+  border-color: $color_light_border;
+  color: $color_font_normal;
+}
+
+.DfSelectedSpace {
+  background-color: #e6f7ff;
+  color: #1890fe;
+  border-right: 2px solid #1890f3;
+}
+
+.DfBgImg {
+  background-size: cover;
+  background-position: center;
+}
+
+.text.muted,
+.text.grey {
+  color: $color_muted;
+}
+
+.text.smaller {
+  font-size: $font_small
+}
+
+.ui.button:disabled,
+.ui.buttons .disabled.button,
+.ui.disabled.active.button,
+.ui.disabled.button,
+.ui.disabled.button:hover {
+  opacity: 0.45 !important;
+}
+
+.ui--row {
+  .ui.message {
+    margin: 0;
+    padding: $space_small $space_normal;
+  }
+
+  textarea,
+  .ui--InputFile {
+    margin: $space_mini 0 !important;
+    height: 5rem;
+  }
+}
+
+.modal {
+  .ui--AddressComponents {
+    width: 100%;
+  }
+
+  .AddressComponents {
+    .button {
+      min-width: 8rem;
+    }
+  }
+
+  .button {
+    max-height: initial;
+  }
+
+  .content {
+    min-width: 75%;
+    width: 100%;
+
+    .DfFollowAccountButton {
+      margin: 0;
+      margin-left: $space_normal;
+    }
+  }
+}
+
+.ui.modal .scrolling.content {
+  text-align: left;
+
+  .ReactionsItem {
+    margin: $space_normal 0;
+  }
+
+  .ProfileDetails {
+    align-items: center;
+  }
+}
+
+
+.Df--AddressComponents-details {
+  color: $color_muted !important;
+  font-weight: normal;
+}
+
+.ui--AddressComponents {
+  display: flex;
+
+  .ui--IdentityIcon {
+    margin-left: 0;
+    margin-right: $space_small;
+  }
+
+  .AddressComponents.follow {
+    float: right;
+
+    .button {
+      margin: 0;
+    }
+  }
+
+  .ui--AddressComponents-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .Df--AddressComponents-details {
+    display: block;
+  }
+
+  .ui--AddressSummary-name,
+  .ui--AddressSummary-balance {
+    display: inline-flex;
+    padding-top: 0;
+    margin-right: 0 !important;
+    font-size: $font_small !important;
+    margin-right: $space_normal;
+    color: $color_muted;
+  }
+}
+
+.Df--profile-balance {
+  margin-right: .5rem;
+  font-size: $font_normal;
+  color: $color_muted;
+}
+
+.TopMenuAccount {
+  line-height: 1.25rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  .addressInfo {
+    margin: 0 $space_tiny;
+  }
+
+  .ui--Balance {
+    font-size: $font_small;
+    color: $color_muted;
+  }
+}
+
+.ui--Bubble.ui.label {
+  background-color: #f2f2f2;
+  margin: $space_mini 0;
+  margin-right: $space_tiny;
+
+  &.pointing:before {
+    background-color: #e6e6e6;
+  }
+
+  &.warn {
+    color: #f2711c !important;
+    border: 1px solid;
+  }
+
+  &.ok {
+    color: #21ba45 !important;
+    border: 1px solid;
+  }
+}
+
+.DfCommentsByPost {
+  .DfSection-title {
+    font-size: $font_large;
+    font-weight: bold !important;
+  }
+}
+
+.DfSection--withButton {
+  display: flex;
+  align-items: center;
+}
+
+.DfSection {
+
+  .viewspace-minipreview {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+  }
+
+  .DfSection-title {
+    border-bottom: 1px solid $color_light_border;
+    margin: 0rem;
+    margin-bottom: $space_tiny;
+    padding: $space_tiny 0;
+    display: flex;
+  }
+
+  li.ant-list-item.ant-list-item-no-flex {
+    border: none;
+    padding: 0;
+    padding-top: $space_tiny;
+    padding-bottom: $space_tiny;
+  }
+}
+
+
+@media (min-width: 560px) {
+  .DfSectionOuter {
+    min-width: 428px;
+    max-width: calc(680px + #{$space_normal} * 2);
+    width: calc(680px + #{$space_normal} * 2);
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 0;
+
+    .DfSectionOuter {
+      width: 100%;
+    }
+  }
+
+  .DfSection {
+    margin: 0;
+  }
+}
+
+.DfForm .ui--Labelled {
+  align-items: end;
+
+  &>label {
+    padding-top: $space_small;
+  }
+}
+
+/* MD = markdown */
+.DfViewMD {
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    background-color: #e0e0e0;
+    padding: 0 $space_mini;
+    border-radius: 2px;
+  }
+}
+
+.DfMainStatus {
+  margin: 1rem auto !important;
+  max-width: 500px !important;
+  width: 100% !important;
+  text-align: center;
+
+  .button {
+    margin-right: 0;
+  }
+}
+
+.ui.top.left.flowing.popup.transition.visible {
+  .ui--AddressComponents-address {
+    font-size: $font_large;
+  }
+
+  .Df--AddressComponents-details {
+    margin-right: $space_mini;
+  }
+}
+
+.DfAvatar {
+  display: inline-block;
+  border-radius: 50%;
+  vertical-align: middle;
+  border: 1px solid $color_light_border;
+  &.space {
+    margin-right: $space_tiny;
+  }
+}
+
+.ui.top.left.flowing.popup.transition.visible {
+  .DfAvatar {
+    margin: 0 $space_tiny $space_tiny 0;
+  }
+}
+
+.ProfileDetails.DfPreview {
+  align-items: center;
+}
+
+.DfPopup-username {
+  font-size: $font_normal !important;
+  color: #4e4e4e;
+  margin: $space_mini 0;
+}
+
+.DfPopup-about {
+  margin: $space_tiny 0;
+}
+
+.DfPopup-links {
+  color: $color_muted;
+  display: flex;
+  justify-content: flex-start;
+  margin: $space_tiny 0;
+
+  .DfPopup-link {
+    margin-right: $space_normal;
+  }
+}
+
+.DfMdEditor {
+  .CodeMirror-scroll {
+    min-height: 5rem !important;
+  }
+
+  .CodeMirror.cm-s-easymde.CodeMirror-wrap.CodeMirror-fullscreen {
+    z-index: 1000;
+  }
+
+  .editor-toolbar {
+    border-color: $color_light_border;
+    color: #c0c0c0;
+
+    &.fullscreen {
+      z-index: 1000;
+    }
+  }
+
+  &:hover .editor-toolbar {
+      color: $color_font_normal;
+    }
+}
+
+
+.DfMdEditor.error {
+  .editor-statusbar {
+    float: right;
+  }
+
+  .CodeMirror.cm-s-easymde.CodeMirror-wrap {
+    background-color: #fff6f6;
+    border-color: #e0b4b4;
+  }
+
+  .editor-toolbar {
+    border-color: #e0b4b4;
+  }
+}
+
+.ui.DfMenu.menu {
+  background-color: #3f3f3f;
+  color: #fff;
+  border-radius: 0;
+
+  label {
+    color: #fff;
+  }
+
+  .search.selection.dropdown {
+    background-color: $color_font_normal;
+  }
+}
+
+.ui.attached.tabular.menu {
+  padding: 0 $space_huge;
+}
+
+.DfSearch {
+  &:first-of-type {
+    margin-top: 0 !important;
+  }
+
+  width: 450px;
+  min-width: 320px;
+  color: rgba(0, 0, 0, 0.7);
+  z-index: 2;
+  padding: 0 1rem;
+
+  input {
+    border-radius: .5rem;
+    font-size: $font_normal;
+  }
+
+  input::placeholder {
+    color: #aaa;
+  }
+
+  input:hover {
+    border-color: #1e99ff;
+  }
+
+  input:focus {
+    border-color: #1e99ff;
+    -moz-box-shadow: 0 0 5px #1e99ff;
+    -webkit-box-shadow: 0 0 5px #1e99ff;
+    box-shadow: 0 0 5px #1e99ff;
+  }
+
+  ul {
+    top: 50px;
+  }
+
+  li {
+    line-height: initial;
+  }
+}
+
+.DfBgColor {
+  background-color: $color_page_bg;
+}
+
+.DfTab {
+  background-color: #fff;
+
+  .ui.attached.tabular.menu {
+    padding: $space_normal $space_normal 0rem $space_normal;
+  }
+}
+
+.DfHeader {
+  background: #fff;
+  padding: 0 $space_normal;
+  border-bottom: 1px solid $color_light_border;
+  position: fixed;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  /* Fix black background of top menu in prod mode: */
+  &.ant-layout-header {
+    padding: 0 .5rem !important;
+    background-color: #fff !important;
+  }
+}
+
+.ant-layout {
+  background-color: $color_page_bg !important;
+
+  &.ant-layout-has-sider {
+    margin-top: $height_top_menu;
+  }
+}
+
+.DfDataList {
+  padding-top: $space_tiny;
+
+  .ant-list-pagination {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.DfEmpty {
+  padding: $space_big;
+}
+
+.DfTitle--List {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.DfSideMenu--FollowedSpaces {
+  & .collapsed {
+    .ant-menu-item-group-list {
+      .content {
+        display: none;
+      }
+
+      margin-left: $space_small;
+    }
+  }
+
+  color: #666;
+  cursor: pointer;
+
+  .ant-menu-item-group-title {
+    text-transform: uppercase;
+    font-size: $font_small
+  }
+
+  .container.highlight {
+    margin-top: $space_tiny;
+    margin-right: $space_mini;
+  }
+
+  .content {
+    width: 80%;
+    display: flex;
+    align-items: center;
+
+    .handle {
+      padding: $space_tiny 0rem;
+    }
+  }
+}
+
+.DfSideMenu--FollowedSpaces.collapsed {
+  .ant-menu-item-group-list {
+    .content {
+      display: none;
+    }
+
+    margin-left: $space_small;
+  }
+}
+
+.DfSider {
+  background: #fff;
+  border-right: 1px solid $color_light_border;
+  overflow-y: auto;
+  height: 100%;
+  left: 0;
+
+  .ant-menu-item:not(:last-child) {
+    margin-bottom: 4px;
+  }
+
+  .ant-badge {
+    margin-left: $space_mini;
+  }
+}
+
+.ant-layout-sider-children {
+  width: inherit;
+  border-right: 1px $color_light_border solid;
+  position: fixed;
+}
+
+.ant-list-something-after-last-item .ant-spin-container>.ant-list-items>.ant-list-item:last-child {
+  border: none;
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+
+  /* Required for text-overflow to do anything */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.DfTopBar {
+  width: 100%;
+  display: contents;
+
+  .DfSearchIcon {
+    padding: $space_tiny;
+    margin-right: $space_tiny;
+    margin-top: 1.15rem;
+    font-size: 1.3rem;
+  }
+
+  .DfCloseSearchIcon {
+    font-size: 1.3rem;
+    padding-left: $space_tiny;
+  }
+}
+
+.DfTopBar--search {
+  display: flex;
+  align-items: center;
+}
+
+.DfTopBar--rightContent {
+  display: -webkit-inline-box;
+  display: -moz-inline-box;
+}
+
+/* Fix syntax error in Markdown editor */
+.CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
+  background: none !important;
+}
+
+.DfCreator {
+  font-size: $font_normal;
+  margin-top: $space_normal;
+
+  i {
+    margin-right: $space_mini;
+  }
+
+  div:not(.DfCreator--data) {
+    display: inline;
+  }
+
+  color: $color_muted !important;
+}
+
+a.DfStatItem {
+  @extend .DfBlackLink;
+}
+
+.DfStatItem {
+  font-size: $font_normal;
+  display: inline;
+  margin-right: $space_tiny;
+}
+
+.DfSpacedButtons {
+  margin-left: 3rem;
+}
+
+.DfSpaceTitle {
+  margin-bottom: $space_small;
+
+  a {
+    @extend .DfBlackLink;
+  }
+
+  .ui.dropdown {
+    margin-left: $space_tiny;
+  }
+}
+
+.DfModal {
+  text-align: left;
+  margin: 1rem;
+
+  content {
+    min-width: 75%;
+  }
+}
+
+.NavEditorWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.NavigationEditor .NERow {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 0;
+  margin-bottom: $space_big;
+  position: relative;
+  flex-direction: column;
+  border-bottom: 1px solid $color_light_border;
+}
+.NavigationEditor .NERow:last-child {
+  border-bottom: none;
+}
+
+.NavigationEditor .NEText {
+  color: $color_font_normal;
+  font-style: normal;
+  font-weight: 500;
+  font-size: $font_normal;
+  margin-right: $space_huge;
+  width: 16rem;
+  margin-top: $space_big;
+}
+
+.NavigationEditor .NavigationEditorForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.NavigationEditor .NavigationEditorForm input,
+.NavigationEditor .NavigationEditorForm select {
+  margin-right: $space_huge !important;
+  height: 3rem !important;
+}
+
+.NavigationEditor .NESelectType {
+  width: 50%;
+}
+
+.NavigationEditor .NavigationEditorForm .NEHidden {
+  input,
+  select {
+    color: $color_muted !important;
+  }
+}
+
+.NavigationEditor .NEButtonsWrapper {
+  display: flex;
+  flex-direction: column;
+  margin: $space_huge 0;
+}
+
+.NavigationEditor .NERemoveButton button:hover {
+  background-color: #ff0000;
+  border-color: #d9d9d9;
+
+  span {
+    color: #fff;
+  }
+}
+
+.NavigationEditor .NEHideButton {
+  margin-bottom: $space_normal;
+
+  button {
+    margin-right: $space_huge;
+  }
+}
+
+.NavigationEditor .NEAddTab {
+  @extend .DfLinkOnHover;
+  background-color: #fff;
+  display: flex;
+  border-radius: 0.28571429rem;
+  line-height: 1.21428571rem;
+  padding: 0.67857143rem 1rem;
+  max-width: 15.2rem;
+  width: 100%;
+  justify-content: center;
+  border: 1px dashed #d9d9d9;
+}
+
+.NavigationEditor .NESubmit {
+  max-width: 8.5rem;
+  width: 100%;
+
+  span {
+    color: #fff !important;
+  }
+}
+
+.NavigationEditor .NETagsWrapper {
+  width: 100%;
+
+  input {
+    height: $space_big !important;
+  }
+}
+
+.NavigationEditor .NEErrorMessage {
+  position: absolute !important;
+  top: 5.5rem;
+  left: 6rem;
+}
+
+.NavigationEditor .NEAutoCompleteItem {
+  position: absolute;
+}
+
+.RNTListItem {
+  padding: 0 $space_normal;
+
+  &:hover {
+     background-color: #eee;
+     border-radius: $border_radius_normal;
+  }
+
+  .ant-list-item-meta-title {
+    font-weight: bold !important;
+  }
+}
+.RNTIcon {
+  transform: rotate(90deg);
+  margin-right: $space_normal;
+  color: #ccc;
+}
+.RNTSaveButton span {
+  color: #fff;
+}
+
+.ViewSpaceWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.SpaceNav {
+  .SNhead {
+    display: flex;
+    flex-direction: column;
+    padding: $space_big;
+    background-color: #fff;
+    border: 1px solid $color_light_border;
+    box-sizing: border-box;
+    border-radius: $border_radius_normal;
+    margin: 0 0 $space_big 0;
+    padding: $space_big;
+
+    .SNavatar {
+      margin: auto;
+
+      img {
+        width: 100%;
+        border-radius: 10rem;
+      }
+    }
+
+    .SNheadTitle {
+      font-weight: 500;
+      font-size: $font_big;
+      line-height: $space_huge;
+      margin: $space_normal 0;
+      text-align: center;
+    }
+
+    .SNheadDescription {
+      margin-top: $space_normal;
+    }
+
+    .SNheadButton {
+      margin: auto;
+
+      &.unfollowed span {
+        color: #fff;
+      }
+    }
+  }
+
+  .SNmenu {
+    border: 1px solid $color_light_border;
+    box-sizing: border-box;
+    border-radius: $border_radius_normal;
+    margin-bottom: $space_big;
+    width: 100% !important;
+  }
+
+  .SpaceNavSettings {
+    display: flex;
+    justify-content: flex-end;
+    margin: $space_tiny;
+
+    a {
+      @extend .DfBlackLink;
+    }
+  }
+}
+
+.DfNotificationItem {
+  display: flex;
+  width: 100%;
+  min-height: 60px;
+  margin-top: 1rem;
+
+  .DfNotificationContent {
+    margin: 0 $space_small;
+    width: inherit;
+  }
+
+  a {
+    @extend .DfBlackLink;
+    font-weight: bold;
+  }
+}
+
+.DfStep {
+  button, a {
+    padding: 0;
+    font-size: $font_normal;
+    font-weight: bolder;
+    color: #222
+  }
+}
+
+.ant-steps-item-title {
+  font-size: $font_normal;
+}
+
+.DfChooseAccountList {
+  margin-top: $space_tiny;
+  border-radius: $space_tiny;
+}
+
+.DfChooseAccount {
+  display: flex;
+
+  .DfAddressInfo {
+    display: block
+  }
+}
+
+.SelectAccountSection {
+  max-height: 16rem;
+  overflow-y: auto;
+
+  .SelectAccountItem {
+    padding: $space_tiny;
+    padding-left: $space_normal;
+    cursor: pointer; 
+    height: 'auto';
+  
+    .DfDisabled {
+      .ant-btn-disabled,
+      .ant-btn.disabled,
+      .ant-btn[disabled]{
+        cursor: default; 
+        border: none;
+        background-color: none;
+    }
+  
+    }
+  }
+  
+  .SelectAccountItem:hover {
+    background-color: #e6f7ff;
+  }
+}
+
+
+.DfCurrentAddress {
+  display: flex;
+  margin: 0 1rem;
+
+  &.icon {
+    &:after {
+      content: '▼';
+      zoom: .8;
+    }
+  }
+
+  .DfAddressIcon {
+    display: flex;
+    align-items: center;
+    margin: $space_normal 0;
+
+    .ui--IdentityIcon {
+      display: block;
+    }
+  }
+
+  .DfAddressInfo {
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+    margin: $space_normal $space_tiny $space_normal 0;
+
+    a {
+      @extend .DfBlackLink;
+    }
+
+    .anticon-caret-down {
+      margin-left: $space_tiny;
+    }
+  }
+}
+
+.DfSelectAccount {
+  padding: $space_small $space_normal;
+
+  .DfProfileInfo{
+      padding-bottom: $space_tiny;
+  }
+
+  .ui.search.dropdown {
+    max-width: 25.5rem;
+  }
+}
+
+.DfError {
+  color: red
+}
+
+.DfShareModalPadding.scrolling.content {
+  padding-bottom: 0;
+}
+
+.DfNewComment {
+
+  .ant-comment-inner {
+    padding-top: 0;
+    padding-bottom: $space_tiny;
+  }
+
+  .ant-comment-avatar {
+    display: none;
+  }
+
+  .ant-comment-actions {
+    li {
+      span, button {
+        font-size: $font_small;
+      }
+      button, button:hover, button:active, button:focus {
+          cursor: pointer;
+          background: transparent;
+          border: none;
+          @extend .DfNoBoxShadow
+      }
+    }
+  
+    margin: $space_tiny 0;
+
+    span {
+      margin-left: $space_tiny;
+    }
+
+    .DfVoter {
+      margin-left: -$space_tiny
+    }
+  }
+
+  .ant-comment-content-author-name {
+    font-size: $font_small;
+    line-height: inherit;
+
+    .DfAuthorBlock {
+      display: flex;
+      .anticon-ellipsis.ant-dropdown-trigger {
+        margin-left: $space_big;
+      }
+    }
+  }
+
+  .ant-comment-content-detail {
+    .markdown-body  {
+      display: inline-block;
+      margin-top: $space_tiny !important;
+      padding: $space_small $space_normal;
+      border-radius: 15px;
+      border-top-left-radius: 0;
+      background-color: #fff;
+      @extend .DfBoxShadow;
+    }
+
+    .DfMdEditor {
+      margin-top: $space_small;
+    }
+  }
+
+  .ant-comment-nested {
+    box-shadow: -1px 0 0 rgba(34,36,38,.15);
+    margin-left: $space_huge;
+    padding-left: $space_normal;
+
+    .DfCommentChild {
+      margin-top: $space_tiny
+    }
+  }
+
+  .DfActionButtonsBlock {
+    padding: $space_tiny 0;
+  }
+}
+
+.anticon-ellipsis.ant-dropdown-trigger {
+  font-size: $font_big;
+}
+
+.DfCommentSection {
+  border-top: 1px solid $color_light_border;
+
+  h3 {
+    padding: $space_small 0;
+  }
+
+  .DfActionButtonsBlock {
+    padding: $space_small 0;
+  }
+}
+
+/* .DfMainContent {
+  min-width: 428px;
+  max-width: calc(680px + #{$space_normal} * 2);
+  width: calc(680px + #{$space_normal} * 2);
+} */
+
+.DfPanel {
+  margin: 0 $space_normal;
+  width: $width_panel;
+}
+
+.DfCard {
+  display: flex;
+  flex-direction: column;
+  padding: $space_normal;
+  margin: $space_small;
+  background-color: #fff;
+  border: 1px solid $color_light_border;
+  box-sizing: border-box;
+  border-radius: $border_radius_normal;
+  &.active {
+    border-color: $color_link
+  }
+}
+
+.DfMobileOnBoarding {
+  @extend .DfBoxShadow;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  line-height: 0.6rem;
+  padding: 1rem;
+  margin: 0 -1rem;
+}
+
+.DfButtonAsMenuItem {
+  color: inherit !important;
+  padding-left: 0 !important;
+  transition: none !important;
+  -webkit-transition: none !important;
+}
+
+.DfSignInModal {
+  .ant-divider-inner-text:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+  }
+  .ant-divider-inner-text {
+    color: $color_muted;
+    font-size: $font_normal;
+  }
+
+  .ant-modal-body {
+    padding: 0;
+  }
+}
+
+.DfAccountMenu {
+  @extend .DfCard;
+  padding: 0;
+}
+
+.DfHiddenButton {
+  margin-left: $space_normal;
+  border-color: yellow;
+}

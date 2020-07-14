@@ -1,9 +1,9 @@
 import React from 'react'
-import { toShortAddress } from '@polkadot/react-components/util';
+import { toShortAddress } from 'src/components/utils';
 import { AddressProps } from './utils/types';
-import Link from 'next/link';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
+import ViewProfileLink from '../ViewProfileLink';
 
 type Props = AddressProps & {
   isShort?: boolean,
@@ -11,17 +11,27 @@ type Props = AddressProps & {
   className?: string
 };
 
-export const Name: React.FunctionComponent<Props> = ({ isShort = true, asLink = true, address, owner = {} as ProfileData, className }) => {
-  const { content, profile } = owner;
-  const name = content?.fullname || profile?.username || (isShort ? toShortAddress(address) : address.toString())
+export const Name = ({
+  address,
+  owner = {} as ProfileData,
+  isShort = true,
+  asLink = true,
+  className
+}: Props) => {
+
+  const { content, profile } = owner
+  const fullname = content?.fullname
+  const username = profile?.username?.toString()
+
+  // TODO extract a function? (find similar copypasta in other files):
+  const addressString = isShort ? toShortAddress(address) : address.toString()
+  const name = fullname || username || addressString
+  const nameClass = `ui--AddressComponents-address ${className}`
+
   return asLink
-    ? <Link href={'/profile/[address]'} as={`/profile/${address}`}>
-      <a className={`ui--AddressComponents-address ${className} `}>
-        {name}
-      </a>
-    </Link>
+    ? <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
     : <>{name}</>
-};
+}
 
 export const NameWithOwner = withLoadedOwner(Name);
 

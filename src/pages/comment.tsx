@@ -1,3 +1,3 @@
-import { ViewComment } from '../components/posts/ViewComment';
+import { ViewComment } from '../components/comments/ViewComment';
 
 export default ViewComment;
