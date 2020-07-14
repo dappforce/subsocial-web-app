@@ -8,6 +8,7 @@ import BN from 'bn.js'
 import { useDispatch } from 'react-redux';
 import { useMyAddress } from '../auth/MyAccountContext';
 import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils';
+import { isHiddenPost, HiddenPostAlert } from '../posts/view-post';
 
 const InnerEditComment = dynamic(() => import('./InnerEditComment'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -23,6 +24,8 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
   const dispatch = useDispatch();
   const { subsocial } = useSubsocialApi()
   const account = useMyAddress()
+
+  if (isHiddenPost(post)) return <div className='mt-3'><HiddenPostAlert post={post} desc='You cannot comment on a hidden post' /></div>;
 
   const parentIdStr = parentId.toString()
 
