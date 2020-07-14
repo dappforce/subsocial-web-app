@@ -20,12 +20,13 @@ import ViewPostLink from '../ViewPostLink';
 import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../../utils/urls';
 import SharePostAction from '../SharePostAction';
 import HiddenPostButton from '../HiddenPostButton';
-import HiddenAlert from 'src/components/utils/HiddenAlert';
+import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert';
 import NoData from 'src/components/utils/EmptyList';
 import { VoterButtons } from 'src/components/voting/VoterButtons';
 import Segment from 'src/components/utils/Segment';
 import { RegularPreview } from '.';
 import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters';
+import { isHidden } from '@subsocial/api/utils/visibility-filter';
 
 type DropdownProps = {
   account: string | AccountId;
@@ -59,7 +60,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
     <Menu>
       {isMyPost && <Menu.Item key={`edit-${postKey}`}>
         <Link href='/spaces/[spaceId]/posts/[postId]/edit' as={postUrl(space, post, '/edit')}>
-          <a className='item'>Edit</a>
+          <a className='item'>Edit post</a>
         </Link>
       </Menu.Item>}
       {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
@@ -84,17 +85,18 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
   </>
 };
 
-type HiddenPostAlertProps = {
-  post: PostWithSomeDetails,
-  onSpacePage?: boolean
+type HiddenPostAlertProps = BaseHiddenAlertProps & {
+  post: Post,
+  space?: SpaceData
 }
 
-export const HiddenPostAlert = ({ post: { post, ext, space }, onSpacePage = false }: HiddenPostAlertProps) => {
-  const PostAlert = () => <HiddenAlert struct={post.struct} type='post' />
-  const ParentPostAlert = () => ext && isVisible(ext.post) ? <HiddenAlert struct={ext.post.struct} type='post' desc='This post is not visible because parent post is hidden.' /> : null
-  const SpaceAlert = () => space && isVisible(space) && !onSpacePage ? <HiddenAlert struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
+export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
+  const { post } = props
+  const PostAlert = () => <HiddenAlert struct={post} type='post' {...props} />
+  // TODO fix view Space alert when space is hidden
+  // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenAlert preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
 
-  return <PostAlert /> || <ParentPostAlert /> || <SpaceAlert />
+  return <PostAlert />
 }
 
 export const renderPostLink = (space: HasSpaceIdOrHandle, post: HasPostId, title?: string) =>
@@ -271,3 +273,5 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
 }
 
 export const PostNotFound = () => <NoData description='Post not found' />
+
+export const isHiddenPost = (post: Post) => isHidden(post)
