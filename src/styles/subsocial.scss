@@ -160,7 +160,7 @@ body,
 
 .DfBrand {
   font-size: $font_big;
-  color: $secondary_color;
+  color: $color_secondary;
   cursor: pointer;
 
   img {
@@ -170,7 +170,7 @@ body,
 }
 
 .DfBrand:hover {
-  color: $secondary_color;
+  color: $color_secondary;
 }
 
 .DfSummary {
@@ -232,7 +232,7 @@ body,
 }
 
 .DfMenuSpaceLink {
-  color: $secondary_color;
+  color: $color_secondary;
   padding: $space_tiny;
   padding-left: $space_normal;
   display: block;
