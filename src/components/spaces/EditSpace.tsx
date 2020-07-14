@@ -26,6 +26,8 @@ import { ValidationProps, buildValidationSchema } from './SpaceValidation';
 import DfMdEditor from '../utils/DfMdEditor';
 
 import useSubsocialEffect from '../api/useSubsocialEffect';
+import NoData from '../utils/EmptyList';
+import { SpaceNotFound } from './helpers';
 
 const log = newLogger('Edit space')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -217,11 +219,11 @@ function LoadStruct (props: LoadStructProps) {
   }
 
   if (!struct || !struct.owner.eq(myAddress)) {
-    return <em>You have no rights to edit this space</em>;
+    return <NoData description={'You have no rights to edit this space'}/>
   }
 
   if (structOpt.isNone) {
-    return <em>Space not found</em>;
+    return <SpaceNotFound />
   }
 
   return <EditForm {...props} struct={struct} json={json} />;

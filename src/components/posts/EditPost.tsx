@@ -27,6 +27,9 @@ import SpacegedSectionTitle from '../spaces/SpacedSectionTitle';
 import DfMdEditor from '../utils/DfMdEditor';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { Loading } from '../utils';
+import NoData from '../utils/EmptyList';
+import { PostNotFound } from './view-post';
+import { withSpaceIdFromUrl } from '../spaces/withSpaceIdFromUrl';
 
 const log = newLogger('Edit post')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
@@ -279,19 +282,7 @@ function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
     try {
       return <Component id={new BN(postId as string)} {...props}/>;
     } catch (err) {
-      return <em>Invalid post ID: {postId}</em>;
-    }
-  };
-}
-
-function withSpaceIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function () {
-    const router = useRouter();
-    const { spaceId } = router.query;
-    try {
-      return <Component spaceId={new BN(spaceId as string)} />;
-    } catch (err) {
-      return <em>Invalid space ID: {spaceId}</em>;
+      return <NoData description={`Post not found because this post id: ${postId} is invalid`}/>
     }
   };
 }
@@ -330,11 +321,11 @@ function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
     }
 
     if (structOpt.isNone) {
-      return <em>Post not found</em>;
+      return <PostNotFound />
     }
 
     if (!struct || !struct.created.account.eq(myAddress)) {
-      return <em>You have no rights to edit this post</em>;
+      return <NoData description={'You have no rights to edit this post'}/>
     }
 
     return <Component {...props} struct={struct} json={json} myAddress={myAddress} />;
@@ -354,6 +345,7 @@ export const NewSharePost = InnerFormWithValidation;
 
 export const EditPost = withMulti<OuterProps>(
   InnerFormWithValidation,
+  withSpaceIdFromUrl,
   withIdFromUrl,
   withCalls<OuterProps>(
     postsQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })

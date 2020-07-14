@@ -8,7 +8,6 @@ import { isBrowser } from 'react-device-detect';
 
 import { AuthorPreview } from '../profiles/address-views';
 import { DfMd } from '../utils/DfMd';
-import NoData from '../utils/EmptyList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { return404 } from '../utils/next';
 import Section from '../utils/Section';
@@ -21,6 +20,7 @@ import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import { PageContent } from '../main/PageWrapper';
 import { getSpaceId } from '../substrate';
+import { SpaceNotFound } from './helpers';
 
 type Props = ViewSpaceProps
 
@@ -30,7 +30,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   const { spaceData } = props;
 
   if (!spaceData || !spaceData?.struct) {
-    return <NoData description={<span>Space not found</span>} />
+    return <SpaceNotFound />
   }
 
   const { owner } = props;

@@ -7,13 +7,12 @@ import mdToText from 'markdown-to-txt';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Error from 'next/error';
-import React, { useState } from 'react';
+import React from 'react';
 import { isBrowser } from 'react-device-detect';
 import { Segment } from 'src/components/utils/Segment';
 
 import { isHidden } from '../utils';
 import { DfBgImg } from '../utils/DfBgImg';
-import NoData from '../utils/EmptyList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
 import { isMyAddress } from '../auth/MyAccountContext';
@@ -31,8 +30,7 @@ import AboutSpaceLink from './AboutSpaceLink';
 import ViewSpaceLink from './ViewSpaceLink';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 import { PageContent } from '../main/PageWrapper';
-import { DropdownMenu, PostPreviewsOnSpace } from './helpers';
-import HiddenAlert from '../utils/HiddenAlert';
+import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert } from './helpers';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -48,7 +46,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   const { spaceData } = props;
 
   if (!spaceData || !spaceData?.struct || isHidden({ struct: spaceData.struct })) {
-    return <NoData description={<span>Space not found</span>} />
+    return <SpaceNotFound />
   }
 
   const {
@@ -72,13 +70,10 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     created: { account }
   } = space;
 
-  const [ content ] = useState(spaceData?.content || {} as SpaceContent);
-  const { desc, name, image, tags } = content;
+  const { desc, name, image, tags } = spaceData?.content || {} as SpaceContent
 
   const isMySpace = isMyAddress(account);
   const hasImage = nonEmptyStr(image);
-
-  const HiddenSpaceAlert = <HiddenAlert struct={space} type='space' />
 
   const SpaceNameAsLink = () =>
     <ViewSpaceLink space={space} title={name} />
@@ -150,13 +145,13 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     return renderMiniPreview();
   } else if (preview || previewDetails) {
     return <Segment>
-      {HiddenSpaceAlert}
+      <HiddenSpaceAlert space={space} preview />
       {renderPreview()}
     </Segment>;
   }
 
   return <>
-    {HiddenSpaceAlert}
+    <HiddenSpaceAlert space={space} />
     <div className='ViewSpaceWrapper'>
       <HeadMeta title={name} desc={mdToText(desc)} image={image} />
       <PageContent leftPanel={isBrowser &&

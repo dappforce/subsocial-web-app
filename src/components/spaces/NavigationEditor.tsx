@@ -24,6 +24,8 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { TxFailedCallback, TxCallback } from '../substrate/SubstrateTxButton';
+import { SpaceNotFound } from './helpers';
+import NoData from '../utils/EmptyList';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -317,11 +319,11 @@ function LoadStruct (props: LoadStructProps) {
   }
 
   if (!struct || !struct.owner.eq(myAddress)) {
-    return <em>You have no rights to edit this space</em>;
+    return <NoData description='You have no rights to edit this space' />
   }
 
   if (structOpt.isNone) {
-    return <em>Space not found</em>;
+    return <SpaceNotFound />
   }
 
   return <NavigationEditor {...props} struct={struct} json={json as SpaceContent} />;
