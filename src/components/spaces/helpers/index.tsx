@@ -13,17 +13,21 @@ import ListData from 'src/components/utils/DataList';
 import PostPreview from 'src/components/posts/view-post/PostPreview';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { Loading } from 'src/components/utils';
+import { isHidden } from '@subsocial/api/utils/visibility-filter'
+import { ButtonProps } from 'antd/lib/button'
+import NoData from 'src/components/utils/EmptyList';
+import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert';
 
 type SpaceProps = {
   space: Space
 }
 
-type DropdownMenuProps = {
+type DropdownMenuProps = BareProps & {
   spaceData: SpaceData,
   vertical?: boolean
 }
 
-export const DropdownMenu = ({ spaceData: { struct }, vertical }: DropdownMenuProps) => {
+export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className }: DropdownMenuProps) => {
   const { id, owner } = struct
   const isMySpace = isMyAddress(owner)
 
@@ -39,11 +43,13 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical }: DropdownMenuPr
       <Menu.Item key={`edit-nav-${spaceKey}`}>
         <EditMenuLink space={struct} className='item' />
       </Menu.Item>
-      <Menu.Item key={`create-post-${spaceKey}`}>
-        <Link href={newPostUrl(struct)}>
-          <a className='item'>Write post</a>
-        </Link>
-      </Menu.Item>
+      {isHiddenSpace(struct)
+        ? null
+        : <Menu.Item key={`create-post-${spaceKey}`}>
+          <Link href={newPostUrl(struct)}>
+            <a className='item'>Write post</a>
+          </Link>
+        </Menu.Item>}
       <Menu.Item key={`hidden-${spaceKey}`}>
         <HiddenSpaceButton space={struct} asLink />
       </Menu.Item>
@@ -51,7 +57,7 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical }: DropdownMenuPr
 
   return isMySpace
     ? <Dropdown overlay={menu} placement='bottomRight'>
-      <EllipsisOutlined rotate={vertical ? 90 : 0} />
+      <EllipsisOutlined rotate={vertical ? 90 : 0} style={style} className={className} />
     </Dropdown>
     : null
 };
@@ -68,13 +74,32 @@ export const EditMenuLink = ({ space: { id, owner }, withIcon }: EditMenuLinkPro
     >
       <a className='DfSecondaryColor'>
         {withIcon && <SettingOutlined className='mr-2' />}
-        Edit Menu
+        Edit menu
       </a>
     </Link>
   </div>
   : null
 
-export const CreatePostButton = ({ space }: SpaceProps) => <Button type='primary' ghost href={newPostUrl(space)}>Create post</Button>
+type CreatePostButtonProps = SpaceProps & ButtonProps & {
+  title?: React.ReactNode
+}
+
+export const CreatePostButton = (props: CreatePostButtonProps) => {
+  const { space, title = 'Create post' } = props
+
+  if (isHiddenSpace(space)) return null
+
+  return isMyAddress(space.owner)
+    ? <Button
+      {...props}
+      type='primary'
+      icon={<PlusOutlined />}
+      ghost href={newPostUrl(space)}
+    >
+      {title}
+    </Button>
+    : null
+}
 
 type PostsOnSpacePageProps = {
   spaceData: SpaceData,
@@ -112,7 +137,7 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
 
   const hiddenPostsCount = myHiddenPosts.length
   return hiddenPostsCount ? <ListData
-    title={<Pluralize count={hiddenPostsCount} singularText={'hidden post'} />}
+    title={<Pluralize count={hiddenPostsCount} singularText={'Hidden post'} />}
     dataSource={myHiddenPosts}
     renderItem={(item) =>
       <PostPreview
@@ -131,17 +156,13 @@ export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
   const { owner } = space
 
   const isMySpace = isMyAddress(owner)
-  const NewPostButton = () => isMySpace
-  // TODO include in CreatePostButton
-    ? <Button href={newPostUrl(space)} icon={<PlusOutlined />} size='small' className='DfGreyButton'>New post</Button>
-    : null
 
   const postsSectionTitle = () =>
-    <div className='DfSection--withButton'>
+    <div className='w-100 d-flex justify-content-between align-items-baseline'>
       <span style={{ marginRight: '1rem' }}>
         <Pluralize count={posts.length} singularText='Post'/>
       </span>
-      {posts.length > 0 && <NewPostButton />}
+      {posts.length > 0 && <CreatePostButton space={space} title={'New Post'} size='small' />}
     </div>
 
   const VisiblePostList = () => <ListData
@@ -168,3 +189,13 @@ export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
     <HiddenPostList {...props} />
   </>
 }
+
+type HiddenSpaceAlertProps = BaseHiddenAlertProps & {
+  space: Space
+}
+
+export const HiddenSpaceAlert = (props: HiddenSpaceAlertProps) => <HiddenAlert struct={props.space} type='space' {...props} />
+
+export const isHiddenSpace = (space: Space) => isHidden(space)
+
+export const SpaceNotFound = () => <NoData description={'Space not found'} />
