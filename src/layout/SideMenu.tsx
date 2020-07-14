@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Icon, Badge } from 'antd';
+import { Menu, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
 import { isMobile, isBrowser } from 'react-device-detect';
@@ -65,19 +65,20 @@ function SideMenu () {
   }
 
   const renderPageLink = (item: PageLink) => {
+    const Icon = item.icon
     return item.isAdvanced
       ? (
         <Menu.Item key={item.page[0]} >
           <a href='/bc'>
-            <Icon type='block' />
-            <span>Advanced</span>
+            <Icon />
+            <span>{item.name}</span>
           </a>
         </Menu.Item>
       ) : (
         <Menu.Item key={item.page[0]} onClick={() => goToPage(item.page)}>
           <Link href={item.page[0]} as={item.page[1]}>
             <a>
-              <Icon type={item.image} />
+              <Icon />
               <span>{item.name}</span>
               {item.isNotifications && renderNotificationsBadge()}
             </a>

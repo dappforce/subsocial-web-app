@@ -3,18 +3,24 @@ import AccountId from '@polkadot/types/generic/AccountId';
 import { NavTab } from '@subsocial/types/offchain';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
 import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils';
-import { Icon, Menu } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
+import { Menu } from 'antd';
 import BN from 'bn.js';
 import Link from 'next/link';
 import React from 'react';
 
-import { SpaceContent } from '../spaces/SpacePreview';
 import { DfBgImg } from '../utils/DfBgImg';
 import FollowSpaceButton from '../utils/FollowSpaceButton';
 import { SummarizeMd } from '../utils/md';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { aboutSpaceUrl, spaceUrl, newSpaceUrlFixture } from '../utils/urls';
 import AboutSpaceLink from './AboutSpaceLink';
+
+export type SpaceContent = {
+  spaceId: BN,
+  title: string,
+  isFollowing: boolean
+}
 
 export interface SpaceNavProps {
   spaceId: BN,
@@ -77,7 +83,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
         as={`/spaces/${spaceId}/space-navigation/edit`}
       >
         <a className='text-secondary'>
-          <Icon type="setting" className='mr-2' />
+          <SettingOutlined className='mr-2' />
           Edit Menu
         </a>
       </Link>

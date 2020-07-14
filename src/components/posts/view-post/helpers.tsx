@@ -7,7 +7,8 @@ import ViewSpacePage from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { isMobile } from 'react-device-detect';
-import { Icon, Menu, Dropdown, Button } from 'antd';
+import { EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
 import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces';
 import { SpaceData, PostWithSomeDetails, PostWithAllDetails } from '@subsocial/types/dto';
@@ -76,7 +77,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ accou
   return <>
     {isMyPost &&
         <Dropdown overlay={menu} placement='bottomRight'>
-          <Icon type='ellipsis' />
+          <EllipsisOutlined />
         </Dropdown>
     }
     {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
@@ -188,7 +189,11 @@ const ShowCommentsAction = ({ postDetails: { post: { struct: { total_replies_cou
   const title = 'Comment'
 
   return <Action onClick={toogleCommentSection} title={title}>
-    <IconWithLabel icon='message' count={total_replies_count} label={!preview ? title : undefined} />
+    <IconWithLabel
+      icon={<MessageOutlined />}
+      count={total_replies_count}
+      label={!preview ? title : undefined}
+    />
   </Action>
 }
 

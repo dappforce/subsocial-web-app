@@ -1,5 +1,5 @@
 {
-  "version": "0.2-beta",
+  "version": "0.3.0",
   "private": true,
   "engines": {
     "node": ">=10.13.0",
@@ -75,6 +75,7 @@
     "yup": "^0.26.10"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.2.1",
     "@polkadot/api": "1.13.1",
     "@polkadot/dev-react": "^0.30.0-beta.1",
     "@polkadot/extension-dapp": "^0.24.1",
@@ -92,7 +93,7 @@
     "@subsocial/api": "^0.3.9",
     "@subsocial/utils": "0.1.23",
     "@types/react-redux": "^7.1.9",
-    "antd": "^3.25.0",
+    "antd": "^4.4.2",
     "antd-mobile": "^2.3.1",
     "axios": "^0.18.0",
     "dotenv-webpack": "^1.7.0",

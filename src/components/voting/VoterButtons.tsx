@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Icon from 'antd/lib/icon';
+import { LikeTwoTone, LikeOutlined, DislikeTwoTone, DislikeOutlined } from '@ant-design/icons';
 import dynamic from 'next/dynamic';
-
 import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial';
 import { ReactionKind } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils';
@@ -37,6 +36,7 @@ const VoterButton = ({
   onSuccess,
   preview
 }: VoterButtonProps) => {
+
   const kind = reaction ? reaction && reaction.kind.toString() : 'None';
   const isUpvote = reactionType === 'Upvote'
   const count = isUpvote ? upvotes_count : downvotes_count
@@ -57,6 +57,17 @@ const VoterButton = ({
     ? `reactions.updatePostReaction`
     : `reactions.deletePostReaction`
 
+  let icon: JSX.Element
+  if (isUpvote) {
+    icon = isActive
+      ? <LikeTwoTone twoToneColor={color} />
+      : <LikeOutlined />
+  } else {
+    icon = isActive
+      ? <DislikeTwoTone twoToneColor={color} />
+      : <DislikeOutlined />
+  }
+
   return <TxButton
     className={`DfVoterButton ${className}`}
     style={{
@@ -72,11 +83,7 @@ const VoterButton = ({
     title={preview ? reactionType : undefined}
   >
     <IconWithLabel
-      icon={<Icon
-        type={isUpvote ? 'like' : 'dislike'}
-        theme={isActive ? 'twoTone' : 'outlined'}
-        twoToneColor={isActive ? color : undefined }
-      />}
+      icon={icon}
       count={count}
       label={!preview ? reactionType : undefined}
     />

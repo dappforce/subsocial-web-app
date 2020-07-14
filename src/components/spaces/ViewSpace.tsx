@@ -2,7 +2,8 @@ import IdentityIcon from 'src/components/utils/IdentityIcon';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
-import { Button, Dropdown, Icon, Menu } from 'antd';
+import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Menu } from 'antd';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import { NextPage } from 'next';
@@ -108,7 +109,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     return <>
       {isMySpace &&
         <Dropdown overlay={menu} placement='bottomRight'>
-          <Icon type='ellipsis' />
+          <EllipsisOutlined />
         </Dropdown>
       }
       {/* open && <SpaceHistoryModal id={id} open={open} close={close} /> */}
@@ -211,7 +212,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   const NewPostButton = () => isMySpace
     // TODO replace with Next Link + URL builder
-    ? <Button href={`/spaces/${id}/posts/new`} icon='plus' size='small' className='DfGreyButton'>New post</Button>
+    ? <Button href={`/spaces/${id}/posts/new`} icon={<PlusOutlined />} size='small' className='DfGreyButton'>New post</Button>
     : null
 
   const postsSectionTitle = () =>

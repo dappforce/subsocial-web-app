@@ -22,7 +22,7 @@ import { newLogger } from '@subsocial/utils'
 import { buildValidationSchema } from './PostValidation';
 import { LabeledValue } from 'antd/lib/select';
 import SelectSpacePreview from '../utils/SelectSpacePreview';
-import { Icon } from 'antd';
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import SpacegedSectionTitle from '../spaces/SpacedSectionTitle';
 import DfMdEditor from '../utils/DfMdEditor';
 import useSubsocialEffect from '../api/useSubsocialEffect';
@@ -199,8 +199,8 @@ const InnerForm = (props: FormProps) => {
 
           <div className="EPadvanced">
             <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
-              {!showAdvanced ? 'Show' : 'Hide'} Advanced Settings
-              <Icon type={showAdvanced ? 'up' : 'down'} />
+              {showAdvanced ? <><CaretUpOutlined /> Show</> : <><CaretDownOutlined /> Hide</>}
+              {' '}advanced settings
             </div>
             {showAdvanced &&
               <LabelledText name='canonical' label='Original post URL' placeholder={`Set a URL of original post`} {...props} />

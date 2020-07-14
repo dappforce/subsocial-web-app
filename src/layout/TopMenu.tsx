@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Icon } from 'antd';
+import { CloseCircleOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
@@ -15,12 +16,12 @@ const InnerMenu = () => {
   return isMobile && show
     ? <div className='DfTopBar DfTopBar--search'>
       <Search/>
-      <Icon type='close-circle' className='DfCloseSearchIcon' onClick={() => setShow(false)} />
+      <CloseCircleOutlined className='DfCloseSearchIcon' onClick={() => setShow(false)} />
     </div>
     : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
         <Button type='link' onClick={toggle} onMouseEnter={open} className='DfBurgerIcon'>
-          <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
+          <UnorderedListOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
         <Link href='/'>
           <a className={`DfBrand ${isMobile ? 'mobile' : ''}`}>
@@ -32,11 +33,11 @@ const InnerMenu = () => {
       <div className='DfTopBar--rightContent'>
         <MobileView>
           {isMobile &&
-          <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
+          <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
         <AuthorizationPanel />
       </div>
-    </div>
+    </div>;
 };
 
 export default InnerMenu;
