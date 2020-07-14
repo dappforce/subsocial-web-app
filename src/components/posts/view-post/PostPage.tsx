@@ -53,7 +53,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
     : title
 
   return <>
-    <HiddenPostAlert post={postDetails} />
+    <HiddenPostAlert post={post.struct} />
     <PageContent>
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
         <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
@@ -92,9 +92,10 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const postIdFromUrl = new BN(postId as string)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findVisiblePostsWithAllDetails([ ...replyIds, postIdFromUrl ])
+  const comments = await subsocial.findPostsWithAllDetails({ ids: [ ...replyIds, postIdFromUrl ] })
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
   const extPostData = extPostsData.pop()
+
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id)
   // If a space id of this post is not equal to the space id/handle from URL,
   // then redirect to the URL with the space id of this post.
