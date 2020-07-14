@@ -1,5 +1,6 @@
 import React from 'react'
-import { TxButton, TxButtonProps } from './SubstrateTxButton'
+import { TxButtonProps } from './SubstrateTxButton'
+import TxButton from 'src/components/utils/TxButton'
 
 const Div: React.FunctionComponent = (props) => <div {...props} >{props.children}</div>
 
