@@ -1,10 +1,3 @@
-import React from 'react'
-import App from 'next/app'
-import Head from 'next/head'
-import MainPage from '../layout/MainPage'
-import { Provider } from 'react-redux'
-import store from 'src/redux/store'
-
 // TODO remove global import of all AntD CSS, use modular LESS loading instead.
 // See .babelrc options: https://github.com/ant-design/babel-plugin-import#usage
 import 'antd/dist/antd.css'
@@ -19,6 +12,13 @@ import 'src/styles/utils.scss'
 import 'src/styles/subsocial-mobile.scss'
 
 import 'easymde/dist/easymde.min.css'
+
+import React from 'react'
+import App from 'next/app'
+import Head from 'next/head'
+import MainPage from '../layout/MainPage'
+import { Provider } from 'react-redux'
+import store from 'src/redux/store'
 
 function MyApp (props) {
   const { Component, pageProps } = props
