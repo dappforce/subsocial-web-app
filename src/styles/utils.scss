@@ -24,5 +24,8 @@
 }
 
 .DfSecondaryColor {
-  color: $secondary_color
+  color: $secondary_color;
+  &:hover, :active {
+    color: $secondary_color;
+  }
 }
