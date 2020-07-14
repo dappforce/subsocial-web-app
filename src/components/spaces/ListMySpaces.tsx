@@ -51,6 +51,8 @@ export const ListMySpaces: NextPage<Props> = (props) => {
   />
 
   const HiddenSpacesList = () => {
+    if (isLoading) return <Loading />
+
     const hiddenSpacesCount = myHiddenSpaces.length
     return hiddenSpacesCount ? <ListData
       title={`My hidden spaces (${hiddenSpacesCount})`}
@@ -62,12 +64,8 @@ export const ListMySpaces: NextPage<Props> = (props) => {
   return <>
     <HeadMeta title='My spaces' desc='The spaces I manage on Subsocial' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      {isLoading
-        ? <Loading />
-        : <>
-          <VisibleSpacesList />
-          <HiddenSpacesList />
-        </>}
+      <VisibleSpacesList />
+      <HiddenSpacesList />
     </div>
   </>
 };
