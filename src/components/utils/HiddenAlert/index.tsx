@@ -15,7 +15,7 @@ export type BaseHiddenAlertProps = BareProps & {
 }
 
 type HiddenAlertProps = BaseHiddenAlertProps & {
-  type: 'post' | 'space',
+  type: 'post' | 'space' | 'comment',
   struct: Post | Space,
 }
 
@@ -36,7 +36,7 @@ export const HiddenAlert = ({
 
   const HiddenButton = () => isSpace ? <HiddenSpaceButton space={struct as Space} /> : <HiddenPostButton post={struct as Post} />
   return <Alert
-    className={`${preview ? styles.DfHiddenAlertPreview : styles.DfHiddenAlert} ${className}`}
+    className={`${preview ? styles.DfHiddenAlertPreview : styles.DfHiddenAlertPage} ${className}`}
     style={style}
     message={
       <div className={`d-flex ${centered ? 'justify-content-center' : 'justify-content-between'}`}>

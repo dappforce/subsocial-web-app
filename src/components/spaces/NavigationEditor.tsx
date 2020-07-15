@@ -36,7 +36,7 @@ export interface FormValues {
 interface OuterProps {
   struct: Space;
   json: SpaceContent;
-  id: BN;
+  spaceId: BN;
 }
 
 const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
@@ -49,7 +49,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     isSubmitting,
     setSubmitting,
     struct,
-    id,
+    spaceId,
     json
   } = props;
 
@@ -134,7 +134,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const onTxSuccess: TxCallback = (txResult) => {
     setSubmitting(false);
 
-    const _id = id || getNewIdFromEvent(txResult);
+    const _id = spaceId || getNewIdFromEvent(txResult);
     _id && goToView(_id);
   };
 
@@ -261,7 +261,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
 export interface NavEditorFormProps {
   struct: Space;
   json: SpaceContent;
-  id: BN;
+  spaceId: BN;
 }
 
 export const NavigationEditor = withFormik<NavEditorFormProps, FormValues>({
@@ -333,7 +333,7 @@ export const EditNavigation = withMulti(
   LoadStruct,
   withSpaceIdFromUrl,
   withCalls<OuterProps>(
-    spacesQueryToProp('spaceById', { paramName: 'id', propName: 'structOpt' })
+    spacesQueryToProp('spaceById', { paramName: 'spaceId', propName: 'structOpt' })
   )
 );
 

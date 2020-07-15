@@ -20,12 +20,12 @@
   background-color: #eee;
   padding: .25rem;
   padding-left: 1rem;
-  color: $secondary_color;
+  color: $color_secondary;
 }
 
 .DfSecondaryColor {
-  color: $secondary_color;
+  color: $color_secondary;
   &:hover, :active {
-    color: $secondary_color;
+    color: $color_secondary;
   }
 }

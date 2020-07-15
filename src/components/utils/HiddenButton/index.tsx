@@ -11,7 +11,7 @@ export type FSetVisible = (visible: boolean) => void
 type HiddenButtonProps = {
   struct: Space | Post,
   newTxParams: () => any[]
-  type: 'post' | 'space',
+  type: 'post' | 'space' | 'comment',
   setVisibility?: FSetVisible
   label?: string,
   asLink?: boolean
@@ -42,6 +42,7 @@ export function HiddenButton (props: HiddenButtonProps) {
     params={newTxParams}
     tx={extrinsic}
     onSuccess={onTxSuccess}
+    failedMessage={`Failed to hide your ${type}`}
   />
 }
 

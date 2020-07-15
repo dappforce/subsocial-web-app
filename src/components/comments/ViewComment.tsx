@@ -1,15 +1,13 @@
 import React, { FunctionComponent, useState } from 'react';
-import { CaretDownOutlined, CaretUpOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { Comment, Menu, Dropdown } from 'antd';
-import { PostWithAllDetails } from '@subsocial/types/dto';
-import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
-import { DfMd } from '../utils/DfMd';
+import { CaretDownOutlined, CaretUpOutlined, CommentOutlined } from '@ant-design/icons';
+import { Comment, Button } from 'antd';
+import { PostWithSomeDetails } from '@subsocial/types/dto';
 import { CommentContent } from '@subsocial/types';
+import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { Space } from '@subsocial/types/substrate/interfaces';
-import { useMyAddress } from '../auth/MyAccountContext';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
-import { formatUnixDate } from '../utils';
+import { formatUnixDate, IconWithLabel, isHidden } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
@@ -17,17 +15,17 @@ import { postUrl } from '../utils/urls';
 import SharePostAction from '../posts/SharePostAction';
 import { NewComment } from './CreateComment';
 import { VoterButtons } from '../voting/VoterButtons';
+import { PostDropDownMenu } from '../posts/view-post';
+import { CommentBody } from './helpers';
 
 type Props = {
   space: Space,
-  comment: PostWithAllDetails,
-  replies?: PostWithAllDetails[],
+  comment: PostWithSomeDetails,
+  replies?: PostWithSomeDetails[],
   withShowReplies?: boolean
 }
 
 export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0 } as any as Space, replies, withShowReplies }) => {
-  const myAddress = useMyAddress()
-
   const {
     post: {
       struct,
@@ -35,6 +33,8 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
     },
     owner
   } = comment
+
+  if (isHidden(comment.post)) return null
 
   const {
     id,
@@ -49,31 +49,7 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
   const repliesCount = direct_replies_count.toString()
 
   const isFake = id.toString().startsWith('fake')
-  const isMyStruct = myAddress === account.toString()
   const commentLink = postUrl(space, struct);
-
-  const RenderDropDownMenu = () => {
-
-    const showDropdown = isMyStruct || true;
-
-    const menu = (
-      <Menu>
-        {(isMyStruct || true) && <Menu.Item key='0'>
-          <div onClick={() => setShowEditForm(true)}>Edit</div>
-        </Menu.Item>}
-        {/* {edit_history.length > 0 && <Menu.Item key='1'>
-          <div onClick={() => setOpen(true)} >View edit history</div>
-        </Menu.Item>} */}
-      </Menu>
-    );
-
-    return <>{showDropdown &&
-      <Dropdown overlay={menu} placement='bottomRight'>
-        <EllipsisOutlined />
-      </Dropdown>
-      /* open && <CommentHistoryModal id={id} open={open} close={close} /> */
-    }</>
-  };
 
   const ViewRepliesLink = () => {
     const viewActionMessage = showReplies ? <><CaretUpOutlined /> {'Hide'}</> : <><CaretDownOutlined /> {'View'}</>
@@ -97,19 +73,19 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
       withCancel
     />}
     {isReplies && <ViewRepliesLink />}
-    {showReplies && <CommentsTree parentId={id} replies={replies} space={space}/>}
+    {showReplies && <CommentsTree parent={struct} replies={replies} space={space}/>}
   </div> : null
 
   return <div className={isFake ? 'DfDisableLayout' : ''}>
     <Comment
       className='DfNewComment'
-      actions={!showReplyForm
-        ? [
-          <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfShareAction' />,
-          <span key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)}>Reply</span>,
-          <SharePostAction postDetails={comment} className='DfShareAction' preview />
-        ]
-        : []}
+      actions={[
+        <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfShareAction' />,
+        <Button key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)}>
+          <IconWithLabel icon={<CommentOutlined />} label='Reply' />
+        </Button>,
+        <SharePostAction postDetails={comment} className='DfShareAction' />
+      ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview
           address={account}
@@ -127,11 +103,11 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
             </span>
           }
         />
-        <RenderDropDownMenu key={`comment-dropdown-menu-${id}`} />
+        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={struct} space={space} />
       </div>}
       content={showEditForm
         ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
-        : <DfMd source={content?.body} />
+        : <CommentBody comment={comment.post} />
       }
     >
       {ChildPanel}

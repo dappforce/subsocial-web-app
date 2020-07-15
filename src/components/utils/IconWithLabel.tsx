@@ -4,11 +4,11 @@ import { gtZero } from '.'
 
 type IconWithTitleProps = {
   icon: JSX.Element,
-  count: BN,
+  count?: BN,
   label?: string
 }
 
-export const IconWithLabel = ({ icon, label, count }: IconWithTitleProps) => {
+export const IconWithLabel = ({ icon, label, count = new BN(0) }: IconWithTitleProps) => {
   const countStr = gtZero(count) ? count.toString() : undefined
   const renderText = () => <span className='ml-2'>
     {label

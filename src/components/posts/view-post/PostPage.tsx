@@ -32,13 +32,13 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
 
   const { post, ext, space } = postDetails
 
-  if (!post || !space) return <PostNotFound />
-
   const { struct, content } = post;
+
   if (!content) return null;
 
   const { title, body, image, canonical, tags } = content;
   const spaceData = space || postDetails.space
+
   const spaceStruct = spaceData.struct;
 
   const goToCommentsId = 'comments'
@@ -59,7 +59,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
         <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
           {<h1 className='DfPostName'>{titleMsg}</h1>}
-          <PostDropDownMenu account={struct.created.account} post={struct} space={spaceStruct} />
+          <PostDropDownMenu post={struct} space={spaceStruct} />
         </div>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
@@ -92,9 +92,10 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const postIdFromUrl = new BN(postId as string)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findPostsWithAllDetails({ ids: [ ...replyIds, postIdFromUrl ] })
+  const comments = await subsocial.findVisiblePostsWithAllDetails([ ...replyIds, postIdFromUrl ])
+
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
-  const extPostData = extPostsData.pop()
+  const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postIdFromUrl)
 
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id)
   // If a space id of this post is not equal to the space id/handle from URL,

@@ -4,7 +4,7 @@ import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
 import mdToText from 'markdown-to-txt';
 import { HeadMeta } from '../utils/HeadMeta';
-import { PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto';
+import { PostWithSomeDetails, PostData } from '@subsocial/types/dto';
 import { NextPage } from 'next';
 import { getProfileName } from '../substrate';
 import { Pluralize } from '../utils/Plularize';
@@ -15,13 +15,13 @@ import Section from '../utils/Section';
 type CommentSectionProps = {
   space: Space,
   post: PostWithSomeDetails,
-  replies?: PostWithAllDetails[],
+  replies?: PostWithSomeDetails[],
   hashId?: string
 }
 
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [] }) => {
   const { post: { struct } } = post;
-  const { total_replies_count, id } = struct
+  const { total_replies_count } = struct
   const totalCount = total_replies_count.toString()
 
   return <Section id={hashId} className='DfCommentSection'>
@@ -29,15 +29,15 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
     <NewComment
       post={struct}
     />
-    <CommentsTree parentId={id} space={space} replies={replies} />
+    <CommentsTree parent={struct} space={space} replies={replies} />
   </Section>
 })
 
 type CommentPageProps = {
-  comment: PostWithAllDetails,
+  comment: PostWithSomeDetails,
   parentPost: PostData,
   space: Space,
-  replies: PostWithAllDetails[]
+  replies: PostWithSomeDetails[]
 }
 
 export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, space }) => {

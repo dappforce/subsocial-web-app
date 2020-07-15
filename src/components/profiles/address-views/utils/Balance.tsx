@@ -29,19 +29,23 @@ const useGetBalance = (address: AnyAccountId) => {
   const [ currency ] = useState(formatBalance.getDefaults().unit);
   useSubsocialEffect(({ substrate }) => {
     let unsub: (() => void) | undefined;
+    let isSubscribe = true
 
     const sub = async () => {
       const api = await substrate.api;
 
       unsub = await api.derive.balances.all(address, (data) => {
         const balance = data.freeBalance
-        setBalance(balance)
+        isSubscribe && setBalance(balance)
       });
     }
 
-    sub().catch(err => log.error('Failed load balance %o', err))
+    isSubscribe && sub().catch(err => log.error('Failed load balance %o', err))
 
-    return () => unsub && unsub()
+    return () => {
+      unsub && unsub()
+      isSubscribe = false
+    }
   })
 
   if (!balance) return null

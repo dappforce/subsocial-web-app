@@ -59,7 +59,6 @@ body,
 }
 
 .DfBoxShadow {
-  $shadow: 0 0 5px 2px #eeecec !important;
   -moz-box-shadow: $shadow;
   -webkit-box-shadow: $shadow;
   box-shadow: $shadow;
@@ -160,7 +159,7 @@ body,
 
 .DfBrand {
   font-size: $font_big;
-  color: $secondary_color;
+  color: $color_secondary;
   cursor: pointer;
 
   img {
@@ -170,7 +169,7 @@ body,
 }
 
 .DfBrand:hover {
-  color: $secondary_color;
+  color: $color_secondary;
 }
 
 .DfSummary {
@@ -232,7 +231,7 @@ body,
 }
 
 .DfMenuSpaceLink {
-  color: $secondary_color;
+  color: $color_secondary;
   padding: $space_tiny;
   padding-left: $space_normal;
   display: block;
@@ -688,7 +687,8 @@ hr {
   }
 
   .DfPostImagePreview {
-    margin-left: $space_normal
+    margin-left: $space_normal;
+    margin-bottom: $space_normal;
   }
 
 }
@@ -1716,23 +1716,17 @@ a.DfStatItem {
       span, button {
         font-size: $font_small;
       }
+
       button, button:hover, button:active, button:focus {
           cursor: pointer;
           background: transparent;
           border: none;
+          margin-left: -$space_normal;
           @extend .DfNoBoxShadow
       }
     }
-  
+
     margin: $space_tiny 0;
-
-    span {
-      margin-left: $space_tiny;
-    }
-
-    .DfVoter {
-      margin-left: -$space_tiny
-    }
   }
 
   .ant-comment-content-author-name {
@@ -1744,22 +1738,6 @@ a.DfStatItem {
       .anticon-ellipsis.ant-dropdown-trigger {
         margin-left: $space_big;
       }
-    }
-  }
-
-  .ant-comment-content-detail {
-    .markdown-body  {
-      display: inline-block;
-      margin-top: $space_tiny !important;
-      padding: $space_small $space_normal;
-      border-radius: 15px;
-      border-top-left-radius: 0;
-      background-color: #fff;
-      @extend .DfBoxShadow;
-    }
-
-    .DfMdEditor {
-      margin-top: $space_small;
     }
   }
 

@@ -33,7 +33,7 @@ const log = newLogger('Edit space')
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type OuterProps = ValidationProps & {
-  id?: BN;
+  spaceId?: BN;
   struct?: Space;
   json?: SpaceContent;
 };
@@ -50,7 +50,7 @@ const LabelledText = DfForms.LabelledText<FormValues>();
 
 const InnerForm = (props: FormProps) => {
   const {
-    id,
+    spaceId,
     struct,
     values,
     errors,
@@ -73,8 +73,8 @@ const InnerForm = (props: FormProps) => {
 
   const { ipfs } = useSubsocialApi()
 
-  const goToView = (id: BN) => {
-    Router.push('/spaces/' + id.toString()).catch(err => log.error('Failed to redirect to space page. Error:', err));
+  const goToView = (spaceId: BN) => {
+    Router.push('/spaces/' + spaceId.toString()).catch(err => log.error('Failed to redirect to space page. Error:', err));
   };
 
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
@@ -87,7 +87,7 @@ const InnerForm = (props: FormProps) => {
   const onTxSuccess: TxCallback = (txResult) => {
     setSubmitting(false);
 
-    const _id = id || getNewIdFromEvent(txResult);
+    const _id = spaceId || getNewIdFromEvent(txResult);
     _id && goToView(_id);
   };
 
@@ -245,7 +245,7 @@ export const EditSpace = withMulti(
   LoadStruct,
   withSpaceIdFromUrl,
   withCalls<OuterProps>(
-    spacesQueryToProp('spaceById', { paramName: 'id', propName: 'structOpt' }),
+    spacesQueryToProp('spaceById', { paramName: 'spaceId', propName: 'structOpt' }),
     ...commonSubstrateQueries
   )
 );

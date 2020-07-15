@@ -9,6 +9,7 @@ import { Codec } from '@polkadot/types/types'
 import { SubstrateId } from '@subsocial/types'
 import { SubmittableResult } from '@polkadot/api'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 export * from './getTxParams'
 export * from './queryToProps'
 export { isEqual } from './isEqual';
@@ -49,10 +50,10 @@ export function stringifyAddress<DFT> (value?: AnyAddress, _default?: DFT): stri
   return stringifyAny(value, _default)
 }
 
-export const getSpaceId = async (idOrHandle: string): Promise<BN | undefined> => {
+export const getSpaceId = async (idOrHandle: string, subsocial?: SubsocialApi): Promise<BN | undefined> => {
   if (idOrHandle.startsWith('@')) {
     const handle = idOrHandle.substring(1) // Drop '@'
-    const { substrate } = await getSubsocialApi()
+    const { substrate } = subsocial || await getSubsocialApi()
     return substrate.getSpaceIdByHandle(handle)
   } else {
     return new BN(idOrHandle)

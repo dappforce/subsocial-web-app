@@ -16,16 +16,20 @@ export const SummarizeMd = ({ md, limit, more }: Props) => {
   const [ showMore, setShowMore ] = useState<boolean>(false)
 
   useEffect(() => {
+    let isSubscribe = true
+
     const process = async () => {
       const text = (await mdToText(md))?.trim()
       const summary = summarize(text, limit)
-      setSummary(summary)
-      if (text && text.length > summary.length) {
+      isSubscribe && setSummary(summary)
+      if (isSubscribe && text && text.length > summary.length) {
         setShowMore(true)
       }
     }
 
     process()
+
+    return () => { isSubscribe = false }
   }, [ md, limit ])
 
   if (isEmptyStr(summary)) return null

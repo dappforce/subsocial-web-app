@@ -56,12 +56,12 @@ const InnerShareModal = (props: Props) => {
   const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
     // TODO show a failure message
-    close()
+    onClose()
   };
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
-    close()
+    onClose()
   };
 
   const newTxParams = (hash: IpfsHash) => {
@@ -82,6 +82,8 @@ const InnerShareModal = (props: Props) => {
       tx={'posts.createPost'}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
+      successMessage='Shared to your space'
+      failedMessage='Failed to share'
     />
 
   const renderShareView = () => {

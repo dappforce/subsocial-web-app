@@ -1,5 +1,5 @@
-import { PostId, Space } from '@subsocial/types/substrate/interfaces';
-import { PostWithAllDetails } from '@subsocial/types';
+import { Post, Space } from '@subsocial/types/substrate/interfaces';
+import { PostWithSomeDetails } from '@subsocial/types';
 import React, { useState } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
 import ListData from '../utils/DataList';
@@ -13,15 +13,14 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 const log = newLogger('CommentTree')
 
 type LoadProps = {
-  parentId: PostId,
+  parent: Post,
   space: Space,
-  replies?: PostWithAllDetails[],
-  newCommentId?: PostId
+  replies?: PostWithSomeDetails[]
 }
 
 type CommentsTreeProps = {
   space: Space,
-  comments: PostWithAllDetails[]
+  comments: PostWithSomeDetails[]
 }
 
 const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, space }) => {
@@ -37,16 +36,16 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
 }
 
 export const DynamicCommentsTree = (props: LoadProps) => {
-  const { parentId, space, replies } = props;
+  const { parent: { id: parentId }, space, replies } = props;
   const parentIdStr = parentId.toString()
-  const [ replyComments, setComments ] = useState<PostWithAllDetails[]>(replies || []);
+  const [ replyComments, setComments ] = useState<PostWithSomeDetails[]>(replies || []);
   const dispatch = useDispatch()
 
   useSubsocialEffect(({ subsocial, substrate }) => {
 
     const loadComments = async () => {
       const replyIds = await substrate.getReplyIdsByPostId(parentId);
-      const comments = await subsocial.findVisiblePostsWithAllDetails(replyIds) as any;
+      const comments = await subsocial.findPostsWithAllDetails({ ids: replyIds }) as any;
       const replyIdsStr = replyIds.map(x => x.toString())
       setComments(comments)
       useSetReplyToStore(dispatch, { reply: { replyId: replyIdsStr, parentId: parentIdStr }, comment: comments })
@@ -65,7 +64,7 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 }
 
 export const CommentsTree = (props: LoadProps) => {
-  const { parentId, space } = props;
+  const { parent: { id: parentId }, space } = props;
 
   const comments = useSelector((store: Store) => getComments(store, parentId.toString()));
 
