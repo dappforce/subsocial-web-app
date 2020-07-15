@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { GenericAccountId as AccountId } from '@polkadot/types';
 import { nonEmptyStr } from '@subsocial/utils';
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import ViewSpacePage from '../../spaces/ViewSpace';
@@ -29,14 +28,13 @@ import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters';
 import { isHidden } from '@subsocial/api/utils/visibility-filter';
 
 type DropdownProps = {
-  account: string | AccountId;
   space: Space,
   post: Post
 };
 
-export const isRegularPost = (extension: PostExtension) => extension.isRegularPost || (extension as any).RegularPost === null; // Hack because SSR serializes objects and this drops all methods.
-export const isSharedPost = (extension: PostExtension) => extension.isSharedPost || (extension as any).SharedPost;
-export const isComment = (extension: PostExtension) => extension.isComment || (extension as any).Comment;
+export const isRegularPost = (extension: PostExtension): boolean => extension.isRegularPost || (extension as any).RegularPost === null; // Hack because SSR serializes objects and this drops all methods.
+export const isSharedPost = (extension: PostExtension): boolean => extension.isSharedPost || (extension as any).SharedPost;
+export const isComment = (extension: PostExtension): boolean => extension.isComment || (extension as any).Comment;
 
 type ReactionModalProps = {
   postId: PostId
@@ -51,8 +49,8 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
   </>
 }
 
-export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ account, space, post }) => {
-  const isMyPost = isMyAddress(account);
+export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ space, post }) => {
+  const isMyPost = isMyAddress(post.created.account);
   const postId = post.id
   const postKey = `post-${postId.toString()}`
 
@@ -92,7 +90,7 @@ type HiddenPostAlertProps = BaseHiddenAlertProps & {
 
 export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   const { post } = props
-  const PostAlert = () => <HiddenAlert struct={post} type='post' {...props} />
+  const PostAlert = () => <HiddenAlert struct={post} type={isComment(post.extension) ? 'comment' : 'post'} {...props} />
   // TODO fix view Space alert when space is hidden
   // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenAlert preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
 
@@ -150,13 +148,18 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
   </>;
 };
 
-const renderPostImage = (content?: PostContentType) => {
+type PostImageProps = {
+  content?: PostContentType
+}
+
+const PostImage = ({ content }: PostImageProps) => {
   if (!content) return null;
 
   const { image } = content;
 
-  return nonEmptyStr(image) &&
-    <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
+  return nonEmptyStr(image)
+    ? <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
+    : null
 }
 
 type PostContentProps = {
@@ -232,13 +235,13 @@ type SharePostContentProps = {
 
 export const SharePostContent = ({ postDetails: { post: { struct, content }, ext }, space }: SharePostContentProps) => {
   const OriginalPost = () => {
-    if (!ext) return <PostNotFound />
+    if (!ext || !ext.space) return <PostNotFound />
 
     const originalPost = ext.post.struct
 
     return <>
       {isVisible({ struct: originalPost, address: originalPost.created.account })
-        ? <RegularPreview postDetails={ext as PostWithAllDetails} space={space} />
+        ? <RegularPreview postDetails={ext as PostWithAllDetails} space={ext.space} />
         : <PostNotFound />}
     </>
   }
@@ -256,18 +259,16 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
   if (!struct || !content) return null;
   return <div className='DfInfo'>
     <div className='DfRow'>
-      <div>
+      <div className='w-100'>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
-          <PostDropDownMenu account={struct.created.account} post={struct} space={space.struct} />
+          <PostDropDownMenu post={struct} space={space.struct} />
         </div>
         <PostContent postDetails={postDetails} space={space.struct} />
         <ViewTags tags={content?.tags} />
         {/* {withStats && <StatsPanel id={post.id}/>} */}
       </div>
-      <div>
-        {renderPostImage(content)}
-      </div>
+      <PostImage content={content} />
     </div>
   </div>
 }

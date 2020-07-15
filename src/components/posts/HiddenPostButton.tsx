@@ -2,6 +2,7 @@ import React from 'react';
 import { Post } from '@subsocial/types/substrate/interfaces';
 import HiddenButton from '../utils/HiddenButton';
 import { PostUpdate, OptionId, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
+import { isComment } from './view-post';
 
 type HiddenPostButtonProps = {
   post: Post,
@@ -23,7 +24,7 @@ export function HiddenPostButton (props: HiddenPostButtonProps) {
     return [ post.id, update ];
   };
 
-  return <HiddenButton type='post' newTxParams={newTxParams} struct={post} {...props} />
+  return <HiddenButton type={isComment(post.extension) ? 'comment' : 'post'} newTxParams={newTxParams} struct={post} {...props} />
 }
 
 export default HiddenPostButton;
