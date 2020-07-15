@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { EllipsisOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
 import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto'
 import { Space, PostId } from '@subsocial/types/substrate/interfaces'
+import { AnyAccountId } from '@subsocial/types/substrate'
 import { isMyAddress } from 'src/components/auth/MyAccountContext';
 import { editSpaceUrl, newPostUrl } from 'src/components/utils/urls';
 import HiddenSpaceButton from '../HiddenSpaceButton';
@@ -17,6 +18,9 @@ import { isHidden } from '@subsocial/api/utils/visibility-filter'
 import { ButtonProps } from 'antd/lib/button'
 import NoData from 'src/components/utils/EmptyList';
 import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert';
+import { useRouter } from 'next/router';
+import { getSpaceId } from 'src/components/substrate';
+import { isEmptyStr } from '@subsocial/utils';
 
 type SpaceProps = {
   space: Space
@@ -107,18 +111,19 @@ type PostsOnSpacePageProps = {
   posts: PostWithSomeDetails[]
 }
 
-type LoadHiddenPostBySpacepProps = SpaceProps & {
+type LoadHiddenPostByOwnerProps = {
+  owner: AnyAccountId
   postIds: PostId[]
 }
 
-const useLoadHiddenPostBySpace = ({ space: { owner }, postIds }: LoadHiddenPostBySpacepProps) => {
+export const useLoadHiddenPostByOwner = ({ owner, postIds }: LoadHiddenPostByOwnerProps) => {
   const isMySpaces = isMyAddress(owner)
   const [ myHiddenPosts, setMyHiddenPosts ] = useState<PostWithSomeDetails[]>()
 
   useSubsocialEffect(({ subsocial }) => {
     if (!isMySpaces) return setMyHiddenPosts([])
 
-    subsocial.findHiddenPostsWithSomeDetails({ ids: postIds, withOwner: true })
+    subsocial.findHiddenPostsWithAllDetails(postIds)
       .then(setMyHiddenPosts)
 
   }, [ postIds.length, isMySpaces ])
@@ -131,7 +136,7 @@ const useLoadHiddenPostBySpace = ({ space: { owner }, postIds }: LoadHiddenPostB
 
 const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   const { struct: space } = spaceData
-  const { myHiddenPosts, isLoading } = useLoadHiddenPostBySpace({ space, postIds })
+  const { myHiddenPosts, isLoading } = useLoadHiddenPostByOwner({ owner: space.owner, postIds })
 
   if (isLoading) return <Loading />
 
@@ -199,3 +204,32 @@ export const HiddenSpaceAlert = (props: HiddenSpaceAlertProps) => <HiddenAlert s
 export const isHiddenSpace = (space: Space) => isHidden(space)
 
 export const SpaceNotFound = () => <NoData description={'Space not found'} />
+
+export const useLoadHiddenSpace = (address: AnyAccountId) => {
+  const isMySpace = isMyAddress(address)
+  const { query: { spaceId } } = useRouter()
+  const idOrHandle = spaceId as string
+
+  const [ myHiddenSpace, setMyHiddenSpace ] = useState<SpaceData>()
+
+  useSubsocialEffect(({ subsocial }) => {
+    if (!isMySpace || isEmptyStr(idOrHandle)) return
+
+    let isSubscribe = true
+
+    const loadSpaceFromId = async () => {
+      const id = await getSpaceId(idOrHandle, subsocial)
+      const spaceData = id && await subsocial.findSpace({ id })
+      isSubscribe && spaceData && setMyHiddenSpace(spaceData)
+    }
+
+    loadSpaceFromId()
+
+    return () => { isSubscribe = false }
+  }, [ isMySpace ])
+
+  return {
+    isLoading: !myHiddenSpace,
+    myHiddenSpaces: myHiddenSpace
+  }
+}
