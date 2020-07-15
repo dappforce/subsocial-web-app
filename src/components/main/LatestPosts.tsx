@@ -5,10 +5,11 @@ import PostPreview from '../posts/view-post/PostPreview';
 
 type Props = {
   postsData: PostWithAllDetails[]
+  type: 'post' | 'comment'
 }
 
 export const LatestPosts = (props: Props) => {
-  const { postsData = [] } = props
+  const { postsData = [], type } = props
   const posts = postsData.filter((x) => typeof x.post.struct !== 'undefined')
 
   if (posts.length === 0) {
@@ -16,7 +17,7 @@ export const LatestPosts = (props: Props) => {
   }
 
   return <ListData
-    title={`Latest posts`}
+    title={`Latest ${type}s`}
     dataSource={postsData}
     renderItem={(item) =>
       <PostPreview postDetails={item} withActions />
