@@ -78,7 +78,6 @@ export function TxButton ({
       <Component
         {...antdProps}
         disabled={true}
-        loading={true}
       >{buttonLabel}</Component>
     )
   }
