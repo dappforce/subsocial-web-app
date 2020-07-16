@@ -6,6 +6,7 @@ import { newSubsocialApi } from './SubsocialConnect';
 import { ApiPromise } from '@polkadot/api';
 import { newLogger } from '@subsocial/utils';
 import { useSubstrate } from '../substrate';
+import { controlledMessage } from './Message';
 // import { isDevMode } from './env';
 
 const log = newLogger('SubsocialApiContext')
@@ -77,17 +78,20 @@ const createSubsocialState = (api?: ApiPromise) => {
 
 export const SubsocialApiContext = createContext<SubsocialApiContextProps>(contextStub)
 
+const message = controlledMessage({ message: 'Connecting to the network...', type: 'info', duration: 0 })
+
 export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
   const { api } = useSubstrate()
   const [ state, dispatch ] = useReducer(reducer, createSubsocialState(api))
   const [ isApiReady, setIsApiReady ] = useState(false)
 
   useEffect(() => {
-    if (!api || isApiReady) return
+    if (!api || isApiReady) return message.open()
 
     const load = async () => {
       await api.isReady
       setIsApiReady(true)
+      message.close()
       dispatch({ type: 'init', api: api as ApiPromise })
     }
 
