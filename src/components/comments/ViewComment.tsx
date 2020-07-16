@@ -7,7 +7,7 @@ import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { Space } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
-import { formatUnixDate, IconWithLabel, isHidden } from '../utils';
+import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
@@ -17,6 +17,7 @@ import { NewComment } from './CreateComment';
 import { VoterButtons } from '../voting/VoterButtons';
 import { PostDropDownMenu } from '../posts/view-post';
 import { CommentBody } from './helpers';
+import BN from 'bn.js'
 
 type Props = {
   space: Space,
@@ -46,7 +47,7 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies, setShowReplies ] = useState(withShowReplies);
-  const repliesCount = direct_replies_count.toString()
+  const [ repliesCount, setRepliesCount ] = useState(new BN(direct_replies_count))
 
   const isFake = id.toString().startsWith('fake')
   const commentLink = postUrl(space, struct);
@@ -62,14 +63,17 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
     </Link>
   }
 
-  const isReplies = repliesCount !== '0';
+  const isReplies = repliesCount.gt(ZERO)
   const isShowChild = showReplyForm || showReplies || isReplies;
 
   const ChildPanel = isShowChild ? <div className="DfCommentChild">
     {showReplyForm &&
     <NewComment
       post={struct}
-      callback={() => setShowReplyForm(false)}
+      callback={(id) => {
+        setShowReplyForm(false)
+        id && setRepliesCount(repliesCount.add(ONE))
+      }}
       withCancel
     />}
     {isReplies && <ViewRepliesLink />}
@@ -80,11 +84,11 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
     <Comment
       className='DfNewComment'
       actions={[
-        <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfShareAction' />,
-        <Button key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)}>
+        <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfCommentAction' />,
+        <Button key={`reply-comment-${id}`} className='DfCommentAction' onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <SharePostAction postDetails={comment} className='DfShareAction' />
+        <SharePostAction postDetails={comment} className='DfCommentAction' />
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview

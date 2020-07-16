@@ -10,8 +10,8 @@ import { SpaceData, PostWithAllDetails } from '@subsocial/types';
 import { PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
+import { ZERO } from '../utils';
 
-const ZERO = new BN(0);
 const FIFTY = new BN(50);
 const MAX_TO_SHOW = 5;
 
