@@ -81,7 +81,7 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
       className='DfNewComment'
       actions={[
         <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfShareAction' />,
-        <Button key={`reply-comment-${id}`} onClick={() => setShowReplyForm(true)}>
+        <Button key={`reply-comment-${id}`} className='DfShareAction' onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
         <SharePostAction postDetails={comment} className='DfShareAction' />
