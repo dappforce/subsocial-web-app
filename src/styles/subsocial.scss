@@ -222,7 +222,6 @@ body,
   margin-bottom: $space_normal !important;
   margin-right: $space_normal;
   color: $color_font_normal;
-  font-size: $font_large;
 }
 
 .DfPostImage {
@@ -941,8 +940,6 @@ hr {
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
     margin: 0rem;
-    margin-bottom: $space_tiny;
-    padding: $space_tiny 0;
     display: flex;
   }
 

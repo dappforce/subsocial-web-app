@@ -19,12 +19,6 @@ body {
 
 h1, h2, h3, h4, h5 {
   color: rgba(0, 0, 0, .6);
-  font-family: sans-serif;
-  font-weight: 100;
-}
-
-h1 {
-  font-weight: normal;
 }
 
 h3, h4, h5 {
@@ -40,12 +34,6 @@ label {
   font-weight: 100;
   margin: 0.25rem;
 }
-
-/*
-a:hover {
-  color: #D75EA1;
-}
-*/
 
 br {
   line-height: 1.5rem;
