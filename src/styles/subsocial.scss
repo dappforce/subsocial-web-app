@@ -14,10 +14,10 @@ body,
   background-color: #fff;
   padding: $space_large;
   position: relative;
-  -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
-  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
+  box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
   border-radius: .28571429rem;
-  border: 1px solid rgba(34,36,38,.15);
+  border: 1px solid rgba(34, 36, 38, .15);
 }
 
 .DfBalance {
@@ -131,7 +131,7 @@ body,
   }
 }
 
-.ui.search.selection.dropdown > .text {
+.ui.search.selection.dropdown>.text {
   margin-left: 0;
 
   .ui--KeyPair {
@@ -144,8 +144,6 @@ body,
     }
   }
 }
-
-
 
 @media (min-width: 1200px) {
   .DfBrand {
@@ -203,6 +201,7 @@ body,
   .DfTags {
     margin: $space_big 0;
   }
+
   .DfPostContent {
     @extend .DfBookPage;
     margin-bottom: $space_small;
@@ -211,6 +210,7 @@ body,
       margin-top: -$space_normal;
     }
   }
+
   .DfCommentAction {
     padding: $space_small $space_normal;
     cursor: pointer;
@@ -239,10 +239,12 @@ body,
     .DfAvatar.space {
       margin-right: 0;
     }
+
     .content {
       padding: 0;
       padding-left: .5rem;
     }
+
     .handle {
       margin-right: 0;
     }
@@ -326,6 +328,7 @@ body,
       padding: 0;
       padding-left: $space_mini;
     }
+
     .DfPopup-about {
       color: $color_font_normal;
     }
@@ -369,6 +372,7 @@ body,
     margin-left: 0 !important;
     font-size: $font_normal;
   }
+
   .text,
   .ant-comment-content-detail {
     display: inline-block;
@@ -395,7 +399,7 @@ form.ui.form.DfForm.EditEntityForm {
     }
   }
 
-  .ETGtag{
+  .ETGtag {
     background: '#fff';
     border-style: dashed;
   }
@@ -435,6 +439,7 @@ form.ui.form.DfForm.EditEntityForm {
     padding: $space_tiny;
 
     &.red {
+
       &:hover,
       &.active {
         color: red !important;
@@ -442,6 +447,7 @@ form.ui.form.DfForm.EditEntityForm {
     }
 
     &.green {
+
       &:hover,
       &.active {
         color: green !important;
@@ -603,8 +609,8 @@ hr {
   justify-content: flex-start;
   margin-top: $space_normal;
 
-  & > a,
-  & > span {
+  &>a,
+  &>span {
     color: rgba(34, 36, 38, .8) !important;
     font-size: $font_small;
     margin-left: $space_normal;
@@ -640,6 +646,7 @@ hr {
   width: 100%;
   display: flex;
   justify-content: space-between;
+
   &.DfActionBorder {
     border-top: 1px solid rgba(34, 36, 38, .15);
   }
@@ -663,7 +670,9 @@ hr {
   border: none;
   @extend .DfNoBoxShadow;
 
-  &:hover, &:active, &:focus {
+  &:hover,
+  &:active,
+  &:focus {
     cursor: pointer;
     background-color: transparent;
   }
@@ -1018,6 +1027,7 @@ hr {
   border-radius: 50%;
   vertical-align: middle;
   border: 1px solid $color_light_border;
+
   &.space {
     margin-right: $space_tiny;
   }
@@ -1073,8 +1083,8 @@ hr {
   }
 
   &:hover .editor-toolbar {
-      color: $color_font_normal;
-    }
+    color: $color_font_normal;
+  }
 }
 
 
@@ -1382,6 +1392,7 @@ a.DfStatItem {
   flex-direction: column;
   border-bottom: 1px solid $color_light_border;
 }
+
 .NavigationEditor .NERow:last-child {
   border-bottom: none;
 }
@@ -1412,6 +1423,7 @@ a.DfStatItem {
 }
 
 .NavigationEditor .NavigationEditorForm .NEHidden {
+
   input,
   select {
     color: $color_muted !important;
@@ -1485,19 +1497,21 @@ a.DfStatItem {
   padding: 0 $space_normal;
 
   &:hover {
-     background-color: #eee;
-     border-radius: $border_radius_normal;
+    background-color: #eee;
+    border-radius: $border_radius_normal;
   }
 
   .ant-list-item-meta-title {
     font-weight: bold !important;
   }
 }
+
 .RNTIcon {
   transform: rotate(90deg);
   margin-right: $space_normal;
   color: #ccc;
 }
+
 .RNTSaveButton span {
   color: #fff;
 }
@@ -1587,7 +1601,9 @@ a.DfStatItem {
 }
 
 .DfStep {
-  button, a {
+
+  button,
+  a {
     padding: 0;
     font-size: $font_normal;
     font-weight: bolder;
@@ -1619,26 +1635,26 @@ a.DfStatItem {
   .SelectAccountItem {
     padding: $space_tiny;
     padding-left: $space_normal;
-    cursor: pointer; 
+    cursor: pointer;
     height: 'auto';
-  
+
     .DfDisabled {
+
       .ant-btn-disabled,
       .ant-btn.disabled,
-      .ant-btn[disabled]{
-        cursor: default; 
+      .ant-btn[disabled] {
+        cursor: default;
         border: none;
         background-color: none;
-    }
-  
+      }
+
     }
   }
-  
+
   .SelectAccountItem:hover {
     background-color: #e6f7ff;
   }
 }
-
 
 .DfCurrentAddress {
   display: flex;
@@ -1680,8 +1696,8 @@ a.DfStatItem {
 .DfSelectAccount {
   padding: $space_small $space_normal;
 
-  .DfProfileInfo{
-      padding-bottom: $space_tiny;
+  .DfProfileInfo {
+    padding-bottom: $space_tiny;
   }
 
   .ui.search.dropdown {
@@ -1710,15 +1726,20 @@ a.DfStatItem {
 
   .ant-comment-actions {
     li {
-      span, button {
+
+      span,
+      button {
         font-size: $font_small;
       }
 
-      button, button:hover, button:active, button:focus {
-          cursor: pointer;
-          background: transparent;
-          border: none;
-          @extend .DfNoBoxShadow
+      button,
+      button:hover,
+      button:active,
+      button:focus {
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        @extend .DfNoBoxShadow
       }
     }
 
@@ -1731,6 +1752,7 @@ a.DfStatItem {
 
     .DfAuthorBlock {
       display: flex;
+
       .anticon-ellipsis.ant-dropdown-trigger {
         margin-left: $space_big;
       }
@@ -1738,7 +1760,7 @@ a.DfStatItem {
   }
 
   .ant-comment-nested {
-    box-shadow: -1px 0 0 rgba(34,36,38,.15);
+    box-shadow: -1px 0 0 rgba(34, 36, 38, .15);
     margin-left: $space_huge;
     padding-left: $space_normal;
 
@@ -1788,6 +1810,7 @@ a.DfStatItem {
   border: 1px solid $color_light_border;
   box-sizing: border-box;
   border-radius: $border_radius_normal;
+
   &.active {
     border-color: $color_link
   }
@@ -1819,6 +1842,7 @@ a.DfStatItem {
     margin-top: 0;
     padding-top: 0;
   }
+
   .ant-divider-inner-text {
     color: $color_muted;
     font-size: $font_normal;
