@@ -10,17 +10,12 @@ type IconWithTitleProps = {
 
 export const IconWithLabel = ({ icon, label, count = new BN(0) }: IconWithTitleProps) => {
   const countStr = gtZero(count) ? count.toString() : undefined
-  const renderText = () => <span className='ml-2'>
-    {label
-      ? <>
-        {label}
-        {countStr && ` (${countStr})`}
-      </>
-      : countStr}
-  </span>
+  const text = label
+    ? label + (countStr ? ` (${countStr})` : '')
+    : countStr
 
   return <>
     {icon}
-    {renderText()}
+    {text && <span className='ml-2'>{text}</span>}
   </>
 }
