@@ -16,7 +16,8 @@ import { getSpaceId, unwrapSubstrateId } from 'src/components/substrate';
 import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
-import { isHidden } from 'src/components/utils';
+import { isHidden, Loading } from 'src/components/utils';
+import { useLoadHiddenSpace } from 'src/components/spaces/helpers';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
@@ -37,7 +38,9 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
   if (!content) return null;
 
   const { title, body, image, canonical, tags } = content;
-  const spaceData = space || postDetails.space
+  const spaceData = space || postDetails.space || useLoadHiddenSpace(struct.created.account).myHiddenSpaces
+
+  if (!spaceData) return <Loading />
 
   const spaceStruct = spaceData.struct;
 

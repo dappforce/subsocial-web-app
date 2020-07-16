@@ -26,15 +26,13 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
 
   return (
     <PageContent>
-      <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-        <HeadMeta
-          title='Latest posts and spaces'
-          desc='Subsocial is an open decentralized social network'
-        />
-        <LatestPosts {...props} postsData={commentData} type='comment' />
-        <LatestPosts {...props} postsData={postsData} type='post' />
-        <LatestSpaces {...props} spacesData={spacesData} />
-      </div>
+      <HeadMeta
+        title='Latest posts and spaces'
+        desc='Subsocial is an open decentralized social network'
+      />
+      <LatestPosts {...props} postsData={postsData} type='post' />
+      <LatestPosts {...props} postsData={commentData} type='comment' />
+      <LatestSpaces {...props} spacesData={spacesData} />
     </PageContent>
 
   );

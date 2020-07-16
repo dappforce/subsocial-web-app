@@ -25,7 +25,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
   const { subsocial } = useSubsocialApi()
   const account = useMyAddress()
 
-  if (isHiddenPost(post)) return <div className='mt-3'><HiddenPostAlert post={post} desc='You cannot comment on a hidden post' /></div>;
+  if (isHiddenPost(post)) return <HiddenPostAlert post={post} desc='You cannot comment on a hidden post' className='mt-3' />
 
   const parentIdStr = parentId.toString()
 
