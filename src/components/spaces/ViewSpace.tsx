@@ -59,7 +59,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     dropdownPreview = false,
     postIds = [],
     posts = [],
-    imageSize = DEFAULT_AVATAR_SIZE,
+    imageSize = 64,
     onClick
   } = props;
 
