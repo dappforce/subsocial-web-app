@@ -86,7 +86,7 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
   const [ isApiReady, setIsApiReady ] = useState(false)
 
   useEffect(() => {
-    if (!api || isApiReady) return message.send()
+    if (!api || isApiReady) return message.open()
 
     const load = async () => {
       await api.isReady
