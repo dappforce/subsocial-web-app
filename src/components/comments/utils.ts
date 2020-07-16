@@ -73,7 +73,7 @@ export const buildMockComment = ({ fakeId, account, content }: MockComment) => {
         direct_replies_count: 0,
         space_id: null,
         extension: { Comment: {} },
-        hidden: true
+        hidden: false
       },
       content: content
     }

@@ -10,12 +10,13 @@ import { CommentContent } from '@subsocial/types';
 import { Button } from 'antd';
 import { fakeClientId } from '../utils';
 import { CommentTxButtonType } from './utils';
-import { FVoid } from '../utils/types';
+import { getNewIdFromEvent } from '../substrate';
+import BN from 'bn.js'
 
 type Props = MyAccountProps & {
   content?: CommentContent,
   withCancel?: boolean,
-  callback?: FVoid,
+  callback?: (id?: BN) => void,
   CommentTxButton: (props: CommentTxButtonType) => JSX.Element
 };
 
@@ -50,8 +51,9 @@ export const InnerEditComment = (props: Props) => {
     cancelCallback()
   };
 
-  const onTxSuccess: TxCallback = () => {
-    callback && callback()
+  const onTxSuccess: TxCallback = (txResult) => {
+    const id = getNewIdFromEvent(txResult)
+    callback && callback(id)
   };
 
   const renderTxButton = () => (
