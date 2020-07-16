@@ -49,7 +49,7 @@ export const controlledMessage = ({
   ...otherProps
 }: ControlledMessageProps) => {
   return {
-    send: () => {
+    open: () => {
       notification.open({
         key,
         type,
