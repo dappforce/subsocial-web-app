@@ -202,7 +202,7 @@ const InnerForm = (props: FormProps) => {
 
           <div className="EPadvanced">
             <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
-              {showAdvanced ? <><CaretUpOutlined /> Show</> : <><CaretDownOutlined /> Hide</>}
+              {showAdvanced ? <><CaretUpOutlined /> Hide</> : <><CaretDownOutlined /> Show</>}
               {' '}advanced settings
             </div>
             {showAdvanced &&
