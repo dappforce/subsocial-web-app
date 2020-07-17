@@ -1,10 +1,20 @@
 @import './subsocial-vars.scss';
 
+html {
+  height: 100%;
+  font-size: 16px;
+}
+
 body,
 #root {
+  height: 100%;
   background-color: $color_page_bg !important;
   color: $color_font_normal !important;
   font-size: $font_normal !important;
+}
+
+h1, h2, h3, h4, h5 {
+  color: rgba(0, 0, 0, .6);
 }
 
 /* Common Resusable Classes */
@@ -12,12 +22,11 @@ body,
 
 .DfSegment {
   background-color: #fff;
-  padding: $space_large;
+  padding: $space_normal;
   position: relative;
-  -webkit-box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
-  box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
-  border-radius: .28571429rem;
-  border: 1px solid rgba(34, 36, 38, .15);
+  border-radius: $border_radius_normal;
+  border: 1px solid $color_light_border;
+  @extend .DfBoxShadow;
 }
 
 .DfBalance {
@@ -87,8 +96,10 @@ body,
 }
 
 .ant-comment-content-author {
-  font-size: inherit;
-  line-height: inherit;
+  // font-size: inherit;
+  // line-height: inherit;
+  margin-top: $space_tiny;
+  margin-bottom: 0;
 }
 
 .am-drawer-content {
@@ -212,13 +223,13 @@ body,
   }
 
   .DfCommentAction {
-    padding: $space_small $space_normal;
     cursor: pointer;
     @extend .DfBlackLink;
   }
 }
 
 .DfPostName {
+  margin-top: 0;
   margin-bottom: $space_normal !important;
   margin-right: $space_normal;
   color: $color_font_normal;
@@ -576,7 +587,7 @@ hr {
 }
 
 .DfSpaceStats {
-  margin-top: $space_normal;
+  margin-top: $space_small;
 
   .DfStatItem {
     margin-right: $space_normal;
@@ -663,7 +674,6 @@ hr {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: .25rem 0;
   font-weight: bold;
   font-size: $font_normal;
   background-color: transparent;
@@ -690,15 +700,22 @@ hr {
     margin: $space_small 0;
   }
 
+  .DfSharedSummary {
+    .DfSegment {
+      margin-bottom: 0;
+      @extend .DfNoBoxShadow;
+    }
+  }
+
   .DfActionsPanel {
-    justify-content: space-around;
+    padding: .25rem 0;
+    justify-content: space-evenly;
   }
 
   .DfPostImagePreview {
     margin-left: $space_normal;
     margin-bottom: $space_normal;
   }
-
 }
 
 .DfShareModalBody {
@@ -955,11 +972,12 @@ hr {
   li.ant-list-item.ant-list-item-no-flex {
     border: none;
     padding: 0;
-    padding-top: $space_tiny;
-    padding-bottom: $space_tiny;
+
+    .DfCommentSection & {
+      padding-top: $space_tiny;
+    }
   }
 }
-
 
 @media (min-width: 560px) {
   .DfSectionOuter {
@@ -1200,6 +1218,10 @@ hr {
 
 .DfDataList {
   padding-top: $space_tiny;
+
+  .DfSegment {
+    margin: $space_normal 0;
+  }
 
   .ant-list-pagination {
     display: flex;
@@ -1668,10 +1690,6 @@ a.DfStatItem {
   }
 
   .DfAddressIcon {
-    display: flex;
-    align-items: center;
-    margin: $space_normal 0;
-
     .ui--IdentityIcon {
       display: block;
     }
@@ -1681,7 +1699,9 @@ a.DfStatItem {
     display: flex;
     flex-direction: column;
     line-height: normal;
-    margin: $space_normal $space_tiny $space_normal 0;
+    padding: $space_tiny;
+    padding-top: $space_normal;
+    padding-left: 0;
 
     a {
       @extend .DfBlackLink;
@@ -1717,7 +1737,13 @@ a.DfStatItem {
 
   .ant-comment-inner {
     padding-top: 0;
-    padding-bottom: $space_tiny;
+    padding-bottom: 0;
+
+    &:hover {
+      button {
+        // color: $color_font_normal; 
+      }
+    }
   }
 
   .ant-comment-avatar {
@@ -1725,11 +1751,15 @@ a.DfStatItem {
   }
 
   .ant-comment-actions {
+    margin-top: $space_mini;
+    margin-bottom: $space_tiny;
+
     li {
 
       span,
       button {
         font-size: $font_small;
+        // color: $color_muted;
       }
 
       button,
@@ -1739,11 +1769,10 @@ a.DfStatItem {
         cursor: pointer;
         background: transparent;
         border: none;
-        @extend .DfNoBoxShadow
+        @extend .DfNoBoxShadow;
+        // color: $color_link;
       }
     }
-
-    margin: $space_tiny 0;
   }
 
   .ant-comment-content-author-name {
@@ -1761,12 +1790,8 @@ a.DfStatItem {
 
   .ant-comment-nested {
     box-shadow: -1px 0 0 rgba(34, 36, 38, .15);
-    margin-left: $space_huge;
+    margin-left: $space_normal;
     padding-left: $space_normal;
-
-    .DfCommentChild {
-      margin-top: $space_tiny
-    }
   }
 
   .DfActionButtonsBlock {
@@ -1775,14 +1800,15 @@ a.DfStatItem {
 }
 
 .anticon-ellipsis.ant-dropdown-trigger {
-  font-size: $font_big;
+  font-size: $font_normal;
 }
 
 .DfCommentSection {
   border-top: 1px solid $color_light_border;
+  margin-bottom: $space_normal;
 
   h3 {
-    padding: $space_small 0;
+    margin: $space_small 0;
   }
 
   .DfActionButtonsBlock {

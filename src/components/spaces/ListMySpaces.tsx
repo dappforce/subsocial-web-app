@@ -43,7 +43,7 @@ export const ListMySpaces: NextPage<Props> = (props) => {
   const { myHiddenSpaces, isLoading } = useLoadHiddenSpaces(mySpaceIds)
 
   const VisibleSpacesList = () => <ListData
-    title={`My Spaces (${spacesData.length})`}
+    title={`My spaces (${spacesData.length})`}
     dataSource={spacesData}
     renderItem={SpacePreview}
     noDataDesc='You do not have your own spaces yet'
