@@ -125,7 +125,6 @@ h1, h2, h3, h4, h5 {
 
 .DfTags {
   margin: $space_normal 0;
-  text-align: end;
   font-size: $font_small;
 
   .anticon {
@@ -346,25 +345,12 @@ h1, h2, h3, h4, h5 {
   }
 }
 
-.ProfileDetailsTable {
-  font-size: $font_normal !important;
-
-  tr td:first-child {
-    width: 1%;
-    white-space: nowrap;
-  }
-}
-
 .EditEntityBox {
   width: 100%;
   /* max-width: 600px; */
 
   .EditEntityForm {
     width: 100%;
-  }
-
-  .editor-statusbar {
-    display: none;
   }
 }
 
@@ -375,25 +361,6 @@ h1, h2, h3, h4, h5 {
 .ui.threaded.comments .comment .comments {
   padding: 0 0 0 $space_large;
   margin: -1rem 0 0 $space_large;
-}
-
-.DfCommentContent,
-.DfComment {
-  .metadata {
-    margin-left: 0 !important;
-    font-size: $font_normal;
-  }
-
-  .text,
-  .ant-comment-content-detail {
-    display: inline-block;
-    margin: $space_tiny 0 !important;
-    padding: $space_small $space_normal;
-    border-radius: 15px;
-    border-top-left-radius: 0;
-    background-color: #fff;
-    @extend .DfBoxShadow;
-  }
 }
 
 form.ui.form.DfForm.EditEntityForm {
@@ -420,53 +387,6 @@ form.ui.form.DfForm.EditEntityForm {
   background-color: #fff;
 }
 
-.editor-statusbar {
-  float: right;
-}
-
-.DfSpacedButtons {
-  margin-top: $space_normal;
-  margin-bottom: calc(2 * #{$space_normal});
-
-  .button {
-    margin-right: $space_tiny;
-  }
-}
-
-.DfVoter {
-  i.icon {
-    margin: 0 .5rem !important;
-  }
-
-  &.vertical {
-    margin-right: $space_tiny;
-  }
-
-  .ui.button {
-    background-color: transparent !important;
-    color: $color_muted;
-    min-width: initial;
-    max-height: initial;
-    padding: $space_tiny;
-
-    &.red {
-
-      &:hover,
-      &.active {
-        color: red !important;
-      }
-    }
-
-    &.green {
-
-      &:hover,
-      &.active {
-        color: green !important;
-      }
-    }
-  }
-}
-
 .DfNoVoters {
   text-align: center;
   background-color: #fff;
@@ -476,35 +396,6 @@ form.ui.form.DfForm.EditEntityForm {
 .ui.img.avatar {
   width: initial;
   height: initial;
-}
-
-.DfCommentsByPost {
-  border-top: $color_light_border 1px solid;
-
-  h3 {
-    font-size: $font_large;
-    font-weight: 400;
-    color: $color_muted;
-    padding-top: $space_normal;
-  }
-
-  .ui.comments {
-    max-width: 100%;
-  }
-}
-
-.DfCommentContent {
-  margin-bottom: $space_huge;
-
-  .reply {
-    color: $color_muted;
-  }
-}
-
-.ChildComment {
-  .DfComment {
-    padding-top: $space_normal;
-  }
 }
 
 .ui.dropdown {
@@ -528,31 +419,11 @@ hr {
   border-bottom: 1px solid $color_light_border;
 }
 
-.DfFollowButton {
-  margin-top: $space_tiny;
-}
-
 .disable,
 .disable:hover {
   color: $color_muted;
   text-decoration: none !important;
   cursor: default !important;
-}
-
-.DfActivityStreamItem {
-
-  .handle,
-  a {
-    font-weight: bold;
-  }
-
-  .header {
-    font-size: $font_normal;
-  }
-
-  .name {
-    text-transform: uppercase;
-  }
 }
 
 .DfDate {
@@ -632,20 +503,11 @@ hr {
   @extend .DfBoldBlackLink;
 }
 
-.DfPostPreview,
-.DfPost {
+.DfPostPreview {
   .ui.button {
     min-width: initial;
     max-height: initial;
   }
-}
-
-.NotificationItem {
-  border-bottom: 1px solid $color_light_border;
-  padding: $space_small;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
 
 .DfRow {
@@ -762,24 +624,6 @@ hr {
   cursor: pointer;
 }
 
-.DfScore {
-  font-size: $font_normal
-}
-
-.editor-statusbar {
-  display: none;
-}
-
-.DfGreyButton {
-  background-color: #ddd;
-}
-
-.DfGreyButton:hover {
-  background-color: #ccc;
-  border-color: $color_light_border;
-  color: $color_font_normal;
-}
-
 .DfSelectedSpace {
   background-color: #e6f7ff;
   color: #1890fe;
@@ -799,66 +643,6 @@ hr {
 .text.smaller {
   font-size: $font_small
 }
-
-.ui.button:disabled,
-.ui.buttons .disabled.button,
-.ui.disabled.active.button,
-.ui.disabled.button,
-.ui.disabled.button:hover {
-  opacity: 0.45 !important;
-}
-
-.ui--row {
-  .ui.message {
-    margin: 0;
-    padding: $space_small $space_normal;
-  }
-
-  textarea,
-  .ui--InputFile {
-    margin: $space_mini 0 !important;
-    height: 5rem;
-  }
-}
-
-.modal {
-  .ui--AddressComponents {
-    width: 100%;
-  }
-
-  .AddressComponents {
-    .button {
-      min-width: 8rem;
-    }
-  }
-
-  .button {
-    max-height: initial;
-  }
-
-  .content {
-    min-width: 75%;
-    width: 100%;
-
-    .DfFollowAccountButton {
-      margin: 0;
-      margin-left: $space_normal;
-    }
-  }
-}
-
-.ui.modal .scrolling.content {
-  text-align: left;
-
-  .ReactionsItem {
-    margin: $space_normal 0;
-  }
-
-  .ProfileDetails {
-    align-items: center;
-  }
-}
-
 
 .Df--AddressComponents-details {
   color: $color_muted !important;
@@ -899,60 +683,6 @@ hr {
     margin-right: $space_normal;
     color: $color_muted;
   }
-}
-
-.Df--profile-balance {
-  margin-right: .5rem;
-  font-size: $font_normal;
-  color: $color_muted;
-}
-
-.TopMenuAccount {
-  line-height: 1.25rem;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-
-  .addressInfo {
-    margin: 0 $space_tiny;
-  }
-
-  .ui--Balance {
-    font-size: $font_small;
-    color: $color_muted;
-  }
-}
-
-.ui--Bubble.ui.label {
-  background-color: #f2f2f2;
-  margin: $space_mini 0;
-  margin-right: $space_tiny;
-
-  &.pointing:before {
-    background-color: #e6e6e6;
-  }
-
-  &.warn {
-    color: #f2711c !important;
-    border: 1px solid;
-  }
-
-  &.ok {
-    color: #21ba45 !important;
-    border: 1px solid;
-  }
-}
-
-.DfCommentsByPost {
-  .DfSection-title {
-    font-size: $font_large;
-    font-weight: bold !important;
-  }
-}
-
-.DfSection--withButton {
-  display: flex;
-  align-items: center;
 }
 
 .DfSection {
@@ -1003,30 +733,6 @@ hr {
 
   &>label {
     padding-top: $space_small;
-  }
-}
-
-/* MD = markdown */
-.DfViewMD {
-  img {
-    max-width: 100%;
-  }
-
-  code {
-    background-color: #e0e0e0;
-    padding: 0 $space_mini;
-    border-radius: 2px;
-  }
-}
-
-.DfMainStatus {
-  margin: 1rem auto !important;
-  max-width: 500px !important;
-  width: 100% !important;
-  text-align: center;
-
-  .button {
-    margin-right: 0;
   }
 }
 
@@ -1103,13 +809,14 @@ hr {
   &:hover .editor-toolbar {
     color: $color_font_normal;
   }
+
+  .editor-statusbar {
+    display: none;
+  }
 }
 
 
 .DfMdEditor.error {
-  .editor-statusbar {
-    float: right;
-  }
 
   .CodeMirror.cm-s-easymde.CodeMirror-wrap {
     background-color: #fff6f6;
@@ -1118,20 +825,6 @@ hr {
 
   .editor-toolbar {
     border-color: #e0b4b4;
-  }
-}
-
-.ui.DfMenu.menu {
-  background-color: #3f3f3f;
-  color: #fff;
-  border-radius: 0;
-
-  label {
-    color: #fff;
-  }
-
-  .search.selection.dropdown {
-    background-color: $color_font_normal;
   }
 }
 
@@ -1181,14 +874,6 @@ hr {
 
 .DfBgColor {
   background-color: $color_page_bg;
-}
-
-.DfTab {
-  background-color: #fff;
-
-  .ui.attached.tabular.menu {
-    padding: $space_normal $space_normal 0rem $space_normal;
-  }
 }
 
 .DfHeader {
@@ -1350,21 +1035,6 @@ hr {
   background: none !important;
 }
 
-.DfCreator {
-  font-size: $font_normal;
-  margin-top: $space_normal;
-
-  i {
-    margin-right: $space_mini;
-  }
-
-  div:not(.DfCreator--data) {
-    display: inline;
-  }
-
-  color: $color_muted !important;
-}
-
 a.DfStatItem {
   @extend .DfBlackLink;
 }
@@ -1373,10 +1043,6 @@ a.DfStatItem {
   font-size: $font_normal;
   display: inline;
   margin-right: $space_tiny;
-}
-
-.DfSpacedButtons {
-  margin-left: 3rem;
 }
 
 .DfSpaceTitle {
@@ -1534,10 +1200,6 @@ a.DfStatItem {
   color: #ccc;
 }
 
-.RNTSaveButton span {
-  color: #fff;
-}
-
 .ViewSpaceWrapper {
   display: flex;
   justify-content: space-between;
@@ -1637,11 +1299,6 @@ a.DfStatItem {
   font-size: $font_normal;
 }
 
-.DfChooseAccountList {
-  margin-top: $space_tiny;
-  border-radius: $space_tiny;
-}
-
 .DfChooseAccount {
   display: flex;
 
@@ -1713,24 +1370,8 @@ a.DfStatItem {
   }
 }
 
-.DfSelectAccount {
-  padding: $space_small $space_normal;
-
-  .DfProfileInfo {
-    padding-bottom: $space_tiny;
-  }
-
-  .ui.search.dropdown {
-    max-width: 25.5rem;
-  }
-}
-
 .DfError {
   color: red
-}
-
-.DfShareModalPadding.scrolling.content {
-  padding-bottom: 0;
 }
 
 .DfNewComment {
