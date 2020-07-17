@@ -4,14 +4,14 @@ import 'antd/dist/antd.css'
 import 'antd-mobile/dist/antd-mobile.css'
 
 import 'src/styles/bootstrap-utilities-4.3.1.css'
-import 'src/styles/app.scss'
 import 'src/styles/components.scss'
 import 'src/styles/github-markdown.css'
+import 'easymde/dist/easymde.min.css'
+
+// Subsocial custom styles:
 import 'src/styles/subsocial.scss'
 import 'src/styles/utils.scss'
 import 'src/styles/subsocial-mobile.scss'
-
-import 'easymde/dist/easymde.min.css'
 
 import React from 'react'
 import App from 'next/app'

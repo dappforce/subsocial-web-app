@@ -41,23 +41,25 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
     id,
     created: { account, time },
     score,
-    direct_replies_count
+    total_replies_count
   } = struct
 
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies, setShowReplies ] = useState(withShowReplies);
-  const [ repliesCount, setRepliesCount ] = useState(new BN(direct_replies_count))
+  const [ repliesCount, setRepliesCount ] = useState(new BN(total_replies_count))
 
   const isFake = id.toString().startsWith('fake')
   const commentLink = postUrl(space, struct);
 
   const ViewRepliesLink = () => {
-    const viewActionMessage = showReplies ? <><CaretUpOutlined /> {'Hide'}</> : <><CaretDownOutlined /> {'View'}</>
+    const viewActionMessage = showReplies
+      ? <><CaretUpOutlined /> {'Hide'}</>
+      : <><CaretDownOutlined /> {'View'}</>
+
     return <Link href={commentLink}>
       <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
-        {viewActionMessage}
-        {' '}
+        {viewActionMessage}{' '}
         <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
       </a>
     </Link>
@@ -66,7 +68,7 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
   const isReplies = repliesCount.gt(ZERO)
   const isShowChild = showReplyForm || showReplies || isReplies;
 
-  const ChildPanel = isShowChild ? <div className="DfCommentChild">
+  const ChildPanel = isShowChild ? <div>
     {showReplyForm &&
     <NewComment
       post={struct}

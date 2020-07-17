@@ -97,38 +97,10 @@
     zoom: .7;
   }
 
-  .ProfilePreviews,
-  .ui.modal {
+  .ProfilePreviews {
 
     button.ui.tiny {
       padding: .6rem;
-      font-size: $font_tiny;
-    }
-  }
-
-  .ui.modal {
-    .ProfileDetails {
-      padding-bottom: $space_tiny
-    }
-
-    .content {
-      line-height: $space_normal;
-    }
-
-    .DfSegment {
-      box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
-      margin: 1rem 0;
-      border-radius: .28571429rem;
-      border: 1px solid rgba(34,36,38,.15);
-    }
-
-    .actions {
-      padding-top: 0;
-    }
-
-    button.ui.tiny.primary,
-    button.ui.tiny.basic {
-      padding: $space_tiny;
       font-size: $font_tiny;
     }
   }
@@ -147,44 +119,6 @@
 
   .Df--AddressComponents-details {
     font-size: $font_small;
-  }
-
-  .ui.modal.transition.visible.active {
-
-    .scrolling.content,
-    .actions {
-      padding: $space_tiny !important;
-    }
-  }
-
-  .modal {
-    .AddressComponents {
-      .button {
-        min-width: inherit;
-        ;
-      }
-    }
-
-    .ui--AddressComponents-info {
-      max-width: 13rem;
-
-      .Df--AddressComponents-details {
-        margin-top: $space_mini;
-        font-size: $font_small;
-      }
-    }
-
-    .ui.attached.tabular.menu {
-      padding: 0 .5rem !important;
-    }
-
-    h1:first-child {
-      font-size: $font_big !important;
-    }
-
-    .DfAddressMini-popup {
-      width: 100%;
-    }
   }
 
   .DfModal:first-child {
@@ -228,10 +162,6 @@
   .DfBurgerIcon {
     padding-left: 0;
     padding-right: $space_tiny;
-  }
-
-  .DfCreator {
-    font-size: $font_small;
   }
 
   .DfSection {
@@ -343,10 +273,6 @@
 
   .ui--IdentityIcon.image {
     margin-right: $space_tiny;
-  }
-
-  .DfCommentContent {
-    margin-bottom: 1.75rem;
   }
 
   .DfDataList {
