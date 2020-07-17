@@ -28,7 +28,6 @@ import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import AboutSpaceLink from './AboutSpaceLink';
 import ViewSpaceLink from './ViewSpaceLink';
-import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 import { PageContent } from '../main/PageWrapper';
 import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert } from './helpers';
 
