@@ -57,7 +57,15 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
   };
 }
 
-export const Loading = () => <div className='d-flex justify-content-center align-items-center w-100 h-100'><LoadingOutlined /></div>;
+type LoadingProps = {
+  label?: React.ReactNode
+}
+
+export const Loading = ({ label }: LoadingProps) =>
+  <div className='d-flex justify-content-center align-items-center w-100 h-100'>
+    <LoadingOutlined />
+    {label && <em className='ml-3 text-muted'>{label}</em>}
+  </div>
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
