@@ -56,10 +56,10 @@ export const DfFormButtons = ({
     }
   </Form.Item>
 
-export const validateForm = async (form: FormInstance) => {
+export const shouldSendTx = async (form: FormInstance) => {
   try {
     await form.validateFields()
-    return true
+    return form.isFieldsTouched()
   } catch (err) {
     // Form is invalid
     return false
@@ -70,5 +70,5 @@ export const DfFormTxButton = ({ form, ...props }: DfFormTxButtonProps) =>
   <TxButton
     {...commonFormTxButtonProps}
     {...props}
-    onValidate={() => validateForm(form)}
+    onValidate={() => shouldSendTx(form)}
   />
