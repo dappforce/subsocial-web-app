@@ -5,8 +5,7 @@ import dynamic from 'next/dynamic'
 import { Form, Button } from 'antd'
 import { FormProps, FormItemProps, FormInstance } from 'antd/lib/form'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
-
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
+import { LoadingOutlined } from '@ant-design/icons'
 
 const labelLen = 6
 const fieldLen = 24 - labelLen
@@ -25,6 +24,16 @@ const commonFormTxButtonProps: TxButtonProps = {
   type: 'primary',
   size: commonFormProps.size
 }
+
+const TxButtonStub = () =>
+  <Button {...commonFormTxButtonProps} disabled={true}>
+    <LoadingOutlined />
+  </Button>
+
+const TxButton = dynamic(
+  () => import('../utils/TxButton'),
+  { loading: TxButtonStub, ssr: false }
+)
 
 export const DfForm = (props: FormProps) =>
   <Form {...commonFormProps} {...props} className={styles.DfForm}>

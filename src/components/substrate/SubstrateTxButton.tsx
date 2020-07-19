@@ -36,7 +36,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   tx?: string
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
   label?: React.ReactNode
-  title?: string,
+  title?: string
   unsigned?: boolean
   onValidate?: () => boolean | Promise<boolean>
   onClick?: () => void
@@ -44,7 +44,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   onFailed?: TxFailedCallback
   successMessage?: SuccessMessage
   failedMessage?: FailedMessage
-  withSpinner?: boolean,
+  withSpinner?: boolean
   component?: React.FunctionComponent
 }
 
