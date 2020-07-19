@@ -6,7 +6,7 @@ import { Avatar, Divider, Alert } from 'antd';
 import { OnBoardingButton } from '../onboarding';
 import { ModalKind, useAuth, StepsEnum } from './AuthContext';
 import { AccountSelector } from '../profile-selector/AccountSelector';
-import PrivacyPolicyLinks from '../utils/PrivacyPoliceLinks';
+import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks';
 
 type IsSteps = {
   isSignIn: boolean,

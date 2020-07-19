@@ -4,7 +4,7 @@ import BN from 'bn.js'
 import { SignOutButton } from 'src/components/auth/AuthButtons';
 import { AnyAccountId } from '@subsocial/types';
 import { AccountSelector } from './AccountSelector';
-import PrivacyPolicyLinks from '../utils/PrivacyPoliceLinks';
+import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks';
 import { Divider } from 'antd';
 
 type Props = {
