@@ -29,7 +29,7 @@ type FailedMessageFn = (status: SubmittableResult | null) => Message
 type SuccessMessage = Message | SuccessMessageFn
 type FailedMessage = Message | FailedMessageFn
 
-export type BaseTxButtonProps = Omit<ButtonProps, 'onClick'>
+export type BaseTxButtonProps = Omit<ButtonProps, 'onClick' | 'form'>
 
 export type TxButtonProps = BaseTxButtonProps & {
   accountId?: AddressOrPair
@@ -38,6 +38,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   label?: React.ReactNode
   title?: string,
   unsigned?: boolean
+  onValidate?: () => boolean | Promise<boolean>
   onClick?: () => void
   onSuccess?: TxCallback
   onFailed?: TxFailedCallback
@@ -54,6 +55,7 @@ export function TxButton ({
   label,
   disabled,
   unsigned,
+  onValidate,
   onClick,
   onSuccess,
   onFailed,
@@ -73,6 +75,7 @@ export function TxButton ({
   const isAuthRequired = !accountId || !isTokens
   const buttonLabel = label || children
   const Component = component || Button
+
   if (!api || !api.isReady) {
     return (
       <Component
@@ -233,6 +236,11 @@ export function TxButton ({
   // TODO can optimize this fn by wrapping it with useCallback. See TxButton from Apps.
   const sendTx = async () => {
     unsubscribe()
+
+    if (isFunction(onValidate) && !(await onValidate())) {
+      log.info('Cannot send a tx because onValidate() returned false')
+      return
+    }
 
     isFunction(onClick) && onClick()
 
