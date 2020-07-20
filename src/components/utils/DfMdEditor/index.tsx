@@ -1,9 +1,16 @@
 import React from 'react'
+import { Input } from 'antd'
 import dynamic from 'next/dynamic'
 import { MdEditorProps } from './types'
 import { isClientSide } from '..'
 
-const ClientMdEditor = dynamic(() => import('./client'), { ssr: false })
+const TextAreaStub = ({ onChange, ...props }: MdEditorProps) =>
+  <Input.TextArea {...props} style={{ height: '120px' }} />
+
+const ClientMdEditor = dynamic(
+  () => import('./client'),
+  { loading: () => <TextAreaStub />, ssr: false }
+)
 
 /**
  * MdEditor is based on CodeMirror that is a large dependency: 55 KB (gzipped).
@@ -13,7 +20,7 @@ const ClientMdEditor = dynamic(() => import('./client'), { ssr: false })
 function Inner (props: MdEditorProps) {
   return isClientSide()
     ? <ClientMdEditor {...props} />
-    : null
+    : <TextAreaStub {...props} />
 }
 
 export default React.memo(Inner)
