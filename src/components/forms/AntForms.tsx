@@ -25,10 +25,11 @@ const commonFormTxButtonProps: TxButtonProps = {
   size: commonFormProps.size
 }
 
-const TxButtonStub = () =>
+const TxButtonStub = React.memo(() =>
   <Button {...commonFormTxButtonProps} disabled={true}>
     <LoadingOutlined />
   </Button>
+)
 
 const TxButton = dynamic(
   () => import('../utils/TxButton'),
