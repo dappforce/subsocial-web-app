@@ -2,13 +2,11 @@ import React from 'react'
 import { Empty } from 'antd'
 import { MutedSpan } from './MutedText'
 
-type Props = {
+type Props = React.PropsWithChildren<{
   image?: string
-  description?: React.ReactNode | string
-  children?: React.ReactNode
-}
+  description?: React.ReactNode
+}>
 
-// TODO rename to 'EmptyList'
 export const NoData = (props: Props) =>
   <Empty
     className='DfEmpty'

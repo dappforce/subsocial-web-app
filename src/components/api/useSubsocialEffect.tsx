@@ -11,8 +11,8 @@ type Apis = {
   ipfs: SubsocialIpfsApi
 }
 
-type EffectCallback =
-  (apis: Apis) => (void | (() => void | undefined))
+type EffectCallbackResult = void | (() => void | undefined)
+type EffectCallback = (apis: Apis) => EffectCallbackResult
 
 /** Effect callback will be called only if API is ready. */
 export default function useSubsocialEffect (

@@ -1,253 +1,253 @@
-import React, { useState } from 'react';
-import Button from 'antd/lib/button';
-import { Form, Field, withFormik, FormikProps } from 'formik';
+import React, { useState } from 'react'
+import { Form, Input, Select } from 'antd'
+import Router, { useRouter } from 'next/router'
+import BN from 'bn.js'
 
-import { Option } from '@polkadot/types';
-import Section from '../utils/Section';
-import dynamic from 'next/dynamic';
-import { withCalls, withMulti, spacesQueryToProp, getNewIdFromEvent, getTxParams } from '../substrate';
-import * as DfForms from '../utils/forms';
-
-import { Loading } from 'src/components/utils';
-import { useMyAddress } from '../auth/MyAccountContext';
-import BN from 'bn.js';
-import Router from 'next/router';
-import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { Space, IpfsHash } from '@subsocial/types/substrate/interfaces';
-import { SpaceContent } from '@subsocial/types/offchain';
-import { SpaceUpdate, OptionOptionText, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
+import HeadMeta from '../utils/HeadMeta'
+import Section from '../utils/Section'
+import { getSpaceId, getNewIdFromEvent, equalAddresses, stringifyText, getTxParams } from '../substrate'
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { Option } from '@polkadot/types'
+import { SpaceUpdate, OptionOptionText, OptionText, OptionBool } from '@subsocial/types/substrate/classes'
+import { IpfsHash } from '@subsocial/types/substrate/interfaces'
+import { SpaceContent, SpaceData, CommonContent } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { useMyAddress } from '../auth/MyAccountContext'
+import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
+import { Loading } from '../utils'
+import NoData from '../utils/EmptyList'
+import { Codec } from '@polkadot/types/types'
+import DfMdEditor from '../utils/DfMdEditor'
 
-import EditableTagGroup from '../utils/EditableTagGroup';
-import { withSpaceIdFromUrl } from './withSpaceIdFromUrl';
-import { ValidationProps, buildValidationSchema } from './SpaceValidation';
-import DfMdEditor from '../utils/DfMdEditor';
+const log = newLogger(EditSpace.name)
 
-import useSubsocialEffect from '../api/useSubsocialEffect';
-import NoData from '../utils/EmptyList';
-import { SpaceNotFound } from './helpers';
+const NAME_MIN_LEN = 3
+const NAME_MAX_LEN = 100
 
-const log = newLogger('Edit space')
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+type FormValues = Partial<SpaceContent & {
+  handle: string
+}>
 
-type OuterProps = ValidationProps & {
-  spaceId?: BN;
-  struct?: Space;
-  json?: SpaceContent;
-};
+type FieldName = keyof FormValues
 
-type FormValues = SpaceContent & {
-  handle: string;
-};
+const fieldName = (name: FieldName): FieldName => name
 
-type FormProps = OuterProps & FormikProps<FormValues>;
+type LoadedDataProps = Partial<SpaceData>
 
-const LabelledField = DfForms.LabelledField<FormValues>();
-
-const LabelledText = DfForms.LabelledText<FormValues>();
-
-const InnerForm = (props: FormProps) => {
-  const {
-    spaceId,
-    struct,
-    values,
-    errors,
-    dirty,
-    isValid,
-    setFieldValue,
-    isSubmitting,
-    setSubmitting,
-    resetForm
-  } = props;
-
-  const {
-    handle,
-    name,
-    desc,
-    image,
-    tags,
-    navTabs
-  } = values;
-
-  const { ipfs } = useSubsocialApi()
-
-  const goToView = (spaceId: BN) => {
-    Router.push('/spaces/' + spaceId.toString()).catch(err => log.error('Failed to redirect to space page. Error:', err));
-  };
-
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
-
-  const onTxFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
-    setSubmitting(false);
-  };
-
-  const onTxSuccess: TxCallback = (txResult) => {
-    setSubmitting(false);
-
-    const _id = spaceId || getNewIdFromEvent(txResult);
-    _id && goToView(_id);
-  };
-
-  const newTxParams = (hash: IpfsHash) => {
-    if (!isValid) return [];
-    if (!struct) {
-      return [ new OptionText(handle), hash ];
-    } else {
-      // TODO update only dirty values.
-      const update = new SpaceUpdate({
-        handle: new OptionOptionText(handle),
-        ipfs_hash: new OptionText(hash),
-        hidden: new OptionBool(false) // TODO has no implementation on UI
-      });
-      return [ struct.id, update ];
-    }
-  };
-
-  const title = struct ? `Edit space` : `New space`;
-
-  return <>
-    <HeadMeta title={title}/>
-    <Section className='EditEntityBox' title={title}>
-      <Form className='ui form DfForm EditEntityForm'>
-
-        <LabelledText name='name' label='Space name' placeholder='Name of your space.' {...props} />
-
-        <LabelledText name='handle' label='URL handle' placeholder={`You can use a-z, 0-9 and underscores.`} style={{ maxWidth: '30rem' }} {...props} />
-
-        <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image Url.`} {...props} />
-
-        <LabelledField name='desc' label='Description' {...props}>
-          <Field component={DfMdEditor} name='desc' value={desc} onChange={(data: string) => setFieldValue('desc', data)} className={`DfMdEditor ${errors['desc'] && 'error'}`} />
-        </LabelledField>
-
-        <EditableTagGroup name='tags' label='Tags' tags={tags} {...props}/>
-
-        <LabelledField {...props}>
-          <TxButton
-            type='primary'
-            label={struct
-              ? 'Update space'
-              : 'Create new space'
-            }
-            disabled={!dirty || isSubmitting}
-            params={() => getTxParams({
-              json: { name, desc, image, tags, navTabs },
-              buildTxParamsCallback: newTxParams,
-              setIpfsHash,
-              ipfs
-            })}
-            tx={struct
-              ? 'spaces.updateSpace'
-              : 'spaces.createSpace'
-            }
-            onFailed={onTxFailed}
-            onSuccess={onTxSuccess}
-          />
-          <Button
-            disabled={!dirty}
-            onClick={() => resetForm()}
-          >Reset form</Button>
-        </LabelledField>
-      </Form>
-    </Section>
-  </>
-};
-
-export const EditForm = withFormik<OuterProps, FormValues>({
-
-  // Transform outer props into form values
-  mapPropsToValues: (props): FormValues => {
-    const { struct, json } = props;
-    if (struct && json) {
-      const handle = struct.handle.unwrapOr('').toString();
-      return {
-        handle,
-        ...json
-      };
-    } else {
-      return {
-        handle: '',
-        name: '',
-        desc: '',
-        image: '',
-        tags: []
-      };
-    }
-  },
-
-  validationSchema: buildValidationSchema,
-
-  handleSubmit: values => {
-    // do submitting things
-  }
-})(InnerForm);
-
-type LoadStructProps = OuterProps & {
-  structOpt: Option<Space>;
-};
-
-// TODO refactor copypasta. See the same function in NavigationEditor
-function LoadStruct (props: LoadStructProps) {
-  const myAddress = useMyAddress()
-  const { structOpt } = props;
-  const [ json, setJson ] = useState<SpaceContent>();
-  const [ struct, setStruct ] = useState<Space>();
-  const [ trigger, setTrigger ] = useState(false);
-  const jsonIsNone = json === undefined;
-
-  const toggleTrigger = () => {
-    json === undefined && setTrigger(!trigger);
-  };
-
-  useSubsocialEffect(({ ipfs }) => {
-    if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
-
-    setStruct(structOpt.unwrap());
-
-    if (!struct) return toggleTrigger();
-
-    ipfs.findSpace(struct.ipfs_hash.toString()).then(json => {
-      setJson(json);
-    }).catch(err => log.error('Failed to find space in IPFS. Error:', err));
-  }, [ trigger ]);
-
-  if (!myAddress || !structOpt || jsonIsNone) {
-    return <Loading />;
-  }
-
-  if (!struct || !struct.owner.eq(myAddress)) {
-    return <NoData description={'You have no rights to edit this space'}/>
-  }
-
-  if (structOpt.isNone) {
-    return <SpaceNotFound />
-  }
-
-  return <EditForm {...props} struct={struct} json={json} />;
+type ValidationProps = {
+  minHandleLen: number
+  maxHandleLen: number
 }
 
-const commonSubstrateQueries = [
-  spacesQueryToProp('minHandleLen', { propName: 'handleMinLen' }),
-  spacesQueryToProp('maxHandleLen', { propName: 'handleMaxLen' })
-]
+type OuterProps = ValidationProps & LoadedDataProps & {
+  spaceId?: BN
+}
 
-export const NewSpace = withMulti(
-  EditForm,
-  withCalls<OuterProps>(
-    ...commonSubstrateQueries
-  )
-);
+function getInitialValues (props: OuterProps): FormValues {
+  const { struct, content } = props
+  if (!struct) return {}
 
-export const EditSpace = withMulti(
-  LoadStruct,
-  withSpaceIdFromUrl,
-  withCalls<OuterProps>(
-    spacesQueryToProp('spaceById', { paramName: 'spaceId', propName: 'structOpt' }),
-    ...commonSubstrateQueries
-  )
-);
+  const handle = stringifyText<string>(struct.handle)
+  return { ...content, handle }
+}
 
-export default NewSpace;
+export function InnerForm (props: OuterProps) {
+  const [ form ] = Form.useForm()
+  const { ipfs } = useSubsocialApi()
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>()
+
+  const { spaceId, struct, minHandleLen, maxHandleLen } = props
+  const initialValues = getInitialValues(props)
+  const tags = initialValues.tags || []
+
+  const getFieldValues = (): FormValues => {
+    return form.getFieldsValue() as FormValues
+  }
+
+  const newTxParams = (cid: IpfsHash) => {
+    const { handle } = getFieldValues()
+    if (!struct) {
+      return [ new OptionText(handle), cid ]
+    } else {
+
+      // TODO update only dirty values. !!!
+
+      const update = new SpaceUpdate({
+        handle: new OptionOptionText(handle),
+        ipfs_hash: new OptionText(cid),
+        hidden: new OptionBool()
+      })
+      return [ struct.id, update ]
+    }
+  }
+
+  const pinToIpfsAndBuildTxParams = () => {
+    const { handle, ...json } = getFieldValues()
+    return getTxParams({
+      json: json as CommonContent,
+      buildTxParamsCallback: newTxParams,
+      setIpfsHash,
+      ipfs
+    })
+  }
+
+  const onFailed: TxFailedCallback = () => {
+    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err))
+  }
+
+  const onSuccess: TxCallback = (txResult) => {
+    const _id = spaceId || getNewIdFromEvent(txResult)
+    _id && goToView(_id)
+  }
+
+  const goToView = (spaceId: BN) => {
+    Router.push('/spaces/' + spaceId.toString())
+      .catch(err => log.error(`Failed to redirect to a space page. ${err}`))
+  }
+
+  const onDescChanged = (mdText: string) => {
+    form.setFieldsValue({ [fieldName('desc')]: mdText })
+  }
+
+  return <>
+    <DfForm form={form} initialValues={initialValues}>
+      <Form.Item
+        name={fieldName('name')}
+        label='Space name'
+        hasFeedback
+        rules={[
+          { required: true, message: 'Name is required.' },
+          { min: NAME_MIN_LEN, message: minLenError('Name', NAME_MIN_LEN) },
+          { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
+        ]}
+      >
+        <Input placeholder='Name of your space' />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('handle')}
+        label='URL handle'
+        hasFeedback
+        rules={[
+          { pattern: /^[A-Za-z0-9_]+$/, message: 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_).' },
+          { min: minHandleLen, message: minLenError('Handle', minHandleLen) },
+          { max: maxHandleLen, message: maxLenError('Handle', maxHandleLen) }
+          // TODO test that handle is unique via a call to Substrate
+        ]}
+      >
+        <Input placeholder='You can use a-z, 0-9 and underscores' />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('image')}
+        label='Avatar URL'
+        hasFeedback
+        rules={[
+          { type: 'url', message: 'Should be a valid image URL.' }
+        ]}
+      >
+        <Input type='url' placeholder='Image URL' />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('desc')}
+        label='Description'
+        hasFeedback
+      >
+        <DfMdEditor onChange={onDescChanged} />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('tags')}
+        label='Tags'
+        hasFeedback
+      >
+        <Select
+          mode='tags'
+          placeholder="Press 'Enter' or 'Tab' key to add tags"
+        >
+          {tags.map((tag, i) =>
+            <Select.Option key={i} value={tag} children={tag} />
+          )}
+        </Select>
+      </Form.Item>
+
+      <DfFormButtons
+        form={form}
+        txProps={{
+          label: struct
+            ? 'Update space'
+            : 'Create new space',
+          tx: struct
+            ? 'spaces.updateSpace'
+            : 'spaces.createSpace',
+          params: pinToIpfsAndBuildTxParams,
+          onSuccess,
+          onFailed
+        }}
+      />
+    </DfForm>
+  </>
+}
+
+function bnToNum (bn: Codec, _default: number): number {
+  return bn ? (bn as unknown as BN).toNumber() : _default
+}
+
+export function FormInSection (props: OuterProps) {
+  const [ consts, setConsts ] = useState<ValidationProps>()
+  const { struct } = props
+  const title = struct ? `Edit space` : `New space`
+
+  useSubsocialEffect(({ substrate }) => {
+    const load = async () => {
+      const api = await substrate.api
+      setConsts({
+        minHandleLen: bnToNum(api.consts.spaces.minHandleLen, 5),
+        maxHandleLen: bnToNum(api.consts.spaces.maxHandleLen, 50)
+      })
+    }
+    load()
+  }, [ false ])
+
+  return <>
+    <HeadMeta title={title} />
+    <Section className='EditEntityBox' title={title}>
+      <InnerForm {...props} {...consts} />
+    </Section>
+  </>
+}
+
+export const NewSpace = FormInSection
+
+export function EditSpace (props: OuterProps) {
+  const idOrHandle = useRouter().query.spaceId as string
+  const myAddress = useMyAddress()
+  const [ isLoaded, setIsLoaded ] = useState(false)
+  const [ loadedData, setLoadedData ] = useState<LoadedDataProps>()
+
+  useSubsocialEffect(({ subsocial }) => {
+    const load = async () => {
+      const id = await getSpaceId(idOrHandle)
+      if (!id) return
+
+      setIsLoaded(false)
+      setLoadedData(await subsocial.findSpace({ id }))
+      setIsLoaded(true)
+    }
+    load()
+  }, [ idOrHandle ])
+
+  if (!isLoaded) return <Loading label='Loading the space...' />
+
+  if (!loadedData) return <NoData description='Space not found' />
+
+  const isOwner = equalAddresses(myAddress, loadedData?.struct?.owner)
+  if (!isOwner) return <NoData description="You don't have permission to edit this space" />
+
+  return <FormInSection {...props} {...loadedData} />
+}
+
+export default NewSpace

@@ -12,5 +12,3 @@ echo "Delete Polkadot static assets"
 echo "Patch Polkadot JS files with 'window'"
 cp -rf ./fixes/fixed-polkadot-ext.js ./node_modules/@polkadot/extension-dapp/index.js
 cp -rf ./fixes/fixed-polkadot-react-qr.js ./node_modules/@polkadot/react-qr/Scan.js
-cp -rf ./fixes/fixed-polkadot-ext.js ./node_modules/@subsocial/react-components/node_modules/@polkadot/extension-dapp/index.js
-cp -rf ./fixes/fixed-polkadot-ext.js ./node_modules/@subsocial/react-api/node_modules/@polkadot/extension-dapp/index.js
