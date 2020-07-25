@@ -26,6 +26,13 @@ function MyApp (props) {
     <>
       <Head>
         <script src="/env.js" />
+        {/*
+          See how to work with custom fonts in Next.js:
+          https://codeconqueror.com/blog/using-google-fonts-with-next-js
+        */}
+        {/* <link rel="font/ttf" href="/fonts/PTSerif-Bold.ttf" /> */}
+        {/* <link rel="font/ttf" href="/fonts/NotoSerif-Bold.ttf" /> */}
+        {/* <link rel="font/ttf" href="/fonts/Merriweather-Bold.ttf" /> */}
       </Head>
       <Provider store={store}>
         <MainPage>

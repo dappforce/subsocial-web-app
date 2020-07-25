@@ -1,3 +1,4 @@
+@import './fonts.scss';
 @import './subsocial-vars.scss';
 
 html {
@@ -13,8 +14,18 @@ body,
   font-size: $font_normal !important;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: rgba(0, 0, 0, .6);
+}
+
+code,
+pre {
+  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif;
 }
 
 /* Common Resusable Classes */
@@ -87,13 +98,6 @@ h1, h2, h3, h4, h5 {
 
 /* Other Styles */
 /* ---------------------------------------- */
-
-.DfMdEditor--preview {
-  .markdown-body {
-    background-color: #fff !important;
-    padding: $space_normal !important;
-  }
-}
 
 .ant-comment-content-author {
   // font-size: inherit;
@@ -232,6 +236,9 @@ h1, h2, h3, h4, h5 {
   margin-bottom: $space_normal !important;
   margin-right: $space_normal;
   color: $color_font_normal;
+  font-size: 2.5rem;
+  // font-weight: 700;
+  // font-family: $font_family_title;
 }
 
 .DfPostImage {
@@ -797,6 +804,11 @@ hr {
     z-index: 1000;
   }
 
+  .markdown-body {
+    background-color: #fff !important;
+    padding: $space_normal !important;
+  }
+
   .editor-toolbar {
     border-color: $color_light_border;
     color: #c0c0c0;
@@ -814,7 +826,6 @@ hr {
     display: none;
   }
 }
-
 
 .DfMdEditor.error {
 
