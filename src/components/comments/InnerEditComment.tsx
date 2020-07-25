@@ -4,7 +4,7 @@ import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsHash } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import SimpleMDEReact from 'react-simplemde-editor';
+import DfMdEditor from '../utils/DfMdEditor';
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
 import { CommentContent } from '@subsocial/types';
 import { Button } from 'antd';
@@ -25,7 +25,6 @@ const Fields = {
 }
 
 export const InnerEditComment = (props: Props) => {
-
   const { content, withCancel = false, callback, CommentTxButton } = props;
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
@@ -76,12 +75,13 @@ export const InnerEditComment = (props: Props) => {
   return <div className='DfShareModalBody'>
     <form>
       <Controller
-        as={<SimpleMDEReact />}
-        name={Fields.body}
         control={control}
+        as={<DfMdEditor />}
+        options={{ autofocus: true }}
+        name={Fields.body}
         value={body}
         defaultValue={body}
-        className={`DfMdEditor ${errors[Fields.body] && 'error'}`}
+        className={errors[Fields.body] && 'error'}
       />
       <div className='DfError'>
         <ErrorMessage errors={errors} name={Fields.body} />
