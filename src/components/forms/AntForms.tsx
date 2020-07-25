@@ -6,6 +6,7 @@ import { Form, Button } from 'antd'
 import { FormProps, FormItemProps, FormInstance } from 'antd/lib/form'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
 import { LoadingOutlined } from '@ant-design/icons'
+import { showInfoMessage, showErrorMessage } from '../utils/Message'
 
 const labelLen = 6
 const fieldLen = 24 - labelLen
@@ -69,9 +70,20 @@ export const DfFormButtons = ({
 export const shouldSendTx = async (form: FormInstance) => {
   try {
     await form.validateFields()
-    return form.isFieldsTouched()
+    const isChanged = form.isFieldsTouched()
+    if (!isChanged) {
+      showInfoMessage({
+        message: 'Nothing to update',
+        description: 'Form has not been changed'
+      })
+    }
+    return isChanged
   } catch (err) {
     // Form is invalid
+    showErrorMessage({
+      message: 'Form is invalid',
+      description: 'Fix form errors and try again'
+    })
     return false
   }
 }
