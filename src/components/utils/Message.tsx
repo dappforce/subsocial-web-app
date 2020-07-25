@@ -24,6 +24,10 @@ const showMessage = (
   }
 }
 
+export const showInfoMessage = (props: Message | MessageProps) => {
+  showMessage(notification.info, props)
+}
+
 export const showSuccessMessage = (props: Message | MessageProps) => {
   showMessage(notification.success, props)
 }
