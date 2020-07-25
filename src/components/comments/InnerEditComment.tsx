@@ -37,23 +37,28 @@ export const InnerEditComment = (props: Props) => {
     mode: 'onBlur'
   });
 
-  const cancelCallback = () => {
-    callback && callback()
-    reset(Fields)
-  }
-
   const body = watch(Fields.body, content?.body || '');
 
   const { isSubmitting, dirty } = formState;
 
+  const resetForm = () => {
+    reset({ [Fields.body]: '' })
+  }
+
+  const onCancel = () => {
+    callback && callback()
+    resetForm()
+  }
+
   const onTxFailed: TxFailedCallback = () => {
     ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
-    cancelCallback()
+    callback && callback()
   };
 
   const onTxSuccess: TxCallback = (txResult) => {
     const id = getNewIdFromEvent(txResult)
     callback && callback(id)
+    resetForm()
   };
 
   const renderTxButton = () => (
@@ -84,7 +89,7 @@ export const InnerEditComment = (props: Props) => {
     </form>
     <div className='DfActionButtonsBlock'>
       {renderTxButton()}
-      {withCancel && <Button type='link' onClick={cancelCallback} className="DfGreyLink">Cancel</Button>}
+      {withCancel && <Button type='link' onClick={onCancel} className="DfGreyLink">Cancel</Button>}
     </div>
   </div>
 };
