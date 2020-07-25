@@ -252,22 +252,25 @@ const Component: NextPage<Props> = (props: Props) => {
   const noFollowers = followers.eq(ZERO);
   const noFollowing = following.eq(ZERO);
 
+  const followersText = <Pluralize count={followers} singularText='Follower' />
+  const followingText = <Pluralize count={following} singularText='Following' />
+
   return <>
     <HeadMeta title={getName()} desc={about} image={avatar} />
     <Section>
       <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>
-          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
-          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{following.toString()} Following </span>
+          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
+          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
           <div className='mt-3'>
             {createProfileButton}
             <FollowAccountButton address={address} />
           </div>
         </div>
       </div>
-      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
-      {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
+      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
+      {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
   </>;
 };
@@ -276,8 +279,6 @@ Component.getInitialProps = async (props): Promise<any> => {
   const { query: { address }, res } = props;
   const subsocial = await getSubsocialApi()
   const accountId = await getAccountId(address as string);
-
-  // TODO resolve profile by accountId or handle (username)
 
   if (!accountId && res) {
     res.statusCode = 404

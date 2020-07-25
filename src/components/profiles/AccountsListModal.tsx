@@ -32,7 +32,7 @@ const InnerAccountsListModal = (props: Props) => {
         dataSource={accounts}
         renderItem={(item) =>
           <ProfilePreviewWithOwner key={item.toString()} address={item} mini />}
-        noDataDesc='No followers yet'
+        noDataDesc='Nothing yet'
       />
     </Modal>
   );
