@@ -6,17 +6,16 @@ type Props =
   Omit<SimpleMDEEditorProps, 'onChange'>
   & MdEditorProps
 
-const MdEditor = (props: Props) => {
-  const {
-    className,
-    options = {},
-    events = {},
-    onChange = () => {},
-    ...otherProps
-  } = props
+const MdEditor = ({
+  className,
+  options = {},
+  events = {},
+  onChange = () => {},
+  ...otherProps
+}: Props) => {
 
   return <SimpleMDEReact
-    className={`${className} DfMdEditor--preview`}
+    className={`DfMdEditor ${className}`}
     options={{ previewClass: 'markdown-body', ...options }}
     events={events}
     onChange={onChange}

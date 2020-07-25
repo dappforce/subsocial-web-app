@@ -115,7 +115,7 @@ const InnerShareModal = (props: Props) => {
           name={Fields.body}
           control={control}
           value={body}
-          className={`DfMdEditor ${errors[Fields.body] && 'error'}`}
+          className={errors[Fields.body] && 'error'}
         />
         <div className='DfError'>
           <ErrorMessage errors={errors} name={Fields.body} />
