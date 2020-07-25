@@ -89,7 +89,7 @@ export const getAccountId = async (addressOrHandle: string): Promise<AccountId |
 }
 
 export function equalAddresses (addr1?: string | AccountId, addr2?: string | AccountId) {
-  return addr1?.toString() === addr2?.toString()
+  return toString(addr1) === toString(addr2)
 }
 
 type GetNameOptions = AddressProps & {
