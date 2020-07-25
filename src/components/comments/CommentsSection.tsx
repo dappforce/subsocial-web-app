@@ -32,7 +32,7 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
       ? <Input className='mb-2' size='large' placeholder='Write a comment...' onClick={() => setAsStub(false)} />
       : <NewComment post={struct} />
     }
-    <CommentsTree parent={struct} space={space} replies={replies} />
+    <CommentsTree rootPost={struct} parent={struct} space={space} replies={replies} />
   </Section>
 })
 

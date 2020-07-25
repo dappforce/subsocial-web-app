@@ -10,6 +10,7 @@ export type AddressProps = {
 
 export type ExtendedAddressProps = AddressProps & {
   children?: React.ReactNode,
+  afterName?: JSX.Element
   details?: JSX.Element
   isPadded?: boolean,
   isShort?: boolean,

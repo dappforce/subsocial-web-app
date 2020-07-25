@@ -1,10 +1,10 @@
 import React, { FunctionComponent, useState } from 'react';
-import { CaretDownOutlined, CaretUpOutlined, CommentOutlined } from '@ant-design/icons';
-import { Comment, Button } from 'antd';
+import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, NotificationOutlined } from '@ant-design/icons';
+import { Comment, Button, Tag } from 'antd';
 import { PostWithSomeDetails } from '@subsocial/types/dto';
 import { CommentContent } from '@subsocial/types';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
-import { Space } from '@subsocial/types/substrate/interfaces';
+import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
 import { pluralize, Pluralize } from '../utils/Plularize';
 import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO } from '../utils';
@@ -17,16 +17,20 @@ import { NewComment } from './CreateComment';
 import { VoterButtons } from '../voting/VoterButtons';
 import { PostDropDownMenu } from '../posts/view-post';
 import { CommentBody } from './helpers';
+import { equalAddresses } from '../substrate';
 import BN from 'bn.js'
 
 type Props = {
+  rootPost?: Post,
   space: Space,
   comment: PostWithSomeDetails,
   replies?: PostWithSomeDetails[],
   withShowReplies?: boolean
 }
 
-export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0 } as any as Space, replies, withShowReplies }) => {
+export const ViewComment: FunctionComponent<Props> = ({
+  rootPost, comment, space = { id: 0 } as any as Space, replies, withShowReplies
+}) => {
   const {
     post: {
       struct,
@@ -50,7 +54,12 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
   const [ repliesCount, setRepliesCount ] = useState(new BN(total_replies_count))
 
   const isFake = id.toString().startsWith('fake')
-  const commentLink = postUrl(space, struct);
+  const commentLink = postUrl(space, struct)
+
+  const isRootPostOwner = equalAddresses(
+    rootPost?.created.account,
+    struct.created.account
+  )
 
   const ViewRepliesLink = () => {
     const viewActionMessage = showReplies
@@ -79,7 +88,7 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
       withCancel
     />}
     {isReplies && <ViewRepliesLink />}
-    {showReplies && <CommentsTree parent={struct} replies={replies} space={space}/>}
+    {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
   </div> : null
 
   return <div className={isFake ? 'DfDisableLayout' : ''}>
@@ -99,6 +108,10 @@ export const ViewComment: FunctionComponent<Props> = ({ comment, space = { id: 0
           isShort={true}
           isPadded={false}
           size={32}
+          afterName={isRootPostOwner
+            ? <Tag color='blue'><NotificationOutlined /> Post author</Tag>
+            : undefined
+          }
           details={
             <span>
               <Link href={commentLink}>

@@ -40,8 +40,9 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     isShort = true,
     style,
     size,
-    children,
-    details
+    afterName,
+    details,
+    children
   } = props;
 
   const avatar = owner.content?.avatar
@@ -71,6 +72,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
               title={name}
               className={nameClass}
             />
+            {afterName && <span className='ml-2'>{afterName}</span>}
           </div>
         </Popover>
         <InfoDetails details={details}/>

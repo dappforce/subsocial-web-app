@@ -13,30 +13,32 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 const log = newLogger('CommentTree')
 
 type LoadProps = {
+  rootPost?: Post,
   parent: Post,
   space: Space,
   replies?: PostWithSomeDetails[]
 }
 
 type CommentsTreeProps = {
+  rootPost?: Post,
   space: Space,
   comments: PostWithSomeDetails[]
 }
 
-const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, space }) => {
+const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, rootPost, space }) => {
   return nonEmptyArr(comments) ? <ListData
     dataSource={comments}
     paginationOff
     renderItem={(item) => {
       const { post: { struct } } = item;
       const key = `comment-${struct.id.toString()}`
-      return <ViewComment key={key} space={space} comment={item} />
+      return <ViewComment key={key} space={space} rootPost={rootPost} comment={item} />
     }}
   /> : null;
 }
 
 export const DynamicCommentsTree = (props: LoadProps) => {
-  const { parent: { id: parentId }, space, replies } = props;
+  const { rootPost, parent: { id: parentId }, space, replies } = props;
   const parentIdStr = parentId.toString()
   const [ replyComments, setComments ] = useState<PostWithSomeDetails[]>(replies || []);
   const dispatch = useDispatch()
@@ -60,15 +62,15 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
   }, [ dispatch ]);
 
-  return <ViewCommentsTree space={space} comments={replyComments} />;
+  return <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />;
 }
 
 export const CommentsTree = (props: LoadProps) => {
-  const { parent: { id: parentId }, space } = props;
+  const { parent: { id: parentId } } = props;
 
   const comments = useSelector((store: Store) => getComments(store, parentId.toString()));
 
   return nonEmptyArr(comments)
-    ? <ViewCommentsTree space={space} comments={comments} />
+    ? <ViewCommentsTree {...props} comments={comments} />
     : <DynamicCommentsTree {...props} />
 }
