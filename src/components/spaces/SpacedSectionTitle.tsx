@@ -1,27 +1,29 @@
 import React from 'react';
-import { ViewSpace } from './ViewSpace';
+import Link from 'next/link';
 import { useStorybookContext } from '../utils/StorybookContext';
-import BN from 'bn.js';
+import { SpaceData } from '@subsocial/types'
+import { spaceUrl } from '../utils/urls';
 
 type Props = {
-  spaceId: BN
-  title: JSX.Element | string
+  space?: SpaceData
+  subtitle: React.ReactNode
 }
 
 export const SpacegedSectionTitle = ({
-  spaceId,
-  title
+  space,
+  subtitle
 }: Props) => {
   const { isStorybook } = useStorybookContext()
+  const name = space?.content?.name
+
   return <>
-    {!isStorybook && <>
-      {/* TODO replace '<a />' tag with Next Link + URL builder */}
-      <a href={`/spaces/${spaceId.toString()}`}>
-        <ViewSpace nameOnly={true} id={spaceId} />
-      </a>
+    {!isStorybook && space && name && <>
+      <Link href='/spaces/[spaceId]' as={spaceUrl(space.struct)}>
+        <a>{name}</a>
+      </Link>
       <span style={{ margin: '0 .75rem' }}>/</span>
     </>}
-    {title}
+    {subtitle}
   </>
 }
 

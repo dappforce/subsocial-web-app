@@ -156,7 +156,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   const pageTitle = `Edit space navigation`
 
   const sectionTitle =
-    <SpacegedSectionTitle spaceId={struct.id} title={pageTitle} />
+    <SpacegedSectionTitle space={{ struct, content: json }} subtitle={pageTitle} />
 
   return <>
     <HeadMeta title={pageTitle} />
@@ -203,7 +203,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
                         component={DfMdEditor}
                         name={`navTabs.${index}.description`} value={nt.description}
                         onChange={(data: string) => setFieldValue(`navTabs.${index}.description`, data)}
-                        className={`DfMdEditor NETextEditor`} />
+                        className={`NETextEditor`} />
 
                       <div className="NEButtonsWrapper">
                         <div className="NEHideButton">
