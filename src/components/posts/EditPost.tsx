@@ -1,357 +1,265 @@
-import React, { useState } from 'react';
-import Button from 'antd/lib/button';
-import { Form, Field, withFormik, FormikProps } from 'formik';
-import dynamic from 'next/dynamic';
-import EditableTagGroup from '../utils/EditableTagGroup'
-import { registry } from '@subsocial/types/substrate/registry';
-import { withCalls, withMulti, getNewIdFromEvent, getTxParams, postsQueryToProp, spacesQueryToProp } from '../substrate';
-import { useSubsocialApi } from '../utils/SubsocialApiContext'
-import * as DfForms from '../utils/forms';
-import { Null } from '@polkadot/types';
-import { Option } from '@polkadot/types/codec';
-import Section from '../utils/Section';
-import { useMyAddress } from '../auth/MyAccountContext';
-import BN from 'bn.js';
-import Router, { useRouter } from 'next/router';
-import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { PostExtension, PostUpdate, OptionId, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
-import { Post, IpfsHash, SpaceId, PostExtension as IPostExtension } from '@subsocial/types/substrate/interfaces';
-import { PostContent } from '@subsocial/types/offchain';
+import React, { useState } from 'react'
+import { Form, Input, Select } from 'antd'
+import Router, { useRouter } from 'next/router'
+import BN from 'bn.js'
+import HeadMeta from '../utils/HeadMeta'
+import Section from '../utils/Section'
+import { getNewIdFromEvent, equalAddresses, getTxParams, OptionText } from '../substrate'
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { PostExtension, PostUpdate, OptionId, OptionBool } from '@subsocial/types/substrate/classes'
+import { IpfsHash } from '@subsocial/types/substrate/interfaces'
+import { PostContent, PostData } from '@subsocial/types'
+import { registry } from '@subsocial/types/substrate/registry'
 import { newLogger } from '@subsocial/utils'
-import { buildValidationSchema } from './PostValidation';
-import { LabeledValue } from 'antd/lib/select';
-import SelectSpacePreview from '../utils/SelectSpacePreview';
-import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import SpacegedSectionTitle from '../spaces/SpacedSectionTitle';
-import DfMdEditor from '../utils/DfMdEditor';
-import useSubsocialEffect from '../api/useSubsocialEffect';
-import { Loading } from '../utils';
-import NoData from '../utils/EmptyList';
-import { PostNotFound } from './view-post';
-import { withSpaceIdFromUrl } from '../spaces/withSpaceIdFromUrl';
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { useMyAddress } from '../auth/MyAccountContext'
+import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
+import { Loading } from '../utils'
+import NoData from '../utils/EmptyList'
+import { Null } from '@polkadot/types'
+import DfMdEditor from '../utils/DfMdEditor'
+import SpacegedSectionTitle from '../spaces/SpacedSectionTitle'
+import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpaceFromUrl'
 
-const log = newLogger('Edit post')
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+const log = newLogger('EditPost')
 
-type OuterProps = {
-  spaceId?: BN,
-  id?: BN,
-  extension?: IPostExtension,
-  struct?: Post
-  json?: PostContent,
-  onlyTxButton?: boolean,
-  closeModal?: () => void,
-  withButtons?: boolean,
-  myAddress?: string,
-  spaceIds?: SpaceId[]
-};
+const TITLE_MIN_LEN = 3
+const TITLE_MAX_LEN = 100
 
-const DefaultPostExt = new PostExtension({ RegularPost: new Null(registry) })
+const BODY_MAX_LEN = 20_000
 
-type FormValues = PostContent;
+const MAX_TAGS = 5
 
-type FormProps = OuterProps & FormikProps<FormValues>;
+type Content = PostContent
 
-const LabelledField = DfForms.LabelledField<FormValues>();
+type FormValues = Partial<Content & {
+  spaceId: string
+}>
 
-const LabelledText = DfForms.LabelledText<FormValues>();
+type FieldName = keyof FormValues
 
-const InnerForm = (props: FormProps) => {
-  const {
-    id,
-    spaceId,
-    struct,
-    extension = DefaultPostExt,
-    values,
-    dirty,
-    isValid,
-    errors,
-    setFieldValue,
-    isSubmitting,
-    setSubmitting,
-    resetForm,
-    onlyTxButton = false,
-    withButtons = true,
-    closeModal,
-    spaceIds
-  } = props;
+const fieldName = (name: FieldName): FieldName => name
 
-  const isRegularPost = extension.isRegularPost
+type FormProps = CanHaveSpaceProps & {
+  post?: PostData
+  /** Spaces where you can post. */
+  spaceIds?: BN[]
+}
 
-  const renderResetButton = () => (
-    <Button
-      disabled={isSubmitting || (isRegularPost && !dirty)}
-      onClick={() => resetForm()}
-    >Reset form</Button>
-  );
+function getInitialValues ({ space, post }: FormProps): FormValues {
+  if (space && post) {
+    const spaceId = space.struct.id.toString()
+    return { ...post.content, spaceId }
+  }
+  return {}
+}
 
-  const {
-    title,
-    body,
-    image,
-    tags,
-    canonical
-  } = values;
+const RegularPostExt = new PostExtension({ RegularPost: new Null(registry) })
 
-  const initialSpaceId = spaceId
-
-  const goToView = (id: BN) => {
-    Router.push(`/spaces/${currentSpaceId}/posts/${id}`).catch(err => log.error('Failed redirection to post page:', err));
-  };
-
+export function InnerForm (props: FormProps) {
+  const { space, post } = props
+  const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
-  const [ currentSpaceId, setCurrentSpaceId ] = useState(initialSpaceId)
-  const [ showAdvanced, setShowAdvanced ] = useState(false)
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
+  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>()
 
-  const onTxFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
-    setSubmitting(false);
-  };
+  if (!space) return <NoData description='Space not found' />
 
-  const onTxSuccess: TxCallback = (txResult) => {
-    setSubmitting(false);
+  const spaceId = space.struct.id
+  const initialValues = getInitialValues(props)
+  const tags = initialValues.tags || []
 
-    closeModal && closeModal();
-
-    const _id = id || getNewIdFromEvent(txResult);
-    _id && isRegularPost && goToView(_id);
-  };
-
-  const handleAdvancedSettings = () => {
-    setShowAdvanced(!showAdvanced)
+  const getFieldValues = (): FormValues => {
+    return form.getFieldsValue() as FormValues
   }
 
-  const newTxParams = (hash: IpfsHash) => {
-    if (isValid || !isRegularPost) {
-      if (!struct) {
-        return [ currentSpaceId, extension, hash ];
-      } else {
-        // TODO update only dirty values.
-        const update = new PostUpdate(
-          {
-          // If we provide a new space_id in update, it will move this post to another space.
-            space_id: new OptionId(),
-            ipfs_hash: new OptionText(hash),
-            hidden: new OptionBool(false) // TODO has no implementation on UI
-          });
-        return [ struct.id, update ];
-      }
+  const newTxParams = (cid: IpfsHash) => {
+    if (!post) {
+      return [ spaceId, RegularPostExt, cid ]
     } else {
-      return [];
+
+      // TODO Update only changed values.
+
+      const update = new PostUpdate({
+        // If we provide a new space_id in update, it will move this post to another space.
+        space_id: new OptionId(),
+        ipfs_hash: new OptionText(cid),
+        hidden: new OptionBool(false) // TODO has no implementation on UI
+      })
+      return [ post.struct.id, update ]
     }
-  };
-
-  const renderTxButton = () => (
-    <TxButton
-      type='primary'
-      label={!struct
-        ? `Create a post`
-        : `Update a post`
-      }
-      disabled={isSubmitting || (isRegularPost && !dirty)}
-      params={() => getTxParams({
-        json: { title, body, image, tags, canonical },
-        buildTxParamsCallback: newTxParams,
-        setIpfsHash,
-        ipfs
-      })}
-      tx={struct
-        ? 'posts.updatePost'
-        : 'posts.createPost'
-      }
-      onFailed={onTxFailed}
-      onSuccess={onTxSuccess}
-    />
-  );
-
-  const handleSpaceSelect = (value: string | number | LabeledValue) => {
-    if (!value) return;
-
-    setCurrentSpaceId(new BN(value as string))
-  };
-
-  const renderSpacesPreviewDropdown = () => {
-    if (!spaceIds) return;
-
-    return <SelectSpacePreview
-      spaceIds={spaceIds}
-      onSelect={handleSpaceSelect}
-      imageSize={24}
-      defaultValue={currentSpaceId?.toString()} />
   }
 
-  const form =
-    <Form className='ui form DfForm EditEntityForm'>
+  const fieldValuesToContent = (): Content => {
+    const { title, body, image, tags, canonical } = getFieldValues()
+    return { title, body, image, tags, canonical } as Content
+  }
 
-      {isRegularPost
-        ? <>
-          {renderSpacesPreviewDropdown()}
-          <LabelledText name='title' label='Post title' placeholder={`What is a title of you post?`} {...props} />
+  const pinToIpfsAndBuildTxParams = () => {
 
-          <LabelledText name='image' label='Image URL' placeholder={`Should be a valid image URL.`} {...props} />
+    // TODO pin to IPFS only if JSON changed.
 
-          {/* TODO ask a post summary or auto-generate and show under an "Advanced" tab. */}
+    return getTxParams({
+      json: fieldValuesToContent(),
+      buildTxParamsCallback: newTxParams,
+      setIpfsHash,
+      ipfs
+    })
+  }
 
-          <LabelledField name='body' label='Post' {...props}>
-            <Field component={DfMdEditor} name='body' value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor ${errors['body'] && 'error'}`} />
-          </LabelledField>
+  const onFailed: TxFailedCallback = () => {
+    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err))
+  }
 
-          <EditableTagGroup name='tags' label='Tags' tags={tags} {...props} />
+  const onSuccess: TxCallback = (txResult) => {
+    const id = post?.struct.id || getNewIdFromEvent(txResult)
+    id && goToView(id)
+  }
 
-          <div className="EPadvanced">
-            <div className="EPadvacedTitle" onClick={handleAdvancedSettings}>
-              {showAdvanced ? <><CaretUpOutlined /> Hide</> : <><CaretDownOutlined /> Show</>}
-              {' '}advanced settings
-            </div>
-            {showAdvanced &&
-              <LabelledText name='canonical' label='Original post URL' placeholder={`Set a URL of original post`} {...props} />
-            }
-          </div>
-        </>
-        : <>
-          <DfMdEditor value={body} onChange={(data: string) => setFieldValue('body', data)} className={`DfMdEditor`}/>
-        </>
-      }
-      {withButtons && <LabelledField {...props}>
-        {renderTxButton()}
-        {renderResetButton()}
-      </LabelledField>}
-    </Form>;
+  const goToView = (postId: BN) => {
+    Router.push(`/spaces/${spaceId}/posts/${postId}`)
+      .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
+  }
 
-  const pageTitle = isRegularPost ? (!struct ? `New post` : `Edit my post`) : 'Share post';
+  const onBodyChanged = (mdText: string) => {
+    form.setFieldsValue({ [fieldName('body')]: mdText })
+  }
 
-  const sectionTitle = currentSpaceId && <SpacegedSectionTitle spaceId={currentSpaceId} title={pageTitle} />
+  return <>
+    <DfForm form={form} initialValues={initialValues}>
+      <Form.Item
+        name={fieldName('title')}
+        label='Post title'
+        hasFeedback
+        rules={[
+          // { required: true, message: 'Post title is required.' },
+          { min: TITLE_MIN_LEN, message: minLenError('Post title', TITLE_MIN_LEN) },
+          { max: TITLE_MAX_LEN, message: maxLenError('Post title', TITLE_MAX_LEN) }
+        ]}
+      >
+        <Input placeholder='Optional: A title of your post' />
+      </Form.Item>
 
-  const editRegularPost = () =>
+      <Form.Item
+        name={fieldName('image')}
+        label='Avatar URL'
+        hasFeedback
+        rules={[
+          { type: 'url', message: 'Should be a valid image URL.' }
+        ]}
+      >
+        <Input type='url' placeholder='Image URL' />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('body')}
+        label='Post'
+        hasFeedback
+        rules={[
+          { required: true, message: 'Post body is required.' },
+          { max: BODY_MAX_LEN, message: maxLenError('Post body', BODY_MAX_LEN) }
+        ]}
+      >
+        <DfMdEditor onChange={onBodyChanged} />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('tags')}
+        label='Tags'
+        hasFeedback
+        rules={[
+          { type: 'array', max: MAX_TAGS, message: `You can use up to ${MAX_TAGS} tags.` }
+        ]}
+      >
+        <Select
+          mode='tags'
+          placeholder="Press 'Enter' or 'Tab' key to add tags"
+        >
+          {tags.map((tag, i) =>
+            <Select.Option key={i} value={tag} children={tag} />
+          )}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('canonical')}
+        label='Canonical URL'
+        help='Provide the original URL of this post if you are cross-posting it here'
+        hasFeedback
+        rules={[
+          { type: 'url', message: 'Should be a valid URL.' }
+        ]}
+      >
+        <Input type='url' placeholder='URL of the original post' />
+      </Form.Item>
+
+      {/* // TODO impl Move post to another space. See component SelectSpacePreview */}
+
+      <DfFormButtons
+        form={form}
+        txProps={{
+          label: post
+            ? 'Update post'
+            : 'Create post',
+          tx: post
+            ? 'posts.updatePost'
+            : 'posts.createPost',
+          params: pinToIpfsAndBuildTxParams,
+          onSuccess,
+          onFailed
+        }}
+      />
+    </DfForm>
+  </>
+}
+
+export function FormInSection (props: FormProps) {
+  const { space, post } = props
+
+  const pageTitle = post ? `Edit post` : `New post`
+
+  const sectionTitle =
+    <SpacegedSectionTitle space={space} subtitle={pageTitle} />
+
+  return <>
+    <HeadMeta title={pageTitle} />
     <Section className='EditEntityBox' title={sectionTitle}>
-      {form}
+      <InnerForm {...props} />
     </Section>
-
-  const editSharedPost = () =>
-    <div style={{ marginTop: '1rem' }}>{form}</div>
-
-  return onlyTxButton
-    ? renderTxButton()
-    : <>
-      <HeadMeta title={pageTitle}/>
-      {isRegularPost
-        ? editRegularPost()
-        : editSharedPost()
-      }
-    </>;
-};
-
-export const InnerEditPost = withFormik<OuterProps, FormValues>({
-
-  // Transform outer props into form values
-  mapPropsToValues: (props): FormValues => {
-    const { struct, json } = props;
-
-    if (struct && json) {
-      return {
-        ...json
-      };
-    } else {
-      return {
-        title: '',
-        body: '',
-        image: '',
-        tags: [],
-        canonical: ''
-      };
-    }
-  },
-
-  validationSchema: buildValidationSchema,
-
-  handleSubmit: () => {
-    // do submitting things
-  }
-})(InnerForm);
-
-function withIdFromUrl (Component: React.ComponentType<OuterProps>) {
-  return function (props: OuterProps) {
-    const router = useRouter();
-    const { postId } = router.query;
-    const { id } = props;
-
-    if (id) return <Component { ...props } />;
-
-    try {
-      return <Component id={new BN(postId as string)} {...props}/>;
-    } catch (err) {
-      return <NoData description={`Post not found because this post id: ${postId} is invalid`}/>
-    }
-  };
+  </>
 }
 
-type LoadStructProps = OuterProps & {
-  structOpt: Option<Post>
-};
+function LoadPostThenEdit (props: FormProps) {
+  const { postId } = useRouter().query
+  const myAddress = useMyAddress()
+  const [ isLoaded, setIsLoaded ] = useState(false)
+  const [ post, setPost ] = useState<PostData>()
 
-function LoadStruct (Component: React.ComponentType<LoadStructProps>) {
-  return function (props: LoadStructProps) {
-    const myAddress = useMyAddress()
-    const { structOpt } = props;
-    const [ json, setJson ] = useState<PostContent>();
-    const [ struct, setStruct ] = useState<Post>();
-    const [ trigger, setTrigger ] = useState(false);
-    const jsonIsNone = json === undefined;
+  useSubsocialEffect(({ subsocial }) => {
+    const load = async () => {
+      if (typeof postId !== 'string') return
 
-    const toggleTrigger = () => {
-      json === undefined && setTrigger(!trigger);
-    };
-
-    useSubsocialEffect(({ ipfs }) => {
-      if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
-
-      setStruct(structOpt.unwrap());
-
-      if (!struct) return toggleTrigger();
-
-      ipfs.findPost(struct.ipfs_hash).then(json => {
-        setJson(json);
-      }).catch(err => log.error('Failed to find a post in IPFS:', err));
-    }, [ trigger ]);
-
-    if (!myAddress || !structOpt || jsonIsNone) {
-      return <Loading />;
+      setIsLoaded(false)
+      const id = new BN(postId)
+      setPost(await subsocial.findPost({ id }))
+      setIsLoaded(true)
     }
+    load()
+  }, [ postId ])
 
-    if (structOpt.isNone) {
-      return <PostNotFound />
-    }
+  if (!isLoaded) return <Loading label='Loading the post...' />
 
-    if (!struct || !struct.created.account.eq(myAddress)) {
-      return <NoData description={'You have no rights to edit this post'}/>
-    }
+  if (!post) return <NoData description='Post not found' />
 
-    return <Component {...props} struct={struct} json={json} myAddress={myAddress} />;
-  };
+  const postOwner = post.struct?.created.account
+  const isOwner = equalAddresses(myAddress, postOwner)
+  if (!isOwner) return <NoData description='You do not have permission to edit this post' />
+
+  return <FormInSection {...props} post={post} />
 }
 
-export const InnerFormWithValidation = withMulti(
-  InnerEditPost
-);
+export const EditPost = withLoadSpaceFromUrl(LoadPostThenEdit)
 
-export const NewPost = withMulti(
-  InnerFormWithValidation,
-  withSpaceIdFromUrl
-);
+export const NewPost = withLoadSpaceFromUrl(FormInSection)
 
-export const NewSharePost = InnerFormWithValidation;
-
-export const EditPost = withMulti<OuterProps>(
-  InnerFormWithValidation,
-  withSpaceIdFromUrl,
-  withIdFromUrl,
-  withCalls<OuterProps>(
-    postsQueryToProp('postById', { paramName: 'id', propName: 'structOpt' })
-  ),
-  LoadStruct,
-  withCalls<OuterProps>(
-    spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'myAddress', propName: 'spaceIds' })
-  )
-);
+export default NewPost
