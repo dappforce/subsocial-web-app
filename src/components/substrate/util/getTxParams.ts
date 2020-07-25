@@ -5,24 +5,31 @@ import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 
 const log = newLogger('BuildTxParams')
 
-type BuildTxParams = {
-  json: CommonContent
-  buildTxParamsCallback: (hash: IpfsHash) => any[]
+// TODO rename setIpfsHash -> setIpfsCid
+type Params<C extends CommonContent> = {
   ipfs: SubsocialIpfsApi
+  json: C
   setIpfsHash: (cid: IpfsHash) => void
+  buildTxParamsCallback: (cid: IpfsHash) => any[]
 }
 
-export const getTxParams = async ({ json, setIpfsHash, ipfs, buildTxParamsCallback }: BuildTxParams) => {
+// TODO rename to: pinToIpfsAndBuildTxParams()
+export const getTxParams = async <C extends CommonContent> ({
+  ipfs,
+  json,
+  setIpfsHash,
+  buildTxParamsCallback
+}: Params<C>) => {
   try {
     const cid = await ipfs.saveContent(json)
     if (cid) {
       setIpfsHash(cid)
       return buildTxParamsCallback(cid)
     } else {
-      log.error('Save to IPFS operation returned undefined CID')
+      log.error('Save to IPFS returned an undefined CID')
     }
   } catch (err) {
-    log.error(`Failed build tx params. ${err}`)
+    log.error(`Failed to build tx params. ${err}`)
   }
   return []
 }
