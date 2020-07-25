@@ -189,7 +189,8 @@ const InnerForm = (props: FormProps) => {
             name={Fields.description}
             value={description}
             onChange={(data: string) => setFieldValue(Fields.description, data)}
-            className={`DfMdEditor ${errors[Fields.description] && 'error'}`} />
+            className={errors[Fields.description] && 'error'}
+          />
         </LabelledField>
 
         {/* TODO replace with TxButton */}
