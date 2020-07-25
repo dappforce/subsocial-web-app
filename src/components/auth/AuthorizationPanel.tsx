@@ -1,11 +1,10 @@
 import React from 'react';
-
-import { useMyAccount } from './MyAccountContext';
+import { useMyAddress } from './MyAccountContext';
 import { AddressPopupWithOwner } from '../profiles/address-views';
 import { SignInButton } from './AuthButtons'
 
 export const AuthorizationPanel = () => {
-  const { state: { address } } = useMyAccount()
+  const address = useMyAddress()
   return <>
     {address ? <AddressPopupWithOwner
       className='profileName'

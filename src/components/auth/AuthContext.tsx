@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext } from 'react';
-import { useIsSignIn, useMyAccount } from 'src/components/auth/MyAccountContext';
+import { useIsSignIn, useMyAddress } from 'src/components/auth/MyAccountContext';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import store from 'store'
 import SignInModal from './SignInModal';
@@ -55,7 +55,7 @@ export const AuthContext = createContext<AuthContextProps>(contextStub)
 
 export function AuthProvider (props: React.PropsWithChildren<any>) {
   const [ currentStep, setCurrentStep ] = useState(StepsEnum.Disabled)
-  const { state: { address } } = useMyAccount()
+  const address = useMyAddress()
   const [ onBoardedAccounts ] = useState<string[]>(store.get(ONBOARDED_ACCS) || [])
 
   const noOnBoarded = !address || !onBoardedAccounts.includes(address)

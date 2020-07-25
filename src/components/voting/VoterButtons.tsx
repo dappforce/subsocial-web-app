@@ -5,7 +5,7 @@ import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial'
 import { ReactionKind } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
-import { useMyAccount } from '../auth/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import { BareProps } from '../utils/types';
 import { IconWithLabel } from '../utils';
 
@@ -96,7 +96,7 @@ type VoterButtonsProps = VoterProps & {
 export const VoterButtons = (props: VoterButtonsProps) => {
   const { post, only } = props
   const [ reactionState, setReactionState ] = useState<Reaction>();
-  const { state: { address } } = useMyAccount();
+  const address = useMyAddress();
   const [ reloadTrigger, setReloadTrigger ] = useState(true);
 
   useSubsocialEffect(({ substrate }) => {
