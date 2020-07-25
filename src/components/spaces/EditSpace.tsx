@@ -1,32 +1,36 @@
 import React, { useState } from 'react'
 import { Form, Input, Select } from 'antd'
-import Router, { useRouter } from 'next/router'
+import Router from 'next/router'
 import BN from 'bn.js'
-
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
-import { getSpaceId, getNewIdFromEvent, equalAddresses, stringifyText, getTxParams } from '../substrate'
+import { getNewIdFromEvent, equalAddresses, stringifyText, getTxParams, OptionOptionText, OptionText } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
-import { Option } from '@polkadot/types'
-import { SpaceUpdate, OptionOptionText, OptionText, OptionBool } from '@subsocial/types/substrate/classes'
+import { SpaceUpdate, OptionBool } from '@subsocial/types/substrate/classes'
 import { IpfsHash } from '@subsocial/types/substrate/interfaces'
-import { SpaceContent, SpaceData, CommonContent } from '@subsocial/types'
+import { SpaceContent } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
-import { Loading } from '../utils'
 import NoData from '../utils/EmptyList'
 import { Codec } from '@polkadot/types/types'
 import DfMdEditor from '../utils/DfMdEditor'
+import { withLoadSpaceFromUrl, CheckSpacePermissionFn, CanHaveSpaceProps } from './withLoadSpaceFromUrl'
 
-const log = newLogger(EditSpace.name)
+const log = newLogger('EditSpace')
 
 const NAME_MIN_LEN = 3
 const NAME_MAX_LEN = 100
 
-type FormValues = Partial<SpaceContent & {
+const DESC_MAX_LEN = 20_000
+
+const MAX_TAGS = 5
+
+type Content = SpaceContent
+
+type FormValues = Partial<Content & {
   handle: string
 }>
 
@@ -34,31 +38,28 @@ type FieldName = keyof FormValues
 
 const fieldName = (name: FieldName): FieldName => name
 
-type LoadedDataProps = Partial<SpaceData>
-
 type ValidationProps = {
   minHandleLen: number
   maxHandleLen: number
 }
 
-type OuterProps = ValidationProps & LoadedDataProps & {
-  spaceId?: BN
+type FormProps = CanHaveSpaceProps & ValidationProps
+
+function getInitialValues ({ space }: FormProps): FormValues {
+  if (space) {
+    const { struct, content } = space
+    const handle = stringifyText<string>(struct.handle)
+    return { ...content, handle }
+  }
+  return {}
 }
 
-function getInitialValues (props: OuterProps): FormValues {
-  const { struct, content } = props
-  if (!struct) return {}
-
-  const handle = stringifyText<string>(struct.handle)
-  return { ...content, handle }
-}
-
-export function InnerForm (props: OuterProps) {
+export function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
   const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>()
 
-  const { spaceId, struct, minHandleLen, maxHandleLen } = props
+  const { space, minHandleLen, maxHandleLen } = props
   const initialValues = getInitialValues(props)
   const tags = initialValues.tags || []
 
@@ -67,26 +68,46 @@ export function InnerForm (props: OuterProps) {
   }
 
   const newTxParams = (cid: IpfsHash) => {
-    const { handle } = getFieldValues()
-    if (!struct) {
-      return [ new OptionText(handle), cid ]
-    } else {
+    const fieldValues = getFieldValues()
 
-      // TODO update only dirty values. !!!
+    /** Returns `undefined` if value hasn't been changed. */
+    function getValueIfChanged (field: FieldName): any | undefined {
+      return form.isFieldTouched(field) ? fieldValues[field] as any : undefined
+    }
+
+    /** Returns `undefined` if CID hasn't been changed. */
+    function getCidIfChanged (): IpfsHash | undefined {
+      const prevCid = stringifyText(space?.struct?.ipfs_hash)
+      return prevCid !== cid.toString() ? cid : undefined
+    }
+
+    if (!space) {
+      return [ new OptionText(fieldValues.handle), cid ]
+    } else {
+      // Update only dirty values.
+
+      // TODO seems like we cannot set a handle to None.
 
       const update = new SpaceUpdate({
-        handle: new OptionOptionText(handle),
-        ipfs_hash: new OptionText(cid),
+        handle: new OptionOptionText(getValueIfChanged('handle')),
+        ipfs_hash: new OptionText(getCidIfChanged()),
         hidden: new OptionBool()
       })
-      return [ struct.id, update ]
+      return [ space.struct.id, update ]
     }
   }
 
+  const fieldValuesToContent = (): Content => {
+    const { name, desc, image, tags, navTabs } = getFieldValues()
+    return { name, desc, image, tags, navTabs } as Content
+  }
+
   const pinToIpfsAndBuildTxParams = () => {
-    const { handle, ...json } = getFieldValues()
+
+    // TODO pin to IPFS only if JSON changed.
+
     return getTxParams({
-      json: json as CommonContent,
+      json: fieldValuesToContent(),
       buildTxParamsCallback: newTxParams,
       setIpfsHash,
       ipfs
@@ -98,12 +119,12 @@ export function InnerForm (props: OuterProps) {
   }
 
   const onSuccess: TxCallback = (txResult) => {
-    const _id = spaceId || getNewIdFromEvent(txResult)
-    _id && goToView(_id)
+    const id = space?.struct.id || getNewIdFromEvent(txResult)
+    id && goToView(id)
   }
 
   const goToView = (spaceId: BN) => {
-    Router.push('/spaces/' + spaceId.toString())
+    Router.push(`/spaces/${spaceId}`)
       .catch(err => log.error(`Failed to redirect to a space page. ${err}`))
   }
 
@@ -155,6 +176,9 @@ export function InnerForm (props: OuterProps) {
         name={fieldName('desc')}
         label='Description'
         hasFeedback
+        rules={[
+          { max: DESC_MAX_LEN, message: maxLenError('Description', DESC_MAX_LEN) }
+        ]}
       >
         <DfMdEditor onChange={onDescChanged} />
       </Form.Item>
@@ -163,6 +187,9 @@ export function InnerForm (props: OuterProps) {
         name={fieldName('tags')}
         label='Tags'
         hasFeedback
+        rules={[
+          { type: 'array', max: MAX_TAGS, message: `You can use up to ${MAX_TAGS} tags.` }
+        ]}
       >
         <Select
           mode='tags'
@@ -177,10 +204,10 @@ export function InnerForm (props: OuterProps) {
       <DfFormButtons
         form={form}
         txProps={{
-          label: struct
+          label: space
             ? 'Update space'
             : 'Create new space',
-          tx: struct
+          tx: space
             ? 'spaces.updateSpace'
             : 'spaces.createSpace',
           params: pinToIpfsAndBuildTxParams,
@@ -196,10 +223,10 @@ function bnToNum (bn: Codec, _default: number): number {
   return bn ? (bn as unknown as BN).toNumber() : _default
 }
 
-export function FormInSection (props: OuterProps) {
+export function FormInSection (props: FormProps) {
   const [ consts, setConsts ] = useState<ValidationProps>()
-  const { struct } = props
-  const title = struct ? `Edit space` : `New space`
+  const { space } = props
+  const title = space ? `Edit space` : `New space`
 
   useSubsocialEffect(({ substrate }) => {
     const load = async () => {
@@ -210,7 +237,7 @@ export function FormInSection (props: OuterProps) {
       })
     }
     load()
-  }, [ false ])
+  }, [])
 
   return <>
     <HeadMeta title={title} />
@@ -220,34 +247,24 @@ export function FormInSection (props: OuterProps) {
   </>
 }
 
-export const NewSpace = FormInSection
+const CannotEditSpace = <NoData description='You do not have permission to edit this space' />
 
-export function EditSpace (props: OuterProps) {
-  const idOrHandle = useRouter().query.spaceId as string
+const LoadSpaceThenEdit = withLoadSpaceFromUrl(FormInSection)
+
+export function EditSpace (props: FormProps) {
   const myAddress = useMyAddress()
-  const [ isLoaded, setIsLoaded ] = useState(false)
-  const [ loadedData, setLoadedData ] = useState<LoadedDataProps>()
 
-  useSubsocialEffect(({ subsocial }) => {
-    const load = async () => {
-      const id = await getSpaceId(idOrHandle)
-      if (!id) return
-
-      setIsLoaded(false)
-      setLoadedData(await subsocial.findSpace({ id }))
-      setIsLoaded(true)
+  const checkSpacePermission: CheckSpacePermissionFn = space => {
+    const isOwner = space && equalAddresses(myAddress, space.struct.owner)
+    return {
+      ok: isOwner,
+      error: () => CannotEditSpace
     }
-    load()
-  }, [ idOrHandle ])
+  }
 
-  if (!isLoaded) return <Loading label='Loading the space...' />
-
-  if (!loadedData) return <NoData description='Space not found' />
-
-  const isOwner = equalAddresses(myAddress, loadedData?.struct?.owner)
-  if (!isOwner) return <NoData description="You don't have permission to edit this space" />
-
-  return <FormInSection {...props} {...loadedData} />
+  return <LoadSpaceThenEdit {...props} checkSpacePermission={checkSpacePermission} />
 }
+
+export const NewSpace = FormInSection
 
 export default NewSpace

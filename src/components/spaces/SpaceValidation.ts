@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 import { minLenError, maxLenError, urlValidation } from '../utils/forms/validation';
 import U32 from '@polkadot/types/primitive/U32';
 
+// TODO Dprecated: deprecate this file
+
 const HANDLE_REGEX = /^[A-Za-z0-9_]+$/;
 
 const NAME_MIN_LEN = 3;
