@@ -1,6 +1,7 @@
 import { Space, Post, SpaceId } from '@subsocial/types/substrate/interfaces'
 import { stringifyText, stringifyNumber, AnyAddress, AnyText, stringifyAddress } from '../substrate'
 import { newLogger, nonEmptyStr, notDef, nonEmptyArr } from '@subsocial/utils'
+import BN from 'bn.js'
 
 const log = newLogger('URLs')
 
@@ -41,7 +42,7 @@ export type HasSpaceIdOrHandle = Pick<Space, 'id' | 'handle'>
  * You should pass both space's id and handle in order to construct
  * good looking URLs for spaces and posts that support a space handle.
  */
-export function newSpaceUrlFixture (id: SpaceId): HasSpaceIdOrHandle {
+export function newSpaceUrlFixture (id: SpaceId | BN): HasSpaceIdOrHandle {
   return { id } as HasSpaceIdOrHandle
 }
 
