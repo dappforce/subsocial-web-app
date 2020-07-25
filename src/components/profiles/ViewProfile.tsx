@@ -25,10 +25,11 @@ import {
   LinkedinOutlined,
   MailOutlined,
   MediumOutlined,
-  TwitterOutlined
+  TwitterOutlined,
+  PlusOutlined
 } from '@ant-design/icons';
 
-import { Menu, Dropdown } from 'antd';
+import { Menu, Dropdown, Button } from 'antd';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
@@ -116,10 +117,10 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const createProfileButton = noProfile && isMyAccount &&
     <Link href={`/profile/new`}>
-      <a className='DfCreateProfileButton'>
-        <i className='plus icon' />
+      <Button type='primary' ghost>
+        <PlusOutlined />
         Create profile
-      </a>
+      </Button>
     </Link>;
 
   const renderDropDownMenu = () => {
@@ -128,7 +129,7 @@ const Component: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
-          <Link href={`/profile/edit`} ><a className='item'>Edit</a></Link>
+          <Link href={`/profile/edit`}><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
