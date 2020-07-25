@@ -35,6 +35,9 @@ function reducer (_state: SubsocialApiState, action: SubsocialApiAction): Subsoc
       const subsocial = newSubsocialApi(action.api)
       const { substrate, ipfs } = subsocial
       log.info('Subsocial API is ready')
+      if (window) {
+        (window as any).subsocial = subsocial
+      }
       return { subsocial, substrate, ipfs, isApiReady: true }
     }
     default: {
