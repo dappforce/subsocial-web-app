@@ -111,9 +111,10 @@ const InnerShareModal = (props: Props) => {
 
       <form className='my-2'>
         <Controller
-          as={<DfMdEditor />}
-          name={Fields.body}
           control={control}
+          as={<DfMdEditor />}
+          options={{ autofocus: true }}
+          name={Fields.body}
           value={body}
           className={errors[Fields.body] && 'error'}
         />
