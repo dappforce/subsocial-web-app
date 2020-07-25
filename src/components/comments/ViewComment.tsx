@@ -75,9 +75,9 @@ export const ViewComment: FunctionComponent<Props> = ({
   }
 
   const isReplies = repliesCount.gt(ZERO)
-  const isShowChild = showReplyForm || showReplies || isReplies;
+  const isShowChildren = showReplyForm || showReplies || isReplies
 
-  const ChildPanel = isShowChild ? <div>
+  const ChildPanel = isShowChildren ? <div>
     {showReplyForm &&
     <NewComment
       post={struct}
