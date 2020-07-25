@@ -7,6 +7,7 @@ import { ViewSpaceProps } from './ViewSpaceProps';
 
 type Props = ViewSpaceProps
 
+// TODO Copypasta. See withLoadSpaceFromUrl
 export const withLoadSpaceDataById = (Component: React.ComponentType<Props>) => {
   return (props: Props) => {
     const { id } = props
