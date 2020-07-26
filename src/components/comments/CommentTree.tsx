@@ -69,7 +69,7 @@ export const DynamicCommentsTree = (props: LoadProps) => {
   }, [ dispatch ]);
 
   return isLoading
-    ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined /> Loading replies...</MutedDiv>
+    ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined className='mr-1' /> Loading replies...</MutedDiv>
     : <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />
 }
 
