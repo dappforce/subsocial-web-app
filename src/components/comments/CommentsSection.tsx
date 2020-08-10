@@ -46,7 +46,7 @@ type CommentPageProps = {
 export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, space }) => {
   const { post: { struct, content }, owner } = comment;
   const { content: postContent } = parentPost;
-  const address = struct.created.account.toString()
+  const address = struct.owner.toString()
   const profileName = getProfileName({ address, owner }).toString()
 
   const renderResponseTitle = () => <>

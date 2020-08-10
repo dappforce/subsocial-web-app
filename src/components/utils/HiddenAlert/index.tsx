@@ -30,7 +30,7 @@ export const HiddenAlert = ({
   style
 }: HiddenAlertProps) => {
   const isSpace = type === 'space';
-  const address = isSpace ? (struct as Space).owner : struct.created.account
+  const address = struct.owner
 
   if (!struct.hidden.valueOf() || !isMyAddress(address)) return null;
 

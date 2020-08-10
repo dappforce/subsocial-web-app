@@ -13,7 +13,7 @@ export const RegularPreview: React.FunctionComponent<InnerPreviewProps> = ({ pos
   const [ commentsSection, setCommentsSection ] = useState(false)
   const extStruct = postDetails.ext?.post.struct
 
-  return !extStruct || isVisible({ struct: extStruct, address: extStruct.created.account })
+  return !extStruct || isVisible({ struct: extStruct, address: extStruct.owner })
     ? <>
       <InfoPostPreview postDetails={postDetails} space={space} />
       {withActions && <PostActionsPanel postDetails={postDetails} toogleCommentSection={() => setCommentsSection(!commentsSection) } preview withBorder />}

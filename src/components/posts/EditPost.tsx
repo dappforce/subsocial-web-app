@@ -251,7 +251,7 @@ function LoadPostThenEdit (props: FormProps) {
 
   if (!post) return <NoData description='Post not found' />
 
-  const postOwner = post.struct?.created.account
+  const postOwner = post.struct?.owner
   const isOwner = equalAddresses(myAddress, postOwner)
   if (!isOwner) return <NoData description='You do not have permission to edit this post' />
 

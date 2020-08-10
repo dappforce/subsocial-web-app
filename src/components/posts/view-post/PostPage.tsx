@@ -38,7 +38,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
   if (!content) return null;
 
   const { title, body, image, canonical, tags } = content;
-  const spaceData = space || postDetails.space || useLoadHiddenSpace(struct.created.account).myHiddenSpaces
+  const spaceData = space || postDetails.space || useLoadHiddenSpace(struct.owner).myHiddenSpaces
 
   if (!spaceData) return <Loading />
 

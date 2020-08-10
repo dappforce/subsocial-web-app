@@ -57,8 +57,8 @@ export const ViewComment: FunctionComponent<Props> = ({
   const commentLink = postUrl(space, struct)
 
   const isRootPostOwner = equalAddresses(
-    rootPost?.created.account,
-    struct.created.account
+    rootPost?.owner,
+    struct.owner
   )
 
   const ViewRepliesLink = () => {

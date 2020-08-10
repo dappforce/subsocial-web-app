@@ -50,7 +50,7 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
 }
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ space, post }) => {
-  const isMyPost = isMyAddress(post.created.account);
+  const isMyPost = isMyAddress(post.owner);
   const postId = post.id
   const postKey = `post-${postId.toString()}`
 
@@ -240,7 +240,7 @@ export const SharePostContent = ({ postDetails: { post: { struct, content }, ext
     const originalPost = ext.post.struct
 
     return <>
-      {isVisible({ struct: originalPost, address: originalPost.created.account })
+      {isVisible({ struct: originalPost, address: originalPost.owner })
         ? <RegularPreview postDetails={ext as PostWithAllDetails} space={ext.space} />
         : <PostNotFound />}
     </>
