@@ -28,7 +28,7 @@ const App = () => {
           ElasticFields.post.body,
           ElasticFields.post.tags,
           ElasticFields.comment.body,
-          ElasticFields.profile.username,
+          ElasticFields.profile.handle,
           ElasticFields.profile.fullname,
           ElasticFields.profile.about
         ]}

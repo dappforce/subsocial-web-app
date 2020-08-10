@@ -24,8 +24,8 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
 
   const { struct, content = {} as ProfileContent, profile } = owner;
   const { about, avatar } = content
-  const { username } = profile || {}
-  const accountForUrl = { address, username }
+  const { handle } = profile || {}
+  const accountForUrl = { address, handle }
 
   const followers = struct ? struct.followers_count.toString() : '0';
   const following = struct ? struct.following_accounts_count.toString() : '0';

@@ -1,9 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasAddressOrUsername, accountUrl } from '../utils/urls'
+import { HasAddressOrHandle, accountUrl } from '../utils/urls'
 
 type Props = {
-  account: HasAddressOrUsername
+  account: HasAddressOrHandle
   title?: React.ReactNode
   hint?: string
   className?: string

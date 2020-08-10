@@ -21,15 +21,15 @@ export const Name = ({
 
   const { content, profile } = owner
   const fullname = content?.fullname
-  const username = profile?.username?.toString()
+  const handle = profile?.handle?.toString()
 
   // TODO extract a function? (find similar copypasta in other files):
   const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = fullname || username || addressString
+  const name = fullname || handle || addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return asLink
-    ? <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
+    ? <ViewProfileLink account={{ address, handle }} title={name} className={nameClass} />
     : <>{name}</>
 }
 

@@ -116,7 +116,7 @@ const InnerForm = (props: FormProps) => {
 
         <LabelledText
           name='handle'
-          label='Username'
+          label='Handle'
           placeholder={`You can use a-z, 0-9, dashes and underscores.`}
           style={{ maxWidth: '30rem' }}
           {...props}
@@ -281,8 +281,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
 export const EditFormWithValidation = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    profilesQueryToProp('minUsernameLen', { propName: 'handleMinLen' }),
-    profilesQueryToProp('maxUsernameLen', { propName: 'handleMaxLen' })
+    profilesQueryToProp('minHandleLen', { propName: 'handleMinLen' }),
+    profilesQueryToProp('maxHandleLen', { propName: 'handleMaxLen' })
   )
 );
 

@@ -10,16 +10,16 @@ const FULLNAME_MAX_LEN = 100;
 const ABOUT_MAX_LEN = 1000;
 
 export type ValidationProps = {
-  usernameMinLen: U32
-  usernameMaxLen: U32
+  handleMinLen: U32
+  handleMaxLen: U32
 }
 
 export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape({
-  username: Yup.string()
-    .required('Username is required')
-    .matches(USERNAME_REGEX, 'Username can have only letters (a-z, A-Z), numbers (0-9) and underscores (_)')
-    .min(p.usernameMinLen.toNumber(), minLenError('Username', p.usernameMinLen))
-    .max(p.usernameMaxLen.toNumber(), maxLenError('Username', p.usernameMaxLen)),
+  handle: Yup.string()
+    .required('Handle is required')
+    .matches(USERNAME_REGEX, 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_)')
+    .min(p.handleMinLen.toNumber(), minLenError('Handle', p.handleMinLen))
+    .max(p.handleMaxLen.toNumber(), maxLenError('Handle', p.handleMaxLen)),
 
   fullname: Yup.string()
     .min(FULLNAME_MIN_LEN, minLenError('Full name', FULLNAME_MIN_LEN))

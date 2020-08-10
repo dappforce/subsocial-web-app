@@ -28,7 +28,7 @@ export const ElasticFields = {
     body: 'body'
   },
   profile: {
-    username: 'username',
+    handle: 'handle',
     fullname: 'fullname',
     about: 'about'
   }

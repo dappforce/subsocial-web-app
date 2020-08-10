@@ -29,13 +29,13 @@ export default <></>;
 //   const stringForHandleOrUsername = /* historyLast[0] instanceof ProfileHistoryRecord ? 'username' : */ 'handle'; // TODO fix after run;
 
 //   const history = [ ...historyLast ];
-//   let ipfsHash = history[0].old_data.ipfs_hash;
+//   let IpfsCid = history[0].old_data.ipfs_hash;
 //   let handle = history[0].old_data.get(stringForHandleOrUsername) as OptionText;
 
-//   if (ipfsHash.isNone) {
+//   if (IpfsCid.isNone) {
 //     for (let i = 1; i < history.length; i++) {
 //       if (history[i].old_data.ipfs_hash.isSome) {
-//         ipfsHash = history[i].old_data.ipfs_hash;
+//         IpfsCid = history[i].old_data.ipfs_hash;
 //         break;
 //       }
 //     }
@@ -53,9 +53,9 @@ export default <></>;
 
 //   return history.map(record => {
 //     if (record.old_data.ipfs_hash.isNone) {
-//       record.old_data.ipfs_hash = ipfsHash;
+//       record.old_data.ipfs_hash = IpfsCid;
 //     } else {
-//       ipfsHash = record.old_data.ipfs_hash;
+//       IpfsCid = record.old_data.ipfs_hash;
 //     }
 //     const _handle = record.old_data.get(stringForHandleOrUsername) as OptionText;
 //     if (_handle.isNone) {
@@ -71,12 +71,12 @@ export default <></>;
 //   if (historyLast[0] === undefined) return;
 
 //   const history = [ ...historyLast ];
-//   let ipfsHash = history[0].old_data.ipfs_hash;
+//   let IpfsCid = history[0].old_data.ipfs_hash;
 
-//   if (ipfsHash.isNone) {
+//   if (IpfsCid.isNone) {
 //     for (let i = 1; i < history.length; i++) {
 //       if (history[i].old_data.ipfs_hash.isSome) {
-//         ipfsHash = history[i].old_data.ipfs_hash;
+//         IpfsCid = history[i].old_data.ipfs_hash;
 //         break;
 //       }
 //     }
@@ -84,9 +84,9 @@ export default <></>;
 
 //   return history.map(record => {
 //     if (record.old_data.ipfs_hash.isNone) {
-//       record.old_data.ipfs_hash = ipfsHash;
+//       record.old_data.ipfs_hash = IpfsCid;
 //     } else {
-//       ipfsHash = record.old_data.ipfs_hash;
+//       IpfsCid = record.old_data.ipfs_hash;
 //     }
 //     return record;
 //   }).reverse() as T;
@@ -180,16 +180,16 @@ export default <></>;
 //   const { history: { old_data, edited }, current_data } = props;
 //   const { ipfs_hash } = old_data;
 //   const [ content, setContent ] = useState({} as PostContent);
-//   const [ ipfsHash, setIpfsHash ] = useState('');
+//   const [ IpfsCid, setIpfsCid ] = useState('');
 
 //   useEffect(() => {
-//     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
+//     ipfs_hash.isNone ? setIpfsCid(current_data.ipfs_hash) : setIpfsCid(ipfs_hash.unwrap().toString());
 //     const loadData = async () => {
-//       const data = await getJsonFromIpfs<PostContent>(ipfsHash);
+//       const data = await getJsonFromIpfs<PostContent>(IpfsCid);
 //       setContent(data);
 //     };
 //     loadData().catch(err => new Error(err));
-//   }, [ ipfsHash ]);
+//   }, [ IpfsCid ]);
 
 //   return (<div className='DfModal'>
 //     <h1 style={{ display: 'flex' }}>
@@ -269,18 +269,18 @@ export default <></>;
 //   const { history: { old_data, edited }, current_data } = props;
 //   const { ipfs_hash, handle } = old_data;
 //   const [ content, setContent ] = useState({} as SpaceContent);
-//   const [ ipfsHash, setIpfsHash ] = useState('');
+//   const [ IpfsCid, setIpfsCid ] = useState('');
 //   const [ _handle, setHandle ] = useState('');
 
 //   useEffect(() => {
-//     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
+//     ipfs_hash.isNone ? setIpfsCid(current_data.ipfs_hash) : setIpfsCid(ipfs_hash.unwrap().toString());
 //     handle.isNone ? setHandle(current_data.handle) : setHandle(handle.unwrap().toString());
 //     const loadData = async () => {
-//       const data = await getJsonFromIpfs<SpaceContent>(ipfsHash);
+//       const data = await getJsonFromIpfs<SpaceContent>(IpfsCid);
 //       setContent(data);
 //     };
 //     loadData().catch(err => new Error(err));
-//   }, [ ipfsHash, _handle ]);
+//   }, [ IpfsCid, _handle ]);
 
 //   return (<div className='DfModal'>
 //     <div className='ui massive relaxed middle aligned list FullProfile'>
@@ -367,18 +367,18 @@ export default <></>;
 //   const { history: { old_data, edited }, current_data } = props;
 //   const { ipfs_hash, username } = old_data;
 //   const [ content, setContent ] = useState({} as ProfileContent);
-//   const [ ipfsHash, setIpfsHash ] = useState('');
+//   const [ IpfsCid, setIpfsCid ] = useState('');
 //   const [ _username, setUsername ] = useState(''); // TODO inconsistent naming
 
 //   useEffect(() => {
-//     ipfs_hash.isNone ? setIpfsHash(current_data.ipfs_hash) : setIpfsHash(ipfs_hash.unwrap().toString());
+//     ipfs_hash.isNone ? setIpfsCid(current_data.ipfs_hash) : setIpfsCid(ipfs_hash.unwrap().toString());
 //     username.isNone ? setUsername(current_data.username) : setUsername(username.unwrap().toString());
 //     const loadData = async () => {
-//       const data = await getJsonFromIpfs<ProfileContent>(ipfsHash);
+//       const data = await getJsonFromIpfs<ProfileContent>(IpfsCid);
 //       setContent(data);
 //     };
 //     loadData().catch(err => new Error(err));
-//   }, [ ipfsHash, _username ]);
+//   }, [ IpfsCid, _username ]);
 
 //   return (<div className='DfModal'>
 //     <div className='ui massive relaxed middle aligned list FullProfile'>

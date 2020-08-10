@@ -106,35 +106,35 @@ export function editPostUrl (space: HasSpaceIdOrHandle, post: HasPostId): string
 // Account URLs
 // --------------------------------------------------
 
-export type HasAddressOrUsername = {
+export type HasAddressOrHandle = {
   address: AnyAddress
-  username?: AnyText
+  handle?: AnyText
 }
 
-export function accountIdForUrl ({ address, username }: HasAddressOrUsername, ...subUrls: string[]): string {
-  if (notDef(address) && notDef(username)) {
-    log.warn(`${accountIdForUrl.name}: Both address and username are undefined`)
+export function accountIdForUrl ({ address, handle }: HasAddressOrHandle, ...subUrls: string[]): string {
+  if (notDef(address) && notDef(handle)) {
+    log.warn(`${accountIdForUrl.name}: Both address and handle are undefined`)
     return ''
   }
 
-  return slugify(username) || stringifyAddress(address) as string
+  return slugify(handle) || stringifyAddress(address) as string
 }
 
-function urlWithAccount (baseUrl: string, account: HasAddressOrUsername, ...subUrls: string[]): string {
+function urlWithAccount (baseUrl: string, account: HasAddressOrHandle, ...subUrls: string[]): string {
   return stringifySubUrls(baseUrl, accountIdForUrl(account), ...subUrls)
 }
 
 /** /profile/[address] */
-export function accountUrl (account: HasAddressOrUsername, ...subUrls: string[]): string {
+export function accountUrl (account: HasAddressOrHandle, ...subUrls: string[]): string {
   return urlWithAccount('profile', account, ...subUrls)
 }
 
 /** /spaces/my/[address] */
-export function spacesOwnedByAccountUrl (account: HasAddressOrUsername, ...subUrls: string[]): string {
+export function spacesOwnedByAccountUrl (account: HasAddressOrHandle, ...subUrls: string[]): string {
   return urlWithAccount('spaces/my', account, ...subUrls)
 }
 
 /** /spaces/following/[address] */
-export function spacesFollowedByAccountUrl (account: HasAddressOrUsername, ...subUrls: string[]): string {
+export function spacesFollowedByAccountUrl (account: HasAddressOrHandle, ...subUrls: string[]): string {
   return urlWithAccount('spaces/following', account, ...subUrls)
 }

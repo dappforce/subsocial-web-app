@@ -774,7 +774,7 @@ hr {
   align-items: center;
 }
 
-.DfPopup-username {
+.DfPopup-handle {
   font-size: $font_normal !important;
   color: #4e4e4e;
   margin: $space_mini 0;
@@ -1391,11 +1391,11 @@ a.DfStatItem {
     padding-top: 0;
     padding-bottom: 0;
 
-    &:hover {
+    /* &:hover {
       button {
-        // color: $color_font_normal; 
+        // color: $color_font_normal;
       }
-    }
+    } */
   }
 
   .ant-comment-avatar {

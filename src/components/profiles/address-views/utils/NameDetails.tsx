@@ -26,21 +26,21 @@ export const NameDetails = ({
   const { profile, content, struct } = owner
   const isMyAccount = isMyAddress(address)
   const shortAddress = toShortAddress(address)
-  const username = profile?.username?.toString()
+  const handle = profile?.handle?.toString()
 
   let title = ''
   let subtitle = null
 
   if (content && nonEmptyStr(content.fullname)) {
     title = content.fullname
-    subtitle = username
+    subtitle = handle
       ? <>
-        <div>{username}</div>
+        <div>{handle}</div>
         <div>{shortAddress}</div>
       </>
       : shortAddress
-  } else if (nonEmptyStr(username)) {
-    title = `@${username}`
+  } else if (nonEmptyStr(handle)) {
+    title = `@${handle}`
     subtitle = shortAddress
   } else {
     title = shortAddress
@@ -48,11 +48,11 @@ export const NameDetails = ({
 
   return <>
     <div className='header DfAccountTitle'>
-      <ViewProfileLink account={{ address, username }} title={title} className='ui--AddressComponents-address' />
+      <ViewProfileLink account={{ address, handle }} title={title} className='ui--AddressComponents-address' />
       {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
     </div>
-    {subtitle && <div className='DfPopup-username'>{subtitle}</div>}
+    {subtitle && <div className='DfPopup-handle'>{subtitle}</div>}
     <InfoDetails address={address} details={<>Reputation: {struct?.reputation?.toString() || 0}</>} />
   </>
 }

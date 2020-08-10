@@ -87,7 +87,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
-    username
+    handle
   } = profile;
 
   const {
@@ -147,7 +147,7 @@ const Component: NextPage<Props> = (props: Props) => {
     </>
   };
 
-  const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(username);
+  const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(handle);
 
   // TODO extract function: there is similar code in other files
   const getName = () => {
@@ -158,7 +158,7 @@ const Component: NextPage<Props> = (props: Props) => {
     }
   };
 
-  const accountForUrl = { address, username }
+  const accountForUrl = { address, handle }
 
   const renderDescription = () => preview
     ? <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />

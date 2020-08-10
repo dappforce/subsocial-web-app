@@ -47,11 +47,11 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
 
   const avatar = owner.content?.avatar
   const fullname = owner.content?.fullname
-  const username = owner.profile?.username?.toString()
+  const handle = owner.profile?.handle?.toString()
 
   // TODO extract a function? (find similar copypasta in other files):
   const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = fullname || username || addressString
+  const name = fullname || handle || addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return <div
@@ -68,7 +68,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
         >
           <div className='d-block'>
             <ViewProfileLink
-              account={{ address, username }}
+              account={{ address, handle }}
               title={name}
               className={nameClass}
             />
