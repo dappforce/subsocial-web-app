@@ -190,13 +190,13 @@ type PostActionsPanelProps = {
   withBorder?: boolean
 }
 
-const ShowCommentsAction = ({ postDetails: { post: { struct: { total_replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => {
+const ShowCommentsAction = ({ postDetails: { post: { struct: { replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => {
   const title = 'Comment'
 
   return <Action onClick={toogleCommentSection} title={title}>
     <IconWithLabel
       icon={<MessageOutlined />}
-      count={total_replies_count}
+      count={replies_count}
       label={!preview ? title : undefined}
     />
   </Action>

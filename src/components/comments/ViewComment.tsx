@@ -45,13 +45,13 @@ export const ViewComment: FunctionComponent<Props> = ({
     id,
     created: { account, time },
     score,
-    total_replies_count
+    replies_count
   } = struct
 
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies, setShowReplies ] = useState(withShowReplies);
-  const [ repliesCount, setRepliesCount ] = useState(new BN(total_replies_count))
+  const [ repliesCount, setRepliesCount ] = useState(new BN(replies_count))
 
   const isFake = id.toString().startsWith('fake')
   const commentLink = postUrl(space, struct)
