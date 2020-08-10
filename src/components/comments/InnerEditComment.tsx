@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MyAccountProps } from '../utils/MyAccount';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import DfMdEditor from '../utils/DfMdEditor';
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
@@ -27,7 +27,7 @@ const Fields = {
 export const InnerEditComment = (props: Props) => {
   const { content, withCancel = false, callback, CommentTxButton } = props;
   const { ipfs } = useSubsocialApi()
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
   const [ fakeId ] = useState(fakeClientId())
 
   const { control, errors, formState, watch, reset } = useForm({
@@ -50,7 +50,7 @@ export const InnerEditComment = (props: Props) => {
   }
 
   const onTxFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err));
     callback && callback()
   };
 
@@ -63,7 +63,7 @@ export const InnerEditComment = (props: Props) => {
   const renderTxButton = () => (
     <CommentTxButton
       ipfs={ipfs}
-      setIpfsHash={setIpfsHash}
+      setIpfsCid={setIpfsCid}
       json={{ body }}
       fakeId={fakeId}
       disabled={isSubmitting || !dirty}

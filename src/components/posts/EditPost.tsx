@@ -4,10 +4,10 @@ import Router, { useRouter } from 'next/router'
 import BN from 'bn.js'
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
-import { getNewIdFromEvent, equalAddresses, getTxParams, OptionText } from '../substrate'
+import { getNewIdFromEvent, equalAddresses, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
-import { PostExtension, PostUpdate, OptionId, OptionBool } from '@subsocial/types/substrate/classes'
-import { IpfsHash } from '@subsocial/types/substrate/interfaces'
+import { PostExtension, PostUpdate, OptionId, OptionBool, OptionContent, OptionIpfsContent } from '@subsocial/types/substrate/classes'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { PostContent, PostData } from '@subsocial/types'
 import { registry } from '@subsocial/types/substrate/registry'
 import { newLogger } from '@subsocial/utils'
@@ -61,7 +61,7 @@ export function InnerForm (props: FormProps) {
   const { space, post } = props
   const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>()
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
   if (!space) return <NoData description='Space not found' />
 
@@ -73,7 +73,7 @@ export function InnerForm (props: FormProps) {
     return form.getFieldsValue() as FormValues
   }
 
-  const newTxParams = (cid: IpfsHash) => {
+  const newTxParams = (cid: IpfsCid) => {
     if (!post) {
       return [ spaceId, RegularPostExt, cid ]
     } else {
@@ -83,7 +83,7 @@ export function InnerForm (props: FormProps) {
       const update = new PostUpdate({
         // If we provide a new space_id in update, it will move this post to another space.
         space_id: new OptionId(),
-        ipfs_hash: new OptionText(cid),
+        content: new OptionIpfsContent(cid),
         hidden: new OptionBool(false) // TODO has no implementation on UI
       })
       return [ post.struct.id, update ]
@@ -102,13 +102,13 @@ export function InnerForm (props: FormProps) {
     return getTxParams({
       json: fieldValuesToContent(),
       buildTxParamsCallback: newTxParams,
-      setIpfsHash,
+      setIpfsCid,
       ipfs
     })
   }
 
   const onFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err))
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
   }
 
   const onSuccess: TxCallback = (txResult) => {

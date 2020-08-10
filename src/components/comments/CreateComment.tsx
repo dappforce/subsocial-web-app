@@ -1,7 +1,7 @@
 import React from 'react';
-import { PostExtension, CommentExt, OptionId } from '@subsocial/types/substrate/classes';
+import { PostExtension, Comment, OptionId } from '@subsocial/types/substrate/classes';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
+import { IpfsCid, Post } from '@subsocial/types/substrate/interfaces';
 import dynamic from 'next/dynamic';
 import { getNewIdFromEvent, getTxParams } from '../substrate';
 import BN from 'bn.js'
@@ -32,12 +32,12 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
   const comment = (extension.isComment && extension.asComment) || (extension as any).Comment
 
   const commentExt = comment
-    ? new CommentExt({ parent_id: new OptionId(parentId), root_post_id: comment.root_post_id })
-    : new CommentExt({ parent_id: new OptionId(), root_post_id: parentId })
+    ? new Comment({ parent_id: new OptionId(parentId), root_post_id: comment.root_post_id })
+    : new Comment({ parent_id: new OptionId(), root_post_id: parentId })
 
   const newExtension = new PostExtension({ Comment: commentExt })
 
-  const newTxParams = (hash: IpfsHash) => [ new OptionId(), newExtension, hash ];
+  const newTxParams = (hash: IpfsCid) => [ new OptionId(), newExtension, hash ];
 
   const onFailedReduxAction = (id: string) =>
     useRemoveReplyFromStore(dispatch, { replyId: id, parentId: parentIdStr })
@@ -62,7 +62,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
         comment: buildMockComment({ fakeId, account, content: { body } })
       })
 
-  const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsHash, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
+  const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
     <TxButton
       type='primary'
       label='Comment'
@@ -71,7 +71,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
         json: json,
         buildTxParamsCallback: newTxParams,
         ipfs,
-        setIpfsHash
+        setIpfsCid
       })}
       tx='posts.createPost'
       onFailed={(txResult) => {

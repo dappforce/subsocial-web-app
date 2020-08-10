@@ -16,9 +16,9 @@ import dynamic from 'next/dynamic';
 import { withSpaceIdFromUrl } from './withSpaceIdFromUrl';
 import { validationSchema } from './NavValidation';
 import SpacegedSectionTitle from './SpacedSectionTitle';
-import { Space, IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { Space, IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { SpaceContent, NavTab } from '@subsocial/types/offchain';
-import { SpaceUpdate, OptionText, OptionOptionText, OptionBool } from '@subsocial/types/substrate/classes';
+import { SpaceUpdate, OptionOptionText, OptionBool, OptionIpfsContent } from '@subsocial/types/substrate/classes';
 import BN from 'bn.js'
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import DfMdEditor from '../utils/DfMdEditor';
@@ -124,10 +124,10 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   }
 
   const { ipfs } = useSubsocialApi()
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
 
   const onTxFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err));
     setSubmitting(false);
   };
 
@@ -142,12 +142,12 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     Router.push('/spaces/' + id.toString()).catch(console.log);
   };
 
-  const newTxParams = (hash: IpfsHash) => {
+  const newTxParams = (hash: IpfsCid) => {
     if (!isValid || !struct) return [];
 
     const update = new SpaceUpdate({
       handle: new OptionOptionText(null),
-      ipfs_hash: new OptionText(hash),
+      content: new OptionIpfsContent(hash),
       hidden: new OptionBool(false) // TODO has no implementation on UI
     });
     return [ struct.id, update ];
@@ -237,7 +237,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             params={() => getTxParams({
               json: { name, desc, image, tags: spaceTags, navTabs },
               buildTxParamsCallback: newTxParams,
-              setIpfsHash,
+              setIpfsCid,
               ipfs
             })}
             tx={'spaces.updateSpace'}
@@ -309,7 +309,7 @@ function LoadStruct (props: LoadStructProps) {
 
     if (!struct) return toggleTrigger();
 
-    ipfs.findSpace(struct.ipfs_hash.toString()).then(json => {
+    ipfs.findSpace(struct.content.asIpfs.toString()).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

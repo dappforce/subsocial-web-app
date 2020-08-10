@@ -1,6 +1,6 @@
 import React from 'react';
-import { PostUpdate, OptionBool } from '@subsocial/types/substrate/classes';
-import { IpfsHash, Post } from '@subsocial/types/substrate/interfaces';
+import { PostUpdate, OptionBool, OptionIpfsContent } from '@subsocial/types/substrate/classes';
+import { IpfsCid, Post } from '@subsocial/types/substrate/interfaces';
 import dynamic from 'next/dynamic';
 import { CommentContent, PostContent } from '@subsocial/types';
 import { registry } from '@subsocial/types/substrate/registry';
@@ -25,12 +25,12 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
 
   const dispatch = useDispatch();
 
-  const newTxParams = (hash: IpfsHash) => {
+  const newTxParams = (hash: IpfsCid) => {
     const update = new PostUpdate(
       {
       // TODO setting new space_id will move the post to another space.
         space_id: new Option(registry, 'u64', null),
-        ipfs_hash: new Option(registry, 'Text', hash),
+        content: new OptionIpfsContent(hash),
         hidden: new OptionBool(false) // TODO has no implementation on UI
       });
     return [ struct.id, update ];
@@ -40,7 +40,7 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
 
   const updatePostToStore = (content: PostContent) => useEditReplyToStore(dispatch, { replyId: id, comment: { struct, content } })
 
-  const buildTxButton = ({ disabled, json, ipfs, setIpfsHash, onClick, onFailed }: CommentTxButtonType) =>
+  const buildTxButton = ({ disabled, json, ipfs, setIpfsCid, onClick, onFailed }: CommentTxButtonType) =>
     <TxButton
       type='primary'
       label='Edit'
@@ -49,7 +49,7 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
         json: json,
         buildTxParamsCallback: newTxParams,
         ipfs,
-        setIpfsHash
+        setIpfsCid
       })}
       tx='posts.updatePost'
       onFailed={(txResult) => {

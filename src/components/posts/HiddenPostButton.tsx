@@ -1,7 +1,7 @@
 import React from 'react';
 import { Post } from '@subsocial/types/substrate/interfaces';
 import HiddenButton from '../utils/HiddenButton';
-import { PostUpdate, OptionId, OptionText, OptionBool } from '@subsocial/types/substrate/classes';
+import { PostUpdate, OptionId, OptionBool, OptionIpfsContent } from '@subsocial/types/substrate/classes';
 import { isComment } from './view-post';
 
 type HiddenPostButtonProps = {
@@ -18,7 +18,7 @@ export function HiddenPostButton (props: HiddenPostButtonProps) {
       {
       // If we provide a new space_id in update, it will move this post to another space.
         space_id: new OptionId(),
-        ipfs_hash: new OptionText(),
+        content: new OptionIpfsContent(),
         hidden: new OptionBool(!hidden) // TODO has no implementation on UI
       });
     return [ post.id, update ];

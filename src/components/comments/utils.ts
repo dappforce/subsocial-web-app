@@ -4,7 +4,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { PostsStoreType } from 'src/redux/types';
 import { PostData, PostWithSomeDetails, CommentContent, PostContent } from '@subsocial/types';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
-import { IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import { FVoid } from '../utils/types';
 
@@ -50,7 +50,7 @@ type MockComment = {
 
 export type CommentTxButtonType = {
   ipfs: SubsocialIpfsApi
-  setIpfsHash: (hash: IpfsHash) => void
+  setIpfsCid: (hash: IpfsCid) => void
   json: CommentContent | PostContent,
   fakeId?: string,
   disabled?: boolean,

@@ -2,21 +2,22 @@ import { mockNavTabs } from './NavTabsMocks'
 import U32 from '@polkadot/types/primitive/U32'
 import { registry } from '@subsocial/types/substrate/registry';
 import BN from 'bn.js'
-import { i32, Option, u16, u32 } from '@polkadot/types'
+import { i32, u16, u32, Null } from '@polkadot/types'
 import { SpaceContent } from '@subsocial/types/offchain'
-import { AccountId, BlockNumber, Moment } from '@subsocial/types/substrate/interfaces/runtime'
-import { Space, SpaceId, IpfsHash, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
+import { AccountId, BlockNumber, Moment, } from '@subsocial/types/substrate/interfaces/runtime'
+import { Space, SpaceId, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
 import { Vec } from '@polkadot/types/codec';
 import { SpaceHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types';
 import { SpaceData } from '@subsocial/types/dto'
+import { Content, IpfsContent, OptionText, OptionId } from '@subsocial/types/substrate/classes';
 
 type NewSpaceProps = {
   id?: number | BN,
   account?: AccountId,
   writers?: AccountId[],
   handle?: string,
-  ipfs_hash?: string,
+  content?: Content,
   posts_count?: number,
   followers_count?: number,
   edit_history?: SpaceHistoryRecord[],
@@ -31,7 +32,7 @@ function newSpaceStructMock ({
   account = mockAccountAlice,
   writers = [],
   handle,
-  ipfs_hash = '',
+  content = new IpfsContent(),
   posts_count = 12,
   followers_count = 3456,
   edit_history = [],
@@ -44,15 +45,16 @@ function newSpaceStructMock ({
       block: new BN(12345) as BlockNumber,
       time: new BN(1586523823996) as Moment
     } as WhoAndWhen,
-    updated: new Option(registry, 'Null', null),
+    updated: new Null(registry),
+    parent_id: new OptionId(),
     owner: account,
-    handle: new Option(registry, 'Text', handle),
-    ipfs_hash: ipfs_hash as unknown as IpfsHash,
+    handle: new OptionText(handle),
+    content: content,
     posts_count: new BN(posts_count) as u16,
     followers_count: new BN(followers_count) as u32,
     edit_history: edit_history as unknown as Vec<SpaceHistoryRecord>,
     score: new BN(score) as i32
-  } as Space
+  } as any as Space // TODO remove any
 }
 
 export const mockSpaceId = nextId()

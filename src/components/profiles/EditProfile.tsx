@@ -12,9 +12,9 @@ import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
 import Router from 'next/router';
 import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { ProfileUpdate, OptionText } from '@subsocial/types/substrate/classes';
+import { ProfileUpdate, OptionIpfsContent, OptionText } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 import { ProfileData } from '@subsocial/types';
@@ -31,7 +31,7 @@ export type OuterProps = MyAccountProps & ValidationProps & {
 };
 
 type FormValues = ProfileContent & {
-  username: string;
+  handle: string;
 };
 
 type FormProps = OuterProps & FormikProps<FormValues>;
@@ -55,7 +55,7 @@ const InnerForm = (props: FormProps) => {
   } = props;
 
   const {
-    username,
+    handle,
     fullname,
     avatar,
     email,
@@ -73,15 +73,15 @@ const InnerForm = (props: FormProps) => {
 
   const goToView = () => {
     if (myAddress) {
-      // TODO use accountUrl({ address, username })
+      // TODO use accountUrl({ address, handle })
       Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
     }
   };
   const { ipfs } = useSubsocialApi()
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
 
   const onTxFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash.toString()).catch(err => new Error(err));
+    IpfsCid && ipfs.removeContent(IpfsCid.toString()).catch(err => new Error(err));
     setSubmitting(false);
   };
 
@@ -90,17 +90,17 @@ const InnerForm = (props: FormProps) => {
     goToView();
   };
 
-  const newTxParams = (hash: IpfsHash) => {
+  const newTxParams = (hash: IpfsCid) => {
     if (!isValid) return [];
 
     if (!profile) {
-      return [ username, hash ];
+      return [ handle, hash ];
     } else {
       // TODO update only dirty values.
       const update = new ProfileUpdate(
         {
-          username: new OptionText(username),
-          ipfs_hash: new OptionText(hash)
+          handle: new OptionText(handle),
+          content: new OptionIpfsContent(hash)
         });
       return [ update ];
     }
@@ -115,7 +115,7 @@ const InnerForm = (props: FormProps) => {
       <Form className='ui form DfForm EditEntityForm'>
 
         <LabelledText
-          name='username'
+          name='handle'
           label='Username'
           placeholder={`You can use a-z, 0-9, dashes and underscores.`}
           style={{ maxWidth: '30rem' }}
@@ -219,7 +219,7 @@ const InnerForm = (props: FormProps) => {
                 instagram
               },
               buildTxParamsCallback: newTxParams,
-              setIpfsHash,
+              setIpfsCid,
               ipfs
             })}
             tx={profile
@@ -248,14 +248,14 @@ const EditForm = withFormik<OuterProps, FormValues>({
     const content = owner?.content
     const profile = owner?.profile
     if (profile && content) {
-      const username = profile.username.toString();
+      const handle = profile.handle.toString();
       return {
-        username,
+        handle,
         ...content
       };
     } else {
       return {
-        username: '',
+        handle: '',
         fullname: '',
         avatar: '',
         about: '',
@@ -281,8 +281,8 @@ const EditForm = withFormik<OuterProps, FormValues>({
 export const EditFormWithValidation = withMulti(
   EditForm,
   withCalls<OuterProps>(
-    profilesQueryToProp('minUsernameLen', { propName: 'usernameMinLen' }),
-    profilesQueryToProp('maxUsernameLen', { propName: 'usernameMaxLen' })
+    profilesQueryToProp('minUsernameLen', { propName: 'handleMinLen' }),
+    profilesQueryToProp('maxUsernameLen', { propName: 'handleMaxLen' })
   )
 );
 

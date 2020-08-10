@@ -72,8 +72,8 @@ const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: M
 const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
   const comment = postMap.get(commentId.toString());
   const commentStruct = comment?.struct;
-  const isCommentExt = commentStruct?.extension.isComment
-  if (commentStruct && isCommentExt) {
+  const isComment = commentStruct?.extension.isComment
+  if (commentStruct && isComment) {
     const { root_post_id } = commentStruct.extension.asComment
 
     /* if (parent_id.isSome) {

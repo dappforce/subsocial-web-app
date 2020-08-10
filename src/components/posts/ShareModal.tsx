@@ -10,7 +10,7 @@ import BN from 'bn.js';
 import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { IpfsHash } from '@subsocial/types/substrate/interfaces';
+import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
@@ -41,7 +41,7 @@ const InnerShareModal = (props: Props) => {
   const extension = new PostExtension({ SharedPost: postId as SharedPost });
 
   const { ipfs } = useSubsocialApi()
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
   const [ spaceId, setSpaceId ] = useState(spaceIds[0]);
 
   const { control, errors, formState, watch } = useForm({
@@ -54,7 +54,7 @@ const InnerShareModal = (props: Props) => {
   const { isSubmitting } = formState;
 
   const onTxFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err));
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err));
     // TODO show a failure message
     onClose()
   };
@@ -64,7 +64,7 @@ const InnerShareModal = (props: Props) => {
     onClose()
   };
 
-  const newTxParams = (hash: IpfsHash) => {
+  const newTxParams = (hash: IpfsCid) => {
     return [ spaceId, extension, hash ];
   };
 
@@ -76,7 +76,7 @@ const InnerShareModal = (props: Props) => {
       params={() => getTxParams({
         json: { body },
         buildTxParamsCallback: newTxParams,
-        setIpfsHash,
+        setIpfsCid,
         ipfs
       })}
       tx={'posts.createPost'}

@@ -4,10 +4,10 @@ import Router from 'next/router'
 import BN from 'bn.js'
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
-import { getNewIdFromEvent, equalAddresses, stringifyText, getTxParams, OptionOptionText, OptionText } from '../substrate'
+import { getNewIdFromEvent, equalAddresses, stringifyText, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
-import { SpaceUpdate, OptionBool } from '@subsocial/types/substrate/classes'
-import { IpfsHash } from '@subsocial/types/substrate/interfaces'
+import { SpaceUpdate, OptionBool, OptionIpfsContent, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { SpaceContent } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
@@ -57,7 +57,7 @@ function getInitialValues ({ space }: FormProps): FormValues {
 export function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>()
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
   const { space, minHandleLen, maxHandleLen } = props
   const initialValues = getInitialValues(props)
@@ -67,7 +67,7 @@ export function InnerForm (props: FormProps) {
     return form.getFieldsValue() as FormValues
   }
 
-  const newTxParams = (cid: IpfsHash) => {
+  const newTxParams = (cid: IpfsCid) => {
     const fieldValues = getFieldValues()
 
     /** Returns `undefined` if value hasn't been changed. */
@@ -76,8 +76,8 @@ export function InnerForm (props: FormProps) {
     }
 
     /** Returns `undefined` if CID hasn't been changed. */
-    function getCidIfChanged (): IpfsHash | undefined {
-      const prevCid = stringifyText(space?.struct?.ipfs_hash)
+    function getCidIfChanged (): IpfsCid | undefined {
+      const prevCid = stringifyText(space?.struct?.content.asIpfs)
       return prevCid !== cid.toString() ? cid : undefined
     }
 
@@ -90,7 +90,7 @@ export function InnerForm (props: FormProps) {
 
       const update = new SpaceUpdate({
         handle: new OptionOptionText(getValueIfChanged('handle')),
-        ipfs_hash: new OptionText(getCidIfChanged()),
+        content: new OptionIpfsContent(getCidIfChanged()),
         hidden: new OptionBool()
       })
       return [ space.struct.id, update ]
@@ -102,20 +102,16 @@ export function InnerForm (props: FormProps) {
     return { name, desc, image, tags, navTabs } as Content
   }
 
-  const pinToIpfsAndBuildTxParams = () => {
-
-    // TODO pin to IPFS only if JSON changed.
-
-    return getTxParams({
-      json: fieldValuesToContent(),
-      buildTxParamsCallback: newTxParams,
-      setIpfsHash,
-      ipfs
-    })
-  }
+  // TODO pin to IPFS only if JSON changed.
+  const pinToIpfsAndBuildTxParams = () => getTxParams({
+    json: fieldValuesToContent(),
+    buildTxParamsCallback: newTxParams,
+    setIpfsCid,
+    ipfs
+  })
 
   const onFailed: TxFailedCallback = () => {
-    ipfsHash && ipfs.removeContent(ipfsHash).catch(err => new Error(err))
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
   }
 
   const onSuccess: TxCallback = (txResult) => {

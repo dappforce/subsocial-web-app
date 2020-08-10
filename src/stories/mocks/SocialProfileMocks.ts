@@ -11,7 +11,7 @@ export const mockSocialAccountAlice = {
 } as SocialAccount
 
 export const mockProfileAlice = {
-  username: 'w3f' as unknown as Text
+  handle: 'w3f' as unknown as Text
 } as Profile
 
 export const mockContentAlice = {
