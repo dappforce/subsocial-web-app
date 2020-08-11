@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { LabeledValue } from 'antd/lib/select';
 import SelectSpacePreview from '../utils/SelectSpacePreview';
 import BN from 'bn.js';
-import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
+import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsCid } from '@subsocial/types/substrate/interfaces';
@@ -65,7 +65,7 @@ const InnerShareModal = (props: Props) => {
   };
 
   const newTxParams = (hash: IpfsCid) => {
-    return [ spaceId, extension, hash ];
+    return [ spaceId, extension, new IpfsContent(hash) ];
   };
 
   const renderTxButton = () =>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PostExtension, Comment, OptionId } from '@subsocial/types/substrate/classes';
+import { PostExtension, Comment, OptionId, IpfsContent } from '@subsocial/types/substrate/classes';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { IpfsCid, Post } from '@subsocial/types/substrate/interfaces';
 import dynamic from 'next/dynamic';
@@ -37,7 +37,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
 
   const newExtension = new PostExtension({ Comment: commentExt })
 
-  const newTxParams = (hash: IpfsCid) => [ new OptionId(), newExtension, hash ];
+  const newTxParams = (hash: IpfsCid) => [ new OptionId(), newExtension, new IpfsContent(hash) ];
 
   const onFailedReduxAction = (id: string) =>
     useRemoveReplyFromStore(dispatch, { replyId: id, parentId: parentIdStr })

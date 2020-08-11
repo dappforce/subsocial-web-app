@@ -14,7 +14,7 @@ import HeadMeta from '../utils/HeadMeta';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
-import { ProfileUpdate, OptionIpfsContent, OptionText } from '@subsocial/types/substrate/classes';
+import { ProfileUpdate, OptionIpfsContent, OptionText, IpfsContent } from '@subsocial/types/substrate/classes';
 import { newLogger } from '@subsocial/utils';
 import { ValidationProps, buildValidationSchema } from './ProfileValidation';
 import { ProfileData } from '@subsocial/types';
@@ -94,7 +94,7 @@ const InnerForm = (props: FormProps) => {
     if (!isValid) return [];
 
     if (!profile) {
-      return [ handle, hash ];
+      return [ handle, new IpfsContent(hash) ];
     } else {
       // TODO update only dirty values.
       const update = new ProfileUpdate(

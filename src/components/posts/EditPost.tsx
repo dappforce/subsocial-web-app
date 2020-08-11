@@ -6,7 +6,7 @@ import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
 import { getNewIdFromEvent, equalAddresses, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
-import { PostExtension, PostUpdate, OptionId, OptionBool, OptionContent, OptionIpfsContent } from '@subsocial/types/substrate/classes'
+import { PostExtension, PostUpdate, OptionId, OptionBool, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { PostContent, PostData } from '@subsocial/types'
 import { registry } from '@subsocial/types/substrate/registry'
@@ -75,7 +75,7 @@ export function InnerForm (props: FormProps) {
 
   const newTxParams = (cid: IpfsCid) => {
     if (!post) {
-      return [ spaceId, RegularPostExt, cid ]
+      return [ spaceId, RegularPostExt, new IpfsContent(cid) ]
     } else {
 
       // TODO Update only changed values.

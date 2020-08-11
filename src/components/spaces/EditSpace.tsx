@@ -6,7 +6,7 @@ import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
 import { getNewIdFromEvent, equalAddresses, stringifyText, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
-import { SpaceUpdate, OptionBool, OptionIpfsContent, OptionOptionText, OptionText } from '@subsocial/types/substrate/classes'
+import { SpaceUpdate, OptionBool, OptionIpfsContent, OptionOptionText, OptionText, OptionId, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { SpaceContent } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
@@ -82,12 +82,13 @@ export function InnerForm (props: FormProps) {
     }
 
     if (!space) {
-      return [ new OptionText(fieldValues.handle), cid ]
+      return [ new OptionId(), new OptionText(fieldValues.handle), new IpfsContent(cid) ]
     } else {
       // Update only dirty values.
 
       // TODO seems like we cannot set a handle to None.
 
+      // TODO uupdate SpaceUpdate class
       const update = new SpaceUpdate({
         handle: new OptionOptionText(getValueIfChanged('handle')),
         content: new OptionIpfsContent(getCidIfChanged()),
