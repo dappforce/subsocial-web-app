@@ -12,6 +12,7 @@ import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
 import { ZERO } from '../utils';
 
+const RESERVED_SPACES = new BN(1000 + 1)
 const FIFTY = new BN(50);
 const MAX_TO_SHOW = 5;
 
@@ -52,7 +53,10 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const latestSpaceIds = getLastNIds(nextSpaceId, FIFTY);
+  const newSpaces = nextSpaceId.sub(RESERVED_SPACES)
+  const spaceLimit = newSpaces.lt(FIFTY) ? newSpaces : FIFTY
+
+  const latestSpaceIds = getLastNIds(nextSpaceId, spaceLimit);
   const visibleSpacesData = await subsocial.findVisibleSpaces(latestSpaceIds) as SpaceData[]
   const spacesData = visibleSpacesData.slice(0, MAX_TO_SHOW)
 
