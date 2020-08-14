@@ -9,18 +9,18 @@ import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate'
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   return (
     <SidebarCollapsedProvider>
-      <MyAccountProvider>
-        <SubstrateProvider>
-          <SubstrateWebConsole />
-          <SubsocialApiProvider>
+      <SubstrateProvider>
+        <SubstrateWebConsole />
+        <SubsocialApiProvider>
+          <MyAccountProvider>
             <AuthProvider>
               <Navigation>
                 {children}
               </Navigation>
             </AuthProvider>
-          </SubsocialApiProvider>
-        </SubstrateProvider>
-      </MyAccountProvider>
+          </MyAccountProvider>
+        </SubsocialApiProvider>
+      </SubstrateProvider>
     </SidebarCollapsedProvider>
   )
 };

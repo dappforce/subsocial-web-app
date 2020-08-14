@@ -124,7 +124,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
     const sub = async () => {
       const readyApi = await api
 
-      unsub = await readyApi.query.profiles.profileById(address, async (optSocialAccount: Option<SocialAccount>) => {
+      unsub = await readyApi.query.profiles.socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
         const struct = optSocialAccount.unwrapOr(undefined)
 
         if (struct) {
@@ -142,7 +142,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
     sub()
 
-    return () => unsub()
+    return () => { unsub && unsub() }
 
   }, [ inited, address || '' ])
 

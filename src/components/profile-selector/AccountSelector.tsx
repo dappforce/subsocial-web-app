@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import keyring from '@polkadot/ui-keyring';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
-import { SelectAddressPreview, ProfilePreview } from '../profiles/address-views';
+import { SelectAddressPreview, MyProfileProview } from '../profiles/address-views';
 import { Loading } from '../utils';
 import { Button, Avatar } from 'antd';
 import { useMyAccount, useMyAddress } from '../auth/MyAccountContext';
@@ -71,11 +71,9 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
 
     return <>
       <div className='p-3 pb-0'>
-        <ProfilePreview
+        <MyProfileProview
           size={60}
           className='justify-content-center'
-          address={currentAddress}
-          owner={profilesByAddressMap.get(currentAddress)}
         />
       </div>
     </>
@@ -100,6 +98,8 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
   const ExtensionAccountPanel = () => {
     const count = extensionAddresses.length
 
+    const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // TODO hack for hide NoAccount msg!!!
+
     const renderContent = (content: JSX.Element) => {
       return <>
         <SubTitle title={'Extension accounts:'} />
@@ -108,6 +108,8 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
     }
 
     if (!isWeb3Injected) return renderContent(<NoExtension />)
+
+    if (!count && isInjectCurrentAddress) return null
 
     if (!count) return renderContent(<NoAccounts />)
 

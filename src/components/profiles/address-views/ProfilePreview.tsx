@@ -6,7 +6,7 @@ import { Pluralize } from 'src/components/utils/Plularize';
 import NameDetails from './utils/NameDetails';
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal';
 import { ProfileContent, ProfileData } from '@subsocial/types';
-import { withLoadedOwner } from './utils/withLoadedOwner';
+import { withLoadedOwner, withMyProfile } from './utils/withLoadedOwner';
 import { SummarizeMd } from 'src/components/utils/md';
 import ViewProfileLink from '../ViewProfileLink';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
@@ -70,3 +70,5 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
 export const ProfilePreviewWithOwner = withLoadedOwner(ProfilePreview);
 
 export default ProfilePreviewWithOwner;
+
+export const MyProfileProview = withMyProfile(ProfilePreview)

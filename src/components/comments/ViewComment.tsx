@@ -94,7 +94,7 @@ export const ViewComment: FunctionComponent<Props> = ({
   return <div className={isFake ? 'DfDisableLayout' : ''}>
     <Comment
       className='DfNewComment'
-      actions={[
+      actions={isFake ? [] : [
         <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfCommentAction' />,
         <Button key={`reply-comment-${id}`} className='DfCommentAction' onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />

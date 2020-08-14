@@ -50,7 +50,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
           { replyId: fakeId, parentId: parentIdStr },
           {
             reply: { replyId: id.toString(), parentId: parentIdStr },
-            comment
+            comment: { ...comment, owner: account }
           }
         )
       })

@@ -14,11 +14,12 @@ type AddReducerType = CaseReducer<PostState, PayloadAction<AddActionType>>
 const serialize = (object?: any) => object ? JSON.parse(JSON.stringify(object)) : undefined
 
 const serializePostWithExt = (item: PostWithSomeDetails): PostWithSomeDetails => {
-  const { post, ext, owner, space } = item
+  let { post, ext, owner, space } = item
 
   if (owner) {
-    const profile = owner.profile
-    owner.profile = { ...profile, content: serialize(profile?.content) } as Profile
+    let profile = owner.profile
+    profile = { ...profile, content: serialize(profile?.content) } as Profile
+    owner = { ...owner, profile }
   }
 
   if (space) {
@@ -27,6 +28,8 @@ const serializePostWithExt = (item: PostWithSomeDetails): PostWithSomeDetails =>
   }
 
   return {
+    owner,
+    space,
     post: serializePost(post),
     ext: ext ? serializePostWithExt(ext) : undefined
   }
