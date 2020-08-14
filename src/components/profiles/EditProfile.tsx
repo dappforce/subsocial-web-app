@@ -10,21 +10,13 @@ import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { ProfileContent, AnyAccountId, ProfileData } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
-import useSubsocialEffect from '../api/useSubsocialEffect'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withMyProfile } from './address-views/utils/withLoadedOwner'
 import { accountUrl } from '../utils/urls'
+import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 
 const log = newLogger('EditProfile')
-
-const NAME_MIN_LEN = 3
-const NAME_MAX_LEN = 100
-
-const DESC_MAX_LEN = 20_000
-
-const MIN_HANDLE_LEN = 5
-const MAX_HANDLE_LEN = 50
 
 type Content = ProfileContent
 
@@ -202,20 +194,24 @@ export function InnerForm (props: FormProps) {
 // }
 
 export function FormInSection (props: FormProps) {
-  const [ consts, setConsts ] = useState<ValidationProps>()
+  const [ consts ] = useState<ValidationProps>({
+    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
+    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+  })
+
   const { owner } = props
   const title = owner?.profile ? `Edit profile` : `New profile`
 
-  useSubsocialEffect(() => {
-    const load = async () => {
-      // const api = await substrate.api
-      setConsts({
-        minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
-        maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
-      })
-    }
-    load()
-  }, [])
+  // useSubsocialEffect(() => {
+  //   const load = async () => {
+  //     // const api = await substrate.api
+  //     setConsts({
+  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
+  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+  //     })
+  //   }
+  //   load()
+  // }, [])
 
   return <>
     <HeadMeta title={title} />

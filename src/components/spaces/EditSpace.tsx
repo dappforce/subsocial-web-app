@@ -11,24 +11,16 @@ import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { SpaceContent } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
-import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
 import NoData from '../utils/EmptyList'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withLoadSpaceFromUrl, CheckSpacePermissionFn, CanHaveSpaceProps } from './withLoadSpaceFromUrl'
+import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 
 const log = newLogger('EditSpace')
 
-const NAME_MIN_LEN = 3
-const NAME_MAX_LEN = 100
-
-const DESC_MAX_LEN = 20_000
-
 const MAX_TAGS = 5
-
-const MIN_HANDLE_LEN = 5
-const MAX_HANDLE_LEN = 50
 
 type Content = SpaceContent
 
@@ -222,21 +214,24 @@ export function InnerForm (props: FormProps) {
 //   return bn ? (bn as unknown as BN).toNumber() : _default
 // }
 
-export function FormInSection (props: FormProps) {
-  const [ consts, setConsts ] = useState<ValidationProps>()
+export function FormInSection (props: Partial<FormProps>) {
+  const [ consts ] = useState<ValidationProps>({
+    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
+    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.spaces.maxHandleLen, 50)
+  })
   const { space } = props
   const title = space ? `Edit space` : `New space`
 
-  useSubsocialEffect(({ substrate }) => {
-    const load = async () => {
-      // const api = await substrate.api
-      setConsts({
-        minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
-        maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.spaces.maxHandleLen, 50)
-      })
-    }
-    load()
-  }, [])
+  // useSubsocialEffect(({ substrate }) => {
+  //   const load = async () => {
+  //     // const api = await substrate.api
+  //     setConsts({
+  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
+  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.spaces.maxHandleLen, 50)
+  //     })
+  //   }
+  //   load()
+  // }, [])
 
   return <>
     <HeadMeta title={title} />
