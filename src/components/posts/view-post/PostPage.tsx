@@ -8,7 +8,7 @@ import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
 import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';
 import { CommentSection } from '../../comments/CommentsSection';
-import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, isComment, SharePostContent } from './helpers';
+import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, isComment, SharePostContent, useSubscribedPost } from './helpers';
 import Error from 'next/error'
 import { NextPage } from 'next';
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
@@ -33,7 +33,9 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
 
   const { post, ext, space } = postDetails
 
-  const { struct, content } = post;
+  const { struct: initStruct, content } = post;
+
+  const struct = useSubscribedPost(initStruct)
 
   if (!content) return null;
 

@@ -3,7 +3,7 @@ import { RegularPreview, SharedPreview, HiddenPostAlert } from '.';
 import { PostWithSomeDetails, PostWithAllDetails, SpaceData } from '@subsocial/types';
 import { PostExtension } from '@subsocial/types/substrate/classes';
 import { Segment } from 'src/components/utils/Segment';
-import { isSharedPost } from './helpers';
+import { isSharedPost, withSubscribedPost } from './helpers';
 export type BarePreviewProps = {
   withActions?: boolean,
   replies?: PostWithAllDetails[],
@@ -31,4 +31,4 @@ export function PostPreview (props: PreviewProps) {
   </Segment>
 }
 
-export default PostPreview
+export default withSubscribedPost(PostPreview)

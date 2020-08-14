@@ -23,9 +23,12 @@ import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAl
 import NoData from 'src/components/utils/EmptyList';
 import { VoterButtons } from 'src/components/voting/VoterButtons';
 import Segment from 'src/components/utils/Segment';
-import { RegularPreview } from '.';
+import { RegularPreview, PostDetailsProps } from '.';
 import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters';
 import { isHidden } from '@subsocial/api/utils/visibility-filter';
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
+import { PreviewProps } from './PostPreview';
+import { Option } from '@polkadot/types'
 
 type DropdownProps = {
   space: Space,
@@ -276,3 +279,32 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
 export const PostNotFound = () => <NoData description='Post not found' />
 
 export const isHiddenPost = (post: Post) => isHidden(post)
+
+export const useSubscribedPost = (initPost: Post) => {
+  const [ post, setPost ] = useState(initPost)
+
+  useSubsocialEffect(({ substrate: { api } }) => {
+    let unsub: { (): void | undefined; (): void; };
+
+    const sub = async () => {
+      const readyApi = await api;
+      unsub = await readyApi.query.posts.postById(post.id, (data: Option<Post>) => {
+        setPost(data.unwrapOr(post));
+      })
+    }
+
+    sub()
+
+    return () => unsub()
+  }, [])
+
+  return post
+}
+
+export const withSubscribedPost = (Component: React.ComponentType<any>) => {
+  return ({ postDetails }: PreviewProps | PostDetailsProps) => {
+    postDetails.post.struct = useSubscribedPost(postDetails.post.struct)
+
+    return <Component postDetails={postDetails}/>
+  }
+}
