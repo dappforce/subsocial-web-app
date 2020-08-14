@@ -4,13 +4,14 @@ import { registry } from '@subsocial/types/substrate/registry';
 import BN from 'bn.js'
 import { i32, u16, u32, Null } from '@polkadot/types'
 import { SpaceContent } from '@subsocial/types/offchain'
-import { AccountId, BlockNumber, Moment, } from '@subsocial/types/substrate/interfaces/runtime'
 import { Space, SpaceId, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
 import { Vec } from '@polkadot/types/codec';
-import { SpaceHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types';
+import { SpaceHistoryRecord, BlockNumber } from '@subsocial/types/substrate/interfaces/subsocial/types';
 import { SpaceData } from '@subsocial/types/dto'
 import { Content, IpfsContent, OptionText, OptionId } from '@subsocial/types/substrate/classes';
+import AccountId from '@polkadot/types/generic/AccountId';
+import { Moment } from '@polkadot/types/interfaces';
 
 type NewSpaceProps = {
   id?: number | BN,
