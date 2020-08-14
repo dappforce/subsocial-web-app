@@ -15,7 +15,6 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
 import NoData from '../utils/EmptyList'
-import { Codec } from '@polkadot/types/types'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withLoadSpaceFromUrl, CheckSpacePermissionFn, CanHaveSpaceProps } from './withLoadSpaceFromUrl'
 
@@ -27,6 +26,9 @@ const NAME_MAX_LEN = 100
 const DESC_MAX_LEN = 20_000
 
 const MAX_TAGS = 5
+
+const MIN_HANDLE_LEN = 5
+const MAX_HANDLE_LEN = 50
 
 type Content = SpaceContent
 
@@ -216,9 +218,9 @@ export function InnerForm (props: FormProps) {
   </>
 }
 
-function bnToNum (bn: Codec, _default: number): number {
-  return bn ? (bn as unknown as BN).toNumber() : _default
-}
+// function bnToNum (bn: Codec, _default: number): number {
+//   return bn ? (bn as unknown as BN).toNumber() : _default
+// }
 
 export function FormInSection (props: FormProps) {
   const [ consts, setConsts ] = useState<ValidationProps>()
@@ -227,10 +229,10 @@ export function FormInSection (props: FormProps) {
 
   useSubsocialEffect(({ substrate }) => {
     const load = async () => {
-      const api = await substrate.api
+      // const api = await substrate.api
       setConsts({
-        minHandleLen: bnToNum(api.consts.spaces.minHandleLen, 5),
-        maxHandleLen: bnToNum(api.consts.spaces.maxHandleLen, 50)
+        minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
+        maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.spaces.maxHandleLen, 50)
       })
     }
     load()

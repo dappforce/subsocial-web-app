@@ -32,13 +32,9 @@ export function withLoadSpaceFromUrl<Props extends CanHaveSpaceProps> (
     const [ isLoaded, setIsLoaded ] = useState(false)
     const [ loadedData, setLoadedData ] = useState<CanHaveSpaceProps>({})
 
-    console.log('idOrHandle', idOrHandle)
-    console.log('loadedData', loadedData)
-
     useSubsocialEffect(({ subsocial }) => {
       const load = async () => {
         const id = await getSpaceId(idOrHandle, subsocial)
-        console.log('getSpaceId:', id)
         if (!id) return
 
         setIsLoaded(false)
