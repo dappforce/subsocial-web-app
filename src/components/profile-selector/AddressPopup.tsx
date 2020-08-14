@@ -3,7 +3,7 @@ import { Dropdown } from 'antd';
 import Address from '../profiles/address-views/Name'
 import Avatar from '../profiles/address-views/Avatar'
 import { AddressProps } from '../profiles/address-views/utils/types';
-import { withLoadedOwner } from '../profiles/address-views/utils/withLoadedOwner';
+import { withLoadedOwner, withMyProfile } from '../profiles/address-views/utils/withLoadedOwner';
 import { InfoDetails } from '../profiles/address-views';
 import { AccountMenu } from 'src/components/profile-selector/AccountMenu';
 
@@ -37,6 +37,5 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   </Dropdown>
 }
 
-export const AddressPopupWithOwner = withLoadedOwner(AddressPopup);
 export const AddressPreviewWithOwner = withLoadedOwner(SelectAddressPreview)
-export default AddressPopupWithOwner;
+export const MyAccountPopup = withMyProfile(AddressPopup);

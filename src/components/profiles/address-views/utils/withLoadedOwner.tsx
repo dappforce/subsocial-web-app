@@ -4,7 +4,7 @@ import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
 import { ExtendedAddressProps } from './types'
 import { Loading } from '../../../utils';
-import { useMyAddress } from 'src/components/auth/MyAccountContext';
+import { useMyAccount } from 'src/components/auth/MyAccountContext';
 
 const log = newLogger(withLoadedOwner.name)
 
@@ -48,8 +48,8 @@ export function withLoadedOwner<P extends Props> (Component: React.ComponentType
 }
 
 export function withMyProfile (Component: React.ComponentType<any>) {
-  return function () {
-    const myAddress = useMyAddress()
-    return myAddress ? withLoadedOwner(Component)({ address: myAddress }) : null
+  return function (props: any) {
+    const { state: { account, address } } = useMyAccount()
+    return address ? <Component owner={account} address={address} {...props} /> : null
   }
 }

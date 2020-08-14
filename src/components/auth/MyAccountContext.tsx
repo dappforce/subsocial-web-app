@@ -3,6 +3,10 @@ import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
 import { equalAddresses } from '../substrate';
+import { ProfileData } from '@subsocial/types';
+import useSubsocialEffect from '../api/useSubsocialEffect';
+import { SocialAccount } from '@subsocial/types/substrate/interfaces';
+import { Option } from '@polkadot/types'
 
 const log = newLogger('MyAccountContext')
 
@@ -21,11 +25,13 @@ export function readMyAddress (): string | undefined {
 type MyAccountState = {
   inited: boolean,
   address?: string,
+  account?: ProfileData
 };
 
 type MyAccountAction = {
-  type: 'reload' | 'setAddress' | 'forget' | 'forgetExact',
+  type: 'reload' | 'setAddress' | 'forget' | 'forgetExact' | 'setAccount',
   address?: string,
+  account?: ProfileData
 };
 
 function reducer (state: MyAccountState, action: MyAccountAction): MyAccountState {
@@ -55,6 +61,16 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
         }
       }
       return state;
+
+    case 'setAccount': {
+      const account = action.account
+
+      if (account) {
+        return { ...state, account }
+      }
+
+      return state
+    }
 
     case 'forget':
       return forget();
@@ -92,11 +108,43 @@ export const MyAccountContext = createContext<MyAccountContextProps>(contextStub
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState);
 
+  const { inited, address } = state
+
   useEffect(() => {
-    if (!state.inited) {
+    if (!inited) {
       dispatch({ type: 'reload' });
     }
-  }, [ state.inited ]); // Don't call this effect if `invited` is not changed
+  }, [ inited ]); // Don't call this effect if `invited` is not changed
+
+  useSubsocialEffect(({ substrate: { api }, subsocial: { ipfs } }) => {
+    if (!inited || !address) return
+
+    let unsub: { (): void | undefined; (): void; };
+
+    const sub = async () => {
+      const readyApi = await api
+
+      unsub = await readyApi.query.profiles.profileById(address, async (optSocialAccount: Option<SocialAccount>) => {
+        const struct = optSocialAccount.unwrapOr(undefined)
+
+        if (struct) {
+          const profile = struct.profile.unwrapOr(undefined)
+
+          const cid = profile && profile.content.isIpfs && profile.content.asIpfs
+
+          const content = cid ? await ipfs.findProfile(cid) : undefined
+
+          dispatch({ type: 'setAccount', account: { struct, profile, content } })
+        }
+
+      })
+    }
+
+    sub()
+
+    return () => unsub()
+
+  }, [ inited, address || '' ])
 
   const contextValue = {
     state,

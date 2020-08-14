@@ -140,7 +140,7 @@ export function InnerForm (props: FormProps) {
           { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
         ]}
       >
-        <Input placeholder='Name of your profile' />
+        <Input placeholder='Full name or nickname' />
       </Form.Item>
 
       <Form.Item
@@ -170,7 +170,7 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('about')}
-        label='Description'
+        label='About'
         hasFeedback
         rules={[
           { max: DESC_MAX_LEN, message: maxLenError('Description', DESC_MAX_LEN) }
