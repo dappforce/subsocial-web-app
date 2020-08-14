@@ -45,6 +45,7 @@ import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
 import ViewProfileLink from './ViewProfileLink';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -180,10 +181,11 @@ const Component: NextPage<Props> = (props: Props) => {
             ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
             : <IdentityIcon className='image' value={address} size={size} />
           }
-          <div className='content'>
+          <div className='content w-100'>
             <div className='header DfProfileTitle'>
               <NameAsLink />
               <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+              <KusamaRolesTags address={address} />
               {renderDropDownMenu()}
             </div>
             {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
@@ -236,6 +238,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 </div>
               </div>
               {renderDescription()}
+              <KusamaIdentity address={address} />
             </div>
           </div>
         </div>

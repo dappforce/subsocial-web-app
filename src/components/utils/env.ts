@@ -11,5 +11,7 @@ export const ipfsNodeUrl = getEnv('IPFS_URL') || 'http://localhost:8080'
 export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944'
 export const ElasticNodeURL = getEnv('ELASTIC_URL') || 'http://localhost:9200'
 
+export const kusamaUrl = 'wss://kusama-rpc.polkadot.io'
+
 export const isProdMode = nodeEnv === 'production'
 export const isDevMode = !isProdMode
