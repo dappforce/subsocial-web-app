@@ -23,7 +23,7 @@ const InnerMenu = () => {
         <Button type='link' onClick={toggle} onMouseEnter={open} className='DfBurgerIcon'>
           <UnorderedListOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
-        <Link href='/'>
+        <Link href='/' as='/'>
           <a className={`DfBrand ${isMobile ? 'mobile' : ''}`}>
             <img src={logoImg} alt='Subsocial' />
           </a>

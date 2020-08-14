@@ -141,7 +141,7 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
       size={size}
       details={<div>
         {withSpaceName && space && <><div className='DfGreyLink'><ViewSpacePage spaceData={space} nameOnly withLink /></div>{' • '}</>}
-        {space && <Link href={postUrl(space.struct, struct)}>
+        {space && <Link href='/spaces/[spaceId]/posts/[postId]' as={postUrl(space.struct, struct)}>
           <a className='DfGreyLink'>
             {formatUnixDate(time)}
           </a>

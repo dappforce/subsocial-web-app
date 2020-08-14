@@ -115,7 +115,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
   const createProfileButton = noProfile && isMyAccount &&
-    <Link href={`/profile/new`}>
+    <Link href='/profile/new' as='profile/new'>
       <Button type='primary' ghost>
         <PlusOutlined />
         Create profile
@@ -128,7 +128,7 @@ const Component: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
-          <Link href={`/profile/edit`}><a className='item'>Edit</a></Link>
+          <Link href='/profile/edit' as='profile/edit'><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
