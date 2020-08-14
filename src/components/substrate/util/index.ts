@@ -2,11 +2,10 @@ import BN from 'bn.js'
 import { Text, GenericAccountId, Option } from '@polkadot/types'
 import { AccountId } from '@polkadot/types/interfaces'
 import AbstractInt from '@polkadot/types/codec/AbstractInt'
-import { registry } from '@subsocial/types/substrate/registry';
 import { AddressProps } from 'src/components/profiles/address-views/utils/types'
 import { toShortAddress } from 'src/components/utils'
 import { Codec } from '@polkadot/types/types'
-import { SubstrateId } from '@subsocial/types'
+import { SubstrateId, AnyAccountId } from '@subsocial/types'
 import { SubmittableResult } from '@polkadot/api'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
 import { SubsocialApi } from '@subsocial/api/subsocial';
@@ -78,13 +77,13 @@ export function getNewIdFromEvent (txResult: SubmittableResult): BN | undefined 
   return id;
 }
 
-export const getAccountId = async (addressOrHandle: string): Promise<AccountId | undefined> => {
+export const getAccountId = async (addressOrHandle: string): Promise<AnyAccountId | undefined> => {
   if (addressOrHandle.startsWith('@')) {
     const handle = addressOrHandle.substring(1) // Drop '@' char.
     const { substrate } = await getSubsocialApi()
     return substrate.getAccountIdByHandle(handle)
   } else {
-    return new GenericAccountId(registry, addressOrHandle)
+    return addressOrHandle
   }
 }
 

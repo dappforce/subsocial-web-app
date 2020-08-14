@@ -63,7 +63,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
   )
 
   const NoAccounts = () => (
-    <div>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
+    <div className='ml-3'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
   )
 
   const CurrentAccount = () => {
@@ -140,7 +140,6 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
 
   useSubsocialEffect(({ subsocial }) => {
     const accounts = keyring.getAccounts()
-
     if (!accounts) return
 
     const loadProfiles = async () => {
@@ -150,7 +149,6 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
 
       const addresses = accounts.map(account => {
         const { address, meta } = account;
-
         if (address === currentAddress) return address
 
         if (meta.isInjected) {

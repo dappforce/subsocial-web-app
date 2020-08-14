@@ -4,6 +4,7 @@ import { AddressProps } from './utils/types';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import ViewProfileLink from '../ViewProfileLink';
+import { useExtensionName } from './utils';
 
 type Props = AddressProps & {
   isShort?: boolean,
@@ -25,7 +26,7 @@ export const Name = ({
 
   // TODO extract a function? (find similar copypasta in other files):
   const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = fullname || handle || addressString
+  const name = fullname || handle || useExtensionName(address) || addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return asLink

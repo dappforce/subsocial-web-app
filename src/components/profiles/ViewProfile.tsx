@@ -37,7 +37,7 @@ import { Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
-import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
+import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { getAccountId } from '../substrate';
@@ -52,7 +52,7 @@ export type Props = {
   preview?: boolean,
   nameOnly?: boolean,
   withLink?: boolean,
-  id: AccountId,
+  address: AccountId,
   owner?: ProfileData,
   followers?: AccountId[],
   size?: number
@@ -60,7 +60,7 @@ export type Props = {
 
 const Component: NextPage<Props> = (props: Props) => {
   const {
-    id,
+    address,
     preview = false,
     nameOnly = false,
     withLink = false,
@@ -72,7 +72,6 @@ const Component: NextPage<Props> = (props: Props) => {
   const [ followingOpen, setFollowingOpen ] = useState(false);
   const { isApiReady } = useSubsocialApi()
 
-  const address = id.toString();
   const isMyAccount = isMyAddress(address);
 
   const {
@@ -152,7 +151,7 @@ const Component: NextPage<Props> = (props: Props) => {
   // TODO extract function: there is similar code in other files
   const getName = () => {
     if (isOnlyAddress) {
-      return address;
+      return address.toString();
     } else {
       return fullname;
     }
@@ -270,8 +269,8 @@ const Component: NextPage<Props> = (props: Props) => {
           </div>
         </div>
       </div>
-      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
-      {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
+      {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
+      {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
   </>;
 };
@@ -288,7 +287,7 @@ Component.getInitialProps = async (props): Promise<any> => {
 
   const owner = await subsocial.findProfile(address as string)
   return {
-    id: accountId,
+    address: accountId,
     owner
   };
 };
@@ -296,3 +295,5 @@ Component.getInitialProps = async (props): Promise<any> => {
 export default Component;
 
 export const ViewProfile = withLoadedOwner(Component)
+
+export const ViewMyProfile = withMyProfile(Component)

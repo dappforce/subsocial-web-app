@@ -8,6 +8,7 @@ import MyEntityLabel from 'src/components/utils/MyEntityLabel';
 import { InfoDetails } from '../AuthorPreview';
 import { AddressProps } from './types';
 import ViewProfileLink from '../../ViewProfileLink';
+import { useExtensionName } from '.';
 
 const FollowAccountButton = dynamic(() => import('../../../utils/FollowAccountButton'), { ssr: false });
 
@@ -27,6 +28,7 @@ export const NameDetails = ({
   const isMyAccount = isMyAddress(address)
   const shortAddress = toShortAddress(address)
   const handle = profile?.handle?.toString()
+  const extensionName = useExtensionName(address)
 
   let title = ''
   let subtitle = null
@@ -41,6 +43,9 @@ export const NameDetails = ({
       : shortAddress
   } else if (nonEmptyStr(handle)) {
     title = `@${handle}`
+    subtitle = shortAddress
+  } else if (extensionName) {
+    title = extensionName
     subtitle = shortAddress
   } else {
     title = shortAddress
