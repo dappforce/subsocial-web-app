@@ -10,6 +10,8 @@ type AddActionType = {
 
 type AddReducerType = CaseReducer<PostState, PayloadAction<AddActionType>>
 
+const serialize = (object?: any) => object ? JSON.parse(JSON.stringify(object)) : undefined
+
 const serializePostWithExt = (item: PostWithSomeDetails): PostWithSomeDetails => {
   const { post, ext } = item
 
@@ -22,7 +24,7 @@ const serializePostWithExt = (item: PostWithSomeDetails): PostWithSomeDetails =>
 
 const serializePost = ({ struct, content }: PostData): PostData => {
   return {
-    struct: { ...struct, extension: JSON.parse(JSON.stringify(struct.extension)) },
+    struct: { ...struct, extension: serialize(struct.extension), content: serialize(struct.content) },
     content
   } as PostData
 }
