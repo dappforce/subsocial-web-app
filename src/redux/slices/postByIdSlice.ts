@@ -1,6 +1,7 @@
 import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit';
 import { PostData, PostWithSomeDetails } from '@subsocial/types';
 import { Store, PostsStoreType } from '../types';
+import { Profile, Space } from '@subsocial/types/substrate/interfaces';
 
 export type PostState = Record<string, any>
 
@@ -13,10 +14,19 @@ type AddReducerType = CaseReducer<PostState, PayloadAction<AddActionType>>
 const serialize = (object?: any) => object ? JSON.parse(JSON.stringify(object)) : undefined
 
 const serializePostWithExt = (item: PostWithSomeDetails): PostWithSomeDetails => {
-  const { post, ext } = item
+  const { post, ext, owner, space } = item
+
+  if (owner) {
+    const profile = owner.profile
+    owner.profile = { ...profile, content: serialize(profile?.content) } as Profile
+  }
+
+  if (space) {
+    const struct = space.struct
+    space.struct = { ...struct, content: serialize(struct.content) } as Space
+  }
 
   return {
-    ...item,
     post: serializePost(post),
     ext: ext ? serializePostWithExt(ext) : undefined
   }

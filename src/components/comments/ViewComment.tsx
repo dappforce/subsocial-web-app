@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useState } from 'react';
-import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, NotificationOutlined } from '@ant-design/icons';
+import { /* CaretDownOutlined, CaretUpOutlined, */ CommentOutlined, NotificationOutlined } from '@ant-design/icons';
 import { Comment, Button, Tag } from 'antd';
 import { PostWithSomeDetails } from '@subsocial/types/dto';
 import { CommentContent } from '@subsocial/types';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
-import { pluralize, Pluralize } from '../utils/Plularize';
+import { pluralize } from '../utils/Plularize';
 import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
@@ -29,7 +29,7 @@ type Props = {
 }
 
 export const ViewComment: FunctionComponent<Props> = ({
-  rootPost, comment, space = { id: 0 } as any as Space, replies, withShowReplies
+  rootPost, comment, space = { id: 0 } as any as Space, replies, withShowReplies = true
 }) => {
   const {
     post: {
@@ -50,7 +50,7 @@ export const ViewComment: FunctionComponent<Props> = ({
 
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
-  const [ showReplies, setShowReplies ] = useState(withShowReplies);
+  const [ showReplies ] = useState(withShowReplies);
   const [ repliesCount, setRepliesCount ] = useState(new BN(replies_count))
 
   const isFake = id.toString().startsWith('fake')
@@ -61,7 +61,7 @@ export const ViewComment: FunctionComponent<Props> = ({
     struct.owner
   )
 
-  const ViewRepliesLink = () => {
+  /*   const ViewRepliesLink = () => {
     const viewActionMessage = showReplies
       ? <><CaretUpOutlined /> {'Hide'}</>
       : <><CaretDownOutlined /> {'View'}</>
@@ -72,7 +72,7 @@ export const ViewComment: FunctionComponent<Props> = ({
         <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
       </a>
     </Link>
-  }
+  } */
 
   const isReplies = repliesCount.gt(ZERO)
   const isShowChild = showReplyForm || showReplies || isReplies;
@@ -87,7 +87,7 @@ export const ViewComment: FunctionComponent<Props> = ({
       }}
       withCancel
     />}
-    {isReplies && <ViewRepliesLink />}
+    {/* {isReplies && <ViewRepliesLink />} */}
     {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
   </div> : null
 

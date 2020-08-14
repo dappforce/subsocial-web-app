@@ -124,3 +124,5 @@ export const calcVotingPercentage = (upvotesCount: BN, downvotesCount: BN) => {
     };
   }
 };
+
+export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'

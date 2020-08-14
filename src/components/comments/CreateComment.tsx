@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { getNewIdFromEvent, getTxParams } from '../substrate';
 import BN from 'bn.js'
 import { useDispatch } from 'react-redux';
-import { useMyAddress } from '../auth/MyAccountContext';
+import { useMyAccount } from '../auth/MyAccountContext';
 import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils';
 import { isHiddenPost, HiddenPostAlert } from '../posts/view-post';
 
@@ -23,7 +23,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
   const { id: parentId, extension } = post;
   const dispatch = useDispatch();
   const { subsocial } = useSubsocialApi()
-  const account = useMyAddress()
+  const { state: { address, account } } = useMyAccount()
 
   if (isHiddenPost(post)) return <HiddenPostAlert post={post} desc='You cannot comment on a hidden post' className='mt-3' />
 
@@ -37,7 +37,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
 
   const newExtension = new PostExtension({ Comment: commentExt })
 
-  const newTxParams = (hash: IpfsCid) => [ new OptionId(), newExtension, new IpfsContent(hash) ];
+  const newTxParams = (cid: IpfsCid) => [ new OptionId(), newExtension, new IpfsContent(cid) ];
 
   const onFailedReduxAction = (id: string) =>
     useRemoveReplyFromStore(dispatch, { replyId: id, parentId: parentIdStr })
@@ -56,10 +56,10 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
       })
 
   const onTxReduxAction = (body: string, fakeId: string) =>
-    account && useSetReplyToStore(dispatch,
+    address && useSetReplyToStore(dispatch,
       {
         reply: { replyId: fakeId, parentId: parentIdStr },
-        comment: buildMockComment({ fakeId, account, content: { body } })
+        comment: buildMockComment({ fakeId, address, owner: account, content: { body } })
       })
 
   const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>

@@ -302,9 +302,10 @@ export const useSubscribedPost = (initPost: Post) => {
 }
 
 export const withSubscribedPost = (Component: React.ComponentType<any>) => {
-  return ({ postDetails }: PreviewProps | PostDetailsProps) => {
+  return (props: PreviewProps | PostDetailsProps) => {
+    const { postDetails } = props
     postDetails.post.struct = useSubscribedPost(postDetails.post.struct)
 
-    return <Component postDetails={postDetails}/>
+    return <Component {...props}/>
   }
 }

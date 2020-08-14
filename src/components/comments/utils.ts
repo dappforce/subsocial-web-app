@@ -2,7 +2,7 @@ import { addComments, removeComment } from 'src/redux/slices/replyIdsByPostIdSli
 import { addPost, removePost, editPost } from 'src/redux/slices/postByIdSlice';
 import { Dispatch } from '@reduxjs/toolkit';
 import { PostsStoreType } from 'src/redux/types';
-import { PostData, PostWithSomeDetails, CommentContent, PostContent } from '@subsocial/types';
+import { PostData, PostWithSomeDetails, CommentContent, PostContent, ProfileData } from '@subsocial/types';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
 import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
@@ -44,7 +44,8 @@ export const useEditReplyToStore = (dispatch: Dispatch, { replyId, comment }: Ed
 
 type MockComment = {
   fakeId: string,
-  account: string,
+  address: string,
+  owner?: ProfileData,
   content: CommentContent
 }
 
@@ -59,13 +60,14 @@ export type CommentTxButtonType = {
   onFailed?: TxFailedCallback
 }
 
-export const buildMockComment = ({ fakeId, account, content }: MockComment) => {
+export const buildMockComment = ({ fakeId, address, owner, content }: MockComment) => {
   return {
+    owner,
     post: {
       struct: {
         id: fakeId,
         created: {
-          account: account,
+          account: address,
           time: new Date().getTime()
         },
         score: 0,
@@ -73,6 +75,7 @@ export const buildMockComment = ({ fakeId, account, content }: MockComment) => {
         direct_replies_count: 0,
         space_id: null,
         extension: { Comment: {} },
+        content: { None: null },
         hidden: false
       },
       content: content

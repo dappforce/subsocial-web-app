@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, Dropdown, Button } from 'antd';
 import Link from 'next/link';
-import { EllipsisOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
+import { EllipsisOutlined, /* SettingOutlined, */ PlusOutlined } from '@ant-design/icons';
 import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto'
 import { Space, PostId } from '@subsocial/types/substrate/interfaces'
 import { AnyAccountId } from '@subsocial/types/substrate'
@@ -70,7 +70,7 @@ type EditMenuLinkProps = BareProps & SpaceProps & {
   withIcon?: boolean
 }
 
-export const EditMenuLink = ({ space: { id, owner }, withIcon }: EditMenuLinkProps) => isMyAddress(owner)
+export const EditMenuLink = ({ space: { id, owner }, withIcon }: EditMenuLinkProps) => /* isMyAddress(owner)
   ? <div className='SpaceNavSettings'>
     <Link
       href='/spaces/[spaceId]/space-navigation/edit'
@@ -82,7 +82,7 @@ export const EditMenuLink = ({ space: { id, owner }, withIcon }: EditMenuLinkPro
       </a>
     </Link>
   </div>
-  : null
+  : */ null
 
 type CreatePostButtonProps = SpaceProps & ButtonProps & {
   title?: React.ReactNode

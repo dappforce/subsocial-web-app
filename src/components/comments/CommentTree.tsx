@@ -32,7 +32,7 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
     renderItem={(item) => {
       const { post: { struct } } = item;
       const key = `comment-${struct.id.toString()}`
-      return <ViewComment key={key} space={space} rootPost={rootPost} comment={item} />
+      return <ViewComment key={key} space={space} rootPost={rootPost} comment={item} withShowReplies/>
     }}
   /> : null;
 }
