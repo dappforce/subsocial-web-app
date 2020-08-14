@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from 'react'
+import React, { useCallback, useEffect, useReducer, useContext } from 'react'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
@@ -8,6 +8,12 @@ import { registryTypes as SubsocialTypes } from '@subsocial/types'
 import { newLogger, isNum, isDef } from '@subsocial/utils'
 import { appName, isDevMode, substrateUrl } from '../utils/env'
 import { cacheSubstrateMetadata, getSubstrateMetadataRecord as getCachedSubstrateMetadata } from '../../storage/substrate'
+import registry from '@subsocial/types/substrate/registry'
+import { formatBalance } from '@polkadot/util';
+
+const DEFAULT_DECIMALS = registry.createType('u32', 12);
+const DEFAULT_SS58 = registry.createType('u32', 28);
+const DEFAULT_TOKEN = registry.createType('Text', 'SMN')
 
 const log = newLogger('SubstrateContext')
 
@@ -135,6 +141,15 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
     _api = new ApiPromise({ provider, types, rpc, metadata })
 
     const onConnectSuccess = async () => {
+      const properties = await _api.rpc.system.properties()
+
+      const tokenSymbol = properties.tokenSymbol.unwrapOr(DEFAULT_TOKEN).toString();
+      const tokenDecimals = properties.tokenDecimals.unwrapOr(DEFAULT_DECIMALS).toNumber();
+      formatBalance.setDefaults({
+        decimals: tokenDecimals,
+        unit: tokenSymbol
+      });
+
       dispatch({ type: 'CONNECT_SUCCESS', payload: connectTime })
       if (!isMetadataCached) {
         isMetadataCached = true
@@ -163,9 +178,9 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
 
   // hook to get injected accounts
   const { keyringState } = state
-  const loadAccounts = useCallback(async () => {
+  const loadAccounts = useCallback(async (api: ApiPromise) => {
     // Ensure the method only run once.
-    if (keyringState) return
+    if (keyringState || !api) return
 
     try {
       await web3Enable(appName)
@@ -173,7 +188,13 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
       allAccounts = allAccounts.map(({ address, meta }) =>
         ({ address, meta: { ...meta, name: `${meta.name} (${meta.source})` } }))
 
-      keyring.loadAll({ isDevelopment: isDevMode }, allAccounts)
+      const properties = await api.rpc.system.properties()
+
+      const ss58Format = properties.ss58Format.unwrapOr(DEFAULT_SS58).toNumber()
+
+      registry.setChainProperties(properties)
+
+      keyring.loadAll({ isDevelopment: isDevMode, ss58Format }, allAccounts)
       dispatch({ type: 'SET_KEYRING', payload: keyring })
     } catch (err) {
       log.error(`Keyring failed to load accounts. ${err}`)
@@ -186,8 +207,11 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
   }, [ connect ])
 
   useEffect(() => {
-    loadAccounts()
-  }, [ loadAccounts ])
+    if (!api) return
+
+    api.isReady
+      .then(api => loadAccounts(api))
+  }, [ loadAccounts, api ])
 
   return (
     <SubstrateContext.Provider value={[ state, dispatch ]}>
@@ -195,3 +219,5 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
     </SubstrateContext.Provider>
   )
 }
+
+export const useSubstrateContext = () => useContext(SubstrateContext)[0]
