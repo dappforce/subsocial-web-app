@@ -10,7 +10,6 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 import { useRouter } from 'next/router';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { Loading } from '../utils';
-import ButtonLink from '../utils/ButtonLink';
 import { NewSpaceButton } from './helpers';
 
 type Props = {

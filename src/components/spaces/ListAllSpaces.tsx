@@ -7,7 +7,6 @@ import BN from 'bn.js';
 import { ZERO, ONE } from '../utils';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import ButtonLink from '../utils/ButtonLink';
 import { NewSpaceButton } from './helpers';
 
 type Props = {

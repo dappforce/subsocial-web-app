@@ -3,7 +3,6 @@ import { Space } from '@subsocial/types/substrate/interfaces';
 import ListData from '../utils/DataList';
 import { ViewSpacePage } from '../spaces/ViewSpace';
 import { SpaceData } from '@subsocial/types/dto';
-import ButtonLink from '../utils/ButtonLink';
 import { NewSpaceButton } from '../spaces/helpers';
 
 type Props = {

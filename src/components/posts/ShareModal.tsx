@@ -16,7 +16,6 @@ import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
 import DfMdEditor from '../utils/DfMdEditor';
 import { DynamicPostPreview } from './view-post/DynamicPostPreview';
-import ButtonLink from '../utils/ButtonLink';
 import { NewSpaceButton } from '../spaces/helpers';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
