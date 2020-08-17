@@ -115,7 +115,7 @@ export function InnerForm (props: FormProps) {
   }
 
   const goToView = (spaceId: BN) => {
-    Router.push(`/spaces/${spaceId}`)
+    Router.push('/spaces/[spaceId]', `/spaces/${spaceId}`)
       .catch(err => log.error(`Failed to redirect to a space page. ${err}`))
   }
 

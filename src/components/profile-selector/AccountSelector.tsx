@@ -107,7 +107,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
       </>
     }
 
-    if (!isWeb3Injected) return renderContent(<NoExtension />)
+    if (!isWeb3Injected) return <NoExtension />
 
     if (!count && isInjectCurrentAddress) return null
 

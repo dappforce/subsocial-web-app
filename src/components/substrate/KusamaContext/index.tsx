@@ -217,7 +217,7 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
   }, [ connect ])
 
   useEffect(() => {
-    if (!api) return
+    if (apiState === 'READY' || !api) return
 
     const loadMembers = async () => {
       const council = await api.query.council.members()

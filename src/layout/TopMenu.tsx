@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { AuthorizationPanel } from '../components/auth/AuthorizationPanel';
+import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
 
 const InnerMenu = () => {

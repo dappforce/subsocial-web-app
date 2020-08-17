@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useContext } from 'react'
+import React, { useCallback, useEffect, useReducer, useContext, useState } from 'react'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
@@ -121,8 +121,9 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
   }
 
   const [ state, dispatch ] = useReducer(reducer, initState)
+  const [ ss58Format, setSs58Fromat ] = useState<number>(DEFAULT_SS58.toNumber())
 
-  const { api, endpoint, rpc, types } = state
+  const { api, endpoint, rpc, types, apiState } = state
   // `useCallback` so that returning memoized function and not created
   //   everytime, and thus re-render.
   const connect = useCallback(async () => {
@@ -141,15 +142,6 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
     _api = new ApiPromise({ provider, types, rpc, metadata })
 
     const onConnectSuccess = async () => {
-      const properties = await _api.rpc.system.properties()
-
-      const tokenSymbol = properties.tokenSymbol.unwrapOr(DEFAULT_TOKEN).toString();
-      const tokenDecimals = properties.tokenDecimals.unwrapOr(DEFAULT_DECIMALS).toNumber();
-      formatBalance.setDefaults({
-        decimals: tokenDecimals,
-        unit: tokenSymbol
-      });
-
       dispatch({ type: 'CONNECT_SUCCESS', payload: connectTime })
       if (!isMetadataCached) {
         isMetadataCached = true
@@ -188,12 +180,6 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
       allAccounts = allAccounts.map(({ address, meta }) =>
         ({ address, meta: { ...meta, name: `${meta.name} (${meta.source})` } }))
 
-      const properties = await api.rpc.system.properties()
-
-      const ss58Format = properties.ss58Format.unwrapOr(DEFAULT_SS58).toNumber()
-
-      registry.setChainProperties(properties)
-
       keyring.loadAll({ isDevelopment: isDevMode, ss58Format }, allAccounts)
       dispatch({ type: 'SET_KEYRING', payload: keyring })
     } catch (err) {
@@ -212,6 +198,29 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
     api.isReady
       .then(api => loadAccounts(api))
   }, [ loadAccounts, api ])
+
+  useEffect(() => {
+    if (apiState !== 'READY' || !api) return
+
+    const setupTokensProps = async () => {
+      const properties = await api.rpc.system.properties()
+
+      registry.setChainProperties(properties)
+
+      const tokenSymbol = properties.tokenSymbol.unwrapOr(DEFAULT_TOKEN).toString();
+      const tokenDecimals = properties.tokenDecimals.unwrapOr(DEFAULT_DECIMALS).toNumber();
+      formatBalance.setDefaults({
+        decimals: tokenDecimals,
+        unit: tokenSymbol
+      });
+
+      const ss58Format = properties.ss58Format.unwrapOr(undefined)
+      ss58Format && setSs58Fromat(ss58Format.toNumber())
+    }
+
+    setupTokensProps()
+
+  }, [ apiState ])
 
   return (
     <SubstrateContext.Provider value={[ state, dispatch ]}>
