@@ -1,6 +1,5 @@
 import { SpaceData } from '@subsocial/types/dto';
 import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
-import Button from 'antd/lib/button';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,6 +12,7 @@ import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { spaceIdForUrl, spaceUrl } from '../utils/urls';
 import { ViewSpacePage } from './ViewSpace';
+import ButtonLink from '../utils/ButtonLink';
 
 type Props = {
   spacesData: SpaceData[]
@@ -33,7 +33,7 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
           <ViewSpacePage {...props} key={index} spaceData={item} previewDetails withFollowButton/>
         )}
         noDataDesc='You are not subscribed to any space yet'
-        noDataExt={<Button href='/spaces/all'>Explore spaces</Button>}
+        noDataExt={<ButtonLink href='/spaces/all' as='/spaces/all'>Explore spaces</ButtonLink>}
       />
     </div>
   );
@@ -91,7 +91,7 @@ export const RenderFollowedList = (props: { followedSpacesData: SpaceData[] }) =
   if (isEmptyArray(followedSpacesData)) {
     return (
       <div className='text-center m-2'>
-        <Button href='/spaces/all'>Explore Spaces</Button>
+        <ButtonLink href='/spaces/all' as='/spaces/all'>Explore Spaces</ButtonLink>
       </div>
     )
   }

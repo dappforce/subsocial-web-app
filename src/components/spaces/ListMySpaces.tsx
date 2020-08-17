@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ViewSpacePage } from './ViewSpace';
 import ListData from '../utils/DataList';
-import Button from 'antd/lib/button';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
@@ -11,6 +10,8 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 import { useRouter } from 'next/router';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { Loading } from '../utils';
+import ButtonLink from '../utils/ButtonLink';
+import { NewSpaceButton } from './helpers';
 
 type Props = {
   spacesData: SpaceData[]
@@ -47,7 +48,7 @@ export const ListMySpaces: NextPage<Props> = (props) => {
     dataSource={spacesData}
     renderItem={SpacePreview}
     noDataDesc='You do not have your own spaces yet'
-    noDataExt={<Button href='/spaces/new' type='primary' ghost>Create my first space</Button>}
+    noDataExt={<NewSpaceButton type='primary' ghost>Create my first space</NewSpaceButton>}
   />
 
   const HiddenSpacesList = () => {

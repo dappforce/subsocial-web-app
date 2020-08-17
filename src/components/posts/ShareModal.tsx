@@ -3,7 +3,6 @@ import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../substra
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import Link from 'next/link';
 import { LabeledValue } from 'antd/lib/select';
 import SelectSpacePreview from '../utils/SelectSpacePreview';
 import BN from 'bn.js';
@@ -17,6 +16,8 @@ import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
 import DfMdEditor from '../utils/DfMdEditor';
 import { DynamicPostPreview } from './view-post/DynamicPostPreview';
+import ButtonLink from '../utils/ButtonLink';
+import { NewSpaceButton } from '../spaces/helpers';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -89,11 +90,11 @@ const InnerShareModal = (props: Props) => {
   const renderShareView = () => {
     if (isEmptyArray(spaceIds)) {
       return (
-        <Link href='/spaces/new'>
+        <NewSpaceButton>
           <a className='ui button primary'>
             Create your first space
           </a>
-        </Link>
+        </NewSpaceButton>
       )
     }
 

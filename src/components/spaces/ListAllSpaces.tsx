@@ -1,13 +1,14 @@
 import React from 'react';
 import { ViewSpacePage } from './ViewSpace';
 import ListData from '../utils/DataList';
-import Button from 'antd/lib/button';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import BN from 'bn.js';
 import { ZERO, ONE } from '../utils';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
+import ButtonLink from '../utils/ButtonLink';
+import { NewSpaceButton } from './helpers';
 
 type Props = {
   totalCount?: BN
@@ -25,7 +26,7 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
         title={title}
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
-        noDataExt={<Button href='/spaces/new'>Create space</Button>}
+        noDataExt={<NewSpaceButton>Create space</NewSpaceButton>}
         renderItem={(item) =>
           <ViewSpacePage
             key={item.struct.id.toString()}

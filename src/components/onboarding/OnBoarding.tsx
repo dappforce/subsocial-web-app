@@ -1,8 +1,10 @@
 import React from 'react'
-import { Steps, Button } from 'antd';
+import { Steps } from 'antd';
 import { useAuth, StepsEnum } from '../auth/AuthContext';
 import { isMobile } from 'react-device-detect';
 import { SignInButton } from '../auth/AuthButtons';
+import ButtonLink from '../utils/ButtonLink';
+import { NewSpaceButton } from '../spaces/helpers';
 
 const { Step } = Steps;
 
@@ -40,11 +42,10 @@ export const OnBoardingButton = (props: ActionButtonProps) => {
 
   switch (step) {
     case StepsEnum.Login: return <SignInButton isPrimary />
-    case StepsEnum.GetTokens: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens'>{title}</Button>
-    case StepsEnum.CreateSpace: return <Button block={block} type={asLink ? 'link' : 'primary'} href='/spaces/new'>{title}</Button>
+    case StepsEnum.GetTokens: return <ButtonLink block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens' as='/get-free-tokens'>{title}</ButtonLink>
+    case StepsEnum.CreateSpace: return <NewSpaceButton block={block} type={asLink ? 'link' : 'primary'}>{title}</NewSpaceButton>
     default: return null
   }
-
 }
 
 export const stepItems: StepItem[] = [

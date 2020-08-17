@@ -21,6 +21,7 @@ import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAl
 import { useRouter } from 'next/router';
 import { getSpaceId } from 'src/components/substrate';
 import { isEmptyStr } from '@subsocial/utils';
+import ButtonLink from 'src/components/utils/ButtonLink';
 
 type SpaceProps = {
   space: Space
@@ -232,4 +233,9 @@ export const useLoadHiddenSpace = (address: AnyAccountId) => {
     isLoading: !myHiddenSpace,
     myHiddenSpaces: myHiddenSpace
   }
+}
+
+export const NewSpaceButton = ({ children, ...buttonProps }: ButtonProps) => {
+  const newSpacePath = '/spaces/new'
+  return <ButtonLink href={newSpacePath} as={newSpacePath} {...buttonProps}>{children}</ButtonLink>
 }

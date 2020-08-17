@@ -11,3 +11,5 @@ export const AuthorizationPanel = () => {
     /> : <SignInButton />}
   </>
 }
+
+export default AuthorizationPanel;

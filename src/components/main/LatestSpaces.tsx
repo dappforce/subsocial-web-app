@@ -1,9 +1,10 @@
 import React from 'react';
-import Button from 'antd/lib/button';
 import { Space } from '@subsocial/types/substrate/interfaces';
 import ListData from '../utils/DataList';
 import { ViewSpacePage } from '../spaces/ViewSpace';
 import { SpaceData } from '@subsocial/types/dto';
+import ButtonLink from '../utils/ButtonLink';
+import { NewSpaceButton } from '../spaces/helpers';
 
 type Props = {
   spacesData: SpaceData[]
@@ -17,7 +18,7 @@ export const LatestSpaces = (props: Props) => {
     title={`Latest spaces`}
     dataSource={spaces}
     noDataDesc='No spaces created yet'
-    noDataExt={<Button type='primary' ghost href='/spaces/new'>Create space</Button>}
+    noDataExt={<NewSpaceButton type='primary' ghost >Create space</NewSpaceButton>}
     renderItem={(item) =>
       <ViewSpacePage
         {...props}
