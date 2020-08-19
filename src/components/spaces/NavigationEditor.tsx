@@ -58,7 +58,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   } = values;
 
   const {
-    desc,
+    about,
     image,
     tags: spaceTags = [],
     name
@@ -235,7 +235,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             label={'Update Navigation'}
             disabled={!isValid || isSubmitting}
             params={() => getTxParams({
-              json: { name, desc, image, tags: spaceTags, navTabs },
+              json: { name, about, image, tags: spaceTags, navTabs },
               buildTxParamsCallback: newTxParams,
               setIpfsCid,
               ipfs

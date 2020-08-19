@@ -44,7 +44,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
 
-  // TODO sort space ids in a desc order (don't forget to sort by id.toString())
+  // TODO sort space ids in a about order (don't forget to sort by id.toString())
   const followedSpaceIds = await substrate.spaceIdsFollowedByAccount(address as string)
   const spacesData = await subsocial.findVisibleSpaces(followedSpaceIds);
 

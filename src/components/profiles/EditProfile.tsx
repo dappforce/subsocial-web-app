@@ -5,7 +5,7 @@ import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
 import { stringifyText, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
-import { ProfileUpdate, OptionIpfsContent, OptionText, IpfsContent } from '@subsocial/types/substrate/classes'
+import { ProfileUpdate, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { ProfileContent, AnyAccountId, ProfileData } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
@@ -20,9 +20,7 @@ const log = newLogger('EditProfile')
 
 type Content = ProfileContent
 
-type FormValues = Partial<Content & {
-  handle: string
-}>
+type FormValues = Partial<Content>
 
 type FieldName = keyof FormValues
 
@@ -40,8 +38,8 @@ type FormProps = ValidationProps & {
 
 function getInitialValues ({ owner }: FormProps): FormValues {
   if (owner) {
-    const { content, profile } = owner
-    return { ...content, handle: profile?.handle.toString() }
+    const { content } = owner
+    return { ...content }
   }
   return {}
 }
@@ -51,7 +49,7 @@ export function InnerForm (props: FormProps) {
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
-  const { owner, minHandleLen, maxHandleLen, address } = props
+  const { owner, address } = props
   const isProfile = owner?.profile
   const initialValues = getInitialValues(props)
 
@@ -60,12 +58,12 @@ export function InnerForm (props: FormProps) {
   }
 
   const newTxParams = (cid: IpfsCid) => {
-    const fieldValues = getFieldValues()
+    // const fieldValues = getFieldValues()
 
-    /** Returns `undefined` if value hasn't been changed. */
-    function getValueIfChanged (field: FieldName): any | undefined {
-      return form.isFieldTouched(field) ? fieldValues[field] as any : undefined
-    }
+    // /** Returns `undefined` if value hasn't been changed. */
+    // function getValueIfChanged (field: FieldName): any | undefined {
+    //   return form.isFieldTouched(field) ? fieldValues[field] as any : undefined
+    // }
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
@@ -74,7 +72,7 @@ export function InnerForm (props: FormProps) {
     }
 
     if (!isProfile) {
-      return [ fieldValues.handle, new IpfsContent(cid) ];
+      return [ new IpfsContent(cid) ];
     } else {
       // Update only dirty values.
 
@@ -82,7 +80,6 @@ export function InnerForm (props: FormProps) {
 
       // TODO uupdate ProfileUpdate class
       const update = new ProfileUpdate({
-        handle: new OptionText(getValueIfChanged('handle')),
         content: new OptionIpfsContent(getCidIfChanged())
       })
 
@@ -104,7 +101,7 @@ export function InnerForm (props: FormProps) {
 
   const goToView = () => {
     if (address) {
-      Router.push('profile/[address]', accountUrl({ address, handle: owner?.profile?.handle })).catch(err => log.error('Error while route:', err));
+      Router.push('profile/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
     }
   };
 
@@ -123,7 +120,7 @@ export function InnerForm (props: FormProps) {
   return <>
     <DfForm form={form} initialValues={initialValues}>
       <Form.Item
-        name={fieldName('fullname')}
+        name={fieldName('name')}
         label='Profile name'
         hasFeedback
         rules={[
@@ -133,20 +130,6 @@ export function InnerForm (props: FormProps) {
         ]}
       >
         <Input placeholder='Full name or nickname' />
-      </Form.Item>
-
-      <Form.Item
-        name={fieldName('handle')}
-        label='URL handle'
-        hasFeedback
-        rules={[
-          { pattern: /^[A-Za-z0-9_]+$/, message: 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_).' },
-          { min: minHandleLen, message: minLenError('Handle', minHandleLen) },
-          { max: maxHandleLen, message: maxLenError('Handle', maxHandleLen) }
-          // TODO test that handle is unique via a call to Substrate
-        ]}
-      >
-        <Input placeholder='You can use a-z, 0-9 and underscores' />
       </Form.Item>
 
       <Form.Item

@@ -98,7 +98,7 @@ type GetNameOptions = AddressProps & {
 export const getProfileName = (options: GetNameOptions) => {
   const { owner, isShort = true, address } = options
   return (
-    owner?.content?.fullname ||
+    owner?.content?.name ||
     owner?.profile?.handle ||
     (isShort ? toShortAddress(address) : address)
   ).toString()

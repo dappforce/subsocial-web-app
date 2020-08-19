@@ -22,10 +22,9 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
 
-  const { struct, content = {} as ProfileContent, profile } = owner;
+  const { struct, content = {} as ProfileContent } = owner;
   const { about, avatar } = content
-  const { handle } = profile || {}
-  const accountForUrl = { address, handle }
+  const accountForUrl = { address }
 
   const followers = struct ? struct.followers_count.toString() : '0';
   const following = struct ? struct.following_accounts_count.toString() : '0';

@@ -38,7 +38,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   const { created: { account, time } } = space;
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent);
-  const { name, desc, image, tags } = content;
+  const { name, about, image, tags } = content;
 
   const SpaceAuthor = () =>
     <AuthorPreview
@@ -59,7 +59,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
       spaceData={spaceData}
     />
   }>
-    <HeadMeta title={title} desc={mdToText(desc)} image={image} />
+    <HeadMeta title={title} desc={mdToText(about)} image={image} />
     <Section className='DfContentPage' level={1} title={title}>
 
       <div className='DfRow mt-3'>
@@ -67,9 +67,9 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
         <SpaceStatsRow space={space} />
       </div>
 
-      {nonEmptyStr(desc) &&
+      {nonEmptyStr(about) &&
         <div className='DfBookPage'>
-          <DfMd source={desc} />
+          <DfMd source={about} />
         </div>
       }
       <ViewTags tags={tags} />

@@ -29,7 +29,7 @@ const App = () => {
           ElasticFields.post.tags,
           ElasticFields.comment.body,
           ElasticFields.profile.handle,
-          ElasticFields.profile.fullname,
+          ElasticFields.profile.name,
           ElasticFields.profile.about
         ]}
         fieldWeights={[ 3, 1, 2, 3, 1, 2, 2, 2, 3, 1 ]}

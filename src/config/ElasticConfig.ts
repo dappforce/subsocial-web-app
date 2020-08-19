@@ -29,7 +29,7 @@ export const ElasticFields = {
   },
   profile: {
     handle: 'handle',
-    fullname: 'fullname',
+    name: 'name',
     about: 'about'
   }
 }

@@ -69,7 +69,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     created: { account }
   } = space;
 
-  const { desc, name, image, tags } = spaceData?.content || {} as SpaceContent
+  const { about, name, image, tags } = spaceData?.content || {} as SpaceContent
 
   const isMySpace = isMyAddress(account);
   const hasImage = nonEmptyStr(image);
@@ -121,9 +121,9 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
             <DropdownMenu spaceData={spaceData} />
           </span>
 
-          {nonEmptyStr(desc) &&
+          {nonEmptyStr(about) &&
             <div className='description'>
-              <SummarizeMd md={desc} more={
+              <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
             </div>
@@ -152,7 +152,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   return <>
     <HiddenSpaceAlert space={space} />
     <div className='ViewSpaceWrapper'>
-      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
+      <HeadMeta title={name} desc={mdToText(about)} image={image} />
       <PageContent leftPanel={isBrowser &&
       <SpaceNav
         spaceData={spaceData}

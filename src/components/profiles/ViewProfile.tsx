@@ -45,7 +45,7 @@ import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
 import ViewProfileLink from './ViewProfileLink';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
-import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
+// import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -87,11 +87,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
-    handle
-  } = profile;
-
-  const {
-    fullname,
+    name,
     avatar,
     email,
     personalSite,
@@ -147,18 +143,18 @@ const Component: NextPage<Props> = (props: Props) => {
     </>
   };
 
-  const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(handle);
+  const isOnlyAddress = isEmptyStr(name)
 
   // TODO extract function: there is similar code in other files
   const getName = () => {
     if (isOnlyAddress) {
       return address.toString();
     } else {
-      return fullname;
+      return name;
     }
   };
 
-  const accountForUrl = { address, handle }
+  const accountForUrl = { address }
 
   const renderDescription = () => preview
     ? <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
@@ -185,7 +181,7 @@ const Component: NextPage<Props> = (props: Props) => {
             <div className='header DfProfileTitle'>
               <NameAsLink />
               <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
-              <KusamaRolesTags address={address} />
+              {/* <KusamaRolesTags address={address} /> */}
               {renderDropDownMenu()}
             </div>
             {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
@@ -238,7 +234,7 @@ const Component: NextPage<Props> = (props: Props) => {
                 </div>
               </div>
               {renderDescription()}
-              <KusamaIdentity address={address} />
+              {/* <KusamaIdentity address={address} /> */}
             </div>
           </div>
         </div>

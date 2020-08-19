@@ -389,7 +389,7 @@ export default <></>;
 //         }
 //         <div className='content'>
 //           <div className='header DfHistoryTitle'>
-//             <Link href='#'><a className='handle'>{content.fullname}</a></Link>
+//             <Link href='#'><a className='handle'>{content.name}</a></Link>
 //           </div>
 //           <div className='about' style={{ margin: '0.2rem' }}>{`username: ${_username}`}</div>
 //           <div className='about' style={{ margin: '0.2rem' }}>

@@ -93,8 +93,8 @@ export function InnerForm (props: FormProps) {
   }
 
   const fieldValuesToContent = (): Content => {
-    const { name, desc, image, tags, navTabs } = getFieldValues()
-    return { name, desc, image, tags, navTabs } as Content
+    const { name, about, image, tags, navTabs } = getFieldValues()
+    return { name, about, image, tags, navTabs } as Content
   }
 
   // TODO pin to IPFS only if JSON changed.
@@ -120,7 +120,7 @@ export function InnerForm (props: FormProps) {
   }
 
   const onDescChanged = (mdText: string) => {
-    form.setFieldsValue({ [fieldName('desc')]: mdText })
+    form.setFieldsValue({ [fieldName('about')]: mdText })
   }
 
   return <>
@@ -164,7 +164,7 @@ export function InnerForm (props: FormProps) {
       </Form.Item>
 
       <Form.Item
-        name={fieldName('desc')}
+        name={fieldName('about')}
         label='Description'
         hasFeedback
         rules={[
