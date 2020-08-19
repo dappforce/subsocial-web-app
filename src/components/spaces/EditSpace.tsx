@@ -17,7 +17,7 @@ import NoData from '../utils/EmptyList'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withLoadSpaceFromUrl, CheckSpacePermissionFn, CanHaveSpaceProps } from './withLoadSpaceFromUrl'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
-
+import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 const log = newLogger('EditSpace')
 
 const MAX_TAGS = 5
@@ -94,6 +94,7 @@ export function InnerForm (props: FormProps) {
 
   const fieldValuesToContent = (): Content => {
     const { name, about, image, tags, navTabs } = getFieldValues()
+    console.log(getFieldValues())
     return { name, about, image, tags, navTabs } as Content
   }
 
@@ -191,6 +192,8 @@ export function InnerForm (props: FormProps) {
           )}
         </Select>
       </Form.Item>
+
+      <NewSocialLinks name='links' />
 
       <DfFormButtons
         form={form}
