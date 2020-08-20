@@ -5,13 +5,13 @@ import { Navigation } from './Navigation'
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext';
 import { AuthProvider } from '../components/auth/AuthContext';
 import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate';
-import { KusamaProvider } from 'src/components/substrate/KusamaContext';
+// import { KusamaProvider } from 'src/components/substrate/KusamaContext';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   return (
     <SidebarCollapsedProvider>
       <SubstrateProvider>
-        <KusamaProvider>
+        {/* <KusamaProvider> */}
           <SubstrateWebConsole />
           <SubsocialApiProvider>
             <MyAccountProvider>
@@ -22,7 +22,7 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
               </AuthProvider>
             </MyAccountProvider>
           </SubsocialApiProvider>
-        </KusamaProvider>
+        {/* </KusamaProvider> */}
       </SubstrateProvider>
     </SidebarCollapsedProvider>
   )
