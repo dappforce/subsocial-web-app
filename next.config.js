@@ -41,6 +41,13 @@ const nextConfig = {
         use: 'raw-loader'
       },
       {
+        test: /\.md$/,
+        use: [
+          require.resolve('html-loader'),
+          require.resolve('markdown-loader')
+        ]
+      },
+      {
         test: /\.(png|svg|eot|otf|ttf|woff|woff2|gif)$/,
         use: {
           loader: 'url-loader',
