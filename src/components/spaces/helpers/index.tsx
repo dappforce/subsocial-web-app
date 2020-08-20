@@ -45,9 +45,9 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className
           <a className='item'>Edit space</a>
         </Link>
       </Menu.Item>
-      <Menu.Item key={`edit-nav-${spaceKey}`}>
+      {/* <Menu.Item key={`edit-nav-${spaceKey}`}>
         <EditMenuLink space={struct} className='item' />
-      </Menu.Item>
+      </Menu.Item> */}
       {isHiddenSpace(struct)
         ? null
         : <Menu.Item key={`create-post-${spaceKey}`}>

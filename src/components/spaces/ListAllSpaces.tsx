@@ -31,8 +31,8 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
             key={item.struct.id.toString()}
             {...props}
             spaceData={item}
-            previewDetails
             withFollowButton
+            preview
           />
         }
       />

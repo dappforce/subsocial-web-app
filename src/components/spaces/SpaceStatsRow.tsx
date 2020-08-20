@@ -30,7 +30,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
   const followersClassName = 'DfStatItem DfGreyLink ' + (!followers && 'disable')
 
   return (
-    <div className={`DfSpaceStats ${isMySpace && 'MySpace'}`}>
+    <div className={`${isMySpace && 'MySpace'}`}>
       <Link href='/spaces/[spaceId]' as={spaceUrl(space)}>
         <a className={'DfStatItem ' + (!postsCount && 'disable')}>
           <Pluralize count={postsCount} singularText='Post'/>

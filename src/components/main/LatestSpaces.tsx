@@ -23,8 +23,8 @@ export const LatestSpaces = (props: Props) => {
         {...props}
         key={(item.struct as Space).id.toString()}
         spaceData={item}
-        previewDetails
         withFollowButton
+        preview
       />
     }
   />

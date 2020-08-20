@@ -36,7 +36,7 @@ const useLoadHiddenSpaces = (mySpaceIds: SpaceId[]) => {
   }
 }
 
-const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.struct.id.toString()}`} spaceData={space} previewDetails withFollowButton />
+const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.struct.id.toString()}`} spaceData={space} preview withFollowButton />
 
 export const ListMySpaces: NextPage<Props> = (props) => {
   const { spacesData, mySpaceIds } = props;

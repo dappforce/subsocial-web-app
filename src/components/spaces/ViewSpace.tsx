@@ -8,7 +8,6 @@ import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Error from 'next/error';
 import React from 'react';
-import { isBrowser } from 'react-device-detect';
 import { Segment } from 'src/components/utils/Segment';
 
 import { isHidden } from '../utils';
@@ -23,13 +22,13 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { getSpaceId } from '../substrate';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
-import SpaceNav from './SpaceNav';
 import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import AboutSpaceLink from './AboutSpaceLink';
 import ViewSpaceLink from './ViewSpaceLink';
 import { PageContent } from '../main/PageWrapper';
 import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert } from './helpers';
+import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -53,8 +52,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     nameOnly = false,
     withLink = false,
     miniPreview = false,
-    previewDetails = false,
-    withFollowButton = false,
+    withFollowButton = true,
     dropdownPreview = false,
     postIds = [],
     posts = [],
@@ -69,7 +67,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     created: { account }
   } = space;
 
-  const { about, name, image, tags } = spaceData?.content || {} as SpaceContent
+  const { about, name, image, tags, ...contactInfo } = spaceData?.content || {} as SpaceContent
 
   const isMySpace = isMyAddress(account);
   const hasImage = nonEmptyStr(image);
@@ -115,10 +113,18 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
         }
         <div className='content'>
-          <span className='header DfSpaceTitle'>
-            <SpaceNameAsLink />
-            <MyEntityLabel isMy={isMySpace}>My space</MyEntityLabel>
-            <DropdownMenu spaceData={spaceData} />
+          <span className='mb-3'>
+            <div className='d-flex justify-content-between'>
+              <span className='header'>
+                <SpaceNameAsLink />
+                <MyEntityLabel isMy={isMySpace}>My space</MyEntityLabel>
+              </span>
+              <span>
+                <DropdownMenu className='m-3' spaceData={spaceData} />
+                {withFollowButton && <FollowSpaceButton spaceId={id} />}
+              </span>
+            </div>
+
           </span>
 
           {nonEmptyStr(about) &&
@@ -130,10 +136,13 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
           }
 
           <ViewTags tags={tags} />
-          {previewDetails && <SpaceStatsRow space={space} />}
+
+          <span className='d-flex justify-content-between'>
+            <SpaceStatsRow space={space} />
+            <ContactInfo {...contactInfo} />
+          </span>
         </div>
       </div>
-      {withFollowButton && <FollowSpaceButton spaceId={id} />}
     </div>
 
   if (nameOnly) {
@@ -142,7 +151,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     return renderDropDownPreview();
   } else if (miniPreview) {
     return renderMiniPreview();
-  } else if (preview || previewDetails) {
+  } else if (preview) {
     return <Segment>
       <HiddenSpaceAlert space={space} preview />
       {renderPreview()}
@@ -153,16 +162,12 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     <HiddenSpaceAlert space={space} />
     <div className='ViewSpaceWrapper'>
       <HeadMeta title={name} desc={mdToText(about)} image={image} />
-      <PageContent leftPanel={isBrowser &&
-      <SpaceNav
-        spaceData={spaceData}
-      />
-      }>
-        <Section className='DfContentPage'>
+      <PageContent>
+        <Segment>{renderPreview()}</Segment>
+        <Section className='DfContentPage mt-3'>
           <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
         </Section>
       </PageContent>
-
     </div></>
 }
 

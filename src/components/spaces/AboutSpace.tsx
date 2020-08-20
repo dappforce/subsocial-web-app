@@ -4,7 +4,6 @@ import mdToText from 'markdown-to-txt';
 import { NextPage } from 'next';
 import Error from 'next/error';
 import React, { useState } from 'react';
-import { isBrowser } from 'react-device-detect';
 
 import { AuthorPreview } from '../profiles/address-views';
 import { DfMd } from '../utils/DfMd';
@@ -15,7 +14,6 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { formatUnixDate } from '../utils';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
-import SpaceNav from './SpaceNav';
 import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import { PageContent } from '../main/PageWrapper';
@@ -54,11 +52,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   // TODO extract WithSpaceNav
 
-  return <PageContent leftPanel={isBrowser &&
-    <SpaceNav
-      spaceData={spaceData}
-    />
-  }>
+  return <PageContent>
     <HeadMeta title={title} desc={mdToText(about)} image={image} />
     <Section className='DfContentPage' level={1} title={title}>
 

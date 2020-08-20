@@ -93,9 +93,7 @@ export function InnerForm (props: FormProps) {
   }
 
   const fieldValuesToContent = (): Content => {
-    const { name, about, image, tags, navTabs } = getFieldValues()
-    console.log(getFieldValues())
-    return { name, about, image, tags, navTabs } as Content
+    return getFieldValues() as Content
   }
 
   // TODO pin to IPFS only if JSON changed.
@@ -125,7 +123,7 @@ export function InnerForm (props: FormProps) {
   }
 
   return <>
-    <DfForm form={form} initialValues={initialValues}>
+    <DfForm form={form} validateTrigger={[ 'onBlur' ]} initialValues={initialValues}>
       <Form.Item
         name={fieldName('name')}
         label='Space name'
@@ -165,6 +163,15 @@ export function InnerForm (props: FormProps) {
       </Form.Item>
 
       <Form.Item
+        name={fieldName('email')}
+        label="Email"
+        rules={[
+          { type: 'email', message: 'Should be a valid email' }
+        ]}>
+        <Input type='email' placeholder='Email' />
+      </Form.Item>
+
+      <Form.Item
         name={fieldName('about')}
         label='Description'
         hasFeedback
@@ -193,7 +200,7 @@ export function InnerForm (props: FormProps) {
         </Select>
       </Form.Item>
 
-      <NewSocialLinks name='links' />
+      <NewSocialLinks name='links' collapsed={!initialValues.links} />
 
       <DfFormButtons
         form={form}

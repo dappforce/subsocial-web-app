@@ -48,7 +48,7 @@ type Props = {
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
     case ElasticIndex.spaces:
-      return <ViewSpace id={new BN(res._id)} previewDetails withFollowButton />;
+      return <ViewSpace id={new BN(res._id)} withFollowButton />;
     case ElasticIndex.posts:
       return <DynamicPostPreview key={i} id={new BN(res._id)} withActions />;
     case ElasticIndex.profiles:
