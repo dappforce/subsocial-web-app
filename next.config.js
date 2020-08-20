@@ -9,15 +9,6 @@ const Dotenv = require('dotenv-webpack')
 // Required by Docker
 require('dotenv').config()
 
-// fix: prevents error when .css files are required by node
-if (typeof require !== 'undefined') {
-  require.extensions['.less'] = () => {}
-  require.extensions['.css'] = () => {}
-  require.extensions['.svg'] = () => {}
-  require.extensions['.gif'] = () => {}
-  require.extensions['.png'] = () => {}
-}
-
 const nextConfig = {
   target: 'server',
   webpack: (config, { isServer }) => {
