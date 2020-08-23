@@ -43,8 +43,8 @@ const nextConfig = {
       {
         test: /\.md$/,
         use: [
-          require.resolve('html-loader'),
-          require.resolve('markdown-loader')
+          'html-loader',
+          'markdown-loader'
         ]
       },
       {
