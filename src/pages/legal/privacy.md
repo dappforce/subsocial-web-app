@@ -18,14 +18,14 @@ Processing of the data means any action performed with your personal data, for e
 
 We know you care about how your personal data is used and we take your privacy seriously. That is why, in general, we don’t collect and process any of your personal data.
 
-However, until Subsocial network is under active development and testing, we may run our own IPFS nodes. It’s necessary for enabling you to upload and post any text, visual or audiovisual content (User Generated Content) to Subsocial network. This means, if we run our own IPFS nodes we may collect and process any User Generated Content or other details that you upload to the blog or profile.
+However, until Subsocial network is under active development and testing, we may run our own IPFS nodes. It’s necessary for enabling you to upload and post any text, visual or audiovisual content (User Generated Content) to Subsocial network. This means, if we run our own IPFS nodes we may collect and process any User Generated Content or other details that you upload to the space or profile.
 
 Please note that we don’t guarantee the running of our own IPFS nodes permanently. We may do so only if we consider it necessary to provide data availability on Subsocial network.
 
 
 ## Use of personal information
 
-Please note that any User Generated Content you upload and post to the blog or profile, including your personal information, will be publicly available forever. It means that others will have read access to your personal information that you unload to the Subsocial network, and we can not control how others may use your personal information.
+Please note that any User Generated Content you upload and post to the space or profile, including your personal information, will be publicly available forever. It means that others will have read access to your personal information that you unload to the Subsocial network, and we can not control how others may use your personal information.
 
 The fact is that with IPFS the small parts of User Generated Content are stored on nodes spread across the globe. A cryptographic hash is computed from User Generated Content then gets stored on Subsocial blockchain. When someone wants to view this content, its hash is used to load the actual data from IPFS. At this point, the small parts are retrieved simultaneously from numerous nearby IPFS nodes. As your User Generated Content is stored in parts on nodes it means it can be publicly available forever.
 
@@ -44,7 +44,7 @@ We do not collect your private key or other details and do not transfer any of y
 
 InterPlanetary File System is a peer-to-peer network for storing and sharing data. We use this third-party network for enabling you to upload and post any text, visual or audiovisual content (User Generated Content) to Subsocial.
 
-As above-mentioned, any User Generated Content you upload or post to the blog or profile using Subsocial is then publicly available and accessible to everyone participating in IPFS Network. This User-Generated Content will be stored on your local IPFS node. Also, this content will be distributed and co-hosted on other users’ local IPFS nodes. If you want to remove some User Generated Content, you can do it only from your local IPFS node. IPFS protocol does not guarantee that User Generated Content removed from your local node will be removed from IPFS Network completely. It may remain stored on other users’ local IPFS nodes.
+As above-mentioned, any User Generated Content you upload or post to the space or profile using Subsocial is then publicly available and accessible to everyone participating in IPFS Network. This User-Generated Content will be stored on your local IPFS node. Also, this content will be distributed and co-hosted on other users’ local IPFS nodes. If you want to remove some User Generated Content, you can do it only from your local IPFS node. IPFS protocol does not guarantee that User Generated Content removed from your local node will be removed from IPFS Network completely. It may remain stored on other users’ local IPFS nodes.
 
 Thus, all content shared with the IPFS Network is public by default. This means your User Generated Content that you have uploaded or posted will be accessible to everyone who queries the data on the IPFS Network. If you want to share certain User Generated Content privately, you must encrypt such content before uploading or posting it to the IPFS Network.
 
