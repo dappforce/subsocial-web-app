@@ -142,7 +142,7 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('image')}
-        label='Avatar URL'
+        label='Image URL'
         hasFeedback
         rules={[
           { type: 'url', message: 'Should be a valid image URL.' }
