@@ -1,10 +1,9 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
-import { Layout } from 'antd';
-import { isBrowser } from 'react-device-detect';
+import { Layout, Drawer } from 'antd';
+import { isBrowser, isMobile } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { Drawer } from 'antd-mobile';
 import { newLogger } from '@subsocial/utils';
 import { isHomePage } from 'src/components/utils';
 import { ElasticNodeURL } from 'src/components/utils/env';
@@ -21,6 +20,8 @@ interface Props {
   children: React.ReactNode;
 }
 
+const asDrawer = !isHomePage() || isMobile
+
 log.debug('Are we in a browser?', isBrowser);
 
 const HomeNav = () => {
@@ -30,6 +31,7 @@ const HomeNav = () => {
     width='255'
     trigger={null}
     collapsible
+    collapsedWidth={asDrawer ? 0 : undefined}
     collapsed={collapsed}
     defaultCollapsed={false}
   >
@@ -38,20 +40,22 @@ const HomeNav = () => {
 };
 
 const DefaultNav: FunctionComponent = ({ children }) => {
-  const { state: { collapsed }, toggle, hide } = useSidebarCollapsed();
+  const { state: { collapsed }, hide } = useSidebarCollapsed();
 
   useEffect(() => hide(), [ false ])
 
   return <Drawer
     className='DfSideBar'
-    enableDragHandle
-    contentStyle={{ color: '#a6a6a6', textAlign: 'center', paddingTop: 42 }}
-    sidebar={<div onMouseLeave={hide}><Menu /></div>}
-    open={!collapsed}
-    onOpenChange={toggle}
+    bodyStyle={{ padding: 0 }}
+    placement='left'
+    closable={false}
+    onClose={hide}
+    visible={!collapsed}
+    getContainer={false}
+    keyboard
   >
-    {children}
-  </Drawer>;
+    <Menu />
+  </Drawer>
 };
 
 export const Navigation = (props: Props): JSX.Element => {
@@ -69,15 +73,8 @@ export const Navigation = (props: Props): JSX.Element => {
         <TopMenu />
       </Header>
       <Layout>
-        {isHomePage() && isBrowser
-          ? <>
-            <HomeNav />
-            <MainContent />
-          </>
-          : <DefaultNav>
-            <MainContent />
-          </DefaultNav>
-        }
+        {asDrawer ? <DefaultNav /> : <HomeNav />}
+        <MainContent />
       </Layout>
     </Layout>
   </ReactiveBase>;

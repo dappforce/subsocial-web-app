@@ -8,7 +8,7 @@ import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
 
 const InnerMenu = () => {
-  const { toggle, show: open } = useSidebarCollapsed();
+  const { toggle } = useSidebarCollapsed();
   const [ show, setShow ] = useState(isBrowser);
 
   const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
@@ -20,7 +20,7 @@ const InnerMenu = () => {
     </div>
     : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
-        <Button type='link' onClick={toggle} onMouseEnter={open} className='DfBurgerIcon'>
+        <Button type='link' onClick={toggle} /* onMouseEnter={open} */ className='DfBurgerIcon'>
           <UnorderedListOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
         <Link href='/' as='/'>
