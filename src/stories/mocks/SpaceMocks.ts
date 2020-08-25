@@ -7,11 +7,11 @@ import { SpaceContent } from '@subsocial/types/offchain'
 import { Space, SpaceId, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
 import { Vec } from '@polkadot/types/codec';
-import { SpaceHistoryRecord, BlockNumber } from '@subsocial/types/substrate/interfaces/subsocial/types';
+import { SpaceHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types';
 import { SpaceData } from '@subsocial/types/dto'
 import { Content, IpfsContent, OptionText, OptionId } from '@subsocial/types/substrate/classes';
 import AccountId from '@polkadot/types/generic/AccountId';
-import { Moment } from '@polkadot/types/interfaces';
+import { Moment, BlockNumber } from '@polkadot/types/interfaces';
 
 type NewSpaceProps = {
   id?: number | BN,
@@ -78,17 +78,21 @@ export const mockSpaceStructBob = newSpaceStructMock({
 
 export const mockSpaceJson: SpaceContent = {
   name: 'Alice in Chains',
-  desc: 'Alice in Chains is an American rock band from Seattle, Washington, formed in 1987 by guitarist and vocalist Jerry Cantrell and drummer Sean Kinney, who later recruited bassist Mike Starr and lead vocalist Layne Staley. Starr was replaced by Mike Inez in 1993.',
+  about: 'Alice in Chains is an American rock band from Seattle, Washington, formed in 1987 by guitarist and vocalist Jerry Cantrell and drummer Sean Kinney, who later recruited bassist Mike Starr and lead vocalist Layne Staley. Starr was replaced by Mike Inez in 1993.',
   image: 'https://i.pinimg.com/originals/d1/dd/32/d1dd322177b1edf654be68644d427e74.jpg',
   tags: [ 'bitcoin', 'ethereum', 'polkadot' ],
+  email: '',
+  links: [],
   navTabs: mockNavTabs
 }
 
 export const mockSpaceJsonBob: SpaceContent = {
   name: 'The Best Space You Can Ever Find on the Internet',
-  desc: 'In 2000 I set up a dot com web site called "the very best site ever" and on it carried pictures and descriptions of our worldwide holidays and our lives closer to home. However, I have learned that the webhosts have "lost" it. Time has moved on and it is being replaced by this space!',
+  about: 'In 2000 I set up a dot com web site called "the very best site ever" and on it carried pictures and descriptions of our worldwide holidays and our lives closer to home. However, I have learned that the webhosts have "lost" it. Time has moved on and it is being replaced by this space!',
   image: '',
   tags: [],
+  email: '',
+  links: [],
   navTabs: mockNavTabs
 }
 

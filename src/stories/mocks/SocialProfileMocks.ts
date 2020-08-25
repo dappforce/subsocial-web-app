@@ -1,6 +1,6 @@
 import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
 import BN from 'bn.js';
-import { u32, Text } from '@polkadot/types';
+import { u32 } from '@polkadot/types';
 import { ProfileContent, ProfileData } from '@subsocial/types';
 
 export const mockSocialAccountAlice = {
@@ -10,9 +10,7 @@ export const mockSocialAccountAlice = {
   following_accounts_count: new BN(122) as u32
 } as SocialAccount
 
-export const mockProfileAlice = {
-  handle: 'w3f' as unknown as Text
-} as Profile
+export const mockProfileAlice = {} as Profile
 
 export const mockContentAlice = {
   about: 'About of w3f',

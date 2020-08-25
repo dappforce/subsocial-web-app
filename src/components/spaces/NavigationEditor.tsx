@@ -61,7 +61,9 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
     about,
     image,
     tags: spaceTags = [],
-    name
+    name,
+    email,
+    links
   } = json
 
   const getMaxId = (): number => {
@@ -235,7 +237,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             label={'Update Navigation'}
             disabled={!isValid || isSubmitting}
             params={() => getTxParams({
-              json: { name, about, image, tags: spaceTags, navTabs },
+              json: { name, about, image, email, links, tags: spaceTags, navTabs },
               buildTxParamsCallback: newTxParams,
               setIpfsCid,
               ipfs

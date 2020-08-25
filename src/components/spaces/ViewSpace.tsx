@@ -112,7 +112,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
           ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} rounded/>
           : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
         }
-        <div className='content'>
+        <div className='content w-100'>
           <span className='mb-3'>
             <div className='d-flex justify-content-between'>
               <span className='header'>
