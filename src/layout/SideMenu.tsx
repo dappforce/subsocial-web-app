@@ -9,7 +9,7 @@ import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import Link from 'next/link';
 import { SpaceData } from '@subsocial/types/dto';
-import { newLogger } from '@subsocial/utils';
+import { newLogger, isEmptyArray } from '@subsocial/utils';
 import { useNotifCounter } from '../components/utils/NotifCounter';
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems';
 import { OnBoardingCard } from 'src/components/onboarding';
@@ -87,17 +87,18 @@ function SideMenu () {
       )
   }
 
-  const renderSubscriptions = () =>
+  const renderSubscriptions = () => (collapsed && isEmptyArray(followedSpacesData)) ? null : (
     <Menu.ItemGroup
-      className={`DfSideMenu--FollowedSpaces ${collapsed && 'collapsed'}`}
+      className={`DfSideMenu--FollowedSpaces text-center ${collapsed && 'collapsed'}`}
       key='followed'
-      title='My subscriptions'
+      title={collapsed ? 'Subs.' : 'My subscriptions'}
     >
       {loaded
         ? <RenderFollowedList followedSpacesData={followedSpacesData} />
         : <div className='text-center m-2'><Loading /></div>
       }
     </Menu.ItemGroup>
+  )
 
   return (
     <Menu

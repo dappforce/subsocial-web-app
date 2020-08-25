@@ -4,7 +4,6 @@ export const ElasticIndex = {
   profiles: 'subsocial_profiles',
   spaces: 'subsocial_spaces',
   posts: 'subsocial_posts'
-  // comments: 'subsocial_comments'
 };
 
 export const AllElasticIndexes = [

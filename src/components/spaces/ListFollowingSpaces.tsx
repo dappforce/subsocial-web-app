@@ -88,9 +88,10 @@ const SpaceLink = (props: { item: SpaceData }) => {
 
 export const RenderFollowedList = (props: { followedSpacesData: SpaceData[] }) => {
   const { followedSpacesData } = props;
+  const { state: { collapsed } } = useSidebarCollapsed()
 
   if (isEmptyArray(followedSpacesData)) {
-    return (
+    return collapsed ? null : (
       <div className='text-center m-2'>
         <ButtonLink href='/spaces/all' as='/spaces/all'>Explore Spaces</ButtonLink>
       </div>

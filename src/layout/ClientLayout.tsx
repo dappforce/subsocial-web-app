@@ -12,16 +12,16 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
     <SidebarCollapsedProvider>
       <SubstrateProvider>
         {/* <KusamaProvider> */}
-        <SubstrateWebConsole />
-        <SubsocialApiProvider>
-          <MyAccountProvider>
-            <AuthProvider>
-              <Navigation>
-                {children}
-              </Navigation>
-            </AuthProvider>
-          </MyAccountProvider>
-        </SubsocialApiProvider>
+          <SubstrateWebConsole />
+          <SubsocialApiProvider>
+            <MyAccountProvider>
+              <AuthProvider>
+                <Navigation>
+                  {children}
+                </Navigation>
+              </AuthProvider>
+            </MyAccountProvider>
+          </SubsocialApiProvider>
         {/* </KusamaProvider> */}
       </SubstrateProvider>
     </SidebarCollapsedProvider>
