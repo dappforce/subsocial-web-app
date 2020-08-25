@@ -22,7 +22,7 @@ const App = () => {
         componentId='q'
         dataField={[
           ElasticFields.space.name,
-          ElasticFields.space.desc,
+          ElasticFields.space.about,
           ElasticFields.space.tags,
           ElasticFields.post.title,
           ElasticFields.post.body,
