@@ -18,6 +18,7 @@ import DfMdEditor from '../utils/DfMdEditor'
 import { withLoadSpaceFromUrl, CheckSpacePermissionFn, CanHaveSpaceProps } from './withLoadSpaceFromUrl'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
+import { UploadImg } from '../uploader'
 const log = newLogger('EditSpace')
 
 const MAX_TAGS = 5
@@ -122,6 +123,10 @@ export function InnerForm (props: FormProps) {
     form.setFieldsValue({ [fieldName('about')]: mdText })
   }
 
+  const onAvatarChanged = (url: string) => {
+    form.setFieldsValue({ [fieldName('image')]: url })
+  }
+
   return <>
     <DfForm form={form} validateTrigger={[ 'onBlur' ]} initialValues={initialValues}>
       <Form.Item
@@ -156,10 +161,10 @@ export function InnerForm (props: FormProps) {
         label='Avatar URL'
         hasFeedback
         rules={[
-          { type: 'url', message: 'Should be a valid image URL.' }
+          { type: 'string', message: 'Should be a valid image string.' }
         ]}
       >
-        <Input type='url' placeholder='Image URL' />
+        <UploadImg onChange={onAvatarChanged} img={initialValues.image} />
       </Form.Item>
 
       <Form.Item

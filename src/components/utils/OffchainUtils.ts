@@ -28,3 +28,15 @@ export const clearNotifications = async (myAddress: string): Promise<void> => {
     console.log(`Failed to mark all notifications as read for account: ${myAddress}`, err)
   }
 };
+
+export const saveFile = async (file: File | Blob) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await axios.post(`${offchainUrl}/v1/ipfs/addFile`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  const { data } = res
+  return data
+}
