@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Menu, Dropdown, Button } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import Link from 'next/link';
 import { EllipsisOutlined, /* SettingOutlined, */ PlusOutlined } from '@ant-design/icons';
 import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto'
 import { Space, PostId } from '@subsocial/types/substrate/interfaces'
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { isMyAddress } from 'src/components/auth/MyAccountContext';
-import { editSpaceUrl, newPostUrl } from 'src/components/utils/urls';
+import { editSpaceUrl, newPostUrl, HasSpaceIdOrHandle } from 'src/components/utils/urls';
 import HiddenSpaceButton from '../HiddenSpaceButton';
 import { BareProps } from 'src/components/utils/types';
 import { Pluralize } from 'src/components/utils/Plularize';
@@ -22,6 +22,8 @@ import { useRouter } from 'next/router';
 import { getSpaceId } from 'src/components/substrate';
 import { isEmptyStr } from '@subsocial/utils';
 import ButtonLink from 'src/components/utils/ButtonLink';
+import BaseAvatar, { BaseAvatarProps } from 'src/components/utils/DfAvatar';
+import ViewSpaceLink from '../ViewSpaceLink';
 
 type SpaceProps = {
   space: Space
@@ -41,7 +43,7 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className
   const menu =
     <Menu>
       <Menu.Item key={`edit-space-${spaceKey}`}>
-        <Link href={`/spaces/[id]/edit`} as={editSpaceUrl(struct)}>
+        <Link href={`/spaces/[spaceId]/edit`} as={editSpaceUrl(struct)}>
           <a className='item'>Edit space</a>
         </Link>
       </Menu.Item>
@@ -95,14 +97,16 @@ export const CreatePostButton = (props: CreatePostButtonProps) => {
   if (isHiddenSpace(space)) return null
 
   return isMyAddress(space.owner)
-    ? <Button
+    ? <ButtonLink
       {...props}
       type='primary'
       icon={<PlusOutlined />}
-      ghost href={newPostUrl(space)}
+      ghost
+      href={'/spaces/[spaceId]/posts/new'}
+      as={newPostUrl(space)}
     >
       {title}
-    </Button>
+    </ButtonLink>
     : null
 }
 
@@ -239,3 +243,9 @@ export const NewSpaceButton = ({ children, ...buttonProps }: ButtonProps) => {
   const newSpacePath = '/spaces/new'
   return <ButtonLink href={newSpacePath} as={newSpacePath} {...buttonProps}>{children}</ButtonLink>
 }
+
+type SpaceAvatarProps = BaseAvatarProps & {
+  space: HasSpaceIdOrHandle
+}
+
+export const SpaceAvatar = (props: SpaceAvatarProps) => <ViewSpaceLink space={props.space} title={<BaseAvatar {...props} />} />

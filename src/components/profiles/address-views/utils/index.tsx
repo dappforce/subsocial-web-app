@@ -12,7 +12,7 @@ export const useExtensionName = (address: AnyAccountId) => {
 
     const name = keyring.getAccount(address)?.meta.name
     name && setExtensionName(name)
-  }, [ keyring ])
+  }, [ keyring, address ])
 
   return extensionName?.replace('(polkadot-js)', '').toUpperCase()
 }

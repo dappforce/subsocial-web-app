@@ -18,6 +18,7 @@ import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
 import { isHidden, Loading } from 'src/components/utils';
 import { useLoadHiddenSpace } from 'src/components/spaces/helpers';
+import { resolveIpfsUrl } from 'src/ipfs';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
@@ -74,7 +75,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
           {ext
             ? <SharePostContent postDetails={postDetails} space={space} />
             : <>
-              {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
+              {image && <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />}
               {body && <DfMd source={body} />}
             </>}
         </div>

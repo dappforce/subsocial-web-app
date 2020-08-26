@@ -64,12 +64,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 
     case 'setAccount': {
       const account = action.account
-
-      if (account) {
-        return { ...state, account }
-      }
-
-      return state
+      return { ...state, account }
     }
 
     case 'forget':
@@ -125,6 +120,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
       const readyApi = await api
 
       unsub = await readyApi.query.profiles.socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
+        let account: ProfileData | undefined
         const struct = optSocialAccount.unwrapOr(undefined)
 
         if (struct) {
@@ -134,8 +130,10 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
           const content = cid ? await ipfs.findProfile(cid) : undefined
 
-          dispatch({ type: 'setAccount', account: { struct, profile, content } })
+          account = { struct, profile, content }
         }
+
+        dispatch({ type: 'setAccount', account })
 
       })
     }

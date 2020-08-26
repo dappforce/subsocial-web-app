@@ -4,7 +4,7 @@ import { HasSpaceIdOrHandle, spaceUrl } from '../utils/urls'
 
 type Props = {
   space: HasSpaceIdOrHandle
-  title?: string
+  title?: React.ReactNode
   hint?: string
   className?: string
 }

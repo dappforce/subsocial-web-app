@@ -2,6 +2,7 @@ import React from 'react'
 import { Form, Input, Button, Space, Collapse } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { FormListFieldData, FormListOperation } from 'antd/lib/form/FormList';
+import { getLinksAttr } from './utils';
 const { Panel } = Collapse;
 
 type NewSocialLinksProps = {
@@ -19,13 +20,13 @@ const staticSocialLinks = (): InnerFilmListFn => {
       const field = fields[index] || { name: index, key: index, fieldKey: index }
       return <Form.Item
         {...field}
-        label={label}
+        label={getLinksAttr(label).icon}
         hasFeedback
         rules={[
           { type: 'url', message: 'Should be a valid URL.' }
         ]}
       >
-        <Input type='url' placeholder={`${label} URL`} />
+        <Input type='url' placeholder={`${label} profile URL`} />
       </Form.Item>
     })}
   </div>
