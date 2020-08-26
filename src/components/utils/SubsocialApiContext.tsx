@@ -1,36 +1,48 @@
-import React, { useReducer, createContext, useContext, useEffect } from 'react';
-import { SubsocialApi } from '@subsocial/api/fullApi';
+import React, { useReducer, createContext, useContext, useEffect, useState } from 'react';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
-import { ipfsUrl, getApi, offchainUrl } from './SubsocialConnect';
+import { newSubsocialApi } from './SubsocialConnect';
 import { ApiPromise } from '@polkadot/api';
-import { useApi } from '@polkadot/react-hooks';
 import { newLogger } from '@subsocial/utils';
+import { useSubstrate } from '../substrate';
+// import { isDevMode } from './env';
 
 const log = newLogger('SubsocialApiContext')
 
 export type SubsocialApiState = {
-  subsocial: SubsocialApi,
-  substrate: SubsocialSubstrateApi,
-  ipfs: SubsocialIpfsApi,
-  isReady?: boolean
+  subsocial: SubsocialApi
+  substrate: SubsocialSubstrateApi
+  ipfs: SubsocialIpfsApi
+  isApiReady: boolean
+}
+
+const emptyState: SubsocialApiState = {
+  subsocial: {} as SubsocialApi,
+  substrate: {} as SubsocialSubstrateApi,
+  ipfs: {} as SubsocialIpfsApi,
+  isApiReady: false
 }
 
 type SubsocialApiAction = {
-  type: 'init' | 'set'
+  type: 'init'
   api: ApiPromise
 }
 
-function reducer (state: SubsocialApiState, action: SubsocialApiAction): SubsocialApiState {
-
+function reducer (_state: SubsocialApiState, action: SubsocialApiAction): SubsocialApiState {
   switch (action.type) {
-    case 'init':
-      const subsocial = new SubsocialApi({ substrateApi: action.api, ipfsApi: ipfsUrl, offchainUrl })
-      log.info('Subsocial API initialized')
-      return { subsocial, substrate: subsocial.substrate, ipfs: subsocial.ipfs, isReady: true }
-
-    default:
-      throw new Error('No action type provided')
+    case 'init': {
+      const subsocial = newSubsocialApi(action.api)
+      const { substrate, ipfs } = subsocial
+      log.info('Subsocial API is ready')
+      if (window) {
+        (window as any).subsocial = subsocial
+      }
+      return { subsocial, substrate, ipfs, isApiReady: true }
+    }
+    default: {
+      throw new Error(`Unsupported type of action: ${action?.type}`)
+    }
   }
 }
 
@@ -38,70 +50,70 @@ function functionStub () {
   throw new Error('Function needs to be set in SubsocialApiProvider')
 }
 
-const initialState = {
-  subsocial: {} as SubsocialApi,
-  substrate: {} as SubsocialSubstrateApi,
-  ipfs: {} as SubsocialIpfsApi,
-  isReady: false
-}
-
 export type SubsocialApiContextProps = {
   state: SubsocialApiState
   dispatch: React.Dispatch<SubsocialApiAction>
-  initial: (api: ApiPromise) => void
 }
 
 const contextStub: SubsocialApiContextProps = {
-  state: initialState,
-  dispatch: functionStub,
-  initial: functionStub
+  state: emptyState,
+  dispatch: functionStub
 }
 
 export type SubsocialApiProps = {
   api: ApiPromise
 }
 
-const createSubsocialState = (api: ApiPromise) => {
-  if (!api) return undefined;
+const createSubsocialState = (api?: ApiPromise) => {
+  if (!api) return emptyState;
 
-  const subsocial = new SubsocialApi({ substrateApi: api, ipfsApi: ipfsUrl, offchainUrl });
+  const subsocial = newSubsocialApi(api)
+  const { substrate, ipfs } = subsocial
+
   return {
     subsocial,
-    substrate: subsocial.substrate,
-    ipfs: subsocial.ipfs,
-    isReady: true
+    substrate,
+    ipfs,
+    isApiReady: true
   }
 }
 
 export const SubsocialApiContext = createContext<SubsocialApiContextProps>(contextStub)
 
 export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
-  const { api } = useApi()
-  const [ state, dispatch ] = useReducer(reducer, createSubsocialState(api) || initialState)
+  const { api } = useSubstrate()
+  const [ state, dispatch ] = useReducer(reducer, createSubsocialState(api))
+  const [ isApiReady, setIsApiReady ] = useState(false)
+
   useEffect(() => {
-    if (!state.isReady) {
-      getApi().then(api => dispatch({ type: 'init', api: api }))
+    if (!api || isApiReady) return
+
+    const load = async () => {
+      await api.isReady
+      setIsApiReady(true)
+      dispatch({ type: 'init', api: api as ApiPromise })
     }
-  }, [ state.isReady ])
 
-  const contextValue = {
+    load()
+  }, [ api, isApiReady ])
+
+  const contextValue: SubsocialApiContextProps = {
     state,
-    dispatch,
-    initial: (api: ApiPromise) => dispatch({ type: 'init', api: api })
+    dispatch
   }
-  return <SubsocialApiContext.Provider value={contextValue}>{props.children}</SubsocialApiContext.Provider>
+
+  return <SubsocialApiContext.Provider value={contextValue}>
+    {/* {isDevMode &&
+      <div className='p-1 pl-2 pr-2' style={{ backgroundColor: isApiReady ? '#cfffc5' : '' }}>
+        Substrate API is {isApiReady ? <b>ready</b> : <em>connecting...</em>}
+      </div>
+    } */}
+    {props.children}
+  </SubsocialApiContext.Provider>
 }
 
-export function useSubsocialApi () {
+export function useSubsocialApi (): SubsocialApiState {
   return { ...useContext(SubsocialApiContext).state }
-}
-
-export function useSubstrateApi () {
-  return useSubsocialApi().substrate
-}
-
-export function useIpfsApi () {
-  return useSubsocialApi().ipfs
 }
 
 export default SubsocialApiProvider

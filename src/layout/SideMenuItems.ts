@@ -1,4 +1,5 @@
-import { accountUrl, blogsFollowedByAccountUrl, blogsOwnedByAccountUrl } from 'src/components/utils/urls'
+import { accountUrl, spacesFollowedByAccountUrl, spacesOwnedByAccountUrl } from 'src/components/utils/urls'
+import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
 
 export type Divider = 'Divider'
 
@@ -7,7 +8,7 @@ export const Divider: Divider = 'Divider'
 export type PageLink = {
   name: string
   page: string[]
-  image: string
+  icon: React.ForwardRefExoticComponent<any>
 
   // Helpers
   isNotifications?: boolean
@@ -25,13 +26,13 @@ export const isPageLink = (item: MenuItem): item is PageLink =>
 export const DefaultMenu: MenuItem[] = [
   {
     name: 'Explore',
-    page: [ '/blogs/all' ],
-    image: 'global'
+    page: [ '/spaces/all' ],
+    icon: GlobalOutlined
   },
   {
     name: 'Advanced',
     page: [ '/bc' ],
-    image: 'block',
+    icon: BlockOutlined,
     isAdvanced: true
   }
 ];
@@ -42,33 +43,33 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     {
       name: 'My feed',
       page: [ '/feed' ],
-      image: 'profile'
+      icon: ProfileOutlined
     },
     {
       name: 'My notifications',
       page: [ '/notifications' ],
-      image: 'notification',
+      icon: BellOutlined,
       isNotifications: true
     },
     {
       name: 'My subscriptions',
-      page: [ '/blogs/following/[address]', blogsFollowedByAccountUrl(account) ],
-      image: 'book'
+      page: [ '/spaces/following/[address]', spacesFollowedByAccountUrl(account) ],
+      icon: StarOutlined
     },
     {
       name: 'My profile',
       page: [ '/profile/[address]', accountUrl(account) ],
-      image: 'user'
+      icon: UserOutlined
     },
     {
-      name: 'My blogs',
-      page: [ '/blogs/my/[address]', blogsOwnedByAccountUrl(account) ],
-      image: 'book'
+      name: 'My spaces',
+      page: [ '/spaces/my/[address]', spacesOwnedByAccountUrl(account) ],
+      icon: BookOutlined
     },
     {
-      name: 'New blog',
-      page: [ '/blogs/new' ],
-      image: 'plus'
+      name: 'New space',
+      page: [ '/spaces/new' ],
+      icon: PlusOutlined
     },
     Divider,
     ...DefaultMenu

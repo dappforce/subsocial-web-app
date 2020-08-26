@@ -1,9 +1,10 @@
 import React from 'react'
-import { toShortAddress } from '@polkadot/react-components/util';
+import { toShortAddress } from 'src/components/utils';
 import { AddressProps } from './utils/types';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import ViewProfileLink from '../ViewProfileLink';
+import { useExtensionName } from './utils';
 
 type Props = AddressProps & {
   isShort?: boolean,
@@ -21,15 +22,15 @@ export const Name = ({
 
   const { content, profile } = owner
   const fullname = content?.fullname
-  const username = profile?.username?.toString()
+  const handle = profile?.handle?.toString()
 
   // TODO extract a function? (find similar copypasta in other files):
   const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = fullname || username || addressString
+  const name = fullname || handle || useExtensionName(address) || addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return asLink
-    ? <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
+    ? <ViewProfileLink account={{ address, handle }} title={name} className={nameClass} />
     : <>{name}</>
 }
 

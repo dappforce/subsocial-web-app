@@ -1,30 +1,30 @@
 import React from 'react'
 import { ProfileData } from '@subsocial/types';
-import classes from '@polkadot/react-components/util/classes';
 import { Popover } from 'antd';
 import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
-import { toShortAddress } from '@polkadot/react-components/util';
+import { toShortAddress } from 'src/components/utils';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
-import dynamic from 'next/dynamic';
-import { useApi } from '@polkadot/react-hooks';
 import ViewProfileLink from '../ViewProfileLink';
-
-const Balance = dynamic(() => import('./utils/DfBalance'), { ssr: false });
+import BN from 'bn.js'
+import { Balance } from './utils/Balance';
 
 export type InfoProps = {
-  address?: string | AccountId
+  address?: string | AccountId,
+  balance?: string | BN | number,
   details?: JSX.Element
 }
 
-export const InfoDetails: React.FunctionComponent<InfoProps> = ({ details, address }) => {
-  const { isApiReady } = useApi()
+export const InfoDetails: React.FunctionComponent<InfoProps> = ({
+  details, balance, address
+}) => {
   return <>
     <div className='Df--AddressComponents-details'>
-      {address && isApiReady &&
-        <div><Balance address={address.toString()} /></div>
+      {balance ||
+        (address &&
+          <Balance address={address.toString()} />)
       }
       {details && <div>{details}</div>}
     </div>
@@ -40,33 +40,40 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     isShort = true,
     style,
     size,
-    children,
-    details
+    afterName,
+    details,
+    children
   } = props;
 
   const avatar = owner.content?.avatar
   const fullname = owner.content?.fullname
-  const username = owner.profile?.username?.toString()
+  const handle = owner.profile?.handle?.toString()
 
   // TODO extract a function? (find similar copypasta in other files):
   const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = fullname || username || addressString
+  const name = fullname || handle || addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return <div
-    className={classes('ui--AddressComponents', isPadded ? 'padded' : '', className)}
+    className={`ui--AddressComponents' ${isPadded ? 'padded' : ''} ${className}`}
     style={style}
   >
-    <div className='ui--AddressComponents-info'>
-      <Avatar size={size || 36} address={address} avatar={avatar} />
+    <div className='ui--AddressComponents-info d-flex'>
+      <Avatar size={size} address={address} avatar={avatar} />
       <div className='DfAddressMini-popup'>
         <Popover
           trigger='hover'
-          content={<ProfilePreview address={address} owner={owner}/>}
+          mouseEnterDelay={0.3}
+          content={<ProfilePreview address={address} owner={owner} />}
         >
-          <span>
-            <ViewProfileLink account={{ address, username }} title={name} className={nameClass} />
-          </span>
+          <div className='d-block'>
+            <ViewProfileLink
+              account={{ address, handle }}
+              title={name}
+              className={nameClass}
+            />
+            {afterName && <span className='ml-2'>{afterName}</span>}
+          </div>
         </Popover>
         <InfoDetails details={details}/>
       </div>

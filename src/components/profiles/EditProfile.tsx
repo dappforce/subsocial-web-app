@@ -1,316 +1,228 @@
-import React, { useState } from 'react';
-import { Button } from 'semantic-ui-react';
-import { Form, Field, withFormik, FormikProps } from 'formik';
-import { Option } from '@polkadot/types';
-import Section from '../utils/Section';
-import dynamic from 'next/dynamic';
-import { SubmittableResult } from '@polkadot/api';
-import { withCalls, withMulti, registry } from '@polkadot/react-api';
-
+import React, { useState } from 'react'
+import { Form, Input } from 'antd'
+import Router from 'next/router'
+import HeadMeta from '../utils/HeadMeta'
+import Section from '../utils/Section'
+import { stringifyText, getTxParams } from '../substrate'
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { ProfileUpdate, OptionIpfsContent, OptionText, IpfsContent } from '@subsocial/types/substrate/classes'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
+import { ProfileContent, AnyAccountId, ProfileData } from '@subsocial/types'
+import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
-import * as DfForms from '../utils/forms';
-import { socialQueryToProp } from '../utils/index';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
+import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
+import DfMdEditor from '../utils/DfMdEditor'
+import { withMyProfile } from './address-views/utils/withLoadedOwner'
+import { accountUrl } from '../utils/urls'
+import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 
-import Router from 'next/router';
-import HeadMeta from '../utils/HeadMeta';
-import { TxFailedCallback } from '@polkadot/react-components/Status/types';
-import { TxCallback } from '../utils/types';
-import { IpfsHash } from '@subsocial/types/substrate/interfaces';
-import { ProfileContent } from '@subsocial/types/offchain';
-import { ProfileUpdate } from '@subsocial/types/substrate/classes';
-import { newLogger } from '@subsocial/utils';
-import { ValidationProps, buildValidationSchema } from './ProfileValidation';
-import { ProfileData } from '@subsocial/types';
-import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
-import DfMdEditor from '../utils/DfMdEditor';
+const log = newLogger('EditProfile')
 
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+type Content = ProfileContent
 
-const log = newLogger('Edit profile')
-export type OuterProps = MyAccountProps & ValidationProps & {
-  myAddress: string,
-  owner?: ProfileData,
-  requireProfile?: boolean,
-};
+type FormValues = Partial<Content & {
+  handle: string
+}>
 
-type FormValues = ProfileContent & {
-  username: string;
-};
+type FieldName = keyof FormValues
 
-type FormProps = OuterProps & FormikProps<FormValues>;
+const fieldName = (name: FieldName): FieldName => name
 
-const LabelledField = DfForms.LabelledField<FormValues>();
+type ValidationProps = {
+  minHandleLen: number
+  maxHandleLen: number
+}
 
-const LabelledText = DfForms.LabelledText<FormValues>();
+type FormProps = ValidationProps & {
+  address: AnyAccountId,
+  owner?: ProfileData
+}
 
-const InnerForm = (props: FormProps) => {
-  const {
-    myAddress,
-    owner,
-    values,
-    errors,
-    dirty,
-    isValid,
-    setFieldValue,
-    isSubmitting,
-    setSubmitting,
-    resetForm
-  } = props;
+function getInitialValues ({ owner }: FormProps): FormValues {
+  if (owner) {
+    const { content, profile } = owner
+    return { ...content, handle: profile?.handle.toString() }
+  }
+  return {}
+}
 
-  const {
-    username,
-    fullname,
-    avatar,
-    email,
-    personalSite,
-    about,
-    facebook,
-    twitter,
-    linkedIn,
-    medium,
-    github,
-    instagram
-  } = values;
+export function InnerForm (props: FormProps) {
+  const [ form ] = Form.useForm()
+  const { ipfs } = useSubsocialApi()
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
-  const profile = owner?.profile
+  const { owner, minHandleLen, maxHandleLen, address } = props
+  const isProfile = owner?.profile
+  const initialValues = getInitialValues(props)
+
+  const getFieldValues = (): FormValues => {
+    return form.getFieldsValue() as FormValues
+  }
+
+  const newTxParams = (cid: IpfsCid) => {
+    const fieldValues = getFieldValues()
+
+    /** Returns `undefined` if value hasn't been changed. */
+    function getValueIfChanged (field: FieldName): any | undefined {
+      return form.isFieldTouched(field) ? fieldValues[field] as any : undefined
+    }
+
+    /** Returns `undefined` if CID hasn't been changed. */
+    function getCidIfChanged (): IpfsCid | undefined {
+      const prevCid = stringifyText(owner?.profile?.content.asIpfs)
+      return prevCid !== cid.toString() ? cid : undefined
+    }
+
+    if (!isProfile) {
+      return [ fieldValues.handle, new IpfsContent(cid) ];
+    } else {
+      // Update only dirty values.
+
+      // TODO seems like we cannot set a handle to None.
+
+      // TODO uupdate ProfileUpdate class
+      const update = new ProfileUpdate({
+        handle: new OptionText(getValueIfChanged('handle')),
+        content: new OptionIpfsContent(getCidIfChanged())
+      })
+
+      return [ update ]
+    }
+  }
+
+  const fieldValuesToContent = (): Content => {
+    return getFieldValues() as Content
+  }
+
+  // TODO pin to IPFS only if JSON changed.
+  const pinToIpfsAndBuildTxParams = () => getTxParams({
+    json: fieldValuesToContent(),
+    buildTxParamsCallback: newTxParams,
+    setIpfsCid,
+    ipfs
+  })
 
   const goToView = () => {
-    if (myAddress) {
-      // TODO use accountUrl({ address, username })
-      Router.push(`/profile/${myAddress}`).catch(err => log.error('Error while route:', err));
-    }
-  };
-  const { ipfs } = useSubsocialApi()
-  const [ ipfsCid, setIpfsCid ] = useState<IpfsHash>();
-
-  const onSubmit = (sendTx: () => void) => {
-    if (isValid) {
-      const json = {
-        fullname,
-        avatar,
-        email,
-        personalSite,
-        about,
-        facebook,
-        twitter,
-        linkedIn,
-        medium,
-        github,
-        instagram
-      };
-      ipfs.saveContent(json).then(cid => {
-        setIpfsCid(cid);
-        sendTx();
-      }).catch(err => new Error(err));
+    if (address) {
+      Router.push('profile/[address]', accountUrl({ address, handle: owner?.profile?.handle })).catch(err => log.error('Error while route:', err));
     }
   };
 
-  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
-    ipfsCid && ipfs.removeContent(ipfsCid.toString()).catch(err => new Error(err));
-    setSubmitting(false);
-  };
+  const onFailed: TxFailedCallback = () => {
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
+  }
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
-    setSubmitting(false);
-    goToView();
-  };
+  const onSuccess: TxCallback = () => {
+    goToView()
+  }
 
-  const buildTxParams = () => {
-    if (!isValid) return [];
+  const onDescChanged = (mdText: string) => {
+    form.setFieldsValue({ [fieldName('about')]: mdText })
+  }
 
-    if (!profile) {
-      return [ username, ipfsCid ];
-    } else {
-      // TODO update only dirty values.
-      const update = new ProfileUpdate(
-        {
-          username: new Option(registry, 'Text', username),
-          ipfs_hash: new Option(registry, 'Text', ipfsCid)
-        });
-      return [ update ];
-    }
-  };
+  return <>
+    <DfForm form={form} initialValues={initialValues}>
+      <Form.Item
+        name={fieldName('fullname')}
+        label='Profile name'
+        hasFeedback
+        rules={[
+          { required: true, message: 'Name is required.' },
+          { min: NAME_MIN_LEN, message: minLenError('Name', NAME_MIN_LEN) },
+          { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
+        ]}
+      >
+        <Input placeholder='Full name or nickname' />
+      </Form.Item>
 
-  const title = profile ? `Edit profile` : `New profile`;
-  const shouldBeValidUrlText = `Should be a valid URL.`;
+      <Form.Item
+        name={fieldName('handle')}
+        label='URL handle'
+        hasFeedback
+        rules={[
+          { pattern: /^[A-Za-z0-9_]+$/, message: 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_).' },
+          { min: minHandleLen, message: minLenError('Handle', minHandleLen) },
+          { max: maxHandleLen, message: maxLenError('Handle', maxHandleLen) }
+          // TODO test that handle is unique via a call to Substrate
+        ]}
+      >
+        <Input placeholder='You can use a-z, 0-9 and underscores' />
+      </Form.Item>
 
-  return (<>
-    <HeadMeta title={title}/>
+      <Form.Item
+        name={fieldName('avatar')}
+        label='Avatar URL'
+        hasFeedback
+        rules={[
+          { type: 'url', message: 'Should be a valid image URL.' }
+        ]}
+      >
+        <Input type='url' placeholder='Image URL' />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('about')}
+        label='About'
+        hasFeedback
+        rules={[
+          { max: DESC_MAX_LEN, message: maxLenError('Description', DESC_MAX_LEN) }
+        ]}
+      >
+        <DfMdEditor onChange={onDescChanged} />
+      </Form.Item>
+
+      <DfFormButtons
+        form={form}
+        txProps={{
+          label: isProfile
+            ? 'Update profile'
+            : 'Create new profile',
+          tx: isProfile
+            ? 'profiles.updateProfile'
+            : 'profiles.createProfile',
+          params: pinToIpfsAndBuildTxParams,
+          onSuccess,
+          onFailed
+        }}
+      />
+    </DfForm>
+  </>
+}
+
+// function bnToNum (bn: Codec, _default: number): number {
+//   return bn ? (bn as unknown as BN).toNumber() : _default
+// }
+
+export function FormInSection (props: FormProps) {
+  const [ consts ] = useState<ValidationProps>({
+    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
+    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+  })
+
+  const { owner } = props
+  const title = owner?.profile ? `Edit profile` : `New profile`
+
+  // useSubsocialEffect(() => {
+  //   const load = async () => {
+  //     // const api = await substrate.api
+  //     setConsts({
+  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
+  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+  //     })
+  //   }
+  //   load()
+  // }, [])
+
+  return <>
+    <HeadMeta title={title} />
     <Section className='EditEntityBox' title={title}>
-      <Form className='ui form DfForm EditEntityForm'>
-
-        <LabelledText
-          name='username'
-          label='Username'
-          placeholder={`You can use a-z, 0-9, dashes and underscores.`}
-          style={{ maxWidth: '30rem' }}
-          {...props}
-        />
-
-        <LabelledText
-          name='fullname'
-          label='Fullname'
-          placeholder='Enter your fullname'
-          {...props}
-        />
-
-        <LabelledText
-          name='avatar'
-          label='Avatar URL'
-          placeholder={`Should be a valid image URL.`}
-          {...props}
-        />
-
-        <LabelledText
-          name='email'
-          label='Email'
-          placeholder='Enter your email'
-          {...props}
-        />
-
-        <LabelledText
-          name='personalSite'
-          label='Personal site'
-          placeholder='Address for personal site'
-          {...props}
-        />
-
-        <LabelledText
-          name='facebook'
-          label='Facebook profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='twitter'
-          label='Twitter profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='linkedIn'
-          label='LinkedIn profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='medium'
-          label='Medium profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='github'
-          label='GitHub profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledText
-          name='instagram'
-          label='Instagram profile'
-          placeholder={shouldBeValidUrlText}
-          {...props}
-        />
-
-        <LabelledField name='about' label='About' {...props}>
-          <Field component={DfMdEditor} name='about' value={about} onChange={(data: string) => setFieldValue('about', data)} className={`DfMdEditor ${errors['about'] && 'error'}`} />
-        </LabelledField>
-
-        <LabelledField {...props}>
-          <TxButton
-            type='submit'
-            size='medium'
-            icon='send'
-            label={profile
-              ? 'Update my profile'
-              : 'Create my profile'
-            }
-            isDisabled={!dirty || isSubmitting}
-            params={buildTxParams()}
-            tx={profile
-              ? 'social.updateProfile'
-              : 'social.createProfile'
-            }
-            onClick={onSubmit}
-            onFailed={onTxFailed}
-            onSuccess={onTxSuccess}
-          />
-          <Button
-            type='button'
-            size='medium'
-            disabled={!dirty || isSubmitting}
-            onClick={() => resetForm()}
-            content='Reset form'
-          />
-        </LabelledField>
-      </Form>
+      <InnerForm {...props} {...consts} />
     </Section>
   </>
-  );
-};
+}
 
-const EditForm = withFormik<OuterProps, FormValues>({
+export const EditProfile = withMyProfile(FormInSection)
 
-  // Transform outer props into form values
-  mapPropsToValues: (props): FormValues => {
-    const { owner } = props;
-    console.log(owner)
-    const content = owner?.content
-    const profile = owner?.profile
-    if (profile && content) {
-      const username = profile.username.toString();
-      return {
-        username,
-        ...content
-      };
-    } else {
-      return {
-        username: '',
-        fullname: '',
-        avatar: '',
-        about: '',
-        email: '',
-        personalSite: '',
-        facebook: '',
-        twitter: '',
-        linkedIn: '',
-        medium: '',
-        github: '',
-        instagram: ''
-      };
-    }
-  },
+export const NewProfile = FormInSection
 
-  validationSchema: buildValidationSchema,
-
-  handleSubmit: values => {
-    // do submitting things
-  }
-})(InnerForm);
-
-export const EditFormWithValidation = withMulti(
-  EditForm,
-  withCalls<OuterProps>(
-    socialQueryToProp('usernameMinLen', { propName: 'usernameMinLen' }),
-    socialQueryToProp('usernameMaxLen', { propName: 'usernameMaxLen' })
-  )
-);
-
-export const NewProfile = withMulti(
-  EditFormWithValidation,
-  withMyAccount
-);
-
-export const EditProfile = withMulti(
-  EditFormWithValidation,
-  withMyAccount,
-  withLoadedOwner
-);
-
-export default NewProfile;
+export default NewProfile

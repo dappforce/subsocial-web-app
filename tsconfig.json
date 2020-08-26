@@ -18,7 +18,8 @@
   },
   "typeRoots": [
     "./node_modules/@polkadot/ts",
-    "./node_modules/@types"
+    "./node_modules/@types",
+    "./src/types"
   ],
   "exclude": [
     "node_modules",
@@ -28,6 +29,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx", "src/pages/_app.js"
+    "**/*.tsx",
+    "src/pages/_app.js"
   ]
 }

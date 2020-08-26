@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Loader } from 'semantic-ui-react'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { hexToBn } from '@polkadot/util';
-import { useMyAddress } from '../utils/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import { Activity } from '@subsocial/types/offchain';
 import NoData from '../utils/EmptyList';
-import NotAuthorized from '../utils/NotAuthorized';
+import NotAuthorized from '../auth/NotAuthorized';
 import { getNewsFeed } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
-import { PostPreviewList } from '../posts/PostPreview';
+import { PostPreviewList } from '../posts/view-post/PostPreviewList';
+import { Loading } from '../utils';
 
 export const MyFeed = () => {
   const myAddress = useMyAddress()
@@ -30,7 +30,6 @@ export const MyFeed = () => {
   const getNextPage = async (actualOffset: number = offset) => {
     const isFirstPage = actualOffset === 0;
     const data = await getNewsFeed(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
-    console.log('Data', actualOffset, data);
     if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
     setItems(isFirstPage ? data : items.concat(data));
     setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
@@ -46,7 +45,7 @@ export const MyFeed = () => {
       next={getNextPage}
       hasMore={hasMore}
       // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
-      loader={<Loader active inline='centered' />}
+      loader={<Loading />}
     >
       <PostPreviewList postIds={postIds} />
     </InfiniteScroll>

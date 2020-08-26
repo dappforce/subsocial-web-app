@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 
-import { withCalls, withMulti } from '@polkadot/react-api';
+import { withCalls, withMulti, profileFollowsQueryToProp } from '../substrate';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { socialQueryToProp } from '../utils/index';
-import { Modal, Button } from 'semantic-ui-react';
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
+import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 
 type Props = {
   following?: AccountId[],
@@ -21,7 +20,7 @@ const InnerFollowingModal = (props: Props) => {
       <div key={account.toString()} className='DfModal'>
         <ProfilePreviewWithOwner
           address={account}
-          size={48}
+          size={LARGE_AVATAR_SIZE}
           mini
         />
       </div>
@@ -29,28 +28,24 @@ const InnerFollowingModal = (props: Props) => {
   };
 
   return (
-    <Modal
-      size='small'
-      onClose={close}
-      open={open}
-      trigger={<Button basic onClick={() => setOpen(true)}>Following ({followingCount})</Button>}
-      centered={true}
-      style={{ marginTop: '3rem' }}
-    >
-      <Modal.Header>Following ({followingCount})</Modal.Header>
-      <Modal.Content scrolling>
+    <>
+      <Button onClick={() => setOpen(true)}>Following ({followingCount})</Button>
+      <Modal
+        onCancel={close}
+        visible={open}
+        title={`Following (${followingCount})`}
+        style={{ marginTop: '3rem' }}
+        footer={<Button onClick={() => setOpen(false)}>Close</Button>}
+      >
         {renderFollowing()}
-      </Modal.Content>
-      <Modal.Actions>
-        <Button content='Close'size={TX_BUTTON_SIZE} onClick={() => setOpen(false)} />
-      </Modal.Actions>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 
 export const AccountFollowingModal = withMulti(
   InnerFollowingModal,
   withCalls<Props>(
-    socialQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'following' })
+    profileFollowsQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'following' })
   )
 );

@@ -1,0 +1,286 @@
+@import './subsocial-vars.scss';
+
+.DfSideBar {
+  position: fixed;
+  z-index: 10;
+  top: $height_top_menu;
+  overflow: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  .ant-menu-inline {
+    width: 255px;
+  }
+}
+
+.DfSideBar .am-drawer-sidebar {
+  background-color: #fff;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.DfSideBar .am-drawer-sidebar .am-list {
+  width: 255px;
+  padding: 0;
+}
+
+.DfBrand.mobile {
+    img {
+      max-width: 36px;
+    }
+}
+
+.item.header.disabled {
+  margin: 0;
+
+  span {
+    width: 3rem;
+    overflow: hidden;
+  }
+}
+
+.am-drawer-draghandle {
+  background-color: initial;
+}
+
+.infinite-scroll-component {
+  overflow: initial !important;
+}
+
+.DfModal:first-child {
+  margin: $space_mini;
+  padding: $space_mini !important;
+}
+
+.DfModal {
+  margin: $space_big $space_mini;
+  padding: $space_normal $space_mini $space_mini $space_mini;
+  border-top: 1px solid $color_light_border;
+
+  .DfContent {
+    padding: 0;
+  }
+
+  .DfDescription {
+    font-size: $font_normal;
+  }
+}
+
+@media (max-width: 450px) {
+
+  .DfEntirePost {
+    .DfPostContent {
+      padding: 1rem;
+      margin: 1rem -1rem;
+      border-radius:0;
+    }
+
+    .DfInfoPanel {
+      display: block;
+
+    }
+  }
+
+  .DfSectionOuter {
+    width: 100%;
+  }
+
+  .item.header.disabled {
+    zoom: 0.8;
+  }
+
+  .ui.search.selection.dropdown {
+    min-width: 18rem;
+  }
+
+  .editor-toolbar {
+    zoom: .7;
+  }
+
+  .ProfilePreviews {
+
+    button.ui.tiny {
+      padding: .6rem;
+      font-size: $font_tiny;
+    }
+  }
+
+  li.ant-list-item.ant-list-item-no-flex {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: .5rem;
+  }
+
+  .infinite-scroll-component {
+    .DfSegment {
+      margin-top: .5rem;
+    }
+  }
+
+  .Df--AddressComponents-details {
+    font-size: $font_small;
+  }
+
+  .DfModal:first-child {
+    margin: $space_mini;
+    padding: $space_mini !important;
+  }
+
+  .DfModal {
+    margin: $space_tiny $space_mini;
+    padding: $space_normal $space_mini $space_mini $space_mini !important;
+    border-top: .5px solid $color_light_border;
+
+    .DfContent {
+      padding: 0;
+    }
+
+    .DfDescription {
+      font-size: $font_normal;
+    }
+  }
+
+  .DfAddressMini-popup {
+    line-height: 1rem;
+    font-size: 1rem !important;
+
+    .header {
+      font-size: 1rem !important;
+    }
+  }
+
+  .DfStatItem {
+    font-size: $font_small;
+  }
+
+  .DfPageContent {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem;
+  }
+
+  .DfBurgerIcon {
+    padding-left: 0;
+    padding-right: $space_tiny;
+  }
+
+  .DfSection {
+    margin-top: $space_big !important;
+
+    .DfSection-title {
+      border: none;
+      font-size: $font_big;
+      margin: 0;
+      margin-top: $space_normal;
+      padding: 0;
+
+      .DfTitle--List {
+        margin-bottom: $space_mini
+      }
+    }
+  }
+
+  .ProfileDetails {
+    .content {
+      padding: 0 $space_tiny;
+    }
+  }
+
+  
+
+  .DfContent,
+  .content {
+    text-align: left !important;
+  }
+
+  .content {
+    width: 80%;
+    line-height: $space_big;
+  }
+
+  .header {
+    line-height: normal;
+    font-size: $font_large !important;
+    font-weight: 500;
+  }
+
+  .header.DfPostTitle--preview {
+    margin: $space_tiny 0;
+  }
+
+  .DfPostPreview {
+    &h2 {
+      margin-top: 0;
+      font-size: $font_large;
+    }
+    &.DfSegment {
+      padding-bottom: 0 !important;
+    }
+  }
+
+  .DfSpaceStats {
+    font-size: $font_tiny; /* TODO maybe delete */
+
+    .DfStatItem {
+      margin-right: $space_tiny;
+    }
+  }
+
+  .DfSegment {
+    z-index: 1;
+    border-radius: 0;
+    margin: 0 -1rem;
+    padding: .5rem;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+
+    .DfSegment {
+      margin: 0;
+    }
+  }
+
+  .ui--Status {
+    zoom: .7;
+    max-width: 50%;
+  }
+
+  .DfPostName {
+    font-size: 2rem;
+    margin-bottom: $space_normal !important;
+    width: 87%;
+  }
+
+  .DfContentPage {
+    text-align: left !important;
+
+    .FullProfile {
+      margin-top: $space_mini !important;
+    }
+  }
+
+  .DfCountsPreview .MutedText {
+    margin-right: $space_normal;
+
+    .disable {
+      margin: 0;
+    }
+  }
+
+  .ui--IdentityIcon.image {
+    margin-right: $space_tiny;
+  }
+
+  .DfDataList {
+    padding: 0;
+  }
+
+  .DfSearch {
+    width: 100%;
+  }
+
+  .DfSocialLinks {
+    margin-top: .25rem;
+    font-size: 1rem;
+  }
+}

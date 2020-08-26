@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
-import '../utils/styles/github-markdown.css'
 
 interface Props {
   source?: string

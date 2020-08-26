@@ -1,40 +1,25 @@
 /* eslint-disable node/no-deprecated-api */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const withCSS = require('@zeit/next-css');
-const withImages = require('next-images');
-const withPlugins = require('next-compose-plugins');
+// const withBundleAnalyzer = require('@next/bundle-analyzer')
+const withImages = require('next-images')
+const withPlugins = require('next-compose-plugins')
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
 
 // Required by Docker
-require('dotenv').config();
-
-// fix: prevents error when .css files are required by node
-if (typeof require !== 'undefined') {
-  require.extensions['.css'] = () => {};
-  require.extensions['.svg'] = () => {};
-  require.extensions['.gif'] = () => {};
-  require.extensions['.png'] = () => {};
-}
+require('dotenv').config()
 
 const nextConfig = {
   target: 'server',
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.(raw)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-      use: 'raw-loader'
-    });
-
-    return config;
-  }
-};
-
-module.exports = withPlugins([ withImages, withCSS({
-  webpack (config, { isServer }) {
+  webpack: (config, { isServer }) => {
 
     if (!isServer) {
       config.node = {
         fs: 'empty'
+      }
+    } else {
+      config.node = {
+        'node-hid': 'empty'
       }
     }
 
@@ -50,38 +35,34 @@ module.exports = withPlugins([ withImages, withCSS({
       })
     ]
 
-    config.module.rules.push({
-      test: /\.(png|svg|eot|otf|ttf|woff|woff2|gif)$/,
-      use: {
-        loader: 'url-loader',
-        options: {
-          limit: 8192,
-          publicPath: '/_next/static/',
-          outputPath: 'static/',
-          name: '[name].[ext]'
-        }
-      }
-    },
-    {
-      test: /\.css$/,
-      exclude: /(node_modules)/,
-      use: [
-        {
-          loader: require.resolve('postcss-loader'),
+    config.module.rules.push(
+      {
+        test: /\.(raw)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: 'raw-loader'
+      },
+      {
+        test: /\.md$/,
+        use: [
+          'html-loader',
+          'markdown-loader'
+        ]
+      },
+      {
+        test: /\.(png|svg|eot|otf|ttf|woff|woff2|gif)$/,
+        use: {
+          loader: 'url-loader',
           options: {
-            ident: 'postcss',
-            plugins: () => [
-              require('precss'),
-              require('autoprefixer'),
-              require('postcss-simple-vars'),
-              require('postcss-nested'),
-              require('postcss-import'),
-              require('postcss-clean')(),
-              require('postcss-flexbugs-fixes')
-            ]
+            limit: 8192,
+            publicPath: '/_next/static/',
+            outputPath: 'static/',
+            name: '[name].[ext]'
           }
         }
-      ]
-    })
+      }
+    )
+
     return config
-  } }) ], nextConfig);
+  }
+}
+
+module.exports = withPlugins([ withImages ], nextConfig)

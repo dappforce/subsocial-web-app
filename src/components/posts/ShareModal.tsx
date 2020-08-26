@@ -1,32 +1,30 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti } from '@polkadot/react-api';
-import { socialQueryToProp } from '../utils/index';
-import { Modal, Button } from 'semantic-ui-react';
+import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../substrate';
+import { Modal } from 'antd';
+import Button from 'antd/lib/button';
 import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
-import { ViewPost } from './ViewPost';
-import Link from 'next/link';
-import { Loading } from '../utils/utils';
 import { LabeledValue } from 'antd/lib/select';
-import SelectBlogPreview from '../utils/SelectBlogPreview';
+import SelectSpacePreview from '../utils/SelectSpacePreview';
 import BN from 'bn.js';
-import { PostExtension, SharedPost } from '@subsocial/types/substrate/classes';
+import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { IpfsHash } from '@subsocial/types/substrate/interfaces';
-import { TxFailedCallback, TxCallback } from '@polkadot/react-components/Status/types';
-import { SubmittableResult } from '@polkadot/api';
+import { IpfsCid } from '@subsocial/types/substrate/interfaces';
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
 import DfMdEditor from '../utils/DfMdEditor';
+import { DynamicPostPreview } from './view-post/DynamicPostPreview';
+import { NewSpaceButton } from '../spaces/helpers';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type Props = MyAccountProps & {
   postId: BN
-  blogIds?: BN[]
+  spaceIds?: BN[]
   open: boolean
-  close: () => void
+  onClose: () => void
 }
 
 const Fields = {
@@ -34,31 +32,17 @@ const Fields = {
 }
 
 const InnerShareModal = (props: Props) => {
-  const { open, close, postId, blogIds } = props;
+  const { open, onClose, postId, spaceIds } = props;
 
-  const renderModal = (children: React.ReactElement) =>
-    <Modal
-      onClose={close}
-      open={open}
-      size='small'
-      style={{ marginTop: '3rem' }}
-    >
-      {children}
-    </Modal>
-
-  if (!blogIds) {
-    return renderModal(
-      <div className='p-4 text-center'>
-        <Loading />
-      </div>
-    )
+  if (!spaceIds) {
+    return null
   }
 
   const extension = new PostExtension({ SharedPost: postId as SharedPost });
 
   const { ipfs } = useSubsocialApi()
-  const [ ipfsHash, setIpfsHash ] = useState<IpfsHash>();
-  const [ blogId, setBlogId ] = useState(blogIds[0]);
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
+  const [ spaceId, setSpaceId ] = useState(spaceIds[0]);
 
   const { control, errors, formState, watch } = useForm({
     validationSchema: buildSharePostValidationSchema(),
@@ -69,99 +53,103 @@ const InnerShareModal = (props: Props) => {
   const body = watch(Fields.body, '');
   const { isSubmitting } = formState;
 
-  const onSubmit = (sendTx: () => void) => {
-    ipfs.saveContent({ body }).then(hash => {
-      if (hash) {
-        setIpfsHash(hash);
-        sendTx();
-      }
-    }).catch(err => new Error(err));
-  };
-
-  const onTxFailed: TxFailedCallback = (_txResult: SubmittableResult | null) => {
+  const onTxFailed: TxFailedCallback = () => {
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err));
     // TODO show a failure message
-    close()
+    onClose()
   };
 
-  const onTxSuccess: TxCallback = (_txResult: SubmittableResult) => {
+  const onTxSuccess: TxCallback = () => {
     // TODO show a success message
-    close()
+    onClose()
   };
 
-  const buildTxParams = () => {
-    return [ blogId, ipfsHash, extension ];
+  const newTxParams = (hash: IpfsCid) => {
+    return [ spaceId, extension, new IpfsContent(hash) ];
   };
 
-  const renderTxButton = () => (
+  const renderTxButton = () =>
     <TxButton
-      type='submit'
-      size='medium'
+      type='primary'
       label={`Create a post`}
-      isDisabled={isSubmitting}
-      params={buildTxParams()}
-      tx={'social.createPost'}
-      onClick={onSubmit}
+      disabled={isSubmitting}
+      params={() => getTxParams({
+        json: { body },
+        buildTxParamsCallback: newTxParams,
+        setIpfsCid,
+        ipfs
+      })}
+      tx={'posts.createPost'}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
+      successMessage='Shared to your space'
+      failedMessage='Failed to share'
     />
-  );
 
   const renderShareView = () => {
-    if (isEmptyArray(blogIds)) {
+    if (isEmptyArray(spaceIds)) {
       return (
-        <Link href='/blogs/new'>
+        <NewSpaceButton>
           <a className='ui button primary'>
-            Create your first blog
+            Create your first space
           </a>
-        </Link>
+        </NewSpaceButton>
       )
     }
 
     return <div className='DfShareModalBody'>
-      <form>
+      <span className='mr-3'>
+        Share the post to your space:
+        {' '}
+        <SelectSpacePreview
+          spaceIds={spaceIds}
+          onSelect={saveSpace}
+          imageSize={24}
+          defaultValue={spaceId?.toString()}
+        />
+      </span>
+
+      <form className='my-2'>
         <Controller
-          as={<DfMdEditor />}
-          name={Fields.body}
           control={control}
+          as={<DfMdEditor />}
+          options={{ autofocus: true }}
+          name={Fields.body}
           value={body}
-          className={`DfMdEditor ${errors[Fields.body] && 'error'}`}
+          className={errors[Fields.body] && 'error'}
         />
         <div className='DfError'>
           <ErrorMessage errors={errors} name={Fields.body} />
         </div>
       </form>
-      <ViewPost id={postId} withStats={false} withActions={false} variant='preview' />
+      <DynamicPostPreview id={postId} asRegularPost />
     </div>
   };
 
-  const saveBlog = (value: string | number | LabeledValue) => {
-    setBlogId(new BN(value as string));
+  const saveSpace = (value: string | number | LabeledValue) => {
+    setSpaceId(new BN(value as string));
   };
 
-  return renderModal(<>
-    <Modal.Header>
-      <span className='mr-3'>Share the post to your blog:</span>
-      <SelectBlogPreview
-        blogIds={blogIds}
-        onSelect={saveBlog}
-        imageSize={24}
-        defaultValue={blogIds[0].toString()}
-      />
-    </Modal.Header>
-    <Modal.Content scrolling className='DfShareModalPadding'>
-      {renderShareView()}
-    </Modal.Content>
-    <Modal.Actions>
-      <Button size='medium' onClick={close}>Cancel</Button>
-      {renderTxButton()}
-    </Modal.Actions>
-  </>)
+  return <Modal
+    onCancel={onClose}
+    visible={open}
+    title={'Share post'}
+    style={{ marginTop: '3rem' }}
+    footer={
+      <>
+        <Button onClick={onClose}>Cancel</Button>
+        {renderTxButton()}
+      </>
+    }
+  >
+    {renderShareView()}
+  </Modal>
 }
 
 export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    socialQueryToProp(`blogIdsByOwner`, { paramName: 'address', propName: 'blogIds' })
+    spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'address', propName: 'spaceIds' })
   )
 );

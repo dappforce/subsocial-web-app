@@ -2,34 +2,40 @@ import React from 'react';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 
-import { PostId } from '@subsocial/types/substrate/interfaces/subsocial';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
-import { LatestBlogs } from './LatestBlogs';
+import { LatestSpaces } from './LatestSpaces';
 import { LatestPosts } from './LatestPosts';
-import { BlogData, ExtendedPostData } from '@subsocial/types';
+import { SpaceData, PostWithAllDetails } from '@subsocial/types';
+import { PageContent } from './PageWrapper';
+import partition from 'lodash.partition';
+import { isComment } from '../posts/view-post';
+import { ZERO } from '../utils';
 
-const ZERO = new BN(0);
-const FIVE = new BN(5);
+const RESERVED_SPACES = new BN(1000 + 1)
+const FIFTY = new BN(50);
+const MAX_TO_SHOW = 5;
 
 type Props = {
-  blogsData: BlogData[]
-  postsData: ExtendedPostData[]
+  spacesData: SpaceData[]
+  postsData: PostWithAllDetails[],
+  commentData: PostWithAllDetails[]
 }
 
 const LatestUpdate: NextPage<Props> = (props: Props) => {
-  const { blogsData, postsData } = props;
+  const { spacesData, postsData, commentData } = props;
 
   return (
-    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+    <PageContent>
       <HeadMeta
-        title='Latest posts and blogs'
+        title='Latest posts and spaces'
         desc='Subsocial is an open decentralized social network'
       />
-      <LatestPosts {...props} postsData={postsData} />
-      {/* TODO Show latest comments */}
-      <LatestBlogs {...props} blogsData={blogsData} />
-    </div>
+      <LatestPosts {...props} postsData={postsData} type='post' />
+      <LatestPosts {...props} postsData={commentData} type='comment' />
+      <LatestSpaces {...props} spacesData={spacesData} />
+    </PageContent>
+
   );
 }
 
@@ -44,19 +50,27 @@ const getLastNIds = (nextId: BN, size: BN): BN[] => {
 LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi();
   const { substrate } = subsocial
-  const nextBlogId = await substrate.nextBlogId()
+  const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const latestBlogIds = getLastNIds(nextBlogId, FIVE);
-  const blogsData = await subsocial.findBlogs(latestBlogIds)
+  const newSpaces = nextSpaceId.sub(RESERVED_SPACES)
+  const spaceLimit = newSpaces.lt(FIFTY) ? newSpaces : FIFTY
 
-  const latestPostIds = getLastNIds(nextPostId, FIVE);
-  const postsData = await subsocial.findPostsWithDetails(latestPostIds as PostId[]);
-  console.log('Loaded posts on the home page:', postsData)
+  const latestSpaceIds = getLastNIds(nextSpaceId, spaceLimit);
+  const visibleSpacesData = await subsocial.findVisibleSpaces(latestSpaceIds) as SpaceData[]
+  const spacesData = visibleSpacesData.slice(0, MAX_TO_SHOW)
+
+  const latestPostIds = getLastNIds(nextPostId, FIFTY);
+  const allPostsData = await subsocial.findVisiblePostsWithAllDetails(latestPostIds);
+  const [ visibleCommentData, visiblePostsData ] = partition(allPostsData, (x) => isComment(x.post.struct.extension))
+
+  const postsData = visiblePostsData.slice(0, MAX_TO_SHOW)
+  const commentData = visibleCommentData.slice(0, MAX_TO_SHOW)
 
   return {
-    blogsData,
-    postsData
+    spacesData,
+    postsData,
+    commentData
   }
 }
 

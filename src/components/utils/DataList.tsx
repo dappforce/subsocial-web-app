@@ -16,12 +16,13 @@ type Props<T extends any> = {
   renderItem: (item: T, index: number) => JSX.Element,
   title?: React.ReactNode,
   noDataDesc?: React.ReactNode,
-  noDataExt?: React.ReactNode
+  noDataExt?: React.ReactNode,
+  paginationOff?: boolean
 }
 
 // TODO rename to DataList
 export function ListData<T extends any> (props: Props<T>) {
-  const { dataSource, renderItem, className, title, noDataDesc = 'no data', noDataExt } = props;
+  const { dataSource, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
   const total = dataSource.length;
 
   const router = useRouter();
@@ -51,7 +52,7 @@ export function ListData<T extends any> (props: Props<T>) {
 
   const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
   const hasNoData = total === 0;
-  const noPagination = hasNoData || total <= pageSize;
+  const noPagination = hasNoData || total <= pageSize || paginationOff;
 
   const paginationConfig = (): PaginationConfig | undefined => {
     if (noPagination) return undefined

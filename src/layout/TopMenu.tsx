@@ -1,32 +1,29 @@
 import React, { useState } from 'react';
-import { Button, Icon } from 'antd';
+import { CloseCircleOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import Search from '../components/search/Search';
 import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { useMyAccount, useIsLoggedIn } from '../components/utils/MyAccountContext';
-import LogInButton from '../components/utils/LogIn';
+import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
-import { AddressPopupWithOwner } from 'src/components/profiles/address-views';
 
 const InnerMenu = () => {
   const { toggle, show: open } = useSidebarCollapsed();
-  const { state: { address } } = useMyAccount();
   const [ show, setShow ] = useState(isBrowser);
-  const isLoggedIn = useIsLoggedIn();
 
   const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
 
   return isMobile && show
     ? <div className='DfTopBar DfTopBar--search'>
       <Search/>
-      <Icon type='close-circle' className='DfCloseSearchIcon' onClick={() => setShow(false)} />
+      <CloseCircleOutlined className='DfCloseSearchIcon' onClick={() => setShow(false)} />
     </div>
     : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
         <Button type='link' onClick={toggle} onMouseEnter={open} className='DfBurgerIcon'>
-          <Icon type='unordered-list' style={{ fontSize: '20px', color: '#999' }} theme='outlined' />
+          <UnorderedListOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
-        <Link href='/'>
+        <Link href='/' as='/'>
           <a className={`DfBrand ${isMobile ? 'mobile' : ''}`}>
             <img src={logoImg} alt='Subsocial' />
           </a>
@@ -36,13 +33,9 @@ const InnerMenu = () => {
       <div className='DfTopBar--rightContent'>
         <MobileView>
           {isMobile &&
-          <Icon type='search' className='DfSearchIcon' onClick={() => setShow(true)} />}
+          <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />}
         </MobileView>
-        {isLoggedIn && address
-          ? <AddressPopupWithOwner
-            className='profileName'
-            address={address}
-          /> : <LogInButton/>}
+        <AuthorizationPanel />
       </div>
     </div>;
 };

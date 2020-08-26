@@ -1,29 +1,43 @@
 import React, { useState } from 'react'
-import { PostId } from '@subsocial/types/substrate/interfaces'
-import { Icon } from 'antd'
+import { PostWithSomeDetails } from '@subsocial/types/dto';
+import { PostExtension } from '@subsocial/types/substrate/classes';
+import { ShareAltOutlined } from '@ant-design/icons';
+import { Button } from 'antd'
 import { ShareModal } from './ShareModal'
+import { isRegularPost } from './view-post';
+import { IconWithLabel } from '../utils';
 
 type Props = {
-  postId?: PostId
+  postDetails: PostWithSomeDetails
   title?: React.ReactNode
-  className?: string
+  className?: string,
+  preview?: boolean
 }
 
 export const SharePostAction = ({
-  postId,
-  title = 'Share',
+  postDetails: {
+    post: { struct: { id, shares_count, extension } },
+    ext
+  },
+  preview,
   className = ''
 }: Props) => {
 
-  const [ open, setOpen ] = useState(false)
-  const close = () => setOpen(false)
+  const [ open, setOpen ] = useState<boolean>()
+  const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
+  const title = 'Share'
 
-  return (
-    <span className={className} onClick={() => setOpen(true)}>
-      <Icon type='share-alt' />{' '}{title}
-      {open && <ShareModal postId={postId} open={open} close={close} />}
-    </span>
-  )
+  return <>
+    <Button
+      className={className}
+      onClick={() => setOpen(true)}
+      title={preview ? title : undefined}
+      style={{ marginRight: !preview ? '-1rem' : '' }}
+    >
+      <IconWithLabel icon={<ShareAltOutlined />} count={shares_count} label={!preview ? title : undefined} />
+    </Button>
+    <ShareModal postId={postId} open={open} onClose={() => setOpen(false)} />
+  </>
 }
 
 export default SharePostAction

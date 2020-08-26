@@ -1,5 +1,5 @@
 import React from 'react';
-import { BareProps } from '@polkadot/react-components/types';
+import { BareProps } from 'src/components/utils/types';
 
 type Props = BareProps & {
   id?: string,
@@ -17,7 +17,7 @@ export class Section extends React.PureComponent<Props> {
       <div className='DfSectionOuter'>
         <section id={id} className={className}>
           {this.renderTitle()}
-          <div>{children}</div>
+          {children}
         </section>
       </div>
     );

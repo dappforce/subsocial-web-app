@@ -1,18 +1,18 @@
 import React from 'react';
-import { SpaceNav, SpaceNavProps } from '../components/blogs/SpaceNav';
-import { NavigationEditor } from '../components/blogs/NavigationEditor';
-import { mockBlogId, mockBlogStruct, mockBlogJson } from './mocks/BlogMocks';
+import { SpaceNav, SpaceNavProps } from '../components/spaces/SpaceNav';
+import { NavigationEditor } from '../components/spaces/NavigationEditor';
+import { mockSpaceId, mockSpaceStruct, mockSpaceJson } from './mocks/SpaceMocks';
 import { mockAccountAlice } from './mocks/AccountMocks';
 import { mockNavTabs } from './mocks/NavTabsMocks';
 
 export default {
-  title: 'Blogs | Navigation'
+  title: 'Spaces | Navigation'
 }
 
-const { name, desc, image } = mockBlogJson
+const { name, desc, image } = mockSpaceJson
 
 const commonNavProps: SpaceNavProps = {
-  blogId: mockBlogId,
+  spaceId: mockSpaceId,
   creator: mockAccountAlice,
   name: name,
   desc: desc,
@@ -28,4 +28,4 @@ export const _NavigationWithTabs = () =>
   <SpaceNav {...commonNavProps} navTabs={mockNavTabs} />
 
 export const _EditNavigation = () =>
-  <NavigationEditor id={mockBlogId} struct={mockBlogStruct} json={mockBlogJson} />
+  <NavigationEditor id={mockSpaceId} struct={mockSpaceStruct} json={mockSpaceJson} />

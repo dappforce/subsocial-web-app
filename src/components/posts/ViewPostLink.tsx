@@ -1,9 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasBlogIdOrHandle, HasPostId, postUrl } from '../utils/urls'
+import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../utils/urls'
 
 type Props = {
-  blog: HasBlogIdOrHandle
+  space: HasSpaceIdOrHandle
   post: HasPostId
   title?: string
   hint?: string
@@ -11,17 +11,17 @@ type Props = {
 }
 
 export const ViewPostLink = ({
-  blog,
+  space,
   post,
   title,
   hint,
   className
 }: Props) => {
 
-  if (!blog.id || !post.id || !title) return null
+  if (!space.id || !post.id || !title) return null
 
   return (
-    <Link href='/blogs/[blogId]/posts/[postId]' as={postUrl(blog, post)}>
+    <Link href='/spaces/[spaceId]/posts/[postId]' as={postUrl(space, post)}>
       <a className={className} title={hint}>{title}</a>
     </Link>
   )

@@ -1,14 +1,16 @@
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { ProfileData } from '@subsocial/types'
-import { BareProps } from '@polkadot/react-api/types'
 
-export type AddressProps = BareProps & {
+export type AddressProps = {
+  className?: string
+  style?: Record<string, any>
   address: AnyAccountId,
   owner?: ProfileData
 }
 
 export type ExtendedAddressProps = AddressProps & {
   children?: React.ReactNode,
+  afterName?: JSX.Element
   details?: JSX.Element
   isPadded?: boolean,
   isShort?: boolean,

@@ -3,7 +3,7 @@ import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
 import { AccountId } from '@polkadot/types/interfaces';
-import IdentityIcon from '@polkadot/react-components/IdentityIcon';
+import IdentityIcon from '@polkadot/react-identicon';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
@@ -11,13 +11,25 @@ import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModa
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
-import { isMyAddress } from '../utils/MyAccountContext';
+import { isMyAddress } from '../auth/MyAccountContext';
 import Section from '../utils/Section';
 import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 
-import { TX_BUTTON_SIZE } from '../../config/Size.config';
-import { Menu, Dropdown, Icon } from 'antd';
+import {
+  EllipsisOutlined,
+  FacebookOutlined,
+  GithubOutlined,
+  GlobalOutlined,
+  InstagramOutlined,
+  LinkedinOutlined,
+  MailOutlined,
+  MediumOutlined,
+  TwitterOutlined,
+  PlusOutlined
+} from '@ant-design/icons';
+
+import { Menu, Dropdown, Button } from 'antd';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
@@ -25,13 +37,15 @@ import { Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
-import { withLoadedOwner } from './address-views/utils/withLoadedOwner';
+import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner';
 import { InfoDetails } from './address-views';
-import { useApi } from '@polkadot/react-hooks';
-import { getAccountId } from '../utils/utils';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { getAccountId } from '../substrate';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
 import ViewProfileLink from './ViewProfileLink';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -39,7 +53,7 @@ export type Props = {
   preview?: boolean,
   nameOnly?: boolean,
   withLink?: boolean,
-  id: AccountId,
+  address: AccountId,
   owner?: ProfileData,
   followers?: AccountId[],
   size?: number
@@ -47,19 +61,18 @@ export type Props = {
 
 const Component: NextPage<Props> = (props: Props) => {
   const {
-    id,
+    address,
     preview = false,
     nameOnly = false,
     withLink = false,
-    size = 48,
+    size = LARGE_AVATAR_SIZE,
     owner = {} as ProfileData
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { isApiReady } = useApi()
+  const { isApiReady } = useSubsocialApi()
 
-  const address = id.toString();
   const isMyAccount = isMyAddress(address);
 
   const {
@@ -74,7 +87,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
-    username
+    handle
   } = profile;
 
   const {
@@ -103,11 +116,11 @@ const Component: NextPage<Props> = (props: Props) => {
   const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
   const createProfileButton = noProfile && isMyAccount &&
-    <Link href={`/profile/new`}>
-      <a className={'DfCreateProfileButton ui button primary ' + TX_BUTTON_SIZE}>
-        <i className='plus icon' />
+    <Link href='/profile/new' as='profile/new'>
+      <Button type='primary' ghost>
+        <PlusOutlined />
         Create profile
-      </a>
+      </Button>
     </Link>;
 
   const renderDropDownMenu = () => {
@@ -116,7 +129,7 @@ const Component: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
-          <Link href={`/profile/edit`} ><a className='item'>Edit</a></Link>
+          <Link href='/profile/edit' as='profile/edit'><a className='item'>Edit</a></Link>
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -127,25 +140,25 @@ const Component: NextPage<Props> = (props: Props) => {
     return <>
       {isMyAccount &&
         <Dropdown overlay={menu} placement='bottomRight'>
-          <Icon type='ellipsis' />
+          <EllipsisOutlined />
         </Dropdown>
       }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
     </>
   };
 
-  const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(username);
+  const isOnlyAddress = isEmptyStr(fullname) || isEmptyStr(handle);
 
   // TODO extract function: there is similar code in other files
   const getName = () => {
     if (isOnlyAddress) {
-      return address;
+      return address.toString();
     } else {
       return fullname;
     }
   };
 
-  const accountForUrl = { address, username }
+  const accountForUrl = { address, handle }
 
   const renderDescription = () => preview
     ? <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
@@ -161,80 +174,76 @@ const Component: NextPage<Props> = (props: Props) => {
   };
 
   const renderPreview = () => {
-    return <div>
-      <div className={`ProfileDetails MyBlog`}>
-        {hasAvatar
-          ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
-          : <IdentityIcon className='image' value={address} size={size} />
-        }
-        <div className='content'>
-          <div className='header DfProfileTitle'>
-            <NameAsLink />
-            <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
-            {renderDropDownMenu()}
-          </div>
-          {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
-          <div className='about'>
-            <div>
-              {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
-              <div className='DfSocialLinks'>
-                {hasEmail &&
-                  <a target='_blank' href={`mailto:${email}`}>
-                    <Icon type='mail' />
-                  </a>
-                }
-
-                {/* TODO fix copypasta of social links. Implement via array. */}
-
-                {hasPersonalSite &&
-                  <a
-                    href={personalSite}
-                    target='_blank'
-                  >
-                    <Icon type='global' />
-                  </a>
-                }
-                {hasFacebookLink &&
-                  <a target='_blank' href={facebook}>
-                    <Icon type='facebook' />
-                  </a>
-                }
-                {hasTwitterLink &&
-                  <a target='_blank' href={twitter}>
-                    <Icon type='twitter' />
-                  </a>}
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasLinkedInLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='linkedin' />
-                  </a>
-                }
-                {hasMediumLink &&
-                  <a target='_blank' href={linkedIn}>
-                    <Icon type='medium' />
-                  </a>
-                }
-                {hasGitHubLink &&
-                  <a target='_blank' href={github}>
-                    <Icon type='github' />
-                  </a>
-                }
-                {hasInstagramLink &&
-                  <a target='_blank' href={instagram}>
-                    <Icon type='instagram' />
-                  </a>
-                }
-              </div>
+    return (
+      <div>
+        <div className={`ProfileDetails MySpace`}>
+          {hasAvatar
+            ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
+            : <IdentityIcon className='image' value={address} size={size} />
+          }
+          <div className='content w-100'>
+            <div className='header DfProfileTitle'>
+              <NameAsLink />
+              <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+              <KusamaRolesTags address={address} />
+              {renderDropDownMenu()}
             </div>
-            {renderDescription()}
+            {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
+            <div className='about'>
+              <div>
+                {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
+                <div className='DfSocialLinks'>
+                  {hasEmail &&
+                    <a target='_blank' href={`mailto:${email}`}>
+                      <MailOutlined />
+                    </a>
+                  }
+
+                  {/* TODO fix copypasta of social links. Implement via array. */}
+
+                  {hasPersonalSite &&
+                    <a target='_blank' href={personalSite}>
+                      <GlobalOutlined />
+                    </a>
+                  }
+                  {hasFacebookLink &&
+                    <a target='_blank' href={facebook}>
+                      <FacebookOutlined />
+                    </a>
+                  }
+                  {hasTwitterLink &&
+                    <a target='_blank' href={twitter}>
+                      <TwitterOutlined />
+                    </a>}
+                  {hasLinkedInLink &&
+                    <a target='_blank' href={linkedIn}>
+                      <LinkedinOutlined />
+                    </a>
+                  }
+                  {hasMediumLink &&
+                    <a target='_blank' href={medium}>
+                      <MediumOutlined />
+                    </a>
+                  }
+                  {hasGitHubLink &&
+                    <a target='_blank' href={github}>
+                      <GithubOutlined />
+                    </a>
+                  }
+                  {hasInstagramLink &&
+                    <a target='_blank' href={instagram}>
+                      <InstagramOutlined />
+                    </a>
+                  }
+                </div>
+              </div>
+              {renderDescription()}
+              <KusamaIdentity address={address} />
+            </div>
           </div>
         </div>
       </div>
-    </div>;
+    )
   };
 
   if (nameOnly) {
@@ -246,22 +255,25 @@ const Component: NextPage<Props> = (props: Props) => {
   const noFollowers = followers.eq(ZERO);
   const noFollowing = following.eq(ZERO);
 
+  const followersText = <Pluralize count={followers} singularText='Follower' />
+  const followingText = <Pluralize count={following} singularText='Following' />
+
   return <>
     <HeadMeta title={getName()} desc={about} image={avatar} />
     <Section>
       <div className='FullProfile'>
         {renderPreview()}
         <div className='Profile--actions'>
-          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}><Pluralize count={followers.toString()} singularText='Follower'/></span>
-          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{following.toString()} Following </span>
+          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
+          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
           <div className='mt-3'>
             {createProfileButton}
-            <FollowAccountButton address={address} size={TX_BUTTON_SIZE} />
+            <FollowAccountButton address={address} />
           </div>
         </div>
       </div>
-      {followersOpen && <AccountFollowersModal id={id} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers.toString()} singularText='Follower'/>} />}
-      {followingOpen && <AccountFollowingModal id={id} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={'Following'} />}
+      {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
+      {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
   </>;
 };
@@ -271,8 +283,6 @@ Component.getInitialProps = async (props): Promise<any> => {
   const subsocial = await getSubsocialApi()
   const accountId = await getAccountId(address as string);
 
-  // TODO resolve profile by accountId or handle (username)
-
   if (!accountId && res) {
     res.statusCode = 404
     return { statusCode: 404 }
@@ -280,7 +290,7 @@ Component.getInitialProps = async (props): Promise<any> => {
 
   const owner = await subsocial.findProfile(address as string)
   return {
-    id: accountId,
+    address: accountId,
     owner
   };
 };
@@ -288,3 +298,5 @@ Component.getInitialProps = async (props): Promise<any> => {
 export default Component;
 
 export const ViewProfile = withLoadedOwner(Component)
+
+export const ViewMyProfile = withMyProfile(Component)

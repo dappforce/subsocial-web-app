@@ -1,5 +1,6 @@
 import { isMobile } from 'react-device-detect';
-import { Button$Sizes } from '@polkadot/react-components/Button/types';
+import { ButtonSize } from 'antd/lib/button';
 
-export const TX_BUTTON_SIZE: Button$Sizes = isMobile ? 'tiny' : 'small';
-export const ANT_BUTTON_SIZE = isMobile ? 'small' : 'default';
+export const ANT_BUTTON_SIZE: ButtonSize = isMobile ? 'small' : undefined;
+export const DEFAULT_AVATAR_SIZE = isMobile ? 30 : 36;
+export const LARGE_AVATAR_SIZE = isMobile ? 40 : 44;

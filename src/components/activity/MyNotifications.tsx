@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Loader } from 'semantic-ui-react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { Activity } from '@subsocial/types/offchain';
 import { getNotifications } from '../utils/OffchainUtils';
 import NoData from '../utils/EmptyList';
-import NotAuthorized from '../utils/NotAuthorized';
+import NotAuthorized from '../auth/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
-import { useMyAddress } from '../utils/MyAccountContext';
+import { useMyAddress } from '../auth/MyAccountContext';
 import { Notifications } from './Notification';
-import { Loading } from '../utils/utils';
+import { Loading } from '../utils';
 
 export const MyNotifications = () => {
   const myAddress = useMyAddress()
@@ -57,7 +56,7 @@ export const MyNotifications = () => {
       next={getNextPage}
       hasMore={hasNextPage}
       // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
-      loader={<Loader active inline='centered' />}
+      loader={<Loading />}
     >
       <Notifications activities={items} />
     </InfiniteScroll>
