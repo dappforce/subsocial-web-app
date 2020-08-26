@@ -29,6 +29,7 @@ import { isHidden } from '@subsocial/api/utils/visibility-filter';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
+import { resolveIpfsUrl } from 'src/ipfs';
 
 type DropdownProps = {
   space: Space,
@@ -161,7 +162,7 @@ const PostImage = ({ content }: PostImageProps) => {
   const { image } = content;
 
   return nonEmptyStr(image)
-    ? <DfBgImg src={image} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
+    ? <DfBgImg src={resolveIpfsUrl(image)} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
     : null
 }
 

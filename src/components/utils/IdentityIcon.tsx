@@ -7,7 +7,6 @@ import { IdentityProps as Props } from '@polkadot/react-identicon/types';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import BaseIdentityIcon from '@polkadot/react-identicon';
-import ViewProfileLink from '../profiles/ViewProfileLink';
 
 export function getIdentityTheme (): 'substrate' {
   return 'substrate';
@@ -19,23 +18,20 @@ function IdentityIcon ({ className, prefix, size, theme, value }: Props): React.
 
   return (
     <span className={`ui--IdentityIcon-Outer ${className}`}>
-      <ViewProfileLink
-        account={{ address }}
-        title={<BaseIdentityIcon
-          isHighlight
-          prefix={prefix}
-          size={size}
-          theme={thisTheme as 'substrate'}
-          value={address}
-          style={{ cursor: 'pointer', marginRight: '.5rem' }}
-        />}
+      <BaseIdentityIcon
+        isHighlight
+        prefix={prefix}
+        size={size}
+        theme={thisTheme as 'substrate'}
+        value={address}
+        style={{ cursor: 'pointer' }}
       />
     </span>
   );
 }
 
-export default React.memo(styled(IdentityIcon)`
+export default styled(IdentityIcon)`
   .ui--IdentityIcon {
     display: block;
   }
-`);
+`
