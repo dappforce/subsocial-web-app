@@ -18,7 +18,8 @@ import DfMdEditor from '../utils/DfMdEditor'
 import { withLoadSpaceFromUrl, CheckSpacePermissionFn, CanHaveSpaceProps } from './withLoadSpaceFromUrl'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
-import { UploadImg } from '../uploader'
+import { UploadAvatar } from '../uploader'
+import { MailOutlined } from '@ant-design/icons'
 const log = newLogger('EditSpace')
 
 const MAX_TAGS = 5
@@ -130,6 +131,13 @@ export function InnerForm (props: FormProps) {
   return <>
     <DfForm form={form} validateTrigger={[ 'onBlur' ]} initialValues={initialValues}>
       <Form.Item
+        name={fieldName('image')}
+        label='Avatar'
+      >
+        <UploadAvatar onChange={onAvatarChanged} img={initialValues.image} />
+      </Form.Item>
+
+      <Form.Item
         name={fieldName('name')}
         label='Space name'
         hasFeedback
@@ -154,26 +162,6 @@ export function InnerForm (props: FormProps) {
         ]}
       >
         <Input placeholder='You can use a-z, 0-9 and underscores' />
-      </Form.Item>
-
-      <Form.Item
-        name={fieldName('image')}
-        label='Avatar URL'
-        hasFeedback
-        rules={[
-          { type: 'string', message: 'Should be a valid image string.' }
-        ]}
-      >
-        <UploadImg onChange={onAvatarChanged} img={initialValues.image} />
-      </Form.Item>
-
-      <Form.Item
-        name={fieldName('email')}
-        label="Email"
-        rules={[
-          { type: 'email', message: 'Should be a valid email' }
-        ]}>
-        <Input type='email' placeholder='Email' />
       </Form.Item>
 
       <Form.Item
@@ -203,6 +191,15 @@ export function InnerForm (props: FormProps) {
             <Select.Option key={i} value={tag} children={tag} />
           )}
         </Select>
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('email')}
+        label={<MailOutlined />}
+        rules={[
+          { type: 'email', message: 'Should be a valid email' }
+        ]}>
+        <Input type='email' placeholder='Email address' />
       </Form.Item>
 
       <NewSocialLinks name='links' collapsed={!initialValues.links} />

@@ -15,6 +15,7 @@ import DfMdEditor from '../utils/DfMdEditor'
 import { withMyProfile } from './address-views/utils/withLoadedOwner'
 import { accountUrl } from '../utils/urls'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
+import { UploadAvatar } from '../uploader'
 
 const log = newLogger('EditProfile')
 
@@ -117,6 +118,10 @@ export function InnerForm (props: FormProps) {
     form.setFieldsValue({ [fieldName('about')]: mdText })
   }
 
+  const onAvatarChanged = (url: string) => {
+    form.setFieldsValue({ [fieldName('avatar')]: url })
+  }
+
   return <>
     <DfForm form={form} initialValues={initialValues}>
       <Form.Item
@@ -134,13 +139,9 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('avatar')}
-        label='Avatar URL'
-        hasFeedback
-        rules={[
-          { type: 'url', message: 'Should be a valid image URL.' }
-        ]}
+        label='Avatar'
       >
-        <Input type='url' placeholder='Image URL' />
+        <UploadAvatar onChange={onAvatarChanged} img={initialValues.avatar} />
       </Form.Item>
 
       <Form.Item
