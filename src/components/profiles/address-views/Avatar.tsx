@@ -2,7 +2,6 @@ import React from 'react'
 import { nonEmptyStr } from '@subsocial/utils';
 import { DfBgImg } from 'src/components/utils/DfBgImg';
 import IdentityIcon from 'src/components/utils/IdentityIcon';
-import { withLoadedOwner } from './utils/withLoadedOwner';
 import { AnyAccountId } from '@subsocial/types/substrate';
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
@@ -26,7 +25,5 @@ export const Avatar: React.FunctionComponent<ImageProps> = ({ size = DEFAULT_AVA
 
   return icon
 };
-
-export const AvatarWithOwner = withLoadedOwner(Avatar);
 
 export default Avatar;

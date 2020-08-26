@@ -26,7 +26,7 @@ function format (value: Compact<any> | BN | string, currency: string, withSi?: b
 
 const useGetBalance = (address: AnyAccountId) => {
   const [ balance, setBalance ] = useState<BN>()
-  const [ currency ] = useState(formatBalance.getDefaults().unit);
+
   useSubsocialEffect(({ substrate }) => {
     let unsub: (() => void) | undefined;
     let isSubscribe = true
@@ -46,10 +46,11 @@ const useGetBalance = (address: AnyAccountId) => {
       unsub && unsub()
       isSubscribe = false
     }
-  })
+  }, [ address ])
 
   if (!balance) return null
 
+  const currency = formatBalance.getDefaults().unit
   return format(balance, currency)
 }
 
