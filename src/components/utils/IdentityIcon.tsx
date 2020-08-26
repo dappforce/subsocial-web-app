@@ -4,7 +4,7 @@
 
 import { IdentityProps as Props } from '@polkadot/react-identicon/types';
 
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import BaseIdentityIcon from '@polkadot/react-identicon';
 
@@ -13,7 +13,7 @@ export function getIdentityTheme (): 'substrate' {
 }
 
 function IdentityIcon ({ className, prefix, size, theme, value }: Props): React.ReactElement<Props> {
-  const [ address ] = useState(value?.toString() || '');
+  const address = value?.toString() || '';
   const thisTheme = theme || getIdentityTheme();
 
   return (
