@@ -9,6 +9,8 @@ import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice';
 import { Store } from 'src/redux/types';
 import { useSetReplyToStore } from './utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
+import { LoadingOutlined } from '@ant-design/icons';
+import { MutedDiv } from '../utils/MutedText';
 
 const log = newLogger('CommentTree')
 
@@ -40,17 +42,21 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
 export const DynamicCommentsTree = (props: LoadProps) => {
   const { rootPost, parent: { id: parentId }, space, replies } = props;
   const parentIdStr = parentId.toString()
+  const [ isLoading, setIsLoading ] = useState(false)
   const [ replyComments, setComments ] = useState<PostWithSomeDetails[]>(replies || []);
   const dispatch = useDispatch()
 
   useSubsocialEffect(({ subsocial, substrate }) => {
 
     const loadComments = async () => {
+      setIsLoading(true)
       const replyIds = await substrate.getReplyIdsByPostId(parentId);
       const comments = await subsocial.findPostsWithAllDetails({ ids: replyIds }) as any;
       const replyIdsStr = replyIds.map(x => x.toString())
       setComments(comments)
-      useSetReplyToStore(dispatch, { reply: { replyId: replyIdsStr, parentId: parentIdStr }, comment: comments })
+      const reply = { replyId: replyIdsStr, parentId: parentIdStr }
+      useSetReplyToStore(dispatch, { reply, comment: comments })
+      setIsLoading(false)
     }
 
     if (nonEmptyArr(replyComments)) {
@@ -62,7 +68,9 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
   }, [ dispatch ]);
 
-  return <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />;
+  return isLoading
+    ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined className='mr-1' /> Loading replies...</MutedDiv>
+    : <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />
 }
 
 export const CommentsTree = (props: LoadProps) => {

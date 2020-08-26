@@ -148,7 +148,7 @@ export function InnerForm (props: FormProps) {
           { type: 'url', message: 'Should be a valid image URL.' }
         ]}
       >
-        <Input type='url' placeholder='Image URL' />
+        <Input type='url' />
       </Form.Item>
 
       <Form.Item
