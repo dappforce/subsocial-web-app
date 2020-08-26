@@ -20,8 +20,6 @@ interface Props {
   children: React.ReactNode;
 }
 
-const asDrawer = !isHomePage() || isMobile
-
 log.debug('Are we in a browser?', isBrowser);
 
 const HomeNav = () => {
@@ -31,7 +29,6 @@ const HomeNav = () => {
     width='255'
     trigger={null}
     collapsible
-    collapsedWidth={asDrawer ? 0 : undefined}
     collapsed={collapsed}
     defaultCollapsed={false}
   >
@@ -61,6 +58,8 @@ const DefaultNav: FunctionComponent = ({ children }) => {
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props;
 
+  const asDrawer = !isHomePage() || isMobile
+
   const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
 
   return <ReactiveBase
@@ -72,7 +71,7 @@ export const Navigation = (props: Props): JSX.Element => {
       <Header className='DfHeader'>
         <TopMenu />
       </Header>
-      <Layout>
+      <Layout className='ant-layout-has-sider'>
         {asDrawer ? <DefaultNav /> : <HomeNav />}
         <MainContent />
       </Layout>
