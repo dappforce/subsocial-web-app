@@ -1,5 +1,5 @@
 import React from 'react'
-import notification, { NotificationPlacement, ArgsProps } from 'antd/lib/notification'
+import notification, { NotificationPlacement, ArgsProps, IconType } from 'antd/lib/notification'
 
 export type Message = React.ReactNode
 
@@ -7,7 +7,9 @@ export type MessageProps = {
   message: React.ReactNode
   description?: React.ReactNode
   icon?: React.ReactNode
-  placement?: NotificationPlacement
+  placement?: NotificationPlacement,
+  duration?: number | null,
+  key?: string
 }
 
 const DefaultPlacement: NotificationPlacement = 'bottomLeft'
@@ -34,4 +36,33 @@ export const showSuccessMessage = (props: Message | MessageProps) => {
 
 export const showErrorMessage = (props: Message | MessageProps) => {
   showMessage(notification.error, props)
+}
+
+export const showWarnMessage = (props: Message | MessageProps) => {
+  showMessage(notification.warn, props)
+}
+
+type ControlledMessageProps = MessageProps & {
+  type?: IconType
+}
+
+export const controlledMessage = ({
+  key = `open${new Date().getMilliseconds()}`,
+  type,
+  placement = DefaultPlacement,
+  ...otherProps
+}: ControlledMessageProps) => {
+  return {
+    open: () => {
+      notification.open({
+        key,
+        type,
+        placement,
+        ...otherProps
+      })
+    },
+    close: () => {
+      notification.close(key)
+    }
+  }
 }

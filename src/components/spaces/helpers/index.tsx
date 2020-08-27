@@ -172,7 +172,7 @@ export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
       <span style={{ marginRight: '1rem' }}>
         <Pluralize count={posts.length} singularText='Post'/>
       </span>
-      {posts.length > 0 && <CreatePostButton space={space} title={'New Post'} size='small' />}
+      {posts.length > 0 && <CreatePostButton space={space} title={'Write Post'} className='mb-2' />}
     </div>
 
   const VisiblePostList = () => <ListData
