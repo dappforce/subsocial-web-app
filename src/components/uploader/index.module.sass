@@ -1,6 +1,8 @@
+@import 'src/styles/subsocial-vars.scss'
+
 .DfUploadAvatar
   display: flex
-  justify-content: flex-end
+  justify-content: flex-start
   \:global .ant-upload-select-picture-card
     border-radius: 100%
     margin: 0
@@ -9,4 +11,20 @@
     \:global .ant-upload-select-picture-card
       width: 100%
       height: 80px
+
+.DfRemoveIcon
+  color: #ea2828
+  cursor: pointer
+
+.DfRemoveCover
+  @extend .DfRemoveIcon
+  margin-left: -2.5rem
+  margin-top: .5rem
+  width: 32px
+  height: 32px
+  justify-content: center
+  display: flex
+  align-items: center
+  background-color: #00000088
+  border-radius: 50%
 

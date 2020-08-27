@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Upload } from 'antd';
-import { LoadingOutlined, CameraOutlined } from '@ant-design/icons';
+import { LoadingOutlined, CameraOutlined, DeleteOutlined } from '@ant-design/icons';
 import { UploadChangeParam, DraggerProps } from 'antd/lib/upload';
 import ImgCrop from 'antd-img-crop';
 import { showErrorMessage } from '../utils/Message';
@@ -9,23 +9,37 @@ import { DfBgImg } from '../utils/DfBgImg';
 import styles from './index.module.sass'
 import { newLogger } from '@subsocial/utils';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { BareProps, FVoid } from '../utils/types';
 
 const log = newLogger('Uploader')
 
 type UploadProps = Omit<DraggerProps, 'onChange'> & {
-  onChange: (url: string) => void,
+  onChange: (url?: string) => void,
   img?: string
 }
 
+type ImagePreviewProps = {
+  imgUrl: string,
+  onRemove: FVoid
+}
+
 type InnerUploadProps = UploadProps & {
-  renderImagePreview: (url: string) => JSX.Element
+  ImagePreview: React.FC<ImagePreviewProps>
 }
 
 const setError = (err: string) => {
   showErrorMessage(err);
 }
 
-export const InnerUploadImg = ({ onChange, img, renderImagePreview, ...props }: InnerUploadProps) => {
+type RemoveIconProps = BareProps & {
+  onClick: FVoid
+}
+
+const RemoveIcon = (props: RemoveIconProps) => <div {...props}>
+  <DeleteOutlined />
+</div>
+
+export const InnerUploadImg = ({ onChange, img, ImagePreview, ...props }: InnerUploadProps) => {
   const [ loading, setLoading ] = useState(false)
   const [ imgUrl, setUrl ] = useState(img)
   const { ipfs } = useSubsocialApi()
@@ -43,6 +57,7 @@ export const InnerUploadImg = ({ onChange, img, renderImagePreview, ...props }: 
   }, [])
 
   const handleChange = async (info: UploadChangeParam) => {
+    console.log('onChange', info)
     if (info.file.status === 'uploading') {
       setLoading(true)
       return;
@@ -63,8 +78,7 @@ export const InnerUploadImg = ({ onChange, img, renderImagePreview, ...props }: 
         }
       }
 
-      setLoading(true)
-
+      setLoading(false)
     }
   };
 
@@ -76,22 +90,29 @@ export const InnerUploadImg = ({ onChange, img, renderImagePreview, ...props }: 
   );
 
   return (
-    <Upload
-      name="avatar"
-      listType="picture-card"
-      showUploadList={false}
-      beforeUpload={beforeUpload}
-      onChange={handleChange}
-      {...props}
-    >
-      {imgUrl ? renderImagePreview(resolveIpfsUrl(imgUrl)) : uploadButton}
-    </Upload>
+    imgUrl ? <ImagePreview imgUrl={resolveIpfsUrl(imgUrl)} onRemove={() => {
+      onChange(undefined)
+      setUrl(undefined)
+    }} />
+      : <Upload
+        name="avatar"
+        listType="picture-card"
+        showUploadList={false}
+        beforeUpload={beforeUpload}
+        onChange={handleChange}
+        {...props}
+      >
+        {uploadButton}
+      </Upload>
   );
 }
 
 export const UploadCover = (props: UploadProps) => {
   return <InnerUploadImg
-    renderImagePreview={(url) => <img src={url} className='w-100' alt='cover' />}
+    ImagePreview={({ imgUrl, onRemove }) => <div className='d-flex'>
+      <img src={imgUrl} className='w-100' alt='cover' />
+      <RemoveIcon className={styles.DfRemoveCover} onClick={onRemove} />
+    </div>}
     className={styles.DfUploadCover}
     {...props}
   />
@@ -100,7 +121,10 @@ export const UploadCover = (props: UploadProps) => {
 export const UploadAvatar = (props: UploadProps) => {
   return <ImgCrop rotate>
     <InnerUploadImg
-      renderImagePreview={(url) => <DfBgImg className='DfAvatar' size={100} src={url} style={{ border: '1px solid #ddd' }} rounded/>}
+      ImagePreview={({ imgUrl, onRemove }) => <div className='d-flex'>
+        <DfBgImg className='DfAvatar' size={100} src={imgUrl} style={{ border: '1px solid #ddd' }} rounded/>
+        <RemoveIcon className={styles.DfRemoveIcon} onClick={onRemove} />
+      </div>}
       className={styles.DfUploadAvatar}
       {...props}
     />
