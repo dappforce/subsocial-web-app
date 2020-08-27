@@ -58,18 +58,18 @@ Go to [localhost:3003](http://localhost:3003)
 
 ### Easy start
 
-To start Subsocial web UI containerized (you should have `Docker` installed):
+To start Subsocial web UI containerized (you should have `docker` installed):
 
 ```
 docker run -d --rm --name subsocial-webui -p 3003:3003 dappforce/subsocial-ui:latest
 ```
 
-### Start with docker-compose
+### Start with `docker-compose`
 
-To start Subsocial web UI with a nginx supported:
+This will start Subsocial web UI with an nginx support:
 
-- Proxy web UI to a port `80`
-- Proxy from `localhost/bc` to `localhost:3002` (where Polkadot JS Apps should be launched)
+- Proxy web UI to the port `80`
+- Proxy from `localhost/bc` to `localhost:3002` (where Polkadot.js Apps should be running)
 
 ```
 docker-compose up -t docker/docker-compose.yml -d
@@ -89,4 +89,3 @@ docker build -f docker/Dockerfile -t [your_nickname]/subsocial-ui .
 ## License
 
 Subsocial is [GPL 3.0](./LICENSE) licensed.
-
