@@ -25,7 +25,7 @@ type SocialLinksProps = {
 }
 
 export const ViewSocialLinks = ({ links }: SocialLinksProps) => {
-  return <>{(links as string[]).map(link => <SocialLink link={link} />)}</>
+  return <>{(links as string[]).map(link => <SocialLink key={link} link={link} />)}</>
 }
 
 type ContactInfoProps = SocialLinksProps & {

@@ -124,7 +124,7 @@ export function InnerForm (props: FormProps) {
     form.setFieldsValue({ [fieldName('about')]: mdText })
   }
 
-  const onAvatarChanged = (url: string) => {
+  const onAvatarChanged = (url?: string) => {
     form.setFieldsValue({ [fieldName('image')]: url })
   }
 
