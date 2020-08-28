@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import isEmpty from 'lodash.isempty';
 import { List } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
@@ -20,13 +20,41 @@ type Props<T extends any> = {
   paginationOff?: boolean
 }
 
+type PaginationQuery = {
+  size?: number | string,
+  page?: number | string
+}
+
 // TODO rename to DataList
 export function ListData<T extends any> (props: Props<T>) {
   const { dataSource, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
   const total = dataSource.length;
 
   const router = useRouter();
-  const routerQuery = router.query;
+  const { address, ...routerQuery } = router.query;
+
+  const setRouterQuery = ({ size, page }: PaginationQuery) => {
+    if (size) {
+      routerQuery.size = size.toString()
+    }
+
+    if (page) {
+      routerQuery.page = page.toString()
+    }
+
+    console.log(router)
+
+    console.log({
+      pathname: router.asPath.split('?')[0],
+      query: routerQuery
+    })
+
+    router.replace(
+      { pathname: router.pathname, query: routerQuery },
+      { pathname: router.asPath.split('?')[0], query: routerQuery },
+      { shallow: true }
+    ).catch(console.log);
+  }
 
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
@@ -34,6 +62,7 @@ export function ListData<T extends any> (props: Props<T>) {
   useEffect(() => {
     let isSubscribe = true;
 
+    console.log(routerQuery)
     if (isEmpty(routerQuery) && isSubscribe) {
       setPageSize(DEFAULT_PAGE_SIZE);
       setCurrentPage(DEFAULT_FIRST_PAGE);
@@ -41,9 +70,13 @@ export function ListData<T extends any> (props: Props<T>) {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);
 
+      console.log(page, _pageSize)
+
       if (isSubscribe) {
-        setCurrentPage(page > 0 ? page : DEFAULT_PAGE_SIZE);
-        setPageSize(_pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE);
+        const currentPage = page > 0 ? page : DEFAULT_PAGE_SIZE
+        const currentSize = _pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE
+        setCurrentPage(currentPage);
+        setPageSize(currentSize);
       }
     }
 
@@ -61,25 +94,16 @@ export function ListData<T extends any> (props: Props<T>) {
       current: currentPage,
       defaultCurrent: DEFAULT_FIRST_PAGE,
       onChange: page => {
+        console.log('Current page:', page)
         setCurrentPage(page);
-        routerQuery.page = page.toString();
-
-        Router.push({
-          pathname: router.pathname,
-          query: routerQuery
-        }).catch(console.log);
+        setRouterQuery({ page })
       },
       pageSize,
       pageSizeOptions,
       showSizeChanger: total > 0,
       onShowSizeChange: (_, size: number) => {
         setPageSize(size);
-        routerQuery.size = size.toString();
-
-        Router.push({
-          pathname: router.pathname,
-          query: routerQuery
-        }).catch(console.log);
+        setRouterQuery({ size })
       }
     }
   }

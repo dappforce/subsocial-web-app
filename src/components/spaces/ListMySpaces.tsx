@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ViewSpacePage } from './ViewSpace';
 import ListData from '../utils/DataList';
 import { NextPage } from 'next';
@@ -38,34 +38,35 @@ const useLoadHiddenSpaces = (mySpaceIds: SpaceId[]) => {
 
 const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.struct.id.toString()}`} spaceData={space} preview withFollowButton />
 
-export const ListMySpaces: NextPage<Props> = (props) => {
-  const { spacesData, mySpaceIds } = props;
+const VisibleSpacesList = ({ spacesData }: Props) => <ListData
+  title={`My spaces (${spacesData.length})`}
+  dataSource={spacesData}
+  renderItem={SpacePreview}
+  noDataDesc='You do not have your own spaces yet'
+  noDataExt={<NewSpaceButton type='primary' ghost>Create my first space</NewSpaceButton>}
+/>
+
+const HiddenSpacesList = ({ mySpaceIds }: Props) => {
   const { myHiddenSpaces, isLoading } = useLoadHiddenSpaces(mySpaceIds)
 
-  const VisibleSpacesList = () => <ListData
-    title={`My spaces (${spacesData.length})`}
-    dataSource={spacesData}
+  if (isLoading) return <Loading />
+
+  const hiddenSpacesCount = myHiddenSpaces.length
+  return hiddenSpacesCount ? <ListData
+    title={`My hidden spaces (${hiddenSpacesCount})`}
+    dataSource={myHiddenSpaces}
     renderItem={SpacePreview}
-    noDataDesc='You do not have your own spaces yet'
-    noDataExt={<NewSpaceButton type='primary' ghost>Create my first space</NewSpaceButton>}
-  />
+  /> : null
+}
 
-  const HiddenSpacesList = () => {
-    if (isLoading) return <Loading />
-
-    const hiddenSpacesCount = myHiddenSpaces.length
-    return hiddenSpacesCount ? <ListData
-      title={`My hidden spaces (${hiddenSpacesCount})`}
-      dataSource={myHiddenSpaces}
-      renderItem={SpacePreview}
-    /> : null
-  }
+export const ListMySpaces: NextPage<Props> = (props) => {
+  const HiddenSpaces = useMemo(() => <HiddenSpacesList {...props} />, [])
 
   return <>
     <HeadMeta title='My spaces' desc='The spaces I manage on Subsocial' />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <VisibleSpacesList />
-      <HiddenSpacesList />
+      <VisibleSpacesList {...props} />
+      {HiddenSpaces}
     </div>
   </>
 };
