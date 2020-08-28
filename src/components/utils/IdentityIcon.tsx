@@ -12,7 +12,7 @@ export function getIdentityTheme (): 'substrate' {
   return 'substrate';
 }
 
-function IdentityIcon ({ className, prefix, size, theme, value }: Props): React.ReactElement<Props> {
+function IdentityIcon ({ className, prefix, size, theme, value, ...props }: Props): React.ReactElement<Props> {
   const address = value?.toString() || '';
   const thisTheme = theme || getIdentityTheme();
 
@@ -24,7 +24,8 @@ function IdentityIcon ({ className, prefix, size, theme, value }: Props): React.
         size={size}
         theme={thisTheme as 'substrate'}
         value={address}
-        style={{ cursor: 'pointer' }}
+        className='DfIdentityIcon'
+        {...props}
       />
     </span>
   );

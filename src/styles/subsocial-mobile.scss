@@ -186,7 +186,7 @@
     }
   }
 
-  
+
 
   .DfContent,
   .content {
@@ -273,6 +273,8 @@
 
   .DfDataList {
     padding: 0;
+    margin-left: -$space_normal;
+    margin-right: -$space_normal;
   }
 
   .DfSearch {

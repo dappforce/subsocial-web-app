@@ -19353,6 +19353,11 @@ use-memo-one@^1.1.1:
   resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.1.tgz#39e6f08fe27e422a7d7b234b5f9056af313bd22c"
   integrity sha512-oFfsyun+bP7RX8X2AskHNTxu+R3QdE/RC5IefMbqptmACAA/gfol1KDD5KRzPsGMa62sWxGZw+Ui43u6x4ddoQ==
 
+use-screen-size@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/use-screen-size/-/use-screen-size-1.1.0.tgz#aeeac7a49f8c9123d63a1776d31aa8763f6fa436"
+  integrity sha512-GmHD1guO2+t5XZ1M8w/H7hlC1CO6IsD3lz1l9o+mKpmZfcm27cHKDw0J5kkj5sy3WT3hZAtno6pVaI3lRzDszA==
+
 use-sidecar@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/use-sidecar/-/use-sidecar-1.0.3.tgz#17a4e567d4830c0c0ee100040e85a7fe68611e0f"

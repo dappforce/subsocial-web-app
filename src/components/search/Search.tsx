@@ -3,7 +3,7 @@ import { DataSearch } from '@appbaseio/reactivesearch';
 import Router from 'next/router';
 import { SearchOutlined } from '@ant-design/icons';
 import { ElasticFields } from '../../config/ElasticConfig';
-import { isBrowser } from 'react-device-detect';
+import { isBrowser } from 'src/config/Size.config';
 
 const App = () => {
   let focus = false;

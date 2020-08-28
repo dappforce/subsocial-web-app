@@ -119,6 +119,7 @@
     "strip-markdown": "^3.1.2",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "url-loader": "^3.0.0",
+    "use-screen-size": "^1.1.0",
     "winston": "^3.2.1"
   }
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Menu, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
-import { isMobile, isBrowser } from 'react-device-detect';
+import { isMobile, isBrowser } from 'src/config/Size.config';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils';
 import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';

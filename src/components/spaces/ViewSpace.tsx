@@ -106,7 +106,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
                 <SpaceNameAsLink />
                 <MyEntityLabel isMy={isMySpace}>My space</MyEntityLabel>
               </span>
-              <span>
+              <span className='d-flex align-items-center'>
                 <DropdownMenu className='m-3' spaceData={spaceData} />
                 {withFollowButton && <FollowSpaceButton spaceId={id} />}
               </span>
@@ -124,7 +124,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
           <ViewTags tags={tags} />
 
-          <span className='d-flex justify-content-between'>
+          <span className='d-flex justify-content-between flex-wrap'>
             <SpaceStatsRow space={space} />
             <ContactInfo {...contactInfo} />
           </span>
@@ -150,7 +150,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     <div className='ViewSpaceWrapper'>
       <HeadMeta title={name} desc={mdToText(about)} image={image} />
       <PageContent>
-        <Segment>{renderPreview()}</Segment>
+        <Section>{renderPreview()}</Section>
         <Section className='DfContentPage mt-3'>
           <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
         </Section>

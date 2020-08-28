@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { CloseCircleOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import Search from '../components/search/Search';
-import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
+import { isMobile, isBrowser } from 'src/config/Size.config';
 
 const InnerMenu = () => {
   const { toggle } = useSidebarCollapsed();
@@ -31,10 +31,8 @@ const InnerMenu = () => {
       </div>
       {isBrowser && <Search/>}
       <div className='DfTopBar--rightContent'>
-        <MobileView>
-          {isMobile &&
+        {isMobile &&
           <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />}
-        </MobileView>
         <AuthorizationPanel />
       </div>
     </div>;

@@ -1,10 +1,10 @@
 import React from 'react'
 import { Steps } from 'antd';
 import { useAuth, StepsEnum } from '../auth/AuthContext';
-import { isMobile } from 'react-device-detect';
 import { SignInButton } from '../auth/AuthButtons';
 import ButtonLink from '../utils/ButtonLink';
 import { NewSpaceButton } from '../spaces/helpers';
+import { isMobile } from 'src/config/Size.config';
 
 const { Step } = Steps;
 

@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout, Drawer } from 'antd';
-import { isBrowser, isMobile } from 'react-device-detect';
+import { isMobile, isBrowser } from 'src/config/Size.config';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { newLogger } from '@subsocial/utils';
 import { isHomePage } from 'src/components/utils';

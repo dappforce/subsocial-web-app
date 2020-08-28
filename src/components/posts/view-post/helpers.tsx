@@ -5,7 +5,7 @@ import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import ViewSpacePage from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
-import { isMobile } from 'react-device-detect';
+import { isMobile } from 'src/config/Size.config';
 import { EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
 import { Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';

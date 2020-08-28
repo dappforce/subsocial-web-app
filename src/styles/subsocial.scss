@@ -316,7 +316,7 @@ pre {
 
 .ProfileDetails {
   display: flex !important;
-
+  align-items: center;
   .content {
     padding: 0 $space_small;
   }
@@ -350,6 +350,11 @@ pre {
       color: $color_font_normal;
     }
   }
+}
+
+.DfIdentityIcon {
+  margin-right: 0.5rem;
+  cursor: 'pointer';
 }
 
 .EditEntityBox {
@@ -936,6 +941,10 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
+  .DfIdentityIcon {
+    margin-right: 0 !important;
+  }
+
   & .collapsed {
     .ant-menu-item-group-list {
       .content {
@@ -1209,6 +1218,7 @@ a.DfStatItem {
 .ViewSpaceWrapper {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   width: 100%;
 }
 

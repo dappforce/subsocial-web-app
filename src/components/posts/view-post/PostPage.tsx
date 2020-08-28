@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import { DfMd } from '../../utils/DfMd';
 import { HeadMeta } from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
-import { isBrowser } from 'react-device-detect';
+import { isBrowser } from 'src/config/Size.config';
 import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
 import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';

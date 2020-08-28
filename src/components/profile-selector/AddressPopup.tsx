@@ -12,7 +12,7 @@ export const SelectAddressPreview: React.FunctionComponent<AddressProps> = ({
   owner
 }) => (
   <div className='DfChooseAccount'>
-    <div className='DfAddressIcon d-flex align-items-center pr-2'>
+    <div className='DfAddressIcon d-flex align-items-center'>
       <Avatar address={address} avatar={owner?.content?.avatar} />
     </div>
     <div className='DfAddressInfo ui--AddressComponents'>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { isBrowser } from 'react-device-detect';
+import { isBrowser } from 'src/config/Size.config';
 import { Tag } from 'antd';
 
 type Props = React.PropsWithChildren<{

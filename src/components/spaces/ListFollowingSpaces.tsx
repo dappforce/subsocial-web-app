@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { isMobile } from 'react-device-detect';
+import { isMobile } from 'src/config/Size.config';
 
 import ListData from '../utils/DataList';
 import { HeadMeta } from '../utils/HeadMeta';

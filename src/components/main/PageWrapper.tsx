@@ -1,7 +1,7 @@
 import React from 'react'
 import { OnBoardingMobileCard } from '../onboarding'
 import Section from '../utils/Section'
-import { isBrowser } from 'react-device-detect'
+import { isBrowser } from 'src/config/Size.config';
 import { Affix } from 'antd'
 import { useAuth } from '../auth/AuthContext'
 
