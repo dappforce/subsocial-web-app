@@ -21,7 +21,7 @@ import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 import { UploadAvatar } from '../uploader'
 import { MailOutlined } from '@ant-design/icons'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
-import { showErrorMessage } from '../utils/Message'
+
 const log = newLogger('EditSpace')
 
 const MAX_TAGS = 5
@@ -52,7 +52,7 @@ function getInitialValues ({ space }: FormProps): FormValues {
   return {}
 }
 
-const checkUniqHandle = async (substrate: SubsocialSubstrateApi, handle: string) => {
+const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string) => {
   const spaceIdByHandle = await substrate.getSpaceIdByHandle(handle.trim().toLowerCase())
   return !spaceIdByHandle
 }
@@ -168,8 +168,8 @@ export function InnerForm (props: FormProps) {
           ({ getFieldValue }) => ({
             async validator () {
               const handle = getFieldValue(fieldName('handle'))
-              const isUniqHandle = await checkUniqHandle(substrate, handle)
-              if (isUniqHandle) {
+              const isUnique = await isHandleUnique(substrate, handle)
+              if (isUnique) {
                 return Promise.resolve();
               }
               return Promise.reject(new Error('This handle is already taken. Please choose another.'));
