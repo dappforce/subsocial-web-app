@@ -15,7 +15,7 @@ const attrByLink = (link: string) => {
 
 const SocialLink = ({ link }: SocialLinkProps) => {
   const { title, icon } = attrByLink(link)
-  return <a href={link} title={title} className='DfBlackLink mr-3'>
+  return <a href={link} title={title} className='DfBlackLink ml-3'>
     {icon}
   </a>
 }

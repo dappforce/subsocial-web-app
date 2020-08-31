@@ -186,7 +186,15 @@
     }
   }
 
+  .DfCommentSection {
+     .DfDataList {
+       margin: initial;
+     }
 
+     .DfCommentAction {
+      padding: $space_tiny;
+     }
+  }
 
   .DfContent,
   .content {

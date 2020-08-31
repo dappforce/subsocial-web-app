@@ -3,11 +3,13 @@ import { DataSearch } from '@appbaseio/reactivesearch';
 import Router from 'next/router';
 import { SearchOutlined } from '@ant-design/icons';
 import { ElasticFields } from '../../config/ElasticConfig';
-import { isBrowser } from 'src/config/Size.config';
+import { useResponsiveSize } from '../responsive';
 
 const App = () => {
   let focus = false;
   let input: HTMLInputElement | undefined;
+
+  const { isNotMobile } = useResponsiveSize()
 
   useEffect(() => {
     if (!input) return;
@@ -36,7 +38,7 @@ const App = () => {
         URLParams
         autoFocus
         ref={(c: any) => {
-          if (focus || isBrowser) return;
+          if (focus || isNotMobile) return;
           input = c._inputRef;
         }}
         onValueSelected={(value) => Router.push(`/search?q="${value}"`)}

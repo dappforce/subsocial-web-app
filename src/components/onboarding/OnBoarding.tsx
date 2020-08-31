@@ -4,7 +4,7 @@ import { useAuth, StepsEnum } from '../auth/AuthContext';
 import { SignInButton } from '../auth/AuthButtons';
 import ButtonLink from '../utils/ButtonLink';
 import { NewSpaceButton } from '../spaces/helpers';
-import { isMobile } from 'src/config/Size.config';
+import { isMobileDevice } from 'src/config/Size.config';
 
 const { Step } = Steps;
 
@@ -18,7 +18,7 @@ type Props = {
   progressDot?: boolean
 }
 
-const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobile && mobileText) ? mobileText : text;
+const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobileDevice && mobileText) ? mobileText : text;
 
 type StepItem = {
   title: string,

@@ -41,6 +41,7 @@ pre {
 }
 
 .DfBalance {
+  display: flex;
   font-size: $font_small;
   color: $color_muted
 }
@@ -1021,13 +1022,11 @@ hr {
 .DfTopBar {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 
   .DfSearchIcon {
     padding: $space_tiny;
-    margin-right: $space_tiny;
-    margin-top: 1.15rem;
     font-size: 1.3rem;
   }
 

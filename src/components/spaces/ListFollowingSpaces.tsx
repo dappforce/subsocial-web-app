@@ -4,7 +4,6 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { isMobile } from 'src/config/Size.config';
 
 import ListData from '../utils/DataList';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -13,6 +12,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { spaceIdForUrl, spaceUrl } from '../utils/urls';
 import { ViewSpacePage } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
+import { useResponsiveSize } from '../responsive';
 
 type Props = {
   spacesData: SpaceData[]
@@ -59,6 +59,7 @@ const SpaceLink = (props: { item: SpaceData }) => {
   const { item } = props;
   const { pathname, query } = useRouter();
   const { toggle } = useSidebarCollapsed();
+  const { isMobile } = useResponsiveSize()
 
   if (!item) return null;
 

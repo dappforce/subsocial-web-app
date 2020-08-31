@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Menu, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
-import { isMobile, isBrowser } from 'src/config/Size.config';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils';
 import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';
@@ -14,16 +13,18 @@ import { useNotifCounter } from '../components/utils/NotifCounter';
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems';
 import { OnBoardingCard } from 'src/components/onboarding';
 import { useAuth } from 'src/components/auth/AuthContext';
+import { useResponsiveSize } from 'src/components/responsive';
 
 const log = newLogger(SideMenu.name)
 
 function SideMenu () {
-  const { toggle, state: { collapsed, triggerFollowed } } = useSidebarCollapsed();
+  const { toggle, state: { collapsed, triggerFollowed, asDrawer } } = useSidebarCollapsed();
   const { pathname } = useRouter();
   const myAddress = useMyAddress();
   const isLoggedIn = useIsSignIn();
   const { unreadCount } = useNotifCounter()
   const { state: { showOnBoarding } } = useAuth()
+  const { isNotMobile } = useResponsiveSize()
 
   const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
@@ -54,7 +55,7 @@ function SideMenu () {
     : DefaultMenu
 
   const goToPage = ([ url, as ]: string[]) => {
-    isMobile && toggle()
+    asDrawer && toggle()
     Router.push(url, as).catch(err =>
       log.error(`Failed to navigate to a selected page. ${err}`))
   }
@@ -111,7 +112,7 @@ function SideMenu () {
         ? <Menu.Divider key={'divider-' + i} />
         : renderPageLink(item)
       )}
-      {isBrowser && showOnBoarding && !collapsed && <OnBoardingCard />}
+      {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />}
       {isLoggedIn && <Menu.Divider />}
       {isLoggedIn && renderSubscriptions()}
     </Menu>

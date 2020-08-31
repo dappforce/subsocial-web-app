@@ -5,7 +5,6 @@ import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import ViewSpacePage from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
-import { isMobile } from 'src/config/Size.config';
 import { EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
 import { Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
@@ -30,6 +29,7 @@ import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
+import { useResponsiveSize } from 'src/components/responsive';
 
 type DropdownProps = {
   space: Space,
@@ -158,6 +158,8 @@ type PostImageProps = {
 
 const PostImage = ({ content }: PostImageProps) => {
   if (!content) return null;
+
+  const { isMobile } = useResponsiveSize()
 
   const { image } = content;
 

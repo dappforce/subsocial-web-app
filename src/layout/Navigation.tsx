@@ -2,25 +2,18 @@ import React, { FunctionComponent, useEffect } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout, Drawer } from 'antd';
-import { isMobile, isBrowser } from 'src/config/Size.config';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { newLogger } from '@subsocial/utils';
-import { isHomePage } from 'src/components/utils';
 import { ElasticNodeURL } from 'src/components/utils/env';
 
 import Menu from './SideMenu';
 import dynamic from 'next/dynamic';
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 
-const log = newLogger('Navigation')
-
 const { Header, Sider, Content } = Layout;
 
 interface Props {
   children: React.ReactNode;
 }
-
-log.debug('Are we in a browser?', isBrowser);
 
 const HomeNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();
@@ -36,7 +29,7 @@ const HomeNav = () => {
   </Sider>;
 };
 
-const DefaultNav: FunctionComponent = ({ children }) => {
+const DefaultNav: FunctionComponent = () => {
   const { state: { collapsed }, hide } = useSidebarCollapsed();
 
   useEffect(() => hide(), [ false ])
@@ -57,8 +50,7 @@ const DefaultNav: FunctionComponent = ({ children }) => {
 
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props;
-
-  const asDrawer = !isHomePage() || isMobile
+  const { state: { asDrawer } } = useSidebarCollapsed()
 
   const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
 

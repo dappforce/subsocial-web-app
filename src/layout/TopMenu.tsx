@@ -5,11 +5,12 @@ import Search from '../components/search/Search';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
-import { isMobile, isBrowser } from 'src/config/Size.config';
+import { useResponsiveSize } from 'src/components/responsive';
 
 const InnerMenu = () => {
   const { toggle } = useSidebarCollapsed();
-  const [ show, setShow ] = useState(isBrowser);
+  const { isNotMobile, isMobile } = useResponsiveSize()
+  const [ show, setShow ] = useState(false);
 
   const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
 
@@ -29,7 +30,7 @@ const InnerMenu = () => {
           </a>
         </Link>
       </div>
-      {isBrowser && <Search/>}
+      {isNotMobile && <Search/>}
       <div className='DfTopBar--rightContent'>
         {isMobile &&
           <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />}

@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 import { DfMd } from '../../utils/DfMd';
 import { HeadMeta } from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
-import { isBrowser } from 'src/config/Size.config';
 import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
 import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';
@@ -19,6 +18,7 @@ import { PageContent } from 'src/components/main/PageWrapper';
 import { isHidden, Loading } from 'src/components/utils';
 import { useLoadHiddenSpace } from 'src/components/spaces/helpers';
 import { resolveIpfsUrl } from 'src/ipfs';
+import { useResponsiveSize } from 'src/components/responsive';
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
@@ -36,12 +36,13 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
 
   const { struct: initStruct, content } = post;
 
-  const struct = useSubscribedPost(initStruct)
-
   if (!content) return null;
 
-  const { title, body, image, canonical, tags } = content;
+  const { isNotMobile } = useResponsiveSize()
+  const struct = useSubscribedPost(initStruct)
   const spaceData = space || postDetails.space || useLoadHiddenSpace(struct.owner).myHiddenSpaces
+
+  const { title, body, image, canonical, tags } = content;
 
   if (!spaceData) return <Loading />
 
@@ -69,7 +70,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
         </div>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
-          {isBrowser && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
+          {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
         <div className='DfPostContent'>
           {ext
