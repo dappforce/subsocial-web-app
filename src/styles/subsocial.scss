@@ -721,7 +721,7 @@ hr {
   }
 }
 
-@media (min-width: 560px) {
+@media (min-width: 767px) {
   .DfSectionOuter {
     min-width: 428px;
     max-width: calc(680px + #{$space_normal} * 2);
@@ -1020,7 +1020,9 @@ hr {
 
 .DfTopBar {
   width: 100%;
-  display: contents;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .DfSearchIcon {
     padding: $space_tiny;
@@ -1033,17 +1035,12 @@ hr {
     font-size: 1.3rem;
     padding-left: $space_tiny;
   }
+  .DfTopBar--leftContent,.DfTopBar--rightContent, .DfTopBar--search {
+    display: flex;
+    align-items: center;
+  }
 }
 
-.DfTopBar--search {
-  display: flex;
-  align-items: center;
-}
-
-.DfTopBar--rightContent {
-  display: -webkit-inline-box;
-  display: -moz-inline-box;
-}
 
 /* Fix syntax error in Markdown editor */
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
