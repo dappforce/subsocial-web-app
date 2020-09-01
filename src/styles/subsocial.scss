@@ -129,7 +129,8 @@ pre {
 }
 
 .DfTags {
-  margin: $space_normal 0;
+  margin: 0;
+  margin-bottom: $space_normal;
   font-size: $font_small;
 
   .anticon {
@@ -356,6 +357,16 @@ pre {
 .DfIdentityIcon {
   margin-right: 0.5rem;
   cursor: 'pointer';
+
+  .container.highlight:before {
+    box-shadow: none !important;
+  }
+
+  .highlight {
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 100%;
+  }
 }
 
 .EditEntityBox {

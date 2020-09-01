@@ -37,6 +37,6 @@ export const ContactInfo = ({ links, email }: ContactInfoProps) => {
 
   return <div>
     {links && <ViewSocialLinks links={links} />}
-    {email && <a href={`maito:${email}`} title='Email'><MailOutlined /></a>}
+    {email && <a className='DfBlackLink' href={`maito:${email}`} title='Email'><MailOutlined /></a>}
   </div>
 }

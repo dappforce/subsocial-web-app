@@ -42,13 +42,6 @@ export function ListData<T extends any> (props: Props<T>) {
       routerQuery.page = page.toString()
     }
 
-    console.log(router)
-
-    console.log({
-      pathname: router.asPath.split('?')[0],
-      query: routerQuery
-    })
-
     router.replace(
       { pathname: router.pathname, query: routerQuery },
       { pathname: router.asPath.split('?')[0], query: routerQuery },
@@ -69,8 +62,6 @@ export function ListData<T extends any> (props: Props<T>) {
     } else {
       const page = parseInt(routerQuery.page as string, 10);
       const _pageSize = parseInt(routerQuery.size as string, 10);
-
-      console.log(page, _pageSize)
 
       if (isSubscribe) {
         const currentPage = page > 0 ? page : DEFAULT_PAGE_SIZE

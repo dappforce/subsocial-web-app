@@ -115,7 +115,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
           </span>
 
           {nonEmptyStr(about) &&
-            <div className='description'>
+            <div className='description mb-3'>
               <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
@@ -126,7 +126,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
           <span className='d-flex justify-content-between flex-wrap'>
             <SpaceStatsRow space={space} />
-            <ContactInfo {...contactInfo} />
+            {!preview && <ContactInfo {...contactInfo} />}
           </span>
         </div>
       </div>

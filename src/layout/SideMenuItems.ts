@@ -42,12 +42,12 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
   return [
     {
       name: 'My feed',
-      page: [ '/feed' ],
+      page: [ '/feed', '/feed' ],
       icon: ProfileOutlined
     },
     {
       name: 'My notifications',
-      page: [ '/notifications' ],
+      page: [ '/notifications', '/notifications' ],
       icon: BellOutlined,
       isNotifications: true
     },
@@ -68,7 +68,7 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     },
     {
       name: 'New space',
-      page: [ '/spaces/new' ],
+      page: [ '/spaces/new', '/spaces/new' ],
       icon: PlusOutlined
     },
     Divider,

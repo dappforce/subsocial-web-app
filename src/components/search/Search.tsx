@@ -41,7 +41,7 @@ const App = () => {
           if (focus || isNotMobile) return;
           input = c._inputRef;
         }}
-        onValueSelected={(value) => Router.push(`/search?q="${value}"`)}
+        onValueSelected={(value) => Router.push('/search', `/search?q="${value}"`)}
         placeholder='Search for spaces, posts or comments'
         iconPosition='left'
         icon={<SearchOutlined style={{ position: 'relative', top: '-0.9rem' }} />}

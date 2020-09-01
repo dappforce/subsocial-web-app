@@ -5,6 +5,7 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
 import ListData from '../utils/DataList';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 
 type Props = {
   accounts?: AccountId[],
@@ -31,7 +32,7 @@ const InnerAccountsListModal = (props: Props) => {
       <ListData
         dataSource={accounts}
         renderItem={(item) =>
-          <ProfilePreviewWithOwner key={item.toString()} address={item} mini />}
+          <ProfilePreviewWithOwner key={item.toString()} address={item} size={LARGE_AVATAR_SIZE} mini />}
         noDataDesc='Nothing yet'
       />
     </Modal>

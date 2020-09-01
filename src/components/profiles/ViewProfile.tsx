@@ -3,7 +3,6 @@ import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
 import { AccountId } from '@polkadot/types/interfaces';
-import IdentityIcon from '@polkadot/react-identicon';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
@@ -13,7 +12,6 @@ import dynamic from 'next/dynamic';
 import { MutedDiv } from '../utils/MutedText';
 import { isMyAddress } from '../auth/MyAccountContext';
 import Section from '../utils/Section';
-import { DfBgImg } from '../utils/DfBgImg';
 import { Pluralize } from '../utils/Plularize';
 
 import {
@@ -45,6 +43,7 @@ import MyEntityLabel from '../utils/MyEntityLabel';
 import { SummarizeMd } from '../utils/md';
 import ViewProfileLink from './ViewProfileLink';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import Avatar from './address-views/Avatar';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
@@ -103,7 +102,6 @@ const Component: NextPage<Props> = (props: Props) => {
   // TODO fix copypasta of social links. Implement via array.
   const hasEmail = email && nonEmptyStr(email);
   const hasPersonalSite = personalSite && nonEmptyStr(personalSite);
-  const hasAvatar = avatar && nonEmptyStr(avatar);
   const hasFacebookLink = facebook && nonEmptyStr(facebook);
   const hasTwitterLink = twitter && nonEmptyStr(twitter);
   const hasLinkedInLink = linkedIn && nonEmptyStr(linkedIn);
@@ -173,10 +171,7 @@ const Component: NextPage<Props> = (props: Props) => {
     return (
       <div>
         <div className={`ProfileDetails MySpace`}>
-          {hasAvatar
-            ? <DfBgImg size={size} src={avatar} className='DfAvatar space' rounded/>
-            : <IdentityIcon className='image' value={address} size={size} />
-          }
+          <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
           <div className='content w-100'>
             <div className='header DfProfileTitle'>
               <NameAsLink />
