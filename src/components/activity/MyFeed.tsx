@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { hexToBn } from '@polkadot/util';
@@ -27,19 +27,19 @@ export const MyFeed = () => {
 
   if (!myAddress) return <NotAuthorized />;
 
-  const getNextPage = async (actualOffset: number = offset) => {
+  const getNextPage = useCallback(async (actualOffset: number = offset) => {
     const isFirstPage = actualOffset === 0;
     const data = await getNewsFeed(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
     if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
     setItems(isFirstPage ? data : items.concat(data));
     setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
-  };
+  }, []);
 
   const totalCount = items && items.length;
 
   const postIds = items.map(x => hexToBn(x.post_id))
 
-  const renderInfiniteScroll = () =>
+  const infiniteScroll = useMemo(() =>
     <InfiniteScroll
       dataLength={totalCount}
       next={getNextPage}
@@ -48,14 +48,14 @@ export const MyFeed = () => {
       loader={<Loading />}
     >
       <PostPreviewList postIds={postIds} />
-    </InfiniteScroll>
+    </InfiniteScroll>, [ totalCount ])
 
   return <>
     <HeadMeta title='My Feed' />
     <Section title={`My Feed (${totalCount})`}>
       {totalCount === 0
         ? <NoData description='Your feed is empty' />
-        : renderInfiniteScroll()
+        : infiniteScroll
       }
     </Section>
   </>

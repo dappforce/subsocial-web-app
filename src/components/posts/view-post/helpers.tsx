@@ -298,7 +298,7 @@ export const useSubscribedPost = (initPost: Post) => {
 
     sub()
 
-    return () => unsub()
+    return () => unsub && unsub()
   }, [])
 
   return post

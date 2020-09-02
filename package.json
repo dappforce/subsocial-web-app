@@ -76,6 +76,7 @@
     "yup": "^0.26.10"
   },
   "dependencies": {
+    "react": "^16.0.0",
     "@ant-design/icons": "^4.2.1",
     "@polkadot/api": "^1.28.1",
     "@polkadot/dev-react": "^0.30.0-beta.1",
