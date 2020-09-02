@@ -6,9 +6,10 @@ import { PaginationConfig } from 'antd/lib/pagination';
 import Section from './Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
 import NoData from './EmptyList';
+import { newLogger } from '@subsocial/utils';
 // import { newLogger } from '@subsocial/utils';
 // TODO use logger
-// const log = newLogger('Data list')
+const log = newLogger(DataList.name)
 
 type Props<T extends any> = {
   className?: string,
@@ -26,7 +27,7 @@ type PaginationQuery = {
 }
 
 // TODO rename to DataList
-export function ListData<T extends any> (props: Props<T>) {
+export function DataList<T extends any> (props: Props<T>) {
   const { dataSource, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
   const total = dataSource.length;
 
@@ -46,7 +47,7 @@ export function ListData<T extends any> (props: Props<T>) {
       { pathname: router.pathname, query: routerQuery },
       { pathname: router.asPath.split('?')[0], query: routerQuery },
       { shallow: true }
-    ).catch(console.log);
+    ).catch(log.error);
   }
 
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
@@ -55,7 +56,6 @@ export function ListData<T extends any> (props: Props<T>) {
   useEffect(() => {
     let isSubscribe = true;
 
-    console.log(routerQuery)
     if (isEmpty(routerQuery) && isSubscribe) {
       setPageSize(DEFAULT_PAGE_SIZE);
       setCurrentPage(DEFAULT_FIRST_PAGE);
@@ -85,7 +85,6 @@ export function ListData<T extends any> (props: Props<T>) {
       current: currentPage,
       defaultCurrent: DEFAULT_FIRST_PAGE,
       onChange: page => {
-        console.log('Current page:', page)
         setCurrentPage(page);
         setRouterQuery({ page })
       },
@@ -122,4 +121,4 @@ export function ListData<T extends any> (props: Props<T>) {
     : <Section title={renderTitle()}>{list}</Section>
 }
 
-export default ListData
+export default DataList

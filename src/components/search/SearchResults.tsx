@@ -5,7 +5,7 @@ import { Segment } from 'src/components/utils/Segment';
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import Router, { useRouter } from 'next/router';
-import ListData from '../utils/DataList';
+import DataList from '../utils/DataList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import BN from 'bn.js';
@@ -66,7 +66,7 @@ const resultToPreview = (res: DataResults, i: number) => {
 const Previews = (props: Props) => {
   const { results } = props;
   return <div className='DfBgColor'>
-    <ListData
+    <DataList
       dataSource={results}
       renderItem={(res, i) => resultToPreview(res, i)}
       noDataDesc='No results found'

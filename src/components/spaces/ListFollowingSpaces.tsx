@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import ListData from '../utils/DataList';
+import DataList from '../utils/DataList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
@@ -26,7 +26,7 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <HeadMeta title={title} desc='The spaces you follow on Subsocial' />
-      <ListData
+      <DataList
         title={title}
         dataSource={spacesData}
         renderItem={(item, index) => (

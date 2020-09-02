@@ -1,6 +1,6 @@
 import React from 'react';
 import { Space } from '@subsocial/types/substrate/interfaces';
-import ListData from '../utils/DataList';
+import DataList from '../utils/DataList';
 import { ViewSpacePage } from '../spaces/ViewSpace';
 import { SpaceData } from '@subsocial/types/dto';
 import { NewSpaceButton } from '../spaces/helpers';
@@ -13,7 +13,7 @@ export const LatestSpaces = (props: Props) => {
   const { spacesData = [] } = props
   const spaces = spacesData.filter((x) => typeof x.struct !== 'undefined')
 
-  return <ListData
+  return <DataList
     title={`Latest spaces`}
     dataSource={spaces}
     noDataDesc='No spaces created yet'

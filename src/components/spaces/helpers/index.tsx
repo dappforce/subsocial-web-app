@@ -10,7 +10,7 @@ import { editSpaceUrl, newPostUrl, HasSpaceIdOrHandle } from 'src/components/uti
 import HiddenSpaceButton from '../HiddenSpaceButton';
 import { BareProps } from 'src/components/utils/types';
 import { Pluralize } from 'src/components/utils/Plularize';
-import ListData from 'src/components/utils/DataList';
+import DataList from 'src/components/utils/DataList';
 import PostPreview from 'src/components/posts/view-post/PostPreview';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { Loading } from 'src/components/utils';
@@ -146,7 +146,7 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   if (isLoading) return <Loading />
 
   const hiddenPostsCount = myHiddenPosts.length
-  return hiddenPostsCount ? <ListData
+  return hiddenPostsCount ? <DataList
     title={<Pluralize count={hiddenPostsCount} singularText={'Hidden post'} />}
     dataSource={myHiddenPosts}
     renderItem={(item) =>
@@ -175,7 +175,7 @@ export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
       {posts.length > 0 && <CreatePostButton space={space} title={'Write Post'} className='mb-2' />}
     </div>
 
-  const VisiblePostList = () => <ListData
+  const VisiblePostList = () => <DataList
     title={postsSectionTitle()}
     dataSource={posts}
     noDataDesc='No posts yet'

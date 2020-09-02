@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ViewSpacePage } from './ViewSpace';
-import ListData from '../utils/DataList';
+import DataList from '../utils/DataList';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
@@ -38,7 +38,7 @@ const useLoadHiddenSpaces = (mySpaceIds: SpaceId[]) => {
 
 const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.struct.id.toString()}`} spaceData={space} preview withFollowButton />
 
-const VisibleSpacesList = ({ spacesData }: Props) => <ListData
+const VisibleSpacesList = ({ spacesData }: Props) => <DataList
   title={`My spaces (${spacesData.length})`}
   dataSource={spacesData}
   renderItem={SpacePreview}
@@ -52,7 +52,7 @@ const HiddenSpacesList = ({ mySpaceIds }: Props) => {
   if (isLoading) return <Loading />
 
   const hiddenSpacesCount = myHiddenSpaces.length
-  return hiddenSpacesCount ? <ListData
+  return hiddenSpacesCount ? <DataList
     title={`My hidden spaces (${hiddenSpacesCount})`}
     dataSource={myHiddenSpaces}
     renderItem={SpacePreview}
