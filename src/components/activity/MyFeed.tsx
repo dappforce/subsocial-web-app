@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
-import { hexToBn } from '@polkadot/util';
 import { useMyAddress } from '../auth/MyAccountContext';
 import { Activity } from '@subsocial/types/offchain';
 import NoData from '../utils/EmptyList';
@@ -11,6 +10,8 @@ import { HeadMeta } from '../utils/HeadMeta';
 import Section from '../utils/Section';
 import { PostPreviewList } from '../posts/view-post/PostPreviewList';
 import { Loading } from '../utils';
+
+import BN from 'bn.js'
 
 export const MyFeed = () => {
   const myAddress = useMyAddress()
@@ -37,7 +38,7 @@ export const MyFeed = () => {
 
   const totalCount = items && items.length;
 
-  const postIds = items.map(x => hexToBn(x.post_id))
+  const postIds = items.map(x => new BN(x.post_id))
 
   const renderInfiniteScroll = () =>
     <InfiniteScroll
