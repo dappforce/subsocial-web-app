@@ -53,7 +53,7 @@ function getInitialValues ({ space }: FormProps): FormValues {
 }
 
 const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string, mySpaceId?: BN) => {
-  if (isEmptyStr(handle)) return false
+  if (isEmptyStr(handle)) return true
 
   const spaceIdByHandle = await substrate.getSpaceIdByHandle(handle.trim().toLowerCase())
 
