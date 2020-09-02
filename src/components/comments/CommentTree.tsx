@@ -11,6 +11,7 @@ import { useSetReplyToStore } from './utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { LoadingOutlined } from '@ant-design/icons';
 import { MutedDiv } from '../utils/MutedText';
+import { isFakeId } from './helpers';
 
 const log = newLogger('CommentTree')
 
@@ -42,7 +43,10 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
 export const DynamicCommentsTree = (props: LoadProps) => {
   const { rootPost, parent: { id: parentId }, space, replies } = props;
   const parentIdStr = parentId.toString()
-  const [ isLoading, setIsLoading ] = useState(false)
+
+  if (isFakeId(props.parent)) return null
+
+  const [ isLoading, setIsLoading ] = useState(parentIdStr.startsWith('fake'))
   const [ replyComments, setComments ] = useState<PostWithSomeDetails[]>(replies || []);
   const dispatch = useDispatch()
 
