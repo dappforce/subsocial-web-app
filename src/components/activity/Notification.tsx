@@ -6,6 +6,7 @@ import { ProfileData, PostData, SpaceData, AnySubsocialData, CommonStruct, Activ
 import Name from '../profiles/address-views/Name';
 import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
+import { hexToBn } from '@polkadot/util';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { Loading } from '../utils';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
@@ -38,9 +39,9 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
 
       activities.forEach(({ account, space_id, post_id, comment_id }) => {
         nonEmptyStr(account) && ownerIds.push(account)
-        nonEmptyStr(space_id) && spaceIds.push(new BN(space_id))
-        nonEmptyStr(post_id) && postIds.push(new BN(post_id))
-        nonEmptyStr(comment_id) && postIds.push(new BN(comment_id))
+        nonEmptyStr(space_id) && spaceIds.push(hexToBn(space_id))
+        nonEmptyStr(post_id) && postIds.push(hexToBn(post_id))
+        nonEmptyStr(comment_id) && postIds.push(hexToBn(comment_id))
       })
 
       const loadData = async () => {

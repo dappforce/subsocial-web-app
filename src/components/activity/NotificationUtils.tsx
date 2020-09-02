@@ -3,6 +3,7 @@ import moment from 'moment-timezone';
 import ViewSpacePage from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity } from '@subsocial/types';
+import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
@@ -95,13 +96,13 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
   const { spaceById, postById } = store;
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
-    getCommentPreview(new BN(comment_id), spaceById, postById)
+    getCommentPreview(hexToBn(comment_id), spaceById, postById)
 
   const getPostPreviewWithMaps = (post_id: string) =>
-    getPostPreview(new BN(post_id), spaceById, postById)
+    getPostPreview(hexToBn(post_id), spaceById, postById)
 
   const getSpacePreviewWithMaps = (space_id: string) =>
-    getSpacePreview(new BN(space_id), spaceById)
+    getSpacePreview(hexToBn(space_id), spaceById)
 
   switch (event) {
     case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
