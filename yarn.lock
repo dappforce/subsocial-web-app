@@ -3477,9 +3477,9 @@
     util-deprecate "^1.0.2"
 
 "@subsocial/api@latest":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.2.tgz#1ad277859048fbb65c8aef94599e34a9435a205e"
-  integrity sha512-MM/e2j1EPa7o1dy/kJ2Y1fdYpQZCyA3Ty25I5wPJB2huaLHQj6Mwp2qPg7kMH19D9vSR5SdxoZJG4OhN/VaBNQ==
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.4.tgz#88cc5d8e84a2444c1757a6f5ae988a453af60e3b"
+  integrity sha512-pGybZ3vxEZ8OnQqBlXX3Mx02I5CEu4KZD+Yf+5t/C/vTgpzUKo8CEoiQeTPRCNFYC0RSgwoaVeNp3yfYjJYdHA==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.28.1"
