@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
 import { Activity } from '@subsocial/types/offchain';
@@ -30,13 +30,13 @@ export const MyNotifications = () => {
 
   if (!myAddress) return <NotAuthorized />;
 
-  const getNextPage = async (actualOffset: number = offset) => {
+  const getNextPage = useCallback(async (actualOffset: number = offset) => {
     const isFirstPage = actualOffset === 0;
     const data = await getNotifications(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
     if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasNextPage(false);
     setItems(isFirstPage ? data : items.concat(data));
     setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
-  };
+  }, []);
 
   const totalCount = (items && items.length) || 0;
 
@@ -47,10 +47,10 @@ export const MyNotifications = () => {
 
     return totalCount === 0
       ? <NoData description='No notifications for you' />
-      : renderInfiniteScroll()
+      : infiniteScroll
   }
 
-  const renderInfiniteScroll = () =>
+  const infiniteScroll = useMemo(() =>
     <InfiniteScroll
       dataLength={totalCount}
       next={getNextPage}
@@ -59,7 +59,7 @@ export const MyNotifications = () => {
       loader={<Loading />}
     >
       <Notifications activities={items} />
-    </InfiniteScroll>
+    </InfiniteScroll>, [ totalCount ])
 
   return <>
     <HeadMeta title='My Notifications' />
@@ -69,4 +69,4 @@ export const MyNotifications = () => {
   </>
 }
 
-export default MyNotifications
+export default React.memo(MyNotifications)

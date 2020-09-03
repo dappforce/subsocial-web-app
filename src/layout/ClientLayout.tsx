@@ -11,22 +11,22 @@ import { ResponsiveSizeProvider } from 'src/components/responsive';
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   return (
     <ResponsiveSizeProvider >
-      <SidebarCollapsedProvider>
-        <SubstrateProvider>
-          {/* <KusamaProvider> */}
-          <SubstrateWebConsole />
-          <SubsocialApiProvider>
-            <MyAccountProvider>
-              <AuthProvider>
+      <SubstrateProvider>
+        {/* <KusamaProvider> */}
+        <SubstrateWebConsole />
+        <SubsocialApiProvider>
+          <MyAccountProvider>
+            <AuthProvider>
+              <SidebarCollapsedProvider>
                 <Navigation>
                   {children}
                 </Navigation>
-              </AuthProvider>
-            </MyAccountProvider>
-          </SubsocialApiProvider>
-          {/* </KusamaProvider> */}
-        </SubstrateProvider>
-      </SidebarCollapsedProvider>
+              </SidebarCollapsedProvider>
+            </AuthProvider>
+          </MyAccountProvider>
+        </SubsocialApiProvider>
+        {/* </KusamaProvider> */}
+      </SubstrateProvider>
     </ResponsiveSizeProvider>
   )
 };

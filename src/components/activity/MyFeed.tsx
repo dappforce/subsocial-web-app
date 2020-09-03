@@ -61,4 +61,4 @@ export const MyFeed = () => {
   </>
 }
 
-export default MyFeed
+export default React.memo(MyFeed)
