@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Menu, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
 import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
@@ -14,11 +14,12 @@ import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMen
 import { OnBoardingCard } from 'src/components/onboarding';
 import { useAuth } from 'src/components/auth/AuthContext';
 import { useResponsiveSize } from 'src/components/responsive';
+import { SpaceId } from '@subsocial/types/substrate/interfaces';
 
 const log = newLogger(SideMenu.name)
 
 function SideMenu () {
-  const { toggle, state: { collapsed, triggerFollowed, asDrawer } } = useSidebarCollapsed();
+  const { toggle, state: { collapsed, asDrawer } } = useSidebarCollapsed();
   const { pathname } = useRouter();
   const myAddress = useMyAddress();
   const isLoggedIn = useIsSignIn();
@@ -29,26 +30,33 @@ function SideMenu () {
   const [ followedSpacesData, setFollowedSpacesData ] = useState<SpaceData[]>([]);
   const [ loaded, setLoaded ] = useState(false);
 
-  useSubsocialEffect(({ subsocial, substrate }) => {
+  useSubsocialEffect(({ subsocial, substrate: { api } }) => {
     if (!myAddress) return;
 
     let isSubscribe = true;
+    let unsub: () => any;
 
-    const loadSpacesData = async () => {
+    const subLoadSpacesData = async () => {
       setLoaded(false);
-      const ids = await substrate.spaceIdsFollowedByAccount(myAddress)
-      const spacesData = await subsocial.findVisibleSpaces(ids);
-      if (isSubscribe) {
-        setFollowedSpacesData(spacesData);
-        setLoaded(true);
-      }
+      const readyApi = await api;
+      unsub = await readyApi.query.spaceFollows.spacesFollowedByAccount(myAddress, async ids => {
+        const spacesData = await subsocial.findVisibleSpaces(ids as unknown as SpaceId[]);
+        if (isSubscribe) {
+          setFollowedSpacesData(spacesData);
+          setLoaded(true);
+        }
+      })
+
     };
 
-    loadSpacesData().catch(err =>
+    subLoadSpacesData().catch(err =>
       log.error(`Failed to load spaces followed by the current user. ${err}`))
 
-    return () => { isSubscribe = false; };
-  }, [ triggerFollowed, myAddress ]);
+    return () => {
+      isSubscribe = false;
+      unsub && unsub()
+    };
+  }, [ myAddress ]);
 
   const menuItems = isLoggedIn && myAddress
     ? buildAuthorizedMenu(myAddress)
@@ -65,7 +73,7 @@ function SideMenu () {
     return <Badge count={unreadCount} className="site-badge-count-4" />
   }
 
-  const renderPageLink = (item: PageLink) => {
+  const renderPageLink = useCallback((item: PageLink) => {
     const Icon = item.icon
     return item.isAdvanced
       ? (
@@ -86,13 +94,13 @@ function SideMenu () {
           </Link>
         </Menu.Item>
       )
-  }
+  }, [])
 
   const renderSubscriptions = () => (collapsed && isEmptyArray(followedSpacesData)) ? null : (
     <Menu.ItemGroup
       className={`DfSideMenu--FollowedSpaces text-center ${collapsed && 'collapsed'}`}
       key='followed'
-      title={collapsed ? 'Subs.' : 'My subscriptions'}
+      title={collapsed && !asDrawer ? 'Subs.' : 'My subscriptions'}
     >
       {loaded
         ? <RenderFollowedList followedSpacesData={followedSpacesData} />

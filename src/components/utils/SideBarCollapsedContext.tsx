@@ -10,14 +10,12 @@ export const SIDEBAR_COLLAPSED = 'df.colapsed'
 type SidebarCollapsedState = {
   inited: boolean
   collapsed?: boolean
-  asDrawer?: boolean,
-  triggerFollowed?: boolean
+  asDrawer?: boolean
 }
 
 type SidebarCollapsedAction = {
   type: 'reload' | 'set' | 'forget' | 'forgetExact'
   collapsed?: boolean
-  triggerFollowed?: boolean
 }
 
 function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction): SidebarCollapsedState {
@@ -27,15 +25,14 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
     case 'reload':
       collapsed = !isHomePage()
       log.debug('Reload collapsed:', collapsed)
-      return { ...state, collapsed, triggerFollowed: !state.triggerFollowed, inited: true }
+      return { ...state, collapsed, inited: true }
 
     case 'set':
       collapsed = action.collapsed
-      const triggerFollowed = action.triggerFollowed ? action.triggerFollowed : state.triggerFollowed
       if (collapsed !== state.collapsed) {
         log.debug('Set new collapsed:', collapsed)
         store.set(SIDEBAR_COLLAPSED, collapsed)
-        return { ...state, collapsed, triggerFollowed: triggerFollowed, inited: true }
+        return { ...state, collapsed, inited: true }
       }
       return state
 
@@ -51,8 +48,7 @@ function functionStub () {
 const initialState = {
   inited: false,
   asDrawer: false,
-  collapsed: undefined,
-  triggerFollowed: false
+  collapsed: undefined
 }
 
 export type SidebarCollapsedContextProps = {
@@ -98,6 +94,7 @@ export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
     forget: () => dispatch({ type: 'forget', collapsed: state.collapsed }),
     reloadFollowed: () => dispatch({ type: 'reload' })
   }
+
   return <SidebarCollapsedContext.Provider value={contextValue}>{props.children}</SidebarCollapsedContext.Provider>
 }
 

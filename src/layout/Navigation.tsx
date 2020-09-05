@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout, Drawer } from 'antd';
@@ -52,7 +52,7 @@ export const Navigation = (props: Props): JSX.Element => {
   const { children } = props;
   const { state: { asDrawer } } = useSidebarCollapsed()
 
-  const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
+  const content = useMemo(() => <Content className='DfPageContent'>{children}</Content>, [ children ]);
 
   return <ReactiveBase
     className='fontSizeNormal'
@@ -65,7 +65,7 @@ export const Navigation = (props: Props): JSX.Element => {
       </Header>
       <Layout className='ant-layout-has-sider'>
         {asDrawer ? <DefaultNav /> : <HomeNav />}
-        <MainContent />
+        {content}
       </Layout>
     </Layout>
   </ReactiveBase>;
