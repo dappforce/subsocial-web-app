@@ -3477,14 +3477,14 @@
     util-deprecate "^1.0.2"
 
 "@subsocial/api@latest":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.4.tgz#88cc5d8e84a2444c1757a6f5ae988a453af60e3b"
-  integrity sha512-pGybZ3vxEZ8OnQqBlXX3Mx02I5CEu4KZD+Yf+5t/C/vTgpzUKo8CEoiQeTPRCNFYC0RSgwoaVeNp3yfYjJYdHA==
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.5.tgz#9adaafa2d47a7fb8a88e8b4e45ae3a28f8ffa3ec"
+  integrity sha512-nRe4JpY2NndGv6jGVui/7ovG1ywe20jMmFNarXxVKjjV2ZDxX8RW8Tn3yc4jIU2ynSMuOa+V+TXDixWns+QOyQ==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.28.1"
     "@subsocial/types" latest
-    "@subsocial/utils" "^0.1.23"
+    "@subsocial/utils" "^0.1.24-beta2"
     "@types/axios" "^0.14.0"
     axios "^0.19.2"
 
@@ -3504,7 +3504,7 @@
     "@subsocial/utils" "^0.1.23"
     cids "^0.7.1"
 
-"@subsocial/utils@0.1.23", "@subsocial/utils@^0.1.23":
+"@subsocial/utils@^0.1.23":
   version "0.1.23"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.23.tgz#f06fbc93e85875ac8ca6f70a07ff5c30a39633e5"
   integrity sha512-UUi3e0CF+VMD6wXYM2GjjMANcL6X0kXkQyArYbzAxvJwOOfyowth42Z4ZE2hGXi2fbMbHz33Ml0KOWvAexQZ4A==
@@ -3517,6 +3517,42 @@
     chalk "^3.0.0"
     circular-json "^0.5.9"
     dotenv "^8.0.0"
+    lodash.truncate "^4.4.2"
+    winston "^3.2.0"
+
+"@subsocial/utils@^0.1.24-beta2":
+  version "0.1.24-beta2"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.24-beta2.tgz#1ffcfe4fd7fec4ddce8ff92e8718a1f1a9bcca2d"
+  integrity sha512-uQLNo1Ozg5HQE3kYH+1BUbNSqo1zCWWrcLYXUVKsn/7ElCgTjpvPiJREY843GV3KdXmosJ5/D6BPIKaGzqGNDg==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@types/circular-json" "^0.4.0"
+    "@types/lodash.isempty" "^4.4.6"
+    "@types/lodash.truncate" "^4.4.6"
+    "@types/winston" "^2.4.4"
+    bn.js "^5.1.1"
+    chalk "^3.0.0"
+    circular-json "^0.5.9"
+    dotenv "^8.0.0"
+    lodash.isempty "^4.4.0"
+    lodash.truncate "^4.4.2"
+    winston "^3.2.0"
+
+"@subsocial/utils@latest":
+  version "0.1.24"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.24.tgz#a3ad7c6535e944d3b8deafc4066dab95fea219cc"
+  integrity sha512-sFmysBFrposRnSqDOsNozH6pEoOGlAwl1sg5PuS+OmUMqL1nv3tVri5M+hCL38ryB7bRkc98yB5xhFiBKrtMOw==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@types/circular-json" "^0.4.0"
+    "@types/lodash.isempty" "^4.4.6"
+    "@types/lodash.truncate" "^4.4.6"
+    "@types/winston" "^2.4.4"
+    bn.js "^5.1.1"
+    chalk "^3.0.0"
+    circular-json "^0.5.9"
+    dotenv "^8.0.0"
+    lodash.isempty "^4.4.0"
     lodash.truncate "^4.4.2"
     winston "^3.2.0"
 
