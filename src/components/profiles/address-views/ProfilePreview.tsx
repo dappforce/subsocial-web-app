@@ -43,7 +43,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
 
   return <div className={`ProfileDetails ${className}`}>
     <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
-    <div className='content'>
+    <div className='content w-100'>
       <NameDetails owner={owner} address={address} withLabel={withLabel} />
       {!mini && <>
         {withAbout && nonEmptyStr(about) &&
