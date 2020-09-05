@@ -4,7 +4,6 @@ import TxButton from './TxButton';
 import { useSidebarCollapsed } from './SideBarCollapsedContext';
 import BN from 'bn.js';
 import { newLogger, notDef } from '@subsocial/utils';
-import { Loading } from '.';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { BaseTxButtonProps } from '../substrate/SubstrateTxButton';
 
@@ -52,22 +51,25 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
 
   const buildTxParams = () => [ spaceId ]
 
-  return notDef(isFollower)
-    ? <Loading />
-    : <TxButton
-      type='primary'
-      ghost={isFollower}
-      label={isFollower
-        ? 'Unfollow'
-        : 'Follow'}
-      tx={isFollower
-        ? `spaceFollows.unfollowSpace`
-        : `spaceFollows.followSpace`}
-      params={buildTxParams}
-      onSuccess={onTxSuccess}
-      withSpinner
-      {...otherProps}
-    />
+  const loading = notDef(isFollower)
+
+  const label = isFollower
+    ? 'Unfollow'
+    : 'Follow'
+
+  return <TxButton
+    type='primary'
+    loading={loading}
+    ghost={isFollower}
+    label={loading ? undefined : label}
+    tx={isFollower
+      ? `spaceFollows.unfollowSpace`
+      : `spaceFollows.followSpace`}
+    params={buildTxParams}
+    onSuccess={onTxSuccess}
+    withSpinner
+    {...otherProps}
+  />
 }
 
 export default FollowSpaceButton;
