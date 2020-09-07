@@ -3,7 +3,7 @@ import { HiddenPostAlert } from 'src/components/posts/view-post';
 import { DfMd } from 'src/components/utils/DfMd';
 import { CommentData } from '@subsocial/types/dto'
 import styles from './index.module.sass'
-import { HasPostId } from 'src/components/utils/urls';
+import { HasPostId } from 'src/components/urls';
 
 type CommentBodyProps = {
   comment: CommentData

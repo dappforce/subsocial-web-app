@@ -8,7 +8,7 @@ import { ZERO } from '../utils';
 import { MutedSpan } from '../utils/MutedText';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { Pluralize } from '../utils/Plularize';
-import { spaceUrl } from '../utils/urls';
+import { spaceUrl } from '../urls';
 
 type Props = {
   space: Space

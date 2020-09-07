@@ -9,7 +9,7 @@ import DataList from '../utils/DataList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { spaceIdForUrl, spaceUrl } from '../utils/urls';
+import { spaceIdForUrl, spaceUrl } from '../urls';
 import { ViewSpacePage } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
 import { useResponsiveSize } from '../responsive';

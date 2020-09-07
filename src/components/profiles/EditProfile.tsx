@@ -13,7 +13,7 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withMyProfile } from './address-views/utils/withLoadedOwner'
-import { accountUrl } from '../utils/urls'
+import { accountUrl } from '../urls'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 import { UploadAvatar } from '../uploader'
 

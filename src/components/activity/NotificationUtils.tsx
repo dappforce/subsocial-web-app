@@ -7,7 +7,7 @@ import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
-import { postUrl } from '../utils/urls';
+import { postUrl } from '../urls';
 
 export type EventsName = 'AccountFollowed'|
 'PostShared' | 'CommentShared' |

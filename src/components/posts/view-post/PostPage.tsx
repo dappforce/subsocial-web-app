@@ -82,7 +82,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
         </div>
         <ViewTags tags={tags} />
         <div className='DfRow'>
-          <PostActionsPanel postDetails={postDetails} />
+          <PostActionsPanel postDetails={postDetails} space={space.struct} />
         </div>
         <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
       </Section>

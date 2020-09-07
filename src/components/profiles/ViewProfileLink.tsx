@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasAddressOrHandle, accountUrl } from '../utils/urls'
+import { HasAddressOrHandle, accountUrl } from '../urls'
 
 type Props = {
   account: HasAddressOrHandle

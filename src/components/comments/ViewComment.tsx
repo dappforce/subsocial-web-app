@@ -11,14 +11,14 @@ import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
-import { postUrl } from '../utils/urls';
-import SharePostAction from '../posts/SharePostAction';
 import { NewComment } from './CreateComment';
 import { VoterButtons } from '../voting/VoterButtons';
 import { PostDropDownMenu } from '../posts/view-post';
 import { CommentBody } from './helpers';
 import { equalAddresses } from '../substrate';
 import BN from 'bn.js'
+import { postUrl } from '../urls';
+import { ShareDropdown } from '../posts/share/ShareDropdown';
 
 type Props = {
   rootPost?: Post,
@@ -99,7 +99,7 @@ export const ViewComment: FunctionComponent<Props> = ({
         <Button key={`reply-comment-${id}`} className='DfCommentAction' onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <SharePostAction postDetails={comment} className='DfCommentAction' />
+        <ShareDropdown postDetails={comment} space={space} className='DfCommentAction' />
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview

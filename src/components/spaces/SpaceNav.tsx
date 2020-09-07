@@ -9,7 +9,7 @@ import React from 'react';
 import { DfBgImg } from '../utils/DfBgImg';
 import FollowSpaceButton from '../utils/FollowSpaceButton';
 import { SummarizeMd } from '../utils/md';
-import { aboutSpaceUrl, spaceUrl } from '../utils/urls';
+import { aboutSpaceUrl, spaceUrl } from '../urls';
 import AboutSpaceLink from './AboutSpaceLink';
 import { DropdownMenu, EditMenuLink } from './helpers';
 import { SpaceData } from '@subsocial/types/dto'

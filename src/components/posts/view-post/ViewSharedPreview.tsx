@@ -13,7 +13,7 @@ export const SharedPreview: React.FunctionComponent<InnerPreviewProps> = ({ post
       <PostDropDownMenu space={space.struct} post={struct}/>
     </div>
     <SharePostContent postDetails={postDetails} space={space} />
-    {withActions && <PostActionsPanel postDetails={postDetails} toogleCommentSection={() => setCommentsSection(!commentsSection)} preview />}
+    {withActions && <PostActionsPanel postDetails={postDetails} space={space.struct} toogleCommentSection={() => setCommentsSection(!commentsSection)} preview />}
     {commentsSection && <CommentSection post={postDetails} space={space.struct} replies={replies}/>}
   </>;
 };

@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasSpaceIdOrHandle, spaceUrl } from '../utils/urls'
+import { HasSpaceIdOrHandle, spaceUrl } from '../urls'
 
 type Props = {
   space: HasSpaceIdOrHandle
