@@ -15,8 +15,6 @@ import ViewTags from '../../utils/ViewTags';
 import AuthorPreview from '../../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../../utils/md/SummarizeMd';
 import ViewPostLink from '../ViewPostLink';
-import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../../utils/urls';
-import SharePostAction from '../SharePostAction';
 import HiddenPostButton from '../HiddenPostButton';
 import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert';
 import NoData from 'src/components/utils/EmptyList';
@@ -30,6 +28,8 @@ import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
+import { postUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
+import { ShareDropdown } from '../share/ShareDropdown';
 
 type DropdownProps = {
   space: Space,
@@ -191,6 +191,7 @@ export const PostContent: React.FunctionComponent<PostContentProps> = ({ postDet
 
 type PostActionsPanelProps = {
   postDetails: PostWithSomeDetails,
+  space: Space,
   toogleCommentSection?: () => void,
   preview?: boolean,
   withBorder?: boolean
@@ -213,7 +214,7 @@ const Action: React.FunctionComponent<{ onClick?: () => void, title?: string }> 
     <Button onClick={onClick} title={title} className='DfAction'>{children}</Button>
 
 export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
-  const { postDetails, preview, withBorder } = props
+  const { postDetails, space, preview, withBorder } = props
   const { post: { struct } } = postDetails;
   const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' preview={preview} />
   return (
@@ -224,7 +225,7 @@ export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = 
           <ReactionsAction />
         </div>}
       {preview && <ShowCommentsAction {...props} />}
-      <SharePostAction postDetails={postDetails} className='DfAction' preview={preview} />
+      <ShareDropdown postDetails={postDetails} space={space} className='DfAction' preview={preview} />
     </div>
   );
 };

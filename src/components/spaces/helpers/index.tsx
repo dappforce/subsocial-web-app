@@ -6,7 +6,7 @@ import { SpaceData, PostWithSomeDetails } from '@subsocial/types/dto'
 import { Space, PostId } from '@subsocial/types/substrate/interfaces'
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { isMyAddress } from 'src/components/auth/MyAccountContext';
-import { editSpaceUrl, newPostUrl, HasSpaceIdOrHandle } from 'src/components/utils/urls';
+import { editSpaceUrl, newPostUrl, HasSpaceIdOrHandle } from 'src/components/urls';
 import HiddenSpaceButton from '../HiddenSpaceButton';
 import { BareProps } from 'src/components/utils/types';
 import { Pluralize } from 'src/components/utils/Plularize';
