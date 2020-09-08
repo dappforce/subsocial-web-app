@@ -35,7 +35,7 @@ type RemoveIconProps = BareProps & {
   onClick: FVoid
 }
 
-const RemoveIcon = (props: RemoveIconProps) => <div {...props}>
+const RemoveIcon = (props: RemoveIconProps) => <div title='Remove image' {...props}>
   <DeleteOutlined />
 </div>
 
