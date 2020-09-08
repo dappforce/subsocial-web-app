@@ -77,7 +77,7 @@ export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState)
   const { isDesktop } = useResponsiveSize()
 
-  const asDrawer = isDesktop && !isHomePage()
+  const asDrawer = !isDesktop || !isHomePage()
 
   useEffect(() => {
     if (!state.inited) {
