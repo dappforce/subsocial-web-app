@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import keyring from '@polkadot/ui-keyring';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
 import { SelectAddressPreview, MyProfileProview } from '../profiles/address-views';
-import { Loading } from '../utils';
 import { Button, Avatar } from 'antd';
 import { useMyAccount, useMyAddress } from '../auth/MyAccountContext';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
@@ -42,8 +41,13 @@ type AccountSelectorViewProps = {
   profilesByAddressMap: Map<string, ProfileData>
 }
 
+type AccountsPanelProps = {
+  accounts: string[],
+  kind: 'Extension' | 'Local' | 'Test'
+}
+
 export const AccountSelectorView = ({ currentAddress, extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
-  const NoExtension = () => (
+  const NoExtension = useCallback(() => (
     <div>
       <div className='mb-4 mt-2'>
         <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
@@ -60,13 +64,13 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
         </Button>
       </div>
     </div>
-  )
+  ), [])
 
-  const NoAccounts = () => (
+  const NoAccounts = useCallback(() => (
     <div className='ml-3'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
-  )
+  ), [])
 
-  const CurrentAccount = () => {
+  const CurrentAccount = useCallback(() => {
     if (!currentAddress) return <div className='m-3'>Click on your account to sign in:</div>
 
     return <>
@@ -77,14 +81,9 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
         />
       </div>
     </>
-  }
+  }, [])
 
-  type AccountsPanelProps = {
-    accounts: string[],
-    kind: 'Extension' | 'Local' | 'Test'
-  }
-
-  const AccountPanel = ({ accounts, kind }: AccountsPanelProps) => {
+  const AccountPanel = useCallback(({ accounts, kind }: AccountsPanelProps) => {
     const count = accounts.length;
 
     if (!count) return null
@@ -93,9 +92,9 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
       <SubTitle title={`${kind} accounts:`} />
       <SelectAccountItems accounts={accounts} profilesByAddressMap={profilesByAddressMap} />
     </>
-  }
+  }, [])
 
-  const ExtensionAccountPanel = () => {
+  const ExtensionAccountPanel = useCallback(() => {
     const count = extensionAddresses.length
 
     const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // TODO hack for hide NoAccount msg!!!
@@ -119,7 +118,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
         profilesByAddressMap={profilesByAddressMap}
       />
     )
-  }
+  }, [])
 
   return <div className='DfAccountSelector'>
     <CurrentAccount />
@@ -197,13 +196,11 @@ export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => 
     currentAddress
   } = useAccountSelector({ injectedAddresses })
 
-  if (!extensionAddresses || !localAddresses || !developAddresses) return <Loading />
-
-  return <AccountSelectorView
+  return useMemo(() => !extensionAddresses || !localAddresses || !developAddresses ? null : <AccountSelectorView
     extensionAddresses={extensionAddresses}
     localAddresses={localAddresses}
     developAddresses={developAddresses}
     profilesByAddressMap={profilesByAddressMap}
     currentAddress={currentAddress}
-  />
+  />, [ extensionAddresses, localAddresses, developAddresses ])
 }

@@ -51,6 +51,7 @@ const useGetBalance = (address: AnyAccountId) => {
   if (!balance) return null
 
   const currency = formatBalance.getDefaults().unit
+
   return format(balance, currency)
 }
 
