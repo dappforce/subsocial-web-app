@@ -575,6 +575,12 @@ hr {
   }
 }
 
+.DfSharedSummary {
+  .DfSummary {
+    margin: $space_tiny 0 $space_normal 0;
+  }
+}
+
 .DfSegment.DfPostPreview {
   padding-bottom: 0;
 
@@ -591,6 +597,10 @@ hr {
     .DfSegment {
       margin-bottom: 0;
       @extend .DfNoBoxShadow;
+    }
+
+    .DfSummary {
+      margin: $space_tiny 0 $space_normal 0;
     }
   }
 
