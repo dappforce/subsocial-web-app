@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { PostWithSomeDetails } from '@subsocial/types/dto';
 import { PostExtension } from '@subsocial/types/substrate/classes';
-import { BookOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { ShareModal } from '../ShareModal'
 import { isRegularPost } from '../view-post';
 import { IconWithLabel } from '../../utils';
@@ -14,14 +14,14 @@ type Props = {
 
 export const SpaceShareLink = ({
   postDetails: {
-    post: { struct: { id, shares_count, extension } },
+    post: { struct: { id, extension } },
     ext
   }
 }: Props) => {
 
   const [ open, setOpen ] = useState<boolean>()
   const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
-  const title = 'My space'
+  const title = 'Write a post'
 
   return <>
     <a
@@ -29,7 +29,7 @@ export const SpaceShareLink = ({
       onClick={() => setOpen(true)}
       title={title}
     >
-      <IconWithLabel icon={<BookOutlined />} count={shares_count} label={title} />
+      <IconWithLabel icon={<EditOutlined />} label={title} />
     </a>
     <ShareModal postId={postId} open={open} onClose={() => setOpen(false)} />
   </>

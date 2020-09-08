@@ -35,3 +35,5 @@ export const redditShareUrl =
 
     return `http://www.reddit.com/submit?url=${subsocialUrl(url)}&${titleVal}`
   }
+
+export const copyUrl = (url: string) => subsocialUrl(url)
