@@ -163,7 +163,8 @@ pre {
 
 @media (min-width: 1200px) {
   .DfBrand {
-    font-size: $font_large;
+    zoom: 0.7;
+    font-size: $font_normal;
 
     img {
       max-width: 160px;
@@ -172,7 +173,7 @@ pre {
 }
 
 .DfBrand {
-  font-size: $font_big;
+  font-size: $font_normal;
   color: $color_secondary;
   cursor: pointer;
 
@@ -953,6 +954,7 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
+  height: 33%;
   .DfIdentityIcon {
     margin-right: 0 !important;
   }

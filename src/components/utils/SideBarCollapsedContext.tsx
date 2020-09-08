@@ -75,9 +75,9 @@ export const SidebarCollapsedContext = createContext<SidebarCollapsedContextProp
 
 export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState)
-  const { isMobile } = useResponsiveSize()
+  const { isDesktop } = useResponsiveSize()
 
-  const asDrawer = !isHomePage() || isMobile
+  const asDrawer = isDesktop && !isHomePage()
 
   useEffect(() => {
     if (!state.inited) {

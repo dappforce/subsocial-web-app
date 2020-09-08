@@ -19,7 +19,7 @@ const HomeNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();
   return <Sider
     className='DfSider'
-    width='255'
+    width='257'
     trigger={null}
     collapsible
     collapsed={collapsed}

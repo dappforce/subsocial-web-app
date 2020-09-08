@@ -12,9 +12,9 @@ type Props = {
 }
 export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, className, children }) => {
   const { state: { showOnBoarding } } = useAuth()
-  const { isDesktop } = useResponsiveSize()
+  const { isNotMobile } = useResponsiveSize()
   const isPanels = leftPanel || rightPanel
-  return isDesktop
+  return isNotMobile
     ? <div className='d-flex w-100'>
       {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
       <Section className={`DfMainContent ${className}`}>{children}</Section>

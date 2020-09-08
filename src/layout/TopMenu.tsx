@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CloseCircleOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import Search from '../components/search/Search';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
@@ -22,7 +22,7 @@ const InnerMenu = () => {
     : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
         <Button type='link' onClick={toggle} /* onMouseEnter={open} */ className='DfBurgerIcon'>
-          <UnorderedListOutlined style={{ fontSize: '20px', color: '#999' }} />
+          <MenuOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
         <Link href='/' as='/'>
           <a className={`DfBrand ${isMobile ? 'mobile' : ''}`}>
