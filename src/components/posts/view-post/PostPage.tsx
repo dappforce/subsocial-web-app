@@ -76,7 +76,9 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
           {ext
             ? <SharePostContent postDetails={postDetails} space={space} />
             : <>
-              {image && <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />}
+              {image && <div className='d-flex justify-content-center'>
+                <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
+              </div>}
               {body && <DfMd source={body} />}
             </>}
         </div>
