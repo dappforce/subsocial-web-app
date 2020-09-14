@@ -24,17 +24,17 @@ const App = () => {
         componentId='q'
         dataField={[
           ElasticFields.space.name,
+          ElasticFields.space.handle,
           ElasticFields.space.about,
           ElasticFields.space.tags,
           ElasticFields.post.title,
           ElasticFields.post.body,
           ElasticFields.post.tags,
           ElasticFields.comment.body,
-          ElasticFields.profile.handle,
           ElasticFields.profile.name,
           ElasticFields.profile.about
         ]}
-        fieldWeights={[ 3, 1, 2, 3, 1, 2, 2, 2, 3, 1 ]}
+        fieldWeights={[ 3, 2, 1, 2, 3, 1, 2, 2, 3, 1 ]}
         URLParams
         autoFocus
         ref={(c: any) => {
