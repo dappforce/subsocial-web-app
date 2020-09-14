@@ -124,11 +124,13 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
     )
   }
 
-  return <div className={styles.DfAccountSelector}>
+  return <div>
     <CurrentAccount />
-    <ExtensionAccountPanel />
-    <AccountPanel accounts={localAddresses} kind='Local' />
-    <AccountPanel accounts={developAddresses} kind='Test'/>
+    <div className={styles.DfAccountSelector}>
+      <ExtensionAccountPanel />
+      <AccountPanel accounts={localAddresses} kind='Local' />
+      <AccountPanel accounts={developAddresses} kind='Test'/>
+    </div>
   </div>
 }
 

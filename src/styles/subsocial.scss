@@ -1558,6 +1558,7 @@ a.DfStatItem {
 
 .DfAccountMenu {
   @extend .DfCard;
+  max-height: 90vh;
   padding: 0;
 }
 
