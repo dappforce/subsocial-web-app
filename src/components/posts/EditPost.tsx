@@ -30,7 +30,7 @@ const TITLE_MAX_LEN = 100
 
 const BODY_MAX_LEN = 20_000
 
-const MAX_TAGS = 5
+const MAX_TAGS = 10
 
 type Content = PostContent
 

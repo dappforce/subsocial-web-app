@@ -24,7 +24,7 @@ import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
 
 const log = newLogger('EditSpace')
 
-const MAX_TAGS = 5
+const MAX_TAGS = 10
 
 type Content = SpaceContent
 
