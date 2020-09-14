@@ -543,6 +543,7 @@ hr {
 .DfActionsPanel {
   width: 100%;
   display: flex;
+  align-items: center;
   justify-content: space-between;
 
   &.DfActionBorder {
@@ -1371,6 +1372,7 @@ a.DfStatItem {
 
 .DfCurrentAddress {
   display: flex;
+  cursor: pointer;
   margin: 0 1rem;
 
   &.icon {
@@ -1475,7 +1477,7 @@ a.DfStatItem {
 }
 
 .anticon-ellipsis.ant-dropdown-trigger {
-  font-size: $font_normal;
+  font-size: $font_normal + 0.25rem;
 }
 
 .DfCommentSection {

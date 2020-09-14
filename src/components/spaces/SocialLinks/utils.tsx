@@ -14,7 +14,7 @@ export const getLinksAttr = (title?: string) => {
     case 'Twitter': return { title, icon: <TwitterOutlined /> }
     case 'Medium': return { title, icon: <MediumOutlined /> }
     case 'LinkedIn': return { title, icon: <LinkedinOutlined /> }
-    case 'Github': return { title, icon: <GithubOutlined /> }
+    case 'GitHub': return { title, icon: <GithubOutlined /> }
     case 'Instagram': return { title, icon: <InstagramOutlined /> }
     default: return { title, icon: <GlobalOutlined /> }
   }
