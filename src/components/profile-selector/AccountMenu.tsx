@@ -7,13 +7,15 @@ import { AccountSelector } from './AccountSelector';
 import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks';
 import { Divider } from 'antd';
 
+import styles from './AccountMenu.module.sass'
+
 type Props = {
   address: AnyAccountId,
   reputation?: BN | u32 | string | number
 }
 
 export const AccountMenu: React.FunctionComponent<Props> = () => {
-  return <div className='DfAccountMenu'>
+  return <div className={styles.DfAccountMenu}>
     <AccountSelector />
     <Divider className='mb-3 mt-0' />
     <SignOutButton />
