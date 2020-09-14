@@ -164,21 +164,22 @@ export function TxButton ({
   }
 
   const onSuccessHandler = (result: SubmittableResult) => {
-    setIsSending(false)
-
     if (!result || !result.status) {
       return
     }
 
     const { status } = result
-    status.isFinalized
-      ? logStatus(`✅ Tx finalized. Block hash: ${status.asFinalized.toString()}`)
-      : logStatus(`⏱ Current tx status: ${status.type}`)
-    ;
-
     // TODO show antd success notification here
 
-    if (result.status.isFinalized || result.status.isInBlock) {
+    if (status.isFinalized || status.isInBlock) {
+      setIsSending(false)
+
+      const blockHash = status.isFinalized
+        ? status.asFinalized
+        : status.asInBlock
+
+      logStatus(`✅ Tx finalized. Block hash: ${blockHash.toString()}`)
+
       unsubscribe()
 
       result.events
@@ -192,12 +193,20 @@ export function TxButton ({
         })
     } else if (result.isError) {
       doOnFailed(result)
+    } else {
+      logStatus(`⏱ Current tx status: ${status.type}`)
     }
   }
 
   const onFailedHandler = (err: Error) => {
     setIsSending(false)
-    err && logStatus(`❌ Tx failed: ${err.toString()}`)
+
+    if (err) {
+      const errMsg = `Tx failed: ${err.toString()}`
+      logStatus(`❌ ${errMsg}`)
+      showErrorMessage(errMsg)
+    }
+
     doOnFailed(null)
   }
 
