@@ -12,7 +12,6 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { spaceIdForUrl, spaceUrl } from '../urls';
 import { ViewSpacePage } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
-import { useResponsiveSize } from '../responsive';
 
 type Props = {
   spacesData: SpaceData[]
@@ -58,8 +57,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
 const SpaceLink = (props: { item: SpaceData }) => {
   const { item } = props;
   const { pathname, query } = useRouter();
-  const { toggle } = useSidebarCollapsed();
-  const { isMobile } = useResponsiveSize()
+  const { toggle, state: { asDrawer } } = useSidebarCollapsed();
 
   if (!item) return null;
 
@@ -79,7 +77,7 @@ const SpaceLink = (props: { item: SpaceData }) => {
           spaceData={item}
           miniPreview
           imageSize={28}
-          onClick={() => isMobile && toggle()}
+          onClick={() => asDrawer && toggle()}
           withFollowButton={false}
         />
       </a>

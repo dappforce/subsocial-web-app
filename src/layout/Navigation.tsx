@@ -23,7 +23,6 @@ const HomeNav = () => {
     trigger={null}
     collapsible
     collapsed={collapsed}
-    defaultCollapsed={false}
   >
     <Menu />
   </Sider>;
@@ -32,7 +31,7 @@ const HomeNav = () => {
 const DefaultNav: FunctionComponent = () => {
   const { state: { collapsed }, hide } = useSidebarCollapsed();
 
-  useEffect(() => hide(), [ false ])
+  useEffect(hide, [ false ])
 
   return <Drawer
     className='DfSideBar'
