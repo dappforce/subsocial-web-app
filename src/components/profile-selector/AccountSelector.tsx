@@ -9,6 +9,8 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useAuth } from '../auth/AuthContext';
 import SubTitle from '../utils/SubTitle';
 
+import styles from './AccountSelector.module.sass'
+
 type SelectAccountItems = {
   accounts: string[],
   profilesByAddressMap: Map<string, ProfileData>
@@ -120,7 +122,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
     )
   }, [])
 
-  return <div className='DfAccountSelector'>
+  return <div className={styles.DfAccountSelector}>
     <CurrentAccount />
     <ExtensionAccountPanel />
     <AccountPanel accounts={localAddresses} kind='Local' />
