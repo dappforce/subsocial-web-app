@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback } from 'react'
 import keyring from '@polkadot/ui-keyring';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
@@ -17,21 +17,23 @@ type SelectAccountItems = {
 }
 
 const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap }: SelectAccountItems) => {
-  const { setAddress } = useMyAccount()
+  const { setAddress, state: { address } } = useMyAccount()
   const { hideSignInModal } = useAuth()
 
+  const AccountItem = useCallback((item: string) => <div
+    key={item.toString()}
+    className='SelectAccountItem'
+    style={{ cursor: 'pointer', height: 'auto' }}
+    onClick={async () => {
+      await hideSignInModal()
+      await setAddress(item)
+    }}
+  >
+    <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
+  </div>, [ address || '', addresses.length ])
+
   return <div className='SelectAccountSection'>
-    {addresses.map(item => <div
-      key={item.toString()}
-      className='SelectAccountItem'
-      style={{ cursor: 'pointer', height: 'auto' }}
-      onClick={async () => {
-        await hideSignInModal()
-        await setAddress(item)
-      }}
-    >
-      <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
-    </div>)}
+    {addresses.map(AccountItem)}
   </div>
 }
 
@@ -48,7 +50,14 @@ type AccountsPanelProps = {
   kind: 'Extension' | 'Local' | 'Test'
 }
 
-export const AccountSelectorView = ({ currentAddress, extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
+const renderExtensionContent = (content: JSX.Element) => {
+  return <>
+    <SubTitle title={'Extension accounts:'} />
+    {content}
+  </>
+}
+
+export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
   const NoExtension = useCallback(() => (
     <div>
       <div className='mb-4 mt-2'>
@@ -83,7 +92,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
         />
       </div>
     </>
-  }, [])
+  }, [ currentAddress ])
 
   const AccountPanel = useCallback(({ accounts, kind }: AccountsPanelProps) => {
     const count = accounts.length;
@@ -96,31 +105,24 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
     </>
   }, [])
 
-  const ExtensionAccountPanel = useCallback(() => {
+  const ExtensionAccountPanel = () => {
     const count = extensionAddresses.length
 
     const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // TODO hack for hide NoAccount msg!!!
-
-    const renderContent = (content: JSX.Element) => {
-      return <>
-        <SubTitle title={'Extension accounts:'} />
-        {content}
-      </>
-    }
 
     if (!isWeb3Injected) return <NoExtension />
 
     if (!count && isInjectCurrentAddress) return null
 
-    if (!count) return renderContent(<NoAccounts />)
+    if (!count) return renderExtensionContent(<NoAccounts />)
 
-    return renderContent(
+    return renderExtensionContent(
       <SelectAccountItems
         accounts={extensionAddresses}
         profilesByAddressMap={profilesByAddressMap}
       />
     )
-  }, [])
+  }
 
   return <div className={styles.DfAccountSelector}>
     <CurrentAccount />
@@ -152,6 +154,7 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
 
       const addresses = accounts.map(account => {
         const { address, meta } = account;
+
         if (address === currentAddress) return address
 
         if (meta.isInjected) {
@@ -164,7 +167,10 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
         return address
       })
 
+      console.log('extensionAddresses', extensionAddresses)
+
       const uniqExtAddresses = new Set(extensionAddresses).values()
+
       setExtensionAddresses([ ...uniqExtAddresses ])
       setLocalAddresses(localAddresses)
       setDevelopAddresses(developAddresses)
@@ -198,11 +204,13 @@ export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => 
     currentAddress
   } = useAccountSelector({ injectedAddresses })
 
-  return useMemo(() => !extensionAddresses || !localAddresses || !developAddresses ? null : <AccountSelectorView
-    extensionAddresses={extensionAddresses}
-    localAddresses={localAddresses}
-    developAddresses={developAddresses}
-    profilesByAddressMap={profilesByAddressMap}
-    currentAddress={currentAddress}
-  />, [ extensionAddresses, localAddresses, developAddresses ])
+  return !extensionAddresses || !localAddresses || !developAddresses
+    ? null
+    : <AccountSelectorView
+      extensionAddresses={extensionAddresses}
+      localAddresses={localAddresses}
+      developAddresses={developAddresses}
+      profilesByAddressMap={profilesByAddressMap}
+      currentAddress={currentAddress}
+    />
 }
