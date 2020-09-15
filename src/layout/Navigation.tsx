@@ -3,7 +3,7 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout, Drawer } from 'antd';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { ElasticNodeURL } from 'src/components/utils/env';
+import { elasticNodeURL } from 'src/components/utils/env';
 
 import Menu from './SideMenu';
 import dynamic from 'next/dynamic';
@@ -55,7 +55,7 @@ export const Navigation = (props: Props): JSX.Element => {
 
   return <ReactiveBase
     className='fontSizeNormal'
-    url={ElasticNodeURL}
+    url={elasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
     <Layout>
