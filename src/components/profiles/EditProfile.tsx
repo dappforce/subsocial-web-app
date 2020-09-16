@@ -16,6 +16,7 @@ import { withMyProfile } from './address-views/utils/withLoadedOwner'
 import { accountUrl } from '../urls'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 import { UploadAvatar } from '../uploader'
+import { resolveCidOfContent } from 'src/ipfs'
 
 const log = newLogger('EditProfile')
 
@@ -68,7 +69,7 @@ export function InnerForm (props: FormProps) {
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
-      const prevCid = stringifyText(owner?.profile?.content.asIpfs)
+      const prevCid = resolveCidOfContent(owner?.profile?.content)
       return prevCid !== cid.toString() ? cid : undefined
     }
 
@@ -102,7 +103,7 @@ export function InnerForm (props: FormProps) {
 
   const goToView = () => {
     if (address) {
-      Router.push('profile/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
+      Router.push('/profile/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
     }
   };
 

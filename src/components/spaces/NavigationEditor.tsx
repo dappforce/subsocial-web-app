@@ -26,6 +26,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 import { TxFailedCallback, TxCallback } from '../substrate/SubstrateTxButton';
 import { SpaceNotFound } from './helpers';
 import NoData from '../utils/EmptyList';
+import { resolveCidOfContent } from 'src/ipfs';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -311,7 +312,9 @@ function LoadStruct (props: LoadStructProps) {
 
     if (!struct) return toggleTrigger();
 
-    ipfs.findSpace(struct.content.asIpfs.toString()).then(json => {
+    const cid = resolveCidOfContent(struct.content)
+
+    cid && ipfs.findSpace(cid).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

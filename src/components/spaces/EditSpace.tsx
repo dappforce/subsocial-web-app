@@ -21,6 +21,7 @@ import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 import { UploadAvatar } from '../uploader'
 import { MailOutlined } from '@ant-design/icons'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
+import { resolveCidOfContent } from 'src/ipfs'
 
 const log = newLogger('EditSpace')
 
@@ -89,7 +90,7 @@ export function InnerForm (props: FormProps) {
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
-      const prevCid = stringifyText(space?.struct?.content.asIpfs)
+      const prevCid = resolveCidOfContent(space?.struct?.content)
       return prevCid !== cid.toString() ? cid : undefined
     }
 
