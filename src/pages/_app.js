@@ -1,6 +1,6 @@
 // TODO remove global import of all AntD CSS, use modular LESS loading instead.
 // See .babelrc options: https://github.com/ant-design/babel-plugin-import#usage
-import 'antd/dist/antd.css'
+import 'src/styles/antd.css'
 
 import 'src/styles/bootstrap-utilities-4.3.1.css'
 import 'src/styles/components.scss'
