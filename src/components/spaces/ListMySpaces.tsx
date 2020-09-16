@@ -39,7 +39,7 @@ const useLoadUnlistedSpaces = (mySpaceIds: SpaceId[]) => {
 const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.struct.id.toString()}`} spaceData={space} preview withFollowButton />
 
 const VisibleSpacesList = ({ spacesData }: Props) => <DataList
-  title={`My spaces (${spacesData.length})`}
+  title={`My public spaces (${spacesData.length})`}
   dataSource={spacesData}
   renderItem={SpacePreview}
   noDataDesc='You do not have any spaces yet'
