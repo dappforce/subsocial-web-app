@@ -108,7 +108,7 @@ export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) =
   >
     <>
       {warn && <Alert
-        className='mb-4'
+        className='mb-3'
         message={warn}
         type="warning"
         closable={false}

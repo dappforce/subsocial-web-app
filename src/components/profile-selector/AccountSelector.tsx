@@ -58,30 +58,34 @@ const renderExtensionContent = (content: JSX.Element) => {
 }
 
 export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
+  const noAccounts = !extensionAddresses.length && !localAddresses.length && !developAddresses.length
+
   const NoExtension = useCallback(() => (
-    <div>
+    <div className='text-center mb-4'>
       <div className='mb-4 mt-2'>
         <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
         was not found or disabled. You can install it if you are using Chrome or Firefox browser.
       </div>
       <div className='mx-5'>
         <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
-          <Avatar size={20} src='chrome.svg' />
+          <Avatar size={20} src='/chrome.svg' />
           <span className='ml-2'>Polkadot extension for Chrome</span>
         </Button>
         <Button block type='default' href='https://addons.mozilla.org/ru/firefox/addon/polkadot-js-extension/' target='_blank' >
-          <Avatar size={20} src='firefox.svg' />
+          <Avatar size={20} src='/firefox.svg' />
           <span className='ml-2'>Polkadot extension for Firefox</span>
         </Button>
       </div>
     </div>
   ), [])
 
-  const NoAccounts = useCallback(() => (
-    <div className='ml-3'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
+  const NoExtensionAccounts = useCallback(() => (
+    <div className='ml-3 text-center'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
   ), [])
 
   const CurrentAccount = useCallback(() => {
+    if (noAccounts) return null
+
     if (!currentAddress) return <div className='m-3'>Click on your account to sign in:</div>
 
     return <>
@@ -114,7 +118,7 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
 
     if (!count && isInjectCurrentAddress) return null
 
-    if (!count) return renderExtensionContent(<NoAccounts />)
+    if (!count) return renderExtensionContent(<NoExtensionAccounts />)
 
     return renderExtensionContent(
       <SelectAccountItems
