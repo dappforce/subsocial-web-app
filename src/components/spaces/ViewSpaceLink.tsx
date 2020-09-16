@@ -20,7 +20,7 @@ export const ViewSpaceLink = ({
 
   return (
     <Link href='/spaces/[spaceId]' as={spaceUrl(space)}>
-      <a className={className} title={hint}>{title}</a>
+      <a className={'DfBlackLink ' + className} title={hint}>{title}</a>
     </Link>
   )
 }
