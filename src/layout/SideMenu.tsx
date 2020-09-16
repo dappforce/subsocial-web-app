@@ -75,6 +75,10 @@ function SideMenu () {
 
   const renderPageLink = useCallback((item: PageLink) => {
     const Icon = item.icon
+    if (item.hidden) {
+      return null
+    }
+
     return item.isAdvanced
       ? (
         <Menu.Item key={item.page[0]} >
