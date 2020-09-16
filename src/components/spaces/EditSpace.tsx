@@ -57,7 +57,9 @@ const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string, 
 
   const spaceIdByHandle = await substrate.getSpaceIdByHandle(handle.trim().toLowerCase())
 
-  if (mySpaceId) return spaceIdByHandle?.eq(mySpaceId)
+  if (!spaceIdByHandle) return true
+
+  if (mySpaceId) return spaceIdByHandle.eq(mySpaceId)
 
   return !spaceIdByHandle
 
