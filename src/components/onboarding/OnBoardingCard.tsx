@@ -2,7 +2,7 @@ import React from 'react'
 import { useAuth, StepsEnum } from '../auth/AuthContext';
 import { OnBoarding, OnBoardingButton, CurrentStep } from '.';
 
-const onBoadingTitle = <h4 className='mb-3'>Get started with Subsocial</h4>
+const onBoadingTitle = <h3 className='mb-3'>Get started with Subsocial</h3>
 
 type OnBoardingCardViewProps = {
   initialized?: boolean

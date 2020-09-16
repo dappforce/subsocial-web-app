@@ -1,30 +1,7 @@
 @import './subsocial-vars.scss';
 
-.DfSideBar {
-  position: fixed;
-  z-index: 10;
-  top: $height_top_menu;
-  overflow: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-
-  .ant-menu-inline {
-    width: 255px;
-  }
-}
-
-.DfSideBar .am-drawer-sidebar {
-  background-color: #fff;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.DfSideBar .am-drawer-sidebar .am-list {
-  width: 255px;
-  padding: 0;
-}
-
 .DfBrand.mobile {
+  zoom: 1;
     img {
       max-width: 36px;
     }
@@ -67,6 +44,16 @@
 }
 
 @media (max-width: 767px) {
+
+  .MobilePageContent {
+    margin-bottom: 64px;
+  }
+
+  .DfSideBar {
+    .ant-drawer-content-wrapper {
+      width: 225px !important;
+    }
+  }
 
   .DfEntirePost {
     .DfPostContent {

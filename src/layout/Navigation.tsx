@@ -7,6 +7,7 @@ import { ElasticNodeURL } from 'src/components/utils/env';
 
 import Menu from './SideMenu';
 import dynamic from 'next/dynamic';
+
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 
 const { Header, Sider, Content } = Layout;
@@ -19,7 +20,7 @@ const HomeNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();
   return <Sider
     className='DfSider'
-    width='257'
+    width='265'
     trigger={null}
     collapsible
     collapsed={collapsed}
@@ -31,7 +32,7 @@ const HomeNav = () => {
 const DefaultNav: FunctionComponent = () => {
   const { state: { collapsed }, hide } = useSidebarCollapsed();
 
-  useEffect(hide, [ false ])
+  useEffect(() => hide(), [ false ])
 
   return <Drawer
     className='DfSideBar'

@@ -100,6 +100,25 @@ pre {
 /* Other Styles */
 /* ---------------------------------------- */
 
+.DfSideBar {
+  .ant-drawer-content-wrapper {
+    width: 265px !important;
+  }
+
+  position: fixed;
+  z-index: 10;
+  top: $height_top_menu;
+  overflow: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.DfSideBar .am-drawer-sidebar {
+  background-color: #fff;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .ant-comment-content-author {
   // font-size: inherit;
   // line-height: inherit;
@@ -163,7 +182,6 @@ pre {
 
 @media (min-width: 1200px) {
   .DfBrand {
-    zoom: 0.7;
     font-size: $font_normal;
 
     img {
@@ -173,6 +191,7 @@ pre {
 }
 
 .DfBrand {
+  zoom: 0.7;
   font-size: $font_normal;
   color: $color_secondary;
   cursor: pointer;
@@ -1333,6 +1352,10 @@ a.DfStatItem {
 
 .ant-steps-item-title {
   font-size: $font_normal;
+}
+
+.DfAddressInfo {
+  text-align: left;
 }
 
 .DfChooseAccount {
