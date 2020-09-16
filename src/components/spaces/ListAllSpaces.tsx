@@ -10,13 +10,12 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { NewSpaceButton } from './helpers';
 
 type Props = {
-  totalCount?: BN
   spacesData?: SpaceData[]
 }
 
 export const ListAllSpaces: NextPage<Props> = (props) => {
-  const { totalCount = ZERO, spacesData = [] } = props
-  const title = `Explore Spaces (${totalCount})`
+  const { spacesData = [] } = props
+  const title = `Explore Spaces (${spacesData.length})`
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
@@ -61,7 +60,6 @@ ListAllSpaces.getInitialProps = async (_props): Promise<Props> => {
   }
 
   return {
-    totalCount,
     spacesData
   }
 }
