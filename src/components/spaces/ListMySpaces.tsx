@@ -17,7 +17,7 @@ type Props = {
   mySpaceIds: SpaceId[]
 };
 
-const useLoadHiddenSpaces = (mySpaceIds: SpaceId[]) => {
+const useLoadUnlistedSpaces = (mySpaceIds: SpaceId[]) => {
   const { query: { address } } = useRouter()
   const isMySpaces = isMyAddress(address as string)
   const [ myHiddenSpaces, setMyHiddenSpaces ] = useState<SpaceData[]>()
@@ -25,7 +25,7 @@ const useLoadHiddenSpaces = (mySpaceIds: SpaceId[]) => {
   useSubsocialEffect(({ subsocial }) => {
     if (!isMySpaces) return setMyHiddenSpaces([])
 
-    subsocial.findHiddenSpaces(mySpaceIds)
+    subsocial.findUnlistedSpaces(mySpaceIds)
       .then(setMyHiddenSpaces)
 
   }, [ mySpaceIds.length, isMySpaces ])
@@ -47,13 +47,14 @@ const VisibleSpacesList = ({ spacesData }: Props) => <DataList
 />
 
 const HiddenSpacesList = ({ mySpaceIds }: Props) => {
-  const { myHiddenSpaces, isLoading } = useLoadHiddenSpaces(mySpaceIds)
+  const { myHiddenSpaces, isLoading } = useLoadUnlistedSpaces(mySpaceIds)
 
+  console.log('myHiddenSpaces', myHiddenSpaces)
   if (isLoading) return <Loading />
 
   const hiddenSpacesCount = myHiddenSpaces.length
   return hiddenSpacesCount ? <DataList
-    title={`My hidden spaces (${hiddenSpacesCount})`}
+    title={`My unlisted spaces (${hiddenSpacesCount})`}
     dataSource={myHiddenSpaces}
     renderItem={SpacePreview}
   /> : null
@@ -76,7 +77,7 @@ ListMySpaces.getInitialProps = async (props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
   const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-  const spacesData = await subsocial.findVisibleSpaces(mySpaceIds);
+  const spacesData = await subsocial.findPublicSpaces(mySpaceIds);
 
   return {
     spacesData,

@@ -16,7 +16,7 @@ import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
 import { isHidden, Loading } from 'src/components/utils';
-import { useLoadHiddenSpace } from 'src/components/spaces/helpers';
+import { useLoadUnlistedSpace } from 'src/components/spaces/helpers';
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
 
@@ -40,7 +40,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
 
   const { isNotMobile } = useResponsiveSize()
   const struct = useSubscribedPost(initStruct)
-  const spaceData = space || postDetails.space || useLoadHiddenSpace(struct.owner).myHiddenSpaces
+  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpaces
 
   const { title, body, image, canonical, tags } = content;
 
@@ -101,7 +101,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const postIdFromUrl = new BN(postId as string)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findVisiblePostsWithAllDetails([ ...replyIds, postIdFromUrl ])
+  const comments = await subsocial.findPublicPostsWithAllDetails([ ...replyIds, postIdFromUrl ])
 
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
   const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postIdFromUrl)

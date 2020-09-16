@@ -116,19 +116,19 @@ type PostsOnSpacePageProps = {
   posts: PostWithSomeDetails[]
 }
 
-type LoadHiddenPostByOwnerProps = {
+type LoadUnlistedPostByOwnerProps = {
   owner: AnyAccountId
   postIds: PostId[]
 }
 
-export const useLoadHiddenPostByOwner = ({ owner, postIds }: LoadHiddenPostByOwnerProps) => {
+export const useLoadUnlistedPostByOwner = ({ owner, postIds }: LoadUnlistedPostByOwnerProps) => {
   const isMySpaces = isMyAddress(owner)
   const [ myHiddenPosts, setMyHiddenPosts ] = useState<PostWithSomeDetails[]>()
 
   useSubsocialEffect(({ subsocial }) => {
     if (!isMySpaces) return setMyHiddenPosts([])
 
-    subsocial.findHiddenPostsWithAllDetails(postIds)
+    subsocial.findUnlistedPostsWithAllDetails(postIds)
       .then(setMyHiddenPosts)
 
   }, [ postIds.length, isMySpaces ])
@@ -141,13 +141,13 @@ export const useLoadHiddenPostByOwner = ({ owner, postIds }: LoadHiddenPostByOwn
 
 const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   const { struct: space } = spaceData
-  const { myHiddenPosts, isLoading } = useLoadHiddenPostByOwner({ owner: space.owner, postIds })
+  const { myHiddenPosts, isLoading } = useLoadUnlistedPostByOwner({ owner: space.owner, postIds })
 
   if (isLoading) return <Loading />
 
   const hiddenPostsCount = myHiddenPosts.length
   return hiddenPostsCount ? <DataList
-    title={<Pluralize count={hiddenPostsCount} singularText={'Hidden post'} />}
+    title={<Pluralize count={hiddenPostsCount} singularText={'Unlisted post'} />}
     dataSource={myHiddenPosts}
     renderItem={(item) =>
       <PostPreview
@@ -210,7 +210,7 @@ export const isHiddenSpace = (space: Space) => isHidden(space)
 
 export const SpaceNotFound = () => <NoData description={'Space not found'} />
 
-export const useLoadHiddenSpace = (address: AnyAccountId) => {
+export const useLoadUnlistedSpace = (address: AnyAccountId) => {
   const isMySpace = isMyAddress(address)
   const { query: { spaceId } } = useRouter()
   const idOrHandle = spaceId as string

@@ -40,7 +40,7 @@ function SideMenu () {
       setLoaded(false);
       const readyApi = await api;
       unsub = await readyApi.query.spaceFollows.spacesFollowedByAccount(myAddress, async ids => {
-        const spacesData = await subsocial.findVisibleSpaces(ids as unknown as SpaceId[]);
+        const spacesData = await subsocial.findPublicSpaces(ids as unknown as SpaceId[]);
         if (isSubscribe) {
           setFollowedSpacesData(spacesData);
           setLoaded(true);

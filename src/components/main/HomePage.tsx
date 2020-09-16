@@ -57,11 +57,11 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   const spaceLimit = newSpaces.lt(FIFTY) ? newSpaces : FIFTY
 
   const latestSpaceIds = getLastNIds(nextSpaceId, spaceLimit);
-  const visibleSpacesData = await subsocial.findVisibleSpaces(latestSpaceIds) as SpaceData[]
+  const visibleSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
   const spacesData = visibleSpacesData.slice(0, MAX_TO_SHOW)
 
   const latestPostIds = getLastNIds(nextPostId, FIFTY);
-  const allPostsData = await subsocial.findVisiblePostsWithAllDetails(latestPostIds);
+  const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds);
   const [ visibleCommentData, visiblePostsData ] = partition(allPostsData, (x) => isComment(x.post.struct.extension))
 
   const postsData = visiblePostsData.slice(0, MAX_TO_SHOW)
