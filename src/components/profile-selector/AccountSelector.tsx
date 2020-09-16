@@ -63,15 +63,15 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
   const NoExtension = useCallback(() => (
     <div className='text-center mb-4'>
       <div className='mb-4 mt-2'>
-        <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
-        was not found or disabled. You can install it if you are using Chrome or Firefox browser.
+        <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot.js extension</a>{' '}
+        was not found or disabled. Please enable the extension or install it from one of the links below.
       </div>
       <div className='mx-5'>
         <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
           <Avatar size={20} src='/chrome.svg' />
           <span className='ml-2'>Polkadot extension for Chrome</span>
         </Button>
-        <Button block type='default' href='https://addons.mozilla.org/ru/firefox/addon/polkadot-js-extension/' target='_blank' >
+        <Button block type='default' href='https://addons.mozilla.org/firefox/addon/polkadot-js-extension/' target='_blank' >
           <Avatar size={20} src='/firefox.svg' />
           <span className='ml-2'>Polkadot extension for Firefox</span>
         </Button>
