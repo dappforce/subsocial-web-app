@@ -42,7 +42,7 @@ const VisibleSpacesList = ({ spacesData }: Props) => <DataList
   title={`My spaces (${spacesData.length})`}
   dataSource={spacesData}
   renderItem={SpacePreview}
-  noDataDesc='You do not have your own spaces yet'
+  noDataDesc='You do not have any spaces yet'
   noDataExt={<NewSpaceButton type='primary' ghost>Create my first space</NewSpaceButton>}
 />
 
