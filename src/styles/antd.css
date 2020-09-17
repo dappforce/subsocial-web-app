@@ -1,10 +1,10 @@
 /*!
- * 
+ *
  * antd v4.6.3
- * 
+ *
  * Copyright 2015-present, Alipay, Inc.
  * All rights reserved.
- *       
+ *
  */
 /* stylelint-disable at-rule-empty-line-before,at-rule-name-space-after,at-rule-no-unknown */
 /* stylelint-disable no-duplicate-selectors */
@@ -4794,7 +4794,6 @@ html {
   padding-left: 0;
   color: rgba(0, 0, 0, 0.85);
   font-size: 14px;
-  line-height: 0;
   text-align: left;
   list-style: none;
   background: #fff;
