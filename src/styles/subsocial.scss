@@ -42,7 +42,6 @@ pre {
 
 .DfBalance {
   display: flex;
-  font-size: $font_small;
   color: $color_muted
 }
 
@@ -497,7 +496,7 @@ hr {
   margin-top: $space_small;
 
   .DfStatItem {
-    margin-right: $space_normal;
+    margin-right: $space_huge;
 
     &::last-child {
       margin-right: 0;
@@ -977,7 +976,7 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
-  height: 33%;
+  min-height: 31%;
   .DfIdentityIcon {
     margin-right: 0 !important;
   }
@@ -1089,7 +1088,7 @@ a.DfStatItem {
 .DfStatItem {
   font-size: $font_normal;
   display: inline;
-  margin-right: $space_tiny;
+  margin-right: $space_large;
 }
 
 .DfSpaceTitle {
@@ -1539,6 +1538,7 @@ a.DfStatItem {
   @extend .DfBoxShadow;
   position: fixed;
   bottom: 0;
+  left: 0;
   width: 100%;
   display: flex;
   align-items: center;
@@ -1546,7 +1546,6 @@ a.DfStatItem {
   background: #fff;
   line-height: 0.6rem;
   padding: 1rem;
-  margin: 0 -1rem;
 }
 
 .DfButtonAsMenuItem {
