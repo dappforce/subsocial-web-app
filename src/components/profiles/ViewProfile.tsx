@@ -35,6 +35,7 @@ import Name from './address-views/Name';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
 import { CopyAddress } from './address-views/utils';
+import mdToText from 'markdown-to-txt';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
@@ -123,14 +124,14 @@ const Component: NextPage<Props> = (props: Props) => {
   const followingText = <Pluralize count={following} singularText='Following' />
 
   return <>
-    <HeadMeta title={getName()} desc={about} image={avatar} />
+    <HeadMeta title={getName()} desc={mdToText(about, { escapeHtml: true })} image={avatar} />
     <Section>
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
         <div className='content w-100 ml-3'>
-          <div className='header DfAccountTitle d-flex justify-content-between'>
-            <span>
-              <Name owner={owner} address={address} />
+          <div className='header DfAccountTitle d-flex justify-content-between mb-2'>
+            <span className='d-flex align-items-center'>
+              <Name owner={owner} address={address} className='mr-3' />
               <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
             </span>
             <DropDownMenu />

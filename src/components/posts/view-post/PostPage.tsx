@@ -19,7 +19,7 @@ import { isHidden, Loading } from 'src/components/utils';
 import { useLoadUnlistedSpace } from 'src/components/spaces/helpers';
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
-
+import mdToText from 'markdown-to-txt';
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 export type PostDetailsProps = {
@@ -63,7 +63,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
     <HiddenPostAlert post={post.struct} />
     <PageContent>
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
-        <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
+        <HeadMeta title={title} desc={mdToText(body, { escapeHtml: true })} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
           {<h1 className='DfPostName'>{titleMsg}</h1>}
           <PostDropDownMenu post={struct} space={spaceStruct} />
