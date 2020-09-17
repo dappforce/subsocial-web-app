@@ -169,7 +169,9 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('handle')}
-        label='URL handle'
+        label='Handle'
+        help='This should be a unique handle that will be used in a URL of your space'
+        hasFeedback
         rules={[
           { pattern: /^[A-Za-z0-9_]+$/, message: 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_).' },
           { min: minHandleLen, message: minLenError('Handle', minHandleLen) },

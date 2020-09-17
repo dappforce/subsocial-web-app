@@ -184,8 +184,8 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('canonical')}
-        label='Canonical URL'
-        help='Provide the original URL of this post if you are cross-posting it here'
+        label='Original URL'
+        help='This is the orginal URL of the place you first posted about this on another social media platform (i.e. Medium, Reddit, Twitter, etc.)'
         hasFeedback
         rules={[
           { type: 'url', message: 'Should be a valid URL.' }

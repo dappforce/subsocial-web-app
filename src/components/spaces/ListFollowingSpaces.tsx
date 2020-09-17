@@ -29,7 +29,7 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
         title={title}
         dataSource={spacesData}
         renderItem={(item, index) => (
-          <ViewSpacePage {...props} key={index} spaceData={item} withFollowButton/>
+          <ViewSpacePage {...props} key={index} spaceData={item} preview withFollowButton />
         )}
         noDataDesc='You are not subscribed to any space yet'
         noDataExt={<ButtonLink href='/spaces/all' as='/spaces/all'>Explore spaces</ButtonLink>}

@@ -42,9 +42,11 @@ type BlackLinkProps = BareProps & Partial<ShareLinkProps> & {
   onClick?: () => void
 }
 
-export const BlackLink = ({ children, className, style, onClick }: BlackLinkProps) => <a className={`DfBlackLink ${className}`} onClick={onClick} style={style}>{children}</a>
+export const BlackLink = ({ children, className, style, onClick }: BlackLinkProps) =>
+  <a className={'DfBlackLink ' + className} onClick={onClick} style={style}>{children}</a>
 
-export const ShareLink = ({ url, children }: ShareLinkProps) => <BlackLink onClick={() => openNewWindow(url)}>{children}</BlackLink>
+export const ShareLink = ({ url, children }: ShareLinkProps) =>
+  <BlackLink onClick={() => openNewWindow(url)}>{children}</BlackLink>
 
 type CopyProps = {
   text: string,
