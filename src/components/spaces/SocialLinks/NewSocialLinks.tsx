@@ -12,7 +12,7 @@ type NewSocialLinksProps = {
 }
 type InnerFilmListFn = (fields: FormListFieldData[], operation: FormListOperation) => React.ReactNode;
 
-const staticLinkLabels = [ 'Presonal site', 'Twitter', 'Medium', 'GitHub', 'Facebook', 'LinkedIn', 'Instagram' ]
+const staticLinkLabels = [ 'Website', 'Twitter', 'Medium', 'GitHub', 'Facebook', 'LinkedIn', 'Instagram' ]
 
 const staticSocialLinks = (): InnerFilmListFn => {
   return (fields) => <div>
