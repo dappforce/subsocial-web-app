@@ -9,6 +9,7 @@ import { MutedSpan } from '../utils/MutedText';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { Pluralize } from '../utils/Plularize';
 import { spaceUrl } from '../urls';
+import AboutSpaceLink from './AboutSpaceLink';
 
 type Props = {
   space: Space
@@ -30,12 +31,14 @@ export const SpaceStatsRow = ({ space }: Props) => {
   const followersClassName = 'DfStatItem DfGreyLink ' + (!followers && 'disable')
 
   return (
-    <div className={`${isMySpace && 'MySpace'}`}>
+    <div className={`${isMySpace && 'MySpace DfStatItem'}`}>
       <Link href='/spaces/[spaceId]' as={spaceUrl(space)}>
         <a className={'DfStatItem ' + (!postsCount && 'disable')}>
           <Pluralize count={postsCount} singularText='Post'/>
         </a>
       </Link>
+
+      <MutedSpan><AboutSpaceLink className='DfGreyLink DfStatItem' space={space} title='About' /></MutedSpan>
 
       <div onClick={() => setFollowersOpen(true)} className={followersClassName}>
         <Pluralize count={followers} singularText='Follower'/>
