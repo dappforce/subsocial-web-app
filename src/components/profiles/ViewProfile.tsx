@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { DfMd } from '../utils/DfMd';
 import Link from 'next/link';
 
 import { AccountId } from '@polkadot/types/interfaces';
 import { ZERO } from '../utils/index';
 import { HeadMeta } from '../utils/HeadMeta';
-import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
+import { isEmptyStr } from '@subsocial/utils'
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
@@ -16,14 +16,6 @@ import { Pluralize } from '../utils/Plularize';
 
 import {
   EllipsisOutlined,
-  FacebookOutlined,
-  GithubOutlined,
-  GlobalOutlined,
-  InstagramOutlined,
-  LinkedinOutlined,
-  MailOutlined,
-  MediumOutlined,
-  TwitterOutlined,
   PlusOutlined
 } from '@ant-design/icons';
 
@@ -36,22 +28,18 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner';
-import { InfoDetails } from './address-views';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { getAccountId } from '../substrate';
-import MyEntityLabel from '../utils/MyEntityLabel';
-import { SummarizeMd } from '../utils/md';
-import ViewProfileLink from './ViewProfileLink';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 import Avatar from './address-views/Avatar';
+import Name from './address-views/Name';
+import MyEntityLabel from '../utils/MyEntityLabel';
+import { Balance } from './address-views/utils/Balance';
+import { CopyAddress } from './address-views/utils';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
 export type Props = {
-  preview?: boolean,
-  nameOnly?: boolean,
-  withLink?: boolean,
   address: AccountId,
   owner?: ProfileData,
   followers?: AccountId[],
@@ -61,16 +49,12 @@ export type Props = {
 const Component: NextPage<Props> = (props: Props) => {
   const {
     address,
-    preview = false,
-    nameOnly = false,
-    withLink = false,
     size = LARGE_AVATAR_SIZE,
     owner = {} as ProfileData
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
-  const { isApiReady } = useSubsocialApi()
 
   const isMyAccount = isMyAddress(address);
 
@@ -83,31 +67,12 @@ const Component: NextPage<Props> = (props: Props) => {
   const noProfile = isEmpty(profile);
   const followers = struct ? new BN(struct.followers_count) : ZERO;
   const following = struct ? new BN(struct.following_accounts_count) : ZERO;
-  const reputation = struct ? new BN(struct.reputation) : ZERO;
 
   const {
     name,
     avatar,
-    email,
-    personalSite,
-    about,
-    facebook,
-    twitter,
-    linkedIn,
-    medium,
-    github,
-    instagram
+    about
   } = content;
-
-  // TODO fix copypasta of social links. Implement via array.
-  const hasEmail = email && nonEmptyStr(email);
-  const hasPersonalSite = personalSite && nonEmptyStr(personalSite);
-  const hasFacebookLink = facebook && nonEmptyStr(facebook);
-  const hasTwitterLink = twitter && nonEmptyStr(twitter);
-  const hasLinkedInLink = linkedIn && nonEmptyStr(linkedIn);
-  const hasMediumLink = medium && nonEmptyStr(medium);
-  const hasGitHubLink = github && nonEmptyStr(github);
-  const hasInstagramLink = instagram && nonEmptyStr(instagram);
 
   const createProfileButton = noProfile && isMyAccount &&
     <Link href='/profile/new' as='profile/new'>
@@ -117,8 +82,7 @@ const Component: NextPage<Props> = (props: Props) => {
       </Button>
     </Link>;
 
-  const renderDropDownMenu = () => {
-    if (noProfile) return null;
+  const DropDownMenu = useCallback(() => {
 
     const menu = (
       <Menu>
@@ -139,7 +103,7 @@ const Component: NextPage<Props> = (props: Props) => {
       }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
     </>
-  };
+  }, [ isMyAccount ]);
 
   const isOnlyAddress = isEmptyStr(name)
 
@@ -152,97 +116,6 @@ const Component: NextPage<Props> = (props: Props) => {
     }
   };
 
-  const accountForUrl = { address }
-
-  const renderDescription = () => preview
-    ? <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
-    : <DfMd className='mt-3' source={about} />
-
-  const NameAsLink = () =>
-    <ViewProfileLink account={accountForUrl} title={getName()} className='handle DfBoldBlackLink' />
-
-  const renderNameOnly = () => {
-    return withLink
-      ? <NameAsLink />
-      : <>{getName()}</>;
-  };
-
-  const renderPreview = () => {
-    return (
-      <div>
-        <div className={`ProfileDetails MySpace`}>
-          <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
-          <div className='content w-100'>
-            <div className='header DfProfileTitle'>
-              <NameAsLink />
-              <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
-              {/* <KusamaRolesTags address={address} /> */}
-              {renderDropDownMenu()}
-            </div>
-            {!isOnlyAddress && <MutedDiv>Address: {address}</MutedDiv>}
-            <div className='about'>
-              <div>
-                {isApiReady && <InfoDetails address={address} details={<>Reputation: {reputation.toString()}</>}/>}
-                <div className='DfSocialLinks'>
-                  {hasEmail &&
-                    <a target='_blank' href={`mailto:${email}`}>
-                      <MailOutlined />
-                    </a>
-                  }
-
-                  {/* TODO fix copypasta of social links. Implement via array. */}
-
-                  {hasPersonalSite &&
-                    <a target='_blank' href={personalSite}>
-                      <GlobalOutlined />
-                    </a>
-                  }
-                  {hasFacebookLink &&
-                    <a target='_blank' href={facebook}>
-                      <FacebookOutlined />
-                    </a>
-                  }
-                  {hasTwitterLink &&
-                    <a target='_blank' href={twitter}>
-                      <TwitterOutlined />
-                    </a>}
-                  {hasLinkedInLink &&
-                    <a target='_blank' href={linkedIn}>
-                      <LinkedinOutlined />
-                    </a>
-                  }
-                  {hasMediumLink &&
-                    <a target='_blank' href={medium}>
-                      <MediumOutlined />
-                    </a>
-                  }
-                  {hasGitHubLink &&
-                    <a target='_blank' href={github}>
-                      <GithubOutlined />
-                    </a>
-                  }
-                  {hasInstagramLink &&
-                    <a target='_blank' href={instagram}>
-                      <InstagramOutlined />
-                    </a>
-                  }
-                </div>
-              </div>
-              {renderDescription()}
-              {/* <KusamaIdentity address={address} /> */}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  };
-
-  if (nameOnly) {
-    return renderNameOnly();
-  } else if (preview) {
-    return renderPreview();
-  }
-
   const noFollowers = followers.eq(ZERO);
   const noFollowing = following.eq(ZERO);
 
@@ -252,15 +125,37 @@ const Component: NextPage<Props> = (props: Props) => {
   return <>
     <HeadMeta title={getName()} desc={about} image={avatar} />
     <Section>
-      <div className='FullProfile'>
-        {renderPreview()}
-        <div className='Profile--actions'>
-          <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
-          <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
-          <Link href='/[address]/spaces' as={`/${address}/spaces`}><a className='DfProfileModalLink'>Spaces</a></Link>
-          <div className='mt-3'>
-            {createProfileButton}
-            <FollowAccountButton address={address} />
+      <div className='d-flex'>
+        <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
+        <div className='content w-100 ml-3'>
+          <div className='header DfAccountTitle d-flex justify-content-between'>
+            <span>
+              <Name owner={owner} address={address} />
+              <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+            </span>
+            <DropDownMenu />
+          </div>
+          {/* <KusamaRolesTags address={address} /> */}
+          <MutedDiv>
+            {'Address: '}
+            <CopyAddress address={address}>
+              <span className='DfGreyLink'>{address}</span>
+            </CopyAddress>
+          </MutedDiv>
+          <MutedDiv><Balance address={address} label='Balance: ' /></MutedDiv>
+          <MutedDiv>{`Reputation: ${struct.reputation}`}</MutedDiv>
+          <div className='about'>
+            {about && <DfMd className='mt-3' source={about} />}
+            {/* <KusamaIdentity address={address} /> */}
+          </div>
+          <div className='Profile--actions'>
+            <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
+            <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
+            <Link href='/[address]/spaces' as={`/${address}/spaces`}><a className='DfProfileModalLink'>Spaces</a></Link>
+            <div className='mt-3'>
+              {createProfileButton}
+              <FollowAccountButton address={address} />
+            </div>
           </div>
         </div>
       </div>

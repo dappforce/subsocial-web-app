@@ -484,15 +484,6 @@ hr {
   }
 }
 
-.Profile--actions {
-  margin-left: 3.5rem;
-
-  .DfCreateProfileButton {
-    margin-top: $space_normal;
-    text-align: initial;
-  }
-}
-
 .asLink {
   @extend .DfLinkOnHover;
 }
@@ -701,6 +692,7 @@ hr {
 
 .Df--AddressComponents-details {
   color: $color_muted !important;
+  font-size: $font_small;
   font-weight: normal;
 }
 
