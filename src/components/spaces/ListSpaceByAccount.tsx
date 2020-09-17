@@ -13,6 +13,7 @@ import { NewSpaceButton } from './helpers';
 import { newLogger } from '@subsocial/utils';
 import { AnyAccountId } from '@subsocial/types';
 import { return404 } from '../utils/next';
+import { PlusOutlined } from '@ant-design/icons';
 
 type Props = {
   spacesData: SpaceData[]
@@ -44,13 +45,26 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: Props) => {
 
 const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.struct.id.toString()}`} spaceData={space} preview withFollowButton />
 
-const VisibleSpacesList = ({ spacesData }: Props) => <DataList
-  title={`Spaces (${spacesData.length})`}
-  dataSource={spacesData}
-  renderItem={SpacePreview}
-  noDataDesc='You do not have your own spaces yet'
-  noDataExt={<NewSpaceButton type='primary' ghost>Create my first space</NewSpaceButton>}
-/>
+const VisibleSpacesList = ({ spacesData, mySpaceIds }: Props) => {
+  const noSpaces = !mySpaceIds.length
+
+  return <DataList
+    title={<span className='d-flex justify-content-between align-items-center w-100 mb-2'>
+      <span>{`Spaces (${spacesData.length})`}</span>
+      {!noSpaces && <NewSpaceButton
+        icon={<PlusOutlined />}
+        type='primary'
+        ghost
+      >
+        Create space
+      </NewSpaceButton>}
+    </span>}
+    dataSource={spacesData}
+    renderItem={SpacePreview}
+    noDataDesc='You do not have your own public spaces yet'
+    noDataExt={noSpaces && <NewSpaceButton type='primary' ghost>Create my first space</NewSpaceButton>}
+  />
+}
 
 const UnlistedSpacesList = (props: Props) => {
   const { myUnlistedSpaces, isLoading } = useLoadUnlistedSpaces(props)
