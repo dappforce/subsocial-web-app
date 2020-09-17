@@ -11,6 +11,8 @@ import { PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
 import { ZERO } from '../utils';
+import { useIsSignIn } from '../auth/MyAccountContext';
+import { MyFeed } from '../activity/MyFeed';
 
 const RESERVED_SPACES = new BN(1000 + 1)
 const FIFTY = new BN(50);
@@ -22,7 +24,7 @@ type Props = {
   commentData: PostWithAllDetails[]
 }
 
-const LatestUpdate: NextPage<Props> = (props: Props) => {
+const LatestUpdate = (props: Props) => {
   const { spacesData, postsData, commentData } = props;
 
   return (
@@ -39,6 +41,8 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
   );
 }
 
+const HomePage: NextPage<Props> = (props) => useIsSignIn() ? <MyFeed /> : <LatestUpdate {...props}/>
+
 const getLastNIds = (nextId: BN, size: BN): BN[] => {
   const idsCount = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
   return new Array<BN>(idsCount)
@@ -47,7 +51,7 @@ const getLastNIds = (nextId: BN, size: BN): BN[] => {
       nextId.sub(new BN(index + 1)))
 }
 
-LatestUpdate.getInitialProps = async (): Promise<Props> => {
+HomePage.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi();
   const { substrate } = subsocial
   const nextSpaceId = await substrate.nextSpaceId()
@@ -74,4 +78,4 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   }
 }
 
-export default LatestUpdate;
+export default HomePage;
