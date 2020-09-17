@@ -61,8 +61,8 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
   const noAccounts = !extensionAddresses.length && !localAddresses.length && !developAddresses.length
 
   const NoExtension = useCallback(() => (
-    <div className='text-center mb-4'>
-      <div className='mb-4 mt-2'>
+    <div className='text-center mb-3'>
+      <div className='mb-3 mx-3'>
         <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
         was not found or disabled. You can install it if you are using Chrome or Firefox browser.
       </div>
