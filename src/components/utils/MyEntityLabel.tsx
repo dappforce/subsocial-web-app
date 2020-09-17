@@ -9,7 +9,7 @@ type Props = React.PropsWithChildren<{
 export const MyEntityLabel = ({ isMy = false, children }: Props) => {
   const { isNotMobile } = useResponsiveSize()
   return isNotMobile && isMy
-    ? <Tag color='green' className='ml-3'>{children}</Tag>
+    ? <Tag color='green'>{children}</Tag>
     : null
 }
 export default MyEntityLabel
