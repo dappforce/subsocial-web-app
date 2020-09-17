@@ -21,7 +21,7 @@ export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPa
       {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>}
     </div>
     : <>
-      <div className='MobilePageContent'>{children}</div>
+      {children}
       {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>}
     </>
 }

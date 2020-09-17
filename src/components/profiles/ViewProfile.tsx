@@ -257,6 +257,7 @@ const Component: NextPage<Props> = (props: Props) => {
         <div className='Profile--actions'>
           <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
           <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
+          <Link href='/[address]/spaces' as={`/${address}/spaces`}><a className='DfProfileModalLink'>Spaces</a></Link>
           <div className='mt-3'>
             {createProfileButton}
             <FollowAccountButton address={address} />

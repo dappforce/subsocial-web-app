@@ -3,7 +3,7 @@ import { Form, Input } from 'antd'
 import Router from 'next/router'
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
-import { stringifyText, getTxParams } from '../substrate'
+import { getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { ProfileUpdate, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
@@ -103,7 +103,7 @@ export function InnerForm (props: FormProps) {
 
   const goToView = () => {
     if (address) {
-      Router.push('/profile/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
+      Router.push('/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
     }
   };
 

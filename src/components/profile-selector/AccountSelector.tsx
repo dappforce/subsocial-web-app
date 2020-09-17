@@ -173,8 +173,6 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
         return address
       })
 
-      console.log('extensionAddresses', extensionAddresses)
-
       const uniqExtAddresses = new Set(extensionAddresses).values()
 
       setExtensionAddresses([ ...uniqExtAddresses ])
