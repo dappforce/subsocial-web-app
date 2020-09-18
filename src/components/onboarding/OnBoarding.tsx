@@ -42,7 +42,7 @@ export const OnBoardingButton = (props: ActionButtonProps) => {
 
   switch (step) {
     case StepsEnum.Login: return <SignInButton isPrimary />
-    case StepsEnum.GetTokens: return <ButtonLink block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens' as='/get-free-tokens'>{title}</ButtonLink>
+    case StepsEnum.GetTokens: return <ButtonLink block={block} type={asLink ? 'link' : 'primary'} href='/faucet' as='/faucet'>{title}</ButtonLink>
     case StepsEnum.CreateSpace: return <CreateSpaceButton block={block} type={asLink ? 'link' : 'primary'} ghost={false}>{title}</CreateSpaceButton>
     default: return null
   }
