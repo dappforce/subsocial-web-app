@@ -25,15 +25,15 @@ export const MyFeed = () => {
     getNextPage(0).catch(err => new Error(err));
   }, [ myAddress ]);
 
-  if (!myAddress) return <NotAuthorized />;
-
   const getNextPage = useCallback(async (actualOffset: number = offset) => {
+    if (!myAddress) return
+
     const isFirstPage = actualOffset === 0;
     const data = await getNewsFeed(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
     if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
     setItems(isFirstPage ? data : items.concat(data));
     setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
-  }, []);
+  }, [ myAddress ]);
 
   const totalCount = items && items.length;
 
@@ -49,6 +49,8 @@ export const MyFeed = () => {
     >
       <PostPreviewList postIds={postIds} />
     </InfiniteScroll>, [ totalCount ])
+
+  if (!myAddress) return <NotAuthorized />;
 
   return <>
     <HeadMeta title='My Feed' />

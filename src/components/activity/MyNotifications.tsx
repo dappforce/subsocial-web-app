@@ -28,9 +28,9 @@ export const MyNotifications = () => {
     // clearNotifications(myAddress)
   }, [ myAddress ]);
 
-  if (!myAddress) return <NotAuthorized />;
-
   const getNextPage = useCallback(async (actualOffset: number = offset) => {
+    if (!myAddress) return
+
     const isFirstPage = actualOffset === 0;
     const data = await getNotifications(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
     if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasNextPage(false);
@@ -60,6 +60,8 @@ export const MyNotifications = () => {
     >
       <Notifications activities={items} />
     </InfiniteScroll>, [ totalCount ])
+
+  if (!myAddress) return <NotAuthorized />;
 
   return <>
     <HeadMeta title='My Notifications' />
