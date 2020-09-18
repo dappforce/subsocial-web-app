@@ -9,11 +9,10 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { isMyAddress, useMyAddress } from '../auth/MyAccountContext';
 import { Loading } from '../utils';
-import { NewSpaceButton } from './helpers';
+import { CreateSpaceButton } from './helpers';
 import { newLogger } from '@subsocial/utils';
 import { AnyAccountId } from '@subsocial/types';
 import { return404 } from '../utils/next';
-import { PlusOutlined } from '@ant-design/icons';
 
 type Props = {
   spacesData: SpaceData[]
@@ -57,21 +56,15 @@ const PublicSpaces = ({ spacesData, mySpaceIds }: Props) => {
   return <DataList
     title={<span className='d-flex justify-content-between align-items-center w-100 mb-2'>
       <span>{`Public Spaces (${spacesData.length})`}</span>
-      {!noSpaces && <NewSpaceButton
-        icon={<PlusOutlined />}
-        type='primary'
-        ghost
-      >
-        Create space
-      </NewSpaceButton>}
+      {!noSpaces && <CreateSpaceButton />}
     </span>}
     dataSource={spacesData}
     renderItem={SpacePreview}
     noDataDesc='You do not own public spaces yet'
     noDataExt={noSpaces &&
-      <NewSpaceButton type='primary' ghost>
+      <CreateSpaceButton>
         Create my first space
-      </NewSpaceButton>
+      </CreateSpaceButton>
     }
   />
 }
