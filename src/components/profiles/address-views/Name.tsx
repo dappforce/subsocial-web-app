@@ -5,10 +5,12 @@ import { ProfileData } from '@subsocial/types';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import ViewProfileLink from '../ViewProfileLink';
 import { useExtensionName } from './utils';
+import { MutedSpan } from 'src/components/utils/MutedText';
 
 type Props = AddressProps & {
   isShort?: boolean,
   asLink?: boolean,
+  withShortAddress?: boolean,
   className?: string
 };
 
@@ -17,19 +19,29 @@ export const Name = ({
   owner = {} as ProfileData,
   isShort = true,
   asLink = true,
+  withShortAddress,
   className
 }: Props) => {
 
   const { content } = owner
 
   // TODO extract a function? (find similar copypasta in other files):
-  const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = content?.name || useExtensionName(address) || addressString
+  const shortAddress = toShortAddress(address)
+  const addressString = isShort ? shortAddress : address.toString()
+  const name = content?.name || useExtensionName(address)
+  const title = name
+    ? <>
+      {name}
+      {withShortAddress && <MutedSpan className='ml-2'>{shortAddress}</MutedSpan>}
+    </>
+    : addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
+  console.log('TITLE:', title, withShortAddress)
+
   return asLink
-    ? <ViewProfileLink account={{ address }} title={name} className={nameClass} />
-    : <>{name}</>
+    ? <ViewProfileLink account={{ address }} title={title} className={nameClass} />
+    : <>{title}</>
 }
 
 export const NameWithOwner = withLoadedOwner(Name);
