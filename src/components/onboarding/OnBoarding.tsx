@@ -60,7 +60,7 @@ export const stepItems: StepItem[] = [
     content: 'Get first tokens'
   },
   {
-    title: getMobilyFriendlyText('Create your space', 'Create space'),
+    title: getMobilyFriendlyText('Create my space', 'Create space'),
     key: 'spaces',
     content: 'Get first tokens'
   }
