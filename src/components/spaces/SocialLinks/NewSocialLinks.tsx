@@ -11,7 +11,7 @@ type NewSocialLinksProps = {
   isDynamic?: boolean
 }
 
-type InnerFilmListFn = (fields: FormListFieldData[], operation: FormListOperation) => React.ReactNode;
+type InnerFieldListFn = (fields: FormListFieldData[], operation: FormListOperation) => React.ReactNode;
 
 const staticLinkLabels: LinkLabel[] = [
   'Website',
@@ -24,7 +24,7 @@ const staticLinkLabels: LinkLabel[] = [
   'Instagram'
 ]
 
-const staticSocialLinks = (): InnerFilmListFn => {
+const staticSocialLinks = (): InnerFieldListFn => {
   return (fields) => <div>
     {staticLinkLabels.map((label, index) => {
       const field = fields[index] || { name: index, key: index, fieldKey: index }
@@ -46,7 +46,7 @@ const staticSocialLinks = (): InnerFilmListFn => {
   </div>
 }
 
-const dynamicSocialLinks = (): InnerFilmListFn => {
+const dynamicSocialLinks = (): InnerFieldListFn => {
   return (fields, { add, remove }) => {
 
     return (

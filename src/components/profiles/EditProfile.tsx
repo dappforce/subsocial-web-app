@@ -181,19 +181,20 @@ export function InnerForm (props: FormProps) {
 
 export function FormInSection (props: FormProps) {
   const [ consts ] = useState<ValidationProps>({
-    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
-    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.utils.minHandleLen, 5),
+    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.utils.maxHandleLen, 50)
   })
 
   const { owner } = props
   const title = owner?.profile ? `Edit profile` : `New profile`
 
+  // TODO get min/max length of a handle from the chain.
   // useSubsocialEffect(() => {
   //   const load = async () => {
   //     // const api = await substrate.api
   //     setConsts({
-  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
-  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.utils.minHandleLen, 5),
+  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.utils.maxHandleLen, 50)
   //     })
   //   }
   //   load()

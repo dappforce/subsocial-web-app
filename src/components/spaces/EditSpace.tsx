@@ -222,7 +222,7 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('email')}
-        label={<MailOutlined />}
+        label={<span><MailOutlined /> Email address</span>}
         rules={[
           { pattern: /\S+@\S+\.\S+/, message: 'Should be a valid email' }
         ]}>
