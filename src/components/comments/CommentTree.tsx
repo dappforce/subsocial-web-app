@@ -2,7 +2,7 @@ import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithSomeDetails } from '@subsocial/types';
 import React, { useState } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
-import ListData from '../utils/DataList';
+import DataList from '../utils/DataList';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
 import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice';
@@ -11,6 +11,7 @@ import { useSetReplyToStore } from './utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { LoadingOutlined } from '@ant-design/icons';
 import { MutedDiv } from '../utils/MutedText';
+import { isFakeId } from './helpers';
 
 const log = newLogger('CommentTree')
 
@@ -28,7 +29,7 @@ type CommentsTreeProps = {
 }
 
 const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, rootPost, space }) => {
-  return nonEmptyArr(comments) ? <ListData
+  return nonEmptyArr(comments) ? <DataList
     dataSource={comments}
     paginationOff
     renderItem={(item) => {
@@ -42,7 +43,10 @@ const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments
 export const DynamicCommentsTree = (props: LoadProps) => {
   const { rootPost, parent: { id: parentId }, space, replies } = props;
   const parentIdStr = parentId.toString()
-  const [ isLoading, setIsLoading ] = useState(false)
+
+  if (isFakeId(props.parent)) return null
+
+  const [ isLoading, setIsLoading ] = useState(parentIdStr.startsWith('fake'))
   const [ replyComments, setComments ] = useState<PostWithSomeDetails[]>(replies || []);
   const dispatch = useDispatch()
 

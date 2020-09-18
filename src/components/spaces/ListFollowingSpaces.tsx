@@ -4,15 +4,15 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { isMobile } from 'react-device-detect';
 
-import ListData from '../utils/DataList';
+import DataList from '../utils/DataList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { spaceIdForUrl, spaceUrl } from '../utils/urls';
+import { spaceIdForUrl, spaceUrl } from '../urls';
 import { ViewSpacePage } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
+import { useResponsiveSize } from '../responsive';
 
 type Props = {
   spacesData: SpaceData[]
@@ -26,11 +26,11 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <HeadMeta title={title} desc='The spaces you follow on Subsocial' />
-      <ListData
+      <DataList
         title={title}
         dataSource={spacesData}
         renderItem={(item, index) => (
-          <ViewSpacePage {...props} key={index} spaceData={item} previewDetails withFollowButton/>
+          <ViewSpacePage {...props} key={index} spaceData={item} withFollowButton/>
         )}
         noDataDesc='You are not subscribed to any space yet'
         noDataExt={<ButtonLink href='/spaces/all' as='/spaces/all'>Explore spaces</ButtonLink>}
@@ -44,7 +44,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
 
-  // TODO sort space ids in a desc order (don't forget to sort by id.toString())
+  // TODO sort space ids in a about order (don't forget to sort by id.toString())
   const followedSpaceIds = await substrate.spaceIdsFollowedByAccount(address as string)
   const spacesData = await subsocial.findVisibleSpaces(followedSpaceIds);
 
@@ -59,6 +59,7 @@ const SpaceLink = (props: { item: SpaceData }) => {
   const { item } = props;
   const { pathname, query } = useRouter();
   const { toggle } = useSidebarCollapsed();
+  const { isMobile } = useResponsiveSize()
 
   if (!item) return null;
 
@@ -79,6 +80,7 @@ const SpaceLink = (props: { item: SpaceData }) => {
           miniPreview
           imageSize={28}
           onClick={() => isMobile && toggle()}
+          withFollowButton={false}
         />
       </a>
     </Link>

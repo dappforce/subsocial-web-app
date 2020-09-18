@@ -12,7 +12,8 @@ const varsToExport = [
   'OFFCHAIN_WS',
   'APPS_URL',
   'IPFS_URL',
-  'LOG_LEVEL'
+  'LOG_LEVEL',
+  'UI_SHOW_ADVANCED'
 ]
 
 function getSerializedVal (varName) {

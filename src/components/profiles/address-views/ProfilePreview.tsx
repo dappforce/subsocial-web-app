@@ -22,10 +22,9 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
   const [ followersOpen, setFollowersOpen ] = useState(false);
   const [ followingOpen, setFollowingOpen ] = useState(false);
 
-  const { struct, content = {} as ProfileContent, profile } = owner;
+  const { struct, content = {} as ProfileContent } = owner;
   const { about, avatar } = content
-  const { handle } = profile || {}
-  const accountForUrl = { address, handle }
+  const accountForUrl = { address }
 
   const followers = struct ? struct.followers_count.toString() : '0';
   const following = struct ? struct.following_accounts_count.toString() : '0';
@@ -44,7 +43,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
 
   return <div className={`ProfileDetails ${className}`}>
     <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
-    <div className='content'>
+    <div className='content w-100'>
       <NameDetails owner={owner} address={address} withLabel={withLabel} />
       {!mini && <>
         {withAbout && nonEmptyStr(about) &&

@@ -9,7 +9,6 @@ export type ViewSpaceProps = {
   dropdownPreview?: boolean
   withLink?: boolean
   miniPreview?: boolean
-  previewDetails?: boolean
   withFollowButton?: boolean
   id?: BN
   spaceData?: SpaceData

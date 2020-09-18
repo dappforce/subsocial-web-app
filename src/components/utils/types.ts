@@ -1,6 +1,8 @@
+import { CSSProperties } from 'react'
+
 export type FVoid = () => void
 
 export interface BareProps {
   className?: string
-  style?: Record<string, string | number>
+  style?: CSSProperties
 }

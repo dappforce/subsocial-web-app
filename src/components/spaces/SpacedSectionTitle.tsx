@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useStorybookContext } from '../utils/StorybookContext';
 import { SpaceData } from '@subsocial/types'
-import { spaceUrl } from '../utils/urls';
+import { spaceUrl } from '../urls';
 
 type Props = {
   space?: SpaceData

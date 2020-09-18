@@ -9,7 +9,7 @@ import { TxFailedCallback, TxCallback } from 'src/components/substrate/Substrate
 import { SpaceUpdate, OptionBool, OptionIpfsContent, OptionOptionText, OptionText, OptionId, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { SpaceContent } from '@subsocial/types'
-import { newLogger } from '@subsocial/utils'
+import { newLogger, isEmptyStr } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { useMyAddress } from '../auth/MyAccountContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
@@ -17,6 +17,10 @@ import NoData from '../utils/EmptyList'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withLoadSpaceFromUrl, CheckSpacePermissionFn, CanHaveSpaceProps } from './withLoadSpaceFromUrl'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
+import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
+import { UploadAvatar } from '../uploader'
+import { MailOutlined } from '@ant-design/icons'
+import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
 
 const log = newLogger('EditSpace')
 
@@ -48,12 +52,24 @@ function getInitialValues ({ space }: FormProps): FormValues {
   return {}
 }
 
+const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string, mySpaceId?: BN) => {
+  if (isEmptyStr(handle)) return true
+
+  const spaceIdByHandle = await substrate.getSpaceIdByHandle(handle.trim().toLowerCase())
+
+  if (mySpaceId) return spaceIdByHandle?.eq(mySpaceId)
+
+  return !spaceIdByHandle
+
+}
+
 export function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
-  const { ipfs } = useSubsocialApi()
+  const { ipfs, substrate } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
   const { space, minHandleLen, maxHandleLen } = props
+
   const initialValues = getInitialValues(props)
   const tags = initialValues.tags || []
 
@@ -93,8 +109,7 @@ export function InnerForm (props: FormProps) {
   }
 
   const fieldValuesToContent = (): Content => {
-    const { name, desc, image, tags, navTabs } = getFieldValues()
-    return { name, desc, image, tags, navTabs } as Content
+    return getFieldValues() as Content
   }
 
   // TODO pin to IPFS only if JSON changed.
@@ -120,11 +135,22 @@ export function InnerForm (props: FormProps) {
   }
 
   const onDescChanged = (mdText: string) => {
-    form.setFieldsValue({ [fieldName('desc')]: mdText })
+    form.setFieldsValue({ [fieldName('about')]: mdText })
+  }
+
+  const onAvatarChanged = (url?: string) => {
+    form.setFieldsValue({ [fieldName('image')]: url })
   }
 
   return <>
-    <DfForm form={form} initialValues={initialValues}>
+    <DfForm form={form} validateTrigger={[ 'onBlur' ]} initialValues={initialValues}>
+      <Form.Item
+        name={fieldName('image')}
+        label='Avatar'
+      >
+        <UploadAvatar onChange={onAvatarChanged} img={initialValues.image} />
+      </Form.Item>
+
       <Form.Item
         name={fieldName('name')}
         label='Space name'
@@ -141,30 +167,27 @@ export function InnerForm (props: FormProps) {
       <Form.Item
         name={fieldName('handle')}
         label='URL handle'
-        hasFeedback
         rules={[
           { pattern: /^[A-Za-z0-9_]+$/, message: 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_).' },
           { min: minHandleLen, message: minLenError('Handle', minHandleLen) },
-          { max: maxHandleLen, message: maxLenError('Handle', maxHandleLen) }
-          // TODO test that handle is unique via a call to Substrate
+          { max: maxHandleLen, message: maxLenError('Handle', maxHandleLen) },
+          ({ getFieldValue }) => ({
+            async validator () {
+              const handle = getFieldValue(fieldName('handle'))
+              const isUnique = await isHandleUnique(substrate, handle, space?.struct.id)
+              if (isUnique) {
+                return Promise.resolve();
+              }
+              return Promise.reject(new Error('This handle is already taken. Please choose another.'));
+            }
+          })
         ]}
       >
         <Input placeholder='You can use a-z, 0-9 and underscores' />
       </Form.Item>
 
       <Form.Item
-        name={fieldName('image')}
-        label='Avatar URL'
-        hasFeedback
-        rules={[
-          { type: 'url', message: 'Should be a valid image URL.' }
-        ]}
-      >
-        <Input type='url' placeholder='Image URL' />
-      </Form.Item>
-
-      <Form.Item
-        name={fieldName('desc')}
+        name={fieldName('about')}
         label='Description'
         hasFeedback
         rules={[
@@ -191,6 +214,17 @@ export function InnerForm (props: FormProps) {
           )}
         </Select>
       </Form.Item>
+
+      <Form.Item
+        name={fieldName('email')}
+        label={<MailOutlined />}
+        rules={[
+          { pattern: /\S+@\S+\.\S+/, message: 'Should be a valid email' }
+        ]}>
+        <Input type='email' placeholder='Email address' />
+      </Form.Item>
+
+      <NewSocialLinks name='links' collapsed={!initialValues.links} />
 
       <DfFormButtons
         form={form}

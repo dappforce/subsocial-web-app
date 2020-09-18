@@ -26,8 +26,8 @@ export function PostPreview (props: PreviewProps) {
   return <Segment className='DfPostPreview'>
     <HiddenPostAlert post={struct} space={space} preview />
     {asRegularPost || !isSharedPost(extension as PostExtension)
-      ? <RegularPreview space={externalSpace || space} {...props} />
-      : <SharedPreview space={externalSpace || space} {...props} />}
+      ? <RegularPreview space={space} {...props} />
+      : <SharedPreview space={space} {...props} />}
   </Segment>
 }
 

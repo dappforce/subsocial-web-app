@@ -41,6 +41,7 @@ pre {
 }
 
 .DfBalance {
+  display: flex;
   font-size: $font_small;
   color: $color_muted
 }
@@ -128,7 +129,8 @@ pre {
 }
 
 .DfTags {
-  margin: $space_normal 0;
+  margin: 0;
+  margin-bottom: $space_normal;
   font-size: $font_small;
 
   .anticon {
@@ -161,7 +163,8 @@ pre {
 
 @media (min-width: 1200px) {
   .DfBrand {
-    font-size: $font_large;
+    zoom: 0.7;
+    font-size: $font_normal;
 
     img {
       max-width: 160px;
@@ -170,7 +173,7 @@ pre {
 }
 
 .DfBrand {
-  font-size: $font_big;
+  font-size: $font_normal;
   color: $color_secondary;
   cursor: pointer;
 
@@ -316,7 +319,7 @@ pre {
 
 .ProfileDetails {
   display: flex !important;
-
+  align-items: center;
   .content {
     padding: 0 $space_small;
   }
@@ -349,6 +352,21 @@ pre {
     .DfPopup-about {
       color: $color_font_normal;
     }
+  }
+}
+
+.DfIdentityIcon {
+  margin-right: 0.5rem;
+  cursor: 'pointer';
+
+  .container.highlight:before {
+    box-shadow: none !important;
+  }
+
+  .highlight {
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 100%;
   }
 }
 
@@ -557,6 +575,12 @@ hr {
   }
 }
 
+.DfSharedSummary {
+  .DfSummary {
+    margin: $space_tiny 0 $space_normal 0;
+  }
+}
+
 .DfSegment.DfPostPreview {
   padding-bottom: 0;
 
@@ -573,6 +597,10 @@ hr {
     .DfSegment {
       margin-bottom: 0;
       @extend .DfNoBoxShadow;
+    }
+
+    .DfSummary {
+      margin: $space_tiny 0 $space_normal 0;
     }
   }
 
@@ -716,7 +744,7 @@ hr {
   }
 }
 
-@media (min-width: 560px) {
+@media (min-width: 767px) {
   .DfSectionOuter {
     min-width: 428px;
     max-width: calc(680px + #{$space_normal} * 2);
@@ -936,6 +964,11 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
+  height: 33%;
+  .DfIdentityIcon {
+    margin-right: 0 !important;
+  }
+
   & .collapsed {
     .ant-menu-item-group-list {
       .content {
@@ -952,11 +985,6 @@ hr {
   .ant-menu-item-group-title {
     text-transform: uppercase;
     font-size: $font_small
-  }
-
-  .container.highlight {
-    margin-top: $space_tiny;
-    margin-right: $space_mini;
   }
 
   .content {
@@ -1016,12 +1044,12 @@ hr {
 
 .DfTopBar {
   width: 100%;
-  display: contents;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .DfSearchIcon {
     padding: $space_tiny;
-    margin-right: $space_tiny;
-    margin-top: 1.15rem;
     font-size: 1.3rem;
   }
 
@@ -1029,17 +1057,12 @@ hr {
     font-size: 1.3rem;
     padding-left: $space_tiny;
   }
+  .DfTopBar--leftContent,.DfTopBar--rightContent, .DfTopBar--search {
+    display: flex;
+    align-items: center;
+  }
 }
 
-.DfTopBar--search {
-  display: flex;
-  align-items: center;
-}
-
-.DfTopBar--rightContent {
-  display: -webkit-inline-box;
-  display: -moz-inline-box;
-}
 
 /* Fix syntax error in Markdown editor */
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
@@ -1214,6 +1237,7 @@ a.DfStatItem {
 .ViewSpaceWrapper {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   width: 100%;
 }
 

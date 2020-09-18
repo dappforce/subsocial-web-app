@@ -2,6 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import { isEmptyStr, nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
 import { summarize } from './text';
+import { resolveIpfsUrl } from 'src/ipfs';
 
 type HeadMetaProps = {
   title: string,
@@ -33,6 +34,7 @@ export const createTitle = (title: string) => {
 export function HeadMeta (props: HeadMetaProps) {
   const { title, desc = DEFAULT_DESC, image = '/subsocial-sign.png', canonical, tags } = props;
   const summary = summarize(desc, MAX_DESC_LEN);
+  const ipfsImg = resolveIpfsUrl(image)
 
   return <div>
     <Head>
@@ -41,12 +43,12 @@ export function HeadMeta (props: HeadMetaProps) {
       {nonEmptyArr(tags) && <meta name="keywords" content={tags?.join(', ')} />}
 
       <meta property='og:site_name' content={SITE_NAME} />
-      <meta property='og:image' content={image} />
+      <meta property='og:image' content={ipfsImg} />
       <meta property='og:title' content={title} />
       <meta property='og:description' content={summary} />
 
       <meta name='twitter:site' content={SITE_NAME} />
-      <meta name='twitter:image' content={image} />
+      <meta name='twitter:image' content={ipfsImg} />
       <meta name='twitter:title' content={title} />
       <meta name='twitter:description' content={summary} />
     </Head>

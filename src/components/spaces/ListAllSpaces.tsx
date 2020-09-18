@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewSpacePage } from './ViewSpace';
-import ListData from '../utils/DataList';
+import DataList from '../utils/DataList';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import BN from 'bn.js';
@@ -21,7 +21,7 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <HeadMeta title={title} desc='Find interesting spaces on Subsocial and follow them.' />
-      <ListData
+      <DataList
         title={title}
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
@@ -31,8 +31,8 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
             key={item.struct.id.toString()}
             {...props}
             spaceData={item}
-            previewDetails
             withFollowButton
+            preview
           />
         }
       />

@@ -24,36 +24,29 @@ export const NameDetails = ({
   withLabel
 }: Props) => {
 
-  const { profile, content, struct } = owner
+  const { content, struct } = owner
   const isMyAccount = isMyAddress(address)
   const shortAddress = toShortAddress(address)
-  const handle = profile?.handle?.toString()
   const extensionName = useExtensionName(address)
 
   let title = ''
   let subtitle = null
 
-  if (content && nonEmptyStr(content.fullname)) {
-    title = content.fullname
-    subtitle = handle
+  if (content && nonEmptyStr(content.name)) {
+    title = content.name
+    subtitle = extensionName
       ? <>
-        <div>{handle}</div>
+        <div>{extensionName}</div>
         <div>{shortAddress}</div>
       </>
       : shortAddress
-  } else if (nonEmptyStr(handle)) {
-    title = `@${handle}`
-    subtitle = shortAddress
-  } else if (extensionName) {
-    title = extensionName
-    subtitle = shortAddress
   } else {
     title = shortAddress
   }
 
   return <>
     <div className='header DfAccountTitle'>
-      <ViewProfileLink account={{ address, handle }} title={title} className='ui--AddressComponents-address' />
+      <ViewProfileLink account={{ address }} title={title} className='ui--AddressComponents-address' />
       {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
     </div>

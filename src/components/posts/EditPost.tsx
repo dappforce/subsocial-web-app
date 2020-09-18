@@ -21,6 +21,7 @@ import { Null } from '@polkadot/types'
 import DfMdEditor from '../utils/DfMdEditor'
 import SpacegedSectionTitle from '../spaces/SpacedSectionTitle'
 import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpaceFromUrl'
+import { UploadCover } from '../uploader'
 
 const log = newLogger('EditPost')
 
@@ -125,6 +126,10 @@ export function InnerForm (props: FormProps) {
     form.setFieldsValue({ [fieldName('body')]: mdText })
   }
 
+  const onAvatarChanged = (url?: string) => {
+    form.setFieldsValue({ [fieldName('image')]: url })
+  }
+
   return <>
     <DfForm form={form} initialValues={initialValues}>
       <Form.Item
@@ -142,13 +147,9 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('image')}
-        label='Image URL'
-        hasFeedback
-        rules={[
-          { type: 'url', message: 'Should be a valid image URL.' }
-        ]}
+        label='Cover'
       >
-        <Input type='url' />
+        <UploadCover onChange={onAvatarChanged} img={initialValues.image} />
       </Form.Item>
 
       <Form.Item

@@ -1,9 +1,10 @@
+import React from 'react'
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { ProfileData } from '@subsocial/types'
 
 export type AddressProps = {
   className?: string
-  style?: Record<string, any>
+  style?: React.CSSProperties
   address: AnyAccountId,
   owner?: ProfileData
 }

@@ -1,10 +1,10 @@
 import React from 'react'
 import { Steps } from 'antd';
 import { useAuth, StepsEnum } from '../auth/AuthContext';
-import { isMobile } from 'react-device-detect';
 import { SignInButton } from '../auth/AuthButtons';
 import ButtonLink from '../utils/ButtonLink';
 import { NewSpaceButton } from '../spaces/helpers';
+import { isMobileDevice } from 'src/config/Size.config';
 
 const { Step } = Steps;
 
@@ -18,7 +18,7 @@ type Props = {
   progressDot?: boolean
 }
 
-const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobile && mobileText) ? mobileText : text;
+const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobileDevice && mobileText) ? mobileText : text;
 
 type StepItem = {
   title: string,

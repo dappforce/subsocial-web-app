@@ -1,5 +1,6 @@
-import { accountUrl, spacesFollowedByAccountUrl, spacesOwnedByAccountUrl } from 'src/components/utils/urls'
+import { accountUrl, spacesFollowedByAccountUrl, spacesOwnedByAccountUrl } from 'src/components/urls'
 import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
+import { showAdvanced } from 'src/components/utils/env'
 
 export type Divider = 'Divider'
 
@@ -33,7 +34,7 @@ export const DefaultMenu: MenuItem[] = [
     name: 'Advanced',
     page: [ '/bc' ],
     icon: BlockOutlined,
-    isAdvanced: true
+    isAdvanced: showAdvanced
   }
 ];
 
@@ -42,12 +43,12 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
   return [
     {
       name: 'My feed',
-      page: [ '/feed' ],
+      page: [ '/feed', '/feed' ],
       icon: ProfileOutlined
     },
     {
       name: 'My notifications',
-      page: [ '/notifications' ],
+      page: [ '/notifications', '/notifications' ],
       icon: BellOutlined,
       isNotifications: true
     },
@@ -68,7 +69,7 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     },
     {
       name: 'New space',
-      page: [ '/spaces/new' ],
+      page: [ '/spaces/new', '/spaces/new' ],
       icon: PlusOutlined
     },
     Divider,

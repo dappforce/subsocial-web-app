@@ -31,6 +31,6 @@ export const buildValidationSchema = (p: ValidationProps) => Yup.object().shape(
 
   image: urlValidation('Avatar'),
 
-  desc: Yup.string()
+  about: Yup.string()
     .max(p.spaceMaxLen || spaceMaxLen, maxLenError('Description', p.spaceMaxLen || spaceMaxLen))
 })

@@ -20,17 +20,15 @@ export const Name = ({
   className
 }: Props) => {
 
-  const { content, profile } = owner
-  const fullname = content?.fullname
-  const handle = profile?.handle?.toString()
+  const { content } = owner
 
   // TODO extract a function? (find similar copypasta in other files):
   const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = fullname || handle || useExtensionName(address) || addressString
+  const name = content?.name || useExtensionName(address) || addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return asLink
-    ? <ViewProfileLink account={{ address, handle }} title={name} className={nameClass} />
+    ? <ViewProfileLink account={{ address }} title={name} className={nameClass} />
     : <>{name}</>
 }
 

@@ -4,7 +4,6 @@ import mdToText from 'markdown-to-txt';
 import { NextPage } from 'next';
 import Error from 'next/error';
 import React, { useState } from 'react';
-import { isBrowser } from 'react-device-detect';
 
 import { AuthorPreview } from '../profiles/address-views';
 import { DfMd } from '../utils/DfMd';
@@ -15,7 +14,6 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { formatUnixDate } from '../utils';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
-import SpaceNav from './SpaceNav';
 import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import { PageContent } from '../main/PageWrapper';
@@ -38,7 +36,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   const { created: { account, time } } = space;
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent);
-  const { name, desc, image, tags } = content;
+  const { name, about, image, tags } = content;
 
   const SpaceAuthor = () =>
     <AuthorPreview
@@ -54,12 +52,8 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   // TODO extract WithSpaceNav
 
-  return <PageContent leftPanel={isBrowser &&
-    <SpaceNav
-      spaceData={spaceData}
-    />
-  }>
-    <HeadMeta title={title} desc={mdToText(desc)} image={image} />
+  return <PageContent>
+    <HeadMeta title={title} desc={mdToText(about)} image={image} />
     <Section className='DfContentPage' level={1} title={title}>
 
       <div className='DfRow mt-3'>
@@ -67,9 +61,9 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
         <SpaceStatsRow space={space} />
       </div>
 
-      {nonEmptyStr(desc) &&
+      {nonEmptyStr(about) &&
         <div className='DfBookPage'>
-          <DfMd source={desc} />
+          <DfMd source={about} />
         </div>
       }
       <ViewTags tags={tags} />

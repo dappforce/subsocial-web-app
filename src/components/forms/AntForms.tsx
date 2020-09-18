@@ -38,7 +38,7 @@ const TxButton = dynamic(
 )
 
 export const DfForm = (props: FormProps) =>
-  <Form {...commonFormProps} {...props} className={styles.DfForm}>
+  <Form validateTrigger={[ 'onBlur' ]} {...commonFormProps} {...props} className={styles.DfForm}>
     {props.children}
   </Form>
 

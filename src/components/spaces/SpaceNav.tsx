@@ -9,7 +9,7 @@ import React from 'react';
 import { DfBgImg } from '../utils/DfBgImg';
 import FollowSpaceButton from '../utils/FollowSpaceButton';
 import { SummarizeMd } from '../utils/md';
-import { aboutSpaceUrl, spaceUrl } from '../utils/urls';
+import { aboutSpaceUrl, spaceUrl } from '../urls';
 import AboutSpaceLink from './AboutSpaceLink';
 import { DropdownMenu, EditMenuLink } from './helpers';
 import { SpaceData } from '@subsocial/types/dto'
@@ -43,7 +43,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
   if (!content) return null;
 
   const { id, owner } = space
-  const { desc, image, navTabs, name } = content
+  const { about, image, navTabs, name } = content
 
   const renderMenuItem = (nt: NavTab) => {
     switch (nt.type) {
@@ -96,9 +96,9 @@ export const SpaceNav = (props: SpaceNavProps) => {
         <DropdownMenu spaceData={spaceData} vertical style={{ marginLeft: '.5rem', marginRight: '-.5rem' }} />
       </span>
 
-      {nonEmptyStr(desc) &&
+      {nonEmptyStr(about) &&
         <div className="SNheadDescription">
-          <SummarizeMd md={desc} more={
+          <SummarizeMd md={about} more={
             <AboutSpaceLink space={space} title={'Learn More'} />
           } />
         </div>
