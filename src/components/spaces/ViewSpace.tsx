@@ -118,7 +118,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
           </span>
 
           {nonEmptyStr(about) &&
-            <div className='description mb-3'>
+            <div className='description mb-2'>
               <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
