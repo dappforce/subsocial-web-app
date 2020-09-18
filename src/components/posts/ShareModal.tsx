@@ -16,7 +16,7 @@ import { buildSharePostValidationSchema } from './PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
 import DfMdEditor from '../utils/DfMdEditor';
 import { DynamicPostPreview } from './view-post/DynamicPostPreview';
-import { NewSpaceButton } from '../spaces/helpers';
+import { CreateSpaceButton } from '../spaces/helpers';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -89,11 +89,11 @@ const InnerShareModal = (props: Props) => {
   const renderShareView = () => {
     if (isEmptyArray(spaceIds)) {
       return (
-        <NewSpaceButton>
+        <CreateSpaceButton>
           <a className='ui button primary'>
-            Create your first space
+            Create my first space
           </a>
-        </NewSpaceButton>
+        </CreateSpaceButton>
       )
     }
 

@@ -1,3 +1,3 @@
-import { ListMySpaces } from '../../../components/spaces/ListSpaceByAccount';
+import { ListMySpaces } from '../../../components/spaces/AccountSpaces';
 
 export default ListMySpaces;

@@ -239,9 +239,17 @@ export const useLoadUnlistedSpace = (address: AnyAccountId) => {
   }
 }
 
-export const NewSpaceButton = ({ children, ...buttonProps }: ButtonProps) => {
+export const CreateSpaceButton = ({
+  children,
+  type = 'primary',
+  ghost = true,
+  ...otherProps
+}: ButtonProps) => {
+  const props = { type, ghost, ...otherProps }
   const newSpacePath = '/spaces/new'
-  return <ButtonLink href={newSpacePath} as={newSpacePath} {...buttonProps}>{children}</ButtonLink>
+  return <ButtonLink href={newSpacePath} as={newSpacePath} {...props}>
+    {children || <span><PlusOutlined /> Create space</span>}
+  </ButtonLink>
 }
 
 type SpaceAvatarProps = BaseAvatarProps & {
