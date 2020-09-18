@@ -20,6 +20,19 @@ type SocialBrand =
 
 export type LinkLabel = SocialBrand | 'Website'
 
+const brandsWithProfiles: SocialBrand[] = [
+  'Facebook',
+  'Twitter',
+  'Medium',
+  'LinkedIn',
+  'GitHub',
+  'Instagram'
+]
+
+export const hasSocialMediaProfiles = (brand: LinkLabel): boolean => {
+  return brandsWithProfiles.indexOf(brand as SocialBrand) >= 0
+}
+
 export const getLinkIcon = (brand?: LinkLabel) => {
   switch (brand) {
     case 'Facebook': return <FacebookOutlined />
