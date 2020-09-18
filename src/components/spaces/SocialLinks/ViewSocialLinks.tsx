@@ -1,22 +1,16 @@
 import React from 'react'
 import { NamedLinks } from '@subsocial/types'
-import { getSocialLinkType, getLinksAttr } from './utils'
+import { getLinkBrand, getLinkIcon } from './utils'
 import { MailOutlined } from '@ant-design/icons'
 
 type SocialLinkProps = {
   link: string
 }
 
-const attrByLink = (link: string) => {
-  const title = getSocialLinkType(link)
-
-  return getLinksAttr(title)
-}
-
 const SocialLink = ({ link }: SocialLinkProps) => {
-  const { title, icon } = attrByLink(link)
-  return <a href={link} title={title} className='DfBlackLink ml-3'>
-    {icon}
+  const brand = getLinkBrand(link)
+  return <a href={link} title={brand} className='DfBlackLink ml-3'>
+    {getLinkIcon(brand)}
   </a>
 }
 

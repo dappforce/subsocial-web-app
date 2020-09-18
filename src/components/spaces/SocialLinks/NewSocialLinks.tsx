@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Input, Button, Space, Collapse } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { FormListFieldData, FormListOperation } from 'antd/lib/form/FormList';
-import { getLinksAttr } from './utils';
+import { getLinkIcon, LinkLabel } from './utils';
 const { Panel } = Collapse;
 
 type NewSocialLinksProps = {
@@ -10,9 +10,19 @@ type NewSocialLinksProps = {
   collapsed: boolean,
   isDynamic?: boolean
 }
+
 type InnerFilmListFn = (fields: FormListFieldData[], operation: FormListOperation) => React.ReactNode;
 
-const staticLinkLabels = [ 'Website', 'Twitter', 'Medium', 'GitHub', 'Facebook', 'LinkedIn', 'Instagram' ]
+const staticLinkLabels: LinkLabel[] = [
+  'Website',
+  'Twitter',
+  'Medium',
+  'Telegram',
+  'GitHub',
+  'Facebook',
+  'LinkedIn',
+  'Instagram'
+]
 
 const staticSocialLinks = (): InnerFilmListFn => {
   return (fields) => <div>
@@ -20,7 +30,7 @@ const staticSocialLinks = (): InnerFilmListFn => {
       const field = fields[index] || { name: index, key: index, fieldKey: index }
       return <Form.Item
         {...field}
-        label={getLinksAttr(label).icon}
+        label={getLinkIcon(label)}
         hasFeedback
         rules={[
           { type: 'url', message: 'Should be a valid URL.' }
@@ -94,9 +104,7 @@ const StaticSocialLinks = ({ name, collapsed }: NewSocialLinksProps) => (
 )
 
 const DynamicSociaLinks = ({ name }: NewSocialLinksProps) => (
-  <Form.Item
-    label='Social links'
-  >
+  <Form.Item label='Social links'>
     <Form.List name={name}>
       {dynamicSocialLinks()}
     </Form.List>
@@ -107,5 +115,4 @@ export const NewSocialLinks = ({ isDynamic, ...props }: NewSocialLinksProps) => 
   return isDynamic
     ? <DynamicSociaLinks {...props} />
     : <StaticSocialLinks {...props} />
-
 }
