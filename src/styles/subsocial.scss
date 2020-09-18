@@ -14,6 +14,10 @@ body,
   font-size: $font_normal !important;
 }
 
+h1 { font-size: $space_huge; }
+
+h2 { font-size: $space_big; }
+
 h1,
 h2,
 h3,
@@ -1573,7 +1577,6 @@ a.DfStatItem {
 
 .DfAccountMenu {
   @extend .DfCard;
-  max-height: 90vh;
   padding: 0;
 }
 
