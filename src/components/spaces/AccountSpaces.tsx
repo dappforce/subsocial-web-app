@@ -17,11 +17,11 @@ import { PlusOutlined } from '@ant-design/icons';
 
 type Props = {
   spacesData: SpaceData[]
-  mySpaceIds: SpaceId[],
+  mySpaceIds: SpaceId[]
   address: AnyAccountId
-};
+}
 
-const log = newLogger('ListSpaceByAccount')
+const log = newLogger('AccountSpaces')
 
 const useLoadUnlistedSpaces = ({ address, mySpaceIds }: Props) => {
   const isMySpaces = isMyAddress(address as string)
@@ -43,14 +43,20 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: Props) => {
   }
 }
 
-const SpacePreview = (space: SpaceData) => <ViewSpacePage key={`space-${space.struct.id.toString()}`} spaceData={space} preview withFollowButton />
+const SpacePreview = (space: SpaceData) =>
+  <ViewSpacePage
+    key={`space-${space.struct.id.toString()}`}
+    spaceData={space}
+    withFollowButton
+    preview
+  />
 
-const VisibleSpacesList = ({ spacesData, mySpaceIds }: Props) => {
+const PublicSpaces = ({ spacesData, mySpaceIds }: Props) => {
   const noSpaces = !mySpaceIds.length
 
   return <DataList
     title={<span className='d-flex justify-content-between align-items-center w-100 mb-2'>
-      <span>{`Spaces (${spacesData.length})`}</span>
+      <span>{`Public Spaces (${spacesData.length})`}</span>
       {!noSpaces && <NewSpaceButton
         icon={<PlusOutlined />}
         type='primary'
@@ -61,45 +67,49 @@ const VisibleSpacesList = ({ spacesData, mySpaceIds }: Props) => {
     </span>}
     dataSource={spacesData}
     renderItem={SpacePreview}
-    noDataDesc='You do not have your own public spaces yet'
-    noDataExt={noSpaces && <NewSpaceButton type='primary' ghost>Create my first space</NewSpaceButton>}
+    noDataDesc='You do not own public spaces yet'
+    noDataExt={noSpaces &&
+      <NewSpaceButton type='primary' ghost>
+        Create my first space
+      </NewSpaceButton>
+    }
   />
 }
 
-const UnlistedSpacesList = (props: Props) => {
+const UnlistedSpaces = (props: Props) => {
   const { myUnlistedSpaces, isLoading } = useLoadUnlistedSpaces(props)
 
   if (isLoading) return <Loading />
 
-  const UnlistedSpacesCount = myUnlistedSpaces.length
-  return UnlistedSpacesCount ? <DataList
-    title={`Unlisted spaces (${UnlistedSpacesCount})`}
+  const unlistedSpacesCount = myUnlistedSpaces.length
+  return unlistedSpacesCount ? <DataList
+    title={`Unlisted Spaces (${unlistedSpacesCount})`}
     dataSource={myUnlistedSpaces}
     renderItem={SpacePreview}
   /> : null
 }
 
-export const ListSpaceByAccount: NextPage<Props> = (props) => {
+export const AccountSpaces: NextPage<Props> = (props) => {
   return <>
-    <HeadMeta title='Spaces' desc='The spaces I manage on Subsocial' />
+    <HeadMeta title='Spaces' desc={`Subsocial spaces owned by ${props.address}`} />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <VisibleSpacesList {...props} />
-      <UnlistedSpacesList {...props} />
+      <PublicSpaces {...props} />
+      <UnlistedSpaces {...props} />
     </div>
   </>
-};
+}
 
-ListSpaceByAccount.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address } } = props;
+AccountSpaces.getInitialProps = async (props): Promise<Props> => {
+  const { query: { address } } = props
 
   if (!address || typeof address !== 'string') {
     return return404(props) as any
   }
 
   const subsocial = await getSubsocialApi()
-  const { substrate } = subsocial;
+  const { substrate } = subsocial
   const mySpaceIds = await substrate.spaceIdsByOwner(address)
-  const spacesData = await subsocial.findPublicSpaces(mySpaceIds);
+  const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
 
   return {
     spacesData,
@@ -118,7 +128,7 @@ export const ListMySpaces = () => {
   useSubsocialEffect(({ subsocial, substrate }) => {
     const loadMySpaces = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-      const spacesData = await subsocial.findPublicSpaces(mySpaceIds);
+      const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
 
       setState({ mySpaceIds, spacesData, address })
     }
@@ -128,8 +138,8 @@ export const ListMySpaces = () => {
   }, [ address ])
 
   return state
-    ? <ListSpaceByAccount {...state} />
+    ? <AccountSpaces {...state} />
     : <Loading label='Loading your spaces' />
 }
 
-export default ListSpaceByAccount
+export default AccountSpaces

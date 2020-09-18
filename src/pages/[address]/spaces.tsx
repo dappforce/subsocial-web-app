@@ -1,3 +1,3 @@
-import ListSpaceByAccount from '../../components/spaces/ListSpaceByAccount';
+import AccountSpaces from '../../components/spaces/AccountSpaces';
 
-export default ListSpaceByAccount;
+export default AccountSpaces;

@@ -15,12 +15,12 @@ import { useIsSignIn } from '../auth/MyAccountContext';
 import { MyFeed } from '../activity/MyFeed';
 
 const RESERVED_SPACES = new BN(1000 + 1)
-const FIFTY = new BN(50);
-const MAX_TO_SHOW = 5;
+const FIFTY = new BN(50)
+const MAX_TO_SHOW = 5
 
 type Props = {
   spacesData: SpaceData[]
-  postsData: PostWithAllDetails[],
+  postsData: PostWithAllDetails[]
   commentData: PostWithAllDetails[]
 }
 
@@ -37,8 +37,7 @@ const LatestUpdate = (props: Props) => {
       <LatestPosts {...props} postsData={commentData} type='comment' />
       <LatestSpaces {...props} spacesData={spacesData} />
     </PageContent>
-
-  );
+  )
 }
 
 const HomePage: NextPage<Props> = (props) => useIsSignIn() ? <MyFeed /> : <LatestUpdate {...props}/>
@@ -61,8 +60,8 @@ HomePage.getInitialProps = async (): Promise<Props> => {
   const spaceLimit = newSpaces.lt(FIFTY) ? newSpaces : FIFTY
 
   const latestSpaceIds = getLastNIds(nextSpaceId, spaceLimit);
-  const visibleSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
-  const spacesData = visibleSpacesData.slice(0, MAX_TO_SHOW)
+  const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
+  const spacesData = publicSpacesData.slice(0, MAX_TO_SHOW)
 
   const latestPostIds = getLastNIds(nextPostId, FIFTY);
   const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds);
