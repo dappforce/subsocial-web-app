@@ -12,7 +12,6 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { spaceIdForUrl, spaceUrl } from '../urls';
 import { ViewSpacePage } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
-import { useResponsiveSize } from '../responsive';
 
 type Props = {
   spacesData: SpaceData[]
@@ -30,7 +29,7 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
         title={title}
         dataSource={spacesData}
         renderItem={(item, index) => (
-          <ViewSpacePage {...props} key={index} spaceData={item} withFollowButton/>
+          <ViewSpacePage {...props} key={index} spaceData={item} preview withFollowButton />
         )}
         noDataDesc='You are not subscribed to any space yet'
         noDataExt={<ButtonLink href='/spaces/all' as='/spaces/all'>Explore spaces</ButtonLink>}
@@ -46,7 +45,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
 
   // TODO sort space ids in a about order (don't forget to sort by id.toString())
   const followedSpaceIds = await substrate.spaceIdsFollowedByAccount(address as string)
-  const spacesData = await subsocial.findVisibleSpaces(followedSpaceIds);
+  const spacesData = await subsocial.findPublicSpaces(followedSpaceIds);
 
   return {
     spacesData
@@ -58,8 +57,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
 const SpaceLink = (props: { item: SpaceData }) => {
   const { item } = props;
   const { pathname, query } = useRouter();
-  const { toggle } = useSidebarCollapsed();
-  const { isMobile } = useResponsiveSize()
+  const { toggle, state: { asDrawer } } = useSidebarCollapsed();
 
   if (!item) return null;
 
@@ -79,7 +77,7 @@ const SpaceLink = (props: { item: SpaceData }) => {
           spaceData={item}
           miniPreview
           imageSize={28}
-          onClick={() => isMobile && toggle()}
+          onClick={() => asDrawer && toggle()}
           withFollowButton={false}
         />
       </a>

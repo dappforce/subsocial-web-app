@@ -7,6 +7,7 @@ import { ProfileData } from '@subsocial/types';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { Option } from '@polkadot/types'
+import { resolveCidOfContent } from 'src/ipfs';
 
 const log = newLogger('MyAccountContext')
 
@@ -126,7 +127,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
         if (struct) {
           const profile = struct.profile.unwrapOr(undefined)
 
-          const cid = profile && profile.content.isIpfs && profile.content.asIpfs
+          const cid = profile && resolveCidOfContent(profile.content)
 
           const content = cid ? await ipfs.findProfile(cid) : undefined
 

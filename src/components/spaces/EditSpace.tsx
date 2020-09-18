@@ -21,10 +21,11 @@ import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 import { UploadAvatar } from '../uploader'
 import { MailOutlined } from '@ant-design/icons'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
+import { resolveCidOfContent } from 'src/ipfs'
 
 const log = newLogger('EditSpace')
 
-const MAX_TAGS = 5
+const MAX_TAGS = 10
 
 type Content = SpaceContent
 
@@ -57,7 +58,9 @@ const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string, 
 
   const spaceIdByHandle = await substrate.getSpaceIdByHandle(handle.trim().toLowerCase())
 
-  if (mySpaceId) return spaceIdByHandle?.eq(mySpaceId)
+  if (!spaceIdByHandle) return true
+
+  if (mySpaceId) return spaceIdByHandle.eq(mySpaceId)
 
   return !spaceIdByHandle
 
@@ -87,7 +90,7 @@ export function InnerForm (props: FormProps) {
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
-      const prevCid = stringifyText(space?.struct?.content.asIpfs)
+      const prevCid = resolveCidOfContent(space?.struct?.content)
       return prevCid !== cid.toString() ? cid : undefined
     }
 
@@ -166,7 +169,9 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('handle')}
-        label='URL handle'
+        label='Handle'
+        help='This should be a unique handle that will be used in a URL of your space'
+        hasFeedback
         rules={[
           { pattern: /^[A-Za-z0-9_]+$/, message: 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_).' },
           { min: minHandleLen, message: minLenError('Handle', minHandleLen) },
@@ -217,7 +222,7 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('email')}
-        label={<MailOutlined />}
+        label={<span><MailOutlined /> Email address</span>}
         rules={[
           { pattern: /\S+@\S+\.\S+/, message: 'Should be a valid email' }
         ]}>

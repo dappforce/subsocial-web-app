@@ -19,7 +19,7 @@ export const ViewProfileLink = ({
   if (!account.address || !title) return null
 
   return (
-    <Link href='/profile/[address]' as={accountUrl(account)}>
+    <Link href='/[address]' as={accountUrl(account)}>
       <a className={className} title={hint}>{title}</a>
     </Link>
   )

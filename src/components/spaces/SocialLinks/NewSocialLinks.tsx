@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Input, Button, Space, Collapse } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { FormListFieldData, FormListOperation } from 'antd/lib/form/FormList';
-import { getLinksAttr } from './utils';
+import { getLinkIcon, hasSocialMediaProfiles, LinkLabel } from './utils';
 const { Panel } = Collapse;
 
 type NewSocialLinksProps = {
@@ -10,29 +10,43 @@ type NewSocialLinksProps = {
   collapsed: boolean,
   isDynamic?: boolean
 }
-type InnerFilmListFn = (fields: FormListFieldData[], operation: FormListOperation) => React.ReactNode;
 
-const staticLinkLabels = [ 'Presonal site', 'Twitter', 'Medium', 'GitHub', 'Facebook', 'LinkedIn', 'Instagram' ]
+type InnerFieldListFn = (fields: FormListFieldData[], operation: FormListOperation) => React.ReactNode;
 
-const staticSocialLinks = (): InnerFilmListFn => {
+const staticLinkLabels: LinkLabel[] = [
+  'Website',
+  'Twitter',
+  'Medium',
+  'Telegram',
+  'GitHub',
+  'Facebook',
+  'LinkedIn',
+  'Instagram'
+]
+
+const staticSocialLinks = (): InnerFieldListFn => {
   return (fields) => <div>
     {staticLinkLabels.map((label, index) => {
       const field = fields[index] || { name: index, key: index, fieldKey: index }
+      const icon = getLinkIcon(label)
+      const hasProfiles = hasSocialMediaProfiles(label)
+      const placeholder = hasProfiles ? `${label} profile URL` : `${label} URL`
+
       return <Form.Item
         {...field}
-        label={getLinksAttr(label).icon}
+        label={<span>{icon} {label}</span>}
         hasFeedback
         rules={[
           { type: 'url', message: 'Should be a valid URL.' }
         ]}
       >
-        <Input type='url' placeholder={`${label} profile URL`} />
+        <Input type='url' placeholder={placeholder} />
       </Form.Item>
     })}
   </div>
 }
 
-const dynamicSocialLinks = (): InnerFilmListFn => {
+const dynamicSocialLinks = (): InnerFieldListFn => {
   return (fields, { add, remove }) => {
 
     return (
@@ -52,7 +66,7 @@ const dynamicSocialLinks = (): InnerFilmListFn => {
               name={[ field.name, 'url' ]}
               fieldKey={[ field.fieldKey, 'url' ]}
               rules={[
-                { required: true, message: 'Missing url' },
+                { required: true, message: 'Missing URL' },
                 { type: 'url', message: 'Should be a valid URL.' }
               ]}
             >
@@ -94,9 +108,7 @@ const StaticSocialLinks = ({ name, collapsed }: NewSocialLinksProps) => (
 )
 
 const DynamicSociaLinks = ({ name }: NewSocialLinksProps) => (
-  <Form.Item
-    label='Social links'
-  >
+  <Form.Item label='Social links'>
     <Form.List name={name}>
       {dynamicSocialLinks()}
     </Form.List>
@@ -107,5 +119,4 @@ export const NewSocialLinks = ({ isDynamic, ...props }: NewSocialLinksProps) => 
   return isDynamic
     ? <DynamicSociaLinks {...props} />
     : <StaticSocialLinks {...props} />
-
 }

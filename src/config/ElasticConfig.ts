@@ -15,6 +15,7 @@ export const AllElasticIndexes = [
 export const ElasticFields = {
   space: {
     name: 'name',
+    handle: 'handle',
     about: 'about',
     tags: 'tags'
   },
@@ -27,7 +28,6 @@ export const ElasticFields = {
     body: 'body'
   },
   profile: {
-    handle: 'handle',
     name: 'name',
     about: 'about'
   }

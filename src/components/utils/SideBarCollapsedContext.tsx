@@ -23,7 +23,7 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
 
   switch (action.type) {
     case 'reload':
-      collapsed = !isHomePage()
+      collapsed = (isHomePage() && store.get(SIDEBAR_COLLAPSED)) || true
       log.debug('Reload collapsed:', collapsed)
       return { ...state, collapsed, inited: true }
 

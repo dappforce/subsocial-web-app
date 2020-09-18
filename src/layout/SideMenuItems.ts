@@ -1,6 +1,6 @@
-import { accountUrl, spacesFollowedByAccountUrl, spacesOwnedByAccountUrl } from 'src/components/urls'
+import { accountUrl, spacesFollowedByAccountUrl } from 'src/components/urls'
 import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
-import { showAdvanced } from 'src/components/utils/env'
+import { uiShowAdvanced } from 'src/components/utils/env'
 
 export type Divider = 'Divider'
 
@@ -10,6 +10,7 @@ export type PageLink = {
   name: string
   page: string[]
   icon: React.ForwardRefExoticComponent<any>
+  hidden?: boolean
 
   // Helpers
   isNotifications?: boolean
@@ -34,7 +35,8 @@ export const DefaultMenu: MenuItem[] = [
     name: 'Advanced',
     page: [ '/bc' ],
     icon: BlockOutlined,
-    isAdvanced: showAdvanced
+    hidden: !uiShowAdvanced,
+    isAdvanced: true
   }
 ];
 
@@ -59,12 +61,12 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     },
     {
       name: 'My profile',
-      page: [ '/profile/[address]', accountUrl(account) ],
+      page: [ '/[address]', accountUrl(account) ],
       icon: UserOutlined
     },
     {
       name: 'My spaces',
-      page: [ '/spaces/my/[address]', spacesOwnedByAccountUrl(account) ],
+      page: [ '/spaces/my', '/spaces/my' ],
       icon: BookOutlined
     },
     {

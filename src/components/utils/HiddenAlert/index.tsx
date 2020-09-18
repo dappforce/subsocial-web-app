@@ -40,7 +40,7 @@ export const HiddenAlert = ({
     style={style}
     message={
       <div className={`d-flex ${centered ? 'justify-content-center' : 'justify-content-between'}`}>
-        {desc || `This ${type} is hidden and only you can see it`}
+        {desc || `This ${type} is unlisted and only you can see it`}
         <HiddenButton />
       </div>
     }

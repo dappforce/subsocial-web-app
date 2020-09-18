@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback } from 'react'
 import keyring from '@polkadot/ui-keyring';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
@@ -9,27 +9,31 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useAuth } from '../auth/AuthContext';
 import SubTitle from '../utils/SubTitle';
 
+import styles from './AccountSelector.module.sass'
+
 type SelectAccountItems = {
   accounts: string[],
   profilesByAddressMap: Map<string, ProfileData>
 }
 
 const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap }: SelectAccountItems) => {
-  const { setAddress } = useMyAccount()
+  const { setAddress, state: { address } } = useMyAccount()
   const { hideSignInModal } = useAuth()
 
+  const AccountItem = useCallback((item: string) => <div
+    key={item.toString()}
+    className='SelectAccountItem'
+    style={{ cursor: 'pointer', height: 'auto' }}
+    onClick={async () => {
+      await hideSignInModal()
+      await setAddress(item)
+    }}
+  >
+    <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
+  </div>, [ address || '', addresses.length ])
+
   return <div className='SelectAccountSection'>
-    {addresses.map(item => <div
-      key={item.toString()}
-      className='SelectAccountItem'
-      style={{ cursor: 'pointer', height: 'auto' }}
-      onClick={async () => {
-        await hideSignInModal()
-        await setAddress(item)
-      }}
-    >
-      <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
-    </div>)}
+    {addresses.map(AccountItem)}
   </div>
 }
 
@@ -46,31 +50,42 @@ type AccountsPanelProps = {
   kind: 'Extension' | 'Local' | 'Test'
 }
 
-export const AccountSelectorView = ({ currentAddress, extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
+const renderExtensionContent = (content: JSX.Element) => {
+  return <>
+    <SubTitle title={'Extension accounts:'} />
+    {content}
+  </>
+}
+
+export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, localAddresses, developAddresses, profilesByAddressMap }: AccountSelectorViewProps) => {
+  const noAccounts = !extensionAddresses.length && !localAddresses.length && !developAddresses.length
+
   const NoExtension = useCallback(() => (
-    <div>
-      <div className='mb-4 mt-2'>
+    <div className='text-center mb-3'>
+      <div className='mb-3 mx-3'>
         <a className='DfBlackLink' href='https://github.com/polkadot-js/extension' target='_blank'>Polkadot extension</a>{' '}
-        was not found or disabled. You can install it if you are using Chrome or Firefox browser.
+        was not found or disabled. Please enable the extension or install it from one of the links below.
       </div>
       <div className='mx-5'>
         <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=de' target='_blank' >
-          <Avatar size={20} src='chrome.svg' />
+          <Avatar size={20} src='/chrome.svg' />
           <span className='ml-2'>Polkadot extension for Chrome</span>
         </Button>
-        <Button block type='default' href='https://addons.mozilla.org/ru/firefox/addon/polkadot-js-extension/' target='_blank' >
-          <Avatar size={20} src='firefox.svg' />
+        <Button block type='default' href='https://addons.mozilla.org/firefox/addon/polkadot-js-extension/' target='_blank' >
+          <Avatar size={20} src='/firefox.svg' />
           <span className='ml-2'>Polkadot extension for Firefox</span>
         </Button>
       </div>
     </div>
   ), [])
 
-  const NoAccounts = useCallback(() => (
-    <div className='ml-3'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
+  const NoExtensionAccounts = useCallback(() => (
+    <div className='ml-3 text-center'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
   ), [])
 
   const CurrentAccount = useCallback(() => {
+    if (noAccounts) return null
+
     if (!currentAddress) return <div className='m-3'>Click on your account to sign in:</div>
 
     return <>
@@ -81,7 +96,7 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
         />
       </div>
     </>
-  }, [])
+  }, [ currentAddress ])
 
   const AccountPanel = useCallback(({ accounts, kind }: AccountsPanelProps) => {
     const count = accounts.length;
@@ -94,37 +109,32 @@ export const AccountSelectorView = ({ currentAddress, extensionAddresses, localA
     </>
   }, [])
 
-  const ExtensionAccountPanel = useCallback(() => {
+  const ExtensionAccountPanel = () => {
     const count = extensionAddresses.length
 
     const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // TODO hack for hide NoAccount msg!!!
-
-    const renderContent = (content: JSX.Element) => {
-      return <>
-        <SubTitle title={'Extension accounts:'} />
-        {content}
-      </>
-    }
 
     if (!isWeb3Injected) return <NoExtension />
 
     if (!count && isInjectCurrentAddress) return null
 
-    if (!count) return renderContent(<NoAccounts />)
+    if (!count) return renderExtensionContent(<NoExtensionAccounts />)
 
-    return renderContent(
+    return renderExtensionContent(
       <SelectAccountItems
         accounts={extensionAddresses}
         profilesByAddressMap={profilesByAddressMap}
       />
     )
-  }, [])
+  }
 
-  return <div className='DfAccountSelector'>
+  return <div>
     <CurrentAccount />
-    <ExtensionAccountPanel />
-    <AccountPanel accounts={localAddresses} kind='Local' />
-    <AccountPanel accounts={developAddresses} kind='Test'/>
+    <div className={styles.DfAccountSelector}>
+      <ExtensionAccountPanel />
+      <AccountPanel accounts={localAddresses} kind='Local' />
+      <AccountPanel accounts={developAddresses} kind='Test'/>
+    </div>
   </div>
 }
 
@@ -150,6 +160,7 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
 
       const addresses = accounts.map(account => {
         const { address, meta } = account;
+
         if (address === currentAddress) return address
 
         if (meta.isInjected) {
@@ -163,6 +174,7 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
       })
 
       const uniqExtAddresses = new Set(extensionAddresses).values()
+
       setExtensionAddresses([ ...uniqExtAddresses ])
       setLocalAddresses(localAddresses)
       setDevelopAddresses(developAddresses)
@@ -196,11 +208,13 @@ export const AccountSelector = ({ injectedAddresses }: AccountSelectorProps) => 
     currentAddress
   } = useAccountSelector({ injectedAddresses })
 
-  return useMemo(() => !extensionAddresses || !localAddresses || !developAddresses ? null : <AccountSelectorView
-    extensionAddresses={extensionAddresses}
-    localAddresses={localAddresses}
-    developAddresses={developAddresses}
-    profilesByAddressMap={profilesByAddressMap}
-    currentAddress={currentAddress}
-  />, [ extensionAddresses, localAddresses, developAddresses ])
+  return !extensionAddresses || !localAddresses || !developAddresses
+    ? null
+    : <AccountSelectorView
+      extensionAddresses={extensionAddresses}
+      localAddresses={localAddresses}
+      developAddresses={developAddresses}
+      profilesByAddressMap={profilesByAddressMap}
+      currentAddress={currentAddress}
+    />
 }

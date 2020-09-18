@@ -7,16 +7,15 @@ import BN from 'bn.js';
 import { ZERO, ONE } from '../utils';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { NewSpaceButton } from './helpers';
+import { CreateSpaceButton } from './helpers';
 
 type Props = {
-  totalCount?: BN
   spacesData?: SpaceData[]
 }
 
 export const ListAllSpaces: NextPage<Props> = (props) => {
-  const { totalCount = ZERO, spacesData = [] } = props
-  const title = `Explore Spaces (${totalCount})`
+  const { spacesData = [] } = props
+  const title = `Explore Spaces (${spacesData.length})`
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
@@ -25,7 +24,7 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
         title={title}
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
-        noDataExt={<NewSpaceButton>Create space</NewSpaceButton>}
+        noDataExt={<CreateSpaceButton />}
         renderItem={(item) =>
           <ViewSpacePage
             key={item.struct.id.toString()}
@@ -57,11 +56,10 @@ ListAllSpaces.getInitialProps = async (_props): Promise<Props> => {
     for (let id = totalCount; id.gte(firstSpaceId); id = id.sub(ONE)) {
       spaceIds.push(id)
     }
-    spacesData = await subsocial.findVisibleSpaces(spaceIds)
+    spacesData = await subsocial.findPublicSpaces(spaceIds)
   }
 
   return {
-    totalCount,
     spacesData
   }
 }

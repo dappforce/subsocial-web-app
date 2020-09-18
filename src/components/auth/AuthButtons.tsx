@@ -3,7 +3,6 @@ import Button, { ButtonSize, ButtonType } from 'antd/lib/button';
 import { useAuth, ModalKind } from './AuthContext';
 import { useMyAccount } from './MyAccountContext';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { ANT_BUTTON_SIZE } from 'src/config/Size.config';
 
 type InnerAuthButtonProps = {
   type?: ButtonType
@@ -18,7 +17,7 @@ type OpenAuthButton = InnerAuthButtonProps & {
 
 export function OpenAuthButton ({
   type = 'default',
-  size = ANT_BUTTON_SIZE,
+  size,
   title = 'Click me',
   kind = 'OnBoarding',
   className
@@ -72,7 +71,7 @@ export const SwitchAccountButton = ({
 type SignOutButtonProps = InnerAuthButtonProps
 
 export function SignOutButton ({
-  size = ANT_BUTTON_SIZE,
+  size,
   title = 'Sign out'
 }: SignOutButtonProps) {
   const { signOut } = useMyAccount()

@@ -100,7 +100,7 @@ function urlWithAccount (baseUrl: string, account: HasAddressOrHandle, ...subUrl
 
 /** /profile/[address] */
 export function accountUrl (account: HasAddressOrHandle, ...subUrls: string[]): string {
-  return urlWithAccount('profile', account, ...subUrls)
+  return urlWithAccount('', account, ...subUrls)
 }
 
 /** /spaces/my/[address] */

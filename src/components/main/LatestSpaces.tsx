@@ -3,7 +3,7 @@ import { Space } from '@subsocial/types/substrate/interfaces';
 import DataList from '../utils/DataList';
 import { ViewSpacePage } from '../spaces/ViewSpace';
 import { SpaceData } from '@subsocial/types/dto';
-import { NewSpaceButton } from '../spaces/helpers';
+import { CreateSpaceButton } from '../spaces/helpers';
 
 type Props = {
   spacesData: SpaceData[]
@@ -17,7 +17,7 @@ export const LatestSpaces = (props: Props) => {
     title={`Latest spaces`}
     dataSource={spaces}
     noDataDesc='No spaces created yet'
-    noDataExt={<NewSpaceButton type='primary' ghost >Create space</NewSpaceButton>}
+    noDataExt={<CreateSpaceButton />}
     renderItem={(item) =>
       <ViewSpacePage
         {...props}

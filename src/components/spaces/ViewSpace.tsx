@@ -1,6 +1,6 @@
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { SpaceContent } from '@subsocial/types/offchain';
-import { nonEmptyStr } from '@subsocial/utils';
+import { nonEmptyStr, isEmptyStr } from '@subsocial/utils';
 import BN from 'bn.js';
 import mdToText from 'markdown-to-txt';
 import { NextPage } from 'next';
@@ -27,6 +27,7 @@ import ViewSpaceLink from './ViewSpaceLink';
 import { PageContent } from '../main/PageWrapper';
 import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar } from './helpers';
 import { ContactInfo } from './SocialLinks/ViewSocialLinks';
+import { MutedSpan } from '../utils/MutedText';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -64,23 +65,25 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   const { about, name, image, tags, ...contactInfo } = spaceData?.content || {} as SpaceContent
 
+  const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
+
   const Avatar = useCallback(() => <SpaceAvatar space={space} address={account} avatar={image} size={imageSize} />, [])
 
   const isMySpace = isMyAddress(account);
 
   const SpaceNameAsLink = () =>
-    <ViewSpaceLink space={space} title={name} />
+    <ViewSpaceLink className='mr-3' space={space} title={spaceName} />
 
   const renderNameOnly = () =>
     withLink
       ? <SpaceNameAsLink />
-      : <span>{name}</span>
+      : <span>{spaceName}</span>
 
   const renderDropDownPreview = () =>
     <div className={`ProfileDetails DfPreview ${isMySpace && 'MySpace'}`}>
       <Avatar />
       <div className='content'>
-        <div className='handle'>{name}</div>
+        <div className='handle'>{spaceName}</div>
       </div>
     </div>
 
@@ -89,7 +92,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
       <div onClick={onClick} className={`ProfileDetails ${isMySpace && 'MySpace'}`}>
         <Avatar />
         <div className='content'>
-          <div className='handle'>{name}</div>
+          <div className='handle'>{spaceName}</div>
         </div>
       </div>
       {withFollowButton && <FollowSpaceButton spaceId={id} />}
@@ -148,7 +151,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   return <>
     <HiddenSpaceAlert space={space} />
     <div className='ViewSpaceWrapper'>
-      <HeadMeta title={name} desc={mdToText(about)} image={image} />
+      <HeadMeta title={name} desc={mdToText(about, { escapeHtml: true })} image={image} />
       <PageContent>
         <Section>{renderPreview()}</Section>
         <Section className='DfContentPage mt-3'>
@@ -181,7 +184,7 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const posts = await subsocial.findVisiblePostsWithAllDetails(postIds.reverse())
+  const posts = await subsocial.findPublicPostsWithAllDetails(postIds.reverse())
 
   return {
     spaceData,

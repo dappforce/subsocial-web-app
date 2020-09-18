@@ -3,7 +3,7 @@ import { Form, Input } from 'antd'
 import Router from 'next/router'
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
-import { stringifyText, getTxParams } from '../substrate'
+import { getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { ProfileUpdate, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
@@ -16,6 +16,7 @@ import { withMyProfile } from './address-views/utils/withLoadedOwner'
 import { accountUrl } from '../urls'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 import { UploadAvatar } from '../uploader'
+import { resolveCidOfContent } from 'src/ipfs'
 
 const log = newLogger('EditProfile')
 
@@ -68,7 +69,7 @@ export function InnerForm (props: FormProps) {
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
-      const prevCid = stringifyText(owner?.profile?.content.asIpfs)
+      const prevCid = resolveCidOfContent(owner?.profile?.content)
       return prevCid !== cid.toString() ? cid : undefined
     }
 
@@ -102,7 +103,7 @@ export function InnerForm (props: FormProps) {
 
   const goToView = () => {
     if (address) {
-      Router.push('profile/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
+      Router.push('/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
     }
   };
 
@@ -124,24 +125,25 @@ export function InnerForm (props: FormProps) {
 
   return <>
     <DfForm form={form} initialValues={initialValues}>
-      <Form.Item
-        name={fieldName('name')}
-        label='Profile name'
-        hasFeedback
-        rules={[
-          { required: true, message: 'Name is required.' },
-          { min: NAME_MIN_LEN, message: minLenError('Name', NAME_MIN_LEN) },
-          { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
-        ]}
-      >
-        <Input placeholder='Full name or nickname' />
-      </Form.Item>
 
       <Form.Item
         name={fieldName('avatar')}
         label='Avatar'
       >
         <UploadAvatar onChange={onAvatarChanged} img={initialValues.avatar} />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('name')}
+        label='Profile name'
+        hasFeedback
+        rules={[
+          // { required: true, message: 'Name is required.' },
+          { min: NAME_MIN_LEN, message: minLenError('Name', NAME_MIN_LEN) },
+          { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
+        ]}
+      >
+        <Input placeholder='Full name or nickname' />
       </Form.Item>
 
       <Form.Item
@@ -179,19 +181,20 @@ export function InnerForm (props: FormProps) {
 
 export function FormInSection (props: FormProps) {
   const [ consts ] = useState<ValidationProps>({
-    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
-    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.utils.minHandleLen, 5),
+    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.utils.maxHandleLen, 50)
   })
 
   const { owner } = props
   const title = owner?.profile ? `Edit profile` : `New profile`
 
+  // TODO get min/max length of a handle from the chain.
   // useSubsocialEffect(() => {
   //   const load = async () => {
   //     // const api = await substrate.api
   //     setConsts({
-  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
-  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
+  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.utils.minHandleLen, 5),
+  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.utils.maxHandleLen, 50)
   //     })
   //   }
   //   load()
