@@ -38,7 +38,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         content.title = <><span className='flipH'>🎉</span> Success <span>🎉</span></>
 
         content.body = <>
-          <div className='mb-4'>You have successfully signed in. Now you can:</div>
+          <div className='my-3'>You have successfully signed in. Now you can:</div>
           <OnBoardingButton />
         </>
         return content

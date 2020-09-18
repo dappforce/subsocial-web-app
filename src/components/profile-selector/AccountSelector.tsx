@@ -13,10 +13,11 @@ import styles from './AccountSelector.module.sass'
 
 type SelectAccountItems = {
   accounts: string[],
-  profilesByAddressMap: Map<string, ProfileData>
+  profilesByAddressMap: Map<string, ProfileData>,
+  withShortAddress?: boolean
 }
 
-const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap }: SelectAccountItems) => {
+const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap, withShortAddress }: SelectAccountItems) => {
   const { setAddress, state: { address } } = useMyAccount()
   const { hideSignInModal } = useAuth()
 
@@ -29,7 +30,7 @@ const SelectAccountItems = ({ accounts: addresses, profilesByAddressMap }: Selec
       await setAddress(item)
     }}
   >
-    <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} />
+    <SelectAddressPreview address={item} owner={profilesByAddressMap.get(item)} withShortAddress={withShortAddress} />
   </div>, [ address || '', addresses.length ])
 
   return <div className='SelectAccountSection'>
@@ -105,7 +106,7 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
 
     return <>
       <SubTitle title={`${kind} accounts:`} />
-      <SelectAccountItems accounts={accounts} profilesByAddressMap={profilesByAddressMap} />
+      <SelectAccountItems accounts={accounts} profilesByAddressMap={profilesByAddressMap} withShortAddress/>
     </>
   }, [])
 
@@ -124,6 +125,7 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
       <SelectAccountItems
         accounts={extensionAddresses}
         profilesByAddressMap={profilesByAddressMap}
+        withShortAddress
       />
     )
   }
