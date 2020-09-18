@@ -44,7 +44,7 @@ export const Faucet = () => {
 
   return <PageContent>
     <HeadMeta title={title} desc='Get free tokens for a decentralized social network.' />
-    <Section className={`DfContentPage ${styles.Faucet}`} level={2} title={title}>
+    <Section className={`DfContentPage ${styles.Faucet}`} title={title}>
       <Steps current={current} className='mt-3'>
         {steps.map(item => (
           <Step key={item.title} title={item.title} />
