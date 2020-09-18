@@ -23,7 +23,6 @@ import { Menu, Dropdown, Button } from 'antd';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
-import { Profile } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { ProfileData } from '@subsocial/types';
@@ -51,7 +50,7 @@ const Component: NextPage<Props> = (props: Props) => {
   const {
     address,
     size = LARGE_AVATAR_SIZE,
-    owner = {} as ProfileData
+    owner
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
@@ -59,21 +58,16 @@ const Component: NextPage<Props> = (props: Props) => {
 
   const isMyAccount = isMyAddress(address);
 
-  const {
-    struct,
-    content = {} as ProfileContent,
-    profile = {} as Profile
-  } = owner;
-
-  const noProfile = isEmpty(profile);
-  const followers = struct ? new BN(struct.followers_count) : ZERO;
-  const following = struct ? new BN(struct.following_accounts_count) : ZERO;
+  const noProfile = isEmpty(owner?.profile);
+  const followers = owner ? new BN(owner.struct.followers_count) : ZERO;
+  const following = owner ? new BN(owner.struct.following_accounts_count) : ZERO;
+  const reputation = owner ? owner.struct.reputation : ZERO;
 
   const {
     name,
     avatar,
     about
-  } = content;
+  } = owner?.content || {} as ProfileContent;
 
   const createProfileButton = noProfile && isMyAccount &&
     <Link href='/profile/new' as='profile/new'>
@@ -144,12 +138,12 @@ const Component: NextPage<Props> = (props: Props) => {
             </CopyAddress>
           </MutedDiv>
           <MutedDiv><Balance address={address} label='Balance: ' /></MutedDiv>
-          <MutedDiv>{`Reputation: ${struct.reputation}`}</MutedDiv>
+          <MutedDiv>{`Reputation: ${reputation}`}</MutedDiv>
           <div className='about'>
             {about && <DfMd className='mt-3' source={about} />}
             {/* <KusamaIdentity address={address} /> */}
           </div>
-          <div className='Profile--actions'>
+          <div className='mt-3'>
             <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
             <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
             <Link href='/[address]/spaces' as={`/${address}/spaces`}><a className='DfProfileModalLink'>Spaces</a></Link>
