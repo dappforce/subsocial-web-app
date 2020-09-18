@@ -10,6 +10,7 @@ import { withLoadedOwner, withMyProfile } from './utils/withLoadedOwner';
 import { SummarizeMd } from 'src/components/utils/md';
 import ViewProfileLink from '../ViewProfileLink';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import { EditProfileLink } from './utils'
 
 type ProfilePreviewProps = AddressProps & {
   mini?: boolean,
@@ -61,6 +62,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
         </div>
         {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
         {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
+        <EditProfileLink className='DfGreyLink' />
       </>}
     </div>
   </div>;

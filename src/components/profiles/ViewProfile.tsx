@@ -33,7 +33,7 @@ import Avatar from './address-views/Avatar';
 import Name from './address-views/Name';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
-import { CopyAddress } from './address-views/utils';
+import { CopyAddress, EditProfileLink } from './address-views/utils';
 import mdToText from 'markdown-to-txt';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
@@ -82,7 +82,7 @@ const Component: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
-          <Link href='/profile/edit' as='profile/edit'><a className='item'>Edit</a></Link>
+          <EditProfileLink className='item' />
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
