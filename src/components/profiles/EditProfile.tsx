@@ -125,24 +125,25 @@ export function InnerForm (props: FormProps) {
 
   return <>
     <DfForm form={form} initialValues={initialValues}>
-      <Form.Item
-        name={fieldName('name')}
-        label='Profile name'
-        hasFeedback
-        rules={[
-          { required: true, message: 'Name is required.' },
-          { min: NAME_MIN_LEN, message: minLenError('Name', NAME_MIN_LEN) },
-          { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
-        ]}
-      >
-        <Input placeholder='Full name or nickname' />
-      </Form.Item>
 
       <Form.Item
         name={fieldName('avatar')}
         label='Avatar'
       >
         <UploadAvatar onChange={onAvatarChanged} img={initialValues.avatar} />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('name')}
+        label='Profile name'
+        hasFeedback
+        rules={[
+          // { required: true, message: 'Name is required.' },
+          { min: NAME_MIN_LEN, message: minLenError('Name', NAME_MIN_LEN) },
+          { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
+        ]}
+      >
+        <Input placeholder='Full name or nickname' />
       </Form.Item>
 
       <Form.Item
