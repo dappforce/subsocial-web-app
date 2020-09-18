@@ -15,7 +15,7 @@ export const ViewTags = ({ tags = [], className = '' }: Props) => {
   return (
     <div className={`DfTags ${className}`}>
       {tags.map(tag =>
-        <Tag key={tag}>
+        <Tag key={tag} className='mt-2'>
           <Link href='/search' as={`/search?tags=${tag}`}>
             <a><TagOutlined />{tag}</a>
           </Link>
