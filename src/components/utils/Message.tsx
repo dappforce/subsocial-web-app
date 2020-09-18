@@ -1,5 +1,7 @@
 import React from 'react'
 import notification, { NotificationPlacement, ArgsProps, IconType } from 'antd/lib/notification'
+import { isMobileDevice } from 'src/config/Size.config'
+import { message } from 'antd'
 
 export type Message = React.ReactNode
 
@@ -14,6 +16,14 @@ export type MessageProps = {
 
 const DefaultPlacement: NotificationPlacement = 'bottomLeft'
 
+const DefaultDuration = 3
+
+message.config({
+  top: typeof window !== 'undefined' ? window.innerHeight - 70 : 24,
+  duration: DefaultDuration,
+  maxCount: 1
+}) // Setup global config for messages
+
 const showMessage = (
   notifFn: (args: ArgsProps) => void,
   props: Message | MessageProps
@@ -26,24 +36,36 @@ const showMessage = (
   }
 }
 
+export const resolveNotififcation = (type: IconType, props: MessageProps) => {
+  const { message: content, duration = null, ...messageProps } = props
+
+  return isMobileDevice
+    ? message.open({ content, type, duration, style: { fontSize: '1rem' }, ...messageProps })
+    : notification.open({ type, ...props })
+}
+
+export const closeNotification = (key: string) => isMobileDevice ? message.destroy() : notification.close(key)
+
+export const createNotifFn = (type: IconType) => (props: MessageProps) => resolveNotififcation(type, props)
+
 export const showInfoMessage = (props: Message | MessageProps) => {
-  showMessage(notification.info, props)
+  showMessage(createNotifFn('info'), props)
 }
 
 export const showSuccessMessage = (props: Message | MessageProps) => {
-  showMessage(notification.success, props)
+  showMessage(createNotifFn('success'), props)
 }
 
 export const showErrorMessage = (props: Message | MessageProps) => {
-  showMessage(notification.error, props)
+  showMessage(createNotifFn('error'), props)
 }
 
 export const showWarnMessage = (props: Message | MessageProps) => {
-  showMessage(notification.warn, props)
+  showMessage(createNotifFn('warning'), props)
 }
 
 type ControlledMessageProps = MessageProps & {
-  type?: IconType
+  type: IconType
 }
 
 export const controlledMessage = ({
@@ -54,15 +76,14 @@ export const controlledMessage = ({
 }: ControlledMessageProps) => {
   return {
     open: () => {
-      notification.open({
+      resolveNotififcation(type, {
         key,
-        type,
         placement,
         ...otherProps
       })
     },
     close: () => {
-      notification.close(key)
+      closeNotification(key)
     }
   }
 }
