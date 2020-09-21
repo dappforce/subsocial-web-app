@@ -1,8 +1,6 @@
 import { ZERO } from ".";
-import { claimedSpaceIds } from "./env";
+import { claimedSpaceIds, lastReservedSpaceId } from "./env";
 import BN from 'bn.js'
-
-const RESERVED_SPACES = new BN(1000 + 1)
 
 export const getLastNIds = (nextId: BN, size: BN): BN[] => {
   const idsCount = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
@@ -12,12 +10,15 @@ export const getLastNIds = (nextId: BN, size: BN): BN[] => {
       nextId.sub(new BN(index + 1)))
 }
 
-export const getLastNSpaceIds = (nextId: BN, size?: BN): BN[] => {
-  const newSpaces = nextId.sub(RESERVED_SPACES)
-  const spaceLimit = !size || newSpaces.lt(size) ? newSpaces : size
-  const newSize = spaceLimit.subn(claimedSpaceIds.length)
+export const getLastNSpaceIds = (nextId: BN, size: BN): BN[] => {
+  const newSpacesCount = nextId.subn(lastReservedSpaceId + 1)
 
-  return [ ...claimedSpaceIds, ...getLastNIds(nextId, newSize) ]
+  const limit = newSpacesCount.lte(size) ? newSpacesCount : size
+  const spaceIds = [ ...claimedSpaceIds, ...getLastNIds(nextId, limit) ]
+
+  return spaceIds.slice(spaceIds.length - limit.toNumber())
 }
 
-export const getAllSpaceIds = (nextId: BN) => getLastNSpaceIds(nextId)
+export const getAllSpaceIds = (nextId: BN) =>
+  [ ...claimedSpaceIds, ...getLastNIds(nextId, nextId.subn(lastReservedSpaceId + 1)) ]
+

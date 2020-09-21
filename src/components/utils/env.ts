@@ -13,6 +13,11 @@ function getEnvAsArray (varName: string): any[] {
   return getEnv(varName)?.split(',') || []
 }
 
+function getEnvAsNumber (varName: string) {
+  const value = getEnv(varName)
+  return value ? parseInt(value) : undefined
+}
+
 export const nodeEnv = getEnv('NODE_ENV')
 export const appName = getEnv('APP_NAME') || 'Subsocial'
 export const offchainUrl = getEnv('OFFCHAIN_URL') || 'http://localhost:3001'
@@ -22,6 +27,7 @@ export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944'
 export const elasticNodeURL = getEnv('ELASTIC_URL') || 'http://localhost:9200'
 export const uiShowAdvanced = getEnvAsBool('UI_SHOW_ADVANCED')
 export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new BN(x))
+export const lastReservedSpaceId = getEnvAsNumber('LAST_RESERVED_SPACE_ID') || 0
 
 export const kusamaUrl = 'wss://kusama-rpc.polkadot.io'
 
