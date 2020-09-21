@@ -51,7 +51,7 @@ const HomePage: NextPage<Props> = (props) => {
   useEffect(() => setKey(defaultKey), [ isSignIn ])
 
   const LatestTab = <TabPane tab='Latest' key='latest'>
-    <LatestUpdate {...props}/>
+    <LatestUpdate {...props} />
   </TabPane>
 
   const FeedTab = isSignIn
@@ -60,7 +60,7 @@ const HomePage: NextPage<Props> = (props) => {
       </TabPane>
     : null
 
-  return <Section>
+  return <Section className='m-0'>
     <Tabs activeKey={key} onChange={setKey}>
       {FeedTab}
       {LatestTab}
