@@ -9,7 +9,7 @@ function getEnvAsBool (varName: string): boolean {
   return getEnv(varName)?.toString()?.toLowerCase() === 'true'
 }
 
-function getEnvAsArray (varName: string): any[] {
+function getEnvAsArray (varName: string): string[] {
   return getEnv(varName)?.split(',') || []
 }
 
@@ -26,8 +26,8 @@ export const ipfsNodeUrl = getEnv('IPFS_URL') || 'http://localhost:8080'
 export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944'
 export const elasticNodeURL = getEnv('ELASTIC_URL') || 'http://localhost:9200'
 export const uiShowAdvanced = getEnvAsBool('UI_SHOW_ADVANCED')
-export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new BN(x))
 export const lastReservedSpaceId = getEnvAsNumber('LAST_RESERVED_SPACE_ID') || 0
+export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new BN(x))
 
 export const kusamaUrl = 'wss://kusama-rpc.polkadot.io'
 

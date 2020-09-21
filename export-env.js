@@ -14,7 +14,8 @@ const varsToExport = [
   'APPS_URL',
   'IPFS_URL',
   'UI_SHOW_ADVANCED',
-  'LAST_RESERVED_SPACE_ID'
+  'LAST_RESERVED_SPACE_ID',
+  'CLAIMED_SPACE_IDS'
 ]
 
 function getSerializedVal (varName) {
