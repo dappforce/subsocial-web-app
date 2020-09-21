@@ -20,7 +20,7 @@ import NoData from 'src/components/utils/EmptyList';
 import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert';
 import { useRouter } from 'next/router';
 import { getSpaceId } from 'src/components/substrate';
-import { isEmptyStr } from '@subsocial/utils';
+import { isEmptyStr, isDef } from '@subsocial/utils';
 import ButtonLink from 'src/components/utils/ButtonLink';
 import BaseAvatar, { BaseAvatarProps } from 'src/components/utils/DfAvatar';
 import ViewSpaceLink from '../ViewSpaceLink';
@@ -34,9 +34,10 @@ type DropdownMenuProps = BareProps & {
   vertical?: boolean
 }
 
+export const isMySpace = (space?: Space) => isDef(space) && isMyAddress(space.owner)
+
 export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className }: DropdownMenuProps) => {
-  const { id, owner } = struct
-  const isMySpace = isMyAddress(owner)
+  const { id } = struct
 
   const spaceKey = `space-${id.toString()}`
 
@@ -62,7 +63,7 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className
       </Menu.Item>
     </Menu>
 
-  return isMySpace
+  return isMySpace(struct)
     ? <Dropdown overlay={menu} placement='bottomRight'>
       <EllipsisOutlined rotate={vertical ? 90 : 0} style={style} className={className} />
     </Dropdown>
@@ -163,9 +164,6 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
 export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
   const { spaceData, posts } = props
   const { struct: space } = spaceData
-  const { owner } = space
-
-  const isMySpace = isMyAddress(owner)
 
   const postsSectionTitle = () =>
     <div className='w-100 d-flex justify-content-between align-items-baseline'>
@@ -179,7 +177,7 @@ export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
     title={postsSectionTitle()}
     dataSource={posts}
     noDataDesc='No posts yet'
-    noDataExt={isMySpace
+    noDataExt={isMySpace(space)
     // TODO replace with Next Link + URL builder
       ? <CreatePostButton space={space} />
       : null
