@@ -14,15 +14,44 @@ import { newLogger } from '@subsocial/utils';
 import { AnyAccountId } from '@subsocial/types';
 import { return404 } from '../utils/next';
 
-type Props = {
+type LoadSpacesType = {
   spacesData: SpaceData[]
   mySpaceIds: SpaceId[]
+
+}
+
+type BaseProps = {
   address: AnyAccountId
 }
 
+type LoadSpacesProps = LoadSpacesType & BaseProps
+
+type Props = Partial<LoadSpacesType> & BaseProps
+
 const log = newLogger('AccountSpaces')
 
-const useLoadUnlistedSpaces = ({ address, mySpaceIds }: Props) => {
+export const useLoadAccoutPublicSpaces = (address?: AnyAccountId): LoadSpacesProps | undefined => {
+
+  if (!address) return undefined
+
+  const [ state, setState ] = useState<LoadSpacesProps>()
+
+  useSubsocialEffect(({ subsocial, substrate }) => {
+    const loadMySpaces = async () => {
+      const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
+      const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
+
+      setState({ mySpaceIds, spacesData, address })
+    }
+
+    loadMySpaces().catch((err) => log.error('Failed load my spaces. Error: %', err))
+
+  }, [ address ])
+
+  return state
+}
+
+const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
   const isMySpaces = isMyAddress(address as string)
   const [ myUnlistedSpaces, setMyUnlistedSpaces ] = useState<SpaceData[]>()
 
@@ -33,8 +62,6 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: Props) => {
       .then(setMyUnlistedSpaces).catch((err) => log.error('Failed load Unlisted spaces. Error: %', err))
 
   }, [ mySpaceIds.length, isMySpaces ])
-
-  console.log(isMySpaces, myUnlistedSpaces)
 
   return {
     isLoading: !myUnlistedSpaces,
@@ -50,18 +77,19 @@ const SpacePreview = (space: SpaceData) =>
     preview
   />
 
-const PublicSpaces = ({ spacesData, mySpaceIds }: Props) => {
+const PublicSpaces = ({ spacesData , mySpaceIds, address }: LoadSpacesProps) => {
   const noSpaces = !mySpaceIds.length
+  const isMy = isMyAddress(address)
 
   return <DataList
     title={<span className='d-flex justify-content-between align-items-center w-100 mb-2'>
       <span>{`Public Spaces (${spacesData.length})`}</span>
-      {!noSpaces && <CreateSpaceButton />}
+      {!noSpaces && isMy && <CreateSpaceButton />}
     </span>}
     dataSource={spacesData}
     renderItem={SpacePreview}
     noDataDesc='You do not own public spaces yet'
-    noDataExt={noSpaces &&
+    noDataExt={noSpaces && isMy &&
       <CreateSpaceButton>
         Create my first space
       </CreateSpaceButton>
@@ -69,7 +97,7 @@ const PublicSpaces = ({ spacesData, mySpaceIds }: Props) => {
   />
 }
 
-const UnlistedSpaces = (props: Props) => {
+const UnlistedSpaces = (props: LoadSpacesProps) => {
   const { myUnlistedSpaces, isLoading } = useLoadUnlistedSpaces(props)
 
   if (isLoading) return <Loading />
@@ -83,11 +111,17 @@ const UnlistedSpaces = (props: Props) => {
 }
 
 export const AccountSpaces: NextPage<Props> = (props) => {
+  const state = props.mySpaceIds
+    ? props as LoadSpacesProps
+    : useLoadAccoutPublicSpaces(props.address)
+
+  if (!state) return <Loading label='Loading public spaces'/>
+
   return <>
     <HeadMeta title='Spaces' desc={`Subsocial spaces owned by ${props.address}`} />
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <PublicSpaces {...props} />
-      <UnlistedSpaces {...props} />
+      <PublicSpaces {...state} />
+      <UnlistedSpaces {...state} />
     </div>
   </>
 }
@@ -113,22 +147,7 @@ AccountSpaces.getInitialProps = async (props): Promise<Props> => {
 
 export const ListMySpaces = () => {
   const address = useMyAddress()
-
-  if (!address) return null
-
-  const [ state, setState ] = useState<Props>()
-
-  useSubsocialEffect(({ subsocial, substrate }) => {
-    const loadMySpaces = async () => {
-      const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-      const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
-
-      setState({ mySpaceIds, spacesData, address })
-    }
-
-    loadMySpaces().catch((err) => log.error('Failed load my spaces. Error: %', err))
-
-  }, [ address ])
+  const state = useLoadAccoutPublicSpaces(address)
 
   return state
     ? <AccountSpaces {...state} />
