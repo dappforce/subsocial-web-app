@@ -6,7 +6,7 @@ This Privacy Policy applies to your use of the Website [subsocial.network](http:
 
 This document explains that we don’t collect, process and store any of your personal data. It also explains how IPFS protocol is related to Subsocial and allows people to add and retrieve data to and from Subsocial network. By using the Website, you accept and agree on the terms of this Privacy Policy. Should you disagree, you are free to stop using the Website.
 
-In this document, terms have the same meaning as provided in Terms of Use.
+In this document, terms have the same meaning as provided in [Terms of Use](/legal/terms).
 
 ## Definitions
 
