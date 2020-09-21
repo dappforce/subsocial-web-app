@@ -130,11 +130,11 @@ type PostCreatorProps = {
 export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDetails, size, withSpaceName, space }) => {
   if (isEmpty(postDetails.post)) return null;
   const { post: { struct }, owner } = postDetails;
-  const { created: { account, time } } = struct;
+  const { created: { time }, owner: postOwnerAddress } = struct;
   // TODO replace on loaded space after refactor this components
   return <>
     <AuthorPreview
-      address={account}
+      address={postOwnerAddress}
       owner={owner}
       withFollowButton
       isShort={true}

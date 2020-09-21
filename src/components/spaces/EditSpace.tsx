@@ -21,7 +21,7 @@ import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 import { UploadAvatar } from '../uploader'
 import { MailOutlined } from '@ant-design/icons'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
-import { resolveCidOfContent } from 'src/ipfs'
+import { resolveCidOfContent } from '@subsocial/api/utils'
 
 const log = newLogger('EditSpace')
 

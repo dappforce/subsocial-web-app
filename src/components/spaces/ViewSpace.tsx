@@ -12,7 +12,6 @@ import { Segment } from 'src/components/utils/Segment';
 import { isHidden } from '../utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
-import { isMyAddress } from '../auth/MyAccountContext';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { return404 } from '../utils/next';
 import Section from '../utils/Section';
@@ -25,7 +24,7 @@ import withLoadSpaceDataById from './withLoadSpaceDataById';
 import AboutSpaceLink from './AboutSpaceLink';
 import ViewSpaceLink from './ViewSpaceLink';
 import { PageContent } from '../main/PageWrapper';
-import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar } from './helpers';
+import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers';
 import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
 
@@ -60,16 +59,18 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   const {
     id,
-    created: { account }
+    owner
   } = space;
 
   const { about, name, image, tags, ...contactInfo } = spaceData?.content || {} as SpaceContent
 
   const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
 
-  const Avatar = useCallback(() => <SpaceAvatar space={space} address={account} avatar={image} size={imageSize} />, [])
+  const Avatar = useCallback(() => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />, [])
 
-  const isMySpace = isMyAddress(account);
+  const isMy = isMySpace(space)
+
+  const primaryClass = `ProfileDetails ${isMy && 'MySpace'}`
 
   const SpaceNameAsLink = () =>
     <ViewSpaceLink className='mr-3' space={space} title={spaceName} />
@@ -80,7 +81,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
       : <span>{spaceName}</span>
 
   const renderDropDownPreview = () =>
-    <div className={`ProfileDetails DfPreview ${isMySpace && 'MySpace'}`}>
+    <div className={`${primaryClass} DfPreview`}>
       <Avatar />
       <div className='content'>
         <div className='handle'>{spaceName}</div>
@@ -89,7 +90,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 
   const renderMiniPreview = () =>
     <div className={'viewspace-minipreview'}>
-      <div onClick={onClick} className={`ProfileDetails ${isMySpace && 'MySpace'}`}>
+      <div onClick={onClick} className={primaryClass}>
         <Avatar />
         <div className='content'>
           <div className='handle'>{spaceName}</div>
@@ -99,7 +100,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     </div>
 
   const renderPreview = () =>
-    <div className={`ProfileDetails ${isMySpace && 'MySpace'}`}>
+    <div className={primaryClass}>
       <div className='DfSpaceBody'>
         <Avatar />
         <div className='content w-100'>
@@ -107,7 +108,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
             <div className='d-flex justify-content-between'>
               <span className='header'>
                 <SpaceNameAsLink />
-                <MyEntityLabel isMy={isMySpace}>My space</MyEntityLabel>
+                <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
               </span>
               <span className='d-flex align-items-center'>
                 <DropdownMenu className='m-3' spaceData={spaceData} />

@@ -79,8 +79,8 @@ type VisibilityProps = {
   address?: AnyAccountId
 }
 
-export const isVisible = ({ struct: { hidden, created: { account } }, address }: VisibilityProps) =>
-  !hidden.valueOf() || isMyAddress(address || account.toString())
+export const isVisible = ({ struct: { hidden, owner }, address }: VisibilityProps) =>
+  !hidden.valueOf() || isMyAddress(address || owner.toString())
 
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
 

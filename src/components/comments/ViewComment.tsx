@@ -43,7 +43,8 @@ export const ViewComment: FunctionComponent<Props> = ({
 
   const {
     id,
-    created: { account, time },
+    created: { time },
+    owner: commentOwnerAddress,
     score,
     replies_count
   } = struct
@@ -103,7 +104,7 @@ export const ViewComment: FunctionComponent<Props> = ({
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview
-          address={account}
+          address={commentOwnerAddress}
           owner={owner}
           isShort={true}
           isPadded={false}

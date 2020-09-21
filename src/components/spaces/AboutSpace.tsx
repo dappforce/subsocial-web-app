@@ -33,14 +33,14 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const { owner } = props;
   const space = spaceData.struct;
-  const { created: { account, time } } = space;
+  const { created: { time }, owner: spaceOwnerAddress } = space;
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent);
   const { name, about, image, tags } = content;
 
   const SpaceAuthor = () =>
     <AuthorPreview
-      address={account}
+      address={spaceOwnerAddress}
       owner={owner}
       withFollowButton
       isShort={true}
