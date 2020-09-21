@@ -88,7 +88,7 @@ const PublicSpaces = ({ spacesData , mySpaceIds, address }: LoadSpacesProps) => 
     </span>}
     dataSource={spacesData}
     renderItem={SpacePreview}
-    noDataDesc='You do not own public spaces yet'
+    noDataDesc='No public spaces found'
     noDataExt={noSpaces && isMy &&
       <CreateSpaceButton>
         Create my first space
