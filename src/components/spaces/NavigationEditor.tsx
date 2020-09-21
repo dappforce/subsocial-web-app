@@ -26,7 +26,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 import { TxFailedCallback, TxCallback } from '../substrate/SubstrateTxButton';
 import { SpaceNotFound } from './helpers';
 import NoData from '../utils/EmptyList';
-import { resolveCidOfContent } from 'src/ipfs';
+import { resolveCidOfContent } from '@subsocial/api/utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 

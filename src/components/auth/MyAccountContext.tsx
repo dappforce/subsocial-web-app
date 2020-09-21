@@ -7,7 +7,7 @@ import { ProfileData } from '@subsocial/types';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { Option } from '@polkadot/types'
-import { resolveCidOfContent } from 'src/ipfs';
+import { resolveCidOfContent } from '@subsocial/api/utils';
 
 const log = newLogger('MyAccountContext')
 

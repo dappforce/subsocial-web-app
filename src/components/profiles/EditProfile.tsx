@@ -16,7 +16,7 @@ import { withMyProfile } from './address-views/utils/withLoadedOwner'
 import { accountUrl } from '../urls'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
 import { UploadAvatar } from '../uploader'
-import { resolveCidOfContent } from 'src/ipfs'
+import { resolveCidOfContent } from '@subsocial/api/utils'
 
 const log = newLogger('EditProfile')
 
