@@ -10,11 +10,10 @@ import { SpaceData, PostWithAllDetails } from '@subsocial/types';
 import { PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
-import { ZERO } from '../utils';
 import { useIsSignIn } from '../auth/MyAccountContext';
 import { MyFeed } from '../activity/MyFeed';
+import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
 
-const RESERVED_SPACES = new BN(1000 + 1)
 const FIFTY = new BN(50)
 const MAX_TO_SHOW = 5
 
@@ -42,24 +41,13 @@ const LatestUpdate = (props: Props) => {
 
 const HomePage: NextPage<Props> = (props) => useIsSignIn() ? <MyFeed /> : <LatestUpdate {...props}/>
 
-const getLastNIds = (nextId: BN, size: BN): BN[] => {
-  const idsCount = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
-  return new Array<BN>(idsCount)
-    .fill(ZERO)
-    .map((_, index) =>
-      nextId.sub(new BN(index + 1)))
-}
-
 HomePage.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi();
   const { substrate } = subsocial
   const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const newSpaces = nextSpaceId.sub(RESERVED_SPACES)
-  const spaceLimit = newSpaces.lt(FIFTY) ? newSpaces : FIFTY
-
-  const latestSpaceIds = getLastNIds(nextSpaceId, spaceLimit);
+  const latestSpaceIds = getLastNSpaceIds(nextSpaceId, FIFTY);
   const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
   const spacesData = publicSpacesData.slice(0, MAX_TO_SHOW)
 

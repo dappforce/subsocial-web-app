@@ -3,11 +3,10 @@ import { ViewSpacePage } from './ViewSpace';
 import DataList from '../utils/DataList';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
-import BN from 'bn.js';
-import { ZERO, ONE } from '../utils';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { CreateSpaceButton } from './helpers';
+import { getAllSpaceIds } from '../utils/getIds';
 
 type Props = {
   spacesData?: SpaceData[]
@@ -39,25 +38,13 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
   )
 }
 
-const firstSpaceId = ONE
-
-// TODO add pagination
-
 ListAllSpaces.getInitialProps = async (_props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
 
   const nextSpaceId = await substrate.nextSpaceId()
-  const totalCount = nextSpaceId.sub(firstSpaceId)
-  let spacesData: SpaceData[] = []
-
-  if (totalCount.gt(ZERO)) {
-    const spaceIds: BN[] = []
-    for (let id = totalCount; id.gte(firstSpaceId); id = id.sub(ONE)) {
-      spaceIds.push(id)
-    }
-    spacesData = await subsocial.findPublicSpaces(spaceIds)
-  }
+  const spaceIds = await getAllSpaceIds(nextSpaceId)
+  const spacesData = await subsocial.findPublicSpaces(spaceIds)
 
   return {
     spacesData
