@@ -105,7 +105,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
         <Avatar />
         <div className='content w-100'>
           <span className='mb-3'>
-            <div className='d-flex justify-content-between'>
+            <div className='d-flex justify-content-between mb-3'>
               <span className='header'>
                 <SpaceNameAsLink />
                 <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>

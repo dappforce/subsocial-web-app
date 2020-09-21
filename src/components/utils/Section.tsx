@@ -4,7 +4,7 @@ import { BareProps } from 'src/components/utils/types';
 type Props = BareProps & {
   id?: string,
   className?: string,
-  title?: JSX.Element | string,
+  title?: React.ReactNode,
   level?: number
 };
 

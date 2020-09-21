@@ -12,7 +12,11 @@ import Section from '../utils/Section';
 import { PostPreviewList } from '../posts/view-post/PostPreviewList';
 import { Loading } from '../utils';
 
-export const MyFeed = () => {
+type MyFeedProps = {
+  withTitle?: boolean
+}
+
+export const MyFeed = ({ withTitle }: MyFeedProps) => {
   const myAddress = useMyAddress()
 
   const [ items, setItems ] = useState<Activity[]>([]);
@@ -54,7 +58,7 @@ export const MyFeed = () => {
 
   return <>
     <HeadMeta title='My Feed' />
-    <Section title={`My Feed (${totalCount})`}>
+    <Section title={withTitle ? `My Feed (${totalCount})` : null}>
       {totalCount === 0
         ? <NoData description='Your feed is empty' />
         : infiniteScroll

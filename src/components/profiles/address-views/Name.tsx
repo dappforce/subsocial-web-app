@@ -37,8 +37,6 @@ export const Name = ({
     : addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
-  console.log('TITLE:', title, withShortAddress)
-
   return asLink
     ? <ViewProfileLink account={{ address }} title={title} className={nameClass} />
     : <>{title}</>
