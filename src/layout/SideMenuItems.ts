@@ -1,4 +1,4 @@
-import { accountUrl, spacesFollowedByAccountUrl } from 'src/components/urls'
+import { spacesFollowedByAccountUrl } from 'src/components/urls'
 import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
 import { uiShowAdvanced } from 'src/components/utils/env'
 
@@ -61,7 +61,7 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     },
     {
       name: 'My profile',
-      page: [ '/[address]', accountUrl(account) ],
+      page: [ '/profile', '/profile' ],
       icon: UserOutlined
     },
     {
