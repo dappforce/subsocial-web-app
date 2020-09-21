@@ -103,7 +103,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     <div className={primaryClass}>
       <div className='DfSpaceBody'>
         <Avatar />
-        <div className='content w-100'>
+        <div className='ml-2 w-100'>
           <span className='mb-3'>
             <div className='d-flex justify-content-between mb-3'>
               <span className='header'>
@@ -111,11 +111,10 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
                 <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
               </span>
               <span className='d-flex align-items-center'>
-                <DropdownMenu className='m-3' spaceData={spaceData} />
+                <DropdownMenu className='mx-3' spaceData={spaceData} />
                 {withFollowButton && <FollowSpaceButton spaceId={id} />}
               </span>
             </div>
-
           </span>
 
           {nonEmptyStr(about) &&
