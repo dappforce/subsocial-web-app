@@ -25,7 +25,7 @@ import BN from 'bn.js';
 import isEmpty from 'lodash.isempty';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { ProfileData } from '@subsocial/types';
+import { ProfileData, SpaceData } from '@subsocial/types';
 import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner';
 import { getAccountId } from '../substrate';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
@@ -35,6 +35,8 @@ import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink } from './address-views/utils';
 import mdToText from 'markdown-to-txt';
+import AccountSpaces from '../spaces/AccountSpaces';
+import { SpaceId } from '@subsocial/types/substrate/interfaces';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
@@ -43,6 +45,8 @@ export type Props = {
   address: AccountId,
   owner?: ProfileData,
   followers?: AccountId[],
+  mySpaceIds?: SpaceId[],
+  spacesData?: SpaceData[],
   size?: number
 };
 
@@ -50,7 +54,9 @@ const Component: NextPage<Props> = (props: Props) => {
   const {
     address,
     size = LARGE_AVATAR_SIZE,
-    owner
+    owner,
+    spacesData,
+    mySpaceIds
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
@@ -119,7 +125,7 @@ const Component: NextPage<Props> = (props: Props) => {
 
   return <>
     <HeadMeta title={getName()} desc={mdToText(about, { escapeHtml: true })} image={avatar} />
-    <Section>
+    <Section className='mb-3'>
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
         <div className='content w-100 ml-3'>
@@ -157,6 +163,7 @@ const Component: NextPage<Props> = (props: Props) => {
       {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
       {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
+    <AccountSpaces address={address} spacesData={spacesData} mySpaceIds={mySpaceIds} />
   </>;
 };
 
@@ -170,10 +177,17 @@ Component.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const owner = await subsocial.findProfile(address as string)
+  const addressStr = address as string
+
+  const owner = await subsocial.findProfile(addressStr)
+  const mySpaceIds = await subsocial.substrate.spaceIdsByOwner(addressStr)
+  const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
+
   return {
     address: accountId,
-    owner
+    owner,
+    spacesData,
+    mySpaceIds
   };
 };
 
