@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import BN from 'bn.js';
 
@@ -13,6 +13,10 @@ import { isComment } from '../posts/view-post';
 import { useIsSignIn } from '../auth/MyAccountContext';
 import { MyFeed } from '../activity/MyFeed';
 import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
+import { Tabs } from 'antd';
+import Section from '../utils/Section';
+
+const { TabPane } = Tabs
 
 const FIFTY = new BN(50)
 const MAX_TO_SHOW = 5
@@ -39,7 +43,30 @@ const LatestUpdate = (props: Props) => {
   )
 }
 
-const HomePage: NextPage<Props> = (props) => useIsSignIn() ? <MyFeed /> : <LatestUpdate {...props}/>
+const HomePage: NextPage<Props> = (props) => {
+  const isSignIn = useIsSignIn()
+  const defaultKey = isSignIn ? 'feed' : 'latest'
+  const [ key, setKey ] = useState<string>(defaultKey)
+
+  useEffect(() => setKey(defaultKey), [ isSignIn ])
+
+  const LatestTab = <TabPane tab='Latest' key='latest'>
+    <LatestUpdate {...props}/>
+  </TabPane>
+
+  const FeedTab = isSignIn
+    ? <TabPane tab='My feed' key='feed'>
+        <MyFeed />
+      </TabPane>
+    : null
+
+  return <Section>
+    <Tabs activeKey={key} onChange={setKey}>
+      {FeedTab}
+      {LatestTab}
+    </Tabs>
+  </Section>
+}
 
 HomePage.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi();
