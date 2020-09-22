@@ -10,26 +10,24 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { spaceIdForUrl, spaceUrl } from '../urls';
-import { ViewSpacePage } from './ViewSpace';
+import { ViewSpace } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
 
 type Props = {
   spacesData: SpaceData[]
 };
 
-export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
+export const ListFollowingSpaces = (props: Props) => {
   const { spacesData } = props;
   const totalCount = nonEmptyArr(spacesData) ? spacesData.length : 0;
   const title = `My Subscriptions (${totalCount})`
-
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta title={title} desc='The spaces you follow on Subsocial' />
       <DataList
         title={title}
         dataSource={spacesData}
         renderItem={(item, index) => (
-          <ViewSpacePage {...props} key={index} spaceData={item} preview withFollowButton />
+          <ViewSpace {...props} key={index} spaceData={item} preview withFollowButton />
         )}
         noDataDesc='You are not subscribed to any space yet'
         noDataExt={<ButtonLink href='/spaces/all' as='/spaces/all'>Explore spaces</ButtonLink>}
@@ -37,6 +35,15 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
     </div>
   );
 };
+
+
+export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
+  const { query: { address } } = useRouter()
+  return <>
+    <HeadMeta title={`Subscriptions of ${address}`} desc={`Spaces that ${address} follows on Subsocial`} />
+    <ListFollowingSpaces {...props} />
+  </>
+}
 
 ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props;
@@ -72,7 +79,7 @@ const SpaceLink = (props: { item: SpaceData }) => {
       as={spaceUrl(item.struct)}
     >
       <a className={`DfMenuSpaceLink ${isSelectedSpace ? 'DfSelectedSpace' : ''}`}>
-        <ViewSpacePage
+        <ViewSpace
           key={idForUrl}
           spaceData={item}
           miniPreview

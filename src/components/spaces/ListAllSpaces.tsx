@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewSpacePage } from './ViewSpace';
+import { ViewSpace } from './ViewSpace';
 import DataList from '../utils/DataList';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -12,20 +12,21 @@ type Props = {
   spacesData?: SpaceData[]
 }
 
-export const ListAllSpaces: NextPage<Props> = (props) => {
+const getTitle = (count: number) => `Explore Spaces (${count})`
+
+export const ListAllSpaces = (props: Props) => {
   const { spacesData = [] } = props
-  const title = `Explore Spaces (${spacesData.length})`
+  const title = getTitle(spacesData.length)
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta title={title} desc='Find interesting spaces on Subsocial and follow them.' />
       <DataList
         title={title}
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
         noDataExt={<CreateSpaceButton />}
         renderItem={(item) =>
-          <ViewSpacePage
+          <ViewSpace
             key={item.struct.id.toString()}
             {...props}
             spaceData={item}
@@ -38,7 +39,17 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
   )
 }
 
-ListAllSpaces.getInitialProps = async (_props): Promise<Props> => {
+const ListAllSpacesPage: NextPage<Props> = (props) => {
+  const { spacesData = [] } = props
+  const title = getTitle(spacesData.length)
+
+  return <>
+      <HeadMeta title={title} desc='Find interesting spaces on Subsocial and follow them.' />
+      <ListAllSpaces {...props} />
+  </>
+}
+
+ListAllSpacesPage.getInitialProps = async (_props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
 
@@ -51,4 +62,4 @@ ListAllSpaces.getInitialProps = async (_props): Promise<Props> => {
   }
 }
 
-export default ListAllSpaces
+export default ListAllSpacesPage

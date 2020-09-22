@@ -33,7 +33,7 @@ const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { 
 
 type Props = ViewSpaceProps
 
-export const ViewSpacePage: NextPage<Props> = (props) => {
+export const ViewSpace = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
   const { spaceData } = props;
@@ -151,7 +151,6 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   return <>
     <HiddenSpaceAlert space={space} />
     <div className='ViewSpaceWrapper'>
-      <HeadMeta title={name} desc={mdToText(about, { escapeHtml: true })} image={image} />
       <PageContent>
         <Section>{renderPreview()}</Section>
         <Section className='DfContentPage mt-3'>
@@ -162,6 +161,15 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
 }
 
 // TODO extract getInitialProps, this func is similar in AboutSpace
+
+const ViewSpacePage: NextPage<Props> = (props) => {
+  const { about, name, image } = props.spaceData?.content || {} as SpaceContent
+
+  return <>
+    <HeadMeta title={name} desc={mdToText(about, { escapeHtml: true })} image={image} />
+    <ViewSpace {...props} />
+  </>
+}
 
 ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const { query: { spaceId } } = props
@@ -196,4 +204,4 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
 
 export default ViewSpacePage
 
-export const ViewSpace = withLoadSpaceDataById(ViewSpacePage)
+export const DynamicViewSpace = withLoadSpaceDataById(ViewSpace)
