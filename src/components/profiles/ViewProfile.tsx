@@ -88,7 +88,7 @@ const Component: NextPage<Props> = (props: Props) => {
     const menu = (
       <Menu>
         {isMyAccount && <Menu.Item key='0'>
-          <EditProfileLink className='item' />
+          <EditProfileLink address={address} className='item' />
         </Menu.Item>}
         {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -152,7 +152,7 @@ const Component: NextPage<Props> = (props: Props) => {
           <div className='mt-3'>
             <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
             <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
-            <Link href='/[address]/spaces' as={`/${address}/spaces`}><a className='DfProfileModalLink'>Spaces</a></Link>
+            <Link href='/profile/[address]/spaces' as={`/${address}/spaces`}><a className='DfProfileModalLink'>Spaces</a></Link>
             <div className='mt-3'>
               {createProfileButton}
               <FollowAccountButton address={address} />
@@ -170,6 +170,7 @@ const Component: NextPage<Props> = (props: Props) => {
 Component.getInitialProps = async (props): Promise<any> => {
   const { query: { address }, res } = props;
   const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial
   const accountId = await getAccountId(address as string);
 
   if (!accountId && res) {
@@ -180,7 +181,7 @@ Component.getInitialProps = async (props): Promise<any> => {
   const addressStr = address as string
 
   const owner = await subsocial.findProfile(addressStr)
-  const mySpaceIds = await subsocial.substrate.spaceIdsByOwner(addressStr)
+  const mySpaceIds = await substrate.spaceIdsByOwner(addressStr)
   const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
 
   return {
