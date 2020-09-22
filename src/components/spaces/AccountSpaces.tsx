@@ -82,13 +82,13 @@ const PublicSpaces = ({ spacesData , mySpaceIds, address }: LoadSpacesProps) => 
   const isMy = isMyAddress(address)
 
   return <DataList
-    title={<span className='d-flex justify-content-between align-items-center w-100 mb-2'>
+    title={<span className='d-flex justify-content-between align-items-center w-100 my-2'>
       <span>{`Public Spaces (${spacesData.length})`}</span>
       {!noSpaces && isMy && <CreateSpaceButton />}
     </span>}
     dataSource={spacesData}
     renderItem={SpacePreview}
-    noDataDesc='You do not own public spaces yet'
+    noDataDesc='No public spaces found'
     noDataExt={noSpaces && isMy &&
       <CreateSpaceButton>
         Create my first space

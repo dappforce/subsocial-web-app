@@ -128,7 +128,7 @@ const Component: NextPage<Props> = (props: Props) => {
     <Section className='mb-3'>
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
-        <div className='content w-100 ml-3'>
+        <div className='ml-3 w-100'>
           <div className='header DfAccountTitle d-flex justify-content-between mb-2'>
             <span className='d-flex align-items-center'>
               <Name owner={owner} address={address} className='mr-3' />

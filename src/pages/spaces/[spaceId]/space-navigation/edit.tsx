@@ -1,5 +1,5 @@
-import React from 'react';
 import dynamic from 'next/dynamic';
 const EditNavigation = dynamic(() => import('../../../../components/spaces/NavigationEditor').then((mod: any) => mod.EditNavigation), { ssr: false });
 
-export default () => <EditNavigation />;
+export const page = () => <EditNavigation />
+export default page

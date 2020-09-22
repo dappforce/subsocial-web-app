@@ -1,5 +1,6 @@
-import React from 'react';
+import styles from './AccountsListModal.module.sass'
 
+import React from 'react';
 import { withCalls, withMulti, spaceFollowsQueryToProp, profileFollowsQueryToProp } from '../substrate';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { Modal, Button } from 'antd';
@@ -25,8 +26,7 @@ const InnerAccountsListModal = (props: Props) => {
       onCancel={close}
       visible={open}
       title={title}
-      className='DfAccountsModal'
-      style={{ marginTop: '3rem' }}
+      className={styles.AccountsListModal}
       footer={<Button onClick={close}>Close</Button>}
     >
       <DataList

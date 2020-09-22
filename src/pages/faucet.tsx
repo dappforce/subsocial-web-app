@@ -1,3 +1,4 @@
 import { Faucet } from 'src/components/utils/Faucet'
 
-export default () => <Faucet />
+export const page = () => <Faucet />
+export default page

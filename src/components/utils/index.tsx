@@ -75,12 +75,12 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
 export const fakeClientId = () => `fake-${new Date().getTime().toString()}`
 
 type VisibilityProps = {
-  struct: Post | Space,
+  struct: Post | Space
   address?: AnyAccountId
 }
 
 export const isVisible = ({ struct: { hidden, owner }, address }: VisibilityProps) =>
-  !hidden.valueOf() || isMyAddress(address || owner.toString())
+  !hidden.valueOf() || isMyAddress(address || owner)
 
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
 
