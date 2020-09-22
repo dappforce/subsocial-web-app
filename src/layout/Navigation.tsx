@@ -5,10 +5,10 @@ import { Layout, Drawer } from 'antd';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { elasticNodeURL } from 'src/components/utils/env';
 
-import Menu from './SideMenu';
 import dynamic from 'next/dynamic';
 
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
+const Menu = dynamic(() => import('./SideMenu'), { ssr: false });
 
 const { Header, Sider, Content } = Layout;
 
