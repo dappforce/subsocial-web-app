@@ -30,10 +30,10 @@ export const Name = ({
   const addressString = isShort ? shortAddress : address.toString()
   const name = content?.name || useExtensionName(address)
   const title = name
-    ? <>
+    ? <span className='d-flex justify-content-between'>
       {name}
-      {withShortAddress && <MutedSpan className='ml-2'>{shortAddress}</MutedSpan>}
-    </>
+      {withShortAddress && <b><MutedSpan>{shortAddress}</MutedSpan></b>}
+    </span>
     : addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
