@@ -33,7 +33,7 @@ import Avatar from './address-views/Avatar';
 import Name from './address-views/Name';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
-import { CopyAddress, EditProfileLink } from './address-views/utils';
+import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
 import mdToText from 'markdown-to-txt';
 import AccountSpaces from '../spaces/AccountSpaces';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
@@ -50,7 +50,7 @@ export type Props = {
   size?: number
 };
 
-const Component: NextPage<Props> = (props: Props) => {
+const Component = (props: Props) => {
   const {
     address,
     size = LARGE_AVATAR_SIZE,
@@ -70,13 +70,12 @@ const Component: NextPage<Props> = (props: Props) => {
   const reputation = owner ? owner.struct.reputation : ZERO;
 
   const {
-    name,
     avatar,
     about
   } = owner?.content || {} as ProfileContent;
 
   const createProfileButton = noProfile && isMyAccount &&
-    <Link href='/profile/new' as='profile/new'>
+    <Link href='/accounts/new' as='accounts/new'>
       <Button type='primary' ghost>
         <PlusOutlined />
         Create profile
@@ -106,17 +105,6 @@ const Component: NextPage<Props> = (props: Props) => {
     </>
   }, [ isMyAccount ]);
 
-  const isOnlyAddress = isEmptyStr(name)
-
-  // TODO extract function: there is similar code in other files
-  const getName = () => {
-    if (isOnlyAddress) {
-      return address.toString();
-    } else {
-      return name;
-    }
-  };
-
   const noFollowers = followers.eq(ZERO);
   const noFollowing = following.eq(ZERO);
 
@@ -124,7 +112,6 @@ const Component: NextPage<Props> = (props: Props) => {
   const followingText = <Pluralize count={following} singularText='Following' />
 
   return <>
-    <HeadMeta title={getName()} desc={mdToText(about, { escapeHtml: true })} image={avatar} />
     <Section className='mb-3'>
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
@@ -152,7 +139,7 @@ const Component: NextPage<Props> = (props: Props) => {
           <div className='mt-3'>
             <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
             <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
-            <Link href='/profile/[address]/spaces' as={`/${address}/spaces`}><a className='DfProfileModalLink'>Spaces</a></Link>
+            <AccountSpacesLink address={address} className='DfProfileModalLink' />
             <div className='mt-3'>
               {createProfileButton}
               <FollowAccountButton address={address} />
@@ -167,7 +154,33 @@ const Component: NextPage<Props> = (props: Props) => {
   </>;
 };
 
-Component.getInitialProps = async (props): Promise<any> => {
+const ProfilePage: NextPage<Props> = (props) => {
+  const { address, owner } = props
+
+  console.log('PROPS:', props)
+
+  const {
+    name,
+    avatar,
+    about
+  } = owner?.content || {} as ProfileContent;
+
+  const isOnlyAddress = isEmptyStr(name)
+
+  const getName = () => {
+    if (isOnlyAddress) {
+      return address.toString();
+    } else {
+      return name;
+    }
+  };
+  return <>
+    <HeadMeta title={getName()} desc={mdToText(about, { escapeHtml: true })} image={avatar} />
+    <Component {...props} />
+  </>
+}
+
+ProfilePage.getInitialProps = async (props): Promise<any> => {
   const { query: { address }, res } = props;
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
@@ -192,7 +205,7 @@ Component.getInitialProps = async (props): Promise<any> => {
   };
 };
 
-export default Component;
+export default ProfilePage;
 
 export const ViewProfile = withLoadedOwner(Component)
 

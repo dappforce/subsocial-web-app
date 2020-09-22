@@ -98,17 +98,7 @@ function urlWithAccount (baseUrl: string, account: HasAddressOrHandle, ...subUrl
   return stringifySubUrls(baseUrl, accountIdForUrl(account), ...subUrls)
 }
 
-/** /profile/[address] */
+/** /accounts/[address] */
 export function accountUrl (account: HasAddressOrHandle, ...subUrls: string[]): string {
-  return urlWithAccount('profile', account, ...subUrls)
-}
-
-/** /spaces/my/[address] */
-export function spacesOwnedByAccountUrl (account: HasAddressOrHandle, ...subUrls: string[]): string {
-  return urlWithAccount('spaces/my', account, ...subUrls)
-}
-
-/** /spaces/following/[address] */
-export function spacesFollowedByAccountUrl (account: HasAddressOrHandle, ...subUrls: string[]): string {
-  return urlWithAccount('spaces/following', account, ...subUrls)
+  return urlWithAccount('accounts', account, ...subUrls)
 }
