@@ -167,11 +167,11 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
 
         if (meta.isInjected) {
           extensionAddresses.push(address)
-        } else if (meta.isTesting) {
+        } /* else if (meta.isTesting) {
           developAddresses.push(address)
         } else {
           localAddresses.push(address)
-        }
+        } */
         return address
       })
 
