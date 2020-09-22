@@ -19,7 +19,7 @@ import { SpaceId } from '@subsocial/types/substrate/interfaces';
 const log = newLogger(SideMenu.name)
 
 function SideMenu () {
-  const { toggle, state: { collapsed, asDrawer } } = useSidebarCollapsed();
+  const { hide, state: { collapsed, asDrawer } } = useSidebarCollapsed();
   const { pathname } = useRouter();
   const myAddress = useMyAddress();
   const isLoggedIn = useIsSignIn();
@@ -63,7 +63,7 @@ function SideMenu () {
     : DefaultMenu
 
   const goToPage = ([ url, as ]: string[]) => {
-    asDrawer && toggle()
+    asDrawer && hide()
     Router.push(url, as).catch(err =>
       log.error(`Failed to navigate to a selected page. ${err}`))
   }
