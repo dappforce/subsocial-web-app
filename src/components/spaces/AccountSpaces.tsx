@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ViewSpacePage } from './ViewSpace';
+import { ViewSpace } from './ViewSpace';
 import DataList from '../utils/DataList';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -70,7 +70,7 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
 }
 
 const SpacePreview = (space: SpaceData) =>
-  <ViewSpacePage
+  <ViewSpace
     key={`space-${space.struct.id.toString()}`}
     spaceData={space}
     withFollowButton
@@ -110,23 +110,25 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
   /> : null
 }
 
-export const AccountSpaces: NextPage<Props> = (props) => {
+export const AccountSpaces = (props: Props) => {
   const state = props.mySpaceIds
     ? props as LoadSpacesProps
     : useLoadAccoutPublicSpaces(props.address)
 
   if (!state) return <Loading label='Loading public spaces'/>
 
-  return <>
-    <HeadMeta title='Spaces' desc={`Subsocial spaces owned by ${props.address}`} />
-    <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+  return <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <PublicSpaces {...state} />
       <UnlistedSpaces {...state} />
     </div>
-  </>
 }
 
-AccountSpaces.getInitialProps = async (props): Promise<Props> => {
+export const AccountSpacesPage: NextPage<Props> = (props: Props) => <>
+  <HeadMeta title='Spaces' desc={`Subsocial spaces owned by ${props.address}`} />
+  <AccountSpaces {...props} />
+</>
+
+AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query: { address } } = props
 
   if (!address || typeof address !== 'string') {
@@ -154,4 +156,4 @@ export const ListMySpaces = () => {
     : <Loading label='Loading your spaces' />
 }
 
-export default AccountSpaces
+export default AccountSpacesPage

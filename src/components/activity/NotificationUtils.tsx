@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment-timezone';
-import ViewSpacePage from '../spaces/ViewSpace';
+import ViewSpace from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util';
@@ -56,7 +56,7 @@ const renderSubjectPreview = (title?: string, href: string = '') =>
 
 const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification => {
   const data = map.get(spaceId.toString())
-  return { preview: <ViewSpacePage spaceData={data} nameOnly withLink /> }
+  return { preview: <ViewSpace spaceData={data} nameOnly withLink /> }
 }
 
 const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification => {

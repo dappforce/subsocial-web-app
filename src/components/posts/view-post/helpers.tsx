@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
-import ViewSpacePage from '../../spaces/ViewSpace';
+import ViewSpace from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
@@ -141,7 +141,7 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
       isPadded={false}
       size={size}
       details={<div>
-        {withSpaceName && space && <><div className='DfGreyLink'><ViewSpacePage spaceData={space} nameOnly withLink /></div>{' • '}</>}
+        {withSpaceName && space && <><div className='DfGreyLink'><ViewSpace spaceData={space} nameOnly withLink /></div>{' • '}</>}
         {space && <Link href='/spaces/[spaceId]/posts/[postId]' as={postUrl(space.struct, struct)}>
           <a className='DfGreyLink'>
             {formatUnixDate(time)}
