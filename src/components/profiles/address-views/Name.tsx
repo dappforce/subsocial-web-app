@@ -32,7 +32,7 @@ export const Name = ({
   const title = name
     ? <span className='d-flex justify-content-between'>
       {name}
-      {withShortAddress && <b><MutedSpan>{shortAddress}</MutedSpan></b>}
+      {withShortAddress && <MutedSpan><b><code>{shortAddress}</code></b></MutedSpan>}
     </span>
     : addressString
   const nameClass = `ui--AddressComponents-address ${className}`
