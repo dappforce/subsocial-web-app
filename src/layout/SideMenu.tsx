@@ -4,7 +4,7 @@ import Router, { useRouter } from 'next/router';
 import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import { Loading } from '../components/utils';
-import { RenderFollowedList } from '../components/spaces/ListFollowingSpaces';
+import { buildFollowedItems } from '../components/spaces/ListFollowingSpaces';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import Link from 'next/link';
 import { SpaceData } from '@subsocial/types/dto';
@@ -15,6 +15,7 @@ import { OnBoardingCard } from 'src/components/onboarding';
 import { useAuth } from 'src/components/auth/AuthContext';
 import { useResponsiveSize } from 'src/components/responsive';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
+import { AllSpacesLink } from 'src/components/spaces/helpers';
 
 const log = newLogger(SideMenu.name)
 
@@ -74,7 +75,7 @@ function SideMenu () {
   }
 
   const renderPageLink = useCallback((item: PageLink) => {
-    const Icon = item.icon
+    const icon = item.icon
     if (item.hidden) {
       return null
     }
@@ -83,7 +84,7 @@ function SideMenu () {
       ? (
         <Menu.Item key={item.page[0]} >
           <a href='/bc'>
-            <Icon />
+            {icon}
             <span>{item.name}</span>
           </a>
         </Menu.Item>
@@ -91,8 +92,8 @@ function SideMenu () {
         <Menu.Item key={item.page[0]} onClick={() => goToPage(item.page)}>
           <Link href={item.page[0]} as={item.page[1]}>
             <a>
-              <Icon />
-              <span>{item.name}</span>
+              {icon}
+              <span className='MenuItemName'>{item.name}</span>
               {item.isNotifications && renderNotificationsBadge()}
             </a>
           </Link>
@@ -100,18 +101,26 @@ function SideMenu () {
       )
   }, [])
 
-  const renderSubscriptions = () => (collapsed && isEmptyArray(followedSpacesData)) ? null : (
-    <Menu.ItemGroup
-      className={`DfSideMenu--FollowedSpaces text-center ${collapsed && 'collapsed'}`}
+  const renderSubscriptions = () => {
+    if (isEmptyArray(followedSpacesData)) {
+      return collapsed ? null : (
+        <div className='text-center m-2'>
+          <AllSpacesLink title='Exlore Spaces' />
+        </div>
+      )
+    }
+
+    return <Menu.ItemGroup
+      className={`DfSideMenu--FollowedSpaces ${collapsed && 'collapsed'}`}
       key='followed'
       title={collapsed && !asDrawer ? 'Subs.' : 'My subscriptions'}
     >
       {loaded
-        ? <RenderFollowedList followedSpacesData={followedSpacesData} />
+        ? buildFollowedItems(followedSpacesData).map(renderPageLink)
         : <div className='text-center m-2'><Loading /></div>
       }
     </Menu.ItemGroup>
-  )
+  }
 
   return (
     <Menu

@@ -1,5 +1,5 @@
 import { SpaceData } from '@subsocial/types/dto';
-import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
+import { nonEmptyArr } from '@subsocial/utils';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -12,6 +12,8 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { spaceIdForUrl, spaceUrl } from '../urls';
 import { ViewSpace } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
+import { PageLink } from 'src/layout/SideMenuItems';
+import BaseAvatar from '../utils/DfAvatar';
 
 type Props = {
   spacesData: SpaceData[]
@@ -61,7 +63,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
 
 // TODO extract to a separate file:
 
-const SpaceLink = (props: { item: SpaceData }) => {
+export const SpaceLink = (props: { item: SpaceData }) => {
   const { item } = props;
   const { pathname, query } = useRouter();
   const { toggle, state: { asDrawer } } = useSidebarCollapsed();
@@ -74,7 +76,7 @@ const SpaceLink = (props: { item: SpaceData }) => {
 
   return (
     <Link
-      key={idForUrl}
+      key={idForUrl}PlusOutlined
       href='/spaces/[spaceId]'
       as={spaceUrl(item.struct)}
     >
@@ -92,21 +94,9 @@ const SpaceLink = (props: { item: SpaceData }) => {
   )
 }
 
-export const RenderFollowedList = (props: { followedSpacesData: SpaceData[] }) => {
-  const { followedSpacesData } = props;
-  const { state: { collapsed } } = useSidebarCollapsed()
+export const buildFollowedItems = (followedSpacesData: SpaceData[]): PageLink[] => followedSpacesData.map(({ struct, content }) => ({
+    name: content?.name || '',
+    page: [ '/spaces/[spaceId]', spaceUrl(struct) ],
+    icon: <span className='SpaceMenuIcon'><BaseAvatar address={struct.owner} avatar={content?.image} size={24} /></span>
+  }))
 
-  if (isEmptyArray(followedSpacesData)) {
-    return collapsed ? null : (
-      <div className='text-center m-2'>
-        <ButtonLink href='/spaces/all' as='/spaces/all'>Explore Spaces</ButtonLink>
-      </div>
-    )
-  }
-
-  return <>{followedSpacesData.map((item) =>
-    <SpaceLink key={item.struct.id.toString()} item={item} />
-  )}</>
-}
-
-export default RenderFollowedList;

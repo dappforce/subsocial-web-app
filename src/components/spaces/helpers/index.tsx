@@ -255,3 +255,11 @@ type SpaceAvatarProps = BaseAvatarProps & {
 }
 
 export const SpaceAvatar = (props: SpaceAvatarProps) => <ViewSpaceLink space={props.space} title={<BaseAvatar {...props} />} />
+
+type AllSpacesLinkProps = BareProps & {
+  title?: React.ReactNode
+}
+
+export const AllSpacesLink = ({ title = 'All', ...otherProps }: AllSpacesLinkProps) => <Link href='/spaces/all' as='/spaces/all'>
+  <a className='DfGreyLink text-uppercase' style={{ fontSize: '1rem' }} {...otherProps}>{title}</a>
+</Link>
