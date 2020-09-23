@@ -21,7 +21,7 @@ const log = newLogger(SideMenu.name)
 
 function SideMenu () {
   const { hide, state: { collapsed, asDrawer } } = useSidebarCollapsed();
-  const { pathname } = useRouter();
+  const { asPath } = useRouter();
   const myAddress = useMyAddress();
   const isLoggedIn = useIsSignIn();
   const { unreadCount } = useNotifCounter()
@@ -89,7 +89,7 @@ function SideMenu () {
           </a>
         </Menu.Item>
       ) : (
-        <Menu.Item key={item.page[0]} onClick={() => goToPage(item.page)}>
+        <Menu.Item key={item.page[1] || item.page[0]} onClick={() => goToPage(item.page)}>
           <Link href={item.page[0]} as={item.page[1]}>
             <a>
               {icon}
@@ -124,7 +124,7 @@ function SideMenu () {
 
   return (
     <Menu
-      selectedKeys={[ pathname ]}
+      selectedKeys={[ asPath ]}
       mode='inline'
       theme='light'
       style={{ height: '100%', borderRight: 0 }}
