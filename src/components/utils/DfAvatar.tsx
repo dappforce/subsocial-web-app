@@ -12,14 +12,12 @@ export type BaseAvatarProps = {
   address: AnyAccountId,
 }
 
-const SUB_SIZE = 3;
-
 export const BaseAvatar = ({ size = DEFAULT_AVATAR_SIZE, avatar, style, address }: BaseAvatarProps) => {
   const icon = nonEmptyStr(avatar)
     ? <DfBgImg size={size} src={avatar} className='DfAvatar space ui--IdentityIcon' style={style} rounded />
     : <IdentityIcon
       style={style}
-      size={size - SUB_SIZE}
+      size={size}
       value={address}
     />;
 
