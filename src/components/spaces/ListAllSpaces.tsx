@@ -44,7 +44,7 @@ const ListAllSpacesPage: NextPage<Props> = (props) => {
   const title = getTitle(spacesData.length)
 
   return <>
-      <HeadMeta title={title} desc='Find interesting spaces on Subsocial and follow them.' />
+      <HeadMeta title={title} desc='Discover and follow interesting spaces on Subsocial.' />
       <ListAllSpaces {...props} />
   </>
 }

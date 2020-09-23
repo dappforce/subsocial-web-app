@@ -1,6 +1,6 @@
-import { accountUrl } from 'src/components/urls'
 import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
 import { uiShowAdvanced } from 'src/components/utils/env'
+import { accountUrl } from 'src/components/urls'
 
 export type Divider = 'Divider'
 
@@ -9,7 +9,7 @@ export const Divider: Divider = 'Divider'
 export type PageLink = {
   name: string
   page: string[]
-  icon: React.ForwardRefExoticComponent<any>
+  icon: React.ReactNode
   hidden?: boolean
 
   // Helpers
@@ -29,12 +29,12 @@ export const DefaultMenu: MenuItem[] = [
   {
     name: 'Explore',
     page: [ '/spaces/all' ],
-    icon: GlobalOutlined
+    icon: <GlobalOutlined />
   },
   {
     name: 'Advanced',
     page: [ '/bc' ],
-    icon: BlockOutlined,
+    icon: <BlockOutlined />,
     hidden: !uiShowAdvanced,
     isAdvanced: true
   }
@@ -46,35 +46,36 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     {
       name: 'My feed',
       page: [ '/feed', '/feed' ],
-      icon: ProfileOutlined
+      icon: <ProfileOutlined />
     },
     {
       name: 'My notifications',
       page: [ '/notifications', '/notifications' ],
-      icon: BellOutlined,
+      icon: <BellOutlined />,
       isNotifications: true
     },
     {
       name: 'My subscriptions',
-      page: [ '/accounts/[address]/following',  accountUrl(account, 'following') ],
-      icon: StarOutlined
+      page: [ '/accounts/[address]/following',  accountUrl(account, 'spaces', 'following') ],
+      icon: <StarOutlined />
     },
     {
       name: 'My profile',
       page: [ '/accounts/[address]', accountUrl(account) ],
-      icon: UserOutlined
+      icon: <UserOutlined />
     },
     {
       name: 'My spaces',
       page: [ '/accounts/[address]/spaces', accountUrl(account, 'spaces') ],
-      icon: BookOutlined
+      icon: <BookOutlined />
     },
     {
       name: 'New space',
       page: [ '/spaces/new', '/spaces/new' ],
-      icon: PlusOutlined
+      icon: <PlusOutlined />
     },
     Divider,
     ...DefaultMenu
   ]
 }
+

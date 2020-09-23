@@ -157,8 +157,6 @@ const Component = (props: Props) => {
 const ProfilePage: NextPage<Props> = (props) => {
   const { address, owner } = props
 
-  console.log('PROPS:', props)
-
   const {
     name,
     avatar,
@@ -174,6 +172,7 @@ const ProfilePage: NextPage<Props> = (props) => {
       return name;
     }
   };
+
   return <>
     <HeadMeta title={getName()} desc={mdToText(about, { escapeHtml: true })} image={avatar} />
     <Component {...props} />
