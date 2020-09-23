@@ -980,47 +980,27 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
-  min-height: 31%;
-  .DfIdentityIcon {
-    margin-right: 0 !important;
+  .SpaceMenuIcon {
+    margin-left: -$space_mini;
   }
 
-  & .collapsed {
-    .ant-menu-item-group-list {
-      .content {
-        display: none;
-      }
-
-      margin-left: $space_small;
+  &.collapsed {
+    .MenuItemName {
+      display: none;
     }
+  }
+
+  .DfIdentityIcon {
+    margin-right: 0 !important;
   }
 
   color: #666;
   cursor: pointer;
 
   .ant-menu-item-group-title {
+    text-align: center;
     text-transform: uppercase;
     font-size: $font_small
-  }
-
-  .content {
-    width: 80%;
-    display: flex;
-    align-items: center;
-
-    .handle {
-      padding: $space_tiny 0rem;
-    }
-  }
-}
-
-.DfSideMenu--FollowedSpaces.collapsed {
-  .ant-menu-item-group-list {
-    .content {
-      display: none;
-    }
-
-    margin-left: $space_small;
   }
 }
 
