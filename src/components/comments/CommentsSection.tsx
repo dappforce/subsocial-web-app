@@ -17,16 +17,17 @@ type CommentSectionProps = {
   space: Space,
   post: PostWithSomeDetails,
   replies?: PostWithSomeDetails[],
-  hashId?: string
+  hashId?: string,
+  withBorder?: boolean
 }
 
-export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [] }) => {
+export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [], withBorder }) => {
   const { post: { struct } } = post
   const [ asStub, setAsStub ] = useState(true)
   const { replies_count } = struct
   const totalCount = replies_count.toString()
 
-  return <Section id={hashId} className='DfCommentSection'>
+  return <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
     <h3><Pluralize count={totalCount} singularText='comment' /></h3>
     {asStub
       ? <Input className='mb-2' size='large' placeholder='Write a comment...' onClick={() => setAsStub(false)} />

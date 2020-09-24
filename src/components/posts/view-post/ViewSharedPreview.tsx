@@ -14,6 +14,6 @@ export const SharedPreview: React.FunctionComponent<InnerPreviewProps> = ({ post
     </div>
     <SharePostContent postDetails={postDetails} space={space} />
     {withActions && <PostActionsPanel postDetails={postDetails} space={space.struct} toogleCommentSection={() => setCommentsSection(!commentsSection)} preview />}
-    {commentsSection && <CommentSection post={postDetails} space={space.struct} replies={replies}/>}
+    {commentsSection && <CommentSection post={postDetails} space={space.struct} replies={replies} withBorder/>}
   </>;
 };

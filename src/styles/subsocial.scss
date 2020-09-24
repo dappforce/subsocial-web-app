@@ -97,7 +97,7 @@ pre {
 
 .DfProfileModalLink {
   @extend .DfGreyLink;
-  margin-right: $space_huge
+  margin-right: $space_big;
 }
 
 /* Other Styles */
@@ -658,12 +658,12 @@ hr {
 .DfGreyLink:hover {
   a {
     color: $color_muted !important;
-    text-decoration: underline !important;
+    text-decoration: underline;
     cursor: pointer;
   }
 
   color: $color_muted !important;
-  text-decoration: underline !important;
+  text-decoration: underline;
   cursor: pointer;
 }
 
@@ -1470,7 +1470,11 @@ a.DfStatItem {
 }
 
 .DfCommentSection {
-  border-top: 1px solid $color_light_border;
+
+  &.TopBorder {
+    border-top: 1px solid $color_light_border;
+  }
+
   margin-bottom: $space_normal;
 
   h3 {
