@@ -12,6 +12,8 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { spaceIdForUrl, spaceUrl } from '../urls';
 import { ViewSpace } from './ViewSpace';
 import ButtonLink from '../utils/ButtonLink';
+import { isMyAddress } from '../auth/MyAccountContext';
+import { toShortAddress } from '../utils';
 
 type Props = {
   spacesData: SpaceData[]
@@ -19,8 +21,15 @@ type Props = {
 
 export const ListFollowingSpaces = (props: Props) => {
   const { spacesData } = props;
+  const { query: { address: queryAddress } } = useRouter()
+
+  const address = queryAddress as string
   const totalCount = nonEmptyArr(spacesData) ? spacesData.length : 0;
-  const title = `My Subscriptions (${totalCount})`
+
+  const title = isMyAddress(address)
+    ? `My Subscriptions (${totalCount})`
+    : `Subscriptions of ${toShortAddress(address)}` // TODO show title | username | extension name | short addresss
+
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <DataList
