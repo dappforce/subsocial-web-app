@@ -145,6 +145,8 @@ export function InnerForm (props: FormProps) {
     form.setFieldsValue({ [fieldName('image')]: url })
   }
 
+  const links = initialValues.links
+
   return <>
     <DfForm form={form} validateTrigger={[ 'onBlur' ]} initialValues={initialValues}>
       <Form.Item
@@ -229,7 +231,7 @@ export function InnerForm (props: FormProps) {
         <Input type='email' placeholder='Email address' />
       </Form.Item>
 
-      <NewSocialLinks name='links' collapsed={!initialValues.links} />
+      <NewSocialLinks name='links' links={links} collapsed={!links} />
 
       <DfFormButtons
         form={form}
