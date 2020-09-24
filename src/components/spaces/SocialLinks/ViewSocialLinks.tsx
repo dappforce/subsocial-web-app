@@ -2,12 +2,15 @@ import React from 'react'
 import { NamedLinks } from '@subsocial/types'
 import { getLinkBrand, getLinkIcon } from './utils'
 import { MailOutlined } from '@ant-design/icons'
+import { isEmptyStr } from '@subsocial/utils'
 
 type SocialLinkProps = {
   link: string
 }
 
 const SocialLink = ({ link }: SocialLinkProps) => {
+  if (isEmptyStr(link)) return null
+
   const brand = getLinkBrand(link)
   return <a href={link} title={brand} className='DfBlackLink ml-3'>
     {getLinkIcon(brand)}
