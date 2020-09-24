@@ -36,11 +36,11 @@ export const SpaceStatsRow = ({ space }: Props) => {
         </a>
       </Link>
 
-      <MutedSpan><AboutSpaceLink className='DfGreyLink DfStatItem' space={space} title='About' /></MutedSpan>
-
       <div onClick={() => setFollowersOpen(true)} className={followersClassName}>
         <Pluralize count={followers} singularText='Follower'/>
       </div>
+
+      <MutedSpan><AboutSpaceLink className='DfGreyLink DfStatItem' space={space} title='About' /></MutedSpan>
 
       <MutedSpan className='DfStatItem'>
         <Pluralize count={score} singularText='Point' />
