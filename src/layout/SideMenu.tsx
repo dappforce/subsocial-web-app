@@ -75,7 +75,7 @@ function SideMenu () {
   }
 
   const renderPageLink = useCallback((item: PageLink) => {
-    const icon = item.icon
+    const { icon } = item
     if (item.hidden) {
       return null
     }
