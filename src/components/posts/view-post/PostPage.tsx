@@ -19,7 +19,7 @@ import { isHidden, Loading } from 'src/components/utils';
 import { useLoadUnlistedSpace } from 'src/components/spaces/helpers';
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { ViewSpace } from 'src/components/spaces/ViewSpace';
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 

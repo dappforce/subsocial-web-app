@@ -1,6 +1,6 @@
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { NextPage } from 'next';
 import Error from 'next/error';
 import React, { useState } from 'react';

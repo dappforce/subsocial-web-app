@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { isEmptyStr } from '@subsocial/utils'
+import mdToTextSync from 'markdown-to-txt'
 
 const remark = require('remark')
 const strip = require('strip-markdown')
@@ -10,10 +11,8 @@ const processMd = remark()
   // .use(squeezeParagraphs) // <-- doesn't work very well: leaves couple sequential new lines
   .process
 
-export async function mdToText (md?: string) {
-  return isEmptyStr(md)
-    ? md
-    : String(await processMd(md) as string)
-}
+export const mdToTextAsync = async (md?: string) =>
+  isEmptyStr(md) ? md : String(await processMd(md) as string)
 
-export default mdToText
+export const mdToText = (md?: string) =>
+  isEmptyStr(md) ? md : mdToTextSync(md, { escapeHtml: false })

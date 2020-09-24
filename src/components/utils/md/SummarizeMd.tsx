@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { isEmptyStr } from '@subsocial/utils'
-import { mdToText } from './mdToText'
-import mdToTextSync from 'markdown-to-txt'
-import { summarize } from '../text'
+import { mdToText, mdToTextAsync, summarize } from 'src/utils'
 
 type Props = {
   md?: string
@@ -18,7 +16,7 @@ export const SummarizeMd = ({ md, limit, more }: Props) => {
   // Here we get the first version of markdown to text.
   // It is not perfect but sync. and this allows us to return a result immediately
   // - this is important for SEO via server-side rendering.
-  const syncSummary = getSummary(mdToTextSync(md))
+  const syncSummary = getSummary(mdToText(md))
 
   const [ summary, setSummary ] = useState<string>(syncSummary)
   const [ showMore, setShowMore ] = useState<boolean>(false)
@@ -30,7 +28,7 @@ export const SummarizeMd = ({ md, limit, more }: Props) => {
       // Here we get a async version of summary by using another async function
       // of markdown to text. Its output is better, but async.
       // That's why we call it in useEffect.
-      const text = (await mdToText(md))?.trim()
+      const text = (await mdToTextAsync(md))?.trim()
       const summary = getSummary(text)
       isSubscribe && setSummary(summary)
       if (isSubscribe && text && text.length > summary.length) {

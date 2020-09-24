@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { PostWithSomeDetails, PostData } from '@subsocial/types/dto';
 import { NextPage } from 'next';
