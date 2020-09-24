@@ -105,8 +105,8 @@ const Component = (props: Props) => {
     </>
   }, [ isMyAccount ]);
 
-  const noFollowers = followers.eq(ZERO);
-  const noFollowing = following.eq(ZERO);
+  const hasFollowers = followers.gt(ZERO);
+  const hasFollowing = following.gt(ZERO);
 
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
@@ -137,8 +137,8 @@ const Component = (props: Props) => {
             {/* <KusamaIdentity address={address} /> */}
           </div>
           <div className='mt-3'>
-            <span onClick={() => noFollowers && setFollowersOpen(true)} className={`${noFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
-            <span onClick={() => noFollowing && setFollowingOpen(true)} className={`${noFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
+            <span onClick={() => hasFollowers && setFollowersOpen(true)} className={`${!hasFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
+            <span onClick={() => hasFollowing && setFollowingOpen(true)} className={`${!hasFollowing && 'disable'} DfProfileModalLink`}>{followingText}</span>
             <AccountSpacesLink address={address} className='DfProfileModalLink' />
             <div className='mt-3'>
               {createProfileButton}
