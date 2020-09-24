@@ -20,6 +20,7 @@ import { useLoadUnlistedSpace } from 'src/components/spaces/helpers';
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
 import mdToText from 'markdown-to-txt';
+import { ViewSpace } from 'src/components/spaces/ViewSpace';
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 export type PostDetailsProps = {
@@ -85,6 +86,15 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
         <ViewTags tags={tags} />
         <div className='DfRow'>
           <PostActionsPanel postDetails={postDetails} space={space.struct} />
+        </div>
+        <div className='my-3'>
+          <ViewSpace
+            spaceData={spaceData}
+            withFollowButton
+            withTags={false}
+            withStats={false}
+            preview
+          />
         </div>
         <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
       </Section>
