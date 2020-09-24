@@ -1,6 +1,6 @@
+import { accountUrl } from 'src/components/urls'
 import { GlobalOutlined, BlockOutlined, ProfileOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
 import { uiShowAdvanced } from 'src/components/utils/env'
-import { accountUrl } from 'src/components/urls'
 
 export type Divider = 'Divider'
 
