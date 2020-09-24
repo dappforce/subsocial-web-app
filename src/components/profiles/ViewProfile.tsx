@@ -174,7 +174,7 @@ const ProfilePage: NextPage<Props> = (props) => {
   };
 
   return <>
-    <HeadMeta title={getName()} desc={mdToText(about, { escapeHtml: true })} image={avatar} />
+    <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
     <Component {...props} />
   </>
 }

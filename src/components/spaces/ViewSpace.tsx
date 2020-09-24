@@ -169,7 +169,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   const { about, name, image } = props.spaceData?.content || {} as SpaceContent
 
   return <>
-    <HeadMeta title={name} desc={mdToText(about, { escapeHtml: true })} image={image} />
+    <HeadMeta title={name} desc={mdToText(about)} image={image} />
     <ViewSpace {...props} />
   </>
 }
