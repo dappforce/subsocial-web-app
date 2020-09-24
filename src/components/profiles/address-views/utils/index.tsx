@@ -41,5 +41,5 @@ type CopyAddressProps = {
   children: React.ReactNode
 }
 
-export const CopyAddress = ({ address, message = 'Address copied', children }: CopyAddressProps) =>
+export const CopyAddress = ({ address = '', message = 'Address copied', children }: CopyAddressProps) =>
   <Copy text={address.toString()} message={message}>{children}</Copy>

@@ -51,7 +51,7 @@ export function stringifyAddress<DFT> (value?: AnyAddress, _default?: DFT): stri
 
 export const getSpaceId = async (idOrHandle: string, subsocial?: SubsocialApi): Promise<BN | undefined> => {
   if (idOrHandle.startsWith('@')) {
-    const handle = idOrHandle.substring(1) // Drop '@'
+    const handle = idOrHandle.substring(1).toLowerCase() // Drop '@'
     const { substrate } = subsocial || await getSubsocialApi()
     return substrate.getSpaceIdByHandle(handle)
   } else {

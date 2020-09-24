@@ -380,17 +380,10 @@ pre {
 
 .DfIdentityIcon {
   margin-right: 0.5rem;
-  cursor: 'pointer';
-
-  .container.highlight:before {
-    box-shadow: none !important;
-  }
-
-  .highlight {
-    cursor: pointer;
-    border: 1px solid #ccc;
-    border-radius: 100%;
-  }
+  cursor: pointer !important;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 100%;
 }
 
 .EditEntityBox {
@@ -988,10 +981,6 @@ hr {
     .MenuItemName {
       display: none;
     }
-  }
-
-  .DfIdentityIcon {
-    margin-right: 0 !important;
   }
 
   color: #666;

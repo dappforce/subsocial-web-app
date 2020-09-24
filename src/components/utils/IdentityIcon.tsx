@@ -5,34 +5,33 @@
 import { IdentityProps as Props } from '@polkadot/react-identicon/types';
 
 import React from 'react';
-import styled from 'styled-components';
 import BaseIdentityIcon from '@polkadot/react-identicon';
+import Avatar from 'antd/lib/avatar/avatar';
+import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 export function getIdentityTheme (): 'substrate' {
   return 'substrate';
 }
 
-function IdentityIcon ({ className, prefix, size, theme, value, ...props }: Props): React.ReactElement<Props> {
+export function IdentityIcon ({ prefix, theme, value, size = DEFAULT_AVATAR_SIZE, ...props }: Props): React.ReactElement<Props> {
   const address = value?.toString() || '';
   const thisTheme = theme || getIdentityTheme();
 
   return (
-    <span className={`ui--IdentityIcon-Outer ${className}`}>
-      <BaseIdentityIcon
+    <Avatar
+      icon={<BaseIdentityIcon
         isHighlight
         prefix={prefix}
-        size={size}
         theme={thisTheme as 'substrate'}
         value={address}
-        className='DfIdentityIcon'
+        size={size - 2}
         {...props}
-      />
-    </span>
+      />}
+      size={size}
+      className='DfIdentityIcon'
+      {...props}
+    />
   );
 }
 
-export default styled(IdentityIcon)`
-  .ui--IdentityIcon {
-    display: block;
-  }
-`
+export default IdentityIcon
