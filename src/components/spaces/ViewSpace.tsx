@@ -27,6 +27,7 @@ import { PageContent } from '../main/PageWrapper';
 import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers';
 import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
+import { BareProps } from '../utils/types';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -48,6 +49,8 @@ export const ViewSpace = (props: Props) => {
     withLink = false,
     miniPreview = false,
     withFollowButton = true,
+    withStats = true,
+    withTags = true,
     dropdownPreview = false,
     postIds = [],
     posts = [],
@@ -72,8 +75,8 @@ export const ViewSpace = (props: Props) => {
 
   const primaryClass = `ProfileDetails ${isMy && 'MySpace'}`
 
-  const SpaceNameAsLink = () =>
-    <ViewSpaceLink className='mr-3' space={space} title={spaceName} />
+  const SpaceNameAsLink = (props: BareProps) =>
+    <ViewSpaceLink space={space} title={spaceName} {...props} />
 
   const renderNameOnly = () =>
     withLink
@@ -107,7 +110,7 @@ export const ViewSpace = (props: Props) => {
           <span className='mb-3'>
             <div className='d-flex justify-content-between mb-3'>
               <span className='header'>
-                <SpaceNameAsLink />
+                <SpaceNameAsLink className='mr-3' />
                 <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
               </span>
               <span className='d-flex align-items-center'>
@@ -125,12 +128,12 @@ export const ViewSpace = (props: Props) => {
             </div>
           }
 
-          <ViewTags tags={tags} />
+          {withTags && <ViewTags tags={tags} />}
 
-          <span className='d-flex justify-content-between flex-wrap'>
+          {withStats && <span className='d-flex justify-content-between flex-wrap'>
             <SpaceStatsRow space={space} />
             {!preview && <ContactInfo {...contactInfo} />}
-          </span>
+          </span>}
         </div>
       </div>
     </div>

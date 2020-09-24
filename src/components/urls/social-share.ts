@@ -1,6 +1,6 @@
 const SUBSOCIAL_TAG = 'subsocial'
 
-const subsocialUrl = (url: string) => `http://subsocial.network${url}`
+const subsocialUrl = (url: string) => `${window.location.origin}${url}`
 
 export const twitterShareUrl =
   (

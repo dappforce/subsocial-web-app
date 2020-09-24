@@ -1,6 +1,6 @@
 import { accountUrl } from 'src/components/urls'
 import { GlobalOutlined, BlockOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
-import { uiShowAdvanced } from 'src/components/utils/env'
+import { uiShowAdvanced, advancedUrl } from 'src/components/utils/env'
 
 export type Divider = 'Divider'
 
@@ -33,7 +33,7 @@ export const DefaultMenu: MenuItem[] = [
   },
   {
     name: 'Advanced',
-    page: [ '/bc' ],
+    page: [ advancedUrl ],
     icon: <BlockOutlined />,
     hidden: !uiShowAdvanced,
     isAdvanced: true
