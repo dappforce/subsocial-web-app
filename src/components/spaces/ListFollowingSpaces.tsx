@@ -85,7 +85,7 @@ export const SpaceLink = (props: { item: SpaceData }) => {
 
   return (
     <Link
-      key={idForUrl}PlusOutlined
+      key={idForUrl}
       href='/spaces/[spaceId]'
       as={spaceUrl(item.struct)}
     >

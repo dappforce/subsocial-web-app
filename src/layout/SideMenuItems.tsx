@@ -44,11 +44,6 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
   const account = { address: myAddress }
   return [
     {
-      name: 'My feed',
-      page: [ '/feed', '/feed' ],
-      icon: <ProfileOutlined />
-    },
-    {
       name: 'My notifications',
       page: [ '/notifications', '/notifications' ],
       icon: <BellOutlined />,

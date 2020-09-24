@@ -260,6 +260,6 @@ type AllSpacesLinkProps = BareProps & {
   title?: React.ReactNode
 }
 
-export const AllSpacesLink = ({ title = 'All', ...otherProps }: AllSpacesLinkProps) => <Link href='/spaces/all' as='/spaces/all'>
+export const AllSpacesLink = ({ title = 'See all', ...otherProps }: AllSpacesLinkProps) => <Link href='/spaces/all' as='/spaces/all'>
   <a className='DfGreyLink text-uppercase' style={{ fontSize: '1rem' }} {...otherProps}>{title}</a>
 </Link>
