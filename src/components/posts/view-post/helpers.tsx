@@ -78,11 +78,9 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ space
   );
 
   return <>
-    {isMyPost &&
-        <Dropdown overlay={menu} placement='bottomRight'>
-          <EllipsisOutlined />
-        </Dropdown>
-    }
+    <Dropdown overlay={menu} placement='bottomRight'>
+      <EllipsisOutlined />
+    </Dropdown>
     {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
   </>
 };
