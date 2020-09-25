@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../substrate';
+import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate';
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
-import { withMyAccount, MyAccountProps } from '../utils/MyAccount';
+import { withMyAccount, MyAccountProps } from '../../utils/MyAccount';
 import { LabeledValue } from 'antd/lib/select';
-import SelectSpacePreview from '../utils/SelectSpacePreview';
+import SelectSpacePreview from '../../utils/SelectSpacePreview';
 import BN from 'bn.js';
 import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { useSubsocialApi } from '../../utils/SubsocialApiContext';
 import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import dynamic from 'next/dynamic';
-import { buildSharePostValidationSchema } from './PostValidation';
+import { buildSharePostValidationSchema } from '../PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
-import DfMdEditor from '../utils/DfMdEditor';
-import { DynamicPostPreview } from './view-post/DynamicPostPreview';
-import { CreateSpaceButton } from '../spaces/helpers';
+import DfMdEditor from '../../utils/DfMdEditor';
+import { DynamicPostPreview } from '../view-post/DynamicPostPreview';
+import { CreateSpaceButton } from '../../spaces/helpers';
+import styles from './index.module.sass'
 
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
 
 type Props = MyAccountProps & {
   postId: BN
@@ -134,7 +135,7 @@ const InnerShareModal = (props: Props) => {
     onCancel={onClose}
     visible={open}
     title={'Share post'}
-    style={{ marginTop: '3rem' }}
+    className={styles.DfShareModal}
     footer={
       <>
         <Button onClick={onClose}>Cancel</Button>
