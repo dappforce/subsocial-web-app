@@ -2,12 +2,14 @@ import React from 'react'
 import { Form, Input, Button, Space, Collapse } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { FormListFieldData, FormListOperation } from 'antd/lib/form/FormList';
-import { getLinkIcon, hasSocialMediaProfiles, LinkLabel } from './utils';
+import { getLinkIcon, hasSocialMediaProfiles, LinkLabel, getLinkBrand } from './utils';
+import { NamedLinks } from '@subsocial/types';
 const { Panel } = Collapse;
 
 type NewSocialLinksProps = {
   name: string,
   collapsed: boolean,
+  links?: string[] | NamedLinks[],
   isDynamic?: boolean
 }
 
@@ -24,9 +26,25 @@ const staticLinkLabels: LinkLabel[] = [
   'Instagram'
 ]
 
-const staticSocialLinks = (): InnerFieldListFn => {
+const resovleLabels = (links?: string[]) => {
+  const labelsWithLinks: LinkLabel[] = links
+    ? links.map(x => getLinkBrand(x) || 'Website')
+    : []
+
+  return links
+    ? [
+        ...labelsWithLinks,
+        ...staticLinkLabels
+          .filter(x => !labelsWithLinks.includes(x))
+      ]
+    : staticLinkLabels
+}
+
+const staticSocialLinks = (links?: string[]): InnerFieldListFn => {
+  const labels = resovleLabels(links)
+
   return (fields) => <div>
-    {staticLinkLabels.map((label, index) => {
+    {labels.map((label, index) => {
       const field = fields[index] || { name: index, key: index, fieldKey: index }
       const icon = getLinkIcon(label)
       const hasProfiles = hasSocialMediaProfiles(label)
@@ -34,7 +52,12 @@ const staticSocialLinks = (): InnerFieldListFn => {
 
       return <Form.Item
         {...field}
-        label={<span>{icon} {label}</span>}
+        label={<span>
+          {icon}
+          <span className='ml-2'>
+            {label}
+          </span>
+        </span>}
         hasFeedback
         rules={[
           { type: 'url', message: 'Should be a valid URL.' }
@@ -97,11 +120,11 @@ const dynamicSocialLinks = (): InnerFieldListFn => {
   }
 }
 
-const StaticSocialLinks = ({ name, collapsed }: NewSocialLinksProps) => (
+const StaticSocialLinks = ({ name, collapsed, links }: NewSocialLinksProps) => (
   <Collapse defaultActiveKey={collapsed ? undefined : [ name ]} ghost>
     <Panel header={<h3 className='m-0'>Social links</h3>} key={name}>
       <Form.List name={name}>
-        {staticSocialLinks()}
+        {staticSocialLinks(links as string[])}
       </Form.List>
     </Panel>
   </Collapse>
