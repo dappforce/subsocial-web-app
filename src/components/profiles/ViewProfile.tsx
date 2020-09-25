@@ -34,7 +34,7 @@ import Name from './address-views/Name';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import AccountSpaces from '../spaces/AccountSpaces';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
@@ -174,7 +174,7 @@ const ProfilePage: NextPage<Props> = (props) => {
   };
 
   return <>
-    <HeadMeta title={getName()} desc={mdToText(about, { escapeHtml: true })} image={avatar} />
+    <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
     <Component {...props} />
   </>
 }

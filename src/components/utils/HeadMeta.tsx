@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { isEmptyStr, nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
-import { summarize } from './text';
+import { summarize } from 'src/utils';
 import { resolveIpfsUrl } from 'src/ipfs';
 
 type HeadMetaProps = {

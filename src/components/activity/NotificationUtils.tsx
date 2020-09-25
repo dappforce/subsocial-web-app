@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment-timezone';
-import ViewSpace from '../spaces/ViewSpace';
+import { ViewSpace } from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util';

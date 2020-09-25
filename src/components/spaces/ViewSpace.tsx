@@ -2,7 +2,7 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils';
 import BN from 'bn.js';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Error from 'next/error';
@@ -169,7 +169,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   const { about, name, image } = props.spaceData?.content || {} as SpaceContent
 
   return <>
-    <HeadMeta title={name} desc={mdToText(about, { escapeHtml: true })} image={image} />
+    <HeadMeta title={name} desc={mdToText(about)} image={image} />
     <ViewSpace {...props} />
   </>
 }

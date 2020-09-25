@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { PostWithSomeDetails, PostData } from '@subsocial/types/dto';
 import { NextPage } from 'next';
@@ -56,7 +56,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
   </>
 
   return <Section className='DfContentPage DfEntirePost'>
-    <HeadMeta title={`${profileName} commented on ${content?.title}`} desc={mdToText(content?.body, { escapeHtml: true })} />
+    <HeadMeta title={`${profileName} commented on ${content?.title}`} desc={mdToText(content?.body)} />
     {renderResponseTitle()}
     <ViewComment space={space} comment={comment} replies={replies} withShowReplies />
   </Section>

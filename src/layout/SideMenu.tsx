@@ -20,7 +20,7 @@ import { AllSpacesLink } from 'src/components/spaces/helpers';
 const log = newLogger(SideMenu.name)
 
 function SideMenu () {
-  const { hide, state: { collapsed, asDrawer } } = useSidebarCollapsed();
+  const { state: { collapsed, asDrawer } } = useSidebarCollapsed();
   const { asPath } = useRouter();
   const myAddress = useMyAddress();
   const isLoggedIn = useIsSignIn();
@@ -64,7 +64,6 @@ function SideMenu () {
     : DefaultMenu
 
   const goToPage = ([ url, as ]: string[]) => {
-    asDrawer && hide()
     Router.push(url, as).catch(err =>
       log.error(`Failed to navigate to a selected page. ${err}`))
   }

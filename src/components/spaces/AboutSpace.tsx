@@ -1,6 +1,6 @@
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { NextPage } from 'next';
 import Error from 'next/error';
 import React, { useState } from 'react';
@@ -53,7 +53,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   // TODO extract WithSpaceNav
 
   return <PageContent>
-    <HeadMeta title={title} desc={mdToText(about, { escapeHtml: true })} image={image} />
+    <HeadMeta title={title} desc={mdToText(about)} image={image} />
     <Section className='DfContentPage' level={1} title={title}>
 
       <div className='DfRow mt-3'>

@@ -6,6 +6,7 @@ import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext
 import { elasticNodeURL } from 'src/components/utils/env';
 
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
 const Menu = dynamic(() => import('./SideMenu'), { ssr: false });
@@ -31,8 +32,9 @@ const HomeNav = () => {
 
 const DefaultNav: FunctionComponent = () => {
   const { state: { collapsed }, hide } = useSidebarCollapsed();
+  const { asPath } = useRouter()
 
-  useEffect(() => hide(), [ false ])
+  useEffect(() => hide(), [ asPath ])
 
   return <Drawer
     className='DfSideBar'
