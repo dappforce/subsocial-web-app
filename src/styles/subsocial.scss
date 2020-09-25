@@ -756,9 +756,9 @@ hr {
 
 @media (min-width: 767px) {
   .DfSectionOuter {
-    min-width: 428px;
-    max-width: calc(680px + #{$space_normal} * 2);
-    width: calc(680px + #{$space_normal} * 2);
+    min-width: $min_width_content;
+    max-width: $max_width_content;
+    width: $width_content;
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 0;
