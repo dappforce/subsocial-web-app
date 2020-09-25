@@ -45,7 +45,6 @@ const staticSocialLinks = (links?: string[]): InnerFieldListFn => {
 
   return (fields) => <div>
     {labels.map((label, index) => {
-      console.log('fields', fields)
       const field = fields[index] || { name: index, key: index, fieldKey: index }
       const icon = getLinkIcon(label)
       const hasProfiles = hasSocialMediaProfiles(label)
