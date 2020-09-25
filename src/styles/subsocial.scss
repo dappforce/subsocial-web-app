@@ -835,6 +835,12 @@ hr {
   }
 }
 
+.markdown-body {
+  a {
+    color: $color_link !important;
+  }
+}
+
 .DfMdEditor {
   .CodeMirror-scroll {
     min-height: 5rem !important;
@@ -845,6 +851,10 @@ hr {
   }
 
   .markdown-body {
+    a {
+      color: $color_link !important;
+    }
+
     background-color: #fff !important;
     padding: $space_normal !important;
   }
