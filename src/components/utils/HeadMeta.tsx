@@ -49,6 +49,7 @@ export function HeadMeta (props: HeadMetaProps) {
       <meta property='og:title' content={title} />
       <meta property='og:description' content={summary} />
 
+      <meta name='twitter:card' content='summary' />
       <meta name='twitter:site' content={SITE_NAME} />
       <meta name='twitter:image' content={img} />
       <meta name='twitter:title' content={title} />
