@@ -14,7 +14,7 @@ const ViewTag = React.memo(({ tag }: ViewTagProps) =>
     ? null
     : <Tag key={tag} className='mt-2'>
       <Link href='/search' as={`/search?tags=${tag}`}>
-        <a><TagOutlined />{tag}</a>
+        <a className='DfBlackLink'><TagOutlined />{tag}</a>
       </Link>
     </Tag>
 )
@@ -27,7 +27,7 @@ export const ViewTags = React.memo(({
   tags = [],
   className = '',
   ...props
-}: ViewTagsProps) => 
+}: ViewTagsProps) =>
   isEmptyArray(tags)
     ? null
     : <div className={`DfTags ${className}`} {...props}>

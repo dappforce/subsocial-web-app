@@ -32,6 +32,8 @@ pre {
   font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif;
 }
 
+a { color: $color_link !important }
+
 /* Common Resusable Classes */
 /* ---------------------------------------- */
 
@@ -66,7 +68,7 @@ pre {
 }
 
 .DfBlackLink {
-  color: $color_font_normal;
+  color: $color_font_normal !important;
   @extend .DfLinkOnHover;
 }
 
