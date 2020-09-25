@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
-import { ViewSpace } from '../spaces/ViewSpace';
+import { DynamicViewSpace } from '../spaces/ViewSpace';
 import { Segment } from 'src/components/utils/Segment';
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
@@ -48,7 +48,7 @@ type Props = {
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
     case ElasticIndex.spaces:
-      return <ViewSpace id={hexToBn(res._id)} preview withFollowButton />;
+      return <DynamicViewSpace id={hexToBn(res._id)} preview withFollowButton />;
     case ElasticIndex.posts:
       return <DynamicPostPreview key={i} id={hexToBn(res._id)} withActions />;
     case ElasticIndex.profiles:
