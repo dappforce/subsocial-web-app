@@ -94,7 +94,8 @@ export function DataList<T extends any> (props: Props<T>) {
       onShowSizeChange: (_, size: number) => {
         setPageSize(size);
         setRouterQuery({ size })
-      }
+      },
+      style: { marginBottom: '1rem' }
     }
   }
 
