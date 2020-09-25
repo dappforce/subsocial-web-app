@@ -22,6 +22,7 @@ import DfMdEditor from '../utils/DfMdEditor'
 import SpacegedSectionTitle from '../spaces/SpacedSectionTitle'
 import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpaceFromUrl'
 import { UploadCover } from '../uploader'
+import { resolveContent } from '../utils/content'
 
 const log = newLogger('EditPost')
 
@@ -91,10 +92,8 @@ export function InnerForm (props: FormProps) {
     }
   }
 
-  const fieldValuesToContent = (): Content => {
-    const { title, body, image, tags, canonical } = getFieldValues()
-    return { title, body, image, tags, canonical } as Content
-  }
+  const fieldValuesToContent = (): Content =>
+    resolveContent(getFieldValues() as Content)
 
   const pinToIpfsAndBuildTxParams = () => {
 
