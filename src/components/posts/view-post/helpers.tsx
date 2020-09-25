@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
-import ViewSpace from '../../spaces/ViewSpace';
+import { ViewSpace } from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
