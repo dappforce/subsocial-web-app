@@ -26,24 +26,26 @@ const staticLinkLabels: LinkLabel[] = [
   'Instagram'
 ]
 
-// const uniqueArray = (array: any[]) => {
-//   const labelToLink = new Map<string, string>()
+const resovleLabels = (links?: string[]) => {
+  const labelsWithLinks: LinkLabel[] = links
+    ? links.map(x => getLinkBrand(x) || 'Website')
+    : []
 
-//   array.forEach(x => {
-//     labelToLink.set(getLinkBrand(x) || 'Website', x)
-//   })
-
-//   return labelToLink
-// }
+  return links
+    ? [
+        ...labelsWithLinks,
+        ...staticLinkLabels
+          .filter(x => !labelsWithLinks.includes(x))
+      ]
+    : staticLinkLabels
+}
 
 const staticSocialLinks = (links?: string[]): InnerFieldListFn => {
-  const labels = links
-    ? [ ...links.map(link => getLinkBrand(link) || 'Website'), ...staticLinkLabels ] as LinkLabel[]
-    : staticLinkLabels
+  const labels = resovleLabels(links)
 
   return (fields) => <div>
     {labels.map((label, index) => {
-      console.log('fields[index]', fields[index])
+      console.log('fields', fields)
       const field = fields[index] || { name: index, key: index, fieldKey: index }
       const icon = getLinkIcon(label)
       const hasProfiles = hasSocialMediaProfiles(label)
