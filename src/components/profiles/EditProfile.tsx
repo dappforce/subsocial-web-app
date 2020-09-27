@@ -14,7 +14,7 @@ import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withMyProfile } from './address-views/utils/withLoadedOwner'
 import { accountUrl } from '../urls'
-import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
+import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN } from 'src/config/ValidationsConfig'
 import { UploadAvatar } from '../uploader'
 import { resolveCidOfContent } from '@subsocial/api/utils'
 
@@ -28,12 +28,7 @@ type FieldName = keyof FormValues
 
 const fieldName = (name: FieldName): FieldName => name
 
-type ValidationProps = {
-  minHandleLen: number
-  maxHandleLen: number
-}
-
-type FormProps = ValidationProps & {
+type FormProps = {
   address: AnyAccountId,
   owner?: ProfileData
 }
@@ -78,9 +73,6 @@ export function InnerForm (props: FormProps) {
     } else {
       // Update only dirty values.
 
-      // TODO seems like we cannot set a handle to None.
-
-      // TODO uupdate ProfileUpdate class
       const update = new ProfileUpdate({
         content: new OptionIpfsContent(getCidIfChanged())
       })
@@ -180,30 +172,13 @@ export function InnerForm (props: FormProps) {
 // }
 
 export function FormInSection (props: FormProps) {
-  const [ consts ] = useState<ValidationProps>({
-    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.utils.minHandleLen, 5),
-    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.utils.maxHandleLen, 50)
-  })
-
   const { owner } = props
   const title = owner?.profile ? `Edit profile` : `New profile`
-
-  // TODO get min/max length of a handle from the chain.
-  // useSubsocialEffect(() => {
-  //   const load = async () => {
-  //     // const api = await substrate.api
-  //     setConsts({
-  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.utils.minHandleLen, 5),
-  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.utils.maxHandleLen, 50)
-  //     })
-  //   }
-  //   load()
-  // }, [])
 
   return <>
     <HeadMeta title={title} />
     <Section className='EditEntityBox' title={title}>
-      <InnerForm {...props} {...consts} />
+      <InnerForm {...props} />
     </Section>
   </>
 }
