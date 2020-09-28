@@ -82,7 +82,7 @@ function SideMenu () {
     return item.isAdvanced
       ? (
         <Menu.Item key={item.page[0]} >
-          <a href={item.page[0]}>
+          <a href={item.page[0]} target='_blank'>
             {icon}
             <span>{item.name}</span>
           </a>
