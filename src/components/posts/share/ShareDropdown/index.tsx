@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PostWithSomeDetails } from '@subsocial/types';
 import { Menu, Dropdown, Button } from 'antd';
 import { ShareLink, Copy } from 'src/components/urls/helpers';
@@ -16,6 +16,7 @@ import SpaceShareLink from '../SpaceShareLink';
 import { Space } from '@subsocial/types/substrate/interfaces';
 
 import styles from './index.module.sass'
+import { FVoid } from '../../../utils/types';
 
 type ShareMenuProps = {
   postDetails: PostWithSomeDetails,
@@ -23,6 +24,7 @@ type ShareMenuProps = {
   preview?: boolean,
   title?: string
   className?: string,
+  hideDropdown?: FVoid
 }
 
 type SomeShareLink = {
@@ -52,12 +54,18 @@ const CopyLink = ({ url }: SomeShareLink) => <Copy text={copyUrl(url)} message='
 </Copy>
 
 const ShareMenu = (props: ShareMenuProps) => {
-  const { postDetails: { post }, space } = props
+  const { postDetails: { post }, space, hideDropdown } = props
   const currentPostUrl = postUrl(space, post.struct)
   const title = post.content?.title
   const summary = post.content?.body
 
-  return <Menu selectable={false} mode='horizontal' className={styles.DfShareDropdown}>
+  return <Menu
+    selectable={false}
+    mode='horizontal'
+    className={styles.DfShareDropdown}
+    onClick={hideDropdown}
+    onMouseLeave={hideDropdown}
+  >
     <Menu.ItemGroup title="Share to:">
       <Menu.Item>
         <SpaceShareLink {...props} />
@@ -83,14 +91,22 @@ const ShareMenu = (props: ShareMenuProps) => {
 
 export const ShareDropdown = (props: ShareMenuProps) => {
   const { preview, title = 'Share', className, postDetails: { post: { struct: { shares_count } } } } = props
+  const [ isVisible, setVisible ] = useState(false)
+
+  const open = () => setVisible(true)
+  const hide = () => setVisible(false)
+
   return <Dropdown
-    trigger={[ 'click', 'hover' ]}
+    visible={isVisible}
     placement='bottomCenter'
-    overlay={<ShareMenu {...props} />}>
+    overlay={<ShareMenu hideDropdown={hide} {...props} />}
+  >
     <Button
       className={className}
       title={preview ? title : undefined}
       style={{ marginRight: !preview ? '-1rem' : '' }}
+      onClick={isVisible ? hide : open}
+      onMouseEnter={open}
     >
       <IconWithLabel icon={<ShareAltOutlined />} count={shares_count} label={!preview ? title : undefined} />
     </Button>
