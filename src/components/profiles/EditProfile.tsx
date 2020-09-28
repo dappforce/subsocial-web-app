@@ -185,6 +185,6 @@ export function FormInSection (props: FormProps) {
 
 export const EditProfile = withMyProfile(FormInSection)
 
-export const NewProfile = FormInSection
+export const NewProfile = withMyProfile(FormInSection)
 
 export default NewProfile
