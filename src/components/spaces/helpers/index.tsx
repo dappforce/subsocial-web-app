@@ -41,6 +41,8 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className
 
   const spaceKey = `space-${id.toString()}`
 
+  const newPostUrlStr = newPostUrl(struct)
+
   const menu =
     <Menu>
       <Menu.Item key={`edit-space-${spaceKey}`}>
@@ -54,7 +56,7 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className
       {isHiddenSpace(struct)
         ? null
         : <Menu.Item key={`create-post-${spaceKey}`}>
-          <Link href={newPostUrl(struct)}>
+          <Link href={newPostUrlStr} as={newPostUrlStr}>
             <a className='item'>Write post</a>
           </Link>
         </Menu.Item>}
