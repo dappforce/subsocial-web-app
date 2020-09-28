@@ -12,12 +12,11 @@ type ViewTagProps = {
 const ViewTag = React.memo(({ tag }: ViewTagProps) => {
 
   const linkHref = '/search'
-  const linkAs = `${linkHref}?tags=${tag}`
 
   return isEmptyStr(tag)
     ? null
     : <Tag key={tag} className='mt-2'>
-      <Link href={linkHref} as={linkAs}>
+      <Link href={linkHref} as={`${linkHref}?tags=${tag}`}>
         <a className='DfBlackLink'><TagOutlined />{tag}</a>
       </Link>
     </Tag>
