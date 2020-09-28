@@ -75,7 +75,7 @@ const Component = (props: Props) => {
   } = owner?.content || {} as ProfileContent;
 
   const createProfileButton = noProfile && isMyAccount &&
-    <Link href='/accounts/new' as='accounts/new'>
+    <Link href='/accounts/new' as='/accounts/new'>
       <Button type='primary' ghost>
         <PlusOutlined />
         Create profile
