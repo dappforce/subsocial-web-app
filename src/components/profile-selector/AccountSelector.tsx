@@ -85,7 +85,7 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
   ), [])
 
   const CurrentAccount = useCallback(() => {
-    if (noAccounts) return null
+    if (noAccounts && !currentAddress) return null
 
     if (!currentAddress) return <div className='m-3'>Click on your account to sign in:</div>
 
@@ -113,7 +113,7 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
   const ExtensionAccountPanel = () => {
     const count = extensionAddresses.length
 
-    const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // TODO hack for hide NoAccount msg!!!
+    const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // FIXME: hack that hides NoAccount msg!!!
 
     if (!isWeb3Injected) return <NoExtension />
 
