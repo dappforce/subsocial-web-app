@@ -121,6 +121,7 @@ export function InnerForm (props: FormProps) {
       <Form.Item
         name={fieldName('avatar')}
         label='Avatar'
+        help='Image should be less than 2 MB'
       >
         <UploadAvatar onChange={onAvatarChanged} img={initialValues.avatar} />
       </Form.Item>
