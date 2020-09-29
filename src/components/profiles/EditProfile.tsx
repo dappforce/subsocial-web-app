@@ -17,6 +17,7 @@ import { accountUrl } from '../urls'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN } from 'src/config/ValidationsConfig'
 import { UploadAvatar } from '../uploader'
 import { resolveCidOfContent } from '@subsocial/api/utils'
+import messages from 'src/messages'
 
 const log = newLogger('EditProfile')
 
@@ -121,6 +122,7 @@ export function InnerForm (props: FormProps) {
       <Form.Item
         name={fieldName('avatar')}
         label='Avatar'
+        help={messages.imageShouldBeLessThanTwoMB}
       >
         <UploadAvatar onChange={onAvatarChanged} img={initialValues.avatar} />
       </Form.Item>

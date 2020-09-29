@@ -23,6 +23,7 @@ import SpacegedSectionTitle from '../spaces/SpacedSectionTitle'
 import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpaceFromUrl'
 import { UploadCover } from '../uploader'
 import { resolveContent } from '../utils/content'
+import messages from 'src/messages'
 
 const log = newLogger('EditPost')
 
@@ -147,6 +148,7 @@ export function InnerForm (props: FormProps) {
       <Form.Item
         name={fieldName('image')}
         label='Cover'
+        help={messages.imageShouldBeLessThanTwoMB}
       >
         <UploadCover onChange={onAvatarChanged} img={initialValues.image} />
       </Form.Item>
