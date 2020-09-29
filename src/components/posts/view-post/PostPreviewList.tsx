@@ -4,7 +4,7 @@ import { Loading } from '../../utils';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from './PostPreview';
-import DataList from 'src/components/utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 
 type OuterProps = {
   postIds: BN[]

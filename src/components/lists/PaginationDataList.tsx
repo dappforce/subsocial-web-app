@@ -3,22 +3,24 @@ import { useRouter } from 'next/router';
 import isEmpty from 'lodash.isempty';
 import { List } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
-import Section from './Section';
+import Section from 'src/components/utils/Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
-import NoData from './EmptyList';
+import NoData from 'src/components/utils/EmptyList';
 import { newLogger } from '@subsocial/utils';
-// import { newLogger } from '@subsocial/utils';
-// TODO use logger
+import BN from 'bn.js'
+import ButtonLink from '../utils/ButtonLink';
+
 const log = newLogger(DataList.name)
 
 type Props<T extends any> = {
-  className?: string,
+  totalCount?: BN,
   dataSource: T[], // TODO add generic type
   renderItem: (item: T, index: number) => JSX.Element,
   title?: React.ReactNode,
   noDataDesc?: React.ReactNode,
   noDataExt?: React.ReactNode,
-  paginationOff?: boolean
+  paginationOff?: boolean,
+  className?: string
 }
 
 type PaginationQuery = {
@@ -26,13 +28,12 @@ type PaginationQuery = {
   page?: number | string
 }
 
-// TODO rename to DataList
 export function DataList<T extends any> (props: Props<T>) {
-  const { dataSource, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
-  const total = dataSource.length;
+  const { dataSource, totalCount = new BN(dataSource.length), renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
 
   const router = useRouter();
-  const { address, ...routerQuery } = router.query;
+  const { query, pathname, asPath } = router
+  const { address, ...routerQuery } = query;
 
   const setRouterQuery = ({ size, page }: PaginationQuery) => {
     if (size) {
@@ -75,8 +76,8 @@ export function DataList<T extends any> (props: Props<T>) {
   }, [ false ]);
 
   const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
-  const hasNoData = total === 0;
-  const noPagination = hasNoData || total <= pageSize || paginationOff;
+  const hasData = totalCount.gtn(0);
+  const noPagination = !hasData || totalCount.lten(pageSize) || paginationOff;
 
   const paginationConfig = (): PaginationConfig | undefined => {
     if (noPagination) return undefined
@@ -90,18 +91,25 @@ export function DataList<T extends any> (props: Props<T>) {
       },
       pageSize,
       pageSizeOptions,
-      showSizeChanger: total > 0,
+      showSizeChanger: hasData,
       onShowSizeChange: (_, size: number) => {
         setPageSize(size);
         setRouterQuery({ size })
       },
-      style: { marginBottom: '1rem' }
+      style: { marginBottom: '1rem' },
+      itemRender: (page, type) => type === 'page'
+        ? <ButtonLink
+          href={pathname}
+          as={`${asPath.split('?')[0]}?page=${page}&size=${routerQuery.size}`}
+        >
+          {page}
+        </ButtonLink>
+        : undefined
     }
   }
 
-  const list = hasNoData
-    ? <NoData description={noDataDesc}>{noDataExt}</NoData>
-    : <List
+  const list = hasData
+    ? <List
       className={'DfDataList ' + className}
       itemLayout='vertical'
       size='large'
@@ -113,6 +121,7 @@ export function DataList<T extends any> (props: Props<T>) {
         </List.Item>
       }
     />
+    : <NoData description={noDataDesc}>{noDataExt}</NoData>
 
   const renderTitle = () =>
     <div className='DfTitle--List'>{title}</div>

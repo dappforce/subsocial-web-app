@@ -1,6 +1,6 @@
 import React from 'react';
 import { Space } from '@subsocial/types/substrate/interfaces';
-import DataList from '../utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { SpaceData } from '@subsocial/types/dto';
 import { CreateSpaceButton, AllSpacesLink } from '../spaces/helpers';

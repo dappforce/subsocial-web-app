@@ -1,5 +1,5 @@
 import React from 'react';
-import DataList from '../utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from '../posts/view-post/PostPreview';
 

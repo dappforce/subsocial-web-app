@@ -2,7 +2,7 @@ import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithSomeDetails } from '@subsocial/types';
 import React, { useState } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
-import DataList from '../utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
 import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice';

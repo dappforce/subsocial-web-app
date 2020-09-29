@@ -10,7 +10,7 @@ import { editSpaceUrl, newPostUrl, HasSpaceIdOrHandle } from 'src/components/url
 import HiddenSpaceButton from '../HiddenSpaceButton';
 import { BareProps } from 'src/components/utils/types';
 import { Pluralize } from 'src/components/utils/Plularize';
-import DataList from 'src/components/utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 import PostPreview from 'src/components/posts/view-post/PostPreview';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { Loading } from 'src/components/utils';

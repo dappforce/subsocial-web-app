@@ -9,7 +9,7 @@ import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
 import { Tag } from 'antd'
 import { hexToString } from '@polkadot/util'
-import DataList from '../../utils/DataList'
+import DataList from 'src/components/lists/PaginationDataList';
 import styles from './index.module.scss'
 
 type Members = {

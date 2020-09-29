@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import DataList from '../utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';

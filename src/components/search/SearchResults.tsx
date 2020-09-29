@@ -5,7 +5,7 @@ import { Segment } from 'src/components/utils/Segment';
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import { useRouter } from 'next/router';
-import DataList from '../utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { hexToBn } from '@polkadot/util';

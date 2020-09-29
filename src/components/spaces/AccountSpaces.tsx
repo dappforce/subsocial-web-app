@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ViewSpace } from './ViewSpace';
-import DataList from '../utils/DataList';
+import DataList from 'src/components/lists/PaginationDataList';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
