@@ -64,7 +64,6 @@ const ShareMenu = (props: ShareMenuProps) => {
     mode='horizontal'
     className={styles.DfShareDropdown}
     onClick={hideDropdown}
-    onMouseLeave={hideDropdown}
   >
     <Menu.ItemGroup title="Share to:">
       <Menu.Item>
@@ -106,7 +105,6 @@ export const ShareDropdown = (props: ShareMenuProps) => {
       title={preview ? title : undefined}
       style={{ marginRight: !preview ? '-1rem' : '' }}
       onClick={isVisible ? hide : open}
-      onMouseEnter={open}
     >
       <IconWithLabel icon={<ShareAltOutlined />} count={shares_count} label={!preview ? title : undefined} />
     </Button>
