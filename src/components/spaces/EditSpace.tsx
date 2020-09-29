@@ -23,6 +23,7 @@ import { MailOutlined } from '@ant-design/icons'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
 import { resolveCidOfContent } from '@subsocial/api/utils'
 import { resolveContent } from '../utils/content'
+import messages from 'src/messages'
 
 const log = newLogger('EditSpace')
 
@@ -152,7 +153,7 @@ export function InnerForm (props: FormProps) {
       <Form.Item
         name={fieldName('image')}
         label='Avatar'
-        help='Image should be less than 2 MB'
+        help={messages.en.imageShouldBeLessThanTwoMegabytes}
       >
         <UploadAvatar onChange={onAvatarChanged} img={initialValues.image} />
       </Form.Item>
