@@ -72,4 +72,4 @@ export const ProfilePreviewWithOwner = withLoadedOwner(ProfilePreview);
 
 export default ProfilePreviewWithOwner;
 
-export const MyProfileProview = withMyProfile(ProfilePreview)
+export const MyProfilePreview = withMyProfile(ProfilePreview)
