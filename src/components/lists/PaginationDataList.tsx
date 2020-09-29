@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash.isempty';
 import { List } from 'antd';
@@ -6,11 +6,12 @@ import { PaginationConfig } from 'antd/lib/pagination';
 import Section from 'src/components/utils/Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
 import NoData from 'src/components/utils/EmptyList';
-import { newLogger } from '@subsocial/utils';
+// import { newLogger } from '@subsocial/utils';
 import BN from 'bn.js'
-import ButtonLink from '../utils/ButtonLink';
+import Link from 'next/link';
+import { hexToBn } from '@polkadot/util'
 
-const log = newLogger(DataList.name)
+// const log = newLogger(DataList.name)
 
 type Props<T extends any> = {
   totalCount?: BN,
@@ -23,36 +24,25 @@ type Props<T extends any> = {
   className?: string
 }
 
-type PaginationQuery = {
-  size?: number | string,
-  page?: number | string
-}
-
 export function DataList<T extends any> (props: Props<T>) {
-  const { dataSource, totalCount = new BN(dataSource.length), renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
+  const { dataSource, totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
 
+  const total = totalCount ? hexToBn(totalCount.toString()) : new BN(totalCount || dataSource.length)
   const router = useRouter();
+
   const { query, pathname, asPath } = router
   const { address, ...routerQuery } = query;
 
-  const setRouterQuery = ({ size, page }: PaginationQuery) => {
-    if (size) {
-      routerQuery.size = size.toString()
-    }
-
-    if (page) {
-      routerQuery.page = page.toString()
-    }
-
-    router.replace(
-      { pathname: router.pathname, query: routerQuery },
-      { pathname: router.asPath.split('?')[0], query: routerQuery },
-      { shallow: true }
-    ).catch(log.error);
-  }
-
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
+
+  const getLinksParams = useCallback((page: number) => {
+    const query = `page=${page}&size=${pageSize}`
+    return {
+      href: `${pathname}?${query}`,
+      as: `${asPath.split('?')[0]}?${query}`
+    }
+  }, [ pathname, asPath, currentPage ])
 
   useEffect(() => {
     let isSubscribe = true;
@@ -76,35 +66,33 @@ export function DataList<T extends any> (props: Props<T>) {
   }, [ false ]);
 
   const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
-  const hasData = totalCount.gtn(0);
-  const noPagination = !hasData || totalCount.lten(pageSize) || paginationOff;
+  const hasData = total.gtn(0);
+  const noPagination = !hasData || total.lten(pageSize) || paginationOff;
 
   const paginationConfig = (): PaginationConfig | undefined => {
     if (noPagination) return undefined
 
     return {
       current: currentPage,
+      total: total.toNumber(),
       defaultCurrent: DEFAULT_FIRST_PAGE,
       onChange: page => {
         setCurrentPage(page);
-        setRouterQuery({ page })
       },
       pageSize,
       pageSizeOptions,
       showSizeChanger: hasData,
       onShowSizeChange: (_, size: number) => {
         setPageSize(size);
-        setRouterQuery({ size })
       },
       style: { marginBottom: '1rem' },
-      itemRender: (page, type) => type === 'page'
-        ? <ButtonLink
-          href={pathname}
-          as={`${asPath.split('?')[0]}?page=${page}&size=${routerQuery.size}`}
-        >
-          {page}
-        </ButtonLink>
-        : undefined
+      itemRender: (page, type, original) => type === 'page'
+        ? <Link {...getLinksParams(page)}>
+          <a>
+            {page}
+          </a>
+        </Link>
+        : original
     }
   }
 
@@ -116,7 +104,7 @@ export function DataList<T extends any> (props: Props<T>) {
       pagination={paginationConfig()}
       dataSource={dataSource}
       renderItem={(item, index) =>
-        <List.Item key={index}>
+        <List.Item key={`${new Date().getTime()}-${index}`}>
           {renderItem(item, index)}
         </List.Item>
       }
