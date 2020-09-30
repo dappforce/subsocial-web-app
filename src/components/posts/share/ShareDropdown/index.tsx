@@ -92,11 +92,11 @@ export const ShareDropdown = (props: ShareMenuProps) => {
   const { preview, title = 'Share', className, postDetails: { post: { struct: { shares_count } } } } = props
   const [ isVisible, setVisible ] = useState(false)
 
-  const open = () => setVisible(true)
   const hide = () => setVisible(false)
 
   return <Dropdown
     visible={isVisible}
+    onVisibleChange={setVisible}
     placement='bottomCenter'
     overlay={<ShareMenu hideDropdown={hide} {...props} />}
   >
@@ -104,7 +104,6 @@ export const ShareDropdown = (props: ShareMenuProps) => {
       className={className}
       title={preview ? title : undefined}
       style={{ marginRight: !preview ? '-1rem' : '' }}
-      onClick={isVisible ? hide : open}
     >
       <IconWithLabel icon={<ShareAltOutlined />} count={shares_count} label={!preview ? title : undefined} />
     </Button>
