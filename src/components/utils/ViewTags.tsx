@@ -31,7 +31,7 @@ export const ViewTags = React.memo(({
   isEmptyArray(tags)
     ? null
     : <div className={`DfTags ${className}`} {...props}>
-      {tags.map(tag => <ViewTag key={tag} tag={tag} />)}
+      {tags.map((tag, i) => <ViewTag key={`${tag}-${i}`} tag={tag} />)}
     </div>
 )
 
