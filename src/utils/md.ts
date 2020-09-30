@@ -9,7 +9,7 @@ const strip = require('strip-markdown')
 const processMd = remark()
   .use(strip)
   // .use(squeezeParagraphs) // <-- doesn't work very well: leaves couple sequential new lines
-  .process
+  .process // TODO check out there is processSync https://github.com/unifiedjs/unified#processorprocesssyncfilevalue
 
 export const mdToTextAsync = async (md?: string) =>
   isEmptyStr(md) ? md : String(await processMd(md) as string)

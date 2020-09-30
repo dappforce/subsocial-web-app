@@ -115,7 +115,7 @@ export const ViewComment: FunctionComponent<Props> = ({
           }
           details={
             <span>
-              <Link href={commentLink}>
+              <Link href={commentLink} as={commentLink}>
                 <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
               </Link>
               {' · '}

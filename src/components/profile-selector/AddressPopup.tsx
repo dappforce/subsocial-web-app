@@ -31,14 +31,18 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   address,
   owner
 }) => {
-  const struct = owner?.struct;
-  const reputation = struct?.reputation
   const menu = (
-    <AccountMenu address={address} reputation={reputation || 0}/>
+    <AccountMenu />
   );
 
-  return <Dropdown overlay={menu} trigger={[ 'click', 'hover' ]} overlayStyle={{ width: '366px' }}>
-    <span className='DfCurrentAddress icon'><SelectAddressPreview address={address} owner={owner} /></span>
+  return <Dropdown
+    overlay={menu}
+    trigger={[ 'click' ]}
+    overlayStyle={{ maxWidth: '366px' }}
+  >
+    <span className='DfCurrentAddress icon'>
+      <SelectAddressPreview address={address} owner={owner} />
+    </span>
   </Dropdown>
 }
 

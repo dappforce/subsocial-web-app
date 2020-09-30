@@ -65,7 +65,7 @@ export const Faucet = () => {
           </Button>
         )}
         {current === steps.length - 1 && (
-          <ButtonLink type='primary' href='https://t.me/joinchat/MDeWpRoYQtab1URrwit12Q'>
+          <ButtonLink type='primary' href='https://t.me/joinchat/MDeWpRoYQtab1URrwit12Q' target='_blank'>
             {steps[current].button}
           </ButtonLink>
         )}
