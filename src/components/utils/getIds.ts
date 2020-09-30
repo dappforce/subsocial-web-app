@@ -12,19 +12,27 @@ export const getLastNIds = (nextId: BN, size: number): BN[] => {
       nextId.sub(new BN(index + 1)))
 }
 
-export const getPageIds = (nextId: BN, query: ParsedUrlQuery) => {
+export const getPageOfIds = (ids: BN[], query: ParsedUrlQuery) => {
   const { size, page } = parsePageQuery(query)
-
   const offset = size * (page - 1)
-  const nextPageId = nextId.subn(offset)
-  return getLastNIds(nextPageId, size)
+
+  const pageOfIds = []
+
+  for (let i = offset; i < offset + size; i++) {
+    pageOfIds.push(ids[offset + i])
+  }
+  return pageOfIds
 }
 
 export const resolveNextSpaceId = (nextId: BN) => nextId.subn(lastReservedSpaceId + 1)
 
-export const getSpacePageIds = (nextId: BN, query: ParsedUrlQuery) => {
-  const { size } = parsePageQuery(query)
-  const ids = getPageIds(nextId, query)
+export const getSpacePageOfIds = (nextId: BN, query: ParsedUrlQuery) => {
+  const { size, page } = parsePageQuery(query)
+
+  const offset = size * (page - 1)
+  const nextPageId = nextId.subn(offset)
+
+  const ids = getLastNIds(nextPageId, size)
 
   return ids.length < size
     ? [ ...ids, ...claimedSpaceIds ]
