@@ -1,29 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash.isempty';
-import { List } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
-import Section from 'src/components/utils/Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
-import NoData from 'src/components/utils/EmptyList';
 // import { newLogger } from '@subsocial/utils';
 import Link from 'next/link';
+import DataList, { DataListProps } from './DataList';
 
 // const log = newLogger(DataList.name)
 
-type Props<T extends any> = {
-  totalCount?: number,
-  dataSource: T[], // TODO add generic type
-  renderItem: (item: T, index: number) => JSX.Element,
-  title?: React.ReactNode,
-  noDataDesc?: React.ReactNode,
-  noDataExt?: React.ReactNode,
-  paginationOff?: boolean,
-  className?: string
-}
-
-export function PaginatedList<T extends any> (props: Props<T>) {
-  const { dataSource, totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
+export function PaginatedList<T extends any> (props: DataListProps<T>) {
+  const { dataSource, totalCount } = props;
 
   const total = totalCount || dataSource.length
 
@@ -66,7 +53,7 @@ export function PaginatedList<T extends any> (props: Props<T>) {
 
   const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
   const hasData = total > 0;
-  const noPagination = !hasData || total <= pageSize || paginationOff;
+  const noPagination = !hasData || total <= pageSize;
 
   const paginationConfig = (): PaginationConfig | undefined => {
     if (noPagination) return undefined
@@ -97,27 +84,10 @@ export function PaginatedList<T extends any> (props: Props<T>) {
     }
   }
 
-  const list = hasData
-    ? <List
-      className={'DfDataList ' + className}
-      itemLayout='vertical'
-      size='large'
-      pagination={paginationConfig()}
-      dataSource={dataSource}
-      renderItem={(item, index) =>
-        <List.Item key={`${new Date().getTime()}-${index}`}>
-          {renderItem(item, index)}
-        </List.Item>
-      }
-    />
-    : <NoData description={noDataDesc}>{noDataExt}</NoData>
-
-  const renderTitle = () =>
-    <div className='DfTitle--List'>{title}</div>
-
-  return !title
-    ? list
-    : <Section title={renderTitle()}>{list}</Section>
+  return <DataList
+    paginationConfig={paginationConfig()}
+    {...props}
+  />
 }
 
 export default PaginatedList
