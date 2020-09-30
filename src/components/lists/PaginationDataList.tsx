@@ -9,7 +9,7 @@ import NoData from 'src/components/utils/EmptyList';
 // import { newLogger } from '@subsocial/utils';
 import BN from 'bn.js'
 import Link from 'next/link';
-import { hexToBn } from '@polkadot/util'
+import { resolveBn } from '../utils';
 
 // const log = newLogger(DataList.name)
 
@@ -27,7 +27,10 @@ type Props<T extends any> = {
 export function DataList<T extends any> (props: Props<T>) {
   const { dataSource, totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
 
-  const total = totalCount ? hexToBn(totalCount.toString()) : new BN(totalCount || dataSource.length)
+  const total = totalCount
+    ? resolveBn(totalCount)
+    : new BN(dataSource.length)
+
   const router = useRouter();
 
   const { query, pathname, asPath } = router
@@ -36,8 +39,8 @@ export function DataList<T extends any> (props: Props<T>) {
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
 
-  const getLinksParams = useCallback((page: number) => {
-    const query = `page=${page}&size=${pageSize}`
+  const getLinksParams = useCallback((page: number, size?: number) => {
+    const query = `page=${page}&size=${size || pageSize}`
     return {
       href: `${pathname}?${query}`,
       as: `${asPath.split('?')[0]}?${query}`
@@ -84,6 +87,8 @@ export function DataList<T extends any> (props: Props<T>) {
       showSizeChanger: hasData,
       onShowSizeChange: (_, size: number) => {
         setPageSize(size);
+        const { href, as } = getLinksParams(currentPage, size)
+        router.push(href, as)
       },
       style: { marginBottom: '1rem' },
       itemRender: (page, type, original) => type === 'page'
