@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
-import BN from 'bn.js';
 
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
@@ -18,7 +17,7 @@ import Section from '../utils/Section';
 
 const { TabPane } = Tabs
 
-const FIFTY = new BN(50)
+const FIFTY = 50
 const MAX_TO_SHOW = 5
 
 type Props = {

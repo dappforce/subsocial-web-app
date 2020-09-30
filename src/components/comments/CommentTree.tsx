@@ -2,7 +2,7 @@ import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithSomeDetails } from '@subsocial/types';
 import React, { useState } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
-import DataList from 'src/components/lists/PaginationDataList';
+import PaginatedList from 'src/components/lists/PaginatedList';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
 import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice';
@@ -29,7 +29,7 @@ type CommentsTreeProps = {
 }
 
 const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, rootPost, space }) => {
-  return nonEmptyArr(comments) ? <DataList
+  return nonEmptyArr(comments) ? <PaginatedList
     dataSource={comments}
     paginationOff
     renderItem={(item) => {

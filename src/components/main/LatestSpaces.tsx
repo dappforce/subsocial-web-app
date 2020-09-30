@@ -1,6 +1,6 @@
 import React from 'react';
 import { Space } from '@subsocial/types/substrate/interfaces';
-import DataList from 'src/components/lists/PaginationDataList';
+import PaginatedList from 'src/components/lists/PaginatedList';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { SpaceData } from '@subsocial/types/dto';
 import { CreateSpaceButton, AllSpacesLink } from '../spaces/helpers';
@@ -13,7 +13,7 @@ export const LatestSpaces = (props: Props) => {
   const { spacesData = [] } = props
   const spaces = spacesData.filter((x) => typeof x.struct !== 'undefined')
 
-  return <DataList
+  return <PaginatedList
     title={<span className='d-flex justify-content-between align-items-end w-100'>
       {'Latest spaces'}
       <AllSpacesLink />

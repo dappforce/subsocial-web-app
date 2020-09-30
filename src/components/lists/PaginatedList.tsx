@@ -7,14 +7,12 @@ import Section from 'src/components/utils/Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
 import NoData from 'src/components/utils/EmptyList';
 // import { newLogger } from '@subsocial/utils';
-import BN from 'bn.js'
 import Link from 'next/link';
-import { resolveBn } from '../utils';
 
 // const log = newLogger(DataList.name)
 
 type Props<T extends any> = {
-  totalCount?: BN,
+  totalCount?: number,
   dataSource: T[], // TODO add generic type
   renderItem: (item: T, index: number) => JSX.Element,
   title?: React.ReactNode,
@@ -24,12 +22,10 @@ type Props<T extends any> = {
   className?: string
 }
 
-export function DataList<T extends any> (props: Props<T>) {
+export function PaginatedList<T extends any> (props: Props<T>) {
   const { dataSource, totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
 
-  const total = totalCount
-    ? resolveBn(totalCount)
-    : new BN(dataSource.length)
+  const total = totalCount || dataSource.length
 
   const router = useRouter();
 
@@ -69,15 +65,15 @@ export function DataList<T extends any> (props: Props<T>) {
   }, [ false ]);
 
   const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
-  const hasData = total.gtn(0);
-  const noPagination = !hasData || total.lten(pageSize) || paginationOff;
+  const hasData = total > 0;
+  const noPagination = !hasData || total <= pageSize || paginationOff;
 
   const paginationConfig = (): PaginationConfig | undefined => {
     if (noPagination) return undefined
 
     return {
       current: currentPage,
-      total: total.toNumber(),
+      total,
       defaultCurrent: DEFAULT_FIRST_PAGE,
       onChange: page => {
         setCurrentPage(page);
@@ -124,4 +120,4 @@ export function DataList<T extends any> (props: Props<T>) {
     : <Section title={renderTitle()}>{list}</Section>
 }
 
-export default DataList
+export default PaginatedList

@@ -10,7 +10,7 @@ import { editSpaceUrl, newPostUrl, HasSpaceIdOrHandle } from 'src/components/url
 import HiddenSpaceButton from '../HiddenSpaceButton';
 import { BareProps } from 'src/components/utils/types';
 import { Pluralize } from 'src/components/utils/Plularize';
-import DataList from 'src/components/lists/PaginationDataList';
+import PaginatedList from 'src/components/lists/PaginatedList';
 import PostPreview from 'src/components/posts/view-post/PostPreview';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { Loading } from 'src/components/utils';
@@ -147,7 +147,7 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   if (isLoading) return <Loading />
 
   const hiddenPostsCount = myHiddenPosts.length
-  return hiddenPostsCount ? <DataList
+  return hiddenPostsCount ? <PaginatedList
     title={<Pluralize count={hiddenPostsCount} singularText={'Unlisted post'} />}
     dataSource={myHiddenPosts}
     renderItem={(item) =>
@@ -162,7 +162,7 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
 }
 
 export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
-  const { spaceData, posts } = props
+  const { spaceData, posts, postIds } = props
   const { struct: space } = spaceData
 
   const postsSectionTitle = () =>
@@ -173,9 +173,10 @@ export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
       {posts.length > 0 && <CreatePostButton space={space} title={'Write Post'} className='mb-2' />}
     </div>
 
-  const VisiblePostList = () => <DataList
+  const VisiblePostList = () => <PaginatedList
     title={postsSectionTitle()}
     dataSource={posts}
+    totalCount={postIds.length}
     noDataDesc='No posts yet'
     noDataExt={isMySpace(space)
     // TODO replace with Next Link + URL builder

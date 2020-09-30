@@ -5,7 +5,7 @@ import { Segment } from 'src/components/utils/Segment';
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import { useRouter } from 'next/router';
-import DataList from 'src/components/lists/PaginationDataList';
+import PaginatedList from 'src/components/lists/PaginatedList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { hexToBn } from '@polkadot/util';
@@ -66,7 +66,7 @@ const resultToPreview = (res: DataResults, i: number) => {
 const Previews = (props: Props) => {
   const { results } = props;
   return <div className='DfBgColor'>
-    <DataList
+    <PaginatedList
       dataSource={results}
       renderItem={(res, i) => resultToPreview(res, i)}
       noDataDesc='No results found'

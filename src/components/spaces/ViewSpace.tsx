@@ -28,6 +28,7 @@ import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, Spa
 import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
 import { BareProps } from '../utils/types';
+import { getPageOfIds } from '../utils/getIds';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -175,7 +176,8 @@ const ViewSpacePage: NextPage<Props> = (props) => {
 }
 
 ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
-  const { query: { spaceId } } = props
+  const { query } = props
+  const { spaceId } = query
   const idOrHandle = spaceId as string
 
   const id = await getSpaceId(idOrHandle)
@@ -195,7 +197,8 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const posts = await subsocial.findPublicPostsWithAllDetails(postIds.reverse())
+  const pageIds = getPageOfIds(postIds, query)
+  const posts = await subsocial.findPublicPostsWithAllDetails(pageIds)
 
   return {
     spaceData,

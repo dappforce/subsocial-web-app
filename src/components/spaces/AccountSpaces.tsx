@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ViewSpace } from './ViewSpace';
-import DataList from 'src/components/lists/PaginationDataList';
+import PaginatedList from 'src/components/lists/PaginatedList';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
@@ -13,6 +13,8 @@ import { CreateSpaceButton } from './helpers';
 import { newLogger } from '@subsocial/utils';
 import { AnyAccountId } from '@subsocial/types';
 import { return404 } from '../utils/next';
+import { getPageOfIds } from '../utils/getIds';
+import { useRouter } from 'next/router';
 
 type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -34,12 +36,14 @@ export const useLoadAccoutPublicSpaces = (address?: AnyAccountId): LoadSpacesPro
 
   if (!address) return undefined
 
+  const { query } = useRouter()
   const [ state, setState ] = useState<LoadSpacesProps>()
 
   useSubsocialEffect(({ subsocial, substrate }) => {
     const loadMySpaces = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-      const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
+      const pageIds = getPageOfIds(mySpaceIds, query)
+      const spacesData = await subsocial.findPublicSpaces(pageIds)
 
       setState({ mySpaceIds, spacesData, address })
     }
@@ -79,13 +83,15 @@ const SpacePreview = (space: SpaceData) =>
 
 const PublicSpaces = ({ spacesData , mySpaceIds, address }: LoadSpacesProps) => {
   const noSpaces = !mySpaceIds.length
+  const totalCount = mySpaceIds.length
   const isMy = isMyAddress(address)
 
-  return <DataList
+  return <PaginatedList
     title={<span className='d-flex justify-content-between align-items-center w-100 my-2'>
-      <span>{`Public Spaces (${spacesData.length})`}</span>
+      <span>{`Public Spaces (${totalCount})`}</span>
       {!noSpaces && isMy && <CreateSpaceButton />}
     </span>}
+    totalCount={totalCount}
     dataSource={spacesData}
     renderItem={SpacePreview}
     noDataDesc='No public spaces found'
@@ -103,7 +109,7 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
   if (isLoading) return <Loading />
 
   const unlistedSpacesCount = myUnlistedSpaces.length
-  return unlistedSpacesCount ? <DataList
+  return unlistedSpacesCount ? <PaginatedList
     title={`Unlisted Spaces (${unlistedSpacesCount})`}
     dataSource={myUnlistedSpaces}
     renderItem={SpacePreview}
@@ -129,8 +135,8 @@ export const AccountSpacesPage: NextPage<Props> = (props: Props) => <>
 </>
 
 AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address } } = props
-
+  const { query } = props
+  const { address } = query
   if (!address || typeof address !== 'string') {
     return return404(props) as any
   }
@@ -138,7 +144,8 @@ AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
   const mySpaceIds = await substrate.spaceIdsByOwner(address)
-  const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
+  const pageIds = getPageOfIds(mySpaceIds, query)
+  const spacesData = await subsocial.findPublicSpaces(pageIds)
 
   return {
     spacesData,

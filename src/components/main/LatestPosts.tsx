@@ -1,5 +1,5 @@
 import React from 'react';
-import DataList from 'src/components/lists/PaginationDataList';
+import PaginatedList from 'src/components/lists/PaginatedList';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from '../posts/view-post/PostPreview';
 
@@ -16,7 +16,7 @@ export const LatestPosts = (props: Props) => {
     return null
   }
 
-  return <DataList
+  return <PaginatedList
     title={`Latest ${type}s`}
     dataSource={postsData}
     renderItem={(item) =>

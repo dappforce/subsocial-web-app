@@ -5,26 +5,26 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { CreateSpaceButton } from './helpers';
-import { getSpacePageIds, resolveNextSpaceId } from '../utils/getIds';
+import { getSpacePageOfIds, resolveNextSpaceId } from '../utils/getIds';
 import BN from 'bn.js'
 import { ZERO, resolveBn } from '../utils';
-import { DataList } from '../lists/InfinityDataList';
+import { PaginatedList } from '../lists/PaginatedList';
 
 type Props = {
   spacesData?: SpaceData[],
   totalSpaceCount?: BN
 }
 
-const getTitle = (count: BN) => `Explore Spaces (${count})`
+const getTitle = (count: number | BN) => `Explore Spaces (${count})`
 
 export const ListAllSpaces = (props: Props) => {
   const { spacesData = [], totalSpaceCount = ZERO } = props
-  const totalCount = resolveBn(totalSpaceCount)
+  const totalCount = resolveBn(totalSpaceCount).toNumber()
   const title = getTitle(totalCount) // TODO resolve bn when as hex and as BN
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <DataList
+      <PaginatedList
         title={title}
         totalCount={totalCount}
         dataSource={spacesData}
@@ -60,7 +60,7 @@ ListAllSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { substrate } = subsocial
 
   const nextSpaceId = await substrate.nextSpaceId()
-  const spaceIds = await getSpacePageIds(nextSpaceId, query)
+  const spaceIds = await getSpacePageOfIds(nextSpaceId, query)
   const spacesData = await subsocial.findPublicSpaces(spaceIds)
 
   return {
