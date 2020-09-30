@@ -16,7 +16,7 @@ import SpaceShareLink from '../SpaceShareLink';
 import { Space } from '@subsocial/types/substrate/interfaces';
 
 import styles from './index.module.sass'
-import { FVoid } from '../../../utils/types';
+import { FVoid } from 'src/components/utils/types';
 
 type ShareMenuProps = {
   postDetails: PostWithSomeDetails,
@@ -24,7 +24,7 @@ type ShareMenuProps = {
   preview?: boolean,
   title?: string
   className?: string,
-  hideDropdown?: FVoid
+  onClick?: FVoid
 }
 
 type SomeShareLink = {
@@ -54,7 +54,7 @@ const CopyLink = ({ url }: SomeShareLink) => <Copy text={copyUrl(url)} message='
 </Copy>
 
 const ShareMenu = (props: ShareMenuProps) => {
-  const { postDetails: { post }, space, hideDropdown } = props
+  const { postDetails: { post }, space, onClick } = props
   const currentPostUrl = postUrl(space, post.struct)
   const title = post.content?.title
   const summary = post.content?.body
@@ -63,7 +63,7 @@ const ShareMenu = (props: ShareMenuProps) => {
     selectable={false}
     mode='horizontal'
     className={styles.DfShareDropdown}
-    onClick={hideDropdown}
+    onClick={onClick}
   >
     <Menu.ItemGroup title="Share to:">
       <Menu.Item>
@@ -98,7 +98,7 @@ export const ShareDropdown = (props: ShareMenuProps) => {
     visible={isVisible}
     onVisibleChange={setVisible}
     placement='bottomCenter'
-    overlay={<ShareMenu hideDropdown={hide} {...props} />}
+    overlay={<ShareMenu onClick={hide} {...props} />}
   >
     <Button
       className={className}
