@@ -45,7 +45,7 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className
   const menu =
     <Menu>
       <Menu.Item key={`edit-space-${spaceKey}`}>
-        <Link href={`/spaces/[spaceId]/edit`} as={editSpaceUrl(struct)}>
+        <Link href={`/[spaceId]/edit`} as={editSpaceUrl(struct)}>
           <a className='item'>Edit space</a>
         </Link>
       </Menu.Item>
@@ -78,7 +78,7 @@ type EditMenuLinkProps = BareProps & SpaceProps & {
 export const EditMenuLink = ({ space: { id, owner }, withIcon }: EditMenuLinkProps) => /* isMyAddress(owner)
   ? <div className='SpaceNavSettings'>
     <Link
-      href='/spaces/[spaceId]/space-navigation/edit'
+      href='/[spaceId]/space-navigation/edit'
       as={`/spaces/${id}/space-navigation/edit`}
     >
       <a className='DfSecondaryColor'>
@@ -104,7 +104,7 @@ export const CreatePostButton = (props: CreatePostButtonProps) => {
       type='primary'
       icon={<PlusOutlined />}
       ghost
-      href={'/spaces/[spaceId]/posts/new'}
+      href={'/[spaceId]/posts/new'}
       as={newPostUrl(space)}
     >
       {title}

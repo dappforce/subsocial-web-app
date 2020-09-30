@@ -75,7 +75,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
   return <div className="SpaceNav">
     <div className="SNhead">
       <div className="SNavatar">
-        <Link href='/spaces/[spaceId]' as={spaceUrl(space)}>
+        <Link href='/[spaceId]' as={spaceUrl(space)}>
           <a className='DfBlackLink'>
             {nonEmptyStr(image)
               ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
@@ -86,7 +86,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
       </div>
 
       <div className="SNheadTitle">
-        <Link href='/spaces/[spaceId]' as={spaceUrl(space)}>
+        <Link href='/[spaceId]' as={spaceUrl(space)}>
           <a className='DfBlackLink'>{name}</a>
         </Link>
       </div>
@@ -110,7 +110,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
         navTabs.map(renderMenuItem)
       }
       <Menu.Item>
-        <Link href='/spaces/[spaceId]/about' as={aboutSpaceUrl(space)}>
+        <Link href='/[spaceId]/about' as={aboutSpaceUrl(space)}>
           <a>About</a>
         </Link>
       </Menu.Item>
