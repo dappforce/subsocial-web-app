@@ -7,8 +7,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { CreateSpaceButton } from './helpers';
 import { getSpacePageIds, resolveNextSpaceId } from '../utils/getIds';
 import BN from 'bn.js'
-import { ZERO } from '../utils';
-import { hexToBn } from '@polkadot/util'
+import { ZERO, resolveBn } from '../utils';
 import { DataList } from '../lists/InfinityDataList';
 
 type Props = {
@@ -20,13 +19,14 @@ const getTitle = (count: BN) => `Explore Spaces (${count})`
 
 export const ListAllSpaces = (props: Props) => {
   const { spacesData = [], totalSpaceCount = ZERO } = props
-  const title = getTitle(hexToBn(totalSpaceCount.toString())) // TODO resolve bn when as hex and as BN
+  const totalCount = resolveBn(totalSpaceCount)
+  const title = getTitle(totalCount) // TODO resolve bn when as hex and as BN
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <DataList
         title={title}
-        totalCount={totalSpaceCount}
+        totalCount={totalCount}
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
         noDataExt={<CreateSpaceButton />}
@@ -46,7 +46,7 @@ export const ListAllSpaces = (props: Props) => {
 
 const ListAllSpacesPage: NextPage<Props> = (props) => {
   const { totalSpaceCount = ZERO } = props
-  const title = getTitle(hexToBn(totalSpaceCount.toString()))
+  const title = getTitle(resolveBn(totalSpaceCount))
 
   return <>
       <HeadMeta title={title} desc='Discover and follow interesting spaces on Subsocial.' />
