@@ -15,6 +15,7 @@ import { AnyAccountId } from '@subsocial/types';
 import { return404 } from '../utils/next';
 import { getPageOfIds } from '../utils/getIds';
 import { useRouter } from 'next/router';
+import DataList from '../lists/DataList';
 
 type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -109,7 +110,7 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
   if (isLoading) return <Loading />
 
   const unlistedSpacesCount = myUnlistedSpaces.length
-  return unlistedSpacesCount ? <PaginatedList
+  return unlistedSpacesCount ? <DataList
     title={`Unlisted Spaces (${unlistedSpacesCount})`}
     dataSource={myUnlistedSpaces}
     renderItem={SpacePreview}

@@ -5,8 +5,8 @@ import { withCalls, withMulti, spaceFollowsQueryToProp, profileFollowsQueryToPro
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
-import PaginatedList from 'src/components/lists/PaginatedList';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import DataList from '../lists/DataList';
 
 type Props = {
   accounts?: AccountId[],
@@ -29,7 +29,7 @@ const InnerAccountsListModal = (props: Props) => {
       className={styles.AccountsListModal}
       footer={<Button onClick={close}>Close</Button>}
     >
-      <PaginatedList
+      <DataList
         dataSource={accounts}
         renderItem={(item) =>
           <ProfilePreviewWithOwner key={item.toString()} address={item} size={LARGE_AVATAR_SIZE} mini />}

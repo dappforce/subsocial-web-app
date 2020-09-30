@@ -9,8 +9,8 @@ import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
 import { Tag } from 'antd'
 import { hexToString } from '@polkadot/util'
-import PaginatedList from 'src/components/lists/PaginatedList';
 import styles from './index.module.scss'
+import DataList from 'src/components/lists/DataList'
 
 type Members = {
   council: AnyAccountId[],
@@ -282,7 +282,7 @@ export const KusamaIdentity = ({ address }: KusamaBareProps) => {
 
   return <div className={styles.KusamaIdentitySection}>
     <h3 className='mb-0'>Kusama identity</h3>
-    <PaginatedList
+    <DataList
       dataSource={identityInfoKeys}
       renderItem={key => details[key] ? <div key={key}>{`${key.toUpperCase()}: ${details[key]}`}</div> : <></>}
     />

@@ -24,6 +24,7 @@ import { isEmptyStr, isDef } from '@subsocial/utils';
 import ButtonLink from 'src/components/utils/ButtonLink';
 import BaseAvatar, { BaseAvatarProps } from 'src/components/utils/DfAvatar';
 import ViewSpaceLink from '../ViewSpaceLink';
+import DataList from 'src/components/lists/DataList';
 
 type SpaceProps = {
   space: Space
@@ -147,7 +148,7 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   if (isLoading) return <Loading />
 
   const hiddenPostsCount = myHiddenPosts.length
-  return hiddenPostsCount ? <PaginatedList
+  return hiddenPostsCount ? <DataList
     title={<Pluralize count={hiddenPostsCount} singularText={'Unlisted post'} />}
     dataSource={myHiddenPosts}
     renderItem={(item) =>
