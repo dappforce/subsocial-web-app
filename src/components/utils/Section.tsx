@@ -8,8 +8,7 @@ type Props = BareProps & {
   level?: number
 };
 
-export const Section = ({ title, level, className, id, children }: React.PropsWithChildren<Props>) => {
-  console.log('LEVEL:', level)
+export const Section = ({ title, level = 2, className, id, children }: React.PropsWithChildren<Props>) => {
 
   const renderTitle = () => {
     if (!title) return null;

@@ -37,7 +37,7 @@ type DropdownMenuProps = BareProps & {
 
 const hrefSpaceUrl = '/[spaceId]'
 
-const createNewPostLinkProps = (space: Space) => ({ 
+const createNewPostLinkProps = (space: Space) => ({
   href: `${hrefSpaceUrl}/posts/new`,
   as: newPostUrl(space)
 })

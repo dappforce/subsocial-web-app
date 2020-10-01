@@ -18,7 +18,18 @@ export type DataListProps<T extends any> = {
 }
 
 export function DataList<T extends any> (props: DataListProps<T>) {
-  const { dataSource, totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationConfig, children } = props;
+  const {
+    dataSource,
+    totalCount,
+    renderItem,
+    className,
+    title,
+    level,
+    noDataDesc = null,
+    noDataExt,
+    paginationConfig,
+    children
+  } = props;
 
   const total = totalCount || dataSource.length
 
@@ -46,7 +57,7 @@ export function DataList<T extends any> (props: DataListProps<T>) {
 
   return !title
     ? list
-    : <Section title={renderTitle()}>{list}</Section>
+    : <Section title={renderTitle()} level={level}>{list}</Section>
 }
 
 export default DataList
