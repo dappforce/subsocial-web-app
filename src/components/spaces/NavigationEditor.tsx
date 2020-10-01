@@ -142,7 +142,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   };
 
   const goToView = (id: BN) => {
-    Router.push('spaces/[spaceId]', '/spaces/' + id.toString()).catch(console.log);
+    Router.push('[spaceId]', '/' + id.toString()).catch(console.log);
   };
 
   const newTxParams = (hash: IpfsCid) => {

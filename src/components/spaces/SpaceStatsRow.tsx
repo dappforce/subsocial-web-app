@@ -30,7 +30,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
 
   return (
     <div className={`${isMySpace(space) && 'MySpace DfStatItem'}`}>
-      <Link href='/spaces/[spaceId]' as={spaceUrl(space)}>
+      <Link href='/[spaceId]' as={spaceUrl(space)}>
         <a className={'DfStatItem ' + (!postsCount && 'disable')}>
           <Pluralize count={postsCount} singularText='Post'/>
         </a>

@@ -51,6 +51,10 @@ pre {
   color: $color_muted
 }
 
+.DfBalanceDecimals {
+  color: #999;
+}
+
 .ant-modal-body {
   padding: $space_small;
 }
@@ -336,6 +340,7 @@ pre {
 }
 
 .header {
+  margin: 0;
   line-height: normal;
   display: flex !important;
   align-items: center;

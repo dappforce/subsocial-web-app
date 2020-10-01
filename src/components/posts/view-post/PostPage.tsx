@@ -120,7 +120,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   // If a space id of this post is not equal to the space id/handle from URL,
   // then redirect to the URL with the space id of this post.
   if (spaceIdFromPost && spaceIdFromUrl && !spaceIdFromPost.eq(spaceIdFromUrl) && res) {
-    res.writeHead(301, { Location: `/spaces/${spaceIdFromPost.toString()}/posts/${postId}` })
+    res.writeHead(301, { Location: `/${spaceIdFromPost.toString()}/posts/${postId}` })
     res.end()
   }
 

@@ -35,8 +35,10 @@ export const MyFeed = ({ withTitle }: MyFeedProps) => {
     <InfiniteList
       dataSource={[] as PostWithAllDetails[]}
       title={withTitle ? 'My feed' : undefined}
+      noDataDesc='No posts in your feed yet'
       renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
       loadMore={getNextPage}
+      initialLoad
     />
   </>
 }

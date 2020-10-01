@@ -18,7 +18,7 @@ export const SpacegedSectionTitle = ({
 
   return <>
     {!isStorybook && space && name && <>
-      <Link href='/spaces/[spaceId]' as={spaceUrl(space.struct)}>
+      <Link href='/[spaceId]' as={spaceUrl(space.struct)}>
         <a>{name}</a>
       </Link>
       <span style={{ margin: '0 .75rem' }}>/</span>

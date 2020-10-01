@@ -29,24 +29,24 @@ export function spaceIdForUrl ({ id, handle }: HasSpaceIdOrHandle): string {
   return slugify(handle) || stringifyNumber(id) as string
 }
 
-/** /spaces/[spaceId] */
+/** /[spaceId] */
 export function spaceUrl (space: HasSpaceIdOrHandle, ...subUrls: string[]): string {
   const idForUrl = spaceIdForUrl(space)
   const ending = stringifySubUrls(...subUrls)
-  return '/spaces/' + idForUrl + ending
+  return '/' + idForUrl + ending
 }
 
-/** /spaces/[spaceId]/new */
+/** /[spaceId]/new */
 export function newSpaceUrl (space: HasSpaceIdOrHandle): string {
   return spaceUrl(space, 'new')
 }
 
-/** /spaces/[spaceId]/edit */
+/** /[spaceId]/edit */
 export function editSpaceUrl (space: HasSpaceIdOrHandle): string {
   return spaceUrl(space, 'edit')
 }
 
-/** /spaces/[spaceId]/about */
+/** /[spaceId]/about */
 export function aboutSpaceUrl (space: HasSpaceIdOrHandle): string {
   return spaceUrl(space, 'about')
 }
@@ -56,12 +56,12 @@ export function aboutSpaceUrl (space: HasSpaceIdOrHandle): string {
 
 export type HasPostId = Pick<Post, 'id'>
 
-/** /spaces/[spaceId]/posts/new */
+/** /[spaceId]/posts/new */
 export function newPostUrl (space: HasSpaceIdOrHandle): string {
   return spaceUrl(space, 'posts', 'new')
 }
 
-/** /spaces/[spaceId]/posts/[postId] */
+/** /[spaceId]/posts/[postId] */
 export function postUrl (space: HasSpaceIdOrHandle, post: HasPostId, ...subUrls: string[]): string {
   if (notDef(post.id)) {
     log.warn(`${postUrl.name}: Post id is undefined`)
@@ -72,7 +72,7 @@ export function postUrl (space: HasSpaceIdOrHandle, post: HasPostId, ...subUrls:
   return spaceUrl(space, 'posts', postId, ...subUrls)
 }
 
-/** /spaces/[spaceId]/posts/[postId]/edit */
+/** /[spaceId]/posts/[postId]/edit */
 export function editPostUrl (space: HasSpaceIdOrHandle, post: HasPostId): string {
   return postUrl(space, post, 'edit')
 }

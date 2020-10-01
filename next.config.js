@@ -65,4 +65,28 @@ const nextConfig = {
   }
 }
 
-module.exports = withPlugins([ withImages ], nextConfig)
+module.exports = withPlugins([
+    withImages
+  ],
+  {
+  ...nextConfig,
+  async redirects() {
+    return [
+      {
+        source: '/spaces/:spaceId(@.*)/:details*',
+        destination: '/:spaceId/:details*',
+        permanent: true,
+      },
+      {
+        source: '/spaces/:spaceId(\\d{1,})/:details*',
+        destination: '/:spaceId/:details*',
+        permanent: true,
+      }
+      // {
+      //   source: '/spaces/:spaceId/:details*',
+      //   destination: '/:spaceId/:details*',
+      //   permanent: true,
+      // }
+    ]
+  }
+})

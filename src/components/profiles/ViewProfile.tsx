@@ -75,7 +75,7 @@ const Component = (props: Props) => {
   } = owner?.content || {} as ProfileContent;
 
   const createProfileButton = noProfile && isMyAccount &&
-    <Link href='/accounts/new' as='accounts/new'>
+    <Link href='/accounts/new' as='/accounts/new'>
       <Button type='primary' ghost>
         <PlusOutlined />
         Create profile
@@ -116,13 +116,13 @@ const Component = (props: Props) => {
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
         <div className='ml-3 w-100'>
-          <div className='header DfAccountTitle d-flex justify-content-between mb-2'>
+          <h1 className='header DfAccountTitle d-flex justify-content-between mb-2'>
             <span className='d-flex align-items-center'>
               <Name owner={owner} address={address} className='mr-3' />
               <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
             </span>
             <DropDownMenu />
-          </div>
+          </h1>
           {/* <KusamaRolesTags address={address} /> */}
           <MutedDiv>
             {'Address: '}

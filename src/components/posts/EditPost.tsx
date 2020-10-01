@@ -23,6 +23,7 @@ import SpacegedSectionTitle from '../spaces/SpacedSectionTitle'
 import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpaceFromUrl'
 import { UploadCover } from '../uploader'
 import { resolveContent } from '../utils/content'
+import messages from 'src/messages'
 
 const log = newLogger('EditPost')
 
@@ -117,7 +118,7 @@ export function InnerForm (props: FormProps) {
   }
 
   const goToView = (postId: BN) => {
-    Router.push('/spaces/[spaceId]/posts/[postId]', `/spaces/${spaceId}/posts/${postId}`)
+    Router.push('/[spaceId]/posts/[postId]', `/${spaceId}/posts/${postId}`)
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
 
@@ -147,6 +148,7 @@ export function InnerForm (props: FormProps) {
       <Form.Item
         name={fieldName('image')}
         label='Cover'
+        help={messages.imageShouldBeLessThanTwoMB}
       >
         <UploadCover onChange={onAvatarChanged} img={initialValues.image} />
       </Form.Item>

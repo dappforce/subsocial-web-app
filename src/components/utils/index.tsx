@@ -126,7 +126,7 @@ export const calcVotingPercentage = (upvotesCount: BN, downvotesCount: BN) => {
   }
 };
 
-export const resolveBn = (value: BN) => {
+export const resolveBn = (value: BN | string) => {
   try {
     return new BN(value)
   } catch {

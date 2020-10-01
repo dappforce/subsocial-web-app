@@ -19,7 +19,7 @@ export const AboutSpaceLink = ({
   if (!space.id || !title) return null
 
   return (
-    <Link href='/spaces/[spaceId]/about' as={aboutSpaceUrl(space)}>
+    <Link href='/[spaceId]/about' as={aboutSpaceUrl(space)}>
       <a className={className} title={hint}>{title}</a>
     </Link>
   )

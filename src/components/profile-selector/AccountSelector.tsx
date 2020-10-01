@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import keyring from '@polkadot/ui-keyring';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { ProfileData } from '@subsocial/types';
-import { SelectAddressPreview, MyProfileProview } from '../profiles/address-views';
+import { SelectAddressPreview, ProfilePreviewWithOwner } from '../profiles/address-views';
 import { Button, Avatar } from 'antd';
 import { useMyAccount, useMyAddress } from '../auth/MyAccountContext';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
@@ -85,13 +85,15 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
   ), [])
 
   const CurrentAccount = useCallback(() => {
-    if (noAccounts) return null
+    if (noAccounts && !currentAddress) return null
 
     if (!currentAddress) return <div className='m-3'>Click on your account to sign in:</div>
 
     return <>
       <div className='p-3 pb-0'>
-        <MyProfileProview
+        <ProfilePreviewWithOwner
+          address={currentAddress}
+          owner={profilesByAddressMap.get(currentAddress)}
           size={60}
           className='justify-content-center'
         />
@@ -113,7 +115,7 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
   const ExtensionAccountPanel = () => {
     const count = extensionAddresses.length
 
-    const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // TODO hack for hide NoAccount msg!!!
+    const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // FIXME: hack that hides NoAccount msg!!!
 
     if (!isWeb3Injected) return <NoExtension />
 
