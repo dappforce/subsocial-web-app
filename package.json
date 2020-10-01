@@ -107,6 +107,7 @@
     "markdown-to-txt": "^1.0.1",
     "moment-timezone": "^0.5.26",
     "next": "9.5.2",
+    "next-optimized-images": "^2.6.2",
     "query-string": "^6.2.0",
     "react": "^16.0.0",
     "react-beautiful-dnd": "^13.0.0",

@@ -9,6 +9,7 @@ export type DataListProps<T extends any> = {
   dataSource: T[],
   renderItem: (item: T, index: number) => JSX.Element,
   title?: React.ReactNode,
+  level?: number,
   noDataDesc?: React.ReactNode,
   noDataExt?: React.ReactNode,
   className?: string,

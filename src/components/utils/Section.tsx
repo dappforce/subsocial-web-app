@@ -8,23 +8,10 @@ type Props = BareProps & {
   level?: number
 };
 
-export class Section extends React.PureComponent<Props> {
-  render () {
-    let { id, className, children } = this.props;
-    className = (className || '') + ' DfSection';
+export const Section = ({ title, level, className, id, children }: React.PropsWithChildren<Props>) => {
+  console.log('LEVEL:', level)
 
-    return (
-      <div className='DfSectionOuter'>
-        <section id={id} className={className}>
-          {this.renderTitle()}
-          {children}
-        </section>
-      </div>
-    );
-  }
-
-  private renderTitle = () => {
-    const { title, level = 2 } = this.props;
+  const renderTitle = () => {
     if (!title) return null;
 
     const className = 'DfSection-title';
@@ -34,6 +21,15 @@ export class Section extends React.PureComponent<Props> {
       title
     );
   }
+
+  return (
+    <div className='DfSectionOuter'>
+      <section id={id} className={`${className} DfSection`}>
+        {renderTitle()}
+        {children}
+      </section>
+    </div>
+  );
 }
 
 export default Section

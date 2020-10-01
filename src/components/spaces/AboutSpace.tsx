@@ -54,19 +54,18 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   return <PageContent>
     <HeadMeta title={title} desc={mdToText(about)} image={image} />
-    <Section className='DfContentPage' level={1} title={title}>
-
-      <div className='DfRow mt-3'>
-        <SpaceAuthor />
-        <SpaceStatsRow space={space} />
-      </div>
-
-      {nonEmptyStr(about) &&
-        <div className='DfBookPage'>
-          <DfMd source={about} />
+      <Section className='DfContentPage' level={1} title={title}>
+        <div className='DfRow mt-3'>
+          <SpaceAuthor />
+          <SpaceStatsRow space={space} />
         </div>
-      }
-      <ViewTags tags={tags} />
+
+        {nonEmptyStr(about) &&
+          <div className='DfBookPage'>
+            <DfMd source={about} />
+          </div>
+        }
+        <ViewTags tags={tags} />
     </Section>
   </PageContent>
 }
