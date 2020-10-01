@@ -30,7 +30,7 @@ const log = newLogger('EditPost')
 const TITLE_MIN_LEN = 3
 const TITLE_MAX_LEN = 100
 
-const BODY_MAX_LEN = 20_000
+const BODY_MAX_LEN = 100_000 // ~100k chars
 
 const MAX_TAGS = 10
 
