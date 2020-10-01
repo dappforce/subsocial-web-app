@@ -35,7 +35,7 @@ type DropdownMenuProps = BareProps & {
   vertical?: boolean
 }
 
-const hrefSpaceUrl = '/spaces/[spaceId]'
+const hrefSpaceUrl = '/[spaceId]'
 
 const createNewPostLinkProps = (space: Space) => ({ 
   href: `${hrefSpaceUrl}/posts/new`,
@@ -85,7 +85,7 @@ type EditMenuLinkProps = BareProps & SpaceProps & {
 export const EditMenuLink = ({ space: { id, owner }, withIcon }: EditMenuLinkProps) => /* isMyAddress(owner)
   ? <div className='SpaceNavSettings'>
     <Link
-      href='/spaces/[spaceId]/space-navigation/edit'
+      href='/[spaceId]/space-navigation/edit'
       as={`/spaces/${id}/space-navigation/edit`}
     >
       <a className='DfSecondaryColor'>

@@ -61,7 +61,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ space
   const menu = (
     <Menu>
       {isMyPost && <Menu.Item key={`edit-${postKey}`}>
-        <Link href='/spaces/[spaceId]/posts/[postId]/edit' as={postUrl(space, post, '/edit')}>
+        <Link href='/[spaceId]/posts/[postId]/edit' as={postUrl(space, post, '/edit')}>
           <a className='item'>Edit post</a>
         </Link>
       </Menu.Item>}
@@ -140,7 +140,7 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
       size={size}
       details={<div>
         {withSpaceName && space && <><div className='DfGreyLink'><ViewSpace spaceData={space} nameOnly withLink /></div>{' • '}</>}
-        {space && <Link href='/spaces/[spaceId]/posts/[postId]' as={postUrl(space.struct, struct)}>
+        {space && <Link href='/[spaceId]/posts/[postId]' as={postUrl(space.struct, struct)}>
           <a className='DfGreyLink'>
             {formatUnixDate(time)}
           </a>

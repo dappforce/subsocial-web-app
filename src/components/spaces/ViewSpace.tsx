@@ -103,6 +103,15 @@ export const ViewSpace = (props: Props) => {
       {withFollowButton && <FollowSpaceButton spaceId={id} />}
     </div>
 
+  const title = React.createElement(
+    preview ? 'span' : 'h1',
+    { className: 'header'},
+    <>
+      <SpaceNameAsLink className='mr-3' />
+      <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
+    </>
+  );
+
   const renderPreview = () =>
     <div className={primaryClass}>
       <div className='DfSpaceBody'>
@@ -110,10 +119,7 @@ export const ViewSpace = (props: Props) => {
         <div className='ml-2 w-100'>
           <span className='mb-3'>
             <div className='d-flex justify-content-between mb-3'>
-              <span className='header'>
-                <SpaceNameAsLink className='mr-3' />
-                <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
-              </span>
+              {title}
               <span className='d-flex align-items-center'>
                 <DropdownMenu className='mx-3' spaceData={spaceData} />
                 {withFollowButton && <FollowSpaceButton spaceId={id} />}

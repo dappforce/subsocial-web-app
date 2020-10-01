@@ -52,7 +52,7 @@ type PreviewNotification = {
 }
 
 const renderSubjectPreview = (title?: string, href: string = '') =>
-  nonEmptyStr(title) || nonEmptyStr(href) ? <Link href='/spaces/[spaceId]/posts/[postId]' as={href} ><a>{title}</a></Link> : null;
+  nonEmptyStr(title) || nonEmptyStr(href) ? <Link href='/[spaceId]/posts/[postId]' as={href} ><a>{title}</a></Link> : null;
 
 const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification => {
   const data = map.get(spaceId.toString())

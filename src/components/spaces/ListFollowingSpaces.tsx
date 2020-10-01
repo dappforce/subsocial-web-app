@@ -90,7 +90,7 @@ export const SpaceLink = (props: { item: SpaceData }) => {
   return (
     <Link
       key={idForUrl}
-      href='/spaces/[spaceId]'
+      href='/[spaceId]'
       as={spaceUrl(item.struct)}
     >
       <a className={`DfMenuSpaceLink ${isSelectedSpace ? 'DfSelectedSpace' : ''}`}>
@@ -109,6 +109,6 @@ export const SpaceLink = (props: { item: SpaceData }) => {
 
 export const buildFollowedItems = (followedSpacesData: SpaceData[]): PageLink[] => followedSpacesData.map(({ struct, content }) => ({
     name: content?.name || '',
-    page: [ '/spaces/[spaceId]', spaceUrl(struct) ],
+    page: [ '/[spaceId]', spaceUrl(struct) ],
     icon: <span className='SpaceMenuIcon'><BaseAvatar address={struct.owner} avatar={content?.image} size={24} /></span>
   }))

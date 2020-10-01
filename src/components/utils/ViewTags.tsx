@@ -1,4 +1,4 @@
-import { isEmptyArray, isEmptyStr } from '@subsocial/utils';
+import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils';
 import { TagOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import Link from 'next/link';
@@ -31,7 +31,7 @@ export const ViewTags = React.memo(({
   isEmptyArray(tags)
     ? null
     : <div className={`DfTags ${className}`} {...props}>
-      {tags.map((tag, i) => <ViewTag key={`${tag}-${i}`} tag={tag} />)}
+      {tags.filter(nonEmptyStr).map((tag, i) => <ViewTag key={`${tag}-${i}`} tag={tag} />)}
     </div>
 )
 
