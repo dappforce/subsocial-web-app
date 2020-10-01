@@ -5,8 +5,8 @@ import { withCalls, withMulti, spaceFollowsQueryToProp, profileFollowsQueryToPro
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
-import DataList from '../utils/DataList';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import DataList from '../lists/DataList';
 
 type Props = {
   accounts?: AccountId[],

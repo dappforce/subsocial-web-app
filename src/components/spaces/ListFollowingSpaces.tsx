@@ -1,11 +1,10 @@
 import { SpaceData } from '@subsocial/types/dto';
-import { nonEmptyArr } from '@subsocial/utils';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import DataList from '../utils/DataList';
+import PaginatedList from 'src/components/lists/PaginatedList';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
@@ -16,17 +15,18 @@ import { PageLink } from 'src/layout/SideMenuItems';
 import BaseAvatar from '../utils/DfAvatar';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { toShortAddress } from '../utils';
+import { getPageOfIds } from '../utils/getIds';
 
 type Props = {
-  spacesData: SpaceData[]
+  spacesData: SpaceData[],
+  totalCount: number
 };
 
 export const ListFollowingSpaces = (props: Props) => {
-  const { spacesData } = props;
+  const { spacesData, totalCount } = props;
   const { query: { address: queryAddress } } = useRouter()
 
   const address = queryAddress as string
-  const totalCount = nonEmptyArr(spacesData) ? spacesData.length : 0;
 
   const title = isMyAddress(address)
     ? `My Subscriptions (${totalCount})`
@@ -34,8 +34,9 @@ export const ListFollowingSpaces = (props: Props) => {
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <DataList
+      <PaginatedList
         title={title}
+        totalCount={totalCount}
         dataSource={spacesData}
         renderItem={(item, index) => (
           <ViewSpace {...props} key={index} spaceData={item} preview withFollowButton />
@@ -57,15 +58,18 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
 }
 
 ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address } } = props;
+  const { query } = props;
+  const { address } = query
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial;
 
   // TODO sort space ids in a about order (don't forget to sort by id.toString())
   const followedSpaceIds = await substrate.spaceIdsFollowedByAccount(address as string)
-  const spacesData = await subsocial.findPublicSpaces(followedSpaceIds);
+  const pageIds = getPageOfIds(followedSpaceIds, query)
+  const spacesData = await subsocial.findPublicSpaces(pageIds);
 
   return {
+    totalCount: followedSpaceIds.length,
     spacesData
   };
 };
@@ -108,4 +112,3 @@ export const buildFollowedItems = (followedSpacesData: SpaceData[]): PageLink[] 
     page: [ '/spaces/[spaceId]', spaceUrl(struct) ],
     icon: <span className='SpaceMenuIcon'><BaseAvatar address={struct.owner} avatar={content?.image} size={24} /></span>
   }))
-

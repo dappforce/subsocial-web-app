@@ -1,7 +1,7 @@
 import React from 'react';
-import DataList from '../utils/DataList';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from '../posts/view-post/PostPreview';
+import DataList from '../lists/DataList';
 
 type Props = {
   postsData: PostWithAllDetails[]

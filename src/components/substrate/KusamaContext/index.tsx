@@ -9,8 +9,8 @@ import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
 import { Tag } from 'antd'
 import { hexToString } from '@polkadot/util'
-import DataList from '../../utils/DataList'
 import styles from './index.module.scss'
+import DataList from 'src/components/lists/DataList'
 
 type Members = {
   council: AnyAccountId[],

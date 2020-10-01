@@ -5,13 +5,13 @@ import { Segment } from 'src/components/utils/Segment';
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import { useRouter } from 'next/router';
-import DataList from '../utils/DataList';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { hexToBn } from '@polkadot/util';
 import { registry } from '@subsocial/types/substrate/registry';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
 import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
+import DataList from '../lists/DataList';
 
 const { TabPane } = Tabs
 

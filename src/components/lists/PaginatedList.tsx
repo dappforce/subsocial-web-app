@@ -1,57 +1,47 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash.isempty';
 import { List } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
-import Section from './Section';
+import Section from 'src/components/utils/Section';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
-import NoData from './EmptyList';
-import { newLogger } from '@subsocial/utils';
+import NoData from 'src/components/utils/EmptyList';
 // import { newLogger } from '@subsocial/utils';
-// TODO use logger
-const log = newLogger(DataList.name)
+import Link from 'next/link';
+
+// const log = newLogger(DataList.name)
 
 type Props<T extends any> = {
-  className?: string,
+  totalCount?: number,
   dataSource: T[], // TODO add generic type
   renderItem: (item: T, index: number) => JSX.Element,
   title?: React.ReactNode,
   noDataDesc?: React.ReactNode,
   noDataExt?: React.ReactNode,
-  paginationOff?: boolean
+  paginationOff?: boolean,
+  className?: string
 }
 
-type PaginationQuery = {
-  size?: number | string,
-  page?: number | string
-}
+export function PaginatedList<T extends any> (props: Props<T>) {
+  const { dataSource = [], totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
 
-// TODO rename to DataList
-export function DataList<T extends any> (props: Props<T>) {
-  const { dataSource, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
-  const total = dataSource.length;
+  const total = totalCount || dataSource.length
 
   const router = useRouter();
-  const { address, ...routerQuery } = router.query;
 
-  const setRouterQuery = ({ size, page }: PaginationQuery) => {
-    if (size) {
-      routerQuery.size = size.toString()
-    }
-
-    if (page) {
-      routerQuery.page = page.toString()
-    }
-
-    router.replace(
-      { pathname: router.pathname, query: routerQuery },
-      { pathname: router.asPath.split('?')[0], query: routerQuery },
-      { shallow: true }
-    ).catch(log.error);
-  }
+  const { query, pathname, asPath } = router
+  const { address, ...routerQuery } = query;
 
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
+
+  const getLinksParams = useCallback((page: number, size?: number) => {
+    const query = `page=${page}&size=${size || pageSize}`
+    return {
+      href: `${pathname}?${query}`,
+      as: `${asPath.split('?')[0]}?${query}`
+    }
+  }, [ pathname, asPath, currentPage ])
 
   useEffect(() => {
     let isSubscribe = true;
@@ -75,44 +65,52 @@ export function DataList<T extends any> (props: Props<T>) {
   }, [ false ]);
 
   const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
-  const hasNoData = total === 0;
-  const noPagination = hasNoData || total <= pageSize || paginationOff;
+  const hasData = total > 0;
+  const noPagination = !hasData || total <= pageSize || paginationOff;
 
   const paginationConfig = (): PaginationConfig | undefined => {
     if (noPagination) return undefined
 
     return {
       current: currentPage,
+      total,
       defaultCurrent: DEFAULT_FIRST_PAGE,
       onChange: page => {
         setCurrentPage(page);
-        setRouterQuery({ page })
       },
       pageSize,
       pageSizeOptions,
-      showSizeChanger: total > 0,
+      showSizeChanger: hasData,
       onShowSizeChange: (_, size: number) => {
         setPageSize(size);
-        setRouterQuery({ size })
+        const { href, as } = getLinksParams(currentPage, size)
+        router.push(href, as)
       },
-      style: { marginBottom: '1rem' }
+      style: { marginBottom: '1rem' },
+      itemRender: (page, type, original) => type === 'page'
+        ? <Link {...getLinksParams(page)}>
+          <a>
+            {page}
+          </a>
+        </Link>
+        : original
     }
   }
 
-  const list = hasNoData
-    ? <NoData description={noDataDesc}>{noDataExt}</NoData>
-    : <List
+  const list = hasData
+    ? <List
       className={'DfDataList ' + className}
       itemLayout='vertical'
       size='large'
       pagination={paginationConfig()}
       dataSource={dataSource}
       renderItem={(item, index) =>
-        <List.Item key={index}>
+        <List.Item key={`${new Date().getTime()}-${index}`}>
           {renderItem(item, index)}
         </List.Item>
       }
     />
+    : <NoData description={noDataDesc}>{noDataExt}</NoData>
 
   const renderTitle = () =>
     <div className='DfTitle--List'>{title}</div>
@@ -122,4 +120,4 @@ export function DataList<T extends any> (props: Props<T>) {
     : <Section title={renderTitle()}>{list}</Section>
 }
 
-export default DataList
+export default PaginatedList

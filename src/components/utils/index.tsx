@@ -10,6 +10,7 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
+import { hexToBn } from '@polkadot/util'
 export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
@@ -124,5 +125,13 @@ export const calcVotingPercentage = (upvotesCount: BN, downvotesCount: BN) => {
     };
   }
 };
+
+export const resolveBn = (value: BN) => {
+  try {
+    return new BN(value)
+  } catch {
+    return hexToBn(value.toString())
+  }
+}
 
 export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'

@@ -2,7 +2,6 @@ import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithSomeDetails } from '@subsocial/types';
 import React, { useState } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
-import DataList from '../utils/DataList';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
 import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice';
@@ -12,6 +11,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 import { LoadingOutlined } from '@ant-design/icons';
 import { MutedDiv } from '../utils/MutedText';
 import { isFakeId } from './helpers';
+import DataList from '../lists/DataList';
 
 const log = newLogger('CommentTree')
 
@@ -31,7 +31,6 @@ type CommentsTreeProps = {
 const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, rootPost, space }) => {
   return nonEmptyArr(comments) ? <DataList
     dataSource={comments}
-    paginationOff
     renderItem={(item) => {
       const { post: { struct } } = item;
       const key = `comment-${struct.id.toString()}`
