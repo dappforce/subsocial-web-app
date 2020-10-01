@@ -23,7 +23,7 @@ type Props<T extends any> = {
 }
 
 export function PaginatedList<T extends any> (props: Props<T>) {
-  const { dataSource, totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
+  const { dataSource = [], totalCount, renderItem, className, title, noDataDesc = null, noDataExt, paginationOff = false } = props;
 
   const total = totalCount || dataSource.length
 

@@ -65,9 +65,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
 
   // TODO sort space ids in a about order (don't forget to sort by id.toString())
   const followedSpaceIds = await substrate.spaceIdsFollowedByAccount(address as string)
-  console.log('followedSpaceIds', followedSpaceIds)
   const pageIds = getPageOfIds(followedSpaceIds, query)
-  console.log('pageIds', pageIds)
   const spacesData = await subsocial.findPublicSpaces(pageIds);
 
   return {
@@ -114,4 +112,3 @@ export const buildFollowedItems = (followedSpacesData: SpaceData[]): PageLink[] 
     page: [ '/spaces/[spaceId]', spaceUrl(struct) ],
     icon: <span className='SpaceMenuIcon'><BaseAvatar address={struct.owner} avatar={content?.image} size={24} /></span>
   }))
-

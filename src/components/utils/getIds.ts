@@ -19,7 +19,7 @@ export const getPageOfIds = (ids: BN[], query: ParsedUrlQuery) => {
   const pageOfIds = []
 
   for (let i = offset; i < offset + size; i++) {
-    pageOfIds.push(ids[offset + i])
+    pageOfIds.push(ids[i])
   }
   return pageOfIds
 }
