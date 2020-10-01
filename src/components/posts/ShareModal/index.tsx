@@ -98,26 +98,24 @@ const InnerShareModal = (props: Props) => {
       )
     }
 
-    return <div className='DfShareModalBody'>
-      <span className='mr-3'>
-        Share the post to your space:
-        {' '}
+    return <div className={styles.DfShareModalBody}>
+      <span className={styles.DfShareModalSelector}>
         <SelectSpacePreview
-          spaceIds={spaceIds}
+          spaceIds={spaceIds || []}
           onSelect={saveSpace}
           imageSize={24}
           defaultValue={spaceId?.toString()}
         />
       </span>
 
-      <form className='my-2'>
+      <form style={{margin: '0.75rem 0'}}>
         <Controller
           control={control}
           as={<DfMdEditor />}
           options={{ autofocus: true }}
           name={Fields.body}
           value={body}
-          className={errors[Fields.body] && 'error'}
+          className={`${errors[Fields.body] && 'error'} ${styles.DfShareModalMdEditor}`}
         />
         <div className='DfError'>
           <ErrorMessage errors={errors} name={Fields.body} />

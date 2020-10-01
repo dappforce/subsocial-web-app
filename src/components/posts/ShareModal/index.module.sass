@@ -1,7 +1,16 @@
 @import 'src/styles/subsocial-vars.scss'
 
+.DfShareModalBody
+  \:global .DfSegment
+    margin: 0
+
 .DfShareModal
-  margin-top: 3rem
-  min-width: $min_width_content
-  max-width: $max_width_content
   width: $max_width_content !important
+
+.DfShareModalSelector
+  display: flex
+  align-items: center
+
+.DfShareModalMdEditor
+  .CodeMirror
+    height: 5rem
