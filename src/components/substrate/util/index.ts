@@ -3,7 +3,7 @@ import { Text, GenericAccountId, Option } from '@polkadot/types'
 import { AccountId } from '@polkadot/types/interfaces'
 import AbstractInt from '@polkadot/types/codec/AbstractInt'
 import { AddressProps } from 'src/components/profiles/address-views/utils/types'
-import { toShortAddress } from 'src/components/utils'
+import { toShortAddress, resolveBn } from 'src/components/utils'
 import { Codec } from '@polkadot/types/types'
 import { SubstrateId, AnyAccountId } from '@subsocial/types'
 import { SubmittableResult } from '@polkadot/api'
@@ -56,7 +56,7 @@ export const getSpaceId = async (idOrHandle: string, subsocial?: SubsocialApi): 
     const { substrate } = subsocial || await getSubsocialApi()
     return substrate.getSpaceIdByHandle(handle)
   } else {
-    return new BN(idOrHandle)
+    return resolveBn(idOrHandle)
   }
 }
 
