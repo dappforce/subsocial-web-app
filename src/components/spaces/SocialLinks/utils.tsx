@@ -47,18 +47,34 @@ export const getLinkIcon = (brand?: LinkLabel) => {
   }
 }
 
-const socialLinksRegExp: Record<SocialBrand, RegExp> = {
-  Facebook: /(?:https?:\/\/)?(?:www\.)?(?:facebook|fb|m\.facebook)\.(?:com|me)/i,
-  Twitter: /(?:https?:\/\/)?(?:www\.)?(?:twitter)\.(?:com)/i,
-  Medium: /(?:https?:\/\/)?(?:www\.)?(?:medium)\.(?:com)/i,
-  LinkedIn: /(?:https?:\/\/)?(?:www\.)?(?:linkedin)\.(?:com)/i,
-  GitHub: /(?:https?:\/\/)?(?:www\.)?(?:github)\.(?:com)/i,
-  Instagram: /(?:https?:\/\/)?(?:www\.)?(?:instagram)\.(?:com)/i,
-  Telegram: /(?:https?:\/\/)?(?:www\.)?(?:telegram|t|)\.(?:com|me)/i
+const socialLinksRegExp: Record<SocialBrand, RegExp[]> = {
+  Facebook: [
+    /(https?:\/\/)?(w{3}\.)?facebook\.com/iy,
+    /(https?:\/\/)?(w{3}\.)?(facebook|fb)\.me/iy
+  ],
+  Twitter: [
+    /(https?:\/\/)?(w{3}\.)?twitter\.com/iy
+  ],
+  Medium: [
+    /(https?:\/\/)?(w{3}\.)?medium\.com/iy
+  ],
+  LinkedIn: [
+    /(https?:\/\/)?(w{3}\.)?linkedin\.com\/in/iy
+  ],
+  GitHub: [
+    /(https?:\/\/)?(w{3}\.)?github\.com/iy
+  ],
+  Instagram: [
+    /(https?:\/\/)?(w{3}\.)?instagram\.com/iy
+  ],
+  Telegram: [
+    /(https?:\/\/)?(w{3}\.)?telegram\.com/iy,
+    /(https?:\/\/)?(w{3}\.)?(telegram|t)\.me/iy
+  ]
 }
 
 const isSocialBrandLink = (brand: SocialBrand, link: string): boolean => {
-  return socialLinksRegExp[brand].test(link)
+  return !!socialLinksRegExp[brand].filter(x => x.test(link)).length
 }
 
 export const getLinkBrand = (link: string): SocialBrand | undefined => {
