@@ -5,13 +5,13 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { CreateSpaceButton } from './helpers';
-import { getSpacePageOfIds, resolveNextSpaceId } from '../utils/getIds';
+import { getPageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/getIds';
 import BN from 'bn.js'
 import { ZERO, resolveBn } from '../utils';
 import { PaginatedList } from '../lists/PaginatedList';
 
 type Props = {
-  spacesData?: SpaceData[],
+  spacesData?: SpaceData[]
   totalSpaceCount?: BN
 }
 
@@ -49,8 +49,8 @@ const ListAllSpacesPage: NextPage<Props> = (props) => {
   const title = getTitle(resolveBn(totalSpaceCount))
 
   return <>
-      <HeadMeta title={title} desc='Discover and follow interesting spaces on Subsocial.' />
-      <ListAllSpaces {...props} />
+    <HeadMeta title={title} desc='Discover and follow interesting spaces on Subsocial.' />
+    <ListAllSpaces {...props} />
   </>
 }
 
@@ -60,12 +60,13 @@ ListAllSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { substrate } = subsocial
 
   const nextSpaceId = await substrate.nextSpaceId()
-  const spaceIds = await getSpacePageOfIds(nextSpaceId, query)
+  const spaceIds = await getPageOfSpaceIds(nextSpaceId, query)
   const spacesData = await subsocial.findPublicSpaces(spaceIds)
+  const totalSpaceCount = approxCountOfPublicSpaces(nextSpaceId)
 
   return {
     spacesData,
-    totalSpaceCount: resolveNextSpaceId(nextSpaceId)
+    totalSpaceCount
   }
 }
 
