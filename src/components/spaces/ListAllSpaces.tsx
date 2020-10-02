@@ -5,7 +5,7 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { CreateSpaceButton } from './helpers';
-import { getPageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/getIds';
+import { getReversePageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/getIds';
 import BN from 'bn.js'
 import { ZERO, resolveBn } from '../utils';
 import { PaginatedList } from '../lists/PaginatedList';
@@ -60,7 +60,7 @@ ListAllSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { substrate } = subsocial
 
   const nextSpaceId = await substrate.nextSpaceId()
-  const spaceIds = await getPageOfSpaceIds(nextSpaceId, query)
+  const spaceIds = await getReversePageOfSpaceIds(nextSpaceId, query)
   const spacesData = await subsocial.findPublicSpaces(spaceIds)
   const totalSpaceCount = approxCountOfPublicSpaces(nextSpaceId)
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
-
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { LatestSpaces } from './LatestSpaces';
@@ -16,9 +15,6 @@ import { Tabs } from 'antd';
 import Section from '../utils/Section';
 
 const { TabPane } = Tabs
-
-const FIFTY = 50
-const MAX_TO_SHOW = 5
 
 type Props = {
   spacesData: SpaceData[]
@@ -61,22 +57,25 @@ const HomePage: NextPage<Props> = (props) => {
   </Section>
 }
 
+const LAST_ITEMS_SIZE = 5
+
 HomePage.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi();
   const { substrate } = subsocial
   const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const latestSpaceIds = getLastNSpaceIds(nextSpaceId, FIFTY);
+  const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE);
   const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
-  const spacesData = publicSpacesData.slice(0, MAX_TO_SHOW)
+  const spacesData = publicSpacesData.slice(0, LAST_ITEMS_SIZE)
 
-  const latestPostIds = getLastNIds(nextPostId, FIFTY);
+  const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE);
   const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds);
-  const [ visibleCommentData, visiblePostsData ] = partition(allPostsData, (x) => isComment(x.post.struct.extension))
+  const [ publicCommentData, publicPostsData ] =
+    partition(allPostsData, (x) => isComment(x.post.struct.extension))
 
-  const postsData = visiblePostsData.slice(0, MAX_TO_SHOW)
-  const commentData = visibleCommentData.slice(0, MAX_TO_SHOW)
+  const postsData = publicPostsData.slice(0, LAST_ITEMS_SIZE)
+  const commentData = publicCommentData.slice(0, LAST_ITEMS_SIZE)
 
   return {
     spacesData,

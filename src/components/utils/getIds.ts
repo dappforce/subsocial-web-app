@@ -13,8 +13,8 @@ export const getLastNIds = (nextId: BN, size: number): BN[] => {
 }
 
 export const getPageOfIds = (ids: BN[], query: ParsedUrlQuery) => {
-  const { size, page } = parsePageQuery(query)
-  const offset = size * (page - 1)
+  const { page, size } = parsePageQuery(query)
+  const offset = (page - 1) * size
   const pageOfIds = []
 
   for (let i = offset; i < offset + size; i++) {
@@ -27,21 +27,29 @@ export const getPageOfIds = (ids: BN[], query: ParsedUrlQuery) => {
 export const approxCountOfPublicSpaces = (nextId: BN) =>
   nextId.subn(lastReservedSpaceId + 1)
 
-export const getPageOfSpaceIds = (nextId: BN, query: ParsedUrlQuery) => {
-  const { size, page } = parsePageQuery(query)
-  const offset = size * (page - 1)
+const reverseClaimedSpaceIds = claimedSpaceIds.reverse()
+
+export const getReversePageOfSpaceIds = (nextId: BN, query: ParsedUrlQuery) => {
+  const { page, size } = parsePageQuery(query)
+  const offset = (page - 1) * size
   const nextPageId = nextId.subn(offset)
-  const ids = getLastNIds(nextPageId, size)
+  let ids = getLastNIds(nextPageId, size)
+
+  const lowId = ids[ids.length - 1]
+  // If there is a reserved space id among found ids:
+  if (lowId.lten(lastReservedSpaceId)) {
+    ids = ids.filter(id => id.gtn(lastReservedSpaceId))
+  }
 
   return ids.length < size
-    ? [ ...ids, ...claimedSpaceIds ]
+    ? [ ...ids, ...reverseClaimedSpaceIds ]
     : ids
 }
 
 export const getLastNSpaceIds = (nextId: BN, size: number): BN[] => {
   const spacesCount = approxCountOfPublicSpaces(nextId)
   const limit = spacesCount.lten(size) ? spacesCount.toNumber() : size
-  const spaceIds = [ ...claimedSpaceIds, ...getLastNIds(nextId, limit) ]
+  const spaceIds = [ ...getLastNIds(nextId, limit), ...reverseClaimedSpaceIds ]
 
   return spaceIds.slice(spaceIds.length - limit)
 }
