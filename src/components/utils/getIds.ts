@@ -5,7 +5,8 @@ import { parsePageQuery } from "../lists/utils";
 import { ParsedUrlQuery } from 'querystring';
 
 export const getLastNIds = (nextId: BN, size: number): BN[] => {
-  const idsCount = nextId.lten(size) ? nextId.toNumber() - 1 : size;
+  const idsCount = nextId.lten(size) ? nextId.toNumber() - 1 : size
+
   return new Array<BN>(idsCount)
     .fill(ZERO)
     .map((_, index) =>
@@ -48,8 +49,15 @@ export const getReversePageOfSpaceIds = (nextId: BN, query: ParsedUrlQuery) => {
 
 export const getLastNSpaceIds = (nextId: BN, size: number): BN[] => {
   const spacesCount = approxCountOfPublicSpaces(nextId)
-  const limit = spacesCount.lten(size) ? spacesCount.toNumber() : size
-  const spaceIds = [ ...getLastNIds(nextId, limit), ...reverseClaimedSpaceIds ]
+  const limit = spacesCount.ltn(size) ? spacesCount.toNumber() : size
+  let spaceIds = getLastNIds(nextId, limit)
+  
+  // We append ids of claimed spaces in case we found
+  // less number of the latest space ids than requested via `size` var.
+  if (spaceIds.length < size && reverseClaimedSpaceIds.length > 0) {
+    const claimedIds = reverseClaimedSpaceIds.slice(0, size - spaceIds.length)
+    spaceIds = spaceIds.concat(claimedIds)
+  }
 
-  return spaceIds.slice(spaceIds.length - limit)
+  return spaceIds.slice(0, limit)
 }
