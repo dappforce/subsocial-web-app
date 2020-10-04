@@ -6,6 +6,7 @@ import {
   LinkedinOutlined,
   GithubOutlined,
   InstagramOutlined,
+  YoutubeOutlined,
   SendOutlined,
   GlobalOutlined
 } from '@ant-design/icons'
@@ -17,6 +18,7 @@ type SocialBrand =
   'LinkedIn' |
   'GitHub' |
   'Instagram' |
+  'YouTube' |
   'Telegram'
 
 export type LinkLabel = SocialBrand | 'Website'
@@ -27,7 +29,8 @@ const brandsWithProfiles: SocialBrand[] = [
   'Medium',
   'LinkedIn',
   'GitHub',
-  'Instagram'
+  'Instagram',
+  'YouTube'
 ]
 
 export const hasSocialMediaProfiles = (brand: LinkLabel): boolean => {
@@ -42,6 +45,7 @@ export const getLinkIcon = (brand?: LinkLabel) => {
     case 'LinkedIn': return <LinkedinOutlined />
     case 'GitHub': return <GithubOutlined />
     case 'Instagram': return <InstagramOutlined />
+    case 'YouTube': return <YoutubeOutlined />
     case 'Telegram': return <SendOutlined />
     case 'Website': return <GlobalOutlined />
     default: return <GlobalOutlined />
@@ -77,6 +81,10 @@ const socialLinksRegExp: Record<SocialBrand, RegExp[]> = {
   Instagram: [
     newSocialLinkRegExp('instagram.com'),
     newSocialLinkRegExp('instagr.am')
+  ],
+  YouTube: [
+    newSocialLinkRegExp('youtube.com'),
+    newSocialLinkRegExp('youtu.be')
   ],
   Telegram: [
     newSocialLinkRegExp('t.me'),
