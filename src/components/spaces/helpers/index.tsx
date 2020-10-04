@@ -210,11 +210,14 @@ type HiddenSpaceAlertProps = BaseHiddenAlertProps & {
   space: Space
 }
 
-export const HiddenSpaceAlert = (props: HiddenSpaceAlertProps) => <HiddenAlert struct={props.space} type='space' {...props} />
+export const HiddenSpaceAlert = (props: HiddenSpaceAlertProps) =>
+  <HiddenAlert struct={props.space} type='space' {...props} />
 
-export const isHiddenSpace = (space: Space) => isHidden(space)
+export const isHiddenSpace = (space: Space) =>
+  isHidden(space)
 
-export const SpaceNotFound = () => <NoData description={'Space not found'} />
+export const SpaceNotFound = () =>
+  <NoData description={'Space not found'} />
 
 export const useLoadUnlistedSpace = (address: AnyAccountId) => {
   const isMySpace = isMyAddress(address)
@@ -262,12 +265,18 @@ type SpaceAvatarProps = BaseAvatarProps & {
   space: HasSpaceIdOrHandle
 }
 
-export const SpaceAvatar = (props: SpaceAvatarProps) => <ViewSpaceLink space={props.space} title={<BaseAvatar {...props} />} />
+export const SpaceAvatar = (props: SpaceAvatarProps) =>
+  <ViewSpaceLink space={props.space} title={<BaseAvatar {...props} />} />
 
 type AllSpacesLinkProps = BareProps & {
   title?: React.ReactNode
 }
 
-export const AllSpacesLink = ({ title = 'See all', ...otherProps }: AllSpacesLinkProps) => <Link href='/spaces/all' as='/spaces/all'>
-  <a className='DfGreyLink text-uppercase' style={{ fontSize: '1rem' }} {...otherProps}>{title}</a>
-</Link>
+export const AllSpacesLink = ({ title = 'See all', ...otherProps }: AllSpacesLinkProps) =>
+  <Link href='/spaces/all' as='/spaces/all'>
+    <a
+      className='DfGreyLink text-uppercase'
+      style={{ fontSize: '1rem' }}
+      {...otherProps}
+    >{title}</a>
+  </Link>
