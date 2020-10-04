@@ -22,7 +22,7 @@ import { UploadAvatar } from '../uploader'
 import { MailOutlined } from '@ant-design/icons'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
 import { resolveCidOfContent } from '@subsocial/api/utils'
-import { resolveContent } from '../utils/content'
+import { getNonEmptySpaceContent } from '../utils/content'
 import messages from 'src/messages'
 
 const log = newLogger('EditSpace')
@@ -114,7 +114,7 @@ export function InnerForm (props: FormProps) {
   }
 
   const fieldValuesToContent = (): Content =>
-    resolveContent(getFieldValues() as Content)
+    getNonEmptySpaceContent(getFieldValues() as Content)
 
   // TODO pin to IPFS only if JSON changed.
   const pinToIpfsAndBuildTxParams = () => getTxParams({
