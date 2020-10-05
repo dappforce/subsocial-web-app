@@ -7,7 +7,7 @@ import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
 import { pluralize } from '../utils/Plularize';
-import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO } from '../utils';
+import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
@@ -16,7 +16,6 @@ import { VoterButtons } from '../voting/VoterButtons';
 import { PostDropDownMenu } from '../posts/view-post';
 import { CommentBody } from './helpers';
 import { equalAddresses } from '../substrate';
-import BN from 'bn.js'
 import { postUrl } from '../urls';
 import { ShareDropdown } from '../posts/share/ShareDropdown';
 
@@ -52,7 +51,7 @@ export const ViewComment: FunctionComponent<Props> = ({
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies ] = useState(withShowReplies);
-  const [ repliesCount, setRepliesCount ] = useState(new BN(replies_count))
+  const [ repliesCount, setRepliesCount ] = useState(resolveBn(replies_count))
 
   const isFake = id.toString().startsWith('fake')
   const commentLink = postUrl(space, struct)
@@ -89,7 +88,7 @@ export const ViewComment: FunctionComponent<Props> = ({
       withCancel
     />}
     {/* {isReplies && <ViewRepliesLink />} */}
-    {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
+    {isReplies && showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
   </div> : null
 
   return <div className={isFake ? 'DfDisableLayout' : ''}>
