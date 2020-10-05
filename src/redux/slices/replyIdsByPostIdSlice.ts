@@ -70,7 +70,7 @@ export const commentSlice = createSlice({
   }
 });
 
-export const getComments = (store: Store, parentId: string): PostWithAllDetails[] => {
+export const getComments = (store: Store, parentId: string): PostWithAllDetails[] | undefined => {
   const { replyIdsByPostId, postById } = store
   const commentIds = replyIdsByPostId[parentId]
   const res = commentIds && postById
@@ -79,7 +79,7 @@ export const getComments = (store: Store, parentId: string): PostWithAllDetails[
         return postById[x]
       })
       .filter(x => x !== undefined)
-    : []
+    : undefined
   return res
 };
 
