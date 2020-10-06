@@ -23,7 +23,8 @@ const staticLinkLabels: LinkLabel[] = [
   'GitHub',
   'Facebook',
   'LinkedIn',
-  'Instagram'
+  'Instagram',
+  'YouTube'
 ]
 
 const resovleLabels = (links?: string[]) => {

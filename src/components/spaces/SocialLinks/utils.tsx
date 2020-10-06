@@ -1,3 +1,4 @@
+import { isEmptyStr } from '@subsocial/utils'
 import {
   FacebookOutlined,
   TwitterOutlined,
@@ -5,6 +6,7 @@ import {
   LinkedinOutlined,
   GithubOutlined,
   InstagramOutlined,
+  YoutubeOutlined,
   SendOutlined,
   GlobalOutlined
 } from '@ant-design/icons'
@@ -16,6 +18,7 @@ type SocialBrand =
   'LinkedIn' |
   'GitHub' |
   'Instagram' |
+  'YouTube' |
   'Telegram'
 
 export type LinkLabel = SocialBrand | 'Website'
@@ -26,7 +29,8 @@ const brandsWithProfiles: SocialBrand[] = [
   'Medium',
   'LinkedIn',
   'GitHub',
-  'Instagram'
+  'Instagram',
+  'YouTube'
 ]
 
 export const hasSocialMediaProfiles = (brand: LinkLabel): boolean => {
@@ -41,24 +45,60 @@ export const getLinkIcon = (brand?: LinkLabel) => {
     case 'LinkedIn': return <LinkedinOutlined />
     case 'GitHub': return <GithubOutlined />
     case 'Instagram': return <InstagramOutlined />
+    case 'YouTube': return <YoutubeOutlined />
     case 'Telegram': return <SendOutlined />
     case 'Website': return <GlobalOutlined />
     default: return <GlobalOutlined />
   }
 }
 
-const socialLinksRegExp: Record<SocialBrand, RegExp> = {
-  Facebook: /(?:https?:\/\/)?(?:www\.)?(?:facebook|fb|m\.facebook)\.(?:com|me)/i,
-  Twitter: /(?:https?:\/\/)?(?:www\.)?(?:twitter)\.(?:com)/i,
-  Medium: /(?:https?:\/\/)?(?:www\.)?(?:medium)\.(?:com)/i,
-  LinkedIn: /(?:https?:\/\/)?(?:www\.)?(?:linkedin)\.(?:com)/i,
-  GitHub: /(?:https?:\/\/)?(?:www\.)?(?:github)\.(?:com)/i,
-  Instagram: /(?:https?:\/\/)?(?:www\.)?(?:instagram)\.(?:com)/i,
-  Telegram: /(?:https?:\/\/)?(?:www\.)?(?:telegram|t|)\.(?:com|me)/i
+const linkPrefix = '^(https?:\/\/)?([a-z0-9-]+\.)?'
+
+const newSocialLinkRegExp = (brandDomain: string): RegExp => {
+  return new RegExp(linkPrefix + brandDomain)
+}
+
+const socialLinksRegExp: Record<SocialBrand, RegExp[]> = {
+  Facebook: [
+    newSocialLinkRegExp('facebook.com'),
+    newSocialLinkRegExp('fb.me'),
+    newSocialLinkRegExp('fb.com'),
+    newSocialLinkRegExp('facebook.me')
+  ],
+  Twitter: [
+    newSocialLinkRegExp('twitter.com')
+  ],
+  Medium: [
+    newSocialLinkRegExp('medium.com')
+  ],
+  LinkedIn: [
+    newSocialLinkRegExp('linkedin.com'),
+    newSocialLinkRegExp('linked.in')
+  ],
+  GitHub: [
+    newSocialLinkRegExp('github.com')
+  ],
+  Instagram: [
+    newSocialLinkRegExp('instagram.com'),
+    newSocialLinkRegExp('instagr.am')
+  ],
+  YouTube: [
+    newSocialLinkRegExp('youtube.com'),
+    newSocialLinkRegExp('youtu.be')
+  ],
+  Telegram: [
+    newSocialLinkRegExp('t.me'),
+    newSocialLinkRegExp('telegram.me')
+  ]
 }
 
 const isSocialBrandLink = (brand: SocialBrand, link: string): boolean => {
-  return socialLinksRegExp[brand].test(link)
+  if (isEmptyStr(link)) {
+    return false
+  }
+
+  link = link.trim().toLowerCase()
+  return !!socialLinksRegExp[brand].find(r => r.test(link))
 }
 
 export const getLinkBrand = (link: string): SocialBrand | undefined => {

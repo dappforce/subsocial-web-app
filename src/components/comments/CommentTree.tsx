@@ -1,6 +1,6 @@
 import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithSomeDetails } from '@subsocial/types';
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
@@ -45,31 +45,40 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
   if (isFakeId(props.parent)) return null
 
-  const [ isLoading, setIsLoading ] = useState(parentIdStr.startsWith('fake'))
-  const [ replyComments, setComments ] = useState<PostWithSomeDetails[]>(replies || []);
   const dispatch = useDispatch()
 
+  const [ isLoading, setIsLoading ] = useState(true)
+  const [ replyComments, setComments ] = useState(replies || []);
+
   useSubsocialEffect(({ subsocial, substrate }) => {
+    if (!isLoading) return;
+
+    let isSubscribe = true
 
     const loadComments = async () => {
-      setIsLoading(true)
       const replyIds = await substrate.getReplyIdsByPostId(parentId);
-      const comments = await subsocial.findPostsWithAllDetails({ ids: replyIds }) as any;
+      const comments = await subsocial.findPostsWithAllDetails({ ids: replyIds }) || [];
       const replyIdsStr = replyIds.map(x => x.toString())
-      setComments(comments)
       const reply = { replyId: replyIdsStr, parentId: parentIdStr }
-      useSetReplyToStore(dispatch, { reply, comment: comments })
-      setIsLoading(false)
+
+      if (isSubscribe) {
+        setComments(comments)
+        useSetReplyToStore(dispatch, { reply, comment: comments })
+      }
     }
 
     if (nonEmptyArr(replyComments)) {
       const replyIds = replyComments.map(x => x.post.struct.id.toString())
       useSetReplyToStore(dispatch, { reply: { replyId: replyIds, parentId: parentIdStr }, comment: replyComments })
     } else {
-      loadComments().catch(err => log.error('Failed to load comments: %o', err))
+      loadComments()
+        .then(() => isSubscribe && setIsLoading(false))
+        .catch(err => log.error('Failed to load comments: %o', err))
     }
 
-  }, [ dispatch ]);
+    return () => { isSubscribe = false }
+
+  }, [ false ]);
 
   return isLoading
     ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined className='mr-1' /> Loading replies...</MutedDiv>
@@ -81,7 +90,7 @@ export const CommentsTree = (props: LoadProps) => {
 
   const comments = useSelector((store: Store) => getComments(store, parentId.toString()));
 
-  return nonEmptyArr(comments)
+  return useMemo(() => nonEmptyArr(comments)
     ? <ViewCommentsTree {...props} comments={comments} />
-    : <DynamicCommentsTree {...props} />
+    : <DynamicCommentsTree {...props} />, [ comments.length ])
 }
