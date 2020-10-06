@@ -9,7 +9,7 @@ import Error from 'next/error';
 import React, { useCallback } from 'react';
 import { Segment } from 'src/components/utils/Segment';
 
-import { isHidden } from '../utils';
+import { isHidden, resolveBn } from '../utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
 import MyEntityLabel from '../utils/MyEntityLabel';
@@ -173,10 +173,23 @@ export const ViewSpace = (props: Props) => {
 // TODO extract getInitialProps, this func is similar in AboutSpace
 
 const ViewSpacePage: NextPage<Props> = (props) => {
-  const { about, name, image } = props.spaceData?.content || {} as SpaceContent
+  const { spaceData } = props
+
+  if (!spaceData || !spaceData.content) {
+    return null
+  }
+
+  const id = resolveBn(spaceData.struct.id)
+  const { about, name, image } = spaceData.content
+  
+  // Simple check (should be imroved later)
+  const isPolkaProject = id.eqn(1) || (id.gtn(1000) && id.ltn(1218))
+
+  // Need to add this to a title to improve SEO of Polkadot projects.
+  const title = name + (isPolkaProject ? ' - Polkadot ecosystem projects' : '')
 
   return <>
-    <HeadMeta title={name} desc={mdToText(about)} image={image} />
+    <HeadMeta title={title} desc={mdToText(about)} image={image} />
     <ViewSpace {...props} />
   </>
 }
