@@ -35,9 +35,9 @@ import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
 import { mdToText } from 'src/utils';
-import AccountSpaces from '../spaces/AccountSpaces';
+import { AccountSpaces } from '../spaces/AccountSpaces';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
-// import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
+import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -120,10 +120,10 @@ const Component = (props: Props) => {
             <span className='d-flex align-items-center'>
               <Name owner={owner} address={address} className='mr-3' />
               <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+              <KusamaRolesTags address={address} />
             </span>
             <DropDownMenu />
           </h1>
-          {/* <KusamaRolesTags address={address} /> */}
           <MutedDiv>
             {'Address: '}
             <CopyAddress address={address}>
@@ -134,7 +134,7 @@ const Component = (props: Props) => {
           <MutedDiv>{`Reputation: ${reputation}`}</MutedDiv>
           <div className='about'>
             {about && <DfMd className='mt-3' source={about} />}
-            {/* <KusamaIdentity address={address} /> */}
+            <KusamaIdentity address={address} />
           </div>
           <div className='mt-3'>
             <span onClick={() => hasFollowers && setFollowersOpen(true)} className={`${!hasFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
@@ -190,7 +190,7 @@ ProfilePage.getInitialProps = async (props): Promise<any> => {
     return { statusCode: 404 }
   }
 
-  const addressStr = address as string
+  const addressStr = accountId as string
 
   const owner = await subsocial.findProfile(addressStr)
   const mySpaceIds = await substrate.spaceIdsByOwner(addressStr)

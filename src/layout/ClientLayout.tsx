@@ -6,14 +6,14 @@ import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContex
 import { AuthProvider } from '../components/auth/AuthContext';
 import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate';
 import { ResponsiveSizeProvider } from 'src/components/responsive';
-// import { KusamaProvider } from 'src/components/substrate/KusamaContext';
+import { KusamaProvider } from 'src/components/substrate/KusamaContext';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   return (
     <ResponsiveSizeProvider >
       <SidebarCollapsedProvider>
         <SubstrateProvider>
-          {/* <KusamaProvider> */}
+          <KusamaProvider>
           <SubstrateWebConsole />
           <SubsocialApiProvider>
             <MyAccountProvider>
@@ -24,7 +24,7 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
               </AuthProvider>
             </MyAccountProvider>
           </SubsocialApiProvider>
-          {/* </KusamaProvider> */}
+          </KusamaProvider>
         </SubstrateProvider>
       </SidebarCollapsedProvider>
     </ResponsiveSizeProvider>

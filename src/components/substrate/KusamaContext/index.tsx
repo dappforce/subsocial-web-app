@@ -217,14 +217,15 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
   }, [ connect ])
 
   useEffect(() => {
-    if (apiState === 'READY' || !api) return
+    if (!api) return
 
     const loadMembers = async () => {
-      const council = await api.query.council.members()
-      const technicalCommittee = await api.query.technicalCommittee.members()
-      const validators = await api.query.session.validators()
+      const readyApi = await api.isReady
+      const council = await readyApi.query.council.members()
+      const technicalCommittee = await readyApi.query.technicalCommittee.members()
+      const validators = await readyApi.query.session.validators()
 
-      const properties = await api.rpc.system.properties()
+      const properties = await readyApi.rpc.system.properties()
 
       kusamaRegistry.setChainProperties(properties)
 
@@ -254,7 +255,7 @@ export const KusamaRolesTags = ({ address }: KusamaBareProps) => {
   const roles = whoIAm(address)
 
   return <>
-    {roles.map(role => <Tag key={role} color='blue' className='ml-3'>{role}</Tag>)}
+    {roles.map(role => <Tag key={role} color='blue' className='mr-3'>{role}</Tag>)}
   </>
 }
 
