@@ -9,10 +9,12 @@ import { PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
 import { useIsSignIn } from '../auth/MyAccountContext';
-import { MyFeed } from '../activity/MyFeed';
 import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
 import { Tabs } from 'antd';
 import Section from '../utils/Section';
+import dynamic from 'next/dynamic';
+
+const MyFeed = dynamic(() => import('../activity/MyFeed'), { ssr: false });
 
 const { TabPane } = Tabs
 
