@@ -109,6 +109,15 @@ pre {
 /* Other Styles */
 /* ---------------------------------------- */
 
+.header {
+  margin: 0;
+  line-height: normal;
+  display: flex !important;
+  align-items: center;
+  font-size: $font_big;
+  font-weight: 600;
+}
+
 .DfSideBar {
   .ant-drawer-content-wrapper {
     width: 275px !important;
@@ -337,15 +346,6 @@ pre {
     display: flex;
     align-items: center;
   }
-}
-
-.header {
-  margin: 0;
-  line-height: normal;
-  display: flex !important;
-  align-items: center;
-  font-size: $font_big;
-  font-weight: 600;
 }
 
 .ProfileDetails {
