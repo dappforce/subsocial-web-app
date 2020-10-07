@@ -170,14 +170,15 @@ export const ViewSpace = (props: Props) => {
 
   return <>
     <HiddenSpaceAlert space={space} />
-    <div className='ViewSpaceWrapper'>
+    <div>
       <PageContent>
         <Section>{renderPreview()}</Section>
-        <Section className='DfContentPage mt-3'>
+        <Section className='DfContentPage mt-4'>
           <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
         </Section>
       </PageContent>
-    </div></>
+    </div>
+  </>
 }
 
 // TODO extract getInitialProps, this func is similar in AboutSpace
