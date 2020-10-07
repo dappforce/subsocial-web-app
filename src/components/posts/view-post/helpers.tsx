@@ -28,7 +28,7 @@ import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
-import { postUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
+import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
 import { ShareDropdown } from '../share/ShareDropdown';
 
 type DropdownProps = {
@@ -61,7 +61,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ space
   const menu = (
     <Menu>
       {isMyPost && <Menu.Item key={`edit-${postKey}`}>
-        <Link href='/[spaceId]/posts/[postId]/edit' as={postUrl(space, post, '/edit')}>
+        <Link href='/[spaceId]/posts/[postId]/edit' as={editPostUrl(space, post)}>
           <a className='item'>Edit post</a>
         </Link>
       </Menu.Item>}
