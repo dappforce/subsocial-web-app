@@ -85,7 +85,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
     </Menu>
   )
 
-  return <div>
+  return <div className='text-nowrap'>
     <Dropdown overlay={menu} placement='bottomRight' className='mx-2'>
       <EllipsisOutlined />
     </Dropdown>
