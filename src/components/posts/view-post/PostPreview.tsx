@@ -4,6 +4,7 @@ import { PostWithSomeDetails, PostWithAllDetails, SpaceData } from '@subsocial/t
 import { PostExtension } from '@subsocial/types/substrate/classes';
 import { Segment } from 'src/components/utils/Segment';
 import { isSharedPost, withSubscribedPost } from './helpers';
+
 export type BarePreviewProps = {
   withActions?: boolean,
   replies?: PostWithAllDetails[],
