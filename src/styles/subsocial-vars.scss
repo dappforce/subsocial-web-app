@@ -22,7 +22,7 @@ $space_huge: 2rem;
 $color_page_bg: #fafafa;
 $color_font_normal: #222222;
 $color_muted: #888;
-$color_link: #1890ff;
+$color_link: #bd018b;
 $color_secondary: #595959;
 $color_light_border: #ddd;
 $color_volcano: #fa541c;
@@ -37,6 +37,8 @@ $shadow: 0 0 5px 2px #eeecec !important;
 $height_top_menu: 64px;
 $border_radius_normal: 4px;
 $width_panel: 300px;
+$min_width_content: 428px;
+$max_width_content: calc(680px + #{$space_normal} * 2);
 
 // $font_family_title: 'PT Serif', Georgia, serif;
 // $font_family_title: 'Noto Serif', Georgia, serif;

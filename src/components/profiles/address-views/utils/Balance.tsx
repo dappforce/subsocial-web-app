@@ -21,12 +21,17 @@ function format (value: Compact<any> | BN | string, currency: string, withSi?: b
     return formatBalance(value);
   }
 
-  return <>{prefix}{!isShort && (<>.<span className='ui--FormatBalance-postfix'>{`000${postfix || ''}`.slice(-3)}</span></>)} {currency}</>;
+  return <>{prefix}{!isShort && (<>.<span className='DfBalanceDecimals'>{`000${postfix || ''}`.slice(-3)}</span></>)}&nbsp;{currency}</>;
+}
+
+export const FormatBalance = (value: Compact<any> | BN | string) => {
+  const currency = formatBalance.getDefaults().unit
+  return format(value, currency)
 }
 
 const useGetBalance = (address: AnyAccountId) => {
   const [ balance, setBalance ] = useState<BN>()
-  const [ currency ] = useState(formatBalance.getDefaults().unit);
+
   useSubsocialEffect(({ substrate }) => {
     let unsub: (() => void) | undefined;
     let isSubscribe = true
@@ -46,9 +51,11 @@ const useGetBalance = (address: AnyAccountId) => {
       unsub && unsub()
       isSubscribe = false
     }
-  })
+  }, [ address ])
 
   if (!balance) return null
+
+  const currency = formatBalance.getDefaults().unit
 
   return format(balance, currency)
 }

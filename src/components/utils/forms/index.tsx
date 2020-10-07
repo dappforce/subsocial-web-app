@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Field, ErrorMessage, FormikErrors, FormikTouched } from 'formik';
 import { nonEmptyStr } from '@subsocial/utils';
 
@@ -12,7 +12,7 @@ export type FieldNames<FormValues = FormValuesType> = {
 
 type LabelledProps<FormValues = FormValuesType> = {
   className?: string
-  style?: Record<string, any>
+  style?: CSSProperties
   name?: keyof FormValues,
   label?: React.ReactNode,
   invisibleLabel?: boolean,

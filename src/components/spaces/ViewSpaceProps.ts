@@ -4,13 +4,14 @@ import { SpaceData, PostWithSomeDetails, ProfileData } from '@subsocial/types/dt
 import { PostId } from '@subsocial/types/substrate/interfaces'
 
 export type ViewSpaceProps = {
-  preview?: boolean
   nameOnly?: boolean
+  miniPreview?: boolean
+  preview?: boolean
   dropdownPreview?: boolean
   withLink?: boolean
-  miniPreview?: boolean
-  previewDetails?: boolean
   withFollowButton?: boolean
+  withTags?: boolean
+  withStats?: boolean
   id?: BN
   spaceData?: SpaceData
   owner?: ProfileData,

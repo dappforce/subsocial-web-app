@@ -14,6 +14,7 @@ const fieldLen = 24 - labelLen
 const commonFormProps: FormProps = {
   size: 'large',
   labelCol: { span: labelLen },
+  labelAlign: 'left',
   wrapperCol: { span: fieldLen }
 }
 
@@ -38,7 +39,7 @@ const TxButton = dynamic(
 )
 
 export const DfForm = (props: FormProps) =>
-  <Form {...commonFormProps} {...props} className={styles.DfForm}>
+  <Form validateTrigger={[ 'onBlur' ]} {...commonFormProps} {...props} className={styles.DfForm}>
     {props.children}
   </Form>
 

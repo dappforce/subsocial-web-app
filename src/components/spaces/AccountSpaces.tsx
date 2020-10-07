@@ -1,0 +1,167 @@
+import React, { useState } from 'react';
+import { ViewSpace } from './ViewSpace';
+import PaginatedList from 'src/components/lists/PaginatedList';
+import { NextPage } from 'next';
+import { HeadMeta } from '../utils/HeadMeta';
+import { SpaceData } from '@subsocial/types/dto';
+import { SpaceId } from '@subsocial/types/substrate/interfaces'
+import { getSubsocialApi } from '../utils/SubsocialConnect';
+import useSubsocialEffect from '../api/useSubsocialEffect';
+import { isMyAddress, useMyAddress } from '../auth/MyAccountContext';
+import { Loading } from '../utils';
+import { CreateSpaceButton } from './helpers';
+import { newLogger } from '@subsocial/utils';
+import { AnyAccountId } from '@subsocial/types';
+import { return404 } from '../utils/next';
+import { getPageOfIds } from '../utils/getIds';
+import { useRouter } from 'next/router';
+import DataList from '../lists/DataList';
+
+type LoadSpacesType = {
+  spacesData: SpaceData[]
+  mySpaceIds: SpaceId[]
+
+}
+
+type BaseProps = {
+  address: AnyAccountId
+}
+
+type LoadSpacesProps = LoadSpacesType & BaseProps
+
+type Props = Partial<LoadSpacesType> & BaseProps
+
+const log = newLogger('AccountSpaces')
+
+export const useLoadAccoutPublicSpaces = (address?: AnyAccountId): LoadSpacesProps | undefined => {
+
+  if (!address) return undefined
+
+  const { query } = useRouter()
+  const [ state, setState ] = useState<LoadSpacesProps>()
+
+  useSubsocialEffect(({ subsocial, substrate }) => {
+    const loadMySpaces = async () => {
+      const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
+      const pageIds = getPageOfIds(mySpaceIds, query)
+      const spacesData = await subsocial.findPublicSpaces(pageIds)
+
+      setState({ mySpaceIds, spacesData, address })
+    }
+
+    loadMySpaces().catch((err) => log.error('Failed load my spaces. Error: %', err))
+
+  }, [ address ])
+
+  return state
+}
+
+const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
+  const isMySpaces = isMyAddress(address as string)
+  const [ myUnlistedSpaces, setMyUnlistedSpaces ] = useState<SpaceData[]>()
+
+  useSubsocialEffect(({ subsocial }) => {
+    if (!isMySpaces) return setMyUnlistedSpaces([])
+
+    subsocial.findUnlistedSpaces(mySpaceIds)
+      .then(setMyUnlistedSpaces).catch((err) => log.error('Failed load Unlisted spaces. Error: %', err))
+
+  }, [ mySpaceIds.length, isMySpaces ])
+
+  return {
+    isLoading: !myUnlistedSpaces,
+    myUnlistedSpaces: myUnlistedSpaces || []
+  }
+}
+
+const SpacePreview = (space: SpaceData) =>
+  <ViewSpace
+    key={`space-${space.struct.id.toString()}`}
+    spaceData={space}
+    withFollowButton
+    preview
+  />
+
+const PublicSpaces = ({ spacesData , mySpaceIds, address }: LoadSpacesProps) => {
+  const noSpaces = !mySpaceIds.length
+  const totalCount = mySpaceIds.length
+  const isMy = isMyAddress(address)
+
+  return <PaginatedList
+    title={<span className='d-flex justify-content-between align-items-center w-100 my-2'>
+      <span>{`Public Spaces (${totalCount})`}</span>
+      {!noSpaces && isMy && <CreateSpaceButton />}
+    </span>}
+    totalCount={totalCount}
+    dataSource={spacesData}
+    renderItem={SpacePreview}
+    noDataDesc='No public spaces found'
+    noDataExt={noSpaces && isMy &&
+      <CreateSpaceButton>
+        Create my first space
+      </CreateSpaceButton>
+    }
+  />
+}
+
+const UnlistedSpaces = (props: LoadSpacesProps) => {
+  const { myUnlistedSpaces, isLoading } = useLoadUnlistedSpaces(props)
+
+  if (isLoading) return <Loading />
+
+  const unlistedSpacesCount = myUnlistedSpaces.length
+  return unlistedSpacesCount ? <DataList
+    title={`Unlisted Spaces (${unlistedSpacesCount})`}
+    dataSource={myUnlistedSpaces}
+    renderItem={SpacePreview}
+  /> : null
+}
+
+export const AccountSpaces = (props: Props) => {
+  const state = props.mySpaceIds
+    ? props as LoadSpacesProps
+    : useLoadAccoutPublicSpaces(props.address)
+
+  if (!state) return <Loading label='Loading public spaces'/>
+
+  return <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
+      <PublicSpaces {...state} />
+      <UnlistedSpaces {...state} />
+    </div>
+}
+
+export const AccountSpacesPage: NextPage<Props> = (props: Props) => <>
+  <HeadMeta title='Spaces' desc={`Subsocial spaces owned by ${props.address}`} />
+  <AccountSpaces {...props} />
+</>
+
+AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
+  const { query } = props
+  const { address } = query
+  if (!address || typeof address !== 'string') {
+    return return404(props) as any
+  }
+
+  const subsocial = await getSubsocialApi()
+  const { substrate } = subsocial
+  const mySpaceIds = await substrate.spaceIdsByOwner(address)
+  const pageIds = getPageOfIds(mySpaceIds, query)
+  const spacesData = await subsocial.findPublicSpaces(pageIds)
+
+  return {
+    spacesData,
+    mySpaceIds,
+    address
+  }
+}
+
+export const ListMySpaces = () => {
+  const address = useMyAddress()
+  const state = useLoadAccoutPublicSpaces(address)
+
+  return state
+    ? <AccountSpaces {...state} />
+    : <Loading label='Loading your spaces' />
+}
+
+export default AccountSpacesPage

@@ -1,9 +1,9 @@
 import React from 'react'
 import { OnBoardingMobileCard } from '../onboarding'
 import Section from '../utils/Section'
-import { isBrowser } from 'react-device-detect'
 import { Affix } from 'antd'
 import { useAuth } from '../auth/AuthContext'
+import { useResponsiveSize } from '../responsive'
 
 type Props = {
   leftPanel?: React.ReactNode,
@@ -12,8 +12,9 @@ type Props = {
 }
 export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, className, children }) => {
   const { state: { showOnBoarding } } = useAuth()
+  const { isNotMobile } = useResponsiveSize()
   const isPanels = leftPanel || rightPanel
-  return isBrowser
+  return isNotMobile
     ? <div className='d-flex w-100'>
       {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
       <Section className={`DfMainContent ${className}`}>{children}</Section>

@@ -9,8 +9,8 @@ import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
 import { Tag } from 'antd'
 import { hexToString } from '@polkadot/util'
-import ListData from '../../utils/DataList'
 import styles from './index.module.scss'
+import DataList from 'src/components/lists/DataList'
 
 type Members = {
   council: AnyAccountId[],
@@ -217,7 +217,7 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
   }, [ connect ])
 
   useEffect(() => {
-    if (!api) return
+    if (apiState === 'READY' || !api) return
 
     const loadMembers = async () => {
       const council = await api.query.council.members()
@@ -282,7 +282,7 @@ export const KusamaIdentity = ({ address }: KusamaBareProps) => {
 
   return <div className={styles.KusamaIdentitySection}>
     <h3 className='mb-0'>Kusama identity</h3>
-    <ListData
+    <DataList
       dataSource={identityInfoKeys}
       renderItem={key => details[key] ? <div key={key}>{`${key.toUpperCase()}: ${details[key]}`}</div> : <></>}
     />

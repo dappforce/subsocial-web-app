@@ -4,7 +4,6 @@ export const ElasticIndex = {
   profiles: 'subsocial_profiles',
   spaces: 'subsocial_spaces',
   posts: 'subsocial_posts'
-  // comments: 'subsocial_comments'
 };
 
 export const AllElasticIndexes = [
@@ -16,7 +15,8 @@ export const AllElasticIndexes = [
 export const ElasticFields = {
   space: {
     name: 'name',
-    desc: 'desc',
+    handle: 'handle',
+    about: 'about',
     tags: 'tags'
   },
   post: {
@@ -28,8 +28,7 @@ export const ElasticFields = {
     body: 'body'
   },
   profile: {
-    handle: 'handle',
-    fullname: 'fullname',
+    name: 'name',
     about: 'about'
   }
 }

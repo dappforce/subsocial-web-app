@@ -1,63 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
+import React, { useCallback } from 'react';
 import { hexToBn } from '@polkadot/util';
 import { useMyAddress } from '../auth/MyAccountContext';
-import { Activity } from '@subsocial/types/offchain';
-import NoData from '../utils/EmptyList';
 import NotAuthorized from '../auth/NotAuthorized';
 import { getNewsFeed } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
-import Section from '../utils/Section';
-import { PostPreviewList } from '../posts/view-post/PostPreviewList';
-import { Loading } from '../utils';
+import { InfiniteList } from '../lists/InfiniteList';
+import PostPreview from '../posts/view-post/PostPreview';
+import { PostWithAllDetails } from '@subsocial/types';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 
-export const MyFeed = () => {
+type MyFeedProps = {
+  withTitle?: boolean
+}
+
+export const MyFeed = ({ withTitle }: MyFeedProps) => {
   const myAddress = useMyAddress()
+  const { subsocial, isApiReady } = useSubsocialApi()
 
-  const [ items, setItems ] = useState<Activity[]>([]);
-  const [ offset, setOffset ] = useState(0);
-  const [ hasMore, setHasMore ] = useState(true);
+  const getNextPage = useCallback(async (page: number, size: number) => {
+    if (!myAddress || !isApiReady) return undefined
 
-  useEffect(() => {
-    if (!myAddress) return;
+    const offset = (page - 1) * size
 
-    getNextPage(0).catch(err => new Error(err));
-  }, [ myAddress ]);
+    const activity = await getNewsFeed(myAddress, offset, size);
+    const postIds = activity.map(x => hexToBn(x.post_id))
+
+    return subsocial.findPublicPostsWithAllDetails(postIds)
+  }, [ myAddress, isApiReady ]);
 
   if (!myAddress) return <NotAuthorized />;
 
-  const getNextPage = async (actualOffset: number = offset) => {
-    const isFirstPage = actualOffset === 0;
-    const data = await getNewsFeed(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
-    if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
-    setItems(isFirstPage ? data : items.concat(data));
-    setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
-  };
-
-  const totalCount = items && items.length;
-
-  const postIds = items.map(x => hexToBn(x.post_id))
-
-  const renderInfiniteScroll = () =>
-    <InfiniteScroll
-      dataLength={totalCount}
-      next={getNextPage}
-      hasMore={hasMore}
-      // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
-      loader={<Loading />}
-    >
-      <PostPreviewList postIds={postIds} />
-    </InfiniteScroll>
-
   return <>
     <HeadMeta title='My Feed' />
-    <Section title={`My Feed (${totalCount})`}>
-      {totalCount === 0
-        ? <NoData description='Your feed is empty' />
-        : renderInfiniteScroll()
-      }
-    </Section>
+    <InfiniteList
+      dataSource={[] as PostWithAllDetails[]}
+      title={withTitle ? 'My feed' : undefined}
+      noDataDesc='No posts in your feed yet'
+      renderItem={(x, i) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+      loadMore={getNextPage}
+      resetTriggers={[ isApiReady ]}
+      initialLoad
+    />
   </>
 }
 

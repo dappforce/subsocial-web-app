@@ -5,7 +5,6 @@ import { registry } from '@subsocial/types/substrate/registry';
 import { newLogger, notDef } from '@subsocial/utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import TxButton from './TxButton';
-import { Loading } from '.';
 import AccountId from '@polkadot/types/generic/AccountId';
 
 const log = newLogger('FollowAccountButton')
@@ -42,23 +41,26 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
 
   const buildTxParams = () => [ accountId ]
 
-  return <span className={className}>{notDef(isFollower)
-    ? <Loading />
-    : <TxButton
-      className='DfFollowAccountButton'
-      type='primary'
-      ghost={isFollower}
-      label={isFollower
-        ? 'Unfollow'
-        : 'Follow'}
-      tx={isFollower
-        ? `profileFollows.unfollowAccount`
-        : `profileFollows.followAccount`}
-      params={buildTxParams}
-      onSuccess={() => setIsFollower(!isFollower)}
-      withSpinner
-    />
-  }</span>
+  const loading = notDef(isFollower)
+
+  const label = isFollower
+    ? 'Unfollow'
+    : 'Follow'
+
+  return <span className={className}><TxButton
+    className='DfFollowAccountButton'
+    type='primary'
+    loading={loading}
+    ghost={isFollower}
+    label={loading ? undefined : label }
+    tx={isFollower
+      ? `profileFollows.unfollowAccount`
+      : `profileFollows.followAccount`}
+    params={buildTxParams}
+    onSuccess={() => setIsFollower(!isFollower)}
+    withSpinner
+  />
+  </span>
 }
 
 export default FollowAccountButton;

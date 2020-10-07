@@ -1,7 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
 import { isEmptyStr, nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
-import { summarize } from './text';
+import { summarize } from 'src/utils';
+import { resolveIpfsUrl } from 'src/ipfs';
 
 type HeadMetaProps = {
   title: string,
@@ -30,9 +31,12 @@ export const createTitle = (title: string) => {
   return `${leftPart} - Subsocial`;
 };
 
+const DEFAULT_SUBSOCIAL_IMG = '/subsocial-sign.png'
+
 export function HeadMeta (props: HeadMetaProps) {
-  const { title, desc = DEFAULT_DESC, image = '/subsocial-sign.png', canonical, tags } = props;
+  const { title, desc = DEFAULT_DESC, image, canonical, tags } = props;
   const summary = summarize(desc, MAX_DESC_LEN);
+  const img = image ? resolveIpfsUrl(image) : DEFAULT_SUBSOCIAL_IMG
 
   return <div>
     <Head>
@@ -41,12 +45,13 @@ export function HeadMeta (props: HeadMetaProps) {
       {nonEmptyArr(tags) && <meta name="keywords" content={tags?.join(', ')} />}
 
       <meta property='og:site_name' content={SITE_NAME} />
-      <meta property='og:image' content={image} />
+      <meta property='og:image' content={img} />
       <meta property='og:title' content={title} />
       <meta property='og:description' content={summary} />
 
+      <meta name='twitter:card' content='summary' />
       <meta name='twitter:site' content={SITE_NAME} />
-      <meta name='twitter:image' content={image} />
+      <meta name='twitter:image' content={img} />
       <meta name='twitter:title' content={title} />
       <meta name='twitter:description' content={summary} />
     </Head>

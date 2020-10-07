@@ -7,16 +7,21 @@ import { withLoadedOwner, withMyProfile } from '../profiles/address-views/utils/
 import { InfoDetails } from '../profiles/address-views';
 import { AccountMenu } from 'src/components/profile-selector/AccountMenu';
 
-export const SelectAddressPreview: React.FunctionComponent<AddressProps> = ({
+type SelectAddressType = AddressProps & {
+  withShortAddress?: boolean
+}
+
+export const SelectAddressPreview: React.FunctionComponent<SelectAddressType> = ({
   address,
-  owner
+  owner,
+  withShortAddress
 }) => (
   <div className='DfChooseAccount'>
     <div className='DfAddressIcon d-flex align-items-center'>
       <Avatar address={address} avatar={owner?.content?.avatar} />
     </div>
     <div className='DfAddressInfo ui--AddressComponents'>
-      <Address asLink={false} owner={owner} address={address} />
+      <Address asLink={false} owner={owner} address={address} withShortAddress={withShortAddress} />
       <InfoDetails address={address} />
     </div>
   </div>
@@ -26,14 +31,18 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   address,
   owner
 }) => {
-  const struct = owner?.struct;
-  const reputation = struct?.reputation
   const menu = (
-    <AccountMenu address={address} reputation={reputation || 0}/>
+    <AccountMenu />
   );
 
-  return <Dropdown overlay={menu} trigger={[ 'click', 'hover' ]} overlayStyle={{ width: '366px' }}>
-    <span className='DfCurrentAddress icon'><SelectAddressPreview address={address} owner={owner} /></span>
+  return <Dropdown
+    overlay={menu}
+    trigger={[ 'click' ]}
+    overlayStyle={{ maxWidth: '366px' }}
+  >
+    <span className='DfCurrentAddress icon'>
+      <SelectAddressPreview address={address} owner={owner} />
+    </span>
   </Dropdown>
 }
 

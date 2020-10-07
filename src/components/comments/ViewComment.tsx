@@ -7,18 +7,17 @@ import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
 import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
 import { pluralize } from '../utils/Plularize';
-import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO } from '../utils';
+import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils';
 import moment from 'moment-timezone';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
-import { postUrl } from '../utils/urls';
-import SharePostAction from '../posts/SharePostAction';
 import { NewComment } from './CreateComment';
 import { VoterButtons } from '../voting/VoterButtons';
 import { PostDropDownMenu } from '../posts/view-post';
 import { CommentBody } from './helpers';
 import { equalAddresses } from '../substrate';
-import BN from 'bn.js'
+import { postUrl } from '../urls';
+import { ShareDropdown } from '../posts/share/ShareDropdown';
 
 type Props = {
   rootPost?: Post,
@@ -43,7 +42,8 @@ export const ViewComment: FunctionComponent<Props> = ({
 
   const {
     id,
-    created: { account, time },
+    created: { time },
+    owner: commentOwnerAddress,
     score,
     replies_count
   } = struct
@@ -51,7 +51,7 @@ export const ViewComment: FunctionComponent<Props> = ({
   const [ showEditForm, setShowEditForm ] = useState(false);
   const [ showReplyForm, setShowReplyForm ] = useState(false);
   const [ showReplies ] = useState(withShowReplies);
-  const [ repliesCount, setRepliesCount ] = useState(new BN(replies_count))
+  const [ repliesCount, setRepliesCount ] = useState(resolveBn(replies_count))
 
   const isFake = id.toString().startsWith('fake')
   const commentLink = postUrl(space, struct)
@@ -75,9 +75,9 @@ export const ViewComment: FunctionComponent<Props> = ({
   } */
 
   const isReplies = repliesCount.gt(ZERO)
-  const isShowChild = showReplyForm || showReplies || isReplies;
+  const isShowChildren = showReplyForm || showReplies || isReplies
 
-  const ChildPanel = isShowChild ? <div>
+  const ChildPanel = isShowChildren ? <div>
     {showReplyForm &&
     <NewComment
       post={struct}
@@ -88,7 +88,7 @@ export const ViewComment: FunctionComponent<Props> = ({
       withCancel
     />}
     {/* {isReplies && <ViewRepliesLink />} */}
-    {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
+    {isReplies && showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
   </div> : null
 
   return <div className={isFake ? 'DfDisableLayout' : ''}>
@@ -99,11 +99,11 @@ export const ViewComment: FunctionComponent<Props> = ({
         <Button key={`reply-comment-${id}`} className='DfCommentAction' onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <SharePostAction postDetails={comment} className='DfCommentAction' />
+        <ShareDropdown postDetails={comment} space={space} className='DfCommentAction' />
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview
-          address={account}
+          address={commentOwnerAddress}
           owner={owner}
           isShort={true}
           isPadded={false}
@@ -114,7 +114,7 @@ export const ViewComment: FunctionComponent<Props> = ({
           }
           details={
             <span>
-              <Link href={commentLink}>
+              <Link href={commentLink} as={commentLink}>
                 <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
               </Link>
               {' · '}

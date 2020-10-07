@@ -59,7 +59,7 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
 
     useSubsocialEffect(({ subsocial }) => {
       const loadSpaces = async () => {
-        const spacesData = await subsocial.findVisibleSpaces(spaceIds)
+        const spacesData = await subsocial.findPublicSpaces(spaceIds)
         setCurrentSpacesData(spacesData)
       }
 

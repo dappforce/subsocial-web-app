@@ -14,6 +14,10 @@ body,
   font-size: $font_normal !important;
 }
 
+h1 { font-size: $space_huge; }
+
+h2 { font-size: $space_big; }
+
 h1,
 h2,
 h3,
@@ -28,6 +32,8 @@ pre {
   font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif;
 }
 
+// a { color: $color_link !important }
+
 /* Common Resusable Classes */
 /* ---------------------------------------- */
 
@@ -41,8 +47,12 @@ pre {
 }
 
 .DfBalance {
-  font-size: $font_small;
+  display: flex;
   color: $color_muted
+}
+
+.DfBalanceDecimals {
+  color: #999;
 }
 
 .ant-modal-body {
@@ -62,7 +72,7 @@ pre {
 }
 
 .DfBlackLink {
-  color: $color_font_normal;
+  color: $color_font_normal !important;
   @extend .DfLinkOnHover;
 }
 
@@ -93,11 +103,30 @@ pre {
 
 .DfProfileModalLink {
   @extend .DfGreyLink;
-  margin-right: $space_huge
+  margin-right: $space_big;
 }
 
 /* Other Styles */
 /* ---------------------------------------- */
+
+.DfSideBar {
+  .ant-drawer-content-wrapper {
+    width: 275px !important;
+  }
+
+  position: fixed;
+  z-index: 10;
+  top: $height_top_menu;
+  overflow: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.DfSideBar .am-drawer-sidebar {
+  background-color: #fff;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
 .ant-comment-content-author {
   // font-size: inherit;
@@ -128,7 +157,8 @@ pre {
 }
 
 .DfTags {
-  margin: $space_normal 0;
+  margin: 0;
+  margin-bottom: $space_normal;
   font-size: $font_small;
 
   .anticon {
@@ -161,7 +191,7 @@ pre {
 
 @media (min-width: 1200px) {
   .DfBrand {
-    font-size: $font_large;
+    font-size: $font_normal;
 
     img {
       max-width: 160px;
@@ -170,7 +200,8 @@ pre {
 }
 
 .DfBrand {
-  font-size: $font_big;
+  zoom: 0.7;
+  font-size: $font_normal;
   color: $color_secondary;
   cursor: pointer;
 
@@ -235,6 +266,7 @@ pre {
   margin-top: 0;
   margin-bottom: $space_normal !important;
   margin-right: $space_normal;
+  line-height: 1.25;
   color: $color_font_normal;
   font-size: 2.5rem;
   // font-weight: 700;
@@ -308,6 +340,8 @@ pre {
 }
 
 .header {
+  margin: 0;
+  line-height: normal;
   display: flex !important;
   align-items: center;
   font-size: $font_big;
@@ -316,7 +350,7 @@ pre {
 
 .ProfileDetails {
   display: flex !important;
-
+  align-items: center;
   .content {
     padding: 0 $space_small;
   }
@@ -350,6 +384,14 @@ pre {
       color: $color_font_normal;
     }
   }
+}
+
+.DfIdentityIcon {
+  margin-right: 0.5rem;
+  cursor: pointer !important;
+  border: 1px solid $color_light_border;
+  background: #fff;
+  border-radius: 100%;
 }
 
 .EditEntityBox {
@@ -447,15 +489,6 @@ hr {
   }
 }
 
-.Profile--actions {
-  margin-left: 3.5rem;
-
-  .DfCreateProfileButton {
-    margin-top: $space_normal;
-    text-align: initial;
-  }
-}
-
 .asLink {
   @extend .DfLinkOnHover;
 }
@@ -468,7 +501,7 @@ hr {
   margin-top: $space_small;
 
   .DfStatItem {
-    margin-right: $space_normal;
+    margin-right: $space_huge;
 
     &::last-child {
       margin-right: 0;
@@ -525,6 +558,7 @@ hr {
 .DfActionsPanel {
   width: 100%;
   display: flex;
+  align-items: center;
   justify-content: space-between;
 
   &.DfActionBorder {
@@ -557,6 +591,12 @@ hr {
   }
 }
 
+.DfSharedSummary {
+  .DfSummary {
+    margin: $space_tiny 0 $space_normal 0;
+  }
+}
+
 .DfSegment.DfPostPreview {
   padding-bottom: 0;
 
@@ -573,6 +613,10 @@ hr {
     .DfSegment {
       margin-bottom: 0;
       @extend .DfNoBoxShadow;
+    }
+
+    .DfSummary {
+      margin: $space_tiny 0 $space_normal 0;
     }
   }
 
@@ -622,12 +666,12 @@ hr {
 .DfGreyLink:hover {
   a {
     color: $color_muted !important;
-    text-decoration: underline !important;
+    text-decoration: underline;
     cursor: pointer;
   }
 
   color: $color_muted !important;
-  text-decoration: underline !important;
+  text-decoration: underline;
   cursor: pointer;
 }
 
@@ -653,6 +697,7 @@ hr {
 
 .Df--AddressComponents-details {
   color: $color_muted !important;
+  font-size: $font_small;
   font-weight: normal;
 }
 
@@ -716,11 +761,11 @@ hr {
   }
 }
 
-@media (min-width: 560px) {
+@media (min-width: 767px) {
   .DfSectionOuter {
-    min-width: 428px;
-    max-width: calc(680px + #{$space_normal} * 2);
-    width: calc(680px + #{$space_normal} * 2);
+    min-width: $min_width_content;
+    max-width: $max_width_content;
+    width: $max_width_content;
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 0;
@@ -795,6 +840,12 @@ hr {
   }
 }
 
+.markdown-body {
+  a {
+    color: $color_link !important;
+  }
+}
+
 .DfMdEditor {
   .CodeMirror-scroll {
     min-height: 5rem !important;
@@ -805,6 +856,10 @@ hr {
   }
 
   .markdown-body {
+    a {
+      color: $color_link !important;
+    }
+
     background-color: #fff !important;
     padding: $space_normal !important;
   }
@@ -936,13 +991,13 @@ hr {
 }
 
 .DfSideMenu--FollowedSpaces {
-  & .collapsed {
-    .ant-menu-item-group-list {
-      .content {
-        display: none;
-      }
+  .SpaceMenuIcon {
+    margin-left: -$space_mini;
+  }
 
-      margin-left: $space_small;
+  &.collapsed {
+    .MenuItemName {
+      display: none;
     }
   }
 
@@ -950,33 +1005,9 @@ hr {
   cursor: pointer;
 
   .ant-menu-item-group-title {
+    text-align: center;
     text-transform: uppercase;
     font-size: $font_small
-  }
-
-  .container.highlight {
-    margin-top: $space_tiny;
-    margin-right: $space_mini;
-  }
-
-  .content {
-    width: 80%;
-    display: flex;
-    align-items: center;
-
-    .handle {
-      padding: $space_tiny 0rem;
-    }
-  }
-}
-
-.DfSideMenu--FollowedSpaces.collapsed {
-  .ant-menu-item-group-list {
-    .content {
-      display: none;
-    }
-
-    margin-left: $space_small;
   }
 }
 
@@ -1016,12 +1047,12 @@ hr {
 
 .DfTopBar {
   width: 100%;
-  display: contents;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .DfSearchIcon {
     padding: $space_tiny;
-    margin-right: $space_tiny;
-    margin-top: 1.15rem;
     font-size: 1.3rem;
   }
 
@@ -1029,17 +1060,12 @@ hr {
     font-size: 1.3rem;
     padding-left: $space_tiny;
   }
+  .DfTopBar--leftContent,.DfTopBar--rightContent, .DfTopBar--search {
+    display: flex;
+    align-items: center;
+  }
 }
 
-.DfTopBar--search {
-  display: flex;
-  align-items: center;
-}
-
-.DfTopBar--rightContent {
-  display: -webkit-inline-box;
-  display: -moz-inline-box;
-}
 
 /* Fix syntax error in Markdown editor */
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
@@ -1053,7 +1079,7 @@ a.DfStatItem {
 .DfStatItem {
   font-size: $font_normal;
   display: inline;
-  margin-right: $space_tiny;
+  margin-right: $space_large;
 }
 
 .DfSpaceTitle {
@@ -1214,6 +1240,7 @@ a.DfStatItem {
 .ViewSpaceWrapper {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   width: 100%;
 }
 
@@ -1310,6 +1337,11 @@ a.DfStatItem {
   font-size: $font_normal;
 }
 
+.DfAddressInfo {
+  text-align: left;
+  width: 100%;
+}
+
 .DfChooseAccount {
   display: flex;
 
@@ -1320,7 +1352,6 @@ a.DfStatItem {
 
 .SelectAccountSection {
   max-height: 16rem;
-  overflow-y: auto;
 
   .SelectAccountItem {
     padding: $space_tiny;
@@ -1348,6 +1379,7 @@ a.DfStatItem {
 
 .DfCurrentAddress {
   display: flex;
+  cursor: pointer;
   margin: 0 1rem;
 
   &.icon {
@@ -1452,11 +1484,15 @@ a.DfStatItem {
 }
 
 .anticon-ellipsis.ant-dropdown-trigger {
-  font-size: $font_normal;
+  font-size: $font_normal + 0.25rem;
 }
 
 .DfCommentSection {
-  border-top: 1px solid $color_light_border;
+
+  &.TopBorder {
+    border-top: 1px solid $color_light_border;
+  }
+
   margin-bottom: $space_normal;
 
   h3 {
@@ -1498,6 +1534,7 @@ a.DfStatItem {
   @extend .DfBoxShadow;
   position: fixed;
   bottom: 0;
+  left: 0;
   width: 100%;
   display: flex;
   align-items: center;
@@ -1505,7 +1542,6 @@ a.DfStatItem {
   background: #fff;
   line-height: 0.6rem;
   padding: 1rem;
-  margin: 0 -1rem;
 }
 
 .DfButtonAsMenuItem {

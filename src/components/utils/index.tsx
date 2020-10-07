@@ -10,6 +10,7 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
+import { hexToBn } from '@polkadot/util'
 export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
@@ -75,12 +76,12 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
 export const fakeClientId = () => `fake-${new Date().getTime().toString()}`
 
 type VisibilityProps = {
-  struct: Post | Space,
+  struct: Post | Space
   address?: AnyAccountId
 }
 
-export const isVisible = ({ struct: { hidden, created: { account } }, address }: VisibilityProps) =>
-  !hidden.valueOf() || isMyAddress(address || account.toString())
+export const isVisible = ({ struct: { hidden, owner }, address }: VisibilityProps) =>
+  !hidden.valueOf() || isMyAddress(address || owner)
 
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
 
@@ -124,5 +125,13 @@ export const calcVotingPercentage = (upvotesCount: BN, downvotesCount: BN) => {
     };
   }
 };
+
+export const resolveBn = (value: BN | string) => {
+  try {
+    return new BN(value)
+  } catch {
+    return hexToBn(value.toString())
+  }
+}
 
 export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'

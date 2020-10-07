@@ -1,28 +1,38 @@
-import { isEmptyArray } from '@subsocial/utils';
+import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils';
 import { TagOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import Link from 'next/link';
 import React from 'react';
+import { BaseProps } from '@polkadot/react-identicon/types';
 
-type Props = {
+type ViewTagProps = {
+  tag?: string
+}
+
+const ViewTag = React.memo(({ tag }: ViewTagProps) =>
+  isEmptyStr(tag)
+    ? null
+    : <Tag key={tag} className='mt-2'>
+      <Link href='/search' as={`/search?tags=${tag}`}>
+        <a className='DfBlackLink'><TagOutlined />{tag}</a>
+      </Link>
+    </Tag>
+)
+
+type ViewTagsProps = BaseProps & {
   tags?: string[]
-  className?: string
 }
 
-export const ViewTags = ({ tags = [], className = '' }: Props) => {
-  if (isEmptyArray(tags)) return null
-
-  return (
-    <div className={`DfTags ${className}`}>
-      {tags.map(tag =>
-        <Tag key={tag}>
-          <Link href='/search' as={`/search?tags=${tag}`}>
-            <a><TagOutlined />{tag}</a>
-          </Link>
-        </Tag>
-      )}
+export const ViewTags = React.memo(({
+  tags = [],
+  className = '',
+  ...props
+}: ViewTagsProps) =>
+  isEmptyArray(tags)
+    ? null
+    : <div className={`DfTags ${className}`} {...props}>
+      {tags.filter(nonEmptyStr).map((tag, i) => <ViewTag key={`${tag}-${i}`} tag={tag} />)}
     </div>
-  )
-}
+)
 
 export default ViewTags

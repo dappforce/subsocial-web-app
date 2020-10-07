@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
-import BN from 'bn.js';
-
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { HeadMeta } from '../utils/HeadMeta';
 import { LatestSpaces } from './LatestSpaces';
@@ -10,19 +8,23 @@ import { SpaceData, PostWithAllDetails } from '@subsocial/types';
 import { PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
-import { ZERO } from '../utils';
+import { useIsSignIn } from '../auth/MyAccountContext';
+import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
+import { Tabs } from 'antd';
+import Section from '../utils/Section';
+import dynamic from 'next/dynamic';
 
-const RESERVED_SPACES = new BN(1000 + 1)
-const FIFTY = new BN(50);
-const MAX_TO_SHOW = 5;
+const MyFeed = dynamic(() => import('../activity/MyFeed'), { ssr: false });
+
+const { TabPane } = Tabs
 
 type Props = {
   spacesData: SpaceData[]
-  postsData: PostWithAllDetails[],
+  postsData: PostWithAllDetails[]
   commentData: PostWithAllDetails[]
 }
 
-const LatestUpdate: NextPage<Props> = (props: Props) => {
+const LatestUpdate = (props: Props) => {
   const { spacesData, postsData, commentData } = props;
 
   return (
@@ -35,37 +37,47 @@ const LatestUpdate: NextPage<Props> = (props: Props) => {
       <LatestPosts {...props} postsData={commentData} type='comment' />
       <LatestSpaces {...props} spacesData={spacesData} />
     </PageContent>
-
-  );
+  )
 }
 
-const getLastNIds = (nextId: BN, size: BN): BN[] => {
-  const idsCount = nextId.lte(size) ? nextId.toNumber() - 1 : size.toNumber();
-  return new Array<BN>(idsCount)
-    .fill(ZERO)
-    .map((_, index) =>
-      nextId.sub(new BN(index + 1)))
+const HomePage: NextPage<Props> = (props) => {
+  const isSignIn = useIsSignIn()
+  const defaultKey = isSignIn ? 'feed' : 'latest'
+  const [ key, setKey ] = useState<string>(defaultKey)
+
+  useEffect(() => setKey(defaultKey), [ isSignIn ])
+
+  return <Section className='m-0'>
+    <Tabs activeKey={key} onChange={setKey}>
+      <TabPane tab='My feed' key='feed'>
+        <MyFeed />
+      </TabPane>
+      <TabPane tab='Latest' key='latest'>
+        <LatestUpdate {...props} />
+      </TabPane>
+    </Tabs>
+  </Section>
 }
 
-LatestUpdate.getInitialProps = async (): Promise<Props> => {
+const LAST_ITEMS_SIZE = 5
+
+HomePage.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi();
   const { substrate } = subsocial
   const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const newSpaces = nextSpaceId.sub(RESERVED_SPACES)
-  const spaceLimit = newSpaces.lt(FIFTY) ? newSpaces : FIFTY
+  const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE);
+  const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
+  const spacesData = publicSpacesData.slice(0, LAST_ITEMS_SIZE)
 
-  const latestSpaceIds = getLastNIds(nextSpaceId, spaceLimit);
-  const visibleSpacesData = await subsocial.findVisibleSpaces(latestSpaceIds) as SpaceData[]
-  const spacesData = visibleSpacesData.slice(0, MAX_TO_SHOW)
+  const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE);
+  const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds);
+  const [ publicCommentData, publicPostsData ] =
+    partition(allPostsData, (x) => isComment(x.post.struct.extension))
 
-  const latestPostIds = getLastNIds(nextPostId, FIFTY);
-  const allPostsData = await subsocial.findVisiblePostsWithAllDetails(latestPostIds);
-  const [ visibleCommentData, visiblePostsData ] = partition(allPostsData, (x) => isComment(x.post.struct.extension))
-
-  const postsData = visiblePostsData.slice(0, MAX_TO_SHOW)
-  const commentData = visibleCommentData.slice(0, MAX_TO_SHOW)
+  const postsData = publicPostsData.slice(0, LAST_ITEMS_SIZE)
+  const commentData = publicCommentData.slice(0, LAST_ITEMS_SIZE)
 
   return {
     spacesData,
@@ -74,4 +86,4 @@ LatestUpdate.getInitialProps = async (): Promise<Props> => {
   }
 }
 
-export default LatestUpdate;
+export default HomePage;

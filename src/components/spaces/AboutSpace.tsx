@@ -1,10 +1,9 @@
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr } from '@subsocial/utils';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { NextPage } from 'next';
 import Error from 'next/error';
 import React, { useState } from 'react';
-import { isBrowser } from 'react-device-detect';
 
 import { AuthorPreview } from '../profiles/address-views';
 import { DfMd } from '../utils/DfMd';
@@ -15,7 +14,6 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { formatUnixDate } from '../utils';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
-import SpaceNav from './SpaceNav';
 import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import { PageContent } from '../main/PageWrapper';
@@ -35,14 +33,14 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const { owner } = props;
   const space = spaceData.struct;
-  const { created: { account, time } } = space;
+  const { created: { time }, owner: spaceOwnerAddress } = space;
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent);
-  const { name, desc, image, tags } = content;
+  const { name, about, image, tags } = content;
 
   const SpaceAuthor = () =>
     <AuthorPreview
-      address={account}
+      address={spaceOwnerAddress}
       owner={owner}
       withFollowButton
       isShort={true}
@@ -54,25 +52,20 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   // TODO extract WithSpaceNav
 
-  return <PageContent leftPanel={isBrowser &&
-    <SpaceNav
-      spaceData={spaceData}
-    />
-  }>
-    <HeadMeta title={title} desc={mdToText(desc)} image={image} />
-    <Section className='DfContentPage' level={1} title={title}>
-
-      <div className='DfRow mt-3'>
-        <SpaceAuthor />
-        <SpaceStatsRow space={space} />
-      </div>
-
-      {nonEmptyStr(desc) &&
-        <div className='DfBookPage'>
-          <DfMd source={desc} />
+  return <PageContent>
+    <HeadMeta title={title} desc={mdToText(about)} image={image} />
+      <Section className='DfContentPage' level={1} title={title}>
+        <div className='DfRow mt-3'>
+          <SpaceAuthor />
+          <SpaceStatsRow space={space} />
         </div>
-      }
-      <ViewTags tags={tags} />
+
+        {nonEmptyStr(about) &&
+          <div className='DfBookPage'>
+            <DfMd source={about} />
+          </div>
+        }
+        <ViewTags tags={tags} />
     </Section>
   </PageContent>
 }

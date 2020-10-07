@@ -26,6 +26,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 import { TxFailedCallback, TxCallback } from '../substrate/SubstrateTxButton';
 import { SpaceNotFound } from './helpers';
 import NoData from '../utils/EmptyList';
+import { resolveCidOfContent } from '@subsocial/api/utils';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -58,10 +59,12 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   } = values;
 
   const {
-    desc,
+    about,
     image,
     tags: spaceTags = [],
-    name
+    name,
+    email,
+    links
   } = json
 
   const getMaxId = (): number => {
@@ -139,7 +142,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   };
 
   const goToView = (id: BN) => {
-    Router.push('/spaces/' + id.toString()).catch(console.log);
+    Router.push('[spaceId]', '/' + id.toString()).catch(console.log);
   };
 
   const newTxParams = (hash: IpfsCid) => {
@@ -235,7 +238,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
             label={'Update Navigation'}
             disabled={!isValid || isSubmitting}
             params={() => getTxParams({
-              json: { name, desc, image, tags: spaceTags, navTabs },
+              json: { name, about, image, email, links, tags: spaceTags, navTabs },
               buildTxParamsCallback: newTxParams,
               setIpfsCid,
               ipfs
@@ -309,7 +312,9 @@ function LoadStruct (props: LoadStructProps) {
 
     if (!struct) return toggleTrigger();
 
-    ipfs.findSpace(struct.content.asIpfs.toString()).then(json => {
+    const cid = resolveCidOfContent(struct.content)
+
+    cid && ipfs.findSpace(cid).then(json => {
       setJson(json);
     }).catch(err => console.log(err));
   }, [ trigger ]);

@@ -21,15 +21,18 @@ import { Null } from '@polkadot/types'
 import DfMdEditor from '../utils/DfMdEditor'
 import SpacegedSectionTitle from '../spaces/SpacedSectionTitle'
 import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpaceFromUrl'
+import { UploadCover } from '../uploader'
+import { getNonEmptyPostContent } from '../utils/content'
+import messages from 'src/messages'
 
 const log = newLogger('EditPost')
 
 const TITLE_MIN_LEN = 3
 const TITLE_MAX_LEN = 100
 
-const BODY_MAX_LEN = 20_000
+const BODY_MAX_LEN = 100_000 // ~100k chars
 
-const MAX_TAGS = 5
+const MAX_TAGS = 10
 
 type Content = PostContent
 
@@ -90,10 +93,8 @@ export function InnerForm (props: FormProps) {
     }
   }
 
-  const fieldValuesToContent = (): Content => {
-    const { title, body, image, tags, canonical } = getFieldValues()
-    return { title, body, image, tags, canonical } as Content
-  }
+  const fieldValuesToContent = (): Content =>
+    getNonEmptyPostContent(getFieldValues() as Content)
 
   const pinToIpfsAndBuildTxParams = () => {
 
@@ -117,12 +118,16 @@ export function InnerForm (props: FormProps) {
   }
 
   const goToView = (postId: BN) => {
-    Router.push(`/spaces/${spaceId}/posts/${postId}`)
+    Router.push('/[spaceId]/posts/[postId]', `/${spaceId}/posts/${postId}`)
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
 
   const onBodyChanged = (mdText: string) => {
     form.setFieldsValue({ [fieldName('body')]: mdText })
+  }
+
+  const onAvatarChanged = (url?: string) => {
+    form.setFieldsValue({ [fieldName('image')]: url })
   }
 
   return <>
@@ -142,13 +147,10 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('image')}
-        label='Avatar URL'
-        hasFeedback
-        rules={[
-          { type: 'url', message: 'Should be a valid image URL.' }
-        ]}
+        label='Cover'
+        help={messages.imageShouldBeLessThanTwoMB}
       >
-        <Input type='url' placeholder='Image URL' />
+        <UploadCover onChange={onAvatarChanged} img={initialValues.image} />
       </Form.Item>
 
       <Form.Item
@@ -183,8 +185,8 @@ export function InnerForm (props: FormProps) {
 
       <Form.Item
         name={fieldName('canonical')}
-        label='Canonical URL'
-        help='Provide the original URL of this post if you are cross-posting it here'
+        label='Original URL'
+        help='This is the orginal URL of the place you first posted about this on another social media platform (i.e. Medium, Reddit, Twitter, etc.)'
         hasFeedback
         rules={[
           { type: 'url', message: 'Should be a valid URL.' }

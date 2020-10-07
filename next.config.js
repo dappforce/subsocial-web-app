@@ -9,15 +9,6 @@ const Dotenv = require('dotenv-webpack')
 // Required by Docker
 require('dotenv').config()
 
-// fix: prevents error when .css files are required by node
-if (typeof require !== 'undefined') {
-  require.extensions['.less'] = () => {}
-  require.extensions['.css'] = () => {}
-  require.extensions['.svg'] = () => {}
-  require.extensions['.gif'] = () => {}
-  require.extensions['.png'] = () => {}
-}
-
 const nextConfig = {
   target: 'server',
   webpack: (config, { isServer }) => {
@@ -50,6 +41,13 @@ const nextConfig = {
         use: 'raw-loader'
       },
       {
+        test: /\.md$/,
+        use: [
+          'html-loader',
+          'markdown-loader'
+        ]
+      },
+      {
         test: /\.(png|svg|eot|otf|ttf|woff|woff2|gif)$/,
         use: {
           loader: 'url-loader',
@@ -67,4 +65,28 @@ const nextConfig = {
   }
 }
 
-module.exports = withPlugins([ withImages ], nextConfig)
+module.exports = withPlugins([
+    withImages
+  ],
+  {
+  ...nextConfig,
+  async redirects() {
+    return [
+      {
+        source: '/spaces/:spaceId(@.*)/:details*',
+        destination: '/:spaceId/:details*',
+        permanent: true,
+      },
+      {
+        source: '/spaces/:spaceId(\\d{1,})/:details*',
+        destination: '/:spaceId/:details*',
+        permanent: true,
+      }
+      // {
+      //   source: '/spaces/:spaceId/:details*',
+      //   destination: '/:spaceId/:details*',
+      //   permanent: true,
+      // }
+    ]
+  }
+})

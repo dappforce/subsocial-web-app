@@ -1,10 +1,10 @@
 import React from 'react'
 import { Steps } from 'antd';
 import { useAuth, StepsEnum } from '../auth/AuthContext';
-import { isMobile } from 'react-device-detect';
 import { SignInButton } from '../auth/AuthButtons';
 import ButtonLink from '../utils/ButtonLink';
-import { NewSpaceButton } from '../spaces/helpers';
+import { CreateSpaceButton } from '../spaces/helpers';
+import { isMobileDevice } from 'src/config/Size.config';
 
 const { Step } = Steps;
 
@@ -18,7 +18,7 @@ type Props = {
   progressDot?: boolean
 }
 
-const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobile && mobileText) ? mobileText : text;
+const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobileDevice && mobileText) ? mobileText : text;
 
 type StepItem = {
   title: string,
@@ -42,8 +42,8 @@ export const OnBoardingButton = (props: ActionButtonProps) => {
 
   switch (step) {
     case StepsEnum.Login: return <SignInButton isPrimary />
-    case StepsEnum.GetTokens: return <ButtonLink block={block} type={asLink ? 'link' : 'primary'} href='/get-free-tokens' as='/get-free-tokens'>{title}</ButtonLink>
-    case StepsEnum.CreateSpace: return <NewSpaceButton block={block} type={asLink ? 'link' : 'primary'}>{title}</NewSpaceButton>
+    case StepsEnum.GetTokens: return <ButtonLink block={block} type={asLink ? 'link' : 'primary'} href='/faucet' as='/faucet'>{title}</ButtonLink>
+    case StepsEnum.CreateSpace: return <CreateSpaceButton block={block} type={asLink ? 'link' : 'primary'} ghost={false}>{title}</CreateSpaceButton>
     default: return null
   }
 }
@@ -60,7 +60,7 @@ export const stepItems: StepItem[] = [
     content: 'Get first tokens'
   },
   {
-    title: getMobilyFriendlyText('Create your space', 'Create space'),
+    title: getMobilyFriendlyText('Create my space', 'Create space'),
     key: 'spaces',
     content: 'Get first tokens'
   }

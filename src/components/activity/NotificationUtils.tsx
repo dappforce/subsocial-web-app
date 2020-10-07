@@ -1,13 +1,13 @@
 import React from 'react'
 import moment from 'moment-timezone';
-import ViewSpacePage from '../spaces/ViewSpace';
+import { ViewSpace } from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
-import { postUrl } from '../utils/urls';
+import { postUrl } from '../urls';
 
 export type EventsName = 'AccountFollowed'|
 'PostShared' | 'CommentShared' |
@@ -52,11 +52,11 @@ type PreviewNotification = {
 }
 
 const renderSubjectPreview = (title?: string, href: string = '') =>
-  nonEmptyStr(title) || nonEmptyStr(href) ? <Link href='/spaces/[spaceId]/posts/[postId]' as={href} ><a>{title}</a></Link> : null;
+  nonEmptyStr(title) || nonEmptyStr(href) ? <Link href='/[spaceId]/posts/[postId]' as={href} ><a>{title}</a></Link> : null;
 
 const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification => {
   const data = map.get(spaceId.toString())
-  return { preview: <ViewSpacePage spaceData={data} nameOnly withLink /> }
+  return { preview: <ViewSpace spaceData={data} nameOnly withLink /> }
 }
 
 const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification => {

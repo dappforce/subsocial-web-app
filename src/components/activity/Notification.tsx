@@ -31,6 +31,7 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
     const [ ownerById, setOwnerByIdMap ] = useState(new Map<string, ProfileData>())
 
     useSubsocialEffect(({ subsocial }) => {
+      let isSubscribe = true
       setLoaded(false);
 
       const ownerIds: string[] = []
@@ -46,7 +47,7 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
 
       const loadData = async () => {
         const ownersData = await subsocial.findProfiles(ownerIds);
-        const postsData = await subsocial.findVisiblePosts(postIds)
+        const postsData = await subsocial.findPublicPosts(postIds)
 
         function createMap<T extends AnySubsocialData> (data: T[], structName?: 'profile' | 'post') {
           const dataByIdMap = new Map<string, T>()
@@ -76,16 +77,18 @@ export function withLoadNotifications<P extends LoadProps> (Component: React.Com
           })
           return dataByIdMap;
         }
-        setPostByIdMap(createMap<PostData>(postsData, 'post'))
-        setOwnerByIdMap(createMap<ProfileData>(ownersData, 'profile'))
+        isSubscribe && setPostByIdMap(createMap<PostData>(postsData, 'post'))
+        isSubscribe && setOwnerByIdMap(createMap<ProfileData>(ownersData, 'profile'))
 
-        const spacesData = await subsocial.findVisibleSpaces(spaceIds)
-        setSpaceByIdMap(createMap<SpaceData>(spacesData))
+        const spacesData = await subsocial.findPublicSpaces(spaceIds)
+        isSubscribe && setSpaceByIdMap(createMap<SpaceData>(spacesData))
 
         setLoaded(true);
       }
 
       loadData().catch(err => new Error(err))
+
+      return () => { isSubscribe = false }
 
     }, [ false ])
 

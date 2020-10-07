@@ -3,7 +3,7 @@ import { Text, GenericAccountId, Option } from '@polkadot/types'
 import { AccountId } from '@polkadot/types/interfaces'
 import AbstractInt from '@polkadot/types/codec/AbstractInt'
 import { AddressProps } from 'src/components/profiles/address-views/utils/types'
-import { toShortAddress } from 'src/components/utils'
+import { toShortAddress, resolveBn } from 'src/components/utils'
 import { Codec } from '@polkadot/types/types'
 import { SubstrateId, AnyAccountId } from '@subsocial/types'
 import { SubmittableResult } from '@polkadot/api'
@@ -51,11 +51,12 @@ export function stringifyAddress<DFT> (value?: AnyAddress, _default?: DFT): stri
 
 export const getSpaceId = async (idOrHandle: string, subsocial?: SubsocialApi): Promise<BN | undefined> => {
   if (idOrHandle.startsWith('@')) {
-    const handle = idOrHandle.substring(1) // Drop '@'
+    // Drop '@' char and lowercase handle before searching for its space.
+    const handle = idOrHandle.substring(1).toLowerCase()
     const { substrate } = subsocial || await getSubsocialApi()
     return substrate.getSpaceIdByHandle(handle)
   } else {
-    return new BN(idOrHandle)
+    return resolveBn(idOrHandle)
   }
 }
 
@@ -98,8 +99,7 @@ type GetNameOptions = AddressProps & {
 export const getProfileName = (options: GetNameOptions) => {
   const { owner, isShort = true, address } = options
   return (
-    owner?.content?.fullname ||
-    owner?.profile?.handle ||
+    owner?.content?.name ||
     (isShort ? toShortAddress(address) : address)
   ).toString()
 }

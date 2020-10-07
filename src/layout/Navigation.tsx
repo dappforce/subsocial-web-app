@@ -1,19 +1,15 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
-import { Layout } from 'antd';
-import { isBrowser } from 'react-device-detect';
+import { Layout, Drawer } from 'antd';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { Drawer } from 'antd-mobile';
-import { newLogger } from '@subsocial/utils';
-import { isHomePage } from 'src/components/utils';
-import { ElasticNodeURL } from 'src/components/utils/env';
+import { elasticNodeURL } from 'src/components/utils/env';
 
-import Menu from './SideMenu';
 import dynamic from 'next/dynamic';
-const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
+import { useRouter } from 'next/router';
 
-const log = newLogger('Navigation')
+const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
+const Menu = dynamic(() => import('./SideMenu'), { ssr: false });
 
 const { Header, Sider, Content } = Layout;
 
@@ -21,63 +17,57 @@ interface Props {
   children: React.ReactNode;
 }
 
-log.debug('Are we in a browser?', isBrowser);
-
 const HomeNav = () => {
   const { state: { collapsed } } = useSidebarCollapsed();
   return <Sider
     className='DfSider'
-    width='255'
+    width='265'
     trigger={null}
     collapsible
     collapsed={collapsed}
-    defaultCollapsed={false}
   >
     <Menu />
   </Sider>;
 };
 
-const DefaultNav: FunctionComponent = ({ children }) => {
-  const { state: { collapsed }, toggle, hide } = useSidebarCollapsed();
+const DefaultNav: FunctionComponent = () => {
+  const { state: { collapsed }, hide } = useSidebarCollapsed();
+  const { asPath } = useRouter()
 
-  useEffect(() => hide(), [ false ])
+  useEffect(() => hide(), [ asPath ])
 
   return <Drawer
     className='DfSideBar'
-    enableDragHandle
-    contentStyle={{ color: '#a6a6a6', textAlign: 'center', paddingTop: 42 }}
-    sidebar={<div onMouseLeave={hide}><Menu /></div>}
-    open={!collapsed}
-    onOpenChange={toggle}
+    bodyStyle={{ padding: 0 }}
+    placement='left'
+    closable={false}
+    onClose={hide}
+    visible={!collapsed}
+    getContainer={false}
+    keyboard
   >
-    {children}
-  </Drawer>;
+    <Menu />
+  </Drawer>
 };
 
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props;
+  const { state: { asDrawer } } = useSidebarCollapsed()
 
-  const MainContent = () => <Content className='DfPageContent'>{children}</Content>;
+  const content = useMemo(() => <Content className='DfPageContent'>{children}</Content>, [ children ]);
 
   return <ReactiveBase
     className='fontSizeNormal'
-    url={ElasticNodeURL}
+    url={elasticNodeURL}
     app={AllElasticIndexes.join(',')}
   >
     <Layout>
       <Header className='DfHeader'>
         <TopMenu />
       </Header>
-      <Layout>
-        {isHomePage() && isBrowser
-          ? <>
-            <HomeNav />
-            <MainContent />
-          </>
-          : <DefaultNav>
-            <MainContent />
-          </DefaultNav>
-        }
+      <Layout className='ant-layout-has-sider'>
+        {asDrawer ? <DefaultNav /> : <HomeNav />}
+        {content}
       </Layout>
     </Layout>
   </ReactiveBase>;

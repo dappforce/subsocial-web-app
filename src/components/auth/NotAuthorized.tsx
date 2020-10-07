@@ -3,7 +3,7 @@ import NoData from '../utils/EmptyList';
 import { AuthorizationPanel } from './AuthorizationPanel';
 
 export const NotAuthorized = () =>
-  <NoData description='Only logged in users can access this page'>
+  <NoData description='Only signed in users can access this page'>
     <AuthorizationPanel />
   </NoData>
 

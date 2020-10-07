@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../utils/urls'
+import { HasSpaceIdOrHandle, HasPostId, postUrl } from '../urls'
 
 type Props = {
   space: HasSpaceIdOrHandle
@@ -21,7 +21,7 @@ export const ViewPostLink = ({
   if (!space.id || !post.id || !title) return null
 
   return (
-    <Link href='/spaces/[spaceId]/posts/[postId]' as={postUrl(space, post)}>
+    <Link href='/[spaceId]/posts/[postId]' as={postUrl(space, post)}>
       <a className={className} title={hint}>{title}</a>
     </Link>
   )

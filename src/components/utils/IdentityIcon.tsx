@@ -4,38 +4,34 @@
 
 import { IdentityProps as Props } from '@polkadot/react-identicon/types';
 
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React from 'react';
 import BaseIdentityIcon from '@polkadot/react-identicon';
-import ViewProfileLink from '../profiles/ViewProfileLink';
+import Avatar from 'antd/lib/avatar/avatar';
+import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
 
 export function getIdentityTheme (): 'substrate' {
   return 'substrate';
 }
 
-function IdentityIcon ({ className, prefix, size, theme, value }: Props): React.ReactElement<Props> {
-  const [ address ] = useState(value?.toString() || '');
+export function IdentityIcon ({ prefix, theme, value, size = DEFAULT_AVATAR_SIZE, ...props }: Props): React.ReactElement<Props> {
+  const address = value?.toString() || '';
   const thisTheme = theme || getIdentityTheme();
 
   return (
-    <span className={`ui--IdentityIcon-Outer ${className}`}>
-      <ViewProfileLink
-        account={{ address }}
-        title={<BaseIdentityIcon
-          isHighlight
-          prefix={prefix}
-          size={size}
-          theme={thisTheme as 'substrate'}
-          value={address}
-          style={{ cursor: 'pointer', marginRight: '.5rem' }}
-        />}
-      />
-    </span>
+    <Avatar
+      icon={<BaseIdentityIcon
+        isHighlight
+        prefix={prefix}
+        theme={thisTheme as 'substrate'}
+        value={address}
+        size={size - 2}
+        {...props}
+      />}
+      size={size}
+      className='DfIdentityIcon'
+      {...props}
+    />
   );
 }
 
-export default React.memo(styled(IdentityIcon)`
-  .ui--IdentityIcon {
-    display: block;
-  }
-`);
+export default IdentityIcon

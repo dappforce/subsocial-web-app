@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
-import { ViewSpace } from '../spaces/ViewSpace';
+import { DynamicViewSpace } from '../spaces/ViewSpace';
 import { Segment } from 'src/components/utils/Segment';
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
-import Router, { useRouter } from 'next/router';
-import ListData from '../utils/DataList';
+import { useRouter } from 'next/router';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import BN from 'bn.js';
+import { hexToBn } from '@polkadot/util';
 import { registry } from '@subsocial/types/substrate/registry';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
 import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
+import DataList from '../lists/DataList';
 
 const { TabPane } = Tabs
 
@@ -48,9 +48,9 @@ type Props = {
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
     case ElasticIndex.spaces:
-      return <ViewSpace id={new BN(res._id)} previewDetails withFollowButton />;
+      return <DynamicViewSpace id={hexToBn(res._id)} preview withFollowButton />;
     case ElasticIndex.posts:
-      return <DynamicPostPreview key={i} id={new BN(res._id)} withActions />;
+      return <DynamicPostPreview key={i} id={hexToBn(res._id)} withActions />;
     case ElasticIndex.profiles:
       return <Segment>
         <ProfilePreviewWithOwner
@@ -66,7 +66,7 @@ const resultToPreview = (res: DataResults, i: number) => {
 const Previews = (props: Props) => {
   const { results } = props;
   return <div className='DfBgColor'>
-    <ListData
+    <DataList
       dataSource={results}
       renderItem={(res, i) => resultToPreview(res, i)}
       noDataDesc='No results found'
@@ -88,16 +88,20 @@ const ResultsTabs = () => {
   const initialTabIndex = getTabIndexFromUrl();
   const initialTabKey = panes[initialTabIndex].key;
   const { tags, spaceId } = router.query;
+
   const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
 
   const handleTabChange: OnTabChangeFn = (key) => {
     setActiveTabKey(key);
 
     router.query.tab = key;
-    Router.push({
+
+    const newPath = {
       pathname: router.pathname,
       query: router.query
-    });
+    }
+
+    router.push(newPath, newPath);
   };
 
   return <>

@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { CloseCircleOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import Search from '../components/search/Search';
-import { isBrowser, isMobile, MobileView } from 'react-device-detect';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { AuthorizationPanel } from '../components/auth/AuthorizationPanel';
+import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
+import { useResponsiveSize } from 'src/components/responsive';
 
 const InnerMenu = () => {
-  const { toggle, show: open } = useSidebarCollapsed();
-  const [ show, setShow ] = useState(isBrowser);
+  const { toggle } = useSidebarCollapsed();
+  const { isNotMobile, isMobile } = useResponsiveSize()
+  const [ show, setShow ] = useState(false);
 
   const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
 
@@ -20,8 +21,8 @@ const InnerMenu = () => {
     </div>
     : <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
-        <Button type='link' onClick={toggle} onMouseEnter={open} className='DfBurgerIcon'>
-          <UnorderedListOutlined style={{ fontSize: '20px', color: '#999' }} />
+        <Button type='link' onClick={toggle} /* onMouseEnter={open} */ className='DfBurgerIcon'>
+          <MenuOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
         <Link href='/' as='/'>
           <a className={`DfBrand ${isMobile ? 'mobile' : ''}`}>
@@ -29,12 +30,10 @@ const InnerMenu = () => {
           </a>
         </Link>
       </div>
-      {isBrowser && <Search/>}
+      {isNotMobile && <Search/>}
       <div className='DfTopBar--rightContent'>
-        <MobileView>
-          {isMobile &&
+        {isMobile &&
           <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />}
-        </MobileView>
         <AuthorizationPanel />
       </div>
     </div>;

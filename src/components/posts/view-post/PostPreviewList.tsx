@@ -4,6 +4,7 @@ import { Loading } from '../../utils';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from './PostPreview';
+import DataList from 'src/components/lists/DataList';
 
 type OuterProps = {
   postIds: BN[]
@@ -23,7 +24,7 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
       setLoaded(false)
 
       const loadData = async () => {
-        const extPostData = await subsocial.findVisiblePostsWithAllDetails(postIds)
+        const extPostData = await subsocial.findPublicPostsWithAllDetails(postIds)
         extPostData && setPosts(extPostData)
         setLoaded(true)
       };
@@ -38,6 +39,6 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
 }
 
 const InnerPostPreviewList: React.FunctionComponent<ResolvedProps> = ({ posts }) =>
-  <>{posts.map(x => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />)}</>
+  <DataList dataSource={posts} renderItem={x => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />} />
 
 export const PostPreviewList = withLoadPostsWithSpaces(InnerPostPreviewList)

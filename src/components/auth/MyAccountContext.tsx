@@ -7,6 +7,7 @@ import { ProfileData } from '@subsocial/types';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { SocialAccount } from '@subsocial/types/substrate/interfaces';
 import { Option } from '@polkadot/types'
+import { resolveCidOfContent } from '@subsocial/api/utils';
 
 const log = newLogger('MyAccountContext')
 
@@ -64,12 +65,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 
     case 'setAccount': {
       const account = action.account
-
-      if (account) {
-        return { ...state, account }
-      }
-
-      return state
+      return { ...state, account }
     }
 
     case 'forget':
@@ -125,17 +121,20 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
       const readyApi = await api
 
       unsub = await readyApi.query.profiles.socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
+        let account: ProfileData | undefined
         const struct = optSocialAccount.unwrapOr(undefined)
 
         if (struct) {
           const profile = struct.profile.unwrapOr(undefined)
 
-          const cid = profile && profile.content.isIpfs && profile.content.asIpfs
+          const cid = profile && resolveCidOfContent(profile.content)
 
           const content = cid ? await ipfs.findProfile(cid) : undefined
 
-          dispatch({ type: 'setAccount', account: { struct, profile, content } })
+          account = { struct, profile, content }
         }
+
+        dispatch({ type: 'setAccount', account })
 
       })
     }

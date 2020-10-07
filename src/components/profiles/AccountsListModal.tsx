@@ -1,10 +1,12 @@
-import React from 'react';
+import styles from './AccountsListModal.module.sass'
 
+import React from 'react';
 import { withCalls, withMulti, spaceFollowsQueryToProp, profileFollowsQueryToProp } from '../substrate';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { Modal, Button } from 'antd';
 import { ProfilePreviewWithOwner } from './address-views';
-import ListData from '../utils/DataList';
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import DataList from '../lists/DataList';
 
 type Props = {
   accounts?: AccountId[],
@@ -24,14 +26,13 @@ const InnerAccountsListModal = (props: Props) => {
       onCancel={close}
       visible={open}
       title={title}
-      className='DfAccountsModal'
-      style={{ marginTop: '3rem' }}
+      className={styles.AccountsListModal}
       footer={<Button onClick={close}>Close</Button>}
     >
-      <ListData
+      <DataList
         dataSource={accounts}
         renderItem={(item) =>
-          <ProfilePreviewWithOwner key={item.toString()} address={item} mini />}
+          <ProfilePreviewWithOwner key={item.toString()} address={item} size={LARGE_AVATAR_SIZE} mini />}
         noDataDesc='Nothing yet'
       />
     </Modal>

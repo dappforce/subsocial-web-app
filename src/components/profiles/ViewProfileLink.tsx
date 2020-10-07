@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasAddressOrHandle, accountUrl } from '../utils/urls'
+import { HasAddressOrHandle, accountUrl } from '../urls'
 
 type Props = {
   account: HasAddressOrHandle
@@ -19,7 +19,7 @@ export const ViewProfileLink = ({
   if (!account.address || !title) return null
 
   return (
-    <Link href='/profile/[address]' as={accountUrl(account)}>
+    <Link href='/accounts/[address]' as={accountUrl(account)}>
       <a className={className} title={hint}>{title}</a>
     </Link>
   )

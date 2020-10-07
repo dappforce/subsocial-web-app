@@ -2,6 +2,7 @@ import React, { useReducer, createContext, useContext, useEffect } from 'react'
 import store from 'store'
 import { newLogger } from '@subsocial/utils';
 import { isHomePage } from '.';
+import { useResponsiveSize } from '../responsive';
 const log = newLogger('Sidebar collapsed context')
 
 export const SIDEBAR_COLLAPSED = 'df.colapsed'
@@ -9,13 +10,12 @@ export const SIDEBAR_COLLAPSED = 'df.colapsed'
 type SidebarCollapsedState = {
   inited: boolean
   collapsed?: boolean
-  triggerFollowed?: boolean
+  asDrawer?: boolean
 }
 
 type SidebarCollapsedAction = {
   type: 'reload' | 'set' | 'forget' | 'forgetExact'
   collapsed?: boolean
-  triggerFollowed?: boolean
 }
 
 function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction): SidebarCollapsedState {
@@ -23,17 +23,16 @@ function reducer (state: SidebarCollapsedState, action: SidebarCollapsedAction):
 
   switch (action.type) {
     case 'reload':
-      collapsed = !isHomePage()
+      collapsed = (isHomePage() && store.get(SIDEBAR_COLLAPSED)) || true
       log.debug('Reload collapsed:', collapsed)
-      return { ...state, collapsed, triggerFollowed: !state.triggerFollowed, inited: true }
+      return { ...state, collapsed, inited: true }
 
     case 'set':
       collapsed = action.collapsed
-      const triggerFollowed = action.triggerFollowed ? action.triggerFollowed : state.triggerFollowed
       if (collapsed !== state.collapsed) {
         log.debug('Set new collapsed:', collapsed)
         store.set(SIDEBAR_COLLAPSED, collapsed)
-        return { ...state, collapsed, triggerFollowed: triggerFollowed, inited: true }
+        return { ...state, collapsed, inited: true }
       }
       return state
 
@@ -48,8 +47,8 @@ function functionStub () {
 
 const initialState = {
   inited: false,
-  collapsed: undefined,
-  triggerFollowed: false
+  asDrawer: false,
+  collapsed: undefined
 }
 
 export type SidebarCollapsedContextProps = {
@@ -76,6 +75,9 @@ export const SidebarCollapsedContext = createContext<SidebarCollapsedContextProp
 
 export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState)
+  const { isDesktop } = useResponsiveSize()
+
+  const asDrawer = !isDesktop || !isHomePage()
 
   useEffect(() => {
     if (!state.inited) {
@@ -84,7 +86,7 @@ export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
   }, [ state.inited ]) // Don't call this effect if `invited` is not changed
 
   const contextValue = {
-    state,
+    state: { ...state, asDrawer },
     dispatch,
     hide: () => dispatch({ type: 'set', collapsed: true }),
     show: () => dispatch({ type: 'set', collapsed: false }),
@@ -92,6 +94,7 @@ export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
     forget: () => dispatch({ type: 'forget', collapsed: state.collapsed }),
     reloadFollowed: () => dispatch({ type: 'reload' })
   }
+
   return <SidebarCollapsedContext.Provider value={contextValue}>{props.children}</SidebarCollapsedContext.Provider>
 }
 

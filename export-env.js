@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const varsToExport = [
   'NODE_ENV',
+  'LOG_LEVEL',
   'APP_NAME',
   'SUBSTRATE_URL',
   'ELASTIC_URL',
@@ -12,7 +13,9 @@ const varsToExport = [
   'OFFCHAIN_WS',
   'APPS_URL',
   'IPFS_URL',
-  'LOG_LEVEL'
+  'UI_SHOW_ADVANCED',
+  'LAST_RESERVED_SPACE_ID',
+  'CLAIMED_SPACE_IDS'
 ]
 
 function getSerializedVal (varName) {

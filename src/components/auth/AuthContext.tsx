@@ -1,8 +1,9 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import { useIsSignIn, useMyAddress } from 'src/components/auth/MyAccountContext';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import store from 'store'
 import SignInModal from './SignInModal';
+import { useRouter } from 'next/router';
 
 const ONBOARDED_ACCS = 'df.onboarded'
 
@@ -54,6 +55,8 @@ export enum StepsEnum {
 export const AuthContext = createContext<AuthContextProps>(contextStub)
 
 export function AuthProvider (props: React.PropsWithChildren<any>) {
+  const { asPath } = useRouter()
+
   const [ currentStep, setCurrentStep ] = useState(StepsEnum.Disabled)
   const address = useMyAddress()
   const [ onBoardedAccounts ] = useState<string[]>(store.get(ONBOARDED_ACCS) || [])
@@ -118,6 +121,8 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       unsubBalance && unsubBalance()
     }
   }, [ currentStep, address, isSignIn ])
+
+  useEffect(() => setShowModal(false), [ asPath ])
 
   const contextValue = {
     state: {

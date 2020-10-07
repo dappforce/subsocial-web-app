@@ -3,9 +3,9 @@ import { Form, Input } from 'antd'
 import Router from 'next/router'
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
-import { stringifyText, getTxParams } from '../substrate'
+import { getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
-import { ProfileUpdate, OptionIpfsContent, OptionText, IpfsContent } from '@subsocial/types/substrate/classes'
+import { ProfileUpdate, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { ProfileContent, AnyAccountId, ProfileData } from '@subsocial/types'
 import { newLogger } from '@subsocial/utils'
@@ -13,35 +13,31 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
 import DfMdEditor from '../utils/DfMdEditor'
 import { withMyProfile } from './address-views/utils/withLoadedOwner'
-import { accountUrl } from '../utils/urls'
-import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN, MIN_HANDLE_LEN, MAX_HANDLE_LEN } from 'src/config/ValidationsConfig'
+import { accountUrl } from '../urls'
+import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN } from 'src/config/ValidationsConfig'
+import { UploadAvatar } from '../uploader'
+import { resolveCidOfContent } from '@subsocial/api/utils'
+import messages from 'src/messages'
 
 const log = newLogger('EditProfile')
 
 type Content = ProfileContent
 
-type FormValues = Partial<Content & {
-  handle: string
-}>
+type FormValues = Partial<Content>
 
 type FieldName = keyof FormValues
 
 const fieldName = (name: FieldName): FieldName => name
 
-type ValidationProps = {
-  minHandleLen: number
-  maxHandleLen: number
-}
-
-type FormProps = ValidationProps & {
+type FormProps = {
   address: AnyAccountId,
   owner?: ProfileData
 }
 
 function getInitialValues ({ owner }: FormProps): FormValues {
   if (owner) {
-    const { content, profile } = owner
-    return { ...content, handle: profile?.handle.toString() }
+    const { content } = owner
+    return { ...content }
   }
   return {}
 }
@@ -51,7 +47,7 @@ export function InnerForm (props: FormProps) {
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
-  const { owner, minHandleLen, maxHandleLen, address } = props
+  const { owner, address } = props
   const isProfile = owner?.profile
   const initialValues = getInitialValues(props)
 
@@ -60,29 +56,25 @@ export function InnerForm (props: FormProps) {
   }
 
   const newTxParams = (cid: IpfsCid) => {
-    const fieldValues = getFieldValues()
+    // const fieldValues = getFieldValues()
 
-    /** Returns `undefined` if value hasn't been changed. */
-    function getValueIfChanged (field: FieldName): any | undefined {
-      return form.isFieldTouched(field) ? fieldValues[field] as any : undefined
-    }
+    // /** Returns `undefined` if value hasn't been changed. */
+    // function getValueIfChanged (field: FieldName): any | undefined {
+    //   return form.isFieldTouched(field) ? fieldValues[field] as any : undefined
+    // }
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
-      const prevCid = stringifyText(owner?.profile?.content.asIpfs)
+      const prevCid = resolveCidOfContent(owner?.profile?.content)
       return prevCid !== cid.toString() ? cid : undefined
     }
 
     if (!isProfile) {
-      return [ fieldValues.handle, new IpfsContent(cid) ];
+      return [ new IpfsContent(cid) ];
     } else {
       // Update only dirty values.
 
-      // TODO seems like we cannot set a handle to None.
-
-      // TODO uupdate ProfileUpdate class
       const update = new ProfileUpdate({
-        handle: new OptionText(getValueIfChanged('handle')),
         content: new OptionIpfsContent(getCidIfChanged())
       })
 
@@ -104,7 +96,7 @@ export function InnerForm (props: FormProps) {
 
   const goToView = () => {
     if (address) {
-      Router.push('profile/[address]', accountUrl({ address, handle: owner?.profile?.handle })).catch(err => log.error('Error while route:', err));
+      Router.push('/accounts/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
     }
   };
 
@@ -120,44 +112,32 @@ export function InnerForm (props: FormProps) {
     form.setFieldsValue({ [fieldName('about')]: mdText })
   }
 
+  const onAvatarChanged = (url?: string) => {
+    form.setFieldsValue({ [fieldName('avatar')]: url })
+  }
+
   return <>
     <DfForm form={form} initialValues={initialValues}>
+
       <Form.Item
-        name={fieldName('fullname')}
+        name={fieldName('avatar')}
+        label='Avatar'
+        help={messages.imageShouldBeLessThanTwoMB}
+      >
+        <UploadAvatar onChange={onAvatarChanged} img={initialValues.avatar} />
+      </Form.Item>
+
+      <Form.Item
+        name={fieldName('name')}
         label='Profile name'
         hasFeedback
         rules={[
-          { required: true, message: 'Name is required.' },
+          // { required: true, message: 'Name is required.' },
           { min: NAME_MIN_LEN, message: minLenError('Name', NAME_MIN_LEN) },
           { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) }
         ]}
       >
         <Input placeholder='Full name or nickname' />
-      </Form.Item>
-
-      <Form.Item
-        name={fieldName('handle')}
-        label='URL handle'
-        hasFeedback
-        rules={[
-          { pattern: /^[A-Za-z0-9_]+$/, message: 'Handle can have only letters (a-z, A-Z), numbers (0-9) and underscores (_).' },
-          { min: minHandleLen, message: minLenError('Handle', minHandleLen) },
-          { max: maxHandleLen, message: maxLenError('Handle', maxHandleLen) }
-          // TODO test that handle is unique via a call to Substrate
-        ]}
-      >
-        <Input placeholder='You can use a-z, 0-9 and underscores' />
-      </Form.Item>
-
-      <Form.Item
-        name={fieldName('avatar')}
-        label='Avatar URL'
-        hasFeedback
-        rules={[
-          { type: 'url', message: 'Should be a valid image URL.' }
-        ]}
-      >
-        <Input type='url' placeholder='Image URL' />
       </Form.Item>
 
       <Form.Item
@@ -194,35 +174,19 @@ export function InnerForm (props: FormProps) {
 // }
 
 export function FormInSection (props: FormProps) {
-  const [ consts ] = useState<ValidationProps>({
-    minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
-    maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
-  })
-
   const { owner } = props
   const title = owner?.profile ? `Edit profile` : `New profile`
-
-  // useSubsocialEffect(() => {
-  //   const load = async () => {
-  //     // const api = await substrate.api
-  //     setConsts({
-  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.profiles.minHandleLen, 5),
-  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.profiles.maxHandleLen, 50)
-  //     })
-  //   }
-  //   load()
-  // }, [])
 
   return <>
     <HeadMeta title={title} />
     <Section className='EditEntityBox' title={title}>
-      <InnerForm {...props} {...consts} />
+      <InnerForm {...props} />
     </Section>
   </>
 }
 
 export const EditProfile = withMyProfile(FormInSection)
 
-export const NewProfile = FormInSection
+export const NewProfile = withMyProfile(FormInSection)
 
 export default NewProfile

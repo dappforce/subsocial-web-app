@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 import { DfMd } from '../../utils/DfMd';
 import { HeadMeta } from '../../utils/HeadMeta';
 import Section from '../../utils/Section';
-import { isBrowser } from 'react-device-detect';
 import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
 import ViewTags from '../../utils/ViewTags';
 import ViewPostLink from '../ViewPostLink';
@@ -17,8 +16,11 @@ import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
 import { isHidden, Loading } from 'src/components/utils';
-import { useLoadHiddenSpace } from 'src/components/spaces/helpers';
-
+import { useLoadUnlistedSpace } from 'src/components/spaces/helpers';
+import { resolveIpfsUrl } from 'src/ipfs';
+import { useResponsiveSize } from 'src/components/responsive';
+import { mdToText } from 'src/utils';
+import { ViewSpace } from 'src/components/spaces/ViewSpace';
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 export type PostDetailsProps = {
@@ -35,12 +37,13 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
 
   const { struct: initStruct, content } = post;
 
-  const struct = useSubscribedPost(initStruct)
-
   if (!content) return null;
 
+  const { isNotMobile } = useResponsiveSize()
+  const struct = useSubscribedPost(initStruct)
+  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpaces
+
   const { title, body, image, canonical, tags } = content;
-  const spaceData = space || postDetails.space || useLoadHiddenSpace(struct.owner).myHiddenSpaces
 
   if (!spaceData) return <Loading />
 
@@ -61,26 +64,37 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
     <HiddenPostAlert post={post.struct} />
     <PageContent>
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
-        <HeadMeta title={title} desc={body} image={image} canonical={canonical} tags={tags} />
+        <HeadMeta title={title} desc={mdToText(body)} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
           {<h1 className='DfPostName'>{titleMsg}</h1>}
           <PostDropDownMenu post={struct} space={spaceStruct} />
         </div>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
-          {isBrowser && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
+          {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
         <div className='DfPostContent'>
           {ext
             ? <SharePostContent postDetails={postDetails} space={space} />
             : <>
-              {image && <img src={image} className='DfPostImage' /* add onError handler */ />}
+              {image && <div className='d-flex justify-content-center'>
+                <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
+              </div>}
               {body && <DfMd source={body} />}
             </>}
         </div>
         <ViewTags tags={tags} />
         <div className='DfRow'>
-          <PostActionsPanel postDetails={postDetails} />
+          <PostActionsPanel postDetails={postDetails} space={space.struct} />
+        </div>
+        <div className='my-3'>
+          <ViewSpace
+            spaceData={spaceData}
+            withFollowButton
+            withTags={false}
+            withStats={false}
+            preview
+          />
         </div>
         <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
       </Section>
@@ -97,7 +111,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const postIdFromUrl = new BN(postId as string)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findVisiblePostsWithAllDetails([ ...replyIds, postIdFromUrl ])
+  const comments = await subsocial.findPublicPostsWithAllDetails([ ...replyIds, postIdFromUrl ])
 
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
   const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postIdFromUrl)
@@ -106,7 +120,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   // If a space id of this post is not equal to the space id/handle from URL,
   // then redirect to the URL with the space id of this post.
   if (spaceIdFromPost && spaceIdFromUrl && !spaceIdFromPost.eq(spaceIdFromUrl) && res) {
-    res.writeHead(301, { Location: `/spaces/${spaceIdFromPost.toString()}/posts/${postId}` })
+    res.writeHead(301, { Location: `/${spaceIdFromPost.toString()}/posts/${postId}` })
     res.end()
   }
 

@@ -1,21 +1,17 @@
-import IdentityIcon from 'src/components/utils/IdentityIcon';
 import { GenericAccountId as AccountId } from '@polkadot/types';
 import { SpaceContent } from '@subsocial/types/offchain';
-import { nonEmptyStr } from '@subsocial/utils';
+import { nonEmptyStr, isEmptyStr } from '@subsocial/utils';
 import BN from 'bn.js';
-import mdToText from 'markdown-to-txt';
+import { mdToText } from 'src/utils';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Error from 'next/error';
-import React from 'react';
-import { isBrowser } from 'react-device-detect';
+import React, { useCallback } from 'react';
 import { Segment } from 'src/components/utils/Segment';
 
 import { isHidden } from '../utils';
-import { DfBgImg } from '../utils/DfBgImg';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
-import { isMyAddress } from '../auth/MyAccountContext';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { return404 } from '../utils/next';
 import Section from '../utils/Section';
@@ -23,23 +19,23 @@ import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { getSpaceId } from '../substrate';
 import ViewTags from '../utils/ViewTags';
 import SpaceStatsRow from './SpaceStatsRow';
-import SpaceNav from './SpaceNav';
 import { ViewSpaceProps } from './ViewSpaceProps';
 import withLoadSpaceDataById from './withLoadSpaceDataById';
 import AboutSpaceLink from './AboutSpaceLink';
 import ViewSpaceLink from './ViewSpaceLink';
 import { PageContent } from '../main/PageWrapper';
-import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert } from './helpers';
+import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers';
+import { ContactInfo } from './SocialLinks/ViewSocialLinks';
+import { MutedSpan } from '../utils/MutedText';
+import { BareProps } from '../utils/types';
+import { getPageOfIds } from '../utils/getIds';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
 
-// TODO get rid of this 'hack'
-const SUB_SIZE = 2;
-
 type Props = ViewSpaceProps
 
-export const ViewSpacePage: NextPage<Props> = (props) => {
+export const ViewSpace = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
   const { spaceData } = props;
@@ -53,87 +49,100 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     nameOnly = false,
     withLink = false,
     miniPreview = false,
-    previewDetails = false,
-    withFollowButton = false,
+    withFollowButton = true,
+    withStats = true,
+    withTags = true,
     dropdownPreview = false,
     postIds = [],
     posts = [],
-    imageSize = 64,
-    onClick
+    onClick,
+    imageSize = 64
   } = props;
 
   const space = spaceData.struct;
 
   const {
     id,
-    created: { account }
+    owner
   } = space;
 
-  const { desc, name, image, tags } = spaceData?.content || {} as SpaceContent
+  const { about, name, image, tags, ...contactInfo } = spaceData?.content || {} as SpaceContent
 
-  const isMySpace = isMyAddress(account);
-  const hasImage = nonEmptyStr(image);
+  const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
 
-  const SpaceNameAsLink = () =>
-    <ViewSpaceLink space={space} title={name} />
+  const Avatar = useCallback(() => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />, [])
+
+  const isMy = isMySpace(space)
+
+  const primaryClass = `ProfileDetails ${isMy && 'MySpace'}`
+
+  const SpaceNameAsLink = (props: BareProps) =>
+    <ViewSpaceLink space={space} title={spaceName} {...props} />
 
   const renderNameOnly = () =>
     withLink
       ? <SpaceNameAsLink />
-      : <span>{name}</span>
+      : <span>{spaceName}</span>
 
   const renderDropDownPreview = () =>
-    <div className={`ProfileDetails DfPreview ${isMySpace && 'MySpace'}`}>
-      {hasImage
-        ? <DfBgImg className='DfAvatar' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
-        : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
-      }
+    <div className={`${primaryClass} DfPreview`}>
+      <Avatar />
       <div className='content'>
-        <div className='handle'>{name}</div>
+        <div className='handle'>{spaceName}</div>
       </div>
     </div>
 
   const renderMiniPreview = () =>
     <div className={'viewspace-minipreview'}>
-      <div onClick={onClick} className={`ProfileDetails ${isMySpace && 'MySpace'}`}>
-        {hasImage
-          ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} style={{ border: '1px solid #ddd' }} rounded/>
-          : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
-        }
+      <div onClick={onClick} className={primaryClass}>
+        <Avatar />
         <div className='content'>
-          <div className='handle'>{name}</div>
+          <div className='handle'>{spaceName}</div>
         </div>
       </div>
       {withFollowButton && <FollowSpaceButton spaceId={id} />}
     </div>
 
+  const title = React.createElement(
+    preview ? 'span' : 'h1',
+    { className: 'header'},
+    <>
+      <SpaceNameAsLink className='mr-3' />
+      <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
+    </>
+  );
+
   const renderPreview = () =>
-    <div className={`ProfileDetails ${isMySpace && 'MySpace'}`}>
+    <div className={primaryClass}>
       <div className='DfSpaceBody'>
-        {hasImage
-          ? <DfBgImg className='DfAvatar space' size={imageSize} src={image} rounded/>
-          : <IdentityIcon className='image' value={account} size={imageSize - SUB_SIZE} />
-        }
-        <div className='content'>
-          <span className='header DfSpaceTitle'>
-            <SpaceNameAsLink />
-            <MyEntityLabel isMy={isMySpace}>My space</MyEntityLabel>
-            <DropdownMenu spaceData={spaceData} />
+        <Avatar />
+        <div className='ml-2 w-100'>
+          <span className='mb-3'>
+            <div className='d-flex justify-content-between mb-3'>
+              {title}
+              <span className='d-flex align-items-center'>
+                <DropdownMenu className='mx-3' spaceData={spaceData} />
+                {withFollowButton && <FollowSpaceButton spaceId={id} />}
+              </span>
+            </div>
           </span>
 
-          {nonEmptyStr(desc) &&
-            <div className='description'>
-              <SummarizeMd md={desc} more={
+          {nonEmptyStr(about) &&
+            <div className='description mb-2'>
+              <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
             </div>
           }
 
-          <ViewTags tags={tags} />
-          {previewDetails && <SpaceStatsRow space={space} />}
+          {withTags && <ViewTags tags={tags} />}
+
+          {withStats && <span className='d-flex justify-content-between flex-wrap'>
+            <SpaceStatsRow space={space} />
+            {!preview && <ContactInfo {...contactInfo} />}
+          </span>}
         </div>
       </div>
-      {withFollowButton && <FollowSpaceButton spaceId={id} />}
     </div>
 
   if (nameOnly) {
@@ -142,7 +151,7 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
     return renderDropDownPreview();
   } else if (miniPreview) {
     return renderMiniPreview();
-  } else if (preview || previewDetails) {
+  } else if (preview) {
     return <Segment>
       <HiddenSpaceAlert space={space} preview />
       {renderPreview()}
@@ -152,24 +161,29 @@ export const ViewSpacePage: NextPage<Props> = (props) => {
   return <>
     <HiddenSpaceAlert space={space} />
     <div className='ViewSpaceWrapper'>
-      <HeadMeta title={name} desc={mdToText(desc)} image={image} />
-      <PageContent leftPanel={isBrowser &&
-      <SpaceNav
-        spaceData={spaceData}
-      />
-      }>
-        <Section className='DfContentPage'>
+      <PageContent>
+        <Section>{renderPreview()}</Section>
+        <Section className='DfContentPage mt-3'>
           <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
         </Section>
       </PageContent>
-
     </div></>
 }
 
 // TODO extract getInitialProps, this func is similar in AboutSpace
 
+const ViewSpacePage: NextPage<Props> = (props) => {
+  const { about, name, image } = props.spaceData?.content || {} as SpaceContent
+
+  return <>
+    <HeadMeta title={name} desc={mdToText(about)} image={image} />
+    <ViewSpace {...props} />
+  </>
+}
+
 ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
-  const { query: { spaceId } } = props
+  const { query } = props
+  const { spaceId } = query
   const idOrHandle = spaceId as string
 
   const id = await getSpaceId(idOrHandle)
@@ -189,7 +203,8 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const posts = await subsocial.findVisiblePostsWithAllDetails(postIds.reverse())
+  const pageIds = getPageOfIds(postIds, query)
+  const posts = await subsocial.findPublicPostsWithAllDetails(pageIds)
 
   return {
     spaceData,
@@ -201,4 +216,4 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
 
 export default ViewSpacePage
 
-export const ViewSpace = withLoadSpaceDataById(ViewSpacePage)
+export const DynamicViewSpace = withLoadSpaceDataById(ViewSpace)

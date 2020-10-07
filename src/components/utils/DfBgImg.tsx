@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import { resolveIpfsUrl } from 'src/ipfs';
 
 type Props = {
   src: string,
@@ -16,7 +17,7 @@ export function DfBgImg (props: Props) {
   const fullClass = 'DfBgImg ' + className;
 
   const fullStyle = Object.assign({
-    backgroundImage: `url(${src})`,
+    backgroundImage: `url(${resolveIpfsUrl(src)})`,
     width: width,
     height: height,
     minWidth: width,

@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasSpaceIdOrHandle, aboutSpaceUrl } from '../utils/urls'
+import { HasSpaceIdOrHandle, aboutSpaceUrl } from '../urls'
 
 type Props = {
   space: HasSpaceIdOrHandle
@@ -19,7 +19,7 @@ export const AboutSpaceLink = ({
   if (!space.id || !title) return null
 
   return (
-    <Link href='/spaces/[spaceId]/about' as={aboutSpaceUrl(space)}>
+    <Link href='/[spaceId]/about' as={aboutSpaceUrl(space)}>
       <a className={className} title={hint}>{title}</a>
     </Link>
   )

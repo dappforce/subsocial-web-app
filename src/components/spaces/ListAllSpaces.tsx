@@ -1,39 +1,42 @@
 import React from 'react';
-import { ViewSpacePage } from './ViewSpace';
-import ListData from '../utils/DataList';
+import { ViewSpace } from './ViewSpace';
 import { NextPage } from 'next';
 import { HeadMeta } from '../utils/HeadMeta';
-import BN from 'bn.js';
-import { ZERO, ONE } from '../utils';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import ButtonLink from '../utils/ButtonLink';
-import { NewSpaceButton } from './helpers';
+import { CreateSpaceButton } from './helpers';
+import { getReversePageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/getIds';
+import BN from 'bn.js'
+import { ZERO, resolveBn } from '../utils';
+import { PaginatedList } from '../lists/PaginatedList';
 
 type Props = {
-  totalCount?: BN
   spacesData?: SpaceData[]
+  totalSpaceCount?: BN
 }
 
-export const ListAllSpaces: NextPage<Props> = (props) => {
-  const { totalCount = ZERO, spacesData = [] } = props
-  const title = `Explore Spaces (${totalCount})`
+const getTitle = (count: number | BN) => `Explore Spaces (${count})`
+
+export const ListAllSpaces = (props: Props) => {
+  const { spacesData = [], totalSpaceCount = ZERO } = props
+  const totalCount = resolveBn(totalSpaceCount).toNumber()
+  const title = getTitle(totalCount) // TODO resolve bn when as hex and as BN
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
-      <HeadMeta title={title} desc='Find interesting spaces on Subsocial and follow them.' />
-      <ListData
+      <PaginatedList
         title={title}
+        totalCount={totalCount}
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
-        noDataExt={<NewSpaceButton>Create space</NewSpaceButton>}
-        renderItem={(item) =>
-          <ViewSpacePage
+        noDataExt={<CreateSpaceButton />}
+        renderItem={(item: any) =>
+          <ViewSpace
             key={item.struct.id.toString()}
             {...props}
             spaceData={item}
-            previewDetails
             withFollowButton
+            preview
           />
         }
       />
@@ -41,30 +44,30 @@ export const ListAllSpaces: NextPage<Props> = (props) => {
   )
 }
 
-const firstSpaceId = ONE
+const ListAllSpacesPage: NextPage<Props> = (props) => {
+  const { totalSpaceCount = ZERO } = props
+  const title = getTitle(resolveBn(totalSpaceCount))
 
-// TODO add pagination
+  return <>
+    <HeadMeta title={title} desc='Discover and follow interesting spaces on Subsocial.' />
+    <ListAllSpaces {...props} />
+  </>
+}
 
-ListAllSpaces.getInitialProps = async (_props): Promise<Props> => {
+ListAllSpacesPage.getInitialProps = async (props): Promise<Props> => {
+  const { query } = props
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
 
   const nextSpaceId = await substrate.nextSpaceId()
-  const totalCount = nextSpaceId.sub(firstSpaceId)
-  let spacesData: SpaceData[] = []
-
-  if (totalCount.gt(ZERO)) {
-    const spaceIds: BN[] = []
-    for (let id = totalCount; id.gte(firstSpaceId); id = id.sub(ONE)) {
-      spaceIds.push(id)
-    }
-    spacesData = await subsocial.findVisibleSpaces(spaceIds)
-  }
+  const spaceIds = await getReversePageOfSpaceIds(nextSpaceId, query)
+  const spacesData = await subsocial.findPublicSpaces(spaceIds)
+  const totalSpaceCount = approxCountOfPublicSpaces(nextSpaceId)
 
   return {
-    totalCount,
-    spacesData
+    spacesData,
+    totalSpaceCount
   }
 }
 
-export default ListAllSpaces
+export default ListAllSpacesPage

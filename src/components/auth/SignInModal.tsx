@@ -1,8 +1,7 @@
 import React from 'react';
 
-import Button from 'antd/lib/button';
 import Modal from 'antd/lib/modal';
-import { Avatar, Divider, Alert } from 'antd';
+import { Divider, Alert } from 'antd';
 import { OnBoardingButton } from '../onboarding';
 import { ModalKind, useAuth, StepsEnum } from './AuthContext';
 import { AccountSelector } from '../profile-selector/AccountSelector';
@@ -39,7 +38,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         content.title = <><span className='flipH'>🎉</span> Success <span>🎉</span></>
 
         content.body = <>
-          <div className='mb-4'>You have successfully signed in. Now you can:</div>
+          <div className='my-3'>You have successfully signed in. Now you can:</div>
           <OnBoardingButton />
         </>
         return content
@@ -62,14 +61,14 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
   } else {
     content.body = <>
       <AccountSelector />
-      <Divider className='m-0 mb-3' />
+      {/* <Divider className='m-0 mb-3' />
       <div className='px-3'>
         <div className='mb-3'>Alternatively, you can create a new account right here on the site.</div>
         <Button block type='default' href='/bc/#/accounts' target='_blank' >
           <Avatar size={18} src='substrate.svg' />
           <span className='ml-2'>Create account</span>
         </Button>
-      </div>
+      </div> */}
     </>
 
     switch (kind) {
@@ -101,15 +100,15 @@ export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) =
 
   return title ? <Modal
     visible={open}
-    title={ <h3 style={{ fontWeight: 'bold' }}>{title}</h3>}
+    title={ <h3 className='font-weight-bold m-0'>{title}</h3>}
     footer={null}
-    width={325}
+    width={350}
     className='text-center DfSignInModal'
     onCancel={hide}
   >
     <>
       {warn && <Alert
-        className='mb-4'
+        className='mb-3'
         message={warn}
         type="warning"
         closable={false}
