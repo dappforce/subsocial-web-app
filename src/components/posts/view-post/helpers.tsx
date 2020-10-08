@@ -5,7 +5,7 @@ import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import { ViewSpace } from '../../spaces/ViewSpace';
 import { DfBgImg } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
-import { EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
 import { Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
 import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces';
@@ -28,13 +28,16 @@ import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
-import { postUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
+import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
 import { ShareDropdown } from '../share/ShareDropdown';
+import { ButtonLink } from 'src/components/utils/ButtonLink';
+import { DfMd } from 'src/components/utils/DfMd';
 
 type DropdownProps = {
-  space: Space,
+  space: Space
   post: Post
-};
+  withEditButton?: boolean
+}
 
 export const isRegularPost = (extension: PostExtension): boolean => extension.isRegularPost || (extension as any).RegularPost === null; // Hack because SSR serializes objects and this drops all methods.
 export const isSharedPost = (extension: PostExtension): boolean => extension.isSharedPost || (extension as any).SharedPost;
@@ -53,15 +56,21 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
   </>
 }
 
-export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ space, post }) => {
+export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) => {
+  const { space, post, withEditButton = false } = props
   const isMyPost = isMyAddress(post.owner);
   const postId = post.id
   const postKey = `post-${postId.toString()}`
 
+  const editPostProps = {
+    href: '/[spaceId]/posts/[postId]/edit',
+    as: editPostUrl(space, post)
+  }
+
   const menu = (
     <Menu>
       {isMyPost && <Menu.Item key={`edit-${postKey}`}>
-        <Link href='/[spaceId]/posts/[postId]/edit' as={postUrl(space, post, '/edit')}>
+        <Link {...editPostProps}>
           <a className='item'>Edit post</a>
         </Link>
       </Menu.Item>}
@@ -75,15 +84,20 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = ({ space
           <div onClick={() => setOpen(true)} >View edit history</div>
         </Menu.Item>} */}
     </Menu>
-  );
+  )
 
-  return <>
-    <Dropdown overlay={menu} placement='bottomRight'>
+  return <div className='text-nowrap'>
+    <Dropdown overlay={menu} placement='bottomRight' className='mx-2'>
       <EllipsisOutlined />
     </Dropdown>
+    {withEditButton && isMyPost &&
+      <ButtonLink {...editPostProps} className='bg-transparent'>
+        <EditOutlined /> Edit
+      </ButtonLink>
+    }
     {/* open && <PostHistoryModal id={id} open={open} close={close} /> */}
-  </>
-};
+  </div>
+}
 
 type HiddenPostAlertProps = BaseHiddenAlertProps & {
   post: Post,
@@ -93,6 +107,7 @@ type HiddenPostAlertProps = BaseHiddenAlertProps & {
 export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   const { post } = props
   const PostAlert = () => <HiddenAlert struct={post} type={isComment(post.extension) ? 'comment' : 'post'} {...props} />
+
   // TODO fix view Space alert when space is hidden
   // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenAlert preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
 
@@ -108,6 +123,7 @@ type PostNameProps = {
   title?: string,
   withLink?: boolean
 }
+
 export const PostName: React.FunctionComponent<PostNameProps> = ({ space, post, title, withLink }) => {
   if (!space?.id || !post?.id || !title) return null
 
@@ -129,7 +145,9 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
   if (isEmpty(postDetails.post)) return null;
   const { post: { struct }, owner } = postDetails;
   const { created: { time }, owner: postOwnerAddress } = struct;
+
   // TODO replace on loaded space after refactor this components
+
   return <>
     <AuthorPreview
       address={postOwnerAddress}
@@ -139,7 +157,11 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
       isPadded={false}
       size={size}
       details={<div>
-        {withSpaceName && space && <><div className='DfGreyLink'><ViewSpace spaceData={space} nameOnly withLink /></div>{' • '}</>}
+        {withSpaceName && space && <>
+          <div className='DfGreyLink'>
+            <ViewSpace spaceData={space} nameOnly withLink />
+          </div>{' • '}</>
+        }
         {space && <Link href='/[spaceId]/posts/[postId]' as={postUrl(space.struct, struct)}>
           <a className='DfGreyLink'>
             {formatUnixDate(time)}
@@ -214,7 +236,10 @@ const Action: React.FunctionComponent<{ onClick?: () => void, title?: string }> 
 export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
   const { postDetails, space, preview, withBorder } = props
   const { post: { struct } } = postDetails;
-  const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' preview={preview} />
+
+  const ReactionsAction = () =>
+    <VoterButtons post={struct} className='DfAction' preview={preview} />
+
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'}`}>
       {preview
@@ -238,7 +263,13 @@ type SharePostContentProps = {
   space: SpaceData
 }
 
-export const SharePostContent = ({ postDetails: { post: { struct, content }, ext }, space }: SharePostContentProps) => {
+const SharePostMd = ({ postDetails: { post: { struct, content } }, space }: SharePostContentProps) => isComment(struct.extension)
+    ? <DfMd source={content?.body} className='mb-2' />
+    : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+
+export const SharePostContent = (props: SharePostContentProps) => {
+  const { postDetails: { ext } } = props
+
   const OriginalPost = () => {
     if (!ext || !ext.space) return <PostNotFound />
 
@@ -247,12 +278,13 @@ export const SharePostContent = ({ postDetails: { post: { struct, content }, ext
     return <>
       {isVisible({ struct: originalPost, address: originalPost.owner })
         ? <RegularPreview postDetails={ext as PostWithAllDetails} space={ext.space} />
-        : <PostNotFound />}
+        : <PostNotFound />
+      }
     </>
   }
 
   return <div className='DfSharedSummary'>
-    <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+    <SharePostMd {...props} />
     <Segment className='DfPostPreview'>
       <OriginalPost />
     </Segment>
@@ -262,12 +294,13 @@ export const SharePostContent = ({ postDetails: { post: { struct, content }, ext
 export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> = ({ postDetails, space }) => {
   const { post: { struct, content } } = postDetails;
   if (!struct || !content) return null;
+
   return <div className='DfInfo'>
     <div className='DfRow'>
       <div className='w-100'>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
-          <PostDropDownMenu post={struct} space={space.struct} />
+          <PostDropDownMenu post={struct} space={space.struct} withEditButton />
         </div>
         <PostContent postDetails={postDetails} space={space.struct} />
         <ViewTags tags={content?.tags} />
