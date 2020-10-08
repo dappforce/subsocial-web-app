@@ -258,16 +258,21 @@ type InfoForPostPreviewProps = {
   space: SpaceData
 }
 
-type SharePostContentProps = {
+type SharedPostContentProps = {
   postDetails: PostWithSomeDetails,
   space: SpaceData
 }
 
-const SharePostMd = ({ postDetails: { post: { struct, content } }, space }: SharePostContentProps) => isComment(struct.extension)
-    ? <DfMd source={content?.body} className='mb-2' />
-    : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+const SharedPostMd = (props: SharedPostContentProps) => {
+  const { postDetails, space } = props
+  const { post: { struct, content } } = postDetails
 
-export const SharePostContent = (props: SharePostContentProps) => {
+  return isComment(struct.extension)
+    ? <DfMd source={content?.body} className='DfPostBody' />
+    : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+}
+
+export const SharePostContent = (props: SharedPostContentProps) => {
   const { postDetails: { ext } } = props
 
   const OriginalPost = () => {
@@ -284,7 +289,7 @@ export const SharePostContent = (props: SharePostContentProps) => {
   }
 
   return <div className='DfSharedSummary'>
-    <SharePostMd {...props} />
+    <SharedPostMd {...props} />
     <Segment className='DfPostPreview'>
       <OriginalPost />
     </Segment>
