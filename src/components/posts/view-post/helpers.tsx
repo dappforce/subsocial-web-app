@@ -31,6 +31,7 @@ import { useResponsiveSize } from 'src/components/responsive';
 import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
+import { DfMd } from 'src/components/utils/DfMd';
 
 type DropdownProps = {
   space: Space
@@ -257,12 +258,23 @@ type InfoForPostPreviewProps = {
   space: SpaceData
 }
 
-type SharePostContentProps = {
+type SharedPostContentProps = {
   postDetails: PostWithSomeDetails,
   space: SpaceData
 }
 
-export const SharePostContent = ({ postDetails: { post: { struct, content }, ext }, space }: SharePostContentProps) => {
+const SharedPostMd = (props: SharedPostContentProps) => {
+  const { postDetails, space } = props
+  const { post: { struct, content } } = postDetails
+
+  return isComment(struct.extension)
+    ? <DfMd source={content?.body} className='DfPostBody' />
+    : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+}
+
+export const SharePostContent = (props: SharedPostContentProps) => {
+  const { postDetails: { ext } } = props
+
   const OriginalPost = () => {
     if (!ext || !ext.space) return <PostNotFound />
 
@@ -277,7 +289,7 @@ export const SharePostContent = ({ postDetails: { post: { struct, content }, ext
   }
 
   return <div className='DfSharedSummary'>
-    <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+    <SharedPostMd {...props} />
     <Segment className='DfPostPreview'>
       <OriginalPost />
     </Segment>

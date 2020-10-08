@@ -1,6 +1,6 @@
 import { Post, Space } from '@subsocial/types/substrate/interfaces';
 import { PostWithSomeDetails } from '@subsocial/types';
-import React, { useState, useMemo } from 'react'
+import React, { useState, useCallback } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils';
 import ViewComment from './ViewComment';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { MutedDiv } from '../utils/MutedText';
 import { isFakeId } from './helpers';
 import DataList from '../lists/DataList';
+import { ZERO, resolveBn } from '../utils';
 
 const log = newLogger('CommentTree')
 
@@ -86,11 +87,19 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 }
 
 export const CommentsTree = (props: LoadProps) => {
-  const { parent: { id: parentId } } = props;
+  const { parent: { id: parentId, replies_count } } = props;
 
-  const comments = useSelector((store: Store) => getComments(store, parentId.toString()));
+  const count = resolveBn(replies_count)
 
-  return useMemo(() => nonEmptyArr(comments)
-    ? <ViewCommentsTree {...props} comments={comments} />
-    : <DynamicCommentsTree {...props} />, [ comments.length ])
+  if (count.eq(ZERO)) return null;
+
+  const parentIdStr = parentId.toString()
+
+  const comments = useSelector((store: Store) => getComments(store, parentIdStr));
+
+  const Tree = useCallback(() => nonEmptyArr(comments)
+  ? <ViewCommentsTree {...props} comments={comments} />
+  : <DynamicCommentsTree {...props} />, [ comments.length, parentIdStr, count.toString() ])
+
+  return <Tree />
 }
