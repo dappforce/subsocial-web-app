@@ -7,7 +7,7 @@ import NoData from 'src/components/utils/EmptyList';
 export type DataListProps<T extends any> = {
   totalCount?: number,
   dataSource: T[],
-  renderItem: (item: T, index: number) => JSX.Element,
+  renderItem: (item: T, index: number) => JSX.Element | null,
   title?: React.ReactNode,
   level?: number,
   noDataDesc?: React.ReactNode,

@@ -2410,7 +2410,7 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.4.9":
+"@subsocial/api@latest":
   version "0.4.9"
   resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.9.tgz#ad8a3f84ac93f4af56c0be6c8ecaead7d4ced470"
   integrity sha512-nc2OmR6c+ZQt5LMszWI8cOs4f3BIMg9pYsg1H7s07zYibm9yp5o6Moye8n6TdQU4cps85Cgyew/d0qUKLUF78A==
