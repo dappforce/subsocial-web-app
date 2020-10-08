@@ -9,7 +9,6 @@ import { isEmptyStr } from '@subsocial/utils'
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
 import dynamic from 'next/dynamic';
-import { MutedDiv } from '../utils/MutedText';
 import { isMyAddress } from '../auth/MyAccountContext';
 import Section from '../utils/Section';
 import { Pluralize } from '../utils/Plularize';
@@ -38,6 +37,7 @@ import { mdToText } from 'src/utils';
 import { AccountSpaces } from '../spaces/AccountSpaces';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
 import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
+import { InfoSection } from './address-views/InfoSection';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -116,22 +116,34 @@ const Component = (props: Props) => {
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
         <div className='ml-3 w-100'>
-          <h1 className='header DfAccountTitle d-flex justify-content-between mb-2'>
-            <span className='d-flex align-items-center'>
-              <Name owner={owner} address={address} className='mr-3' />
-              <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
-              <KusamaRolesTags address={address} />
-            </span>
-            <DropDownMenu />
-          </h1>
-          <MutedDiv>
-            {'Address: '}
-            <CopyAddress address={address}>
-              <span className='DfGreyLink'>{address}</span>
-            </CopyAddress>
-          </MutedDiv>
-          <MutedDiv><Balance address={address} label='Balance: ' /></MutedDiv>
-          <MutedDiv>{`Reputation: ${reputation}`}</MutedDiv>
+          <InfoSection
+            level={1}
+            column={1}
+            title={<>
+              <span className='d-flex align-items-center'>
+                <Name owner={owner} address={address} className='mr-3' />
+                <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
+                <KusamaRolesTags address={address} />
+              </span>
+              <DropDownMenu />
+            </>}
+            items={[
+              {
+                label: 'Address',
+                value: <CopyAddress address={address}>
+                  <span className='DfGreyLink'>{address}</span>
+                </CopyAddress>
+              },
+              {
+                label: 'Balance',
+                value: <Balance address={address} />
+              },
+              {
+                label: 'Reputation',
+                value: reputation.toString()
+              }
+            ]}
+          />
           <div className='about'>
             {about && <DfMd className='mt-3' source={about} />}
             <KusamaIdentity address={address} />
