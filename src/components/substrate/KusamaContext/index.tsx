@@ -3,14 +3,15 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
 import { DefinitionRpcExt, RegistryTypes } from '@polkadot/types/types'
 import { registryTypes as SubsocialTypes, AnyAccountId } from '@subsocial/types'
-import { newLogger, isNum } from '@subsocial/utils'
+import { newLogger, isNum, nonEmptyStr, isEmptyStr, isDef } from '@subsocial/utils'
 import { kusamaUrl } from '../../utils/env'
 import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
 import { Tag } from 'antd'
 import { hexToString } from '@polkadot/util'
 import styles from './index.module.scss'
-import DataList from 'src/components/lists/DataList'
+import { InfoSection } from 'src/components/profiles/address-views/InfoSection'
+import { isObject } from 'formik'
 
 type Members = {
   council: AnyAccountId[],
@@ -255,7 +256,7 @@ export const KusamaRolesTags = ({ address }: KusamaBareProps) => {
   const roles = whoIAm(address)
 
   return <>
-    {roles.map(role => <Tag key={role} color='blue' className='mr-3'>{role}</Tag>)}
+    {roles.map(role => <Tag key={role} color='black' className='mr-3'>{role}</Tag>)}
   </>
 }
 
@@ -276,16 +277,32 @@ export const useKusamaIdentity = (address: AnyAccountId) => {
   return info;
 }
 
+const getKusamaItem = (key: KusamaInfoKeys, value: string) => {
+  if (isEmptyStr(value)) return undefined
+
+  switch(key) {
+    case 'email': return <a href={`mailto:${value}`}>{value}</a>
+    case 'twitter': return <a href={`https://twitter.com/${value.replace('@', '')}`}>{value}</a>
+    case 'web': return <a href={value}>{value}</a>
+    case 'riot': return <a href={value}>{value}</a>
+    default: return value
+  }
+}
+
 export const KusamaIdentity = ({ address }: KusamaBareProps) => {
   const details = useKusamaIdentity(address)
 
   if (!details) return null
 
-  return <div className={styles.KusamaIdentitySection}>
-    <h3 className='mb-0'>Kusama identity</h3>
-    <DataList
-      dataSource={identityInfoKeys}
-      renderItem={key => details[key] ? <div key={key}>{`${key.toUpperCase()}: ${details[key]}`}</div> : <></>}
-    />
-  </div>
+  const items = identityInfoKeys.map(key => ({
+    label: key.replace(/(?:^\s*|\s+)(\S?)/g, (b) => b.toUpperCase()),
+    value: getKusamaItem(key, details[key])
+  })).filter(x => isDef(x.value))
+
+  return <InfoSection
+    title='Kusama identity'
+    level={3}
+    items={items}
+    className={styles.KusamaIdentitySection}
+  />
 }
