@@ -35,10 +35,8 @@ type DropdownMenuProps = BareProps & {
   vertical?: boolean
 }
 
-const hrefSpaceUrl = '/[spaceId]'
-
 const createNewPostLinkProps = (space: Space) => ({ 
-  href: `${hrefSpaceUrl}/posts/new`,
+  href: `/[spaceId]/posts/new`,
   as: newPostUrl(space)
 })
 
@@ -52,7 +50,7 @@ export const DropdownMenu = ({ spaceData: { struct }, vertical, style, className
   const menu =
     <Menu>
       <Menu.Item key={`edit-space-${spaceKey}`}>
-        <Link href={`${hrefSpaceUrl}/edit`} as={editSpaceUrl(struct)}>
+        <Link href={`/[spaceId]/edit`} as={editSpaceUrl(struct)}>
           <a className='item'>Edit space</a>
         </Link>
       </Menu.Item>

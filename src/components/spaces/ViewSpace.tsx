@@ -29,6 +29,9 @@ import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
 import { BareProps } from '../utils/types';
 import { getPageOfIds } from '../utils/getIds';
+import { editSpaceUrl } from '../urls';
+import ButtonLink from '../utils/ButtonLink';
+import { EditOutlined } from '@ant-design/icons';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -121,8 +124,15 @@ export const ViewSpace = (props: Props) => {
             <div className='d-flex justify-content-between mb-3'>
               {title}
               <span className='d-flex align-items-center'>
-                <DropdownMenu className='mx-3' spaceData={spaceData} />
-                {withFollowButton && <FollowSpaceButton spaceId={id} />}
+                <DropdownMenu className='mx-2' spaceData={spaceData} />
+                {isMy &&
+                  <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
+                    <EditOutlined /> Edit
+                  </ButtonLink>
+                }
+                {withFollowButton &&
+                  <FollowSpaceButton spaceId={id} />
+                }
               </span>
             </div>
           </span>
@@ -160,14 +170,15 @@ export const ViewSpace = (props: Props) => {
 
   return <>
     <HiddenSpaceAlert space={space} />
-    <div className='ViewSpaceWrapper'>
+    <div>
       <PageContent>
         <Section>{renderPreview()}</Section>
-        <Section className='DfContentPage mt-3'>
+        <Section className='DfContentPage mt-4'>
           <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
         </Section>
       </PageContent>
-    </div></>
+    </div>
+  </>
 }
 
 // TODO extract getInitialProps, this func is similar in AboutSpace
