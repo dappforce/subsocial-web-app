@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useMyAddress } from '../auth/MyAccountContext';
 import { Loading } from '../utils';
 import { INFINITE_SCROLL_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
+import { isEmptyArray } from '@subsocial/utils';
 
 type ListProps<T> = Partial<DataListProps<T>>
 
@@ -50,19 +51,19 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   }, [ myAddress, page, ...resetTriggers ])
 
   return <InfiniteScroll
-      initialLoad={initialLoad}
       loadMore={handleInfiniteOnLoad}
       hasMore={hasMore}
     >
-      {(loading && hasMore)
+      {isEmptyArray(data) && loading
         ? <Loading />
         : !renderItem
-        ? customList ? customList({ dataSource: data, ...otherProps }) : null
-        : <DataList
-          {...otherProps}
-          dataSource={data}
-          renderItem={renderItem}
-      />
-      }
+          ? customList ? customList({ dataSource: data, ...otherProps }) : null
+          : <DataList
+            {...otherProps}
+            dataSource={data}
+            renderItem={renderItem}
+            >
+              {loading && hasMore && <Loading />}
+            </DataList>}
     </InfiniteScroll>
 }

@@ -36,7 +36,7 @@ export const MyFeed = ({ withTitle }: MyFeedProps) => {
       dataSource={[] as PostWithAllDetails[]}
       title={withTitle ? 'My feed' : undefined}
       noDataDesc='No posts in your feed yet'
-      renderItem={(x, i) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+      renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
       loadMore={getNextPage}
       resetTriggers={[ isApiReady ]}
       initialLoad

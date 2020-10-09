@@ -4,23 +4,33 @@ import { getNotifications } from '../utils/OffchainUtils';
 import NotAuthorized from '../auth/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAddress } from '../auth/MyAccountContext';
-import { Notifications } from './Notification';
-import { Loading } from '../utils';
+import { Notification, loadNotifications } from './Notification';
 import { InfiniteList } from '../lists/InfiniteList';
 import { PageContent } from '../main/PageWrapper';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { PostData, SpaceData, ProfileData } from '@subsocial/types';
+import { ActivityStore } from './NotificationUtils';
 
 export const MyNotifications = () => {
   const myAddress = useMyAddress()
+  const { subsocial, isApiReady } = useSubsocialApi()
+
+  const activityStore: ActivityStore = {
+    spaceById: new Map<string, SpaceData>(),
+    postById: new Map<string, PostData>(),
+    ownerById: new Map<string, ProfileData>()
+  }
 
   const getNextPage = useCallback(async (page: number, size: number) => {
-    if (!myAddress) return undefined
+    if (!myAddress || !isApiReady) return undefined
 
     const offset = (page - 1) * size
 
-    const items = getNotifications(myAddress, offset, INFINITE_SCROLL_PAGE_SIZE);
+    const items = await getNotifications(myAddress, offset, INFINITE_SCROLL_PAGE_SIZE);
 
-    return items
-  }, [ myAddress ]);
+    return loadNotifications(subsocial, items, activityStore)
+
+  }, [ myAddress, isApiReady ]);
 
   if (!myAddress) return <NotAuthorized />;
 
@@ -31,11 +41,8 @@ export const MyNotifications = () => {
         title={'My notificatiost'}
         noDataDesc='No notifications for you'
         loadMore={getNextPage}
-        customList={({ dataSource }) =>
-          dataSource
-            ? <Notifications activities={dataSource} />
-            : <Loading />
-        }
+        renderItem={(x, key) => <Notification key={key} {...x}/>}
+        resetTriggers={[ isApiReady ]}
         initialLoad
       />
     </PageContent>
