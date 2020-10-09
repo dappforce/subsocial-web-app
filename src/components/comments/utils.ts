@@ -70,6 +70,7 @@ export const buildMockComment = ({ fakeId, address, owner, content }: MockCommen
           account: address,
           time: new Date().getTime()
         },
+        owner: address,
         score: 0,
         shares_count: 0,
         direct_replies_count: 0,

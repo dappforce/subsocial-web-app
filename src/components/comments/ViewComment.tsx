@@ -88,7 +88,7 @@ export const ViewComment: FunctionComponent<Props> = ({
       withCancel
     />}
     {/* {isReplies && <ViewRepliesLink />} */}
-    {isReplies && showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
+    {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
   </div> : null
 
   return <div className={isFake ? 'DfDisableLayout' : ''}>
