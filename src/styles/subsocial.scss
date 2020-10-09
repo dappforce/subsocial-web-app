@@ -109,6 +109,15 @@ pre {
 /* Other Styles */
 /* ---------------------------------------- */
 
+.header {
+  margin: 0;
+  line-height: normal;
+  display: flex !important;
+  align-items: center;
+  font-size: $font_big;
+  font-weight: 600;
+}
+
 .DfSideBar {
   .ant-drawer-content-wrapper {
     width: 275px !important;
@@ -159,7 +168,7 @@ pre {
 .DfTags {
   margin: 0;
   margin-bottom: $space_normal;
-  font-size: $font_small;
+  font-size: $font_normal;
 
   .anticon {
     color: #bbb !important;
@@ -241,10 +250,6 @@ pre {
 
   .DfCommentSection {
     margin-top: $space_small
-  }
-
-  .DfTags {
-    margin: $space_big 0;
   }
 
   .DfPostContent {
@@ -337,15 +342,6 @@ pre {
     display: flex;
     align-items: center;
   }
-}
-
-.header {
-  margin: 0;
-  line-height: normal;
-  display: flex !important;
-  align-items: center;
-  font-size: $font_big;
-  font-weight: 600;
 }
 
 .ProfileDetails {
@@ -592,8 +588,8 @@ hr {
 }
 
 .DfSharedSummary {
-  .DfSummary {
-    margin: $space_tiny 0 $space_normal 0;
+  .DfPostBody {
+    margin: $space_small 0 $space_large 0;
   }
 }
 
@@ -613,10 +609,6 @@ hr {
     .DfSegment {
       margin-bottom: 0;
       @extend .DfNoBoxShadow;
-    }
-
-    .DfSummary {
-      margin: $space_tiny 0 $space_normal 0;
     }
   }
 
@@ -1235,13 +1227,6 @@ a.DfStatItem {
   transform: rotate(90deg);
   margin-right: $space_normal;
   color: #ccc;
-}
-
-.ViewSpaceWrapper {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  width: 100%;
 }
 
 .SpaceNav {

@@ -29,11 +29,11 @@ export type PostDetailsProps = {
   replies: PostWithAllDetails[]
 }
 
-export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, statusCode }) => {
+export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost, replies, statusCode }) => {
   if (statusCode === 404) return <Error statusCode={statusCode} />
-  if (!postDetails || isHidden({ struct: postDetails.post.struct })) return <PostNotFound />
+  if (!initialPost || isHidden({ struct: initialPost.post.struct })) return <PostNotFound />
 
-  const { post, ext, space } = postDetails
+  const { post, ext, space } = initialPost
 
   const { struct: initStruct, content } = post;
 
@@ -41,6 +41,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
 
   const { isNotMobile } = useResponsiveSize()
   const struct = useSubscribedPost(initStruct)
+  const postDetails = { ...initialPost, post: { struct, content } }
+
   const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpaces
 
   const { title, body, image, canonical, tags } = content;
@@ -66,8 +68,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
         <HeadMeta title={title} desc={mdToText(body)} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
-          {<h1 className='DfPostName'>{titleMsg}</h1>}
-          <PostDropDownMenu post={struct} space={spaceStruct} />
+          <h1 className='DfPostName'>{titleMsg}</h1>
+          <PostDropDownMenu post={struct} space={spaceStruct} withEditButton />
         </div>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
