@@ -2823,13 +2823,6 @@
     "@types/react" "*"
     "@types/reactcss" "*"
 
-"@types/react-infinite-scroll-component@^4.2.4":
-  version "4.2.5"
-  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroll-component/-/react-infinite-scroll-component-4.2.5.tgz#63111919c7e5fd86c8f1b019889bcd1a190d45c7"
-  integrity sha512-Vo2ykqsvATeFgAAz0IBvO7fgpx9Q2kHG/KJJRNTrdWL06ghTG0t/l/+oY1Z5Zl5PJoLArEHu8D4Yq0kD8jx8ow==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react-infinite-scroller@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@types/react-infinite-scroller/-/react-infinite-scroller-1.2.1.tgz#1cd747ef8f50d3c883e375c0491a906e5436fcb2"
@@ -11261,11 +11254,6 @@ react-hotkeys@2.0.0:
   integrity sha512-3n3OU8vLX/pfcJrR3xJ1zlww6KS1kEJt0Whxc4FiGV+MJrQ1mYSYI3qS/11d2MJDFm8IhOXMTFQirfu6AVOF6Q==
   dependencies:
     prop-types "^15.6.1"
-
-react-infinite-scroll-component@^4.5.3:
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-4.5.3.tgz#008c2ec358628b490117ffc4aa6ce6982b26f8be"
-  integrity sha512-8O0PIeYZx0xFVS1ChLlLl/1obn64vylzXeheLsm+t0qUibmet7U6kDaKFg6jVRQJwDikWBTcyqEFFsxrbFCO5w==
 
 react-infinite-scroller@^1.2.4:
   version "1.2.4"
