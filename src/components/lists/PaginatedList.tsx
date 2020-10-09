@@ -6,6 +6,8 @@ import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS
 // import { newLogger } from '@subsocial/utils';
 import Link from 'next/link';
 import DataList, { DataListProps } from './DataList';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import ButtonLink from '../utils/ButtonLink';
 
 // const log = newLogger(DataList.name)
 
@@ -21,6 +23,7 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
 
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
+  const lastPage = Math.floor(total / pageSize)
 
   const getLinksParams = useCallback((page: number, size?: number) => {
     const query = `page=${page}&size=${size || pageSize}`
@@ -74,13 +77,14 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
         router.push(href, as)
       },
       style: { marginBottom: '1rem' },
-      itemRender: (page, type, original) => type === 'page'
-        ? <Link {...getLinksParams(page)}>
-          <a>
-            {page}
-          </a>
-        </Link>
-        : original
+      itemRender: (page, type, original) => {
+        switch(type) {
+          case 'page': return <Link {...getLinksParams(page)}><a>{page}</a></Link>
+          case 'next': return <ButtonLink {...getLinksParams(currentPage + 1)} disabled={currentPage === lastPage}><RightOutlined /></ButtonLink>
+          case 'prev': return <ButtonLink {...getLinksParams(currentPage - 1)} disabled={currentPage === 1}><LeftOutlined /></ButtonLink>
+          default: return original
+        }
+      }
     }
   }
 
