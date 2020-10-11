@@ -41,8 +41,9 @@ export function HeadMeta (props: HeadMetaProps) {
   return <div>
     <Head>
       <title>{createTitle(title)}</title>
-      {nonEmptyStr(canonical) && <link rel="canonical" href={canonical} />}
-      {nonEmptyArr(tags) && <meta name="keywords" content={tags?.join(', ')} />}
+      <meta name='description' content={summary} />
+      {nonEmptyArr(tags) && <meta name='keywords' content={tags?.join(', ')} />}
+      {nonEmptyStr(canonical) && <link rel='canonical' href={canonical} />}
 
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={img} />
