@@ -23,7 +23,7 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
 
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
-  const lastPage = Math.floor(total / pageSize)
+  const lastPage = Math.ceil(total / pageSize)
 
   const getLinksParams = useCallback((page: number, size?: number) => {
     const query = `page=${page}&size=${size || pageSize}`
