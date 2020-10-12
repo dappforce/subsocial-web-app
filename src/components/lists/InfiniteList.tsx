@@ -1,4 +1,3 @@
-// import InfiniteScroll from 'react-infinite-scroller';
 import DataList, { DataListProps } from './DataList';
 import { useState, useCallback, useEffect } from 'react';
 import { Loading } from '../utils';
