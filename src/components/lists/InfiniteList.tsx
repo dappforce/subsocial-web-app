@@ -40,7 +40,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   useEffect(() => { handleInfiniteOnLoad() }, [])
 
-  if (isEmptyArray(data) && page === 1) return <Loading />
+  if (isEmptyArray(data) && page === 1) return <Loading label='Loading more data...' />
 
   return <InfiniteScroll
       dataLength={data.length}
@@ -48,10 +48,10 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
       hasMore={hasMore}
       loader={<Loading />}
     >
-        <DataList
-          {...otherProps}
-          dataSource={data}
-          renderItem={renderItem}
-        />
+      <DataList
+        {...otherProps}
+        dataSource={data}
+        renderItem={renderItem}
+      />
     </InfiniteScroll>
 }
