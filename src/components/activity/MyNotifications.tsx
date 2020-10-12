@@ -6,12 +6,13 @@ import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAddress } from '../auth/MyAccountContext';
 import { Notification, loadNotifications } from './Notification';
 import { InfiniteList } from '../lists/InfiniteList';
-import { PageContent } from '../main/PageWrapper';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { PostData, SpaceData, ProfileData } from '@subsocial/types';
-import { ActivityStore } from './NotificationUtils';
+import { ActivityStore, NotificationType } from './NotificationUtils';
+import { Loading } from '../utils';
 
-export const MyNotifications = () => {
+
+export const InnerMyNotifications = () => {
   const myAddress = useMyAddress()
   const { subsocial, isApiReady } = useSubsocialApi()
 
@@ -21,31 +22,33 @@ export const MyNotifications = () => {
     ownerById: new Map<string, ProfileData>()
   }
 
-  const getNextPage = useCallback(async (page: number, size: number) => {
-    if (!myAddress || !isApiReady) return undefined
+  const Notifications = useCallback(() => <InfiniteList
+    dataSource={[] as NotificationType[]}
+    title={'My notificatiost'}
+    noDataDesc='No notifications for you'
+    loadMore={async (page: number, size: number) => {
+        const offset = (page - 1) * size
+        const items = await getNotifications(myAddress as string, offset, INFINITE_SCROLL_PAGE_SIZE);
 
-    const offset = (page - 1) * size
+        return loadNotifications(subsocial, items, activityStore)
 
-    const items = await getNotifications(myAddress, offset, INFINITE_SCROLL_PAGE_SIZE);
+      }
+    }
+    renderItem={(x, key) => <Notification key={key} {...x}/>}
+    initialLoad
+  />, [ myAddress, isApiReady ])
 
-    return loadNotifications(subsocial, items, activityStore)
-
-  }, [ myAddress, isApiReady ]);
+  if (!isApiReady) return <Loading />
 
   if (!myAddress) return <NotAuthorized />;
 
+  return <Notifications />
+}
+
+export const MyNotifications = () => {
   return <>
     <HeadMeta title='My Notifications' />
-    <PageContent >
-      <InfiniteList
-        title={'My notificatiost'}
-        noDataDesc='No notifications for you'
-        loadMore={getNextPage}
-        renderItem={(x, key) => <Notification key={key} {...x}/>}
-        resetTriggers={[ isApiReady ]}
-        initialLoad
-      />
-    </PageContent>
+    <InnerMyNotifications />
   </>
 }
 
