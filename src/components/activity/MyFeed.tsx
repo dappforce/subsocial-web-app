@@ -34,7 +34,7 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
     initialLoad
   />, [ myAddress, isApiReady ])
 
-  if (!isApiReady) return <Loading />
+  if (!isApiReady) return <Loading label='Loading your feed...' />
 
   if (!myAddress) return <NotAuthorized />;
 

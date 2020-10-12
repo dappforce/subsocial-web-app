@@ -38,7 +38,7 @@ export const InnerMyNotifications = () => {
     initialLoad
   />, [ myAddress, isApiReady ])
 
-  if (!isApiReady) return <Loading />
+  if (!isApiReady) return <Loading label='Loading your notifications...' />
 
   if (!myAddress) return <NotAuthorized />;
 
