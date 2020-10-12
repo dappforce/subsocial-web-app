@@ -9,11 +9,16 @@ import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 import { postUrl } from '../urls';
 
-export type EventsName = 'AccountFollowed'|
-'PostShared' | 'CommentShared' |
-'SpaceFollowed' | 'SpaceCreated' |
-'CommentCreated' | 'CommentReplyCreated'
-| 'PostReactionCreated' | 'CommentReactionCreated'
+export type EventsName =
+  'AccountFollowed' |
+  'SpaceFollowed' |
+  'SpaceCreated' |
+  'CommentCreated' |
+  'CommentReplyCreated' |
+  'PostShared' |
+  'CommentShared' |
+  'PostReactionCreated' |
+  'CommentReactionCreated'
 
 export type EventsMsg = {
   [key in EventsName]: string;
@@ -21,12 +26,12 @@ export type EventsMsg = {
 
 export const eventsMsg: EventsMsg = {
   AccountFollowed: 'followed your account',
-  PostShared: 'shared your post',
-  CommentShared: 'shared your comment',
   SpaceFollowed: 'followed your space',
   SpaceCreated: 'created a new space',
   CommentCreated: 'commented on your post',
   CommentReplyCreated: 'replied to your comment',
+  PostShared: 'shared your post',
+  CommentShared: 'shared your comment',
   PostReactionCreated: 'reacted to your post',
   CommentReactionCreated: 'reacted to your comment'
 }
@@ -52,7 +57,9 @@ type PreviewNotification = {
 }
 
 const renderSubjectPreview = (title?: string, href: string = '') =>
-  nonEmptyStr(title) || nonEmptyStr(href) ? <Link href='/[spaceId]/posts/[postId]' as={href} ><a>{title}</a></Link> : null;
+  nonEmptyStr(title) || nonEmptyStr(href) ?
+    <Link href='/[spaceId]/posts/[postId]' as={href} ><a>{title}</a></Link>
+    : null
 
 const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification => {
   const data = map.get(spaceId.toString())

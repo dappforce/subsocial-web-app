@@ -9,9 +9,31 @@ import PostPreview from '../posts/view-post/PostPreview';
 import { PostWithAllDetails } from '@subsocial/types';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils';
+import { SubsocialApi } from '@subsocial/api/subsocial';
+
+const title = 'My feed'
 
 type MyFeedProps = {
   withTitle?: boolean
+}
+
+type LoadMoreProps = {
+  subsocial: SubsocialApi
+  myAddress?: string
+  page: number
+  size: number
+}
+
+const loadMore = async (props: LoadMoreProps) => {
+  const { subsocial, myAddress, page, size } = props
+  
+  if (!myAddress) return []
+
+  const offset = (page - 1) * size
+  const activity = await getNewsFeed(myAddress, offset, size)
+  const postIds = activity.map(x => hexToBn(x.post_id))
+
+  return subsocial.findPublicPostsWithAllDetails(postIds)
 }
 
 export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
@@ -19,31 +41,24 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
   const { subsocial, isApiReady } = useSubsocialApi()
 
   const Feed = useCallback(() => <InfiniteList
-    dataSource={[] as PostWithAllDetails[]}
-    title={withTitle ? 'My feed' : undefined}
-    noDataDesc='Your feed is empty. Try to follow more spaces ;)'
-    renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
-    loadMore={async (page: number, size: number) => {
-      const offset = (page - 1) * size
-
-      const activity = await getNewsFeed(myAddress as string, offset, size);
-      const postIds = activity.map(x => hexToBn(x.post_id))
-
-      return subsocial.findPublicPostsWithAllDetails(postIds)
-    }}
     initialLoad
+    title={withTitle ? title : undefined}
+    noDataDesc='Your feed is empty. Try to follow more spaces ;)'
+    dataSource={[] as PostWithAllDetails[]}
+    renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+    loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
   />, [ myAddress, isApiReady ])
 
   if (!isApiReady) return <Loading label='Loading your feed...' />
 
-  if (!myAddress) return <NotAuthorized />;
+  if (!myAddress) return <NotAuthorized />
 
   return <Feed />
 }
 
 export const MyFeed = (props: MyFeedProps) => {
   return <>
-    <HeadMeta title='My Feed' />
+    <HeadMeta title={title} />
     <InnerMyFeed {...props}/>
   </>
 }
