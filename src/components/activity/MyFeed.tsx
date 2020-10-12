@@ -21,7 +21,7 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
   const Feed = useCallback(() => <InfiniteList
     dataSource={[] as PostWithAllDetails[]}
     title={withTitle ? 'My feed' : undefined}
-    noDataDesc='No posts in your feed yet'
+    noDataDesc='Your feed is empty. Try to follow more spaces ;)'
     renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
     loadMore={async (page: number, size: number) => {
       const offset = (page - 1) * size

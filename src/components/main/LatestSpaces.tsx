@@ -21,7 +21,7 @@ export const LatestSpaces = (props: Props) => {
         <AllSpacesLink />
       </span>}
       dataSource={spaces}
-      noDataDesc='No spaces created yet'
+      noDataDesc='No spaces found'
       noDataExt={<CreateSpaceButton />}
       renderItem={(item) =>
         <ViewSpace
