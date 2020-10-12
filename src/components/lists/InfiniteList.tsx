@@ -34,10 +34,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
     data.push(...newData)
 
-    console.log('Data:', data)
-
     setData([ ...data ])
-
     setPage(page + 1)
   }, [ page ])
 
