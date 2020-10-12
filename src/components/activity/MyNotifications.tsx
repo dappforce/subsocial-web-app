@@ -13,6 +13,7 @@ import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 
 const title = 'My notifications'
+const loadingLabel = 'Loading your notifications...'
 
 type StructId = string
 
@@ -47,6 +48,7 @@ export const InnerMyNotifications = () => {
 
   const Notifications = useCallback(() => <InfiniteList
     initialLoad
+    loadingLabel={loadingLabel}
     title={title}
     noDataDesc='No notifications for you'
     dataSource={[] as NotificationType[]}
@@ -54,7 +56,7 @@ export const InnerMyNotifications = () => {
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size, activityStore })}
   />, [ myAddress, isApiReady ])
 
-  if (!isApiReady) return <Loading label='Loading your notifications...' />
+  if (!isApiReady) return <Loading label={loadingLabel} />
 
   if (!myAddress) return <NotAuthorized />
 

@@ -12,6 +12,7 @@ import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 
 const title = 'My feed'
+const loadingLabel = 'Loading your feed...'
 
 type MyFeedProps = {
   withTitle?: boolean
@@ -42,6 +43,7 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
 
   const Feed = useCallback(() => <InfiniteList
     initialLoad
+    loadingLabel={loadingLabel}
     title={withTitle ? title : undefined}
     noDataDesc='Your feed is empty. Try to follow more spaces ;)'
     dataSource={[] as PostWithAllDetails[]}
@@ -49,7 +51,7 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
   />, [ myAddress, isApiReady ])
 
-  if (!isApiReady) return <Loading label='Loading your feed...' />
+  if (!isApiReady) return <Loading label={loadingLabel} />
 
   if (!myAddress) return <NotAuthorized />
 

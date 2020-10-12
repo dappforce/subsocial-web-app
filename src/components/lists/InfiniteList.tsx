@@ -8,15 +8,17 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 type InfiniteListProps<T> = DataListProps<T> & {
   loadMore: (page: number, size: number) => Promise<T[]>
   initialLoad?: boolean
+  loadingLabel?: string
   resetTriggers?: any[]
 }
 
 export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   const {
-    dataSource = [],
-    loadMore,
     initialLoad = false,
+    loadingLabel = 'Loading data...',
+    dataSource = [],
     renderItem,
+    loadMore,
     resetTriggers = [],
     ...otherProps
   } = props
@@ -40,7 +42,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   useEffect(() => { handleInfiniteOnLoad() }, [])
 
-  if (isEmptyArray(data) && page === 1) return <Loading label='Loading more data...' />
+  if (isEmptyArray(data) && page === 1) return <Loading label={loadingLabel} />
 
   return <InfiniteScroll
       dataLength={data.length}
