@@ -1,74 +1,71 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import React, { useCallback } from 'react';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
-import { Activity } from '@subsocial/types/offchain';
 import { getNotifications } from '../utils/OffchainUtils';
-import NoData from '../utils/EmptyList';
 import NotAuthorized from '../auth/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
-import Section from '../utils/Section';
 import { useMyAddress } from '../auth/MyAccountContext';
-import { Notifications } from './Notification';
+import { Notification, loadNotifications } from './Notification';
+import { InfiniteList } from '../lists/InfiniteList';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { PostData, SpaceData, ProfileData } from '@subsocial/types';
+import { ActivityStore, NotificationType } from './NotificationUtils';
 import { Loading } from '../utils';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 
-export const MyNotifications = () => {
+const title = 'My notifications'
+
+type StructId = string
+
+type LoadMoreProps = {
+  subsocial: SubsocialApi
+  myAddress?: string
+  page: number
+  size: number
+  activityStore: ActivityStore
+}
+
+const loadMore = async (props: LoadMoreProps) => {
+  const { subsocial, myAddress, page, size, activityStore } = props
+  
+  if (!myAddress) return []
+
+  const offset = (page - 1) * size
+  const items = await getNotifications(myAddress, offset, INFINITE_SCROLL_PAGE_SIZE)
+
+  return loadNotifications(subsocial, items, activityStore)
+}
+
+export const InnerMyNotifications = () => {
   const myAddress = useMyAddress()
+  const { subsocial, isApiReady } = useSubsocialApi()
 
-  const [ items, setItems ] = useState<Activity[]>([]);
-  const [ offset, setOffset ] = useState(0);
-  const [ hasNextPage, setHasNextPage ] = useState(true);
-  const [ loaded, setLoaded ] = useState(false);
-
-  useEffect(() => {
-    if (!myAddress) return;
-    setLoaded(false)
-    getNextPage(0).catch(err => new Error(err)).finally(() => setLoaded(true));
-
-    // TODO fix 'Mark all notifications as read' when user's session key implemented:
-    // clearNotifications(myAddress)
-  }, [ myAddress ]);
-
-  const getNextPage = useCallback(async (actualOffset: number = offset) => {
-    if (!myAddress) return
-
-    const isFirstPage = actualOffset === 0;
-    const data = await getNotifications(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
-    if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasNextPage(false);
-    setItems(isFirstPage ? data : items.concat(data));
-    setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
-  }, []);
-
-  const totalCount = (items && items.length) || 0;
-
-  const Content = () => {
-    if (!loaded) {
-      return <Loading />
-    }
-
-    return totalCount === 0
-      ? <NoData description='No notifications for you' />
-      : infiniteScroll
+  const activityStore: ActivityStore = {
+    spaceById: new Map<StructId, SpaceData>(),
+    postById: new Map<StructId, PostData>(),
+    ownerById: new Map<StructId, ProfileData>()
   }
 
-  const infiniteScroll = useMemo(() =>
-    <InfiniteScroll
-      dataLength={totalCount}
-      next={getNextPage}
-      hasMore={hasNextPage}
-      // endMessage={<MutedDiv className='DfEndMessage'>You have read all notifications</MutedDiv>}
-      loader={<Loading />}
-    >
-      <Notifications activities={items} />
-    </InfiniteScroll>, [ totalCount ])
+  const Notifications = useCallback(() => <InfiniteList
+    initialLoad
+    title={title}
+    noDataDesc='No notifications for you'
+    dataSource={[] as NotificationType[]}
+    renderItem={(x, key) => <Notification key={key} {...x} />}
+    loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size, activityStore })}
+  />, [ myAddress, isApiReady ])
 
-  if (!myAddress) return <NotAuthorized />;
+  if (!isApiReady) return <Loading label='Loading your notifications...' />
 
+  if (!myAddress) return <NotAuthorized />
+
+  return <Notifications />
+}
+
+export const MyNotifications = () => {
   return <>
-    <HeadMeta title='My Notifications' />
-    <Section title={`My Notifications (${totalCount})`}>
-      <Content />
-    </Section>
+    <HeadMeta title={title} />
+    <InnerMyNotifications />
   </>
 }
 
-export default React.memo(MyNotifications)
+export default MyNotifications

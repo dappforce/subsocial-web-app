@@ -1,70 +1,66 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
+import React, { useCallback } from 'react';
 import { hexToBn } from '@polkadot/util';
 import { useMyAddress } from '../auth/MyAccountContext';
-import { Activity } from '@subsocial/types/offchain';
-import NoData from '../utils/EmptyList';
 import NotAuthorized from '../auth/NotAuthorized';
 import { getNewsFeed } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
-import Section from '../utils/Section';
-import { PostPreviewList } from '../posts/view-post/PostPreviewList';
+import { InfiniteList } from '../lists/InfiniteList';
+import PostPreview from '../posts/view-post/PostPreview';
+import { PostWithAllDetails } from '@subsocial/types';
+import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils';
+import { SubsocialApi } from '@subsocial/api/subsocial';
+
+const title = 'My feed'
 
 type MyFeedProps = {
   withTitle?: boolean
 }
 
-export const MyFeed = ({ withTitle }: MyFeedProps) => {
+type LoadMoreProps = {
+  subsocial: SubsocialApi
+  myAddress?: string
+  page: number
+  size: number
+}
+
+const loadMore = async (props: LoadMoreProps) => {
+  const { subsocial, myAddress, page, size } = props
+  
+  if (!myAddress) return []
+
+  const offset = (page - 1) * size
+  const activity = await getNewsFeed(myAddress, offset, size)
+  const postIds = activity.map(x => hexToBn(x.post_id))
+
+  return subsocial.findPublicPostsWithAllDetails(postIds)
+}
+
+export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
   const myAddress = useMyAddress()
+  const { subsocial, isApiReady } = useSubsocialApi()
 
-  const [ items, setItems ] = useState<Activity[]>([]);
-  const [ offset, setOffset ] = useState(0);
-  const [ hasMore, setHasMore ] = useState(true);
+  const Feed = useCallback(() => <InfiniteList
+    initialLoad
+    title={withTitle ? title : undefined}
+    noDataDesc='Your feed is empty. Try to follow more spaces ;)'
+    dataSource={[] as PostWithAllDetails[]}
+    renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+    loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
+  />, [ myAddress, isApiReady ])
 
-  useEffect(() => {
-    if (!myAddress) return;
+  if (!isApiReady) return <Loading label='Loading your feed...' />
 
-    getNextPage(0).catch(err => new Error(err));
-  }, [ myAddress ]);
+  if (!myAddress) return <NotAuthorized />
 
-  const getNextPage = useCallback(async (actualOffset: number = offset) => {
-    if (!myAddress) return
+  return <Feed />
+}
 
-    const isFirstPage = actualOffset === 0;
-    const data = await getNewsFeed(myAddress, actualOffset, INFINITE_SCROLL_PAGE_SIZE);
-    if (data.length < INFINITE_SCROLL_PAGE_SIZE) setHasMore(false);
-    setItems(isFirstPage ? data : items.concat(data));
-    setOffset(actualOffset + INFINITE_SCROLL_PAGE_SIZE);
-  }, [ myAddress ]);
-
-  const totalCount = items && items.length;
-
-  const postIds = items.map(x => hexToBn(x.post_id))
-
-  const infiniteScroll = useMemo(() =>
-    <InfiniteScroll
-      dataLength={totalCount}
-      next={getNextPage}
-      hasMore={hasMore}
-      // endMessage={<MutedDiv className='DfEndMessage'>You have read all feed</MutedDiv>}
-      loader={<Loading />}
-    >
-      <PostPreviewList postIds={postIds} />
-    </InfiniteScroll>, [ totalCount ])
-
-  if (!myAddress) return <NotAuthorized />;
-
+export const MyFeed = (props: MyFeedProps) => {
   return <>
-    <HeadMeta title='My Feed' />
-    <Section title={withTitle ? `My Feed (${totalCount})` : null}>
-      {totalCount === 0
-        ? <NoData description='Your feed is empty' />
-        : infiniteScroll
-      }
-    </Section>
+    <HeadMeta title={title} />
+    <InnerMyFeed {...props}/>
   </>
 }
 
-export default React.memo(MyFeed)
+export default MyFeed

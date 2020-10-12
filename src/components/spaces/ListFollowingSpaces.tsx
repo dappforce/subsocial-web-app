@@ -41,7 +41,7 @@ export const ListFollowingSpaces = (props: Props) => {
         renderItem={(item, index) => (
           <ViewSpace {...props} key={index} spaceData={item} preview withFollowButton />
         )}
-        noDataDesc='You are not subscribed to any space yet'
+        noDataDesc='You are not following any space yet'
         noDataExt={<ButtonLink href='/spaces/all' as='/spaces/all'>Explore spaces</ButtonLink>}
       />
     </div>
