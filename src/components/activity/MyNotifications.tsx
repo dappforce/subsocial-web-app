@@ -24,7 +24,7 @@ export const InnerMyNotifications = () => {
 
   const Notifications = useCallback(() => <InfiniteList
     dataSource={[] as NotificationType[]}
-    title={'My notificatiost'}
+    title={'My notifications'}
     noDataDesc='No notifications for you'
     loadMore={async (page: number, size: number) => {
         const offset = (page - 1) * size
