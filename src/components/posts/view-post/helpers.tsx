@@ -328,7 +328,7 @@ export const useSubscribedPost = (initPost: Post) => {
 
     const sub = async () => {
       const readyApi = await api;
-      unsub = await readyApi.query.posts.postById(post.id, (data: Option<Post>) => {
+      unsub = await readyApi.query.posts.postById(initPost.id, (data: Option<Post>) => {
         setPost(data.unwrapOr(post));
       })
     }
@@ -336,7 +336,7 @@ export const useSubscribedPost = (initPost: Post) => {
     sub()
 
     return () => unsub && unsub()
-  }, [])
+  }, [ initPost.id.toString() ])
 
   return post
 }
