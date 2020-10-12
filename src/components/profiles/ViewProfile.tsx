@@ -35,7 +35,7 @@ import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
 import { mdToText } from 'src/utils';
-import AccountSpaces from '../spaces/AccountSpaces';
+import { AccountSpaces } from '../spaces/AccountSpaces';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
