@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Menu, Dropdown } from 'antd';
 import Link from 'next/link';
 import { EllipsisOutlined, /* SettingOutlined, */ PlusOutlined } from '@ant-design/icons';
@@ -10,10 +10,9 @@ import { editSpaceUrl, newPostUrl, HasSpaceIdOrHandle } from 'src/components/url
 import HiddenSpaceButton from '../HiddenSpaceButton';
 import { BareProps } from 'src/components/utils/types';
 import { Pluralize } from 'src/components/utils/Plularize';
-import PaginatedList from 'src/components/lists/PaginatedList';
 import PostPreview from 'src/components/posts/view-post/PostPreview';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { Loading } from 'src/components/utils';
+import { Loading, resolveBn } from 'src/components/utils';
 import { isHidden } from '@subsocial/api/utils/visibility-filter'
 import { ButtonProps } from 'antd/lib/button'
 import NoData from 'src/components/utils/EmptyList';
@@ -25,6 +24,9 @@ import ButtonLink from 'src/components/utils/ButtonLink';
 import BaseAvatar, { BaseAvatarProps } from 'src/components/utils/DfAvatar';
 import ViewSpaceLink from '../ViewSpaceLink';
 import DataList from 'src/components/lists/DataList';
+import { InfiniteList } from 'src/components/lists/InfiniteList';
+import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext';
+import { getPageOfIds } from 'src/components/utils/getIds';
 
 type SpaceProps = {
   space: Space
@@ -35,7 +37,7 @@ type DropdownMenuProps = BareProps & {
   vertical?: boolean
 }
 
-const createNewPostLinkProps = (space: Space) => ({ 
+const createNewPostLinkProps = (space: Space) => ({
   href: `/[spaceId]/posts/new`,
   as: newPostUrl(space)
 })
@@ -166,37 +168,49 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   /> : null
 }
 
+export const getPostCount = ({ posts_count, hidden_posts_count }: Space) => resolveBn(posts_count).sub(resolveBn(hidden_posts_count))
+
 export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
   const { spaceData, posts, postIds } = props
   const { struct: space } = spaceData
+  const { isApiReady, subsocial } = useSubsocialApi()
+
+  const postCount = getPostCount(space)
 
   const postsSectionTitle = () =>
     <div className='w-100 d-flex justify-content-between align-items-baseline'>
       <span style={{ marginRight: '1rem' }}>
-        <Pluralize count={posts.length} singularText='Post'/>
+        <Pluralize count={postCount} singularText='Post'/>
       </span>
       {posts.length > 0 && <CreatePostButton space={space} title={'Write Post'} className='mb-2' />}
     </div>
 
-  const VisiblePostList = () => <PaginatedList
-    title={postsSectionTitle()}
-    dataSource={posts}
-    totalCount={postIds.length}
-    noDataDesc='No posts yet'
-    noDataExt={isMySpace(space)
-    // TODO replace with Next Link + URL builder
-      ? <CreatePostButton space={space} />
-      : null
-    }
-    renderItem={(item) =>
-      <PostPreview
-        key={item.post.struct.id.toString()}
-        postDetails={item}
-        space={spaceData}
-        withActions
-      />
-    }
-  />
+  const VisiblePostList = useCallback(() => <InfiniteList
+      title={postsSectionTitle()}
+      dataSource={posts}
+      loadMore={async (page: number, size: number) => {
+        if (!isApiReady) return posts
+
+        const pageIds = getPageOfIds(postIds, { page, size })
+
+        return subsocial.findPublicPostsWithAllDetails(pageIds)
+      }}
+      totalCount={postCount.toNumber()}
+      noDataDesc='No posts yet'
+      noDataExt={isMySpace(space)
+      // TODO replace with Next Link + URL builder
+        ? <CreatePostButton space={space} />
+        : null
+      }
+      renderItem={(item) =>
+        <PostPreview
+          key={item.post.struct.id.toString()}
+          postDetails={item}
+          space={spaceData}
+          withActions
+        />
+      }
+    />, [ isApiReady ])
 
   return <>
     <VisiblePostList />
