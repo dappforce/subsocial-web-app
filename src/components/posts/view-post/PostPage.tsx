@@ -71,7 +71,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
         <HeadMeta title={title} desc={mdToText(body)} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
           <h1 className='DfPostName'>{titleMsg}</h1>
-          <PostDropDownMenu post={struct} space={spaceStruct} withEditButton />
+          <PostDropDownMenu postDetails={postDetails} space={spaceStruct} withEditButton />
         </div>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />

@@ -32,10 +32,11 @@ import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/compone
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
+import MovePostLink from 'src/components/posts/MovePostLink';
 
 type DropdownProps = {
   space: Space
-  post: Post
+  postDetails: PostWithSomeDetails
   withEditButton?: boolean
 }
 
@@ -57,7 +58,8 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
 }
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) => {
-  const { space, post, withEditButton = false } = props
+  const { space, postDetails, withEditButton = false } = props
+  const { post: { struct: post } } = postDetails
   const isMyPost = isMyAddress(post.owner);
   const postId = post.id
   const postKey = `post-${postId.toString()}`
@@ -83,6 +85,11 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
       {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
         </Menu.Item>} */}
+      {isComment(post.extension)
+        ? null
+        : <Menu.Item>
+            <MovePostLink {...props} />
+          </Menu.Item>}
     </Menu>
   )
 
@@ -311,7 +318,7 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
       <div className='w-100'>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
-          <PostDropDownMenu post={struct} space={space.struct} withEditButton />
+          <PostDropDownMenu postDetails={postDetails} space={space.struct} withEditButton />
         </div>
         <PostContent postDetails={postDetails} space={space.struct} />
         <ViewTags tags={content?.tags} />

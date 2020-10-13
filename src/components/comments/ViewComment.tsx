@@ -122,7 +122,7 @@ export const ViewComment: FunctionComponent<Props> = ({
             </span>
           }
         />
-        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={struct} space={space} />
+        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} postDetails={comment} space={space} />
       </div>}
       content={showEditForm
         ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
