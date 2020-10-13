@@ -19,11 +19,11 @@ export const parsePageQuery = (props: ParsedUrlQuery | PaginationQuery) => {
 }
 
 type ParamsHookProps = {
-  trigers?: any[],
+  triggers?: any[],
   defaultSize: number
 }
 
-export const useLinkParams = ({ trigers = [], defaultSize }: ParamsHookProps) => {
+export const useLinkParams = ({ triggers = [], defaultSize }: ParamsHookProps) => {
   const { pathname, asPath } = useRouter()
 
   return useCallback((page: number, size?: number) => {
@@ -32,5 +32,5 @@ export const useLinkParams = ({ trigers = [], defaultSize }: ParamsHookProps) =>
       href: `${pathname}?${query}`,
       as: `${asPath.split('?')[0]}?${query}`
     }
-  }, [ pathname, asPath, ...trigers ])
+  }, [ pathname, asPath, ...triggers ])
 }

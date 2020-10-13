@@ -39,7 +39,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   const getLinksParams = useLinkParams({
     defaultSize: INFINITE_SCROLL_PAGE_SIZE,
-    trigers: [ page ]
+    triggers: [ page ]
   })
 
   const handleInfiniteOnLoad = useCallback(async () => {
