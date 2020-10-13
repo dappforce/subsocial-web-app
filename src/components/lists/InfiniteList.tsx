@@ -15,11 +15,13 @@ const canHaveMoreData = (currentPageItems: any[]) =>
 type InfiniteListProps<T> = DataListProps<T> & {
   loadMore: (page: number, size: number) => Promise<T[]>
   loadingLabel?: string
+  withLoadMoreLink?: boolean // Helpful for SEO
 }
 
 export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   const {
     loadingLabel = 'Loading data...',
+    withLoadMoreLink = false,
     dataSource = [],
     renderItem,
     loadMore,
@@ -34,7 +36,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   const [ page, setPage ] = useState(initialPage)
   const [ data, setData ] = useState(dataSource)
-  const [ hasMore, setHasMore ] = useState(canHaveMoreData(data))
+  const [ hasMore, setHasMore ] = useState(true)
   const [ loading, setLoading ] = useState(false)
 
   const getLinksParams = useLinkParams({
@@ -78,7 +80,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
         dataSource={data}
         renderItem={renderItem}
       />
-      {hasMore && !loading &&
+      {withLoadMoreLink && !loading && hasMore &&
         <ButtonLink block {...linkProps} className='mb-2'>Load more</ButtonLink>
       }
     </InfiniteScroll>
