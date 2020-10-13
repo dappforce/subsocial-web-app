@@ -14,7 +14,10 @@ type InfiniteListProps<T> = DataListProps<T> & {
 
 export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   const {
+    initialLoad = false,
+    loadingLabel = 'Loading data...',
     dataSource = [],
+    renderItem,
     loadMore,
     renderItem,
     ...otherProps

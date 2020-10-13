@@ -15,11 +15,13 @@ const log = newLogger(SideMenu.name)
 
 const goToPage = ([ url, as ]: string[]) => {
   Router.push(url, as).catch(err =>
-    log.error(`Failed to navigate to a selected page. ${err}`))
+    log.error(`Failed to navigate to a selected page. ${err}`)
+  )
 }
 
 const renderPageLink = (item: PageLink, unreadCount?: number) => {
   const { icon } = item
+
   if (item.hidden) {
     return null
   }
@@ -47,78 +49,15 @@ const renderPageLink = (item: PageLink, unreadCount?: number) => {
 
 const renderNotificationsBadge = (unreadCount?: number) => {
   if (!unreadCount || unreadCount <= 0) return null
+
   return <Badge count={unreadCount} className="site-badge-count-4" />
 }
 
-// const MySubscriptions = () => {
-//   const [ followedSpaceIds, setFollowedSpacesIds ] = useState<SpaceId[]>([]);
-//   const [ loaded, setLoaded ] = useState(false);
-//   const { state: { collapsed } } = useSidebarCollapsed();
-//   const { subsocial, isApiReady } = useSubsocialApi()
-//   const myAddress = useMyAddress();
-
-//   useSubsocialEffect(({ subsocial, substrate: { api } }) => {
-//     if (!myAddress) return;
-
-//     let isSubscribe = true;
-//     let unsub: () => any;
-
-//     const subLoadSpacesData = async () => {
-//       setLoaded(false);
-//       const readyApi = await api;
-//       unsub = await readyApi.query.spaceFollows.spacesFollowedByAccount(myAddress, async ids => {
-//         if (isSubscribe) {
-//           setFollowedSpacesIds(ids as unknown as SpaceId[]);
-//           setLoaded(true);
-//         }
-//       })
-
-//     };
-
-//     subLoadSpacesData().catch(err =>
-//       log.error(`Failed to load spaces followed by the current user. ${err}`))
-
-//     return () => {
-//       isSubscribe = false;
-//       unsub && unsub()
-//     };
-//   }, [ myAddress ]);
-
-//   const getNextPage = useCallback(async (page: number, size: number) => {
-//     if (!isApiReady) return [];
-
-//     const idsOfPage = getPageOfIds(followedSpaceIds, { page, size } as unknown as ParsedUrlQuery)
-//     const spacesData = await subsocial.findPublicSpaces(idsOfPage);
-
-//     return spacesData
-//   }, [ followedSpaceIds, isApiReady ])
-
-//   if (isEmptyArray(followedSpaceIds)) {
-//     return collapsed ? null : (
-//       <div className='text-center m-2'>
-//         <AllSpacesLink title='Exlore Spaces' />
-//       </div>
-//     )
-//   }
-
-//   return useMemo(() => <InfiniteList
-//     loadMore={getNextPage}
-//     customList={({ dataSource = [] }) => {
-//       console.log('dataSource', dataSource)
-//       return loaded
-//           ? <>{buildFollowedItems(dataSource).map(renderPageLink)}</>
-//           : <div className='text-center m-2'><Loading /></div>}
-//       }
-//     initialLoad
-//   />, [ followedSpaceIds.length, myAddress ] )
-
-// }
-
 function SideMenu () {
-  const { state: { collapsed } } = useSidebarCollapsed();
-  const { asPath } = useRouter();
-  const myAddress = useMyAddress();
-  const isLoggedIn = useIsSignIn();
+  const { state: { collapsed } } = useSidebarCollapsed()
+  const { asPath } = useRouter()
+  const myAddress = useMyAddress()
+  const isLoggedIn = useIsSignIn()
   const { unreadCount } = useNotifCounter()
   const { state: { showOnBoarding } } = useAuth()
   const { isNotMobile } = useResponsiveSize()
@@ -142,7 +81,7 @@ function SideMenu () {
       {isLoggedIn && <Menu.Divider />}
       {/* {isLoggedIn && <MySubscriptions />} */}
     </Menu>
-  );
+  )
 }
 
 export default SideMenu

@@ -10,43 +10,62 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { PostData, SpaceData, ProfileData } from '@subsocial/types';
 import { ActivityStore, NotificationType } from './NotificationUtils';
 import { Loading } from '../utils';
+import { SubsocialApi } from '@subsocial/api/subsocial';
 
+const title = 'My notifications'
+const loadingLabel = 'Loading your notifications...'
+
+type StructId = string
+
+type LoadMoreProps = {
+  subsocial: SubsocialApi
+  myAddress?: string
+  page: number
+  size: number
+  activityStore: ActivityStore
+}
+
+const loadMore = async (props: LoadMoreProps) => {
+  const { subsocial, myAddress, page, size, activityStore } = props
+  
+  if (!myAddress) return []
+
+  const offset = (page - 1) * size
+  const items = await getNotifications(myAddress, offset, INFINITE_SCROLL_PAGE_SIZE)
+
+  return loadNotifications(subsocial, items, activityStore)
+}
 
 export const InnerMyNotifications = () => {
   const myAddress = useMyAddress()
   const { subsocial, isApiReady } = useSubsocialApi()
 
   const activityStore: ActivityStore = {
-    spaceById: new Map<string, SpaceData>(),
-    postById: new Map<string, PostData>(),
-    ownerById: new Map<string, ProfileData>()
+    spaceById: new Map<StructId, SpaceData>(),
+    postById: new Map<StructId, PostData>(),
+    ownerById: new Map<StructId, ProfileData>()
   }
 
   const Notifications = useCallback(() => <InfiniteList
-    dataSource={[] as NotificationType[]}
-    title={'My notificatiost'}
+    initialLoad
+    loadingLabel={loadingLabel}
+    title={title}
     noDataDesc='No notifications for you'
-    loadMore={async (page: number, size: number) => {
-        const offset = (page - 1) * size
-        const items = await getNotifications(myAddress as string, offset, INFINITE_SCROLL_PAGE_SIZE);
-
-        return loadNotifications(subsocial, items, activityStore)
-
-      }
-    }
-    renderItem={(x, key) => <Notification key={key} {...x}/>}
+    dataSource={[] as NotificationType[]}
+    renderItem={(x, key) => <Notification key={key} {...x} />}
+    loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size, activityStore })}
   />, [ myAddress, isApiReady ])
 
-  if (!isApiReady) return <Loading />
+  if (!isApiReady) return <Loading label={loadingLabel} />
 
-  if (!myAddress) return <NotAuthorized />;
+  if (!myAddress) return <NotAuthorized />
 
   return <Notifications />
 }
 
 export const MyNotifications = () => {
   return <>
-    <HeadMeta title='My Notifications' />
+    <HeadMeta title={title} />
     <InnerMyNotifications />
   </>
 }
