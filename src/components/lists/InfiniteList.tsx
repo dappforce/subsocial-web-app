@@ -9,17 +9,16 @@ import { useLinkParams } from './utils';
 import { useRouter } from 'next/router';
 
 type InfiniteListProps<T> = DataListProps<T> & {
-  loadMore: (page: number, size: number) => Promise<T[]>
+  loadMore: (page: number, size: number) => Promise<T[]>,
+  loadingLabel?: string
 }
 
 export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   const {
-    initialLoad = false,
     loadingLabel = 'Loading data...',
     dataSource = [],
     renderItem,
     loadMore,
-    renderItem,
     ...otherProps
   } = props
 
@@ -54,13 +53,13 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
     handleInfiniteOnLoad()
   }, [])
 
-  if (isEmptyArray(data) && loading) return <Loading />
+  if (isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
 
   return <InfiniteScroll
       dataLength={data.length}
       next={handleInfiniteOnLoad}
       hasMore={hasMore}
-      loader={<Loading />}
+      loader={<Loading label={loadingLabel} />}
     >
       <DataList
         {...otherProps}
