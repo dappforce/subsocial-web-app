@@ -13,7 +13,7 @@ import { CreateSpaceButton } from './helpers';
 import { newLogger } from '@subsocial/utils';
 import { AnyAccountId } from '@subsocial/types';
 import { return404 } from '../utils/next';
-import { getPageOfIdsFromQuery } from '../utils/getIds';
+import { getPageOfIds } from '../utils/getIds';
 import { useRouter } from 'next/router';
 import DataList from '../lists/DataList';
 
@@ -43,7 +43,7 @@ export const useLoadAccoutPublicSpaces = (address?: AnyAccountId): LoadSpacesPro
   useSubsocialEffect(({ subsocial, substrate }) => {
     const loadMySpaces = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-      const pageIds = getPageOfIdsFromQuery(mySpaceIds, query)
+      const pageIds = getPageOfIds(mySpaceIds, query)
       const spacesData = await subsocial.findPublicSpaces(pageIds)
 
       setState({ mySpaceIds, spacesData, address })
@@ -145,7 +145,7 @@ AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
   const mySpaceIds = await substrate.spaceIdsByOwner(address)
-  const pageIds = getPageOfIdsFromQuery(mySpaceIds, query)
+  const pageIds = getPageOfIds(mySpaceIds, query)
   const spacesData = await subsocial.findPublicSpaces(pageIds)
 
   return {

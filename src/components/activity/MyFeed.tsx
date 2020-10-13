@@ -10,6 +10,7 @@ import { PostWithAllDetails } from '@subsocial/types';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
+import { ParsedPaginationQuery } from '../utils/getIds';
 
 const title = 'My feed'
 const loadingLabel = 'Loading your feed...'
@@ -18,11 +19,9 @@ type MyFeedProps = {
   withTitle?: boolean
 }
 
-type LoadMoreProps = {
+type LoadMoreProps = ParsedPaginationQuery & {
   subsocial: SubsocialApi
   myAddress?: string
-  page: number
-  size: number
 }
 
 const loadMore = async (props: LoadMoreProps) => {
@@ -42,7 +41,6 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
   const { subsocial, isApiReady } = useSubsocialApi()
 
   const Feed = useCallback(() => <InfiniteList
-    initialLoad
     loadingLabel={loadingLabel}
     title={withTitle ? title : undefined}
     noDataDesc='Your feed is empty. Try to follow more spaces ;)'

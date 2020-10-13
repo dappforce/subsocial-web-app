@@ -11,17 +11,16 @@ import { PostData, SpaceData, ProfileData } from '@subsocial/types';
 import { ActivityStore, NotificationType } from './NotificationUtils';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
+import { ParsedPaginationQuery } from '../utils/getIds';
 
 const title = 'My notifications'
 const loadingLabel = 'Loading your notifications...'
 
 type StructId = string
 
-type LoadMoreProps = {
+type LoadMoreProps = ParsedPaginationQuery & {
   subsocial: SubsocialApi
   myAddress?: string
-  page: number
-  size: number
   activityStore: ActivityStore
 }
 
@@ -47,7 +46,6 @@ export const InnerMyNotifications = () => {
   }
 
   const Notifications = useCallback(() => <InfiniteList
-    initialLoad
     loadingLabel={loadingLabel}
     title={title}
     noDataDesc='No notifications for you'

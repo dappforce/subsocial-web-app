@@ -64,7 +64,6 @@
 //   }
 
 //   return useMemo(() => <InfiniteList
-//     initialLoad
 //     loadMore={getNextPage}
 //     customList={({ dataSource = [] }) => {
 //       console.log('dataSource', dataSource)
