@@ -34,6 +34,7 @@ const InnerMoveModal = (props: Props) => {
   }
 
   const router = useRouter()
+
   const [ spaceId, setSpaceId ] = useState(spaceIds[0]);
 
   const onTxFailed: TxFailedCallback = () => {
@@ -43,7 +44,12 @@ const InnerMoveModal = (props: Props) => {
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
-    router.push('/[spaceId]/posts/[postId]', postUrl({ id: spaceId as SpaceId } as Space, { id: postId as PostId }))
+    router.push(
+      '/[spaceId]/posts/[postId]',
+      postUrl(
+        { id: spaceId as SpaceId } as Space,
+        { id: postId as PostId })
+      )
     onClose()
   };
 

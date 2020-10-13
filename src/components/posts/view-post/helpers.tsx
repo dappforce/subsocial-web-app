@@ -79,15 +79,15 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
       {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
         <HiddenPostButton post={post} asLink />
       </Menu.Item>}
+      {isMyPost && !isComment(post.extension) && <Menu.Item key={`move-${postKey}`}>
+        <MovePostLink {...props} />
+      </Menu.Item>}
       <Menu.Item key={`view-reaction-${postKey}`} >
         <ReactionModal postId={postId} />
       </Menu.Item>
       {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
         </Menu.Item>} */}
-      {isMyPost && !isComment(post.extension) && <Menu.Item key={`move-${postKey}`}>
-        <MovePostLink {...props} />
-      </Menu.Item>}
     </Menu>
   )
 
