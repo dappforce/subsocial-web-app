@@ -154,6 +154,7 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   if (isLoading) return <Loading />
 
   const hiddenPostsCount = myHiddenPosts.length
+
   return hiddenPostsCount ? <DataList
     title={<Pluralize count={hiddenPostsCount} singularText={'Unlisted post'} />}
     dataSource={myHiddenPosts}
@@ -168,37 +169,41 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   /> : null
 }
 
-export const getPostCount = ({ posts_count, hidden_posts_count }: Space) => resolveBn(posts_count).sub(resolveBn(hidden_posts_count))
+export const getPublicPostsCount = (space: Space): number =>
+  resolveBn(space.posts_count)
+    .sub(resolveBn(space.hidden_posts_count))
+    .toNumber()
 
 export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
   const { spaceData, posts, postIds } = props
   const { struct: space } = spaceData
+  const publicPostsCount = getPublicPostsCount(space)
   const { isApiReady, subsocial } = useSubsocialApi()
-
-  const postCount = getPostCount(space)
 
   const postsSectionTitle = () =>
     <div className='w-100 d-flex justify-content-between align-items-baseline'>
       <span style={{ marginRight: '1rem' }}>
-        <Pluralize count={postCount} singularText='Post'/>
+        <Pluralize count={publicPostsCount} singularText='Post'/>
       </span>
-      {posts.length > 0 && <CreatePostButton space={space} title={'Write Post'} className='mb-2' />}
+      {publicPostsCount > 0 &&
+        <CreatePostButton space={space} title={'Write Post'} className='mb-2' />
+      }
     </div>
 
-  const VisiblePostList = useCallback(() => <InfiniteList
+  const VisiblePostList = useCallback(() =>
+    <InfiniteList
       title={postsSectionTitle()}
       dataSource={posts}
-      loadMore={async (page: number, size: number) => {
+      loadMore={async (page, size) => {
         if (!isApiReady) return posts
 
         const pageIds = getPageOfIds(postIds, { page, size })
 
         return subsocial.findPublicPostsWithAllDetails(pageIds)
       }}
-      totalCount={postCount.toNumber()}
+      totalCount={publicPostsCount}
       noDataDesc='No posts yet'
       noDataExt={isMySpace(space)
-      // TODO replace with Next Link + URL builder
         ? <CreatePostButton space={space} />
         : null
       }
