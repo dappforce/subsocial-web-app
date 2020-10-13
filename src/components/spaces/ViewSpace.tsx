@@ -192,7 +192,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
 
   const id = resolveBn(spaceData.struct.id)
   const { about, name, image } = spaceData.content
-  
+
   // Simple check (should be imroved later)
   const isPolkaProject = id.eqn(1) || (id.gtn(1000) && id.ltn(1218))
 
@@ -226,7 +226,8 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const ownerId = spaceData?.struct.owner as AccountId
   const owner = await subsocial.findProfile(ownerId)
 
-  const postIds = await substrate.postIdsBySpaceId(id as BN)
+  // We need to reverse post ids to display posts in a descending order on a space page.
+  const postIds = (await substrate.postIdsBySpaceId(id as BN)).reverse()
   const pageIds = getPageOfIds(postIds, query)
   const posts = await subsocial.findPublicPostsWithAllDetails(pageIds)
 

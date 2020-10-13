@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash.isempty';
 import { PaginationConfig } from 'antd/lib/pagination';
@@ -8,6 +8,7 @@ import Link from 'next/link';
 import DataList, { DataListProps } from './DataList';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import ButtonLink from '../utils/ButtonLink';
+import { useLinkParams } from './utils';
 
 // const log = newLogger(DataList.name)
 
@@ -18,20 +19,14 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
 
   const router = useRouter();
 
-  const { query, pathname, asPath } = router
+  const { query } = router
   const { address, ...routerQuery } = query;
 
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
   const lastPage = Math.ceil(total / pageSize)
 
-  const getLinksParams = useCallback((page: number, size?: number) => {
-    const query = `page=${page}&size=${size || pageSize}`
-    return {
-      href: `${pathname}?${query}`,
-      as: `${asPath.split('?')[0]}?${query}`
-    }
-  }, [ pathname, asPath, currentPage ])
+  const getLinksParams = useLinkParams({ defaultSize: pageSize, triggers: [ currentPage ]})
 
   useEffect(() => {
     let isSubscribe = true;
