@@ -10,6 +10,7 @@ import { PostWithAllDetails } from '@subsocial/types';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
+import { isDef } from '@subsocial/utils';
 
 const title = 'My feed'
 const loadingLabel = 'Loading your feed...'
@@ -27,14 +28,14 @@ type LoadMoreProps = {
 
 const loadMore = async (props: LoadMoreProps) => {
   const { subsocial, myAddress, page, size } = props
-  
+
   if (!myAddress) return []
 
   const offset = (page - 1) * size
   const activity = await getNewsFeed(myAddress, offset, size)
   const postIds = activity.map(x => hexToBn(x.post_id))
-
-  return subsocial.findPublicPostsWithAllDetails(postIds)
+  const posts = await subsocial.findPublicPostsWithAllDetails(postIds)
+  return posts.filter(x => isDef(x.space))
 }
 
 export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
@@ -42,7 +43,6 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
   const { subsocial, isApiReady } = useSubsocialApi()
 
   const Feed = useCallback(() => <InfiniteList
-    initialLoad
     loadingLabel={loadingLabel}
     title={withTitle ? title : undefined}
     noDataDesc='Your feed is empty. Try to follow more spaces ;)'

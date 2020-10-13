@@ -27,7 +27,7 @@ type LoadMoreProps = {
 
 const loadMore = async (props: LoadMoreProps) => {
   const { subsocial, myAddress, page, size, activityStore } = props
-  
+
   if (!myAddress) return []
 
   const offset = (page - 1) * size
@@ -47,7 +47,6 @@ export const InnerMyNotifications = () => {
   }
 
   const Notifications = useCallback(() => <InfiniteList
-    initialLoad
     loadingLabel={loadingLabel}
     title={title}
     noDataDesc='No notifications for you'

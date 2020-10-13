@@ -12,7 +12,7 @@ import { BareProps } from 'src/components/utils/types';
 import { Pluralize } from 'src/components/utils/Plularize';
 import PostPreview from 'src/components/posts/view-post/PostPreview';
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { Loading, resolveBn } from 'src/components/utils';
+import { resolveBn } from 'src/components/utils';
 import { isHidden } from '@subsocial/api/utils/visibility-filter'
 import { ButtonProps } from 'antd/lib/button'
 import NoData from 'src/components/utils/EmptyList';
@@ -151,7 +151,7 @@ const HiddenPostList = ({ spaceData, postIds }: PostsOnSpacePageProps) => {
   const { struct: space } = spaceData
   const { myHiddenPosts, isLoading } = useLoadUnlistedPostByOwner({ owner: space.owner, postIds })
 
-  if (isLoading) return <Loading />
+  if (isLoading) return null
 
   const hiddenPostsCount = myHiddenPosts.length
   return hiddenPostsCount ? <DataList
