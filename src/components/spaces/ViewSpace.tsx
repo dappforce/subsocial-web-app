@@ -28,7 +28,7 @@ import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, Spa
 import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
 import { BareProps } from '../utils/types';
-import { getPageOfIds } from '../utils/getIds';
+import { getPageOfIdsFromQuery } from '../utils/getIds';
 import { editSpaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
@@ -192,7 +192,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
 
   const id = resolveBn(spaceData.struct.id)
   const { about, name, image } = spaceData.content
-  
+
   // Simple check (should be imroved later)
   const isPolkaProject = id.eqn(1) || (id.gtn(1000) && id.ltn(1218))
 
@@ -227,7 +227,7 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const owner = await subsocial.findProfile(ownerId)
 
   const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const pageIds = getPageOfIds(postIds, query)
+  const pageIds = getPageOfIdsFromQuery(postIds, query)
   const posts = await subsocial.findPublicPostsWithAllDetails(pageIds)
 
   return {

@@ -13,8 +13,15 @@ export const getLastNIds = (nextId: BN, size: number): BN[] => {
       nextId.sub(new BN(index + 1)))
 }
 
-export const getPageOfIds = (ids: BN[], query: ParsedUrlQuery) => {
-  const { page, size } = parsePageQuery(query)
+type GetPageProps = {
+  page: number,
+  size: number
+}
+
+export const getPageOfIdsFromQuery = (ids: BN[], query: ParsedUrlQuery) =>
+  getPageOfIds(ids, parsePageQuery(query))
+
+export const getPageOfIds = (ids: BN[], { page, size }: GetPageProps) => {
   const offset = (page - 1) * size
   const pageOfIds = []
 
@@ -51,7 +58,7 @@ export const getLastNSpaceIds = (nextId: BN, size: number): BN[] => {
   const spacesCount = approxCountOfPublicSpaces(nextId)
   const limit = spacesCount.ltn(size) ? spacesCount.toNumber() : size
   let spaceIds = getLastNIds(nextId, limit)
-  
+
   // We append ids of claimed spaces in case we found
   // less number of the latest space ids than requested via `size` var.
   if (spaceIds.length < size && reverseClaimedSpaceIds.length > 0) {
