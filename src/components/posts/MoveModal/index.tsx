@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate';
+import { withCalls, withMulti, spacesQueryToProp } from '../../substrate';
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
 import { withMyAccount, MyAccountProps } from '../../utils/MyAccount';
 import { LabeledValue } from 'antd/lib/select';
 import SelectSpacePreview from '../../utils/SelectSpacePreview';
 import BN from 'bn.js';
-import { PostExtension, SharedPost, IpfsContent, OptionId } from '@subsocial/types/substrate/classes';
-import { useForm } from 'react-hook-form';
-import { useSubsocialApi } from '../../utils/SubsocialApiContext';
-import { IpfsCid } from '@subsocial/types/substrate/interfaces';
+import { OptionId } from '@subsocial/types/substrate/classes';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import dynamic from 'next/dynamic';
-import { buildSharePostValidationSchema } from '../PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
 import { DynamicPostPreview } from '../view-post/DynamicPostPreview';
 import { CreateSpaceButton } from '../../spaces/helpers';
 import styles from './index.module.sass'
+import { useRouter } from 'next/router';
+import { postUrl } from '../../urls/subsocial';
+import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces';
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
 
@@ -27,10 +26,6 @@ type Props = MyAccountProps & {
   onClose: () => void
 }
 
-const Fields = {
-  body: 'body'
-}
-
 const InnerMoveModal = (props: Props) => {
   const { open, onClose, postId, spaceIds } = props;
 
@@ -38,27 +33,17 @@ const InnerMoveModal = (props: Props) => {
     return null
   }
 
-  const { ipfs } = useSubsocialApi()
-  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
+  const router = useRouter()
   const [ spaceId, setSpaceId ] = useState(spaceIds[0]);
 
-  const { formState, watch } = useForm({
-    validationSchema: buildSharePostValidationSchema(),
-    reValidateMode: 'onBlur',
-    mode: 'onBlur'
-  });
-
-  const body = watch(Fields.body, '');
-  const { isSubmitting } = formState;
-
   const onTxFailed: TxFailedCallback = () => {
-    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err));
     // TODO show a failure message
     onClose()
   };
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
+    router.push('/[spaceId]/posts/[postId]', postUrl({ id: spaceId as SpaceId } as Space, { id: postId as PostId }))
     onClose()
   };
 
@@ -71,21 +56,15 @@ const InnerMoveModal = (props: Props) => {
     <TxButton
       type='primary'
       label={`Move`}
-      disabled={isSubmitting}
-      params={() => getTxParams({
-        json: { body },
-        buildTxParamsCallback: newTxParams,
-        setIpfsCid,
-        ipfs
-      })}
+      params={newTxParams}
       tx={'posts.movePost'}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
-      successMessage='Moved to another space'
-      failedMessage='Failed to move'
+      successMessage='Moved post to another space'
+      failedMessage='Failed to move post'
     />
 
-  const renderShareView = () => {
+  const renderMoveView = () => {
     if (isEmptyArray(spaceIds)) {
       return (
         <CreateSpaceButton>
@@ -96,18 +75,17 @@ const InnerMoveModal = (props: Props) => {
       )
     }
 
-    return <div className='DfShareModalBody'>
-      <span className='mr-3'>
-        Select space:
-        {' '}
+    return <div className={styles.DfShareModalBody}>
+      <span className={styles.DfShareModalSelector}>
         <SelectSpacePreview
-          spaceIds={spaceIds}
+          spaceIds={spaceIds || []}
           onSelect={saveSpace}
           imageSize={24}
           defaultValue={spaceId?.toString()}
         />
       </span>
-      <div className='mx-3'>
+
+      <div style={{margin: '0.75rem 0'}}>
         <DynamicPostPreview id={postId} asRegularPost />
       </div>
     </div>
@@ -120,7 +98,7 @@ const InnerMoveModal = (props: Props) => {
   return <Modal
     onCancel={onClose}
     visible={open}
-    title={'Move post'}
+    title={'Move post to another space'}
     className={styles.DfShareModal}
     footer={
       <>
@@ -129,7 +107,7 @@ const InnerMoveModal = (props: Props) => {
       </>
     }
   >
-    {renderShareView()}
+    {renderMoveView()}
   </Modal>
 }
 
