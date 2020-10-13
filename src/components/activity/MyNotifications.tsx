@@ -35,7 +35,6 @@ export const InnerMyNotifications = () => {
       }
     }
     renderItem={(x, key) => <Notification key={key} {...x}/>}
-    initialLoad
   />, [ myAddress, isApiReady ])
 
   if (!isApiReady) return <Loading />

@@ -31,7 +31,6 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
 
       return subsocial.findPublicPostsWithAllDetails(postIds)
     }}
-    initialLoad
   />, [ myAddress, isApiReady ])
 
   if (!isApiReady) return <Loading />
