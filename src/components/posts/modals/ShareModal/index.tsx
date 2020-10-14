@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate';
+import { withCalls, withMulti, getTxParams, spacesQueryToProp } from 'src/components/substrate';
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
-import { withMyAccount, MyAccountProps } from '../../utils/MyAccount';
+import { withMyAccount, MyAccountProps } from 'src/components/utils/MyAccount';
 import { LabeledValue } from 'antd/lib/select';
-import SelectSpacePreview from '../../utils/SelectSpacePreview';
+import SelectSpacePreview from 'src/components/utils/SelectSpacePreview';
 import BN from 'bn.js';
 import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
-import { useSubsocialApi } from '../../utils/SubsocialApiContext';
+import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext';
 import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import dynamic from 'next/dynamic';
-import { buildSharePostValidationSchema } from '../PostValidation';
+import { buildSharePostValidationSchema } from 'src/components/posts/PostValidation';
 import { isEmptyArray } from '@subsocial/utils';
-import DfMdEditor from '../../utils/DfMdEditor';
-import { DynamicPostPreview } from '../view-post/DynamicPostPreview';
-import { CreateSpaceButton } from '../../spaces/helpers';
+import DfMdEditor from 'src/components/utils/DfMdEditor';
+import { DynamicPostPreview } from 'src/components/posts/view-post/DynamicPostPreview';
+import { CreateSpaceButton } from 'src/components/spaces/helpers';
 import styles from './index.module.sass'
 
-const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
+const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false });
 
 type Props = MyAccountProps & {
   postId: BN

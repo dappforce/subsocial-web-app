@@ -1,22 +1,22 @@
 import React, { useState } from 'react'
-import { withCalls, withMulti, spacesQueryToProp } from '../../substrate'
+import { withCalls, withMulti, spacesQueryToProp } from 'src/components/substrate'
 import { Modal } from 'antd'
 import Button from 'antd/lib/button'
-import { withMyAccount, MyAccountProps } from '../../utils/MyAccount'
+import { withMyAccount, MyAccountProps } from 'src/components/utils/MyAccount'
 import { LabeledValue } from 'antd/lib/select'
-import SelectSpacePreview from '../../utils/SelectSpacePreview'
+import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import BN from 'bn.js'
 import { OptionId } from '@subsocial/types/substrate/classes'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import dynamic from 'next/dynamic'
 import { isEmptyArray } from '@subsocial/utils'
-import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
-import { CreateSpaceButton } from '../../spaces/helpers'
+import { DynamicPostPreview } from 'src/components/posts/view-post/DynamicPostPreview'
+import { CreateSpaceButton } from 'src/components/spaces/helpers'
 import { useRouter } from 'next/router'
-import { postUrl } from '../../urls/subsocial'
+import { postUrl } from 'src/components/urls/subsocial'
 import { Post, PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
 
-const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
+const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false })
 
 type Props = MyAccountProps & {
   post: Post

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Post } from '@subsocial/types/substrate/interfaces';
-import { MoveModal } from 'src/components/posts/MoveModal'
+import { Post } from '@subsocial/types/substrate/interfaces'
+import { MoveModal } from 'src/components/posts/modals/MoveModal'
 
 type Props = {
   post: Post
