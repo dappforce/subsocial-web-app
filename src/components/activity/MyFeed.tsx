@@ -11,6 +11,7 @@ import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import { isDef } from '@subsocial/utils';
+import { ParsedPaginationQuery } from '../utils/getIds';
 
 const title = 'My feed'
 const loadingLabel = 'Loading your feed...'
@@ -19,11 +20,9 @@ type MyFeedProps = {
   withTitle?: boolean
 }
 
-type LoadMoreProps = {
+type LoadMoreProps = ParsedPaginationQuery & {
   subsocial: SubsocialApi
   myAddress?: string
-  page: number
-  size: number
 }
 
 const loadMore = async (props: LoadMoreProps) => {

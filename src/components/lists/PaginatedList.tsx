@@ -26,7 +26,7 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
   const lastPage = Math.ceil(total / pageSize)
 
-  const getLinksParams = useLinkParams({ defaultSize: pageSize, trigers: [ currentPage ]})
+  const getLinksParams = useLinkParams({ defaultSize: pageSize, triggers: [ currentPage ]})
 
   useEffect(() => {
     let isSubscribe = true;

@@ -15,7 +15,7 @@ import { PageLink } from 'src/layout/SideMenuItems';
 import BaseAvatar from '../utils/DfAvatar';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { toShortAddress } from '../utils';
-import { getPageOfIdsFromQuery } from '../utils/getIds';
+import { getPageOfIds } from '../utils/getIds';
 
 type Props = {
   spacesData: SpaceData[],
@@ -65,7 +65,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
 
   // TODO sort space ids in a about order (don't forget to sort by id.toString())
   const followedSpaceIds = await substrate.spaceIdsFollowedByAccount(address as string)
-  const pageIds = getPageOfIdsFromQuery(followedSpaceIds, query)
+  const pageIds = getPageOfIds(followedSpaceIds, query)
   const spacesData = await subsocial.findPublicSpaces(pageIds);
 
   return {

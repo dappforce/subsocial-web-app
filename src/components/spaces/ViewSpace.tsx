@@ -28,7 +28,7 @@ import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, Spa
 import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
 import { BareProps } from '../utils/types';
-import { getPageOfIdsFromQuery } from '../utils/getIds';
+import { getPageOfIds } from '../utils/getIds';
 import { editSpaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
@@ -226,8 +226,9 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const ownerId = spaceData?.struct.owner as AccountId
   const owner = await subsocial.findProfile(ownerId)
 
-  const postIds = await substrate.postIdsBySpaceId(id as BN)
-  const pageIds = getPageOfIdsFromQuery(postIds, query)
+  // We need to reverse post ids to display posts in a descending order on a space page.
+  const postIds = (await substrate.postIdsBySpaceId(id as BN)).reverse()
+  const pageIds = getPageOfIds(postIds, query)
   const posts = await subsocial.findPublicPostsWithAllDetails(pageIds)
 
   return {
