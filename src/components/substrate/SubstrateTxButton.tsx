@@ -10,7 +10,7 @@ import { isFunction } from '@polkadot/util'
 import { newLogger, isEmptyStr, nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import { useSubstrate } from '.'
 import useToggle from './useToggle'
-import { Message, showSuccessMessage, showErrorMessage } from '../utils/Message'
+import { Message, showSuccessMessage, showErrorMessage, controlledMessage } from '../utils/Message'
 import { useAuth } from '../auth/AuthContext'
 
 const log = newLogger('TxButton')
@@ -71,6 +71,7 @@ export function TxButton ({
   const [ unsub, setUnsub ] = useState<() => void>()
   const [ isSending, , setIsSending ] = useToggle(false)
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
+  const waitMessage = controlledMessage({ message: 'Waiting for transaction...', type: 'info', duration: 0 })
 
   const isAuthRequired = !accountId || !isTokens
   const buttonLabel = label || children
@@ -144,6 +145,7 @@ export function TxButton ({
   }
 
   const doOnSuccess: TxCallback = (result) => {
+    waitMessage.close()
     isFunction(onSuccess) && onSuccess(result)
 
     const message: Message = isFunction(successMessage)
@@ -154,6 +156,7 @@ export function TxButton ({
   }
 
   const doOnFailed: TxFailedCallback = (result) => {
+    waitMessage.close()
     isFunction(onFailed) && onFailed(result)
 
     const message: Message = isFunction(failedMessage)
@@ -170,7 +173,6 @@ export function TxButton ({
 
     const { status } = result
     // TODO show antd success notification here
-
     if (status.isFinalized || status.isInBlock) {
       setIsSending(false)
 
@@ -196,9 +198,11 @@ export function TxButton ({
     } else {
       logStatus(`⏱ Current tx status: ${status.type}`)
     }
+
   }
 
   const onFailedHandler = (err: Error) => {
+    waitMessage.close()
     setIsSending(false)
 
     if (err) {
@@ -222,6 +226,8 @@ export function TxButton ({
       .signAndSend(account, onSuccessHandler)
       .catch(onFailedHandler)
 
+    waitMessage.open()
+
     setUnsub(() => unsub)
   }
 
@@ -231,6 +237,8 @@ export function TxButton ({
     const unsub = await extrinsic
       .send(onSuccessHandler)
       .catch(onFailedHandler)
+
+    waitMessage.open()
 
     setUnsub(() => unsub)
   }
@@ -263,6 +271,7 @@ export function TxButton ({
     } else {
       sendSignedTx()
     }
+
   }
 
   const isDisabled =
