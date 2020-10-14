@@ -1,5 +1,5 @@
 import React from 'react';
-import { DfBgImg } from '../utils/DfBgImg';
+import { DfBgImageLink } from '../utils/DfBgImg';
 import { nonEmptyStr } from '@subsocial/utils';
 import Avatar from '../profiles/address-views/Avatar'
 import { ProfileData, AnySubsocialData, CommonStruct, Activity } from '@subsocial/types';
@@ -10,7 +10,6 @@ import { hexToBn } from '@polkadot/util';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
-import Link from 'next/link';
 
 type Struct = Exclude<CommonStruct, SocialAccount>
 
@@ -103,11 +102,7 @@ export function Notification (props: NotificationType) {
       </div>
       <MutedDiv className='DfDate'>{details}</MutedDiv>
     </div>
-    {nonEmptyStr(image) && <Link {...links}>
-        <a>
-          <DfBgImg width={80} height={60} src={image}/>
-        </a>
-      </Link>}
+    {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} />}
   </div>
 }
 
