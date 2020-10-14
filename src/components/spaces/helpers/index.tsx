@@ -192,6 +192,8 @@ export const PostPreviewsOnSpace = (props: PostsOnSpacePageProps) => {
 
   const VisiblePostList = useCallback(() =>
     <InfiniteList
+      withLoadMoreLink
+      loadingLabel='Loading more posts...'
       title={postsSectionTitle()}
       dataSource={posts}
       loadMore={async (page, size) => {

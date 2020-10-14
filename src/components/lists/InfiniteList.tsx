@@ -89,7 +89,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
         dataSource={data}
         renderItem={renderItem}
       />
-      {hasMore && !loading &&
+      {withLoadMoreLink && !loading && hasMore &&
         <ButtonLink block {...linkProps} className='mb-2'>Load more</ButtonLink>
       }
     </InfiniteScroll>
