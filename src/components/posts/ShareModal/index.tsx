@@ -98,8 +98,8 @@ const InnerShareModal = (props: Props) => {
       )
     }
 
-    return <div className={styles.DfShareModalBody}>
-      <span className={styles.DfShareModalSelector}>
+    return <div className={'DfPostActionModalBody'}>
+      <span className={'DfPostActionModalSelector'}>
         <SelectSpacePreview
           spaceIds={spaceIds || []}
           onSelect={saveSpace}
@@ -133,7 +133,7 @@ const InnerShareModal = (props: Props) => {
     onCancel={onClose}
     visible={open}
     title={'Share post'}
-    className={styles.DfShareModal}
+    className={'DfPostActionModal'}
     footer={
       <>
         <Button onClick={onClose}>Cancel</Button>

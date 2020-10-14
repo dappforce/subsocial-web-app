@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { withCalls, withMulti, spacesQueryToProp } from '../../substrate';
-import { Modal } from 'antd';
-import Button from 'antd/lib/button';
-import { withMyAccount, MyAccountProps } from '../../utils/MyAccount';
-import { LabeledValue } from 'antd/lib/select';
-import SelectSpacePreview from '../../utils/SelectSpacePreview';
-import BN from 'bn.js';
-import { OptionId } from '@subsocial/types/substrate/classes';
-import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import dynamic from 'next/dynamic';
-import { isEmptyArray } from '@subsocial/utils';
-import { DynamicPostPreview } from '../view-post/DynamicPostPreview';
-import { CreateSpaceButton } from '../../spaces/helpers';
-import styles from './index.module.sass'
-import { useRouter } from 'next/router';
-import { postUrl } from '../../urls/subsocial';
-import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces';
+import React, { useState } from 'react'
+import { withCalls, withMulti, spacesQueryToProp } from '../../substrate'
+import { Modal } from 'antd'
+import Button from 'antd/lib/button'
+import { withMyAccount, MyAccountProps } from '../../utils/MyAccount'
+import { LabeledValue } from 'antd/lib/select'
+import SelectSpacePreview from '../../utils/SelectSpacePreview'
+import BN from 'bn.js'
+import { OptionId } from '@subsocial/types/substrate/classes'
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import dynamic from 'next/dynamic'
+import { isEmptyArray } from '@subsocial/utils'
+import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
+import { CreateSpaceButton } from '../../spaces/helpers'
+import { useRouter } from 'next/router'
+import { postUrl } from '../../urls/subsocial'
+import { Post, PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
 
-const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
+const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
 type Props = MyAccountProps & {
   postId: BN
@@ -35,12 +34,12 @@ const InnerMoveModal = (props: Props) => {
 
   const router = useRouter()
 
-  const [ spaceId, setSpaceId ] = useState(spaceIds[0]);
+  const [ spaceId, setSpaceId ] = useState(spaceIds[0])
 
   const onTxFailed: TxFailedCallback = () => {
     // TODO show a failure message
     onClose()
-  };
+  }
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
@@ -51,12 +50,12 @@ const InnerMoveModal = (props: Props) => {
         { id: postId as PostId })
       )
     onClose()
-  };
+  }
 
   const newTxParams = () => {
     const spaceIdOption = new OptionId(spaceId)
-    return [ postId, spaceIdOption ];
-  };
+    return [ postId, spaceIdOption ]
+  }
 
   const renderTxButton = () =>
     <TxButton
@@ -70,7 +69,7 @@ const InnerMoveModal = (props: Props) => {
       failedMessage='Failed to move post'
     />
 
-  const renderMoveView = () => {
+  const renderMovePostView = () => {
     if (isEmptyArray(spaceIds)) {
       return (
         <CreateSpaceButton>
@@ -81,8 +80,8 @@ const InnerMoveModal = (props: Props) => {
       )
     }
 
-    return <div className={styles.DfShareModalBody}>
-      <span className={styles.DfShareModalSelector}>
+    return <div className={'DfPostActionModalBody'}>
+      <span className={'DfPostActionModalSelector'}>
         <SelectSpacePreview
           spaceIds={spaceIds || []}
           onSelect={saveSpace}
@@ -95,17 +94,17 @@ const InnerMoveModal = (props: Props) => {
         <DynamicPostPreview id={postId} asRegularPost />
       </div>
     </div>
-  };
+  }
 
   const saveSpace = (value: string | number | LabeledValue) => {
-    setSpaceId(new BN(value as string));
-  };
+    setSpaceId(new BN(value as string))
+  }
 
   return <Modal
     onCancel={onClose}
     visible={open}
     title={'Move post to another space'}
-    className={styles.DfShareModal}
+    className={'DfPostActionModal'}
     footer={
       <>
         <Button onClick={onClose}>Cancel</Button>
@@ -113,7 +112,7 @@ const InnerMoveModal = (props: Props) => {
       </>
     }
   >
-    {renderMoveView()}
+    {renderMovePostView()}
   </Modal>
 }
 
@@ -123,4 +122,4 @@ export const MoveModal = withMulti(
   withCalls<Props>(
     spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'address', propName: 'spaceIds' })
   )
-);
+)
