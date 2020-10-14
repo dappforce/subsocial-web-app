@@ -10,6 +10,7 @@ import { PostWithAllDetails } from '@subsocial/types';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
+import { isDef } from '@subsocial/utils';
 import { ParsedPaginationQuery } from '../utils/getIds';
 
 const title = 'My feed'
@@ -26,14 +27,14 @@ type LoadMoreProps = ParsedPaginationQuery & {
 
 const loadMore = async (props: LoadMoreProps) => {
   const { subsocial, myAddress, page, size } = props
-  
+
   if (!myAddress) return []
 
   const offset = (page - 1) * size
   const activity = await getNewsFeed(myAddress, offset, size)
   const postIds = activity.map(x => hexToBn(x.post_id))
-
-  return subsocial.findPublicPostsWithAllDetails(postIds)
+  const posts = await subsocial.findPublicPostsWithAllDetails(postIds)
+  return posts.filter(x => isDef(x.space))
 }
 
 export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
@@ -44,8 +45,7 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
     loadingLabel={loadingLabel}
     title={withTitle ? title : undefined}
     noDataDesc='Your feed is empty. Try to follow more spaces ;)'
-    dataSource={[] as PostWithAllDetails[]}
-    renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+    renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
   />, [ myAddress, isApiReady ])
 

@@ -30,7 +30,7 @@ export const Name = ({
   const addressString = isShort ? shortAddress : address.toString()
   const name = content?.name || useExtensionName(address)
   const title = name
-    ? <span className='d-flex justify-content-between'>
+    ? <span className={withShortAddress ? 'd-flex justify-content-between' : ''}>
       {name}
       {withShortAddress && <MutedSpan><code>{shortAddress}</code></MutedSpan>}
     </span>

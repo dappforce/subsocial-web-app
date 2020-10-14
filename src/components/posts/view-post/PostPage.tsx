@@ -16,7 +16,7 @@ import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
 import { isHidden, Loading } from 'src/components/utils';
-import { useLoadUnlistedSpace } from 'src/components/spaces/helpers';
+import { useLoadUnlistedSpace, isHiddenSpace } from 'src/components/spaces/helpers';
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
 import { mdToText } from 'src/utils';
@@ -34,6 +34,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
   if (!initialPost || isHidden({ struct: initialPost.post.struct })) return <PostNotFound />
 
   const { post, ext, space } = initialPost
+
+  if (!space || isHiddenSpace(space.struct)) return <PostNotFound />
 
   const { struct: initStruct, content } = post;
 

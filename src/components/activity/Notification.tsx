@@ -10,6 +10,7 @@ import { hexToBn } from '@polkadot/util';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
+import Link from 'next/link';
 
 type Struct = Exclude<CommonStruct, SocialAccount>
 
@@ -90,7 +91,7 @@ export const loadNotifications = async (
 }
 
 export function Notification (props: NotificationType) {
-  const { address, notificationMessage, details, image = '', owner } = props
+  const { address, notificationMessage, details, image = '', owner, links } = props
   const avatar = owner?.content?.avatar
 
   return <div className='DfNotificationItem'>
@@ -102,7 +103,11 @@ export function Notification (props: NotificationType) {
       </div>
       <MutedDiv className='DfDate'>{details}</MutedDiv>
     </div>
-    {nonEmptyStr(image) && <DfBgImg width={80} height={60} src={image}/>}
+    {nonEmptyStr(image) && <Link {...links}>
+        <a>
+          <DfBgImg width={80} height={60} src={image}/>
+        </a>
+      </Link>}
   </div>
 }
 
