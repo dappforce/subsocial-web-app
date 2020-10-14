@@ -281,11 +281,13 @@ export const CreateSpaceButton = ({
 }
 
 type SpaceAvatarProps = BaseAvatarProps & {
-  space: HasSpaceIdOrHandle
+  space: HasSpaceIdOrHandle,
+  asLink?: boolean
 }
 
-export const SpaceAvatar = (props: SpaceAvatarProps) =>
-  <ViewSpaceLink space={props.space} title={<BaseAvatar {...props} />} />
+export const SpaceAvatar = ({ asLink = true, ...props }: SpaceAvatarProps) => asLink
+  ? <ViewSpaceLink space={props.space} title={<BaseAvatar {...props} />} />
+  : <BaseAvatar {...props} />
 
 type AllSpacesLinkProps = BareProps & {
   title?: React.ReactNode
