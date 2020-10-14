@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import { ViewSpace } from '../../spaces/ViewSpace';
-import { DfBgImg } from '../../utils/DfBgImg';
+import { DfBgImageLink } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
 import { Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
 import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces';
-import { SpaceData, PostWithSomeDetails, PostWithAllDetails } from '@subsocial/types/dto';
+import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto';
 import { PostContent as PostContentType } from '@subsocial/types';
 import ViewTags from '../../utils/ViewTags';
 import AuthorPreview from '../../profiles/address-views/AuthorPreview';
@@ -173,10 +173,11 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
 };
 
 type PostImageProps = {
-  content?: PostContentType
+  post: PostData,
+  space: Space
 }
 
-const PostImage = ({ content }: PostImageProps) => {
+const PostImage = ({ post: { content, struct }, space }: PostImageProps) => {
   if (!content) return null;
 
   const { isMobile } = useResponsiveSize()
@@ -184,7 +185,12 @@ const PostImage = ({ content }: PostImageProps) => {
   const { image } = content;
 
   return nonEmptyStr(image)
-    ? <DfBgImg src={resolveIpfsUrl(image)} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
+    ? <DfBgImageLink
+        href={'/[spaceId]/posts/[postId]'}
+        as={postUrl(space, struct)}
+        src={resolveIpfsUrl(image)}
+        size={isMobile ? 100 : 160}
+        className='DfPostImagePreview' /* add onError handler */ />
     : null
 }
 
@@ -311,7 +317,7 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
         <ViewTags tags={content?.tags} />
         {/* {withStats && <StatsPanel id={post.id}/>} */}
       </div>
-      <PostImage content={content} />
+      <PostImage post={postDetails.post} space={space.struct} />
     </div>
   </div>
 }
