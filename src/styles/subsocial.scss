@@ -1074,20 +1074,6 @@ a.DfStatItem {
   }
 }
 
-.DfPostActionModal {
-  width: $max_width_content !important
-}
-
-.DfPostActionModalBody {
-  .DfSegment {
-    margin: 0
-  }
-}
-
-.DfPostActionModalSelector {
-  width: $max_width_content !important
-}
-
 .NavEditorWrapper {
   display: flex;
   justify-content: space-between;

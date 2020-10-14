@@ -9,12 +9,14 @@ import BN from 'bn.js'
 import { OptionId } from '@subsocial/types/substrate/classes'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import dynamic from 'next/dynamic'
-import { isEmptyArray } from '@subsocial/utils'
+import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
 import { DynamicPostPreview } from 'src/components/posts/view-post/DynamicPostPreview'
 import { CreateSpaceButton } from 'src/components/spaces/helpers'
 import { useRouter } from 'next/router'
 import { postUrl } from 'src/components/urls/subsocial'
 import { Post, PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
+import modalStyles from 'src/components/posts/modals/index.module.sass';
+import NoData from 'src/components/utils/EmptyList'
 
 const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false })
 
@@ -63,8 +65,8 @@ const InnerMoveModal = (props: Props) => {
     return [ postId, spaceIdOption ]
   }
 
-  const renderTxButton = () =>
-    <TxButton
+  const renderTxButton = () => nonEmptyArr(spaceIds)
+    ? <TxButton
       type='primary'
       label={`Move`}
       params={newTxParams}
@@ -73,22 +75,16 @@ const InnerMoveModal = (props: Props) => {
       onSuccess={onTxSuccess}
       successMessage='Moved post to another space'
       failedMessage='Failed to move post'
-      disabled={isEmptyArray(spaceIds)}
     />
+    : <CreateSpaceButton>Create one more space</CreateSpaceButton>
 
   const renderMovePostView = () => {
     if (isEmptyArray(spaceIds)) {
-      return (
-        <CreateSpaceButton>
-          <a className='ui button primary'>
-            Create one more space
-          </a>
-        </CreateSpaceButton>
-      )
+      return <NoData description='You need to have at least one more space to move post' />
     }
 
-    return <div className={'DfPostActionModalBody'}>
-      <span className={'DfPostActionModalSelector'}>
+    return <div className={modalStyles.DfPostActionModalBody}>
+      <span className={modalStyles.DfPostActionModalSelector}>
         <SelectSpacePreview
           spaceIds={spaceIds || []}
           onSelect={saveSpace}
@@ -111,7 +107,7 @@ const InnerMoveModal = (props: Props) => {
     onCancel={onClose}
     visible={open}
     title={'Move post to another space'}
-    className={'DfPostActionModal'}
+    className={modalStyles.DfPostActionModal}
     footer={
       <>
         <Button onClick={onClose}>Cancel</Button>

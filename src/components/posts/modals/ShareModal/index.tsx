@@ -18,6 +18,7 @@ import DfMdEditor from 'src/components/utils/DfMdEditor';
 import { DynamicPostPreview } from 'src/components/posts/view-post/DynamicPostPreview';
 import { CreateSpaceButton } from 'src/components/spaces/helpers';
 import styles from './index.module.sass'
+import modalStyles from 'src/components/posts/modals/index.module.sass'
 
 const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false });
 
@@ -98,8 +99,8 @@ const InnerShareModal = (props: Props) => {
       )
     }
 
-    return <div className={'DfPostActionModalBody'}>
-      <span className={'DfPostActionModalSelector'}>
+    return <div className={modalStyles.DfPostActionModalBody}>
+      <span className={modalStyles.DfPostActionModalSelector}>
         <SelectSpacePreview
           spaceIds={spaceIds || []}
           onSelect={saveSpace}
@@ -133,7 +134,7 @@ const InnerShareModal = (props: Props) => {
     onCancel={onClose}
     visible={open}
     title={'Share post'}
-    className={'DfPostActionModal'}
+    className={modalStyles.DfPostActionModal}
     footer={
       <>
         <Button onClick={onClose}>Cancel</Button>
