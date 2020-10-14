@@ -1,20 +1,25 @@
 import DataList, { DataListProps } from './DataList';
 import { useState, useCallback, useEffect } from 'react';
-import { Loading } from '../utils';
+import { Loading, isClientSide } from '../utils';
 import { INFINITE_SCROLL_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
-import { isEmptyArray } from '@subsocial/utils';
+import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ButtonLink from '../utils/ButtonLink';
 import { useLinkParams } from './utils';
 import { useRouter } from 'next/router';
 import { tryParseInt } from 'src/utils';
 
-const canHaveMoreData = (currentPageItems: any[]) =>
-  currentPageItems.length >= INFINITE_SCROLL_PAGE_SIZE
+const DEFAULT_THRESHOLD = isClientSide() ? window.innerHeight / 3 : undefined
 
-type InfiniteListProps<T> = DataListProps<T> & {
+const canHaveMoreData = (currentPageItems?: any[]) =>
+  currentPageItems
+    ? currentPageItems.length >= INFINITE_SCROLL_PAGE_SIZE
+    : true
+
+type InfiniteListProps<T> = Partial<DataListProps<T>> & {
   loadMore: (page: number, size: number) => Promise<T[]>
-  loadingLabel?: string
+  renderItem: (item: T, index: number) => JSX.Element
+  loadingLabel?: string,
   withLoadMoreLink?: boolean // Helpful for SEO
 }
 
@@ -22,7 +27,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   const {
     loadingLabel = 'Loading data...',
     withLoadMoreLink = false,
-    dataSource = [],
+    dataSource,
     renderItem,
     loadMore,
     ...otherProps
@@ -30,13 +35,16 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   const { query: { page: pagePath } } = useRouter()
 
+  const isInitialData = nonEmptyArr(dataSource)
+
+
   const initialPage = pagePath
     ? tryParseInt(pagePath.toString(), DEFAULT_FIRST_PAGE)
     : DEFAULT_FIRST_PAGE
 
   const [ page, setPage ] = useState(initialPage)
-  const [ data, setData ] = useState(dataSource)
-  const [ hasMore, setHasMore ] = useState(true)
+  const [ data, setData ] = useState(dataSource || [])
+  const [ hasMore, setHasMore ] = useState(canHaveMoreData(dataSource))
   const [ loading, setLoading ] = useState(false)
 
   const getLinksParams = useLinkParams({
@@ -60,17 +68,18 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   }, [ page ])
 
   useEffect(() => {
-    if (dataSource.length) return setPage(page + 1);
+    if (isInitialData) return setPage(page + 1);
 
     handleInfiniteOnLoad()
   }, [])
 
-  if (isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
+  if (!isInitialData && isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
 
   const linkProps = getLinksParams(page + 1)
 
   return <InfiniteScroll
       dataLength={data.length}
+      pullDownToRefreshThreshold={DEFAULT_THRESHOLD}
       next={handleInfiniteOnLoad}
       hasMore={hasMore}
       loader={<Loading label={loadingLabel} />}

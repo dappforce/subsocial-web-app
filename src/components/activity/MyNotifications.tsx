@@ -49,8 +49,7 @@ export const InnerMyNotifications = () => {
     loadingLabel={loadingLabel}
     title={title}
     noDataDesc='No notifications for you'
-    dataSource={[] as NotificationType[]}
-    renderItem={(x, key) => <Notification key={key} {...x} />}
+    renderItem={(x: NotificationType, key) => <Notification key={key} {...x} />}
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size, activityStore })}
   />, [ myAddress, isApiReady ])
 

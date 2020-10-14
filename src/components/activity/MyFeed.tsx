@@ -45,8 +45,7 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
     loadingLabel={loadingLabel}
     title={withTitle ? title : undefined}
     noDataDesc='Your feed is empty. Try to follow more spaces ;)'
-    dataSource={[] as PostWithAllDetails[]}
-    renderItem={(x) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+    renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
   />, [ myAddress, isApiReady ])
 
