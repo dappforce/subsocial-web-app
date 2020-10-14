@@ -13,12 +13,13 @@ import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import dynamic from 'next/dynamic';
 import { buildSharePostValidationSchema } from 'src/components/posts/PostValidation';
-import { isEmptyArray } from '@subsocial/utils';
+import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
 import DfMdEditor from 'src/components/utils/DfMdEditor';
 import { DynamicPostPreview } from 'src/components/posts/view-post/DynamicPostPreview';
 import { CreateSpaceButton } from 'src/components/spaces/helpers';
 import styles from './index.module.sass'
 import modalStyles from 'src/components/posts/modals/index.module.sass'
+import NoData from 'src/components/utils/EmptyList';
 
 const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false });
 
@@ -70,8 +71,8 @@ const InnerShareModal = (props: Props) => {
     return [ spaceId, extension, new IpfsContent(hash) ];
   };
 
-  const renderTxButton = () =>
-    <TxButton
+  const renderTxButton = () => nonEmptyArr(spaceIds)
+    ? <TxButton
       type='primary'
       label={`Create a post`}
       disabled={isSubmitting}
@@ -87,16 +88,11 @@ const InnerShareModal = (props: Props) => {
       successMessage='Shared to your space'
       failedMessage='Failed to share'
     />
+    : <CreateSpaceButton>Create my first space</CreateSpaceButton>
 
   const renderShareView = () => {
     if (isEmptyArray(spaceIds)) {
-      return (
-        <CreateSpaceButton>
-          <a className='ui button primary'>
-            Create my first space
-          </a>
-        </CreateSpaceButton>
-      )
+      return <NoData description='You need to have at least one space to share post'/>
     }
 
     return <div className={modalStyles.DfPostActionModalBody}>
