@@ -7,7 +7,7 @@ import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
-import { postUrl } from '../urls';
+import { postUrl, spaceUrl } from '../urls';
 
 export type EventsName =
   'AccountFollowed' |
@@ -36,7 +36,14 @@ export const eventsMsg: EventsMsg = {
   CommentReactionCreated: 'reacted to your comment'
 }
 
-export type NotificationType = {
+export type PathLinks = {
+  links: {
+    href: string,
+    as?: string
+  }
+}
+
+export type NotificationType = PathLinks & {
   address: string
   notificationMessage: React.ReactNode,
   details?: string,
@@ -50,10 +57,10 @@ export type ActivityStore = {
   ownerById: Map<string, ProfileData>
 }
 
-type PreviewNotification = {
+type PreviewNotification = PathLinks & {
   preview: JSX.Element | null,
   image?: string,
-  msg?: string
+  msg?: string,
 }
 
 const renderSubjectPreview = (title?: string, href: string = '') =>
@@ -63,7 +70,14 @@ const renderSubjectPreview = (title?: string, href: string = '') =>
 
 const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification => {
   const data = map.get(spaceId.toString())
-  return { preview: <ViewSpace spaceData={data} nameOnly withLink /> }
+  return {
+    preview: <ViewSpace spaceData={data} nameOnly withLink />,
+    image: data?.content?.image,
+    links: {
+      href: '/[spaceId]',
+      as: data && spaceUrl(data?.struct)
+    }
+  }
 }
 
 const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification => {
@@ -73,7 +87,14 @@ const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: M
   const postLink = space && data && postUrl(space, data.struct)
   const preview = renderSubjectPreview(data?.content?.title, postLink)
   const image = data?.content?.image;
-  return { preview, image }
+  return {
+    preview,
+    image,
+    links: {
+      href: '/[spaceId]/posts/[postId]',
+      as: postLink
+    }
+  }
 }
 
 const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
@@ -138,9 +159,9 @@ export const getNotification = (activity: Activity, store: ActivityStore): Notif
 
   if (!activityPreview) return undefined;
 
-  const { preview, image, msg = eventsMsg[(event as EventsName)] } = activityPreview
+  const { preview, msg = eventsMsg[(event as EventsName)], ...other } = activityPreview
 
   const notificationMessage = getNotificationMessage(msg, agg_count, preview)
 
-  return { address: account, notificationMessage, details: formatDate, image, owner }
+  return { address: account, notificationMessage, details: formatDate, owner, ...other }
 }
