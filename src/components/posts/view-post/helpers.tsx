@@ -80,7 +80,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
         <HiddenPostButton post={post} asLink />
       </Menu.Item>}
       {isMyPost && !isComment(post.extension) && <Menu.Item key={`move-${postKey}`}>
-        <MovePostLink {...props} />
+        <MovePostLink post={post} />
       </Menu.Item>}
       <Menu.Item key={`view-reaction-${postKey}`} >
         <ReactionModal postId={postId} />

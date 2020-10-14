@@ -19,14 +19,20 @@ import { Post, PostId, Space, SpaceId } from '@subsocial/types/substrate/interfa
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
 type Props = MyAccountProps & {
-  postId: BN
+  post: Post
   spaceIds?: BN[]
   open: boolean
   onClose: () => void
 }
 
 const InnerMoveModal = (props: Props) => {
-  const { open, onClose, postId, spaceIds } = props;
+  const { open, onClose, post, post: { id: postId } } = props
+  let { spaceIds } = props
+
+  if (post.space_id.isSome && spaceIds) {
+    const postSpaceId = post.space_id.unwrap()
+    spaceIds = spaceIds.filter(spaceId => !spaceId.eq(postSpaceId))
+  }
 
   if (!spaceIds) {
     return null
@@ -67,6 +73,7 @@ const InnerMoveModal = (props: Props) => {
       onSuccess={onTxSuccess}
       successMessage='Moved post to another space'
       failedMessage='Failed to move post'
+      disabled={isEmptyArray(spaceIds)}
     />
 
   const renderMovePostView = () => {
@@ -74,7 +81,7 @@ const InnerMoveModal = (props: Props) => {
       return (
         <CreateSpaceButton>
           <a className='ui button primary'>
-            Create my first space
+            Create one more space
           </a>
         </CreateSpaceButton>
       )
