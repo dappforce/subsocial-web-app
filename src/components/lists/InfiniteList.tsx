@@ -35,8 +35,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   const { query: { page: pagePath } } = useRouter()
 
-  const isInitialData = nonEmptyArr(dataSource)
-
+  const hasInitialData = nonEmptyArr(dataSource)
 
   const initialPage = pagePath
     ? tryParseInt(pagePath.toString(), DEFAULT_FIRST_PAGE)
@@ -68,12 +67,12 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   }, [ page ])
 
   useEffect(() => {
-    if (isInitialData) return setPage(page + 1);
+    if (hasInitialData) return setPage(page + 1);
 
     handleInfiniteOnLoad()
   }, [])
 
-  if (!isInitialData && isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
+  if (!hasInitialData && isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
 
   const linkProps = getLinksParams(page + 1)
 

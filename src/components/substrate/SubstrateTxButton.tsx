@@ -71,7 +71,7 @@ export function TxButton ({
   const [ unsub, setUnsub ] = useState<() => void>()
   const [ isSending, , setIsSending ] = useToggle(false)
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-  const waitMessage = controlledMessage({ message: 'Waiting for transaction...', type: 'info', duration: 0 })
+  const waitMessage = controlledMessage({ message: 'Waiting for transaction completed...', type: 'info', duration: 0 })
 
   const isAuthRequired = !accountId || !isTokens
   const buttonLabel = label || children
