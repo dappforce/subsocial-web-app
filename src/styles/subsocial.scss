@@ -623,28 +623,6 @@ hr {
   }
 }
 
-.DfShareModalBody {
-  .DfSection {
-    margin-top: $space_huge;
-    margin-bottom: 0;
-    width: auto;
-  }
-
-  .EditEntityBox {
-    width: 100%;
-    max-width: none;
-  }
-
-  .ui.input>input,
-  .ui.selection.dropdown {
-    width: 100%;
-  }
-
-  .DfSegment.DfPostPreview {
-    text-align: left;
-  }
-}
-
 .DfGreyLink {
   color: $color_muted !important;
   cursor: pointer;
@@ -809,6 +787,7 @@ hr {
 
 .ProfileDetails.DfPreview {
   align-items: center;
+  height: stretch;
 }
 
 .DfPopup-handle {
