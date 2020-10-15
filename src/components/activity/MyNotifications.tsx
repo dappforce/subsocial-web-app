@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
-import { getNotifications } from '../utils/OffchainUtils';
+import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils';
 import NotAuthorized from '../auth/NotAuthorized';
 import { HeadMeta } from '../utils/HeadMeta';
 import { useMyAddress } from '../auth/MyAccountContext';
@@ -13,7 +13,7 @@ import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import { ParsedPaginationQuery } from '../utils/getIds';
 
-const title = 'My notifications'
+const NOTIFICATION_TITLE = 'My notifications'
 const loadingLabel = 'Loading your notifications...'
 
 type StructId = string
@@ -30,6 +30,7 @@ const loadMore = async (props: LoadMoreProps) => {
   if (!myAddress) return []
 
   const offset = (page - 1) * size
+
   const items = await getNotifications(myAddress, offset, INFINITE_SCROLL_PAGE_SIZE)
 
   return loadNotifications(subsocial, items, activityStore)
@@ -38,6 +39,14 @@ const loadMore = async (props: LoadMoreProps) => {
 export const InnerMyNotifications = () => {
   const myAddress = useMyAddress()
   const { subsocial, isApiReady } = useSubsocialApi()
+  const [ totalCount, setTotalCount ] = useState<number>()
+
+  useEffect(() => {
+    if (!myAddress) return
+
+    getNotificationsCount(myAddress)
+      .then(setTotalCount)
+  })
 
   const activityStore: ActivityStore = {
     spaceById: new Map<StructId, SpaceData>(),
@@ -47,13 +56,14 @@ export const InnerMyNotifications = () => {
 
   const Notifications = useCallback(() => <InfiniteList
     loadingLabel={loadingLabel}
-    title={title}
+    title={`${NOTIFICATION_TITLE} (${totalCount})`}
     noDataDesc='No notifications for you'
+    totalCount={totalCount || 0}
     renderItem={(x: NotificationType, key) => <Notification key={key} {...x} />}
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size, activityStore })}
-  />, [ myAddress, isApiReady ])
+  />, [ myAddress, isApiReady, totalCount ])
 
-  if (!isApiReady) return <Loading label={loadingLabel} />
+  if (!isApiReady || !totalCount) return <Loading label={loadingLabel} />
 
   if (!myAddress) return <NotAuthorized />
 
@@ -62,7 +72,7 @@ export const InnerMyNotifications = () => {
 
 export const MyNotifications = () => {
   return <>
-    <HeadMeta title={title} />
+    <HeadMeta title={NOTIFICATION_TITLE} />
     <InnerMyNotifications />
   </>
 }

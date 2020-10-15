@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { hexToBn } from '@polkadot/util';
 import { useMyAddress } from '../auth/MyAccountContext';
 import NotAuthorized from '../auth/NotAuthorized';
-import { getNewsFeed } from '../utils/OffchainUtils';
+import { getNewsFeed, getFeedCount } from '../utils/OffchainUtils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { InfiniteList } from '../lists/InfiniteList';
 import PostPreview from '../posts/view-post/PostPreview';
@@ -40,16 +40,24 @@ const loadMore = async (props: LoadMoreProps) => {
 export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
   const myAddress = useMyAddress()
   const { subsocial, isApiReady } = useSubsocialApi()
+  const [ totalCount, setTotalCount ] = useState<number>()
 
+  useEffect(() => {
+    if (!myAddress) return
+
+    getFeedCount(myAddress)
+      .then(setTotalCount)
+  })
   const Feed = useCallback(() => <InfiniteList
     loadingLabel={loadingLabel}
     title={withTitle ? title : undefined}
+    totalCount={totalCount || 0}
     noDataDesc='Your feed is empty. Try to follow more spaces ;)'
     renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
-  />, [ myAddress, isApiReady ])
+  />, [ myAddress, isApiReady, totalCount ])
 
-  if (!isApiReady) return <Loading label={loadingLabel} />
+  if (!isApiReady || !totalCount) return <Loading label={loadingLabel} />
 
   if (!myAddress) return <NotAuthorized />
 
