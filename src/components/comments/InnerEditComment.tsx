@@ -17,7 +17,8 @@ type Props = MyAccountProps & {
   content?: CommentContent,
   withCancel?: boolean,
   callback?: (id?: BN) => void,
-  CommentTxButton: (props: CommentTxButtonType) => JSX.Element
+  CommentTxButton: (props: CommentTxButtonType) => JSX.Element,
+  withStub?: boolean
 };
 
 const Fields = {
@@ -25,10 +26,11 @@ const Fields = {
 }
 
 export const InnerEditComment = (props: Props) => {
-  const { content, withCancel = false, callback, CommentTxButton } = props;
+  const { content, withCancel = false, callback, CommentTxButton, withStub } = props;
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
   const [ fakeId ] = useState(fakeClientId())
+  const [ toolbar, setToolbar ] = useState(!withStub)
 
   const { control, errors, formState, watch, reset } = useForm({
     validationSchema: buildSharePostValidationSchema(),
@@ -73,11 +75,10 @@ export const InnerEditComment = (props: Props) => {
   );
 
   return <div className='DfShareModalBody'>
-    <form>
+    <form onClick={() => setToolbar(true)}>
       <Controller
         control={control}
-        as={<DfMdEditor />}
-        options={{ autofocus: true }}
+        as={<DfMdEditor options={{ placeholder: 'Write a comment...', toolbar, autofocus: toolbar }} />}
         name={Fields.body}
         value={body}
         defaultValue={body}
