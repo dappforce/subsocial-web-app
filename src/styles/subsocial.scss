@@ -65,7 +65,7 @@ pre {
 
 .DfLinkOnHover {
   &:hover {
-    color: $color_link;
+    color: $color_link !important;
     cursor: pointer;
     text-decoration: none;
   }
@@ -201,10 +201,6 @@ pre {
 @media (min-width: 1200px) {
   .DfBrand {
     font-size: $font_normal;
-
-    img {
-      max-width: 160px;
-    }
   }
 }
 
@@ -215,7 +211,7 @@ pre {
   cursor: pointer;
 
   img {
-    max-width: 200px;
+    max-width: 160px;
     margin-top: -5px;
   }
 }
@@ -346,7 +342,7 @@ pre {
 
 .ProfileDetails {
   display: flex !important;
-  align-items: center;
+
   .content {
     padding: 0 $space_small;
   }
@@ -786,7 +782,6 @@ hr {
 }
 
 .ProfileDetails.DfPreview {
-  align-items: center;
   height: stretch;
 }
 
@@ -818,6 +813,12 @@ hr {
 }
 
 .DfMdEditor {
+
+  .CodeMirror {
+    font-size: 1rem;
+    padding: 6.5px 11px; /* padding from ant design input */
+  }
+
   .CodeMirror-scroll {
     min-height: 5rem !important;
   }
@@ -949,7 +950,7 @@ hr {
 }
 
 .DfDataList {
-  padding-top: $space_tiny;
+  margin-top: $space_tiny;
 
   .DfSegment {
     margin: $space_normal 0;
@@ -1374,7 +1375,7 @@ a.DfStatItem {
     flex-direction: column;
     line-height: normal;
     padding: $space_tiny;
-    padding-top: $space_normal;
+    padding-top: .85rem;
     padding-left: 0;
 
     a {
@@ -1453,7 +1454,7 @@ a.DfStatItem {
   }
 
   .DfActionButtonsBlock {
-    padding: $space_tiny 0;
+    margin: $space_tiny 0;
   }
 }
 
@@ -1474,7 +1475,7 @@ a.DfStatItem {
   }
 
   .DfActionButtonsBlock {
-    padding: $space_small 0;
+    margin: $space_small 0;
   }
 }
 
