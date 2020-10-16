@@ -9,10 +9,7 @@ const MdEditor = ({
   onChange = () => {},
   ...otherProps
 }: MdEditorProps) => {
-
-  console.log('OPTIONS', options)
-
-  const { toolbar, ...otherOptions } = options
+  const { toolbar = true, ...otherOptions } = options
 
   const classToolbar = !toolbar && 'hideToolbar'
 
