@@ -1,6 +1,6 @@
 import DataList, { DataListProps } from './DataList';
 import { useState, useCallback, useEffect } from 'react';
-import { Loading, isClientSide } from '../utils';
+import { Loading, isClientSide, isServerSide } from '../utils';
 import { INFINITE_SCROLL_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
 import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -47,7 +47,7 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   const canHaveMoreData = () =>
     data
-      ? page <= lastPage
+      ? page < lastPage
       : true
 
   const [ hasMore, setHasMore ] = useState(canHaveMoreData())
@@ -63,12 +63,12 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
     data.push(...newData)
 
     setData([ ...data ])
-    setPage(page + 1)
 
     if (!canHaveMoreData()) {
       setHasMore(false)
     }
 
+    setPage(page + 1)
     setLoading(false)
   }, [ page ])
 
@@ -91,10 +91,11 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
     >
       <DataList
         {...otherProps}
+        totalCount={totalCount}
         dataSource={data}
         renderItem={renderItem}
       />
-      {withLoadMoreLink && !loading && hasMore && isClientSide() &&
+      {withLoadMoreLink && !loading && hasMore && isServerSide() &&
         <ButtonLink block {...linkProps} className='mb-2'>Load more</ButtonLink>
       }
     </InfiniteScroll>
