@@ -55,8 +55,14 @@ pre {
   color: #999;
 }
 
-.ant-modal-body {
-  padding: $space_small;
+.ant-modal-header,
+.ant-modal-body,
+.ant-modal-footer {
+  padding: $space_normal;
+}
+
+.ant-modal-title {
+  font-size: $font_large;
 }
 
 .ant-list-lg.ant-list-item {
@@ -166,17 +172,18 @@ pre {
 }
 
 .DfTags {
-  margin: 0;
-  margin-bottom: $space_normal;
-  font-size: $font_normal;
-
   .anticon {
     color: #bbb !important;
     margin-right: .35rem !important;
   }
 
-  .ant-tag:hover {
-    background-color: #fff;
+  .ant-tag {
+    font-size: .85rem;
+    padding: .25rem .5rem;
+
+    &:hover {
+      background-color: #fff;
+    }
   }
 
   a {
@@ -244,17 +251,17 @@ pre {
 .DfEntirePost {
   /* padding: 0 $space_tiny; */
 
-  .DfCommentSection {
-    margin-top: $space_small
-  }
-
   .DfPostContent {
     @extend .DfBookPage;
     margin-bottom: $space_small;
+  }
 
-    .DfSharedSummary {
-      margin-top: -$space_normal;
-    }
+  .DfSpacePreviewOnPostPage > .DfSegment {
+    @extend .DfBookPage;
+  }
+
+  .DfCommentSection {
+    margin-top: $space_small
   }
 
   .DfCommentAction {
@@ -585,7 +592,7 @@ hr {
 
 .DfSharedSummary {
   .DfPostBody {
-    margin: $space_small 0 $space_large 0;
+    margin-bottom: $space_large;
   }
 }
 
