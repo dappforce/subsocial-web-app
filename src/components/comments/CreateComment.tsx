@@ -10,17 +10,17 @@ import { useMyAccount } from '../auth/MyAccountContext';
 import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils';
 import { isHiddenPost, HiddenPostAlert } from '../posts/view-post';
 
-const InnerEditComment = dynamic(() => import('./InnerEditComment'), { ssr: false });
+const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type NewCommentProps = {
   post: Post
   callback?: (id?: BN) => void
   withCancel?: boolean,
-  withStub?: boolean
+  asStub?: boolean
 }
 
-export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, withStub }) => {
+export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
   const { id: parentId, extension } = post;
   const dispatch = useDispatch();
   const { subsocial } = useSubsocialApi()
@@ -90,10 +90,10 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
       }}
     />
 
-  return <InnerEditComment
+  return <CommentEditor
     callback={callback}
     CommentTxButton={buildTxButton}
     withCancel={withCancel}
-    withStub={withStub}
+    asStub={asStub}
   />
 }
