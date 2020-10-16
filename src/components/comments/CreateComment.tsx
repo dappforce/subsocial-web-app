@@ -17,10 +17,10 @@ type NewCommentProps = {
   post: Post
   callback?: (id?: BN) => void
   withCancel?: boolean,
-  withStub?: boolean
+  asStub?: boolean
 }
 
-export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, withStub }) => {
+export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
   const { id: parentId, extension } = post;
   const dispatch = useDispatch();
   const { subsocial } = useSubsocialApi()
@@ -94,6 +94,6 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
     callback={callback}
     CommentTxButton={buildTxButton}
     withCancel={withCancel}
-    withStub={withStub}
+    asStub={asStub}
   />
 }

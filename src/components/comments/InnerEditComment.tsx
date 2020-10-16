@@ -18,7 +18,7 @@ type Props = MyAccountProps & {
   withCancel?: boolean,
   callback?: (id?: BN) => void,
   CommentTxButton: (props: CommentTxButtonType) => JSX.Element,
-  withStub?: boolean
+  asStub?: boolean
 };
 
 const Fields = {
@@ -26,11 +26,11 @@ const Fields = {
 }
 
 export const InnerEditComment = (props: Props) => {
-  const { content, withCancel = false, callback, CommentTxButton, withStub } = props;
+  const { content, withCancel = false, callback, CommentTxButton, asStub } = props;
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
   const [ fakeId ] = useState(fakeClientId())
-  const [ toolbar, setToolbar ] = useState(!withStub)
+  const [ toolbar, setToolbar ] = useState(!asStub)
 
   const { control, errors, formState, watch, reset } = useForm({
     validationSchema: buildSharePostValidationSchema(),
