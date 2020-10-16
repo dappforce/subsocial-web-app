@@ -251,13 +251,17 @@ pre {
 .DfEntirePost {
   /* padding: 0 $space_tiny; */
 
-  .DfCommentSection {
-    margin-top: $space_small
-  }
-
   .DfPostContent {
     @extend .DfBookPage;
     margin-bottom: $space_small;
+  }
+
+  .DfSpacePreviewOnPostPage > .DfSegment {
+    @extend .DfBookPage;
+  }
+
+  .DfCommentSection {
+    margin-top: $space_small
   }
 
   .DfCommentAction {

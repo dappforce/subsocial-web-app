@@ -120,25 +120,23 @@ export const ViewSpace = (props: Props) => {
       <div className='DfSpaceBody'>
         <Avatar />
         <div className='ml-2 w-100'>
-          <span className='mb-3'>
-            <div className='d-flex justify-content-between mb-3'>
-              {title}
-              <span className='d-flex align-items-center'>
-                <DropdownMenu className='mx-2' spaceData={spaceData} />
-                {isMy &&
-                  <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
-                    <EditOutlined /> Edit
-                  </ButtonLink>
-                }
-                {withFollowButton &&
-                  <FollowSpaceButton spaceId={id} />
-                }
-              </span>
-            </div>
-          </span>
+          <div className='d-flex justify-content-between'>
+            {title}
+            <span className='d-flex align-items-center'>
+              <DropdownMenu className='mx-2' spaceData={spaceData} />
+              {isMy &&
+                <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
+                  <EditOutlined /> Edit
+                </ButtonLink>
+              }
+              {withFollowButton &&
+                <FollowSpaceButton spaceId={id} />
+              }
+            </span>
+          </div>
 
           {nonEmptyStr(about) &&
-            <div className='description'>
+            <div className='description mt-3'>
               <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />

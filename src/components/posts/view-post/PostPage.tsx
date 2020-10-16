@@ -95,7 +95,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
           <PostActionsPanel postDetails={postDetails} space={space.struct} />
         </div>
 
-        <div className='my-3'>
+        <div className='DfSpacePreviewOnPostPage'>
           <ViewSpace
             spaceData={spaceData}
             withFollowButton
