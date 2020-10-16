@@ -259,17 +259,13 @@ export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = 
   );
 };
 
-type InfoForPostPreviewProps = {
-  postDetails: PostWithSomeDetails,
+type PostPreviewProps = {
+  postDetails: PostWithSomeDetails
   space: SpaceData
+  withTags?: boolean
 }
 
-type SharedPostContentProps = {
-  postDetails: PostWithSomeDetails,
-  space: SpaceData
-}
-
-const SharedPostMd = (props: SharedPostContentProps) => {
+const SharedPostMd = (props: PostPreviewProps) => {
   const { postDetails, space } = props
   const { post: { struct, content } } = postDetails
 
@@ -278,7 +274,7 @@ const SharedPostMd = (props: SharedPostContentProps) => {
     : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
 }
 
-export const SharePostContent = (props: SharedPostContentProps) => {
+export const SharePostContent = (props: PostPreviewProps) => {
   const { postDetails: { ext } } = props
 
   const OriginalPost = () => {
@@ -302,9 +298,11 @@ export const SharePostContent = (props: SharedPostContentProps) => {
   </div>
 }
 
-export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> = ({ postDetails, space }) => {
-  const { post: { struct, content } } = postDetails;
-  if (!struct || !content) return null;
+export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props) => {
+  const { postDetails, space, withTags } = props
+  const { post: { struct, content } } = postDetails
+
+  if (!struct || !content) return null
 
   return <div className='DfInfo'>
     <div className='DfRow'>
@@ -314,7 +312,7 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
           <PostDropDownMenu post={struct} space={space.struct} withEditButton />
         </div>
         <PostContent postDetails={postDetails} space={space.struct} />
-        <ViewTags tags={content?.tags} />
+        {withTags && <ViewTags tags={content?.tags} />}
         {/* {withStats && <StatsPanel id={post.id}/>} */}
       </div>
       <PostImage post={postDetails.post} space={space.struct} />
