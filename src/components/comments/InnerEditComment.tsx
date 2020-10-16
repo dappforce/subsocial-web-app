@@ -13,6 +13,15 @@ import { CommentTxButtonType } from './utils';
 import { getNewIdFromEvent } from '../substrate';
 import BN from 'bn.js'
 
+// A height of EasyMDE toolbar with our custom styles. Can be changed
+const toolbarHeight = 49
+
+function scrollToolbarHeight() {
+  if (window) {
+    window.scrollBy(0, toolbarHeight)
+  }
+}
+
 type Props = MyAccountProps & {
   content?: CommentContent,
   withCancel?: boolean,
@@ -26,7 +35,7 @@ const Fields = {
 }
 
 export const InnerEditComment = (props: Props) => {
-  const { content, withCancel = false, callback, CommentTxButton, asStub } = props;
+  const { content, withCancel, callback, CommentTxButton, asStub } = props;
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
   const [ fakeId ] = useState(fakeClientId())
@@ -74,8 +83,15 @@ export const InnerEditComment = (props: Props) => {
     />
   );
 
+  const showToolbar = () => {
+    if (!toolbar) {
+      setToolbar(true)
+      scrollToolbarHeight()
+    }
+  }
+
   return <div className='DfShareModalBody'>
-    <form onClick={() => setToolbar(true)}>
+    <form onClick={showToolbar}>
       <Controller
         control={control}
         as={<DfMdEditor options={{ placeholder: 'Write a comment...', toolbar, autofocus: toolbar }} />}
@@ -89,7 +105,7 @@ export const InnerEditComment = (props: Props) => {
       </div>
     </form>
     <div className='DfActionButtonsBlock'>
-      {renderTxButton()}
+      {toolbar && renderTxButton()}
       {withCancel && <Button type='link' onClick={onCancel} className="DfGreyLink">Cancel</Button>}
     </div>
   </div>
