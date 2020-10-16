@@ -10,7 +10,7 @@ import { useMyAccount } from '../auth/MyAccountContext';
 import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils';
 import { isHiddenPost, HiddenPostAlert } from '../posts/view-post';
 
-const InnerEditComment = dynamic(() => import('./InnerEditComment'), { ssr: false });
+const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type NewCommentProps = {
@@ -90,7 +90,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
       }}
     />
 
-  return <InnerEditComment
+  return <CommentEditor
     callback={callback}
     CommentTxButton={buildTxButton}
     withCancel={withCancel}

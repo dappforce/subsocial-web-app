@@ -34,7 +34,7 @@ const Fields = {
   body: 'body'
 }
 
-export const InnerEditComment = (props: Props) => {
+export const CommentEditor = (props: Props) => {
   const { content, withCancel, callback, CommentTxButton, asStub } = props;
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
@@ -111,4 +111,4 @@ export const InnerEditComment = (props: Props) => {
   </div>
 };
 
-export default InnerEditComment
+export default CommentEditor
