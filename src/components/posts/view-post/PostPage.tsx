@@ -73,10 +73,12 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
           <h1 className='DfPostName'>{titleMsg}</h1>
           <PostDropDownMenu post={struct} space={spaceStruct} withEditButton />
         </div>
+
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
           {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
+
         <div className='DfPostContent'>
           {ext
             ? <SharePostContent postDetails={postDetails} space={space} />
@@ -85,12 +87,14 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
                 <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
               </div>}
               {body && <DfMd source={body} />}
+              <ViewTags tags={tags} className='mt-2' />
             </>}
         </div>
-        <ViewTags tags={tags} />
+        
         <div className='DfRow'>
           <PostActionsPanel postDetails={postDetails} space={space.struct} />
         </div>
+
         <div className='my-3'>
           <ViewSpace
             spaceData={spaceData}
@@ -100,6 +104,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
             preview
           />
         </div>
+
         <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
       </Section>
     </PageContent>

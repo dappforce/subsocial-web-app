@@ -138,16 +138,16 @@ export const ViewSpace = (props: Props) => {
           </span>
 
           {nonEmptyStr(about) &&
-            <div className='description mb-2'>
+            <div className='description'>
               <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
             </div>
           }
 
-          {withTags && <ViewTags tags={tags} />}
+          {withTags && <ViewTags tags={tags} className='mt-2' />}
 
-          {withStats && <span className='d-flex justify-content-between flex-wrap'>
+          {withStats && <span className='d-flex justify-content-between flex-wrap mt-3'>
             <SpaceStatsRow space={space} />
             {!preview && <ContactInfo {...contactInfo} />}
           </span>}
