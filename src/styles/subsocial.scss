@@ -850,7 +850,7 @@ hr {
     }
 
     .CodeMirror {
-      border-radius: 4px;
+      border-radius: $border_radius_normal;
     }
   }
 
@@ -891,7 +891,7 @@ hr {
   padding: 0 1rem;
 
   input {
-    border-radius: .5rem;
+    border-radius: $border_radius_normal;
     font-size: $font_normal;
   }
 
