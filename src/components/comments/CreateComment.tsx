@@ -16,10 +16,11 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 type NewCommentProps = {
   post: Post
   callback?: (id?: BN) => void
-  withCancel?: boolean
+  withCancel?: boolean,
+  withStub?: boolean
 }
 
-export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel }) => {
+export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, withStub }) => {
   const { id: parentId, extension } = post;
   const dispatch = useDispatch();
   const { subsocial } = useSubsocialApi()
@@ -93,5 +94,6 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
     callback={callback}
     CommentTxButton={buildTxButton}
     withCancel={withCancel}
+    withStub={withStub}
   />
 }

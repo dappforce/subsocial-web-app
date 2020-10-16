@@ -844,6 +844,16 @@ hr {
     }
   }
 
+  &.hideToolbar {
+    .editor-toolbar {
+      display: none;
+    }
+
+    .CodeMirror {
+      border-radius: 4px;
+    }
+  }
+
   &:hover .editor-toolbar {
     color: $color_font_normal;
   }

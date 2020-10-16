@@ -1,7 +1,5 @@
-export type MdEditorProps = {
-  id?: string
-  className?: string
-  // label?: string
-  value?: string
-  onChange?: (value: string) => void | any
+import { SimpleMDEEditorProps } from 'react-simplemde-editor'
+
+export type MdEditorProps = Omit<SimpleMDEEditorProps, 'onChange'> & {
+  onChange?: (value: string) => any | void
 }

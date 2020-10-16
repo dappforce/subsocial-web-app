@@ -1,10 +1,6 @@
 import React from 'react'
-import SimpleMDEReact, { SimpleMDEEditorProps } from 'react-simplemde-editor'
+import SimpleMDEReact from 'react-simplemde-editor'
 import { MdEditorProps } from './types'
-
-type Props =
-  Omit<SimpleMDEEditorProps, 'onChange'>
-  & MdEditorProps
 
 const MdEditor = ({
   className,
@@ -12,11 +8,14 @@ const MdEditor = ({
   events = {},
   onChange = () => {},
   ...otherProps
-}: Props) => {
+}: MdEditorProps) => {
+  const { toolbar = true, ...otherOptions } = options
+
+  const classToolbar = !toolbar && 'hideToolbar'
 
   return <SimpleMDEReact
-    className={`DfMdEditor ${className}`}
-    options={{ previewClass: 'markdown-body', ...options }}
+    className={`DfMdEditor ${classToolbar} ${className}`}
+    options={{ previewClass: 'markdown-body', ...otherOptions }}
     events={events}
     onChange={onChange}
     {...otherProps}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Button, { ButtonProps } from 'antd/lib/button'
 
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types'
@@ -12,6 +12,8 @@ import { useSubstrate } from '.'
 import useToggle from './useToggle'
 import { Message, showSuccessMessage, showErrorMessage, controlledMessage } from '../utils/Message'
 import { useAuth } from '../auth/AuthContext'
+import { VoidFn } from '@polkadot/api/types'
+import { LoadingOutlined } from '@ant-design/icons'
 
 const log = newLogger('TxButton')
 
@@ -68,10 +70,11 @@ export function TxButton ({
 }: TxButtonProps) {
 
   const { api, keyring, keyringState } = useSubstrate()
-  const [ unsub, setUnsub ] = useState<() => void>()
   const [ isSending, , setIsSending ] = useToggle(false)
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-  const waitMessage = controlledMessage({ message: 'Waiting for transaction completed...', type: 'info', duration: 0 })
+  const waitMessage = controlledMessage({ message: 'Waiting for transaction completed...', type: 'info', duration: 0, icon: <LoadingOutlined /> })
+
+  let unsub: VoidFn | undefined;
 
   const isAuthRequired = !accountId || !isTokens
   const buttonLabel = label || children
@@ -145,7 +148,6 @@ export function TxButton ({
   }
 
   const doOnSuccess: TxCallback = (result) => {
-    waitMessage.close()
     isFunction(onSuccess) && onSuccess(result)
 
     const message: Message = isFunction(successMessage)
@@ -156,7 +158,6 @@ export function TxButton ({
   }
 
   const doOnFailed: TxFailedCallback = (result) => {
-    waitMessage.close()
     isFunction(onFailed) && onFailed(result)
 
     const message: Message = isFunction(failedMessage)
@@ -166,7 +167,8 @@ export function TxButton ({
     message && showErrorMessage(message)
   }
 
-  const onSuccessHandler = (result: SubmittableResult) => {
+  const onSuccessHandler = async (result: SubmittableResult) => {
+
     if (!result || !result.status) {
       return
     }
@@ -175,14 +177,13 @@ export function TxButton ({
     // TODO show antd success notification here
     if (status.isFinalized || status.isInBlock) {
       setIsSending(false)
+      await unsubscribe()
 
       const blockHash = status.isFinalized
         ? status.asFinalized
         : status.asInBlock
 
       logStatus(`✅ Tx finalized. Block hash: ${blockHash.toString()}`)
-
-      unsubscribe()
 
       result.events
         .filter(({ event: { section } }): boolean => section === 'system')
@@ -202,7 +203,6 @@ export function TxButton ({
   }
 
   const onFailedHandler = (err: Error) => {
-    waitMessage.close()
     setIsSending(false)
 
     if (err) {
@@ -222,31 +222,34 @@ export function TxButton ({
     const account = await getAccount()
     const extrinsic = await getExtrinsic()
 
-    const unsub = await extrinsic
+    try {
+      unsub = await extrinsic
       .signAndSend(account, onSuccessHandler)
-      .catch(onFailedHandler)
 
-    waitMessage.open()
+      waitMessage.open()
+    } catch (err) {
+      onFailedHandler(err)
+    }
 
-    setUnsub(() => unsub)
   }
 
   const sendUnsignedTx = async () => {
     const extrinsic = await getExtrinsic()
 
-    const unsub = await extrinsic
+    try {
+      unsub = await extrinsic
       .send(onSuccessHandler)
-      .catch(onFailedHandler)
 
-    waitMessage.open()
-
-    setUnsub(() => unsub)
+      waitMessage.open()
+    } catch (err) {
+      onFailedHandler(err)
+    }
   }
 
   const unsubscribe = () => {
     if (unsub) {
+      waitMessage.close()
       unsub()
-      setUnsub(undefined)
     }
   }
 
