@@ -13,6 +13,7 @@ import useToggle from './useToggle'
 import { Message, showSuccessMessage, showErrorMessage, controlledMessage } from '../utils/Message'
 import { useAuth } from '../auth/AuthContext'
 import { VoidFn } from '@polkadot/api/types'
+import { LoadingOutlined } from '@ant-design/icons'
 
 const log = newLogger('TxButton')
 
@@ -71,7 +72,7 @@ export function TxButton ({
   const { api, keyring, keyringState } = useSubstrate()
   const [ isSending, , setIsSending ] = useToggle(false)
   const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-  const waitMessage = controlledMessage({ message: 'Waiting for transaction completed...', type: 'info', duration: 0 })
+  const waitMessage = controlledMessage({ message: 'Waiting for transaction completed...', type: 'info', duration: 0, icon: <LoadingOutlined /> })
 
   let unsub: VoidFn | undefined;
 
@@ -147,7 +148,6 @@ export function TxButton ({
   }
 
   const doOnSuccess: TxCallback = (result) => {
-    waitMessage.close()
     isFunction(onSuccess) && onSuccess(result)
 
     const message: Message = isFunction(successMessage)
@@ -158,7 +158,6 @@ export function TxButton ({
   }
 
   const doOnFailed: TxFailedCallback = (result) => {
-    waitMessage.close()
     isFunction(onFailed) && onFailed(result)
 
     const message: Message = isFunction(failedMessage)
@@ -169,7 +168,6 @@ export function TxButton ({
   }
 
   const onSuccessHandler = async (result: SubmittableResult) => {
-    console.log('RESULT', result)
 
     if (!result || !result.status) {
       return
@@ -205,7 +203,6 @@ export function TxButton ({
   }
 
   const onFailedHandler = (err: Error) => {
-    waitMessage.close()
     setIsSending(false)
 
     if (err) {
@@ -227,10 +224,7 @@ export function TxButton ({
 
     try {
       unsub = await extrinsic
-      .signAndSend(account, (x) => {
-        console.log('SignAndSend', x)
-        onSuccessHandler(x)
-      })
+      .signAndSend(account, onSuccessHandler)
 
       waitMessage.open()
     } catch (err) {
@@ -254,6 +248,7 @@ export function TxButton ({
 
   const unsubscribe = () => {
     if (unsub) {
+      waitMessage.close()
       unsub()
     }
   }
