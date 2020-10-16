@@ -108,7 +108,7 @@ const InnerShareModal = (props: Props) => {
         />
       </span>
 
-      <form style={{ margin: '0.75rem 0' }}>
+      <form style={{ margin: '1rem 0' }}>
         <Controller
           control={control}
           as={<DfMdEditor />}

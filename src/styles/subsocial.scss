@@ -55,8 +55,14 @@ pre {
   color: #999;
 }
 
-.ant-modal-body {
-  padding: $space_small;
+.ant-modal-header,
+.ant-modal-body,
+.ant-modal-footer {
+  padding: $space_normal;
+}
+
+.ant-modal-title {
+  font-size: $font_large;
 }
 
 .ant-list-lg.ant-list-item {
