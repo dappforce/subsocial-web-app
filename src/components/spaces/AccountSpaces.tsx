@@ -17,10 +17,9 @@ import { getPageOfIds } from '../utils/getIds';
 import { useRouter } from 'next/router';
 import DataList from '../lists/DataList';
 
-type LoadSpacesType = {
+export type LoadSpacesType = {
   spacesData: SpaceData[]
   mySpaceIds: SpaceId[]
-
 }
 
 type BaseProps = {

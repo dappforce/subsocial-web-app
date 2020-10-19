@@ -9,11 +9,12 @@ function getOffchainUrl (subUrl: string): string {
   return `${offchainUrl}/v1/offchain${subUrl}`
 }
 
-const createActivitiesUrlByAddress = (address: string, entity: 'feed' | 'notifications') =>
+const createActivitiesUrlByAddress = (address: string, entity: 'feed' | 'notifications' | 'activity') =>
   getOffchainUrl(`/${entity}/${address}`)
 
 const createNotificationsUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'notifications')
 const createFeedUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'feed')
+const createActivityUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'activity')
 
 const axiosRequest = async (url: string) => {
   try {
@@ -57,11 +58,17 @@ export const getNewsFeed = async (myAddress: string, offset: number, limit: numb
 export const getNotifications = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> =>
   getActivity(`${createNotificationsUrlByAddress(myAddress)}?offset=${offset}&limit=${limit}`)
 
+export const getActivities = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> =>
+  getActivity(`${createActivityUrlByAddress(myAddress)}?offset=${offset}&limit=${limit}`)
+
 export const getFeedCount = async (myAddress: string) =>
   getCount(`${createFeedUrlByAddress(myAddress)}/count`)
 
 export const getNotificationsCount = async (myAddress: string) =>
   getCount(`${createNotificationsUrlByAddress(myAddress)}/count`)
+
+export const getActivitiesCount = async (myAddress: string) =>
+  getCount(`${createActivityUrlByAddress(myAddress)}/count`)
 
 
 // TODO require refactor
