@@ -1,24 +1,71 @@
 import axios from 'axios';
 import { offchainUrl } from './env';
 import { Activity } from '@subsocial/types/offchain';
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('OffchainRequests')
 
 function getOffchainUrl (subUrl: string): string {
   return `${offchainUrl}/v1/offchain${subUrl}`
 }
 
-export const getNewsFeed = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> => {
-  const res = await axios.get(getOffchainUrl(`/feed/${myAddress}?offset=${offset}&limit=${limit}`));
-  const { data } = res;
-  return data;
-};
+const createActivitiesUrlByAddress = (address: string, entity: 'feed' | 'notifications') =>
+  getOffchainUrl(`/${entity}/${address}`)
 
-export const getNotifications = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> => {
-  const res = await axios.get(getOffchainUrl(`/notifications/${myAddress}?offset=${offset}&limit=${limit}`));
-  const { data } = res;
-  return data;
-};
+const createNotificationsUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'notifications')
+const createFeedUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'feed')
 
-export const clearNotifications = async (myAddress: string): Promise<void> => {
+const axiosRequest = async (url: string) => {
+  try {
+    const res = await axios.get(url);
+    if (res.status !== 200) {
+      log.error('Failed request to offchain with status', res.status)
+    }
+
+    return res;
+  } catch (err) {
+      log.error('Failed request to offchain with error', err)
+      return err
+  }
+}
+
+const getActivity = async (url: string): Promise<Activity[]> => {
+  try {
+    const res = await axiosRequest(url)
+    const { data } = res
+    return data
+  } catch (err) {
+    log.error('Failed get activities from offchain with error', err)
+    return []
+  }
+}
+
+const getCount = async (url: string): Promise<number> => {
+  try {
+    const res = await axiosRequest(url)
+    const { data } = res
+    return data
+  } catch (err) {
+    log.error('Failed get count of activities from offchain with error', err)
+    return 0
+  }
+}
+
+export const getNewsFeed = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> =>
+  getActivity(`${createFeedUrlByAddress(myAddress)}?offset=${offset}&limit=${limit}`)
+
+export const getNotifications = async (myAddress: string, offset: number, limit: number): Promise<Activity[]> =>
+  getActivity(`${createNotificationsUrlByAddress(myAddress)}?offset=${offset}&limit=${limit}`)
+
+export const getFeedCount = async (myAddress: string) =>
+  getCount(`${createFeedUrlByAddress(myAddress)}/count`)
+
+export const getNotificationsCount = async (myAddress: string) =>
+  getCount(`${createNotificationsUrlByAddress(myAddress)}/count`)
+
+
+// TODO require refactor
+export const clearNotifications = async (myAddress: string): Promise<void> =>{
   try {
     const res = await axios.post(getOffchainUrl(`/notifications/${myAddress}/readAll`));
     if (res.status !== 200) {
