@@ -10,7 +10,7 @@ import { PostWithAllDetails } from '@subsocial/types';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
-import { isDef } from '@subsocial/utils';
+import { isDef, notDef } from '@subsocial/utils';
 import { ParsedPaginationQuery } from '../utils/getIds';
 
 const title = 'My feed'
@@ -57,7 +57,7 @@ export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
   />, [ myAddress, isApiReady, totalCount ])
 
-  if (!isApiReady || !totalCount) return <Loading label={loadingLabel} />
+  if (!isApiReady || notDef(totalCount)) return <Loading label={loadingLabel} />
 
   if (!myAddress) return <NotAuthorized />
 

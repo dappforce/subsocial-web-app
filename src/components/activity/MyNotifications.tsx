@@ -12,6 +12,7 @@ import { ActivityStore, NotificationType } from './NotificationUtils';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import { ParsedPaginationQuery } from '../utils/getIds';
+import { notDef } from '@subsocial/utils';
 
 const NOTIFICATION_TITLE = 'My notifications'
 const loadingLabel = 'Loading your notifications...'
@@ -63,7 +64,7 @@ export const InnerMyNotifications = () => {
     loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size, activityStore })}
   />, [ myAddress, isApiReady, totalCount ])
 
-  if (!isApiReady || !totalCount) return <Loading label={loadingLabel} />
+  if (!isApiReady || notDef(totalCount)) return <Loading label={loadingLabel} />
 
   if (!myAddress) return <NotAuthorized />
 
