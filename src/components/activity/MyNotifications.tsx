@@ -1,13 +1,9 @@
-import React, {  } from 'react';
-import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils';
-import NotAuthorized from '../auth/NotAuthorized';
-import { HeadMeta } from '../utils/HeadMeta';
-import { useMyAddress } from '../auth/MyAccountContext';
-import { getLoadMoreFn, InnerActivities } from './InnerActivities';
+import { useMyAddress } from "../auth/MyAccountContext"
+import NotAuthorized from "../auth/NotAuthorized"
+import HeadMeta from "../utils/HeadMeta"
+import { Notifications } from "./Notifications"
 
 const NOTIFICATION_TITLE = 'My notifications'
-
-const loadMoreNotifications = getLoadMoreFn(getNotifications)
 
 export const MyNotifications = () => {
   const myAddress = useMyAddress()
@@ -16,13 +12,8 @@ export const MyNotifications = () => {
 
   return <>
     <HeadMeta title={NOTIFICATION_TITLE} />
-    <InnerActivities
-      loadMore={loadMoreNotifications}
-      address={myAddress} title={NOTIFICATION_TITLE}
-      getCount={getNotificationsCount}
-    />
+    <Notifications title={NOTIFICATION_TITLE} address={myAddress} />
   </>
 }
 
 export default MyNotifications
-

@@ -1,57 +1,41 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { INFINITE_SCROLL_PAGE_SIZE } from '../../config/ListData.config';
-import { Notification, loadNotifications } from './Notification';
 import { InfiniteList } from '../lists/InfiniteList';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { PostData, SpaceData, ProfileData, Activity } from '@subsocial/types';
+import { PostData, SpaceData, ProfileData, PostWithAllDetails } from '@subsocial/types';
 import { ActivityStore, NotificationType } from './NotificationUtils';
 import { Loading } from '../utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import { ParsedPaginationQuery } from '../utils/getIds';
 import { notDef } from '@subsocial/utils';
-
-const loadingLabel = 'Loading your notifications...'
+import PostPreview from '../posts/view-post/PostPreview';
+import { Notification } from './Notification'
 
 type StructId = string
 
-type LoadMoreProps = ParsedPaginationQuery & {
+export type LoadMoreProps = ParsedPaginationQuery & {
   subsocial: SubsocialApi
   address?: string
   activityStore: ActivityStore
 }
 
-type LoadMoreFn = (
-  myAddress: string,
-  offset: number,
-  limit: number
-) => Promise<Activity[]>
-
 type GetCountFn = (account: string) => Promise<number>
 
-export const getLoadMoreFn = (getActivity: LoadMoreFn) =>
-  async (props: LoadMoreProps) => {
-    const { subsocial, address, page, size, activityStore } = props
-
-    if (!address) return []
-
-    const offset = (page - 1) * size
-
-    const items = await getActivity(address, offset, INFINITE_SCROLL_PAGE_SIZE)
-
-    console.log('items', items)
-
-    return loadNotifications(subsocial, items, activityStore)
-  }
-
-
-type InnerActivitiesProps = {
-  loadMore: (props: LoadMoreProps) => Promise<NotificationType[]>
-  getCount: GetCountFn,
+export type BaseActivityProps = {
   address: string,
   title?: string
 }
 
-export const InnerActivities = ({ loadMore, address, title, getCount }: InnerActivitiesProps) => {
+export type InnerActivitiesProps<T> = BaseActivityProps & {
+  loadMore: (props: LoadMoreProps) => Promise<T[]>
+  getCount: GetCountFn,
+  renderItem: (item: T, index: number) => JSX.Element,
+  noDataDesc?: string,
+  loadingLabel?: string,
+}
+
+export type ActivitiesProps<T> = Omit<InnerActivitiesProps<T>, 'renderItem'>
+
+export function InnerActivities<T> ({ loadMore, address, title, getCount, renderItem, noDataDesc, loadingLabel }: InnerActivitiesProps<T>) {
   const { subsocial, isApiReady } = useSubsocialApi()
   const [ totalCount, setTotalCount ] = useState<number>()
 
@@ -70,20 +54,30 @@ export const InnerActivities = ({ loadMore, address, title, getCount }: InnerAct
     ownerById: new Map<StructId, ProfileData>()
   }
 
-  const Notifications = useCallback(() => <InfiniteList
+  const Activities = useCallback(() => <InfiniteList
     loadingLabel={loadingLabel}
     title={title ? `${title} (${totalCount})` : null}
-    noDataDesc='No notifications for you'
+    noDataDesc={noDataDesc}
     totalCount={totalCount || 0}
-    renderItem={(x: NotificationType, key) => <Notification key={key} {...x} />}
+    renderItem={renderItem}
     loadMore={(page, size) => loadMore({ subsocial, address, page, size, activityStore })}
   />, [ address, isApiReady, totalCount ])
 
   if (!isApiReady || notDef(totalCount)) return <Loading label={loadingLabel} />
 
-
-  return <Notifications />
+  return <Activities />
 }
 
+export type FeedActivitiesProps<T> = ActivitiesProps<T>
 
+export const FeedActivities = (props: FeedActivitiesProps<PostWithAllDetails>) => <InnerActivities
+  {...props}
+  renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+/>
 
+export type NotifActivitiesProps<T> = ActivitiesProps<T>
+
+export const NotifActivities = (props: FeedActivitiesProps<NotificationType>) => <InnerActivities
+  {...props}
+  renderItem={(x: NotificationType, key) => <Notification key={key} {...x} />}
+/>
