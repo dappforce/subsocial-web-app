@@ -6,15 +6,15 @@ import { AnyAccountId } from '@subsocial/types';
 import { getLoadMoreNotificationsFn, NotifActivities } from './Notifications';
 import { BaseActivityProps } from './types';
 import { getLoadMoreFeedFn, FeedActivities } from './FeedActivities';
+import msg from '../../messages'
 
 const { TabPane } = Tabs
-
 
 type ActivitiesByAddressProps = Partial<LoadSpacesType> & {
   address: AnyAccountId
 }
 
-const loadMoreActivities = getLoadMoreNotificationsFn(getActivities)
+const loadMoreActivities = getLoadMoreNotificationsFn(getActivities, msg.activities)
 
 const AllActivities = ({ address }: BaseActivityProps) => <NotifActivities
   loadMore={loadMoreActivities}
@@ -23,7 +23,7 @@ const AllActivities = ({ address }: BaseActivityProps) => <NotifActivities
   getCount={getActivitiesCount}
 />
 
-const loadMoreReaction = getLoadMoreNotificationsFn(getReactionActivities)
+const loadMoreReaction = getLoadMoreNotificationsFn(getReactionActivities, msg.activities)
 
 const ReactionActivities = ({ address }: BaseActivityProps) => <NotifActivities
   loadMore={loadMoreReaction}

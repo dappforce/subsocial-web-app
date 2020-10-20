@@ -8,9 +8,8 @@ import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
 import { hexToBn } from '@polkadot/util';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
-import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
+import { NotificationType, getNotification, ActivityStore, EventsMsg } from './NotificationUtils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
-
 type Struct = Exclude<CommonStruct, SocialAccount>
 
 const fillArray = <T extends string | BN>(
@@ -28,7 +27,8 @@ const fillArray = <T extends string | BN>(
 export const loadNotifications = async (
     subsocial: SubsocialApi,
     activities: Activity[],
-    activityStore: ActivityStore
+    activityStore: ActivityStore,
+    eventMsg: EventsMsg
 ) => {
   const { spaceById, postById, ownerById } = activityStore
 
@@ -85,7 +85,7 @@ export const loadNotifications = async (
   fillMap(spacesData, spaceById)
 
   return activities
-    .map(x => getNotification(x, activityStore))
+    .map(x => getNotification(x, activityStore, eventMsg))
     .filter(x => x !== undefined) as NotificationType[]
 }
 

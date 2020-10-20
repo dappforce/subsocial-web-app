@@ -30,18 +30,6 @@ export type EventsMsg = {
   [key in EventsName]: string;
 };
 
-export const eventsMsg: EventsMsg = {
-  AccountFollowed: 'followed your account',
-  SpaceFollowed: 'followed your space',
-  SpaceCreated: 'created a new space',
-  CommentCreated: 'commented on your post',
-  CommentReplyCreated: 'replied to your comment',
-  PostShared: 'shared your post',
-  CommentShared: 'shared your comment',
-  PostReactionCreated: 'reacted to your post',
-  CommentReactionCreated: 'reacted to your comment'
-}
-
 export type PathLinks = {
   links: {
     href: string,
@@ -157,7 +145,7 @@ const getNotificationMessage = (msg: string, aggregationCount: number, preview: 
   return <span className="DfActivityMsg">{aggregationMsg} {msg} {preview}</span>
 }
 
-export const getNotification = (activity: Activity, store: ActivityStore): NotificationType | undefined => {
+export const getNotification = (activity: Activity, store: ActivityStore, eventsMsg: EventsMsg): NotificationType | undefined => {
   const { account, event, date, agg_count } = activity;
   const formatDate = moment(date).format('lll');
   const owner = store.ownerById.get(account);

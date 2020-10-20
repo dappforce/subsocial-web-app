@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils';
 import { loadNotifications } from './Notification'
 import { INFINITE_SCROLL_PAGE_SIZE } from 'src/config/ListData.config';
-import { LoadMoreFn, ActivityStore } from './NotificationUtils';
+import { LoadMoreFn, ActivityStore, EventsMsg } from './NotificationUtils';
 
 import { InfiniteList } from '../lists/InfiniteList';
 import { useSubsocialApi } from '../utils/SubsocialApiContext';
@@ -12,7 +12,7 @@ import { Loading } from '../utils';
 import { notDef } from '@subsocial/utils';
 import { Notification } from './Notification'
 import { InnerActivitiesProps, LoadMoreProps, BaseActivityProps } from './types';
-
+import msg from '../../messages'
 type StructId = string
 
 export function NotifActivities ({ loadMore, address, title, getCount, noDataDesc, loadingLabel }: InnerActivitiesProps<NotificationType>) {
@@ -46,7 +46,7 @@ export function NotifActivities ({ loadMore, address, title, getCount, noDataDes
   return <Activities />
 }
 
-export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn) =>
+export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn, eventMsg: EventsMsg) =>
   async (props: LoadMoreProps) => {
     const { subsocial, address, page, size, activityStore = {} as ActivityStore } = props
 
@@ -56,10 +56,10 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn) =>
 
     const items = await getActivity(address, offset, INFINITE_SCROLL_PAGE_SIZE)
 
-    return loadNotifications(subsocial, items, activityStore)
+    return loadNotifications(subsocial, items, activityStore, eventMsg)
   }
 
-const loadMoreNotifications = getLoadMoreNotificationsFn(getNotifications)
+const loadMoreNotifications = getLoadMoreNotificationsFn(getNotifications, msg.notifications)
 const loadingLabel = 'Loading your notifications...'
 
 export const Notifications = ({ address, title }: BaseActivityProps) => <NotifActivities
