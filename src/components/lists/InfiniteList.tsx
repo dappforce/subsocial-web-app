@@ -57,8 +57,6 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
     triggers: [ page ]
   })
 
-  console.log('DATA', hasMore, data, page, lastPage)
-
   const handleInfiniteOnLoad = useCallback(async () => {
     setLoading(true)
     const newData = await loadMore(page, INFINITE_SCROLL_PAGE_SIZE)

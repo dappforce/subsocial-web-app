@@ -9,7 +9,7 @@ function getOffchainUrl (subUrl: string): string {
   return `${offchainUrl}/v1/offchain${subUrl}`
 }
 
-const createActivitiesUrlByAddress = (address: string, entity: 'feed' | 'notifications' | 'activity') =>
+const createActivitiesUrlByAddress = (address: string, entity: 'feed' | 'notifications' | 'activities') =>
   getOffchainUrl(`/${entity}/${address}`)
 
 type ActivityType = 'follows' | 'posts' | 'comments' | 'reactions' | 'spaces'
@@ -18,7 +18,7 @@ const createNotificationsUrlByAddress = (address: string) => createActivitiesUrl
 const createFeedUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'feed')
 const createActivityUrlByAddress = (address: string, activityType?: ActivityType) => {
   const type = nonEmptyStr(activityType) ? `/${activityType}` : ''
-  return `${createActivitiesUrlByAddress(address, 'activity')}${type}`
+  return `${createActivitiesUrlByAddress(address, 'activities')}${type}`
 }
 
 const axiosRequest = async (url: string) => {

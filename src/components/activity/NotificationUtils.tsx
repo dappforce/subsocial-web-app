@@ -9,6 +9,12 @@ import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 import { postUrl, spaceUrl } from '../urls';
 
+export type LoadMoreFn = (
+  myAddress: string,
+  offset: number,
+  limit: number
+) => Promise<Activity[]>
+
 export type EventsName =
   'AccountFollowed' |
   'SpaceFollowed' |
