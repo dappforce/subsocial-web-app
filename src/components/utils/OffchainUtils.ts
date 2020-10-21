@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { offchainUrl } from './env';
-import { Activity } from '@subsocial/types/offchain';
+import { Activity, Counts } from '@subsocial/types/offchain';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 
 const log = newLogger('OffchainRequests')
@@ -12,7 +12,7 @@ function getOffchainUrl (subUrl: string): string {
 const createActivitiesUrlByAddress = (address: string, entity: 'feed' | 'notifications' | 'activities') =>
   getOffchainUrl(`/${entity}/${address}`)
 
-type ActivityType = 'follows' | 'posts' | 'comments' | 'reactions' | 'spaces'
+type ActivityType = 'follows' | 'posts' | 'comments' | 'reactions' | 'spaces' | 'counts'
 
 const createNotificationsUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'notifications')
 const createFeedUrlByAddress = (address: string) => createActivitiesUrlByAddress(address, 'feed')
@@ -96,6 +96,24 @@ export const getSpaceActivities = async (myAddress: string, offset: number, limi
   getActivity(createActivityUrlByAddress(myAddress, 'spaces'), offset, limit)
 export const getSpaceActivitiesCount = async (myAddress: string) =>
   getCount(createActivityUrlByAddress(myAddress, 'spaces'))
+
+export const getActivityCounts = async (address: string): Promise<Counts> => {
+  try {
+    const res = await axiosRequest(`${createActivityUrlByAddress(address, 'counts')}`)
+    const { data } = res
+    return data
+  } catch (err) {
+    log.error('Failed get count of activities from offchain with error', err)
+    return {
+      activitiesCount: 0,
+      postsCount: 0,
+      commentsCount: 0,
+      spacesCount: 0,
+      reactionsCount: 0,
+      followsCount: 0
+    }
+  }
+}
 
 // TODO require refactor
 export const clearNotifications = async (myAddress: string): Promise<void> =>{
