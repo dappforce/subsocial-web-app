@@ -23,7 +23,8 @@ export type LoadSpacesType = {
 }
 
 type BaseProps = {
-  address: AnyAccountId
+  address: AnyAccountId,
+  withTitle?: boolean
 }
 
 type LoadSpacesProps = LoadSpacesType & BaseProps
@@ -81,16 +82,18 @@ const SpacePreview = (space: SpaceData) =>
     preview
   />
 
-const PublicSpaces = ({ spacesData , mySpaceIds, address }: LoadSpacesProps) => {
+const PublicSpaces = ({ spacesData , mySpaceIds, address, withTitle }: LoadSpacesProps) => {
   const noSpaces = !mySpaceIds.length
   const totalCount = mySpaceIds.length
   const isMy = isMyAddress(address)
 
   return <PaginatedList
-    title={<span className='d-flex justify-content-between align-items-center w-100 my-2'>
-      <span>{`Public Spaces (${totalCount})`}</span>
-      {!noSpaces && isMy && <CreateSpaceButton />}
-    </span>}
+    title={withTitle
+      ? <span className='d-flex justify-content-between align-items-center w-100 my-2'>
+        <span>{`Public Spaces (${totalCount})`}</span>
+        {!noSpaces && isMy && <CreateSpaceButton />}
+      </span>
+      : null}
     totalCount={totalCount}
     dataSource={spacesData}
     renderItem={SpacePreview}
@@ -116,9 +119,9 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
   /> : null
 }
 
-export const AccountSpaces = (props: Props) => {
-  const state = props.mySpaceIds
-    ? props as LoadSpacesProps
+export const AccountSpaces = ({ mySpaceIds, withTitle = true, ...props}: Props) => {
+  const state = mySpaceIds
+    ? { mySpaceIds, withTitle, ...props } as LoadSpacesProps
     : useLoadAccoutPublicSpaces(props.address)
 
   if (!state) return <Loading label='Loading public spaces'/>
