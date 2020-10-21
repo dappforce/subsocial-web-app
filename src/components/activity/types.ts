@@ -12,12 +12,14 @@ type GetCountFn = (account: string) => Promise<number>
 
 export type BaseActivityProps = {
   address: string,
+  totalCount?: number,
   title?: string
 }
 
 export type InnerActivitiesProps<T> = BaseActivityProps & {
   loadMore: (props: LoadMoreProps) => Promise<T[]>
-  getCount: GetCountFn,
+  getCount?: GetCountFn,
+  totalCount?: number,
   noDataDesc?: string,
   loadingLabel?: string,
 }

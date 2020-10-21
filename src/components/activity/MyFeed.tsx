@@ -13,7 +13,7 @@ type MyFeedProps = {
   title?: string
 }
 
-const loadMoreFeed = getLoadMoreFeedFn(getNewsFeed)
+const loadMoreFeed = getLoadMoreFeedFn(getNewsFeed, 'post_id')
 
 export const InnerMyFeed = (props: BaseActivityProps) => <FeedActivities
   {...props}

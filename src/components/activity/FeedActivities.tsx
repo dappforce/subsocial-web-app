@@ -8,8 +8,16 @@ import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from '../posts/view-post/PostPreview';
 import { Loading } from '../utils';
 import { InnerActivitiesProps, LoadMoreProps } from './types';
+import { SubsocialApi } from '@subsocial/api/subsocial';
+import BN from 'bn.js'
 
-export const getLoadMoreFeedFn = (getActivity: LoadMoreFn) =>
+export const postsFromActivity = async (subsocial: SubsocialApi, postIds: BN[]) => {
+  const posts = await subsocial.findPublicPostsWithAllDetails(postIds)
+
+  return posts.filter(x => isDef(x.space))
+}
+
+export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'comment_id') =>
   async (props: LoadMoreProps) => {
     const { subsocial, address, page, size } = props
 
@@ -17,30 +25,26 @@ export const getLoadMoreFeedFn = (getActivity: LoadMoreFn) =>
 
     const offset = (page - 1) * size
     const activity = await getActivity(address, offset, size)
+    const postIds = activity.map(x => hexToBn(x[keyId]))
 
-    const postIds = activity.map(x => hexToBn(x.post_id))
-    const posts = await subsocial.findPublicPostsWithAllDetails(postIds)
-
-    return posts.filter(x => isDef(x.space))
+    return postsFromActivity(subsocial, postIds)
   }
 
-export function FeedActivities ({ loadMore, address, title, getCount, noDataDesc, loadingLabel }: InnerActivitiesProps<PostWithAllDetails>) {
+export function FeedActivities ({ loadMore, address, title, getCount, totalCount, noDataDesc, loadingLabel }: InnerActivitiesProps<PostWithAllDetails>) {
   const { subsocial, isApiReady } = useSubsocialApi()
-  const [ totalCount, setTotalCount ] = useState<number>()
+  const [ total, setTotalCount ] = useState<number | undefined>(totalCount)
 
   useEffect(() => {
-    if (!address) return
+    if (!address || !getCount) return
 
     getCount(address)
       .then(setTotalCount)
   })
 
-  console.log('totalCount', totalCount)
-
   const Feed = useCallback(() => <InfiniteList
     loadingLabel={loadingLabel}
     title={title ? title : undefined}
-    totalCount={totalCount || 0}
+    totalCount={total || 0}
     noDataDesc={noDataDesc}
     renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
     loadMore={(page, size) => loadMore({ subsocial, address, page, size })}
