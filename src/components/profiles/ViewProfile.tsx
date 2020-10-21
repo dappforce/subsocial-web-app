@@ -36,7 +36,7 @@ import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
 import { mdToText } from 'src/utils';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
-import { AddressActivity } from '../activity/AddressActivity';
+import { AccountActivity } from '../activity/AccountActivity';
 import { PageContent } from '../main/PageWrapper';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
@@ -151,7 +151,7 @@ const Component = (props: Props) => {
       {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
       {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
-    <AddressActivity address={address} mySpaceIds={mySpaceIds} spacesData={spacesData} />
+    <AccountActivity address={address} mySpaceIds={mySpaceIds} spacesData={spacesData} />
   </PageContent>;
 };
 
