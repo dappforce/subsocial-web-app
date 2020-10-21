@@ -19,8 +19,12 @@ const MAX_TITLE_LEN = 45;
 const MAX_DESC_LEN = 300;
 
 const SITE_NAME = 'Subsocial Network';
-const DEFAULT_TITLE = 'Subsocial - Protocol for decentralized social networks';
-const DEFAULT_DESC = ''; // TODO create default description
+
+const DEFAULT_TITLE = 'Subsocial - social network on Polkadot & IPFS';
+
+const DEFAULT_DESC =
+  'Subsocial is an open protocol for decentralized social networks and marketplaces built on Polkadot & IPFS tech stack. ' +
+  'Subsocial is a SoFi (social finance) project and provides a toolkit of decentralized financial primitives that are optimized for social networking.'
 
 export const createTitle = (title: string) => {
   if (isEmptyStr(title)) {
