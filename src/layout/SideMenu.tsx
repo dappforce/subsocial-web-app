@@ -1,7 +1,7 @@
 import React, {  } from 'react';
 import { Menu, Badge } from 'antd';
 import Router, { useRouter } from 'next/router';
-import { useIsSignIn, useMyAddress } from '../components/auth/MyAccountContext';
+import { useIsSignedIn, useMyAddress } from '../components/auth/MyAccountContext';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import Link from 'next/link';
 import { newLogger } from '@subsocial/utils';
@@ -57,7 +57,7 @@ function SideMenu () {
   const { state: { collapsed } } = useSidebarCollapsed()
   const { asPath } = useRouter()
   const myAddress = useMyAddress()
-  const isLoggedIn = useIsSignIn()
+  const isLoggedIn = useIsSignedIn()
   const { unreadCount } = useNotifCounter()
   const { state: { showOnBoarding } } = useAuth()
   const { isNotMobile } = useResponsiveSize()

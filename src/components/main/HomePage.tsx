@@ -8,7 +8,7 @@ import { SpaceData, PostWithAllDetails } from '@subsocial/types';
 import { PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
-import { useIsSignIn } from '../auth/MyAccountContext';
+import { useIsSignedIn } from '../auth/MyAccountContext';
 import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
 import { Tabs } from 'antd';
 import Section from '../utils/Section';
@@ -42,11 +42,11 @@ const LatestUpdate = (props: Props) => {
 }
 
 const HomePage: NextPage<Props> = (props) => {
-  const isSignIn = useIsSignIn()
-  const defaultKey = isSignIn ? 'feed' : 'latest'
+  const isSignedIn = useIsSignedIn()
+  const defaultKey = isSignedIn ? 'feed' : 'latest'
   const [ key, setKey ] = useState<string>(defaultKey)
 
-  useEffect(() => setKey(defaultKey), [ isSignIn ])
+  useEffect(() => setKey(defaultKey), [ isSignedIn ])
 
   return <Section className='m-0'>
     <Tabs activeKey={key} onChange={setKey}>

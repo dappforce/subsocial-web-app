@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
-import { useIsSignIn, useMyAddress } from 'src/components/auth/MyAccountContext';
+import { useIsSignedIn, useMyAddress } from 'src/components/auth/MyAccountContext';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import store from 'store'
 import SignInModal from './SignInModal';
@@ -7,14 +7,16 @@ import { useRouter } from 'next/router';
 
 const ONBOARDED_ACCS = 'df.onboarded'
 
+export type CompletedSteps = {
+  isSignedIn: boolean
+  hasTokens: boolean
+  hasOwnSpaces: boolean
+}
+
 export type AuthState = {
-  currentStep: number,
-  isSteps: {
-    isSignIn: boolean,
-    isTokens: boolean,
-    isSpaces: boolean,
-  }
   showOnBoarding: boolean
+  currentStep: number
+  completedSteps: CompletedSteps
 }
 
 function functionStub () {
@@ -33,10 +35,10 @@ export type AuthContextProps = {
 const contextStub: AuthContextProps = {
   state: {
     currentStep: 0,
-    isSteps: {
-      isSignIn: false,
-      isSpaces: false,
-      isTokens: false
+    completedSteps: {
+      isSignedIn: false,
+      hasTokens: false,
+      hasOwnSpaces: false
     },
     showOnBoarding: false
   },
@@ -65,12 +67,12 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
   const [ showOnBoarding, setShowOnBoarding ] = useState(noOnBoarded)
   const [ showModal, setShowModal ] = useState<boolean>(false);
   const [ kind, setKind ] = useState<ModalKind>()
-  const [ isTokens, setTokens ] = useState(false)
-  const [ isSpaces, setSpaces ] = useState(false)
-  const isSignIn = useIsSignIn()
+  const [ hasTokens, setTokens ] = useState(false)
+  const [ hasOwnSpaces, setSpaces ] = useState(false)
+  const isSignedIn = useIsSignedIn()
 
   useSubsocialEffect(({ substrate }) => {
-    if (!isSignIn) {
+    if (!isSignedIn) {
       return setCurrentStep(0)
     }
 
@@ -120,7 +122,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       unsubSpace && unsubSpace()
       unsubBalance && unsubBalance()
     }
-  }, [ currentStep, address, isSignIn ])
+  }, [ address, isSignedIn, currentStep ])
 
   useEffect(() => setShowModal(false), [ asPath ])
 
@@ -128,10 +130,10 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
     state: {
       showOnBoarding: showOnBoarding,
       currentStep,
-      isSteps: {
-        isSignIn,
-        isTokens,
-        isSpaces
+      completedSteps: {
+        isSignedIn,
+        hasTokens,
+        hasOwnSpaces
       }
     },
     openSignInModal: (kind?: ModalKind) => {
