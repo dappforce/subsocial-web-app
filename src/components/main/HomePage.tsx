@@ -71,6 +71,7 @@ HomePage.getInitialProps = async (): Promise<Props> => {
   const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE);
   const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
   const spacesData = publicSpacesData.slice(0, LAST_ITEMS_SIZE)
+  const canHaveMoreSpaces = publicSpacesData.length >= LAST_ITEMS_SIZE
 
   const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE);
   const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds);
@@ -84,7 +85,7 @@ HomePage.getInitialProps = async (): Promise<Props> => {
     spacesData,
     postsData,
     commentData,
-    canHaveMoreSpaces: publicSpacesData.length > LAST_ITEMS_SIZE
+    canHaveMoreSpaces
   }
 }
 
