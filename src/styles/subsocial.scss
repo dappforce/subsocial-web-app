@@ -1291,7 +1291,6 @@ a.DfStatItem {
   display: flex;
   width: 100%;
   min-height: 60px;
-  margin-top: 1rem;
 
   .DfNotificationContent {
     margin: 0 $space_small;
@@ -1301,6 +1300,10 @@ a.DfStatItem {
   a {
     @extend .DfBlackLink;
     font-weight: bold;
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 }
 
