@@ -22,6 +22,7 @@ type Props = {
   spacesData: SpaceData[]
   postsData: PostWithAllDetails[]
   commentData: PostWithAllDetails[]
+  isSpacesLimitReached: boolean
 }
 
 const LatestUpdate = (props: Props) => {
@@ -82,7 +83,8 @@ HomePage.getInitialProps = async (): Promise<Props> => {
   return {
     spacesData,
     postsData,
-    commentData
+    commentData,
+    isSpacesLimitReached: publicSpacesData.length > LAST_ITEMS_SIZE
   }
 }
 
