@@ -20,9 +20,9 @@ const { TabPane } = Tabs
 
 type Props = {
   spacesData: SpaceData[]
+  canHaveMoreSpaces: boolean
   postsData: PostWithAllDetails[]
   commentData: PostWithAllDetails[]
-  isSpacesLimitReached: boolean
 }
 
 const LatestUpdate = (props: Props) => {
@@ -84,7 +84,7 @@ HomePage.getInitialProps = async (): Promise<Props> => {
     spacesData,
     postsData,
     commentData,
-    isSpacesLimitReached: publicSpacesData.length > LAST_ITEMS_SIZE
+    canHaveMoreSpaces: publicSpacesData.length > LAST_ITEMS_SIZE
   }
 }
 
