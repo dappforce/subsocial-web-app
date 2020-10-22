@@ -266,7 +266,10 @@ pre {
 
   .DfCommentAction {
     cursor: pointer;
-    @extend .DfBlackLink;
+    color: $color_muted;
+    &:hover {
+      color: $color_link !important;
+    }
   }
 }
 
