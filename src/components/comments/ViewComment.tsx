@@ -91,15 +91,17 @@ export const ViewComment: FunctionComponent<Props> = ({
     {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
   </div> : null
 
+  const actionCss = 'DfCommentAction'
+
   return <div className={isFake ? 'DfDisableLayout' : ''}>
     <Comment
       className='DfNewComment'
       actions={isFake ? [] : [
-        <VoterButtons key={`voters-of-comments-${id}`} post={struct} className='DfCommentAction' />,
-        <Button key={`reply-comment-${id}`} className='DfCommentAction' onClick={() => setShowReplyForm(true)}>
+        <VoterButtons key={`voters-of-comments-${id}`} post={struct} className={actionCss} />,
+        <Button key={`reply-comment-${id}`} className={actionCss} onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <ShareDropdown postDetails={comment} space={space} className='DfCommentAction' />
+        <ShareDropdown postDetails={comment} space={space} className={actionCss} />
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview

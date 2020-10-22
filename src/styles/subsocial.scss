@@ -263,14 +263,6 @@ pre {
   .DfCommentSection {
     margin-top: $space_small
   }
-
-  .DfCommentAction {
-    cursor: pointer;
-    color: $color_muted;
-    &:hover {
-      color: $color_link !important;
-    }
-  }
 }
 
 .DfPostName {
@@ -1486,6 +1478,15 @@ a.DfStatItem {
 
   .DfActionButtonsBlock {
     margin: $space_small 0;
+  }
+}
+
+.DfCommentAction {
+  cursor: pointer;
+  color: $color_muted;
+
+  &:hover {
+    color: $color_link !important;
   }
 }
 
