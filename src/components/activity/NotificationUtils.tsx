@@ -182,8 +182,11 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
   return undefined
 }
 
-const getNotificationMessage = (msg: string, aggregationCount: number, preview: JSX.Element | null) => {
-  const aggregationMsg = aggregationCount > 0 && <>{' and'} <Pluralize count={aggregationCount} singularText='other person' pluralText='other people' /></>;
+const getNotificationMessage = (msg: string, aggregationCount: number, preview: JSX.Element | null, withAggregation: boolean) => {
+  const aggregationMsg = withAggregation
+    ? aggregationCount > 0 && <>{' and'} <Pluralize count={aggregationCount} singularText='other person' pluralText='other people' /></>
+    : undefined;
+
   return <span className="DfActivityMsg">{aggregationMsg} {msg} {preview}</span>
 }
 
@@ -199,7 +202,7 @@ export const getNotification = (activity: Activity, store: ActivityStore, type: 
 
   const { preview, msg = eventMsg[event as EventsName], ...other } = activityPreview
 
-  const notificationMessage = getNotificationMessage(msg, agg_count, preview)
+  const notificationMessage = getNotificationMessage(msg, agg_count, preview, type === 'notifications')
 
   return { address: account, notificationMessage, details: formatDate, owner, ...other }
 }
