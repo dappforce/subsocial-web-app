@@ -151,7 +151,7 @@ const Component = (props: Props) => {
       {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
       {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
-    <AccountActivity address={address} mySpaceIds={mySpaceIds} spacesData={spacesData} />
+    <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} spacesData={spacesData} />
   </PageContent>;
 };
 
