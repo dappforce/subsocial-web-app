@@ -720,7 +720,6 @@ hr {
 
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
-    margin: 0rem;
     display: flex;
   }
 
@@ -1290,6 +1289,7 @@ a.DfStatItem {
 .DfNotificationItem {
   display: flex;
   width: 100%;
+  color: $color_font_normal;
   min-height: 60px;
 
   .DfNotificationContent {

@@ -21,26 +21,28 @@ export function NotifActivities ({ loadMore, address, title, getCount, totalCoun
   useEffect(() => {
     if (!address || !getCount) return
 
-    getCount(address)
-      .then(setTotalCount)
-  })
+    getCount
+      ? getCount(address).then(setTotalCount)
+      : setTotalCount(0)
+  }, [])
 
   const activityStore: ActivityStore = {
     spaceById: new Map<StructId, SpaceData>(),
     postById: new Map<StructId, PostData>(),
     ownerById: new Map<StructId, ProfileData>()
   }
+  const noData = notDef(total)
 
   const Activities = useCallback(() => <InfiniteList
     loadingLabel={loadingLabel}
-    title={title ? `${title} (${totalCount})` : null}
+    title={title ? `${title} (${total})` : null}
     noDataDesc={noDataDesc}
     totalCount={total || 0}
     renderItem={(x: NotificationType, key) => <Notification key={key} {...x} />}
     loadMore={(page, size) => loadMore({ subsocial, address, page, size, activityStore })}
-  />, [ address, isApiReady, totalCount ])
+  />, [ address, isApiReady, noData ])
 
-  if (!isApiReady || notDef(totalCount)) return <Loading label={loadingLabel} />
+  if (!isApiReady || noData) return <Loading label={loadingLabel} />
 
   return <Activities />
 }
@@ -55,7 +57,7 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn, type: NotifA
 
     const offset = (page - 1) * size
 
-    const items = await getActivity(address, offset, INFINITE_SCROLL_PAGE_SIZE)
+    const items = await getActivity(address, offset, INFINITE_SCROLL_PAGE_SIZE) || []
 
     return loadNotifications(subsocial, items, activityStore, type)
   }

@@ -24,33 +24,36 @@ export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'c
     if (!address) return []
 
     const offset = (page - 1) * size
-    const activity = await getActivity(address, offset, size)
+    const activity = await getActivity(address, offset, size) || []
     const postIds = activity.map(x => hexToBn(x[keyId]))
 
     return postsFromActivity(subsocial, postIds)
   }
 
-export function FeedActivities ({ loadMore, address, title, getCount, totalCount, noDataDesc, loadingLabel }: InnerActivitiesProps<PostWithAllDetails>) {
+export function FeedActivities ({ loadMore, address, title, getCount, totalCount, loadingLabel, ...props }: InnerActivitiesProps<PostWithAllDetails>) {
   const { subsocial, isApiReady } = useSubsocialApi()
   const [ total, setTotalCount ] = useState<number | undefined>(totalCount)
 
   useEffect(() => {
-    if (!address || !getCount) return
+    if (!address) return
 
-    getCount(address)
-      .then(setTotalCount)
-  })
+    getCount
+      ? getCount(address).then(setTotalCount)
+      : setTotalCount(0)
+  }, [])
+
+  const noData = notDef(total)
 
   const Feed = useCallback(() => <InfiniteList
+    {...props}
     loadingLabel={loadingLabel}
-    title={title ? title : undefined}
+    title={title ? `${title} (${total})` : undefined}
     totalCount={total || 0}
-    noDataDesc={noDataDesc}
     renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
     loadMore={(page, size) => loadMore({ subsocial, address, page, size })}
-  />, [ address, isApiReady, totalCount ])
+  />, [ address, isApiReady, noData ])
 
-  if (!isApiReady || notDef(totalCount)) return <Loading label={loadingLabel} />
+  if (!isApiReady || noData) return <Loading label={loadingLabel} />
 
   return <Feed />
 }

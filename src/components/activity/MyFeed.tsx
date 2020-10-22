@@ -1,7 +1,6 @@
 import { getLoadMoreFeedFn, FeedActivities } from "./FeedActivities"
-import { getNewsFeed } from "../utils/SubsocialConnect"
 import { BaseActivityProps } from "./types"
-import { getFeedCount } from "../utils/OffchainUtils"
+import { getFeedCount, getNewsFeed } from "../utils/OffchainUtils"
 import { useMyAddress } from "../auth/MyAccountContext"
 import NotAuthorized from "../auth/NotAuthorized"
 import HeadMeta from "../utils/HeadMeta"
