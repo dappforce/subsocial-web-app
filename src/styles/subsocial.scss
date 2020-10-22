@@ -268,7 +268,7 @@ pre {
     cursor: pointer;
     color: $color_muted;
     &:hover {
-      color: $color_font_normal !important;
+      color: $color_link !important;
     }
   }
 }
