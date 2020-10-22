@@ -11,6 +11,7 @@ import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util'
+import isbot from 'isbot'
 export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
@@ -40,6 +41,8 @@ export function isClientSide (): boolean {
 
 export const isHomePage = (): boolean =>
   isClientSide() && window.location.pathname === '/'
+
+export const isBot = () => isClientSide() ? isbot(window.navigator.userAgent) : true
 
 type PropsWithSocialAccount = {
   profile?: Profile;
