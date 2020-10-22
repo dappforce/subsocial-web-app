@@ -10,37 +10,37 @@ type HeadMetaProps = {
   image?: string,
   canonical?: string,
   tags?: string[]
-};
+}
 
 // Google typically displays the first 50–60 characters of a title tag.
 // If you keep your titles under 60 characters, our research suggests
 // that you can expect about 90% of your titles to display properly.
-const MAX_TITLE_LEN = 45;
-const MAX_DESC_LEN = 300;
+const MAX_TITLE_LEN = 45
+const MAX_DESC_LEN = 300
 
-const SITE_NAME = 'Subsocial Network';
+const SITE_NAME = 'Subsocial Network'
 
-const DEFAULT_TITLE = 'Subsocial - social network on Polkadot & IPFS';
+const DEFAULT_TITLE = 'Subsocial - social network on Polkadot & IPFS'
 
 const DEFAULT_DESC =
-  'Subsocial is an open protocol for decentralized social networks and marketplaces built on Polkadot & IPFS tech stack. ' +
-  'Subsocial is a SoFi (social finance) project and provides a toolkit of decentralized financial primitives that are optimized for social networking.'
+  'Subsocial is a Polkadot ecosystem project supported by Web3 Foundation. ' +
+  'Subsocial follows SoFi (social finance) principles to bring DeFi features to social networking.'
 
 export const createTitle = (title: string) => {
   if (isEmptyStr(title)) {
-    return DEFAULT_TITLE;
+    return DEFAULT_TITLE
   }
 
   const leftPart = summarize(title, MAX_TITLE_LEN)
-  return `${leftPart} - Subsocial`;
-};
+  return `${leftPart} - Subsocial`
+}
 
 const DEFAULT_SUBSOCIAL_IMG = '/subsocial-sign.png'
 
 export function HeadMeta (props: HeadMetaProps) {
-  const { title, desc = DEFAULT_DESC, image, canonical, tags } = props;
-  const summary = summarize(desc, MAX_DESC_LEN);
-  const img = image ? resolveIpfsUrl(image) : DEFAULT_SUBSOCIAL_IMG
+  const { title, desc = DEFAULT_DESC, image, canonical, tags } = props
+  const summary = summarize(desc, MAX_DESC_LEN)
+  const img = nonEmptyStr(image) ? resolveIpfsUrl(image) : DEFAULT_SUBSOCIAL_IMG
 
   return <div>
     <Head>
@@ -60,7 +60,7 @@ export function HeadMeta (props: HeadMetaProps) {
       <meta name='twitter:title' content={title} />
       <meta name='twitter:description' content={summary} />
     </Head>
-  </div>;
+  </div>
 }
 
-export default HeadMeta;
+export default HeadMeta

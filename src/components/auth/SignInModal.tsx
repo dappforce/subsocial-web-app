@@ -3,15 +3,9 @@ import React from 'react';
 import Modal from 'antd/lib/modal';
 import { Divider, Alert } from 'antd';
 import { OnBoardingButton } from '../onboarding';
-import { ModalKind, useAuth, StepsEnum } from './AuthContext';
+import { ModalKind, useAuth, StepsEnum, CompletedSteps } from './AuthContext';
 import { AccountSelector } from '../profile-selector/AccountSelector';
 import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks';
-
-type IsSteps = {
-  isSignIn: boolean,
-  isTokens: boolean,
-  isSpaces: boolean
-}
 
 type ModalProps = {
   open: boolean
@@ -25,14 +19,14 @@ type ModalContent = {
   warn?: string
 }
 
-const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
-  const { isSignIn = false, isTokens = false } = isSteps
+const getModalContent = (kind: ModalKind, completedSteps: CompletedSteps) => {
+  const { isSignedIn = false, hasTokens = false } = completedSteps
   const content: ModalContent = {
     title: null,
     body: null
   }
 
-  if (isSignIn) {
+  if (isSignedIn) {
     switch (kind) {
       case 'OnBoarding': {
         content.title = <><span className='flipH'>🎉</span> Success <span>🎉</span></>
@@ -44,7 +38,7 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
         return content
       }
       case 'AuthRequired': {
-        if (!isTokens) {
+        if (!hasTokens) {
           content.title = 'Wait a sec...'
           content.body = <OnBoardingButton onlyStep={StepsEnum.GetTokens} />
           content.warn = 'You need some tokens to continue.'
@@ -88,15 +82,11 @@ const getModalContent = (kind: ModalKind, isSteps: IsSteps) => {
 }
 
 type ModalViewProps = ModalProps & {
-  isSteps: {
-    isSignIn: boolean;
-    isTokens: boolean;
-    isSpaces: boolean;
-  }
+  completedSteps: CompletedSteps
 }
 
-export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) => {
-  const { warn, body, title } = getModalContent(kind, isSteps)
+export const SignInModalView = ({ open, hide, kind, completedSteps }: ModalViewProps) => {
+  const { warn, body, title } = getModalContent(kind, completedSteps)
 
   return title ? <Modal
     visible={open}
@@ -121,9 +111,9 @@ export const SignInModalView = ({ open, hide, kind, isSteps }: ModalViewProps) =
 }
 
 export const SignInModal = (props: ModalProps) => {
-  const { state: { isSteps } } = useAuth()
+  const { state: { completedSteps } } = useAuth()
 
-  return <SignInModalView isSteps={isSteps} {...props} />
+  return <SignInModalView completedSteps={completedSteps} {...props} />
 };
 
 export default SignInModal;

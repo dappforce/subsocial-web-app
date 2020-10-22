@@ -71,12 +71,18 @@ export function TxButton ({
 
   const { api, keyring, keyringState } = useSubstrate()
   const [ isSending, , setIsSending ] = useToggle(false)
-  const { openSignInModal, state: { isSteps: { isTokens } } } = useAuth()
-  const waitMessage = controlledMessage({ message: 'Waiting for transaction completed...', type: 'info', duration: 0, icon: <LoadingOutlined /> })
+  const { openSignInModal, state: { completedSteps: { hasTokens } } } = useAuth()
+
+  const waitMessage = controlledMessage({
+    message: 'Waiting for transaction completed...',
+    type: 'info',
+    duration: 0,
+    icon: <LoadingOutlined />
+  })
 
   let unsub: VoidFn | undefined;
 
-  const isAuthRequired = !accountId || !isTokens
+  const isAuthRequired = !accountId || !hasTokens
   const buttonLabel = label || children
   const Component = component || Button
 
@@ -223,23 +229,18 @@ export function TxButton ({
     const extrinsic = await getExtrinsic()
 
     try {
-      unsub = await extrinsic
-      .signAndSend(account, onSuccessHandler)
-
+      unsub = await extrinsic.signAndSend(account, onSuccessHandler)
       waitMessage.open()
     } catch (err) {
       onFailedHandler(err)
     }
-
   }
 
   const sendUnsignedTx = async () => {
     const extrinsic = await getExtrinsic()
 
     try {
-      unsub = await extrinsic
-      .send(onSuccessHandler)
-
+      unsub = await extrinsic.send(onSuccessHandler)
       waitMessage.open()
     } catch (err) {
       onFailedHandler(err)
@@ -274,7 +275,6 @@ export function TxButton ({
     } else {
       sendSignedTx()
     }
-
   }
 
   const isDisabled =

@@ -18,7 +18,8 @@ interface Props {
 }
 
 const HomeNav = () => {
-  const { state: { collapsed } } = useSidebarCollapsed();
+  const { state: { collapsed } } = useSidebarCollapsed()
+
   return <Sider
     className='DfSider'
     width='265'
@@ -27,11 +28,11 @@ const HomeNav = () => {
     collapsed={collapsed}
   >
     <Menu />
-  </Sider>;
-};
+  </Sider>
+}
 
 const DefaultNav: FunctionComponent = () => {
-  const { state: { collapsed }, hide } = useSidebarCollapsed();
+  const { state: { collapsed }, hide } = useSidebarCollapsed()
   const { asPath } = useRouter()
 
   useEffect(() => hide(), [ asPath ])
@@ -48,13 +49,16 @@ const DefaultNav: FunctionComponent = () => {
   >
     <Menu />
   </Drawer>
-};
+}
 
 export const Navigation = (props: Props): JSX.Element => {
-  const { children } = props;
+  const { children } = props
   const { state: { asDrawer } } = useSidebarCollapsed()
 
-  const content = useMemo(() => <Content className='DfPageContent'>{children}</Content>, [ children ]);
+  const content = useMemo(() =>
+    <Content className='DfPageContent'>{children}</Content>,
+    [ children ]
+  )
 
   return <ReactiveBase
     className='fontSizeNormal'
@@ -70,5 +74,5 @@ export const Navigation = (props: Props): JSX.Element => {
         {content}
       </Layout>
     </Layout>
-  </ReactiveBase>;
-};
+  </ReactiveBase>
+}
