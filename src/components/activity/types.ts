@@ -4,7 +4,7 @@ import { ActivityStore } from "./NotificationUtils"
 
 export type LoadMoreProps = ParsedPaginationQuery & {
   subsocial: SubsocialApi
-  address?: string
+  address?: string,
   activityStore?: ActivityStore
 }
 
@@ -13,13 +13,17 @@ type GetCountFn = (account: string) => Promise<number>
 export type BaseActivityProps = {
   address: string,
   totalCount?: number,
-  title?: string
+  title?: string,
+
 }
 
-export type InnerActivitiesProps<T> = BaseActivityProps & {
-  loadMore: (props: LoadMoreProps) => Promise<T[]>
+export type ActivityProps<T> = BaseActivityProps & {
+  loadMore: (props: LoadMoreProps) => Promise<T[]>,
   getCount?: GetCountFn,
-  totalCount?: number,
   noDataDesc?: string,
-  loadingLabel?: string,
+  loadingLabel?: string
+}
+
+export type InnerActivitiesProps<T> = ActivityProps<T> & {
+  renderItem: (item: T, index: number) => JSX.Element,
 }

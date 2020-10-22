@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {  } from 'react';
 import { hexToBn } from '@polkadot/util';
-import { isDef, notDef } from '@subsocial/utils';
+import { isDef } from '@subsocial/utils';
 import { LoadMoreFn } from './NotificationUtils';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { InfiniteList } from '../lists/InfiniteList';
 import { PostWithAllDetails } from '@subsocial/types';
 import PostPreview from '../posts/view-post/PostPreview';
-import { Loading } from '../utils';
-import { InnerActivitiesProps, LoadMoreProps } from './types';
+import { LoadMoreProps, ActivityProps } from './types';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import BN from 'bn.js'
+import { InnerActivities } from './InnerActivities';
 
 export const postsFromActivity = async (subsocial: SubsocialApi, postIds: BN[]) => {
   const posts = await subsocial.findPublicPostsWithAllDetails(postIds)
@@ -30,32 +28,11 @@ export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'c
     return postsFromActivity(subsocial, postIds)
   }
 
-export function FeedActivities ({ loadMore, address, title, getCount, totalCount, loadingLabel, ...props }: InnerActivitiesProps<PostWithAllDetails>) {
-  const { subsocial, isApiReady } = useSubsocialApi()
-  const [ total, setTotalCount ] = useState<number | undefined>(totalCount)
+export const FeedActivities = (props: ActivityProps<PostWithAllDetails>) => <InnerActivities
+  {...props}
+  renderItem={(x: PostWithAllDetails) =>
+    <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
+/>
 
-  useEffect(() => {
-    if (!address) return
-
-    getCount
-      ? getCount(address).then(setTotalCount)
-      : setTotalCount(0)
-  }, [])
-
-  const noData = notDef(total)
-
-  const Feed = useCallback(() => <InfiniteList
-    {...props}
-    loadingLabel={loadingLabel}
-    title={title ? `${title} (${total})` : undefined}
-    totalCount={total || 0}
-    renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
-    loadMore={(page, size) => loadMore({ subsocial, address, page, size })}
-  />, [ address, isApiReady, noData ])
-
-  if (!isApiReady || noData) return <Loading label={loadingLabel} />
-
-  return <Feed />
-}
 
 

@@ -1,50 +1,28 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {  } from 'react';
 import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils';
 import { loadNotifications } from './Notification'
 import { INFINITE_SCROLL_PAGE_SIZE } from 'src/config/ListData.config';
 import { LoadMoreFn, ActivityStore } from './NotificationUtils';
 
-import { InfiniteList } from '../lists/InfiniteList';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
 import { PostData, SpaceData, ProfileData } from '@subsocial/types';
 import { NotificationType } from './NotificationUtils';
-import { Loading } from '../utils';
-import { notDef } from '@subsocial/utils';
 import { Notification } from './Notification'
-import { InnerActivitiesProps, LoadMoreProps, BaseActivityProps } from './types';
+import { LoadMoreProps, BaseActivityProps, ActivityProps } from './types';
+import { InnerActivities } from './InnerActivities';
 type StructId = string
 
-export function NotifActivities ({ loadMore, address, title, getCount, totalCount, noDataDesc, loadingLabel }: InnerActivitiesProps<NotificationType>) {
-  const { subsocial, isApiReady } = useSubsocialApi()
-  const [ total, setTotalCount ] = useState<number | undefined>(totalCount)
-
-  useEffect(() => {
-    if (!address || !getCount) return
-
-    getCount
-      ? getCount(address).then(setTotalCount)
-      : setTotalCount(0)
-  }, [])
-
+export const NotifActivities = ({ loadMore ,...props }: ActivityProps<NotificationType>) => {
   const activityStore: ActivityStore = {
     spaceById: new Map<StructId, SpaceData>(),
     postById: new Map<StructId, PostData>(),
     ownerById: new Map<StructId, ProfileData>()
   }
-  const noData = notDef(total)
 
-  const Activities = useCallback(() => <InfiniteList
-    loadingLabel={loadingLabel}
-    title={title ? `${title} (${total})` : null}
-    noDataDesc={noDataDesc}
-    totalCount={total || 0}
+  return <InnerActivities
+    {...props}
     renderItem={(x: NotificationType, key) => <Notification key={key} {...x} />}
-    loadMore={(page, size) => loadMore({ subsocial, address, page, size, activityStore })}
-  />, [ address, isApiReady, noData ])
-
-  if (!isApiReady || noData) return <Loading label={loadingLabel} />
-
-  return <Activities />
+    loadMore={(props) => loadMore({ ...props, activityStore })}
+  />
 }
 
 export type NotifActivitiesType = 'notifications' | 'activities'
