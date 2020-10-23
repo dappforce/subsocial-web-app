@@ -16,7 +16,7 @@ export default {
     SpaceFollowed: 'followed a space',
     SpaceCreated: 'created a space',
     CommentCreated: 'commented on a post',
-    CommentReplyCreated: 'replied to a comment',
+    CommentReplyCreated: 'replied to a comment on',
     PostSharing: 'shared a post',
     CommentShared: 'shared a comment',
     PostReactionCreated: 'reacted to a post',
