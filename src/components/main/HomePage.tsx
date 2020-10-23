@@ -12,9 +12,7 @@ import { useIsSignedIn } from '../auth/MyAccountContext';
 import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
 import { Tabs } from 'antd';
 import Section from '../utils/Section';
-import dynamic from 'next/dynamic';
-
-const MyFeed = dynamic(() => import('../activity/MyFeed'), { ssr: false });
+import MyFeed from '../activity/MyFeed';
 
 const { TabPane } = Tabs
 

@@ -10,7 +10,8 @@ import { hexToBn } from '@polkadot/util';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
-
+import { NotifActivitiesType } from './Notifications';
+import Link from 'next/link';
 type Struct = Exclude<CommonStruct, SocialAccount>
 
 const fillArray = <T extends string | BN>(
@@ -28,7 +29,8 @@ const fillArray = <T extends string | BN>(
 export const loadNotifications = async (
     subsocial: SubsocialApi,
     activities: Activity[],
-    activityStore: ActivityStore
+    activityStore: ActivityStore,
+    type: NotifActivitiesType
 ) => {
   const { spaceById, postById, ownerById } = activityStore
 
@@ -85,7 +87,7 @@ export const loadNotifications = async (
   fillMap(spacesData, spaceById)
 
   return activities
-    .map(x => getNotification(x, activityStore))
+    .map(x => getNotification(x, activityStore, type))
     .filter(x => x !== undefined) as NotificationType[]
 }
 
@@ -93,17 +95,19 @@ export function Notification (props: NotificationType) {
   const { address, notificationMessage, details, image = '', owner, links } = props
   const avatar = owner?.content?.avatar
 
-  return <div className='DfNotificationItem'>
-    <Avatar address={address} avatar={avatar} />
-    <div className="DfNotificationContent">
-      <div className="DfTextActivity">
-        <Name owner={owner} address={address}/>
-        {notificationMessage}
+  return <Link {...links}>
+    <a className='DfNotificationItem'>
+      <Avatar address={address} avatar={avatar} />
+      <div className="DfNotificationContent">
+        <div className="DfTextActivity">
+          <Name owner={owner} address={address}/>
+          {notificationMessage}
+        </div>
+        <MutedDiv className='DfDate'>{details}</MutedDiv>
       </div>
-      <MutedDiv className='DfDate'>{details}</MutedDiv>
-    </div>
-    {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} />}
-  </div>
+      {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} />}
+    </a>
+  </Link>
 }
 
 export default Notification

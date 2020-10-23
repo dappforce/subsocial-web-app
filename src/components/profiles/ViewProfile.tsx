@@ -35,8 +35,9 @@ import MyEntityLabel from '../utils/MyEntityLabel';
 import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
 import { mdToText } from 'src/utils';
-import { AccountSpaces } from '../spaces/AccountSpaces';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
+import { AccountActivity } from '../activity/AccountActivity';
+import { PageContent } from '../main/PageWrapper';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
@@ -111,7 +112,7 @@ const Component = (props: Props) => {
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
 
-  return <>
+  return <PageContent>
     <Section className='mb-3'>
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
@@ -150,8 +151,8 @@ const Component = (props: Props) => {
       {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
       {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
-    <AccountSpaces address={address} spacesData={spacesData} mySpaceIds={mySpaceIds} />
-  </>;
+    <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} spacesData={spacesData} />
+  </PageContent>;
 };
 
 const ProfilePage: NextPage<Props> = (props) => {

@@ -715,7 +715,6 @@ hr {
 
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
-    margin: 0rem;
     display: flex;
   }
 
@@ -1285,8 +1284,8 @@ a.DfStatItem {
 .DfNotificationItem {
   display: flex;
   width: 100%;
+  color: $color_font_normal;
   min-height: 60px;
-  margin-top: 1rem;
 
   .DfNotificationContent {
     margin: 0 $space_small;
@@ -1296,6 +1295,10 @@ a.DfStatItem {
   a {
     @extend .DfBlackLink;
     font-weight: bold;
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 }
 

@@ -2429,6 +2429,15 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
+"@subsocial/types@0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.7.tgz#a0d0fac3309d50fddd329c440787cb4443657421"
+  integrity sha512-SaStQKv/hta+bu3DQlfCE0fujzDU0dnrqfMeH6gEr0eJuVaRirJgpxXAHmC3zMKfrcjUKcyFxT5r1b4YNvx0MQ==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@subsocial/utils" "^0.1.23"
+    cids "^0.7.1"
+
 "@subsocial/types@latest":
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.5.tgz#c2785b893a026f98bd39fd78bd0261e2b9454ef5"
