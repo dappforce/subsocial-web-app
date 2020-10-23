@@ -9,7 +9,7 @@ import { SubsocialApi } from '@subsocial/api/subsocial';
 import BN from 'bn.js'
 import { InnerActivities } from './InnerActivities';
 
-export const postsFromActivity = async (subsocial: SubsocialApi, postIds: BN[]) => {
+const postsFromActivity = async (subsocial: SubsocialApi, postIds: BN[]): Promise<PostWithAllDetails[]> => {
   const posts = await subsocial.findPublicPostsWithAllDetails(postIds)
 
   return posts.filter(x => isDef(x.space))
