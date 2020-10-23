@@ -2410,10 +2410,10 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@latest":
-  version "0.4.8"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.8.tgz#905525147fae603f10f539748be31f9ca65fb7d9"
-  integrity sha512-qN1//Sjj79woEXiXHQD8jUAuQTDfiU8vQivUSXck82RQu8gl8OVelmFDvMNyPRMlY9uUk4TaJj11tRXSUcy5+g==
+"@subsocial/api@0.4.9":
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.9.tgz#ad8a3f84ac93f4af56c0be6c8ecaead7d4ced470"
+  integrity sha512-nc2OmR6c+ZQt5LMszWI8cOs4f3BIMg9pYsg1H7s07zYibm9yp5o6Moye8n6TdQU4cps85Cgyew/d0qUKLUF78A==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@polkadot/api" "^1.28.1"
@@ -2447,7 +2447,7 @@
     "@subsocial/utils" "^0.1.23"
     cids "^0.7.1"
 
-"@subsocial/utils@^0.1.23", "@subsocial/utils@^0.1.24-beta2", "@subsocial/utils@latest":
+"@subsocial/utils@0.1.24", "@subsocial/utils@^0.1.23", "@subsocial/utils@^0.1.24-beta2":
   version "0.1.24"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.24.tgz#a3ad7c6535e944d3b8deafc4066dab95fea219cc"
   integrity sha512-sFmysBFrposRnSqDOsNozH6pEoOGlAwl1sg5PuS+OmUMqL1nv3tVri5M+hCL38ryB7bRkc98yB5xhFiBKrtMOw==
