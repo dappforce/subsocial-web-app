@@ -6,6 +6,7 @@ import { withLoadedOwner } from './utils/withLoadedOwner';
 import ViewProfileLink from '../ViewProfileLink';
 import { useExtensionName } from './utils';
 import { MutedSpan } from 'src/components/utils/MutedText';
+import { KusamaIdentityTooltip } from 'src/components/substrate/KusamaContext';
 
 type Props = AddressProps & {
   isShort?: boolean,
@@ -30,16 +31,19 @@ export const Name = ({
   const addressString = isShort ? shortAddress : address.toString()
   const name = content?.name || useExtensionName(address)
   const title = name
-    ? <span className={withShortAddress ? 'd-flex justify-content-between' : ''}>
+    ? <span className={withShortAddress ? 'd-flex justify-content-between w-100' : ''}>
       {name}
       {withShortAddress && <MutedSpan><code>{shortAddress}</code></MutedSpan>}
     </span>
     : addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
-  return asLink
-    ? <ViewProfileLink account={{ address }} title={title} className={nameClass} />
-    : <>{title}</>
+  return <span className='d-flex'>
+    {asLink
+      ? <ViewProfileLink account={{ address }} title={title} className={nameClass} />
+      : <>{title}</>}
+      <KusamaIdentityTooltip address={address} />
+    </span>
 }
 
 export const NameWithOwner = withLoadedOwner(Name);

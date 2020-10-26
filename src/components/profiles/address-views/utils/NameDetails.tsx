@@ -9,6 +9,7 @@ import { InfoDetails } from '../AuthorPreview';
 import { AddressProps } from './types';
 import { useExtensionName } from '.';
 import Name from '../Name';
+import { KusamaRolesTags, KusamaVerify } from 'src/components/substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../../../utils/FollowAccountButton'), { ssr: false });
 
@@ -43,9 +44,10 @@ export const NameDetails = ({
   }
 
   return <>
-    <div className='header DfAccountTitle'>
+    <div className='header'>
       <Name owner={owner} address={address} />
       {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
+      <KusamaRolesTags address={address} />
       {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
     </div>
     {subtitle && <div className='DfPopup-handle'>{subtitle}</div>}

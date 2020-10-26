@@ -35,7 +35,7 @@ import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
 import { mdToText } from 'src/utils';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
-import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
+import { KusamaRolesTags, KusamaIdentity, KusamaVerify } from '../substrate/KusamaContext';
 import { InfoSection } from './address-views/InfoSection';
 import { AccountActivity } from '../activity/AccountActivity';
 import { PageContent } from '../main/PageWrapper';
@@ -123,6 +123,7 @@ const Component = (props: Props) => {
             title={<>
               <span className='d-flex align-items-center'>
                 <Name owner={owner} address={address} className='mr-3' />
+                <KusamaVerify address={address} />
                 <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
                 <KusamaRolesTags address={address} />
               </span>
@@ -147,7 +148,7 @@ const Component = (props: Props) => {
           />
           <div className='about'>
             {about && <DfMd className='mt-3' source={about} />}
-            <KusamaIdentity address={address} />
+            <KusamaIdentity address={address} withSection />
           </div>
           <div className='mt-3'>
             <span onClick={() => hasFollowers && setFollowersOpen(true)} className={`${!hasFollowers && 'disable'} DfProfileModalLink`}>{followersText}</span>
