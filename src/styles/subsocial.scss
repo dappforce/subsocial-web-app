@@ -61,6 +61,11 @@ pre {
   padding: $space_normal;
 }
 
+.ant-descriptions-header {
+  margin-bottom: $space_tiny;
+  border-bottom: 1px solid $color_light_border;
+}
+
 .ant-modal-title {
   font-size: $font_large;
 }
@@ -118,6 +123,7 @@ pre {
 .header {
   margin: 0;
   line-height: normal;
+  flex-wrap: wrap;
   display: flex !important;
   align-items: center;
   font-size: $font_big;
@@ -343,8 +349,6 @@ pre {
 }
 
 .ProfileDetails {
-  display: flex !important;
-
   .content {
     padding: 0 $space_small;
   }
@@ -716,6 +720,7 @@ hr {
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
     display: flex;
+    align-items: center;
   }
 
   li.ant-list-item.ant-list-item-no-flex {
@@ -1559,6 +1564,12 @@ a.DfStatItem {
 .DfAccountMenu {
   @extend .DfCard;
   padding: 0;
+
+  .DfSection {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
 }
 
 .DfHiddenButton {
