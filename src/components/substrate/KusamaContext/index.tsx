@@ -7,11 +7,14 @@ import { newLogger, isNum, nonEmptyStr, isEmptyStr, isDef } from '@subsocial/uti
 import { kusamaUrl } from '../../utils/env'
 import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
-import { Tag } from 'antd'
+import { Tag, Tooltip, Dropdown, Popover } from 'antd'
 import { hexToString } from '@polkadot/util'
 import styles from './index.module.scss'
-import { InfoSection } from 'src/components/profiles/address-views/InfoSection'
+import { InfoSection, InfoPanel } from 'src/components/profiles/address-views/InfoSection'
 import { isObject } from 'formik'
+import { CheckCircleFilled } from '@ant-design/icons'
+import { DfBgImg } from 'src/components/utils/DfBgImg'
+import Avatar from 'antd/lib/avatar/avatar'
 
 type Members = {
   council: AnyAccountId[],
@@ -250,14 +253,41 @@ type KusamaBareProps = {
   address: AnyAccountId
 }
 
+export const KusamaIdentityTooltip = ({ address }: KusamaBareProps) => <Tooltip
+    placement="topRight"
+    color='#fafafa'
+    title={<KusamaIdentity
+      address={address}
+      title={<span className='d-flex justify-content-between'>
+        Verify account
+        <KusamaVerify address={address} />
+      </span>}
+      layout='horizontal'
+      column={1}
+    />}
+  >
+    <span>
+      <DfBgImg src='kusama-logo.svg' size={20} style={{ marginLeft: '.5rem' }} rounded/>
+    </span>
+  </Tooltip>
+
+
 export const KusamaRolesTags = ({ address }: KusamaBareProps) => {
   const { whoIAm } = useKusamaContext()
 
   const roles = whoIAm(address)
 
-  return <>
+  return <div className='mb-2'>
     {roles.map(role => <Tag key={role} color='black' className='mr-3'>{role}</Tag>)}
-  </>
+  </div>
+}
+
+export const KusamaVerify = ({ address }: KusamaBareProps) => {
+  const identity = useKusamaIdentity(address)
+
+  return (identity?.isVerifySignIn
+      && <CheckCircleFilled size={20} style={{ color: '#4dd18f' }} />)
+      || null
 }
 
 export const useKusamaIdentity = (address: AnyAccountId) => {
@@ -273,8 +303,11 @@ export const useKusamaIdentity = (address: AnyAccountId) => {
   const info: KusamaInfo = {} as KusamaInfo;
 
   identityInfoKeys.forEach(key => { info[key] = hexToString(kusamaDetails.info[key].asRaw.toString()) })
-
-  return info;
+  const isVerifySignIn = !!kusamaDetails.judgements.filter(x => x[1].isReasonable).length
+  return {
+    info,
+    isVerifySignIn
+  };
 }
 
 const getKusamaItem = (key: KusamaInfoKeys, value: string) => {
@@ -289,20 +322,34 @@ const getKusamaItem = (key: KusamaInfoKeys, value: string) => {
   }
 }
 
-export const KusamaIdentity = ({ address }: KusamaBareProps) => {
+type KusamaIdentityProps = KusamaBareProps & {
+  title?: React.ReactNode,
+  size?: 'middle' | 'small' | 'default',
+  column?: number,
+  layout?: 'vertical' | 'horizontal',
+  withTitle?: boolean,
+  withSection?: boolean
+}
+
+export const KusamaIdentity = ({ address, title = 'Kusama identity',  withSection, withTitle = true, ...props }: KusamaIdentityProps) => {
   const details = useKusamaIdentity(address)
 
   if (!details) return null
 
+  const { info } = details
+
   const items = identityInfoKeys.map(key => ({
     label: key.replace(/(?:^\s*|\s+)(\S?)/g, (b) => b.toUpperCase()),
-    value: getKusamaItem(key, details[key])
+    value: getKusamaItem(key, info[key])
   })).filter(x => isDef(x.value))
 
-  return <InfoSection
-    title='Kusama identity'
-    level={3}
-    items={items}
-    className={styles.KusamaIdentitySection}
-  />
+  const infoProps = {
+    ...props,
+    title: withTitle ? title : undefined,
+    level: 3,
+    items,
+    className: styles.KusamaIdentitySection
+  }
+
+  return withSection ? <InfoSection {...infoProps} /> : <InfoPanel {...infoProps} />
 }
