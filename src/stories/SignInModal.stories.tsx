@@ -18,25 +18,25 @@ const MockSignInModal = ({ kind }: Props) => (
 )
 
 export const _WaitSecSignIn = () => (
-  <MockAuthProvider currentStep={StepsEnum.Login} isSteps={ { isSignIn: false } } {...{} as any}>
+  <MockAuthProvider currentStep={StepsEnum.Login} completedSteps={ { isSignedIn: false } } {...{} as any}>
     <MockSignInModal kind='AuthRequired' />
   </MockAuthProvider>
 )
 
 export const _WaitSecGetTokens = () => (
-  <MockAuthProvider currentStep={StepsEnum.Login} isSteps={ { isSignIn: true } } {...{} as any}>
+  <MockAuthProvider currentStep={StepsEnum.Login} completedSteps={ { isSignedIn: true } } {...{} as any}>
     <MockSignInModal kind='AuthRequired' />
   </MockAuthProvider>
 )
 
 export const _SignIn = () => (
-  <MockAuthProvider currentStep={StepsEnum.Login} isSteps={ { isSignIn: false } } {...{} as any}>
+  <MockAuthProvider currentStep={StepsEnum.Login} completedSteps={ { isSignedIn: false } } {...{} as any}>
     <MockSignInModal kind='OnBoarding' />
   </MockAuthProvider>
 )
 
 export const _SwitchAccount = () => (
-  <MockAuthProvider currentStep={StepsEnum.Login} isSteps={ { isSignIn: true } } {...{} as any}>
+  <MockAuthProvider currentStep={StepsEnum.Login} completedSteps={ { isSignedIn: true } } {...{} as any}>
     <MockSignInModal kind='SwitchAccount' />
   </MockAuthProvider>
 )

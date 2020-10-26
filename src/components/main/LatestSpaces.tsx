@@ -8,20 +8,21 @@ import { ButtonLink } from 'src/components/utils/ButtonLink';
 
 type Props = {
   spacesData: SpaceData[]
+  canHaveMoreSpaces?: boolean
 }
 
 export const LatestSpaces = (props: Props) => {
-  const { spacesData = [] } = props
+  const { spacesData = [], canHaveMoreSpaces = true } = props
   const spaces = spacesData.filter((x) => typeof x.struct !== 'undefined')
 
   return <>
     <DataList
       title={<span className='d-flex justify-content-between align-items-end w-100'>
         {'Latest spaces'}
-        <AllSpacesLink />
+        {canHaveMoreSpaces && <AllSpacesLink />}
       </span>}
       dataSource={spaces}
-      noDataDesc='No spaces created yet'
+      noDataDesc='No spaces found'
       noDataExt={<CreateSpaceButton />}
       renderItem={(item) =>
         <ViewSpace
@@ -33,6 +34,10 @@ export const LatestSpaces = (props: Props) => {
         />
       }
     />
-    <ButtonLink block href='/spaces/all' as='/spaces/all' className='mb-2'>See all spaces</ButtonLink>
+    {canHaveMoreSpaces &&
+      <ButtonLink block href='/spaces/all' as='/spaces/all' className='mb-2'>
+        See all spaces
+      </ButtonLink>
+    }
   </>
 }

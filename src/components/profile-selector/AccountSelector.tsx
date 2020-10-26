@@ -81,7 +81,9 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
   ), [])
 
   const NoExtensionAccounts = useCallback(() => (
-    <div className='ml-3 text-center'>No accounts found. Please open your Polkadot extension and create a new account or import existing.</div>
+    <div className='m-3 text-center'>
+      No accounts found. Please open your Polkadot extension and create a new account or import existing. Then reload this page.
+    </div>
   ), [])
 
   const CurrentAccount = useCallback(() => {

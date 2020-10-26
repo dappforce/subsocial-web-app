@@ -40,18 +40,18 @@ type SignInButtonProps = InnerAuthButtonProps & {
   isPrimary?: boolean
 };
 
+export const SignInMobileStub = () => <Button disabled>Read only</Button>
+
 export const SignInButton = ({
   isPrimary,
   size,
   title = 'Sign in'
-}: SignInButtonProps) => (
-  <OpenAuthButton
+}: SignInButtonProps) => <OpenAuthButton
     type={isPrimary ? 'primary' : 'default'}
     size={size}
     title={title}
     kind={'OnBoarding'}
   />
-)
 
 type SwitchAccountButtonProps = InnerAuthButtonProps
 

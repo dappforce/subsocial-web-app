@@ -16,7 +16,7 @@ import partition from 'lodash.partition';
 import BN from 'bn.js'
 import { PageContent } from 'src/components/main/PageWrapper';
 import { isHidden, Loading } from 'src/components/utils';
-import { useLoadUnlistedSpace } from 'src/components/spaces/helpers';
+import { useLoadUnlistedSpace, isHiddenSpace } from 'src/components/spaces/helpers';
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
 import { mdToText } from 'src/utils';
@@ -29,11 +29,13 @@ export type PostDetailsProps = {
   replies: PostWithAllDetails[]
 }
 
-export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, statusCode }) => {
+export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost, replies, statusCode }) => {
   if (statusCode === 404) return <Error statusCode={statusCode} />
-  if (!postDetails || isHidden({ struct: postDetails.post.struct })) return <PostNotFound />
+  if (!initialPost || isHidden({ struct: initialPost.post.struct })) return <PostNotFound />
 
-  const { post, ext, space } = postDetails
+  const { post, ext, space } = initialPost
+
+  if (!space || isHiddenSpace(space.struct)) return <PostNotFound />
 
   const { struct: initStruct, content } = post;
 
@@ -41,6 +43,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
 
   const { isNotMobile } = useResponsiveSize()
   const struct = useSubscribedPost(initStruct)
+  const postDetails = { ...initialPost, post: { struct, content } }
+
   const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpaces
 
   const { title, body, image, canonical, tags } = content;
@@ -69,10 +73,12 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
           <h1 className='DfPostName'>{titleMsg}</h1>
           <PostDropDownMenu post={struct} space={spaceStruct} withEditButton />
         </div>
+
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
           {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
+
         <div className='DfPostContent'>
           {ext
             ? <SharePostContent postDetails={postDetails} space={space} />
@@ -81,13 +87,15 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
                 <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
               </div>}
               {body && <DfMd source={body} />}
+              <ViewTags tags={tags} className='mt-2' />
             </>}
         </div>
-        <ViewTags tags={tags} />
+        
         <div className='DfRow'>
           <PostActionsPanel postDetails={postDetails} space={space.struct} />
         </div>
-        <div className='my-3'>
+
+        <div className='DfSpacePreviewOnPostPage'>
           <ViewSpace
             spaceData={spaceData}
             withFollowButton
@@ -96,6 +104,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails, replies, sta
             preview
           />
         </div>
+
         <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
       </Section>
     </PageContent>

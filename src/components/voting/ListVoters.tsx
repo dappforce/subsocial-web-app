@@ -92,7 +92,7 @@ const InnerModalVoters = (props: VotersProps) => {
 
     if (isEmptyArray(reactionView)) return <MutedDiv className='DfNoVoters'><em>No reactions yet</em></MutedDiv>
 
-    return <Tabs defaultActiveKey={active.toString()}>
+    return <Tabs defaultActiveKey={active.toString()} style={{ marginTop: '-1rem' }}>
       {panes.map(({ key, title, voters }) => <TabPane
         key={key}
         tab={renderTitle(title, voters)}

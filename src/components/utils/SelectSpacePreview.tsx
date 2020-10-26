@@ -1,54 +1,49 @@
 import React, { useState } from 'react'
 import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
-import { DfBgImg } from './DfBgImg';
 import BN from 'bn.js'
-import IdentityIcon from './IdentityIcon';
 import useSubsocialEffect from '../api/useSubsocialEffect';
-import { isEmptyArray, nonEmptyStr } from '@subsocial/utils';
+import { isEmptyArray } from '@subsocial/utils';
 import { SpaceData } from '@subsocial/types/dto';
-import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
+import { SpaceAvatar } from '../spaces/helpers';
 
-type PreparedSpaceData = {
-  name: string,
-  image: string,
-  hasImage: boolean,
-  id: string
-}
 
 type Props = {
   imageSize?: number,
   spaceIds: BN[],
   onSelect?: (value: string | number | LabeledValue) => void,
   defaultValue?: string,
-  preparedSpacesData?: PreparedSpaceData[]
+  spacesData?: SpaceData[]
 };
 
-const SUB_SIZE = 2;
 
 const SelectSpacePreview = (props: Props) => {
-  const { preparedSpacesData = [], imageSize = DEFAULT_AVATAR_SIZE, onSelect, defaultValue } = props
+  const { spacesData = [], onSelect, defaultValue, imageSize } = props
 
-  if (isEmptyArray(preparedSpacesData)) return null
+  if (isEmptyArray(spacesData)) return null
 
   return <Select
     style={{ width: 200 }}
     onSelect={onSelect}
     defaultValue={defaultValue}
   >
-    {preparedSpacesData.map((x) =>
-      <Select.Option value={x.id} key={x.id}>
+    {spacesData.map(({ struct, content }) => {
+      if (!content) return null
+
+      const { id, owner } = struct
+      const { image, name } = content
+
+      const idStr = id.toString()
+
+      return <Select.Option value={idStr} key={idStr}>
         <div className={`ProfileDetails DfPreview`}>
-          {x.hasImage
-            ? <DfBgImg className='DfAvatar' size={imageSize} src={x.image} style={{ border: '1px solid #ddd' }} rounded/>
-            : <IdentityIcon className='image' size={imageSize - SUB_SIZE} />
-          }
+          <SpaceAvatar address={owner} space={struct} avatar={image} size={imageSize} asLink={false}  />
           <div className='content'>
-            <div className='handle'>{x.name}</div>
+            <div className='handle'>{name}</div>
           </div>
         </div>
       </Select.Option>
-    )}
+    })}
   </Select>
 }
 
@@ -68,23 +63,9 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
 
     if (isEmptyArray(spaceIds)) return null
 
-    const preparedSpacesData = currentSpacesData.map((x) => {
-      const { struct, content } = x
-      if (!struct || !content) return undefined;
+    if (!currentSpacesData) return null
 
-      const { name, image } = content
-      const hasImage = nonEmptyStr(image)
-      return {
-        id: struct.id.toString(),
-        name,
-        image,
-        hasImage
-      }
-    }).filter(x => typeof x !== 'undefined') as PreparedSpaceData[]
-
-    if (!preparedSpacesData) return null
-
-    return <Component preparedSpacesData={preparedSpacesData} {...props} />
+    return <Component spacesData={currentSpacesData} {...props} />
   }
 }
 

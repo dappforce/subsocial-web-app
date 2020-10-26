@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import { ViewSpace } from '../../spaces/ViewSpace';
-import { DfBgImg } from '../../utils/DfBgImg';
+import { DfBgImageLink } from '../../utils/DfBgImg';
 import isEmpty from 'lodash.isempty';
 import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
 import { Menu, Dropdown, Button } from 'antd';
 import { isMyAddress } from '../../auth/MyAccountContext';
 import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces';
-import { SpaceData, PostWithSomeDetails, PostWithAllDetails } from '@subsocial/types/dto';
+import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto';
 import { PostContent as PostContentType } from '@subsocial/types';
 import ViewTags from '../../utils/ViewTags';
 import AuthorPreview from '../../profiles/address-views/AuthorPreview';
@@ -173,10 +173,11 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
 };
 
 type PostImageProps = {
-  content?: PostContentType
+  post: PostData,
+  space: Space
 }
 
-const PostImage = ({ content }: PostImageProps) => {
+const PostImage = ({ post: { content, struct }, space }: PostImageProps) => {
   if (!content) return null;
 
   const { isMobile } = useResponsiveSize()
@@ -184,7 +185,12 @@ const PostImage = ({ content }: PostImageProps) => {
   const { image } = content;
 
   return nonEmptyStr(image)
-    ? <DfBgImg src={resolveIpfsUrl(image)} size={isMobile ? 100 : 160} className='DfPostImagePreview' /* add onError handler */ />
+    ? <DfBgImageLink
+        href={'/[spaceId]/posts/[postId]'}
+        as={postUrl(space, struct)}
+        src={resolveIpfsUrl(image)}
+        size={isMobile ? 100 : 160}
+        className='DfPostImagePreview' /* add onError handler */ />
     : null
 }
 
@@ -253,21 +259,22 @@ export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = 
   );
 };
 
-type InfoForPostPreviewProps = {
-  postDetails: PostWithSomeDetails,
+type PostPreviewProps = {
+  postDetails: PostWithSomeDetails
   space: SpaceData
+  withTags?: boolean
 }
 
-type SharePostContentProps = {
-  postDetails: PostWithSomeDetails,
-  space: SpaceData
-}
+const SharedPostMd = (props: PostPreviewProps) => {
+  const { postDetails, space } = props
+  const { post: { struct, content } } = postDetails
 
-const SharePostMd = ({ postDetails: { post: { struct, content } }, space }: SharePostContentProps) => isComment(struct.extension)
-    ? <DfMd source={content?.body} className='mb-2' />
+  return isComment(struct.extension)
+    ? <DfMd source={content?.body} className='DfPostBody' />
     : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+}
 
-export const SharePostContent = (props: SharePostContentProps) => {
+export const SharePostContent = (props: PostPreviewProps) => {
   const { postDetails: { ext } } = props
 
   const OriginalPost = () => {
@@ -284,16 +291,18 @@ export const SharePostContent = (props: SharePostContentProps) => {
   }
 
   return <div className='DfSharedSummary'>
-    <SharePostMd {...props} />
+    <SharedPostMd {...props} />
     <Segment className='DfPostPreview'>
       <OriginalPost />
     </Segment>
   </div>
 }
 
-export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> = ({ postDetails, space }) => {
-  const { post: { struct, content } } = postDetails;
-  if (!struct || !content) return null;
+export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props) => {
+  const { postDetails, space, withTags } = props
+  const { post: { struct, content } } = postDetails
+
+  if (!struct || !content) return null
 
   return <div className='DfInfo'>
     <div className='DfRow'>
@@ -303,10 +312,10 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
           <PostDropDownMenu post={struct} space={space.struct} withEditButton />
         </div>
         <PostContent postDetails={postDetails} space={space.struct} />
-        <ViewTags tags={content?.tags} />
+        {withTags && <ViewTags tags={content?.tags} />}
         {/* {withStats && <StatsPanel id={post.id}/>} */}
       </div>
-      <PostImage content={content} />
+      <PostImage post={postDetails.post} space={space.struct} />
     </div>
   </div>
 }
@@ -323,7 +332,7 @@ export const useSubscribedPost = (initPost: Post) => {
 
     const sub = async () => {
       const readyApi = await api;
-      unsub = await readyApi.query.posts.postById(post.id, (data: Option<Post>) => {
+      unsub = await readyApi.query.posts.postById(initPost.id, (data: Option<Post>) => {
         setPost(data.unwrapOr(post));
       })
     }
@@ -331,7 +340,7 @@ export const useSubscribedPost = (initPost: Post) => {
     sub()
 
     return () => unsub && unsub()
-  }, [])
+  }, [ initPost.id.toString() ])
 
   return post
 }

@@ -8,18 +8,17 @@ import { SpaceData, PostWithAllDetails } from '@subsocial/types';
 import { PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
-import { useIsSignIn } from '../auth/MyAccountContext';
+import { useIsSignedIn } from '../auth/MyAccountContext';
 import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
 import { Tabs } from 'antd';
 import Section from '../utils/Section';
-import dynamic from 'next/dynamic';
-
-const MyFeed = dynamic(() => import('../activity/MyFeed'), { ssr: false });
+import MyFeed from '../activity/MyFeed';
 
 const { TabPane } = Tabs
 
 type Props = {
   spacesData: SpaceData[]
+  canHaveMoreSpaces: boolean
   postsData: PostWithAllDetails[]
   commentData: PostWithAllDetails[]
 }
@@ -41,11 +40,11 @@ const LatestUpdate = (props: Props) => {
 }
 
 const HomePage: NextPage<Props> = (props) => {
-  const isSignIn = useIsSignIn()
-  const defaultKey = isSignIn ? 'feed' : 'latest'
+  const isSignedIn = useIsSignedIn()
+  const defaultKey = isSignedIn ? 'feed' : 'latest'
   const [ key, setKey ] = useState<string>(defaultKey)
 
-  useEffect(() => setKey(defaultKey), [ isSignIn ])
+  useEffect(() => setKey(defaultKey), [ isSignedIn ])
 
   return <Section className='m-0'>
     <Tabs activeKey={key} onChange={setKey}>
@@ -70,6 +69,7 @@ HomePage.getInitialProps = async (): Promise<Props> => {
   const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE);
   const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
   const spacesData = publicSpacesData.slice(0, LAST_ITEMS_SIZE)
+  const canHaveMoreSpaces = publicSpacesData.length >= LAST_ITEMS_SIZE
 
   const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE);
   const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds);
@@ -82,7 +82,8 @@ HomePage.getInitialProps = async (): Promise<Props> => {
   return {
     spacesData,
     postsData,
-    commentData
+    commentData,
+    canHaveMoreSpaces
   }
 }
 

@@ -6,6 +6,7 @@ import { Segment } from 'src/components/utils/Segment';
 import { isSharedPost, withSubscribedPost } from './helpers';
 
 export type BarePreviewProps = {
+  withTags?: boolean,
   withActions?: boolean,
   replies?: PostWithAllDetails[],
   asRegularPost?: boolean

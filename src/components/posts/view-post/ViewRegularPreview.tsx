@@ -9,13 +9,16 @@ export type InnerPreviewProps = PreviewProps & {
   space: SpaceData
 }
 
-export const RegularPreview: React.FunctionComponent<InnerPreviewProps> = ({ postDetails, space, replies, withActions = false }) => {
-  const [ commentsSection, setCommentsSection ] = useState(false)
+type ComponentType = React.FunctionComponent<InnerPreviewProps>
+
+export const RegularPreview: ComponentType = (props) => {
+  const { postDetails, space, replies, withTags, withActions } = props
   const extStruct = postDetails.ext?.post.struct
+  const [ commentsSection, setCommentsSection ] = useState(false)
 
   return !extStruct || isVisible({ struct: extStruct, address: extStruct.owner })
     ? <>
-      <InfoPostPreview postDetails={postDetails} space={space} />
+      <InfoPostPreview postDetails={postDetails} space={space} withTags={withTags} />
       {withActions && <PostActionsPanel postDetails={postDetails} space={space.struct} toogleCommentSection={() => setCommentsSection(!commentsSection) } preview withBorder />}
       {commentsSection && <CommentSection post={postDetails} replies={replies} space={space.struct} withBorder />}
     </>

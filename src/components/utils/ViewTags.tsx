@@ -14,7 +14,7 @@ const ViewTag = React.memo(({ tag }: ViewTagProps) =>
     ? null
     : <Tag key={tag} className='mt-2'>
       <Link href='/search' as={`/search?tags=${tag}`}>
-        <a className='DfBlackLink'><TagOutlined />{tag}</a>
+        <a className='DfGreyLink'><TagOutlined />{tag}</a>
       </Link>
     </Tag>
 )

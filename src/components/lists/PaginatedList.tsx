@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash.isempty';
 import { PaginationConfig } from 'antd/lib/pagination';
@@ -6,6 +6,9 @@ import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS
 // import { newLogger } from '@subsocial/utils';
 import Link from 'next/link';
 import DataList, { DataListProps } from './DataList';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import ButtonLink from '../utils/ButtonLink';
+import { useLinkParams } from './utils';
 
 // const log = newLogger(DataList.name)
 
@@ -16,19 +19,14 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
 
   const router = useRouter();
 
-  const { query, pathname, asPath } = router
+  const { query } = router
   const { address, ...routerQuery } = query;
 
   const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
   const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
+  const lastPage = Math.ceil(total / pageSize)
 
-  const getLinksParams = useCallback((page: number, size?: number) => {
-    const query = `page=${page}&size=${size || pageSize}`
-    return {
-      href: `${pathname}?${query}`,
-      as: `${asPath.split('?')[0]}?${query}`
-    }
-  }, [ pathname, asPath, currentPage ])
+  const getLinksParams = useLinkParams({ defaultSize: pageSize, triggers: [ currentPage ]})
 
   useEffect(() => {
     let isSubscribe = true;
@@ -74,13 +72,14 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
         router.push(href, as)
       },
       style: { marginBottom: '1rem' },
-      itemRender: (page, type, original) => type === 'page'
-        ? <Link {...getLinksParams(page)}>
-          <a>
-            {page}
-          </a>
-        </Link>
-        : original
+      itemRender: (page, type, original) => {
+        switch(type) {
+          case 'page': return <Link {...getLinksParams(page)}><a>{page}</a></Link>
+          case 'next': return <ButtonLink {...getLinksParams(currentPage + 1)} disabled={currentPage === lastPage}><RightOutlined /></ButtonLink>
+          case 'prev': return <ButtonLink {...getLinksParams(currentPage - 1)} disabled={currentPage === 1}><LeftOutlined /></ButtonLink>
+          default: return original
+        }
+      }
     }
   }
 

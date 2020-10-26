@@ -52,7 +52,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 
     case 'setAddress':
       address = action.address;
-      if (address !== state.address) {
+      if (!equalAddresses(address, state.address)) {
         if (address) {
           log.info(`Set my new address: ${print(address)}`);
           store.set(MY_ADDRESS, address);
@@ -108,9 +108,9 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
   useEffect(() => {
     if (!inited) {
-      dispatch({ type: 'reload' });
+      dispatch({ type: 'reload' })
     }
-  }, [ inited ]); // Don't call this effect if `invited` is not changed
+  }, [ inited ]) // Don't call this effect if `invited` is not changed
 
   useSubsocialEffect(({ substrate: { api }, subsocial: { ipfs } }) => {
     if (!inited || !address) return
@@ -126,16 +126,13 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
         if (struct) {
           const profile = struct.profile.unwrapOr(undefined)
-
           const cid = profile && resolveCidOfContent(profile.content)
-
           const content = cid ? await ipfs.findProfile(cid) : undefined
 
           account = { struct, profile, content }
         }
 
         dispatch({ type: 'setAccount', account })
-
       })
     }
 
@@ -159,7 +156,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 }
 
 export function useMyAccount () {
-  return useContext(MyAccountContext);
+  return useContext(MyAccountContext)
 }
 
 export function useMyAddress () {
@@ -170,12 +167,8 @@ export function isMyAddress (anotherAddress?: string | AccountId) {
   return equalAddresses(useMyAddress(), anotherAddress)
 }
 
-export function useIsSignIn () {
+export function useIsSignedIn () {
   return nonEmptyStr(useMyAddress())
 }
 
-export function notSignIn () {
-  return !useIsSignIn()
-}
-
-export default MyAccountProvider;
+export default MyAccountProvider

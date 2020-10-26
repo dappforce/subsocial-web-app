@@ -51,6 +51,8 @@ export const DynamicCommentsTree = (props: LoadProps) => {
   const [ isLoading, setIsLoading ] = useState(true)
   const [ replyComments, setComments ] = useState(replies || []);
 
+  const hasComments = nonEmptyArr(replyComments)
+
   useSubsocialEffect(({ subsocial, substrate }) => {
     if (!isLoading) return;
 
@@ -68,7 +70,7 @@ export const DynamicCommentsTree = (props: LoadProps) => {
       }
     }
 
-    if (nonEmptyArr(replyComments)) {
+    if (hasComments) {
       const replyIds = replyComments.map(x => x.post.struct.id.toString())
       useSetReplyToStore(dispatch, { reply: { replyId: replyIds, parentId: parentIdStr }, comment: replyComments })
     } else {
@@ -81,7 +83,7 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
   }, [ false ]);
 
-  return isLoading
+  return isLoading && !hasComments
     ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined className='mr-1' /> Loading replies...</MutedDiv>
     : <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />
 }
@@ -90,16 +92,16 @@ export const CommentsTree = (props: LoadProps) => {
   const { parent: { id: parentId, replies_count } } = props;
 
   const count = resolveBn(replies_count)
-
-  if (count.eq(ZERO)) return null;
-
   const parentIdStr = parentId.toString()
 
   const comments = useSelector((store: Store) => getComments(store, parentIdStr));
+  const hasComments = nonEmptyArr(comments)
 
   const Tree = useCallback(() => nonEmptyArr(comments)
   ? <ViewCommentsTree {...props} comments={comments} />
   : <DynamicCommentsTree {...props} />, [ comments.length, parentIdStr, count.toString() ])
+
+  if (count.eq(ZERO) && !hasComments) return null;
 
   return <Tree />
 }

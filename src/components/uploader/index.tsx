@@ -57,7 +57,6 @@ export const InnerUploadImg = ({ onChange, img, ImagePreview, ...props }: InnerU
   }, [])
 
   const handleChange = async (info: UploadChangeParam) => {
-    console.log('onChange', info)
     if (info.file.status === 'uploading') {
       setLoading(true)
       return;

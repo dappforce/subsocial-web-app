@@ -1,7 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { resolveIpfsUrl } from 'src/ipfs';
+import Link, { LinkProps } from 'next/link';
 
-type Props = {
+export type BgImgProps = {
   src: string,
   size?: number | string,
   height?: number | string,
@@ -11,7 +12,7 @@ type Props = {
   style?: CSSProperties
 };
 
-export function DfBgImg (props: Props) {
+export function DfBgImg (props: BgImgProps) {
   const { src, size, height = size, width = size, rounded = false, className, style } = props;
 
   const fullClass = 'DfBgImg ' + className;
@@ -27,3 +28,11 @@ export function DfBgImg (props: Props) {
 
   return <div className={fullClass} style={fullStyle} />;
 }
+
+type DfBgImageLinkProps = BgImgProps & LinkProps
+
+export const DfBgImageLink = ({ href, as, ...props }: DfBgImageLinkProps) => <Link href={href} as={as}>
+  <a>
+    <DfBgImg {...props}/>
+  </a>
+</Link>

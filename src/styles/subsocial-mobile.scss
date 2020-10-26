@@ -172,13 +172,13 @@
   }
 
   .DfCommentSection {
-     .DfDataList {
-       margin: initial;
-     }
+    .DfDataList {
+      margin: initial;
+    }
 
-     .DfCommentAction {
+    .DfCommentAction {
       padding: $space_tiny;
-     }
+    }
   }
 
   .DfContent,
@@ -265,9 +265,7 @@
   }
 
   .DfDataList {
-    padding: 0;
-    margin-left: -$space_normal;
-    margin-right: -$space_normal;
+    margin: 0 -$space_normal;
   }
 
   .DfSearch {

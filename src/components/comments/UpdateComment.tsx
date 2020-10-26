@@ -10,7 +10,7 @@ import BN from 'bn.js'
 import { useDispatch } from 'react-redux';
 import { useEditReplyToStore, CommentTxButtonType } from './utils';
 
-const InnerEditComment = dynamic(() => import('./InnerEditComment'), { ssr: false });
+const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type FCallback = (id?: BN) => void
@@ -62,7 +62,7 @@ export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct,
       }}
     />
 
-  return <InnerEditComment
+  return <CommentEditor
     callback={callback}
     content={content}
     CommentTxButton={buildTxButton}

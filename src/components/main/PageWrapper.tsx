@@ -1,8 +1,5 @@
 import React from 'react'
-import { OnBoardingMobileCard } from '../onboarding'
 import Section from '../utils/Section'
-import { Affix } from 'antd'
-import { useAuth } from '../auth/AuthContext'
 import { useResponsiveSize } from '../responsive'
 
 type Props = {
@@ -11,7 +8,6 @@ type Props = {
   className?: string
 }
 export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, className, children }) => {
-  const { state: { showOnBoarding } } = useAuth()
   const { isNotMobile } = useResponsiveSize()
   const isPanels = leftPanel || rightPanel
   return isNotMobile
@@ -22,6 +18,6 @@ export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPa
     </div>
     : <>
       {children}
-      {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>}
+      {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
     </>
 }

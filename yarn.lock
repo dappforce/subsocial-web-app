@@ -2410,7 +2410,7 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@latest":
+"@subsocial/api@0.4.9":
   version "0.4.9"
   resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.9.tgz#ad8a3f84ac93f4af56c0be6c8ecaead7d4ced470"
   integrity sha512-nc2OmR6c+ZQt5LMszWI8cOs4f3BIMg9pYsg1H7s07zYibm9yp5o6Moye8n6TdQU4cps85Cgyew/d0qUKLUF78A==
@@ -2429,6 +2429,15 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
+"@subsocial/types@0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.7.tgz#a0d0fac3309d50fddd329c440787cb4443657421"
+  integrity sha512-SaStQKv/hta+bu3DQlfCE0fujzDU0dnrqfMeH6gEr0eJuVaRirJgpxXAHmC3zMKfrcjUKcyFxT5r1b4YNvx0MQ==
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@subsocial/utils" "^0.1.23"
+    cids "^0.7.1"
+
 "@subsocial/types@latest":
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.5.tgz#c2785b893a026f98bd39fd78bd0261e2b9454ef5"
@@ -2438,7 +2447,7 @@
     "@subsocial/utils" "^0.1.23"
     cids "^0.7.1"
 
-"@subsocial/utils@^0.1.23", "@subsocial/utils@^0.1.24-beta2", "@subsocial/utils@latest":
+"@subsocial/utils@0.1.24", "@subsocial/utils@^0.1.23", "@subsocial/utils@^0.1.24-beta2":
   version "0.1.24"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.1.24.tgz#a3ad7c6535e944d3b8deafc4066dab95fea219cc"
   integrity sha512-sFmysBFrposRnSqDOsNozH6pEoOGlAwl1sg5PuS+OmUMqL1nv3tVri5M+hCL38ryB7bRkc98yB5xhFiBKrtMOw==
@@ -2823,10 +2832,10 @@
     "@types/react" "*"
     "@types/reactcss" "*"
 
-"@types/react-infinite-scroller@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroller/-/react-infinite-scroller-1.2.1.tgz#1cd747ef8f50d3c883e375c0491a906e5436fcb2"
-  integrity sha512-64bpbqdSgtmy1zSZ2AQoFzguwZO7TyKjqJRTEnfNMCAQbnrX90kz+rYufZyY9CmzhwpXMwRO8xR9fMQnbYUkgQ==
+"@types/react-infinite-scroll-component@^4.2.5":
+  version "4.2.5"
+  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroll-component/-/react-infinite-scroll-component-4.2.5.tgz#63111919c7e5fd86c8f1b019889bcd1a190d45c7"
+  integrity sha512-Vo2ykqsvATeFgAAz0IBvO7fgpx9Q2kHG/KJJRNTrdWL06ghTG0t/l/+oY1Z5Zl5PJoLArEHu8D4Yq0kD8jx8ow==
   dependencies:
     "@types/react" "*"
 
@@ -11262,12 +11271,12 @@ react-hotkeys@2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-infinite-scroller@^1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/react-infinite-scroller/-/react-infinite-scroller-1.2.4.tgz#f67eaec4940a4ce6417bebdd6e3433bfc38826e9"
-  integrity sha512-/oOa0QhZjXPqaD6sictN2edFMsd3kkMiE19Vcz5JDgHpzEJVqYcmq+V3mkwO88087kvKGe1URNksHEOt839Ubw==
+react-infinite-scroll-component@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-5.1.0.tgz#3c0043cd17c6857c25d3ca7aa4171e0c33ce8023"
+  integrity sha512-ZQ7lYlLByil1ZVdvt57UJeBIj/tSOwKyds+B0LIm/xGmxzJJZwW/hYGKKs74sHO3LoIDwcq2ci6YXqrkWSalLQ==
   dependencies:
-    prop-types "^15.5.8"
+    throttle-debounce "^2.1.0"
 
 react-input-autosize@^2.2.2:
   version "2.2.2"

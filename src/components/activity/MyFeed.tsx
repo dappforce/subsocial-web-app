@@ -1,46 +1,36 @@
-import React, { useCallback } from 'react';
-import { hexToBn } from '@polkadot/util';
-import { useMyAddress } from '../auth/MyAccountContext';
-import NotAuthorized from '../auth/NotAuthorized';
-import { getNewsFeed } from '../utils/OffchainUtils';
-import { HeadMeta } from '../utils/HeadMeta';
-import { InfiniteList } from '../lists/InfiniteList';
-import PostPreview from '../posts/view-post/PostPreview';
-import { PostWithAllDetails } from '@subsocial/types';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import { getLoadMoreFeedFn, FeedActivities } from "./FeedActivities"
+import { BaseActivityProps } from "./types"
+import { getFeedCount, getNewsFeed } from "../utils/OffchainUtils"
+import { useMyAddress } from "../auth/MyAccountContext"
+import NotAuthorized from "../auth/NotAuthorized"
+import HeadMeta from "../utils/HeadMeta"
+
+const TITLE = 'My feed'
+const loadingLabel = 'Loading your feed...'
 
 type MyFeedProps = {
-  withTitle?: boolean
+  title?: string
 }
 
-export const MyFeed = ({ withTitle }: MyFeedProps) => {
+const loadMoreFeed = getLoadMoreFeedFn(getNewsFeed, 'post_id')
+
+export const InnerMyFeed = (props: BaseActivityProps) => <FeedActivities
+  {...props}
+  loadMore={loadMoreFeed}
+  loadingLabel={loadingLabel}
+  noDataDesc='Your feed is empty. Try to follow more spaces ;)'
+  getCount={getFeedCount}
+/>
+
+
+export const MyFeed = ({ title }: MyFeedProps) => {
   const myAddress = useMyAddress()
-  const { subsocial, isApiReady } = useSubsocialApi()
 
-  const getNextPage = useCallback(async (page: number, size: number) => {
-    if (!myAddress || !isApiReady) return undefined
-
-    const offset = (page - 1) * size
-
-    const activity = await getNewsFeed(myAddress, offset, size);
-    const postIds = activity.map(x => hexToBn(x.post_id))
-
-    return subsocial.findPublicPostsWithAllDetails(postIds)
-  }, [ myAddress, isApiReady ]);
-
-  if (!myAddress) return <NotAuthorized />;
+  if (!myAddress) return <NotAuthorized />
 
   return <>
-    <HeadMeta title='My Feed' />
-    <InfiniteList
-      dataSource={[] as PostWithAllDetails[]}
-      title={withTitle ? 'My feed' : undefined}
-      noDataDesc='No posts in your feed yet'
-      renderItem={(x, i) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
-      loadMore={getNextPage}
-      resetTriggers={[ isApiReady ]}
-      initialLoad
-    />
+    <HeadMeta title={TITLE} />
+    <InnerMyFeed title={title} address={myAddress} />
   </>
 }
 

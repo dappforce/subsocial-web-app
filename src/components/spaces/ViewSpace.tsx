@@ -120,34 +120,32 @@ export const ViewSpace = (props: Props) => {
       <div className='DfSpaceBody'>
         <Avatar />
         <div className='ml-2 w-100'>
-          <span className='mb-3'>
-            <div className='d-flex justify-content-between mb-3'>
-              {title}
-              <span className='d-flex align-items-center'>
-                <DropdownMenu className='mx-2' spaceData={spaceData} />
-                {isMy &&
-                  <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
-                    <EditOutlined /> Edit
-                  </ButtonLink>
-                }
-                {withFollowButton &&
-                  <FollowSpaceButton spaceId={id} />
-                }
-              </span>
-            </div>
-          </span>
+          <div className='d-flex justify-content-between'>
+            {title}
+            <span className='d-flex align-items-center'>
+              <DropdownMenu className='mx-2' spaceData={spaceData} />
+              {isMy &&
+                <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
+                  <EditOutlined /> Edit
+                </ButtonLink>
+              }
+              {withFollowButton &&
+                <FollowSpaceButton spaceId={id} />
+              }
+            </span>
+          </div>
 
           {nonEmptyStr(about) &&
-            <div className='description mb-2'>
+            <div className='description mt-3'>
               <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
             </div>
           }
 
-          {withTags && <ViewTags tags={tags} />}
+          {withTags && <ViewTags tags={tags} className='mt-2' />}
 
-          {withStats && <span className='d-flex justify-content-between flex-wrap'>
+          {withStats && <span className='d-flex justify-content-between flex-wrap mt-3'>
             <SpaceStatsRow space={space} />
             {!preview && <ContactInfo {...contactInfo} />}
           </span>}
@@ -192,7 +190,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
 
   const id = resolveBn(spaceData.struct.id)
   const { about, name, image } = spaceData.content
-  
+
   // Simple check (should be imroved later)
   const isPolkaProject = id.eqn(1) || (id.gtn(1000) && id.ltn(1218))
 
@@ -226,7 +224,8 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const ownerId = spaceData?.struct.owner as AccountId
   const owner = await subsocial.findProfile(ownerId)
 
-  const postIds = await substrate.postIdsBySpaceId(id as BN)
+  // We need to reverse post ids to display posts in a descending order on a space page.
+  const postIds = (await substrate.postIdsBySpaceId(id as BN)).reverse()
   const pageIds = getPageOfIds(postIds, query)
   const posts = await subsocial.findPublicPostsWithAllDetails(pageIds)
 
