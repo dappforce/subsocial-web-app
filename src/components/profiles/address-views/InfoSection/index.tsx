@@ -10,40 +10,47 @@ type DescItem = {
   value: React.ReactNode
 }
 
-type DescriptionsProps = BareProps & {
-  title: React.ReactNode
-  level?: number,
+type InfoPanelProps = BareProps & {
+  title?: React.ReactNode
   items?: DescItem[],
   size?: 'middle' | 'small' | 'default',
   column?: number,
   layout?: 'vertical' | 'horizontal'
 }
 
+type DescriptionsProps = InfoPanelProps & {
+  title: React.ReactNode
+  level?: number,
+}
 
-export const InfoSection = ({ title, size = 'small', level, layout, column = 2, items, className, ...bareProps }: DescriptionsProps) => {
+export const InfoPanel = ({ title, size = 'small', layout, column = 2, items, className, ...bareProps }: InfoPanelProps) => {
   const { isMobile } = useResponsiveSize()
 
-  return <Section
-      level={level}
-      title={title}
-      className={`${styles.DfInfoSection} ${className}`}
-      {...bareProps}
-    >
-      <AntdDesc
-        size={size}
-        layout={layout || isMobile ? 'vertical' : 'horizontal'}
-        column={isMobile ? 1 : column}
-        className='mt-2'
+  return <AntdDesc
+    {...bareProps}
+    title={title}
+    size={size}
+    layout={layout}
+    column={isMobile ? 1 : column}
+    className='mt-2'
+  >
+    {items?.map(({ label, value }, key) =>
+      <AntdDesc.Item
+        key={key}
+        label={label}
       >
-        {items?.map(({ label, value }, key) =>
-          <AntdDesc.Item
-            key={key}
-            label={label}
-          >
-          {value}
-        </AntdDesc.Item>)}
-      </AntdDesc>
-  </Section>
+      {value}
+    </AntdDesc.Item>)}
+  </AntdDesc>
 }
+
+export const InfoSection = ({ title, level, className, style, ...props }: DescriptionsProps) => <Section
+    level={level}
+    title={title}
+    className={`${styles.DfInfoSection} ${className}`}
+    style={style}
+  >
+    <InfoPanel {...props} />
+</Section>
 
 export default InfoSection
