@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { ViewSpace } from './ViewSpace';
-import PaginatedList from 'src/components/lists/PaginatedList';
-import { NextPage } from 'next';
-import { HeadMeta } from '../utils/HeadMeta';
-import { SpaceData } from '@subsocial/types/dto';
+import React, { useState } from 'react'
+import { ViewSpace } from './ViewSpace'
+import PaginatedList from 'src/components/lists/PaginatedList'
+import { NextPage } from 'next'
+import { HeadMeta } from '../utils/HeadMeta'
+import { SpaceData } from '@subsocial/types/dto'
 import { SpaceId } from '@subsocial/types/substrate/interfaces'
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import useSubsocialEffect from '../api/useSubsocialEffect';
-import { isMyAddress, useMyAddress } from '../auth/MyAccountContext';
-import { Loading } from '../utils';
-import { CreateSpaceButton } from './helpers';
-import { newLogger } from '@subsocial/utils';
-import { AnyAccountId } from '@subsocial/types';
-import { return404 } from '../utils/next';
-import { getPageOfIds } from '../utils/getIds';
-import { useRouter } from 'next/router';
-import DataList from '../lists/DataList';
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { isMyAddress, useMyAddress } from '../auth/MyAccountContext'
+import { Loading } from '../utils'
+import { CreateSpaceButton } from './helpers'
+import { newLogger } from '@subsocial/utils'
+import { AnyAccountId } from '@subsocial/types'
+import { return404 } from '../utils/next'
+import { getPageOfIds } from '../utils/getIds'
+import { useRouter } from 'next/router'
+import DataList from '../lists/DataList'
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -64,8 +64,10 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
     if (!isMySpaces) return setMyUnlistedSpaces([])
 
     subsocial.findUnlistedSpaces(mySpaceIds)
-      .then(setMyUnlistedSpaces).catch((err) => log.error('Failed load Unlisted spaces. Error: %', err))
-
+      .then(setMyUnlistedSpaces)
+      .catch((err) =>
+        log.error('Failed to load unlisted spaces. Error: %', err)
+      )
   }, [ mySpaceIds.length, isMySpaces ])
 
   return {
@@ -82,18 +84,21 @@ const SpacePreview = (space: SpaceData) =>
     preview
   />
 
-const PublicSpaces = ({ spacesData , mySpaceIds, address, withTitle }: LoadSpacesProps) => {
+const PublicSpaces = (props: LoadSpacesProps) => {
+  const { spacesData, mySpaceIds, address, withTitle } = props
   const noSpaces = !mySpaceIds.length
   const totalCount = mySpaceIds.length
   const isMy = isMyAddress(address)
 
+  const title = withTitle
+    ? <span className='d-flex justify-content-between align-items-center w-100 my-2'>
+      <span>{`Public Spaces (${totalCount})`}</span>
+      {!noSpaces && isMy && <CreateSpaceButton />}
+    </span>
+    : null
+
   return <PaginatedList
-    title={withTitle
-      ? <span className='d-flex justify-content-between align-items-center w-100 my-2'>
-        <span>{`Public Spaces (${totalCount})`}</span>
-        {!noSpaces && isMy && <CreateSpaceButton />}
-      </span>
-      : null}
+    title={title}
     totalCount={totalCount}
     dataSource={spacesData}
     renderItem={SpacePreview}
@@ -112,6 +117,7 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
   if (isLoading) return <Loading />
 
   const unlistedSpacesCount = myUnlistedSpaces.length
+
   return unlistedSpacesCount ? <DataList
     title={`Unlisted Spaces (${unlistedSpacesCount})`}
     dataSource={myUnlistedSpaces}
@@ -140,6 +146,7 @@ export const AccountSpacesPage: NextPage<Props> = (props: Props) => <>
 AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props
   const { address } = query
+
   if (!address || typeof address !== 'string') {
     return return404(props) as any
   }
