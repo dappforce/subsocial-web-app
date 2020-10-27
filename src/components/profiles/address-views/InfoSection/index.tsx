@@ -23,7 +23,7 @@ type DescriptionsProps = InfoPanelProps & {
   level?: number,
 }
 
-export const InfoPanel = ({ title, size = 'small', layout, column = 2, items, className, ...bareProps }: InfoPanelProps) => {
+export const InfoPanel = ({ title, size = 'small', layout, column = 2, items, ...bareProps }: InfoPanelProps) => {
   const { isMobile } = useResponsiveSize()
 
   return <AntdDesc
@@ -32,7 +32,6 @@ export const InfoPanel = ({ title, size = 'small', layout, column = 2, items, cl
     size={size}
     layout={layout}
     column={isMobile ? 1 : column}
-    className='mt-2'
   >
     {items?.map(({ label, value }, key) =>
       <AntdDesc.Item

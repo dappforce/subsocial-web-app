@@ -9,7 +9,7 @@ import { InfoDetails } from '../AuthorPreview';
 import { AddressProps } from './types';
 import { useExtensionName } from '.';
 import Name from '../Name';
-import { KusamaRolesTags, KusamaVerify } from 'src/components/substrate/KusamaContext';
+import { KusamaRolesTags } from 'src/components/kusama/KusamaRoles';
 
 const FollowAccountButton = dynamic(() => import('../../../utils/FollowAccountButton'), { ssr: false });
 

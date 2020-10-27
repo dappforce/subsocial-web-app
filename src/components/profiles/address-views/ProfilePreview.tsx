@@ -11,7 +11,6 @@ import { SummarizeMd } from 'src/components/utils/md';
 import ViewProfileLink from '../ViewProfileLink';
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
 import { EditProfileLink } from './utils'
-import { KusamaIdentity } from 'src/components/substrate/KusamaContext';
 
 type ProfilePreviewProps = AddressProps & {
   mini?: boolean,

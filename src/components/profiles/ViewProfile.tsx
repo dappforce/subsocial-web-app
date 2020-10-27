@@ -35,10 +35,11 @@ import { Balance } from './address-views/utils/Balance';
 import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
 import { mdToText } from 'src/utils';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
-import { KusamaRolesTags, KusamaIdentity, KusamaVerify } from '../substrate/KusamaContext';
 import { InfoSection } from './address-views/InfoSection';
 import { AccountActivity } from '../activity/AccountActivity';
 import { PageContent } from '../main/PageWrapper';
+import { KusamaRolesTags } from '../kusama/KusamaRoles';
+import { KusamaIdentity } from '../kusama/KusamaIdentity';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
 
@@ -123,7 +124,6 @@ const Component = (props: Props) => {
             title={<>
               <span className='d-flex align-items-center'>
                 <Name owner={owner} address={address} className='mr-3' />
-                <KusamaVerify address={address} />
                 <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
                 <KusamaRolesTags address={address} />
               </span>

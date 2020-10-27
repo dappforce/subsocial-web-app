@@ -6,7 +6,7 @@ import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContex
 import { AuthProvider } from '../components/auth/AuthContext';
 import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate';
 import { ResponsiveSizeProvider } from 'src/components/responsive';
-import { KusamaProvider } from 'src/components/substrate/KusamaContext';
+import { KusamaProvider } from 'src/components/kusama/KusamaContext';
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   return (

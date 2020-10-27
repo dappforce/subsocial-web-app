@@ -22,5 +22,9 @@ export default {
     PostReactionCreated: 'reacted to a post',
     CommentReactionCreated: 'reacted to a comment',
     PostCreated: 'created a post'
+  },
+  kusama: {
+    verifiedIdentity: 'Kusama verified identity',
+    unverifiedIdetity: 'Kusama identity'
   }
 }
