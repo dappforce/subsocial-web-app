@@ -8,7 +8,6 @@ import dynamic from 'next/dynamic';
 import Error from 'next/error';
 import React, { useCallback } from 'react';
 import { Segment } from 'src/components/utils/Segment';
-
 import { isHidden, resolveBn } from '../utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
