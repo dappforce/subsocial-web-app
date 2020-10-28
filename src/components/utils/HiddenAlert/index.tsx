@@ -1,11 +1,11 @@
 import React from 'react'
 import { Post, Space } from '@subsocial/types/substrate/interfaces'
-import { Alert } from 'antd'
 import HiddenSpaceButton from 'src/components/spaces/HiddenSpaceButton'
 import HiddenPostButton from 'src/components/posts/HiddenPostButton'
 import { isMyAddress } from 'src/components/auth/MyAccountContext'
 import styles from './index.module.sass'
 import { BareProps } from '../types'
+import WarningPanel from '../WarningPanel'
 
 export type BaseHiddenAlertProps = BareProps & {
   desc?: React.ReactNode,
@@ -35,18 +35,13 @@ export const HiddenAlert = ({
   if (!struct.hidden.valueOf() || !isMyAddress(address)) return null;
 
   const HiddenButton = () => isSpace ? <HiddenSpaceButton space={struct as Space} /> : <HiddenPostButton post={struct as Post} />
-  return <Alert
+  return <WarningPanel
     className={`${preview ? styles.DfHiddenAlertPreview : styles.DfHiddenAlertPage} ${className}`}
     style={style}
-    message={
-      <div className={`d-flex ${centered ? 'justify-content-center' : 'justify-content-between'}`}>
-        {desc || `This ${type} is unlisted and only you can see it`}
-        <HiddenButton />
-      </div>
-    }
-    banner
-    showIcon={withIcon}
-    type="warning"
+    desc={desc}
+    actions={[<HiddenButton />]}
+    centered={centered}
+    withIcon={withIcon}
   />
 }
 
