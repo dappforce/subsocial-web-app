@@ -29,16 +29,21 @@ export const HiddenAlert = ({
   className,
   style
 }: HiddenAlertProps) => {
-  const isSpace = type === 'space';
-  const address = struct.owner
 
-  if (!struct.hidden.valueOf() || !isMyAddress(address)) return null;
+  if (!struct.hidden.valueOf() || !isMyAddress(struct.owner)) return null
 
-  const HiddenButton = () => isSpace ? <HiddenSpaceButton space={struct as Space} /> : <HiddenPostButton post={struct as Post} />
+  const HiddenButton = () => type === 'space'
+    ? <HiddenSpaceButton space={struct as Space} />
+    : <HiddenPostButton post={struct as Post} />
+
+  const alertCss = preview
+    ? styles.DfHiddenAlertPreview
+    : styles.DfHiddenAlertPage
+
   return <WarningPanel
-    className={`${preview ? styles.DfHiddenAlertPreview : styles.DfHiddenAlertPage} ${className}`}
+    className={`${alertCss} ${className}`}
     style={style}
-    desc={desc}
+    desc={desc || `This ${type} is unlisted and only you can see it`}
     actions={[<HiddenButton />]}
     centered={centered}
     withIcon={withIcon}
