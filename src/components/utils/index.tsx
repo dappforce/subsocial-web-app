@@ -42,7 +42,7 @@ export function isClientSide (): boolean {
 export const isHomePage = (): boolean =>
   isClientSide() && window.location.pathname === '/'
 
-export const isBot = () => isClientSide() ? isbot(window.navigator.userAgent) : true
+export const isBot = () => isClientSide() ? isbot(window.navigator.userAgent) : false
 
 type PropsWithSocialAccount = {
   profile?: Profile;

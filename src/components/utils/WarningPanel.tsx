@@ -4,7 +4,7 @@ import { BareProps } from './types';
 
 export type WarningPanelProps = BareProps & {
   desc: React.ReactNode,
-  action?: React.ReactNode
+  actions?: React.ReactNode[]
   preview?: boolean,
   withIcon?: boolean,
   centered?: boolean,
@@ -13,7 +13,7 @@ export type WarningPanelProps = BareProps & {
 
 export const WarningPanel = ({
   desc,
-  action,
+  actions,
   centered,
   closable,
   withIcon = false,
@@ -25,7 +25,7 @@ export const WarningPanel = ({
     message={
       <div className={`d-flex align-items-center ${centered ? 'justify-content-center' : 'justify-content-between'}`}>
         {desc}
-        {action}
+        {actions}
       </div>
     }
     banner

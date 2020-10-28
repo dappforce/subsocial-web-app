@@ -39,7 +39,7 @@ export const HiddenAlert = ({
     className={`${preview ? styles.DfHiddenAlertPreview : styles.DfHiddenAlertPage} ${className}`}
     style={style}
     desc={desc}
-    action={<HiddenButton />}
+    actions={[<HiddenButton />]}
     centered={centered}
     withIcon={withIcon}
   />

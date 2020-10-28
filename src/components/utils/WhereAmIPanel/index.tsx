@@ -1,23 +1,23 @@
-import { isBot } from "..";
+import { isBot, isServerSide } from "..";
 import WarningPanel from "../WarningPanel";
 import { Button } from "antd";
 import styles from './index.module.sass'
 import { landingPageUrl } from "../env";
 import { didSignIn } from "src/components/auth/MyAccountContext";
 
-export const SubsocialWarnPanel = () => isBot() || didSignIn()
+export const WhereAmIPanel = () => isServerSide() || didSignIn() || isBot()
   ? null
   : <WarningPanel
-      className={styles.DfSubsocialWarnPanel}
+      className={styles.DfWhereAmIPanel}
       desc='You are on SubSocial – a social networking protocol on Polkadot & IPFS'
-      action={<Button
+      actions={[<Button
         href={landingPageUrl}
         target='_blank'
         ghost size='small'
         className={styles.DfActionButton}
       >
         Learn more
-      </Button>}
+      </Button>]}
       closable
       centered
     />

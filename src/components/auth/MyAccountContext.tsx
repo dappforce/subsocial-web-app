@@ -24,7 +24,7 @@ export function readMyAddress (): string | undefined {
   return myAddress;
 }
 
-export function writeMyAddress (myAddress: string) {
+export function storeMyAddress (myAddress: string) {
   store.set(MY_ADDRESS, myAddress)
   store.set(DID_SIGN_IN, true)
 }
@@ -63,7 +63,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
       if (!equalAddresses(address, state.address)) {
         if (address) {
           log.info(`Set my new address: ${print(address)}`);
-          writeMyAddress(address)
+          storeMyAddress(address)
           return { ...state, address, inited: true };
         } else {
           return forget();
