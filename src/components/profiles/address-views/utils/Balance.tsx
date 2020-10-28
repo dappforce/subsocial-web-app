@@ -24,7 +24,13 @@ function format (value: Compact<any> | BN | string, currency: string, withSi?: b
   return <>{prefix}{!isShort && (<>.<span className='DfBalanceDecimals'>{`000${postfix || ''}`.slice(-3)}</span></>)}&nbsp;{currency}</>;
 }
 
-export const FormatBalance = (value: Compact<any> | BN | string) => {
+type FormatBalanceProps = {
+  value?: Compact<any> | BN | string
+}
+
+export const FormatBalance = ({ value }: FormatBalanceProps): React.ReactNode => {
+  if (!value) return null
+
   const currency = formatBalance.getDefaults().unit
   return format(value, currency)
 }
