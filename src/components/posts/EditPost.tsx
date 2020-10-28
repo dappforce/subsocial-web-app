@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Form, Input, Select } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { Form, Select, Tabs } from 'antd'
 import Router, { useRouter } from 'next/router'
 import BN from 'bn.js'
 import HeadMeta from '../utils/HeadMeta'
@@ -8,7 +8,7 @@ import { getNewIdFromEvent, equalAddresses, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { PostExtension, PostUpdate, OptionId, OptionBool, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
-import { PostContent, PostData } from '@subsocial/types'
+import { PostContent, PostData, PostExt } from '@subsocial/types'
 import { registry } from '@subsocial/types/substrate/registry'
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
@@ -18,12 +18,21 @@ import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
 import { Loading } from '../utils'
 import NoData from '../utils/EmptyList'
 import { Null } from '@polkadot/types'
-import DfMdEditor from '../utils/DfMdEditor'
+import DfMdEditor from '../utils/DfMdEditor/client'
 import SpacegedSectionTitle from '../spaces/SpacedSectionTitle'
 import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpaceFromUrl'
 import { UploadCover } from '../uploader'
 import { getNonEmptyPostContent } from '../utils/content'
 import messages from 'src/messages'
+import { PageContent } from '../main/PageWrapper'
+import { useKusamaContext } from '../kusama/KusamaContext'
+import { AccountId, Balance } from '@polkadot/types/interfaces'
+import { NameWithOwner } from '../profiles/address-views/Name'
+import { InfoPanel, DescItem } from '../profiles/address-views/InfoSection'
+import { formatBalance } from '@polkadot/util';
+import Input from 'antd/lib/input/Input'
+
+const { TabPane } = Tabs
 
 const log = newLogger('EditPost')
 
@@ -37,7 +46,8 @@ const MAX_TAGS = 10
 type Content = PostContent
 
 type FormValues = Partial<Content & {
-  spaceId: string
+  spaceId: string,
+  proposalIndex?: number
 }>
 
 type FieldName = keyof FormValues
@@ -70,6 +80,9 @@ export function InnerForm (props: FormProps) {
 
   const spaceId = space.struct.id
   const initialValues = getInitialValues(props)
+
+  console.log('INIT', initialValues)
+
   const tags = initialValues.tags || []
 
   const getFieldValues = (): FormValues => {
@@ -215,20 +228,178 @@ export function InnerForm (props: FormProps) {
   </>
 }
 
+type Proposal = {
+  proposer: AccountId;
+  value: Balance;
+  beneficiary: AccountId;
+  bond: Balance;
+  id: number,
+  status: 'pass' | 'active'
+}
+
+type KusamaProposalDescProps = {
+  proposal: Proposal
+}
+
+const KusamaProposalDesc = ({ proposal: { proposer, beneficiary, value, bond, id, status } }: KusamaProposalDescProps) => {
+  const isPass = status === 'pass'
+  const commonItems: DescItem[] = [
+    {
+      label: 'Proposal index',
+      value: id
+    },
+    {
+      label: 'Status',
+      value: status
+    }
+  ]
+
+  const items: DescItem[] = isPass
+    ? commonItems
+    : [
+      ...commonItems,
+      {
+        label: 'Proposer',
+        value: <NameWithOwner address={proposer} />
+      },
+      {
+        label: 'Requested amount',
+        value: formatBalance(value)
+      },
+      {
+        label: 'Beneficiary',
+        value: <NameWithOwner address={beneficiary} />
+      },
+      {
+        label: 'Requested bond',
+        value: formatBalance(bond)
+      }
+    ]
+
+  return <InfoPanel
+    style={{ border: `1px solid ${isPass ? 'grey' : 'green'}`}}
+    items={items}
+    layout='horizontal'
+    column={2}
+  />
+}
+
+const createPassProposal = (proposalIndex: number): Proposal => ({ id: proposalIndex, status: 'pass' } as Proposal)
+
+export const KusamaProposalForm = (props: FormProps) => {
+  const { api } = useKusamaContext()
+  const [ lastProposaCount, setCount ] = useState<number>()
+  const [ proposalIndex, setIndex ] = useState<number>()
+  const [ proposal, setProposal ] = useState<Proposal>()
+  const [ form ] = Form.useForm()
+  const initialValues = getInitialValues(props)
+
+  useEffect(() => {
+    if (!api) return
+
+    api.query.treasury.proposalCount()
+      .then(x => setCount(x.toNumber()))
+  })
+
+  useEffect(() => {
+    if (!proposalIndex || !api) return
+
+    const loadProposal = async () => {
+      const proposalOpt = await api.query.treasury.proposals(proposalIndex)
+      const treasuryProposal = proposalOpt.unwrapOr(undefined)
+
+      const proposal: Proposal = treasuryProposal
+        ? { ...treasuryProposal, status: 'active', id: proposalIndex }
+        : createPassProposal(proposalIndex)
+
+      if (props.post) {
+        const ext: PostExt = { proposal: { proposalIndex, network: 'kusama' } }
+        const content = props.post.content
+        if (content) {
+          content.ext = ext
+        } else {
+          props.post.content = { ext } as PostContent
+        }
+      }
+
+      setProposal(proposal)
+
+      console.log('PROPS', props.post?.content)
+    }
+
+    loadProposal().catch(console.error)
+  })
+
+  if (!lastProposaCount) return <Loading />
+
+  return <>
+      <DfForm form={form} initialValues={initialValues}>
+        <Form.Item
+          name='proposalIndex'
+          label='Post proposal'
+          hasFeedback
+          rules={[
+            { required: true, message: 'Proposal index is required.' },
+            ({ getFieldValue }) => ({
+              async validator () {
+                const proposalIndex = getFieldValue('proposalIndex')
+                console.log('INDEX', proposalIndex)
+                const isValid = proposalIndex <= lastProposaCount
+                if (isValid) {
+                  setIndex(proposalIndex)
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error(`Proposal is not exist, max proposal index: ${lastProposaCount}`));
+              }
+            })
+          ]}
+        >
+          <Input placeholder='Proposal index' type='number' className='mt-3' />
+        </Form.Item>
+      </DfForm>
+      {proposal && <>
+        <KusamaProposalDesc proposal={proposal} />
+        <InnerForm {...props} />
+      </>}
+  </>
+}
+
+export const PostForms = (props: FormProps) => {
+  const { post } = props
+
+  const defaultKey = (post?.content as any)?.proposal
+    ? 'proposal'
+    : 'regular'
+
+  return <Tabs defaultActiveKey={defaultKey}>
+    <TabPane tab='Regular post' key='regular'>
+      <InnerForm {...props} />
+    </TabPane>
+    <TabPane tab='Kusama proposal' key='proposal'>
+      <KusamaProposalForm {...props} />
+    </TabPane>
+  </Tabs>
+}
+
 export function FormInSection (props: FormProps) {
   const { space, post } = props
+  const { apiState } = useKusamaContext()
+
+  const isShowKusama = apiState && apiState !== 'ERROR'
 
   const pageTitle = post ? `Edit post` : `New post`
 
   const sectionTitle =
     <SpacegedSectionTitle space={space} subtitle={pageTitle} />
 
-  return <>
+  return <PageContent>
     <HeadMeta title={pageTitle} />
     <Section className='EditEntityBox' title={sectionTitle}>
-      <InnerForm {...props} />
+      {isShowKusama
+        ? <PostForms {...props} />
+        : <InnerForm {...props} />}
     </Section>
-  </>
+  </PageContent>
 }
 
 function LoadPostThenEdit (props: FormProps) {
