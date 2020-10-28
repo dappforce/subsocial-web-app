@@ -15,18 +15,25 @@ function print (x?: any): string {
   return typeof x?.toString === 'function' ? x.toString() : ''
 }
 
-const MY_ADDRESS = 'df.myAddress';
+const MY_ADDRESS = 'df.myAddress'
 const DID_SIGN_IN = 'df.didSignIn'
 
+function storeDidSignIn () {
+  store.set(DID_SIGN_IN, true)
+}
+
 export function readMyAddress (): string | undefined {
-  const myAddress: string | undefined = store.get(MY_ADDRESS);
-  log.info(`Read my address from the local storage: ${print(myAddress)}`);
-  return myAddress;
+  const myAddress: string | undefined = store.get(MY_ADDRESS)
+  if (nonEmptyStr(myAddress)) {
+    storeDidSignIn()
+  }
+  log.info(`Read my address from the local storage: ${print(myAddress)}`)
+  return myAddress
 }
 
 export function storeMyAddress (myAddress: string) {
   store.set(MY_ADDRESS, myAddress)
-  store.set(DID_SIGN_IN, true)
+  storeDidSignIn()
 }
 
 export const didSignIn = (): boolean => store.get(DID_SIGN_IN)
