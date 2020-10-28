@@ -11,20 +11,26 @@ import { showInfoMessage, showErrorMessage } from '../utils/Message'
 const labelLen = 6
 const fieldLen = 24 - labelLen
 
-const commonFormProps: FormProps = {
+const defaultFormProps: FormProps = {
+  validateTrigger: [ 'onBlur' ],
+  autoComplete: 'off',
   size: 'large',
-  labelCol: { span: labelLen },
   labelAlign: 'left',
-  wrapperCol: { span: fieldLen }
+  labelCol: { span: labelLen },
+  wrapperCol: { span: fieldLen },
+  className: styles.DfForm
 }
 
 const commonFormButtonsProps: FormItemProps = {
-  wrapperCol: { offset: labelLen, span: fieldLen }
+  wrapperCol: {
+    offset: labelLen,
+    span: fieldLen
+  }
 }
 
 const commonFormTxButtonProps: TxButtonProps = {
   type: 'primary',
-  size: commonFormProps.size
+  size: defaultFormProps.size
 }
 
 const TxButtonStub = React.memo(() =>
@@ -38,10 +44,16 @@ const TxButton = dynamic(
   { loading: TxButtonStub, ssr: false }
 )
 
-export const DfForm = (props: FormProps) =>
-  <Form validateTrigger={[ 'onBlur' ]} {...commonFormProps} {...props} className={styles.DfForm}>
+export const DfForm = (props: FormProps) => {
+  const mergedProps = { ...defaultFormProps, ...props }
+  if (mergedProps.layout === 'vertical') {
+    mergedProps.labelCol = undefined
+    mergedProps.wrapperCol = undefined
+  }
+  return <Form {...mergedProps}>
     {props.children}
   </Form>
+}
 
 type DfFormTxButtonProps = Omit<TxButtonProps, 'form'> & {
   form: FormInstance
