@@ -98,14 +98,16 @@ export function Notification (props: NotificationType) {
   return <Link {...links}>
     <a className='DfNotificationItem'>
       <Avatar address={address} avatar={avatar} />
-      <div className="DfNotificationContent">
-        <div className="DfTextActivity">
-          <Name owner={owner} address={address}/>
-          {notificationMessage}
+      <div className='d-flex justify-content-between w-100'>
+        <div className="DfNotificationContent">
+          <div className="d-flex">
+            <Name owner={owner} address={address}/>
+            {notificationMessage}
+          </div>
+          <MutedDiv className='DfDate'>{details}</MutedDiv>
         </div>
-        <MutedDiv className='DfDate'>{details}</MutedDiv>
+        {nonEmptyStr(image) && <DfBgImageLink {...links} className='mb-1' src={image} size={80} />}
       </div>
-      {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} />}
     </a>
   </Link>
 }

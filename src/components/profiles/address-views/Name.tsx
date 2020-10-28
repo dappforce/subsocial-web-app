@@ -40,12 +40,12 @@ export const Name = ({
     : addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
-  return <>
+  return <span className='d-flex'>
     {asLink
       ? <ViewProfileLink account={{ address }} title={title} className={nameClass} />
       : <>{title}</>}
       {withKusama && <KusamaIdentityTooltip address={address} />}
-    </>
+    </span>
 }
 
 export const NameWithOwner = withLoadedOwner(Name);
