@@ -9,7 +9,7 @@ export const WhereAmIPanel = () => isServerSide() || didSignIn() || isBot()
   ? null
   : <WarningPanel
       className={styles.DfWhereAmIPanel}
-      desc='You are on SubSocial – a social networking protocol on Polkadot & IPFS'
+      desc='You are on Subsocial – a social networking protocol on Polkadot & IPFS'
       actions={[<Button
         href={landingPageUrl}
         target='_blank'
