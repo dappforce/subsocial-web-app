@@ -2431,10 +2431,10 @@
   dependencies:
     "@babel/runtime" "^7.8.4"
 
-"@subsocial/types@0.4.7-beta1":
-  version "0.4.7-beta1"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.7-beta1.tgz#7eceaa0b61a88b7597fef61a6b091f896b93a1f4"
-  integrity sha512-5YpCEE+RTibxyHV1Bh74edQ/f49EulqIx5CJpgWBYtcx0oikDXDquecyBnevWcBhh6jaeJqdr5SE7oNc2RA4Pg==
+"@subsocial/types@0.4.7-beta3":
+  version "0.4.7-beta3"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.7-beta3.tgz#a71436aea23265f33405f9708697deef0299cc2a"
+  integrity sha512-AbsDFl9D8dWrfVwbtxiI95QkOkdHAZSqHczC/CxQ2/Z1Jkto7P43umtm9rNy+1gyg5n7F9UJEcGZnVn7S0xUaQ==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@subsocial/utils" "^0.1.23"
