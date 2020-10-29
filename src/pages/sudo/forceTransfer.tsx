@@ -117,7 +117,7 @@ function InnerForm (props: FormProps) {
   const hasZeroBalances = zeroBalances.length > 0
 
   return <div {...props}>
-    <DfForm form={form}>
+    <DfForm form={form} layout='vertical'>
 
       <Form.Item
         label='Free tokens per account'
