@@ -91,13 +91,13 @@ export const getAccountId = async (addressOrHandle: string): Promise<AnyAccountI
 
 type MaybeAccAddr = undefined | string | GenericAccountId
 
-export function equalAddresses (addr1: MaybeAccAddr, addr2: MaybeAccAddr) {
+export function equalAddresses (addr1: MaybeAccAddr, addr2: MaybeAccAddr): boolean {
   if (addr1 === addr2) {
     return true
   } else if (!addr1 || !addr2) {
     return false
   } else {
-    return asAccountId(addr1)?.eq(asAccountId(addr2))
+    return asAccountId(addr1)?.eq(asAccountId(addr2)) || false
   }
 }
 
