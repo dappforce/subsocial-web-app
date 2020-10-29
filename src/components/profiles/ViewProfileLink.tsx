@@ -15,12 +15,13 @@ export const ViewProfileLink = ({
   hint,
   className
 }: Props) => {
+  const { address } = account
 
-  if (!account.address || !title) return null
+  if (!address) return null
 
   return (
     <Link href='/accounts/[address]' as={accountUrl(account)}>
-      <a className={className} title={hint}>{title}</a>
+      <a className={className} title={hint}>{title || address.toString()}</a>
     </Link>
   )
 }

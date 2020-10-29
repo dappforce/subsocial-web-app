@@ -5,7 +5,7 @@ import React from 'react'
 import { isMyAddress } from 'src/components/auth/MyAccountContext'
 import { newPostUrl } from 'src/components/urls'
 import NoData from 'src/components/utils/EmptyList'
-import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert'
+import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
 
 export type SpaceProps = {
   space: Space
@@ -22,12 +22,12 @@ export const createNewPostLinkProps = (space: Space) => ({
   as: newPostUrl(space)
 })
 
-type HiddenSpaceAlertProps = BaseHiddenAlertProps & {
+type StatusProps = EntityStatusProps & {
   space: Space
 }
 
-export const HiddenSpaceAlert = (props: HiddenSpaceAlertProps) =>
-  <HiddenAlert struct={props.space} type='space' {...props} />
+export const HiddenSpaceAlert = (props: StatusProps) =>
+  <HiddenEntityPanel struct={props.space} type='space' {...props} />
 
 export const SpaceNotFound = () =>
   <NoData description={'Space not found'} />

@@ -48,9 +48,9 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
       <NameDetails owner={owner} address={address} withLabel={withLabel} />
       {!mini && <>
         {withAbout && nonEmptyStr(about) &&
-            <div className='DfPopup-about'>
-              <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
-            </div>
+          <div className='DfPopup-about'>
+            <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
+          </div>
         }
         <div className='DfPopup-links'>
           <div onClick={openFollowersModal} className={`DfPopup-link ${followers ? '' : 'disable'}`}>
@@ -65,11 +65,11 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
         <EditProfileLink address={address} className='DfGreyLink' />
       </>}
     </div>
-  </div>;
-};
+  </div>
+}
 
-export const ProfilePreviewWithOwner = withLoadedOwner(ProfilePreview);
+export const ProfilePreviewWithOwner = withLoadedOwner(ProfilePreview)
 
-export default ProfilePreviewWithOwner;
+export default ProfilePreviewWithOwner
 
 export const MyProfilePreview = withMyProfile(ProfilePreview)

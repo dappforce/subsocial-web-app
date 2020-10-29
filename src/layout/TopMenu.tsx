@@ -7,6 +7,7 @@ import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
 import { useResponsiveSize } from 'src/components/responsive';
 import { SignInMobileStub } from 'src/components/auth/AuthButtons';
+import { isMobileDevice } from 'src/config/Size.config';
 
 const InnerMenu = () => {
   const { toggle } = useSidebarCollapsed();
@@ -34,8 +35,12 @@ const InnerMenu = () => {
       {isNotMobile && <Search/>}
       <div className='DfTopBar--rightContent'>
         {isMobile &&
-          <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />}
-        {isMobile ? <SignInMobileStub /> : <AuthorizationPanel />}
+          <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />
+        }
+        {isMobileDevice
+          ? <SignInMobileStub />
+          : <AuthorizationPanel />
+        }
       </div>
     </div>;
 };

@@ -9,6 +9,7 @@ import { SubstrateId, AnyAccountId } from '@subsocial/types'
 import { SubmittableResult } from '@polkadot/api'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
 import { SubsocialApi } from '@subsocial/api/subsocial';
+import { asAccountId } from '@subsocial/api/utils'
 export * from './getTxParams'
 export * from './queryToProps'
 export { isEqual } from './isEqual';
@@ -88,8 +89,16 @@ export const getAccountId = async (addressOrHandle: string): Promise<AnyAccountI
   }
 }
 
-export function equalAddresses (addr1?: string | AccountId, addr2?: string | AccountId) {
-  return toString(addr1) === toString(addr2)
+type MaybeAccAddr = undefined | string | GenericAccountId
+
+export function equalAddresses (addr1: MaybeAccAddr, addr2: MaybeAccAddr) {
+  if (addr1 === addr2) {
+    return true
+  } else if (!addr1 || !addr2) {
+    return false
+  } else {
+    return asAccountId(addr1)?.eq(asAccountId(addr2))
+  }
 }
 
 type GetNameOptions = AddressProps & {

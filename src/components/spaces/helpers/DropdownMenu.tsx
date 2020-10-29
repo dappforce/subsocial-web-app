@@ -6,6 +6,7 @@ import React from 'react'
 import { editSpaceUrl } from 'src/components/urls'
 import { BareProps } from 'src/components/utils/types'
 import HiddenSpaceButton from '../HiddenSpaceButton'
+import { TransferOwnershipLink } from '../TransferSpaceOwnership'
 import { isHiddenSpace, createNewPostLinkProps, isMySpace } from './common'
 
 type Props = BareProps & {
@@ -18,7 +19,7 @@ export const DropdownMenu = (props: Props) => {
   const { id } = struct
   const spaceKey = `space-${id.toString()}`
 
-  const buildByMenu = () =>
+  const buildMenu = () =>
     <Menu>
       <Menu.Item key={`edit-space-${spaceKey}`}>
         <Link href={`/[spaceId]/edit`} as={editSpaceUrl(struct)}>
@@ -39,10 +40,13 @@ export const DropdownMenu = (props: Props) => {
       <Menu.Item key={`hidden-${spaceKey}`}>
         <HiddenSpaceButton space={struct} asLink />
       </Menu.Item>
+      {<Menu.Item key={`transfer-ownership-${spaceKey}`}>
+        <TransferOwnershipLink space={struct} />
+      </Menu.Item>}
     </Menu>
 
   return isMySpace(struct)
-    ? <Dropdown overlay={buildByMenu()} placement='bottomRight'>
+    ? <Dropdown overlay={buildMenu()} placement='bottomRight'>
       <EllipsisOutlined rotate={vertical ? 90 : 0} style={style} className={className} />
     </Dropdown>
     : null
