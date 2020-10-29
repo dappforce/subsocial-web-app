@@ -32,8 +32,6 @@ export const KusamaProposalView = ({ proposal, ...bareProps }: KusamaProposalPro
       const proposalOpt = await api.query.treasury.proposals(proposalIndex)
       const treasuryProposal = proposalOpt.unwrapOr(undefined)
 
-      console.log('treasuryProposal', treasuryProposal)
-
       const proposal: Proposal = treasuryProposal
         ? { ...treasuryProposal, status: 'active', id: proposalIndex }
         : createPassProposal(proposalIndex)

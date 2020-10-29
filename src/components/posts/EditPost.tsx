@@ -79,8 +79,6 @@ export function PostForm (props: PostFormProps) {
   const spaceId = space.struct.id
   const initialValues = getInitialValues(props)
 
-  console.log('INIT', initialValues)
-
   const tags = initialValues.tags || []
 
   const getFieldValues = (): FormValues => {
@@ -106,8 +104,6 @@ export function PostForm (props: PostFormProps) {
 
   const fieldValuesToContent = (): Content =>
     getNonEmptyPostContent({ ...getFieldValues(), ext } as Content)
-
-  console.log('fieldValuesToContent', fieldValuesToContent())
 
   const pinToIpfsAndBuildTxParams = () => {
 

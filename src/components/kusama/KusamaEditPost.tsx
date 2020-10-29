@@ -23,8 +23,6 @@ export const KusamaProposalForm = (props: PostFormProps) => {
 
   const proposal: ProposalContent | undefined = proposalIndex ? { proposalIndex, network: 'kusama' } : undefined
 
-  console.log('Proposal', proposal)
-
   const PostForm = useCallback(
     () => proposalIndex ? <InnerForm {...props} ext={{ proposal }} /> : null,
     [ proposalIndex || 0 ])
@@ -47,7 +45,6 @@ export const KusamaProposalForm = (props: PostFormProps) => {
           ({ getFieldValue }) => ({
             async validator() {
               const proposalIndex = getFieldValue('proposalIndex')
-              console.log('INDEX', proposalIndex)
               const isValid = proposalIndex <= lastProposaCount
               if (isValid) {
                 setIndex(proposalIndex)
