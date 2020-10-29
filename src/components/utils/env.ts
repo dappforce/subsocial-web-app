@@ -31,7 +31,7 @@ export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new B
 
 export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 
-export const kusamaUrl = 'wss://rpc.polkadot.io'
+export const kusamaUrl = getEnv('KUSAMA_URL')
 
 export const isProdMode = nodeEnv === 'production'
 export const isDevMode = !isProdMode

@@ -3,10 +3,9 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
 import { DefinitionRpcExt, RegistryTypes } from '@polkadot/types/types'
 import { registryTypes as SubsocialTypes, AnyAccountId } from '@subsocial/types'
-import { newLogger, isNum } from '@subsocial/utils'
+import { newLogger, isNum, notDef, isEmptyStr } from '@subsocial/utils'
 import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
-import { kusamaUrl } from '../utils/env'
 import { functionStub } from '../utils'
 
 const log = newLogger('KusamaContext')
@@ -61,7 +60,6 @@ export type State = {
 }
 
 const INIT_STATE: State = {
-  endpoint: kusamaUrl,
   types: SubsocialTypes,
   rpc: { ...jsonrpc },
   hasKusamaConnection: false,
@@ -122,9 +120,11 @@ let _api: ApiPromise
 export { _api as api }
 
 export const KusamaProvider = (props: KusamaProviderProps) => {
+  const connectEndpoint = props.endpoint || INIT_STATE.endpoint
+
   const initState: State = {
     ...INIT_STATE,
-    endpoint: props.endpoint || INIT_STATE.endpoint,
+    endpoint: connectEndpoint,
     types: props.types || INIT_STATE.types
   }
 
@@ -208,8 +208,10 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
   }, [ api, endpoint, rpc, types, dispatch ])
 
   useEffect(() => {
+    if (notDef(endpoint) || isEmptyStr(endpoint)) return
+  
     connect()
-  }, [ connect ])
+  }, [ endpoint ])
 
   useEffect(() => {
     if (!api) return
