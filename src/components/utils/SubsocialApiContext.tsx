@@ -7,6 +7,7 @@ import { ApiPromise } from '@polkadot/api';
 import { newLogger } from '@subsocial/utils';
 import { useSubstrate } from '../substrate';
 import { controlledMessage } from './Message';
+import { functionStub } from '.';
 // import { isDevMode } from './env';
 
 const log = newLogger('SubsocialApiContext')
@@ -45,10 +46,6 @@ function reducer (_state: SubsocialApiState, action: SubsocialApiAction): Subsoc
       throw new Error(`Unsupported type of action: ${action?.type}`)
     }
   }
-}
-
-function functionStub () {
-  throw new Error('Function needs to be set in SubsocialApiProvider')
 }
 
 export type SubsocialApiContextProps = {

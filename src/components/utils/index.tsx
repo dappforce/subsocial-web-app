@@ -73,6 +73,10 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 
   return moment(new Date(seconds)).format(format);
 };
 
+export function functionStub (): any {
+  throw new Error('Function needs to be set in ApiProvider')
+}
+
 export const fakeClientId = () => `fake-${new Date().getTime().toString()}`
 
 type VisibilityProps = {
@@ -133,5 +137,7 @@ export const resolveBn = (value: BN | string) => {
     return hexToBn(value.toString())
   }
 }
+
+export const startWithUpperCase = (str: string) => str.replace(/(?:^\s*|\s+)(\S?)/g, (b) => b.toUpperCase())
 
 export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'

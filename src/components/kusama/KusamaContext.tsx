@@ -7,6 +7,7 @@ import { newLogger, isNum } from '@subsocial/utils'
 import { TypeRegistry, GenericAccountId } from '@polkadot/types'
 import { Registration } from '@polkadot/types/interfaces'
 import { kusamaUrl } from '../utils/env'
+import { functionStub } from '../utils'
 
 const log = newLogger('KusamaContext')
 
@@ -39,6 +40,11 @@ type ApiState = 'CONNECTING' | 'READY' | 'ERROR'
 
 type JsonRpc = Record<string, Record<string, DefinitionRpcExt>>
 
+type TokenOptions = {
+  decimals?: number,
+  currency?: string
+}
+
 export type State = {
   endpoint?: string | string[]
   types?: RegistryTypes
@@ -47,6 +53,8 @@ export type State = {
   registry?: TypeRegistry,
   apiError?: any
   apiState?: ApiState,
+  hasKusamaConnection: boolean
+  tokenOptions: TokenOptions
   whoIAm: (address: AnyAccountId) => string[],
   isEqualKusamaAddress: (a: AnyAccountId, b: AnyAccountId) => boolean,
   getIdentity: (address: AnyAccountId) => Promise<Registration | undefined>
@@ -56,9 +64,11 @@ const INIT_STATE: State = {
   endpoint: kusamaUrl,
   types: SubsocialTypes,
   rpc: { ...jsonrpc },
-  whoIAm: {} as any,
-  isEqualKusamaAddress: {} as any,
-  getIdentity: {} as any
+  hasKusamaConnection: false,
+  tokenOptions: {} as TokenOptions,
+  whoIAm: functionStub,
+  isEqualKusamaAddress: functionStub,
+  getIdentity: functionStub
 }
 
 const reducer = (state: State, action: Action): State => {
@@ -121,6 +131,8 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
   const [ state, dispatch ] = useReducer(reducer, initState)
   const [ members, setMembers ] = useState<Members>()
   const [ kusamaRegistry ] = useState<TypeRegistry>(new TypeRegistry())
+  const [ tokenOptions, setTokenOptions ] = useState({} as TokenOptions)
+  const [ hasKusamaConnection, setKusamaConnection ] = useState(false)
   const { api, endpoint, rpc, types, apiState } = state
 
   const getKusamaAccount = (address: AnyAccountId) => new GenericAccountId(kusamaRegistry, address)
@@ -209,10 +221,17 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
       const validators = await readyApi.query.session.validators()
 
       const properties = await readyApi.rpc.system.properties()
+      const tokenSymbol = properties.tokenSymbol.unwrapOr(undefined)?.toString();
+      const tokenDecimals = properties.tokenDecimals.unwrapOr(undefined)?.toNumber();
+
+      console.log('TOKENS', tokenSymbol, tokenDecimals)
+
+      setTokenOptions({ decimals: tokenDecimals, currency: tokenSymbol })
 
       kusamaRegistry.setChainProperties(properties)
 
       setMembers({ council, technicalCommittee, validators })
+      setKusamaConnection(true)
     }
 
     loadMembers()
@@ -220,7 +239,14 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
   }, [ apiState || '' ])
 
   return (
-    <KusamaContext.Provider value={[ { ...state, whoIAm, isEqualKusamaAddress, getIdentity }, dispatch ]}>
+    <KusamaContext.Provider value={[{
+      ...state,
+      whoIAm,
+      isEqualKusamaAddress,
+      getIdentity,
+      tokenOptions,
+      hasKusamaConnection
+    }, dispatch ]}>
       {props.children}
     </KusamaContext.Provider>
   )
