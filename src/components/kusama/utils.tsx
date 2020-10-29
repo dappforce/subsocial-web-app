@@ -9,14 +9,14 @@ import { hexToString } from '@polkadot/util'
 const log = newLogger('Kusama')
 
 export const useKusamaIdentity = (address: AnyAccountId) => {
-  const { getIdentity, apiState } = useKusamaContext()
+  const { getIdentity, hasKusamaConnection } = useKusamaContext()
   const [ kusamaDetails, setInfo ] = useState<Registration>()
 
   useEffect(() => {
     getIdentity(address).then(setInfo).catch(log.error)
-  }, [ apiState || '' ])
+  }, [ hasKusamaConnection ])
 
-  if (!kusamaDetails) return undefined
+  if (!kusamaDetails || !hasKusamaConnection) return undefined
 
   const info: KusamaInfo = {} as KusamaInfo;
 

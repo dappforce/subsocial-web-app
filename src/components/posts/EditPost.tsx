@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Form, Select, Tabs } from 'antd'
 import Router, { useRouter } from 'next/router'
 import BN from 'bn.js'
@@ -26,11 +26,8 @@ import { getNonEmptyPostContent } from '../utils/content'
 import messages from 'src/messages'
 import { PageContent } from '../main/PageWrapper'
 import { useKusamaContext } from '../kusama/KusamaContext'
-import { AccountId, Balance } from '@polkadot/types/interfaces'
-import { NameWithOwner } from '../profiles/address-views/Name'
-import { InfoPanel, DescItem } from '../profiles/address-views/InfoSection'
-import { formatBalance } from '@polkadot/util';
 import Input from 'antd/lib/input/Input'
+import { KusamaProposalForm } from '../kusama/KusamaEditPost'
 
 const { TabPane } = Tabs
 
@@ -54,13 +51,14 @@ type FieldName = keyof FormValues
 
 const fieldName = (name: FieldName): FieldName => name
 
-type FormProps = CanHaveSpaceProps & {
+export type PostFormProps = CanHaveSpaceProps & {
   post?: PostData
   /** Spaces where you can post. */
-  spaceIds?: BN[]
+  spaceIds?: BN[],
+  ext?: PostExt
 }
 
-function getInitialValues ({ space, post }: FormProps): FormValues {
+export function getInitialValues ({ space, post }: PostFormProps): FormValues {
   if (space && post) {
     const spaceId = space.struct.id.toString()
     return { ...post.content, spaceId }
@@ -70,8 +68,8 @@ function getInitialValues ({ space, post }: FormProps): FormValues {
 
 const RegularPostExt = new PostExtension({ RegularPost: new Null(registry) })
 
-export function InnerForm (props: FormProps) {
-  const { space, post } = props
+export function PostForm (props: PostFormProps) {
+  const { space, post, ext } = props
   const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
@@ -107,7 +105,9 @@ export function InnerForm (props: FormProps) {
   }
 
   const fieldValuesToContent = (): Content =>
-    getNonEmptyPostContent(getFieldValues() as Content)
+    getNonEmptyPostContent({ ...getFieldValues(), ext } as Content)
+
+  console.log('fieldValuesToContent', fieldValuesToContent())
 
   const pinToIpfsAndBuildTxParams = () => {
 
@@ -228,164 +228,26 @@ export function InnerForm (props: FormProps) {
   </>
 }
 
-type Proposal = {
-  proposer: AccountId;
-  value: Balance;
-  beneficiary: AccountId;
-  bond: Balance;
-  id: number,
-  status: 'pass' | 'active'
-}
-
-type KusamaProposalDescProps = {
-  proposal: Proposal
-}
-
-const KusamaProposalDesc = ({ proposal: { proposer, beneficiary, value, bond, id, status } }: KusamaProposalDescProps) => {
-  const isPass = status === 'pass'
-  const commonItems: DescItem[] = [
-    {
-      label: 'Proposal index',
-      value: id
-    },
-    {
-      label: 'Status',
-      value: status
-    }
-  ]
-
-  const items: DescItem[] = isPass
-    ? commonItems
-    : [
-      ...commonItems,
-      {
-        label: 'Proposer',
-        value: <NameWithOwner address={proposer} />
-      },
-      {
-        label: 'Requested amount',
-        value: formatBalance(value)
-      },
-      {
-        label: 'Beneficiary',
-        value: <NameWithOwner address={beneficiary} />
-      },
-      {
-        label: 'Requested bond',
-        value: formatBalance(bond)
-      }
-    ]
-
-  return <InfoPanel
-    style={{ border: `1px solid ${isPass ? 'grey' : 'green'}`}}
-    items={items}
-    layout='horizontal'
-    column={2}
-  />
-}
-
-const createPassProposal = (proposalIndex: number): Proposal => ({ id: proposalIndex, status: 'pass' } as Proposal)
-
-export const KusamaProposalForm = (props: FormProps) => {
-  const { api } = useKusamaContext()
-  const [ lastProposaCount, setCount ] = useState<number>()
-  const [ proposalIndex, setIndex ] = useState<number>()
-  const [ proposal, setProposal ] = useState<Proposal>()
-  const [ form ] = Form.useForm()
-  const initialValues = getInitialValues(props)
-
-  useEffect(() => {
-    if (!api) return
-
-    api.query.treasury.proposalCount()
-      .then(x => setCount(x.toNumber()))
-  })
-
-  useEffect(() => {
-    if (!proposalIndex || !api) return
-
-    const loadProposal = async () => {
-      const proposalOpt = await api.query.treasury.proposals(proposalIndex)
-      const treasuryProposal = proposalOpt.unwrapOr(undefined)
-
-      const proposal: Proposal = treasuryProposal
-        ? { ...treasuryProposal, status: 'active', id: proposalIndex }
-        : createPassProposal(proposalIndex)
-
-      if (props.post) {
-        const ext: PostExt = { proposal: { proposalIndex, network: 'kusama' } }
-        const content = props.post.content
-        if (content) {
-          content.ext = ext
-        } else {
-          props.post.content = { ext } as PostContent
-        }
-      }
-
-      setProposal(proposal)
-
-      console.log('PROPS', props.post?.content)
-    }
-
-    loadProposal().catch(console.error)
-  })
-
-  if (!lastProposaCount) return <Loading />
-
-  return <>
-      <DfForm form={form} initialValues={initialValues}>
-        <Form.Item
-          name='proposalIndex'
-          label='Post proposal'
-          hasFeedback
-          rules={[
-            { required: true, message: 'Proposal index is required.' },
-            ({ getFieldValue }) => ({
-              async validator () {
-                const proposalIndex = getFieldValue('proposalIndex')
-                console.log('INDEX', proposalIndex)
-                const isValid = proposalIndex <= lastProposaCount
-                if (isValid) {
-                  setIndex(proposalIndex)
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error(`Proposal is not exist, max proposal index: ${lastProposaCount}`));
-              }
-            })
-          ]}
-        >
-          <Input placeholder='Proposal index' type='number' className='mt-3' />
-        </Form.Item>
-      </DfForm>
-      {proposal && <>
-        <KusamaProposalDesc proposal={proposal} />
-        <InnerForm {...props} />
-      </>}
-  </>
-}
-
-export const PostForms = (props: FormProps) => {
+export const PostForms = (props: PostFormProps) => {
   const { post } = props
 
   const defaultKey = (post?.content as any)?.proposal
     ? 'proposal'
     : 'regular'
 
-  return <Tabs defaultActiveKey={defaultKey}>
-    <TabPane tab='Regular post' key='regular'>
-      <InnerForm {...props} />
-    </TabPane>
+  return <Tabs className='mb-0' defaultActiveKey={defaultKey}>
     <TabPane tab='Kusama proposal' key='proposal'>
       <KusamaProposalForm {...props} />
+    </TabPane>
+    <TabPane tab='Regular post' key='regular'>
+      <PostForm {...props} />
     </TabPane>
   </Tabs>
 }
 
-export function FormInSection (props: FormProps) {
+export function FormInSection (props: PostFormProps) {
   const { space, post } = props
-  const { apiState } = useKusamaContext()
-
-  const isShowKusama = apiState && apiState !== 'ERROR'
+  const { hasKusamaConnection } = useKusamaContext()
 
   const pageTitle = post ? `Edit post` : `New post`
 
@@ -395,14 +257,14 @@ export function FormInSection (props: FormProps) {
   return <PageContent>
     <HeadMeta title={pageTitle} />
     <Section className='EditEntityBox' title={sectionTitle}>
-      {isShowKusama
+      {hasKusamaConnection
         ? <PostForms {...props} />
-        : <InnerForm {...props} />}
+        : <PostForm {...props} />}
     </Section>
   </PageContent>
 }
 
-function LoadPostThenEdit (props: FormProps) {
+function LoadPostThenEdit (props: PostFormProps) {
   const { postId } = useRouter().query
   const myAddress = useMyAddress()
   const [ isLoaded, setIsLoaded ] = useState(false)

@@ -1,3 +1,5 @@
+import AccountId from "@polkadot/types/ethereum/AccountId";
+import { Balance } from "@polkadot/types/interfaces";
 import { AnyAccountId } from "@subsocial/types";
 import { BareProps } from "../utils/types";
 
@@ -12,6 +14,20 @@ export type KusamaInfo = {
   riot: string,
   email: string,
   twitter: string
+}
+
+export type Proposal = {
+  proposer: AccountId;
+  value: Balance;
+  beneficiary: AccountId;
+  bond: Balance;
+  id: number,
+  status: 'passed' | 'active'
+}
+
+export type KusamaProposalDescProps = BareProps & {
+  proposal: Proposal
+  network: 'kusama' | 'polkadot'
 }
 
 export type KusamaInfoKeys = keyof KusamaInfo

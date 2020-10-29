@@ -6,6 +6,7 @@ import styles from './index.module.sass'
 import { KusamaBareProps, KusamaInfo, identityInfoKeys } from "./types"
 import { useKusamaIdentity, getKusamaItem } from "./utils"
 import { KusamaTitle } from "./KusamaVerify"
+import { startWithUpperCase } from "../utils"
 
 type KusamaIdentityProps = KusamaBareProps & {
   title?: React.ReactNode
@@ -23,7 +24,7 @@ export const KusamaIdentityTooltip = ({ address, ...props }: KusamaBareProps) =>
 
   return <Tooltip
     {...props}
-    placement="topRight"
+    placement="top"
     color='#fafafa'
     title={<InnerKusamaIdentity
       info={details.info}
@@ -70,7 +71,7 @@ export const KusamaIdentity = ({ address,  withSection, withTitle = true, ...pro
   const { info } = details
 
   const items = identityInfoKeys.map(key => ({
-    label: key.replace(/(?:^\s*|\s+)(\S?)/g, (b) => b.toUpperCase()),
+    label: startWithUpperCase(key),
     value: getKusamaItem(key, info[key] || '')
   })).filter(x => isDef(x.value))
 
@@ -79,7 +80,6 @@ export const KusamaIdentity = ({ address,  withSection, withTitle = true, ...pro
     title: withTitle
       ? <KusamaTitle address={address} />
       : undefined,
-    level: 3,
     items,
     className: styles.KusamaIdentitySection
   }
