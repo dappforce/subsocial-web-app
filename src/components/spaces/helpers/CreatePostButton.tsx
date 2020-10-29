@@ -22,7 +22,7 @@ export const CreatePostButton = (props: Props) => {
       ghost
       {...createNewPostLinkProps(space)}
     >
-      {title}
+      {' '}{title}
     </ButtonLink>
     : null
 }
