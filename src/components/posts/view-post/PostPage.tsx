@@ -21,6 +21,7 @@ import { resolveIpfsUrl } from 'src/ipfs';
 import { useResponsiveSize } from 'src/components/responsive';
 import { mdToText } from 'src/utils';
 import { ViewSpace } from 'src/components/spaces/ViewSpace';
+import { KusamaProposalView } from 'src/components/kusama/KusamaProposalDesc';
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
 
 export type PostDetailsProps = {
@@ -78,6 +79,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
           {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
+
+        <KusamaProposalView proposal={content.ext?.proposal} />
 
         <div className='DfPostContent'>
           {ext

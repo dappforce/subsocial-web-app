@@ -32,6 +32,7 @@ import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/compone
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
+import { KusamaProposalView } from 'src/components/kusama/KusamaProposalDesc';
 
 type DropdownProps = {
   space: Space
@@ -311,6 +312,7 @@ export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
           <PostDropDownMenu post={struct} space={space.struct} withEditButton />
         </div>
+        <KusamaProposalView proposal={content.ext?.proposal} />
         <PostContent postDetails={postDetails} space={space.struct} />
         {withTags && <ViewTags tags={content?.tags} />}
         {/* {withStats && <StatsPanel id={post.id}/>} */}
