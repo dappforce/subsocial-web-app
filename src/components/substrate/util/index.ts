@@ -97,7 +97,7 @@ export function equalAddresses (addr1: MaybeAccAddr, addr2: MaybeAccAddr) {
   } else if (!addr1 || !addr2) {
     return false
   } else {
-    return asAccountId(addr1)?.eq(asAccountId(addr2))
+    return true === asAccountId(addr1)?.eq(asAccountId(addr2))
   }
 }
 
