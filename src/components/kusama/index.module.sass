@@ -1,5 +1,4 @@
 @import 'src/styles/subsocial-vars.scss'
-$verified_color: #4dd18f
 
 .KusamaIdentitySection
   margin-bottom: 1rem
@@ -7,11 +6,12 @@ $verified_color: #4dd18f
 
 .TooltipKusamaIdentity
   margin: 0
+  padding: $space_tiny
   \:global .ant-descriptions-item
     padding: 0 !important
 
 .VerifiedIcon
-  color: $verified_color
+  color: $color_success
   margin-right: $space_tiny
   font-size: $font_big
 
@@ -19,8 +19,18 @@ $verified_color: #4dd18f
   padding: 2px
   height: 24px
   border-radius: 50%
-  border: 2px solid $color_font_normal
+  border: 2px solid $color_muted
   margin: 0 $space_tiny
 
 .verified
-  border-color: $verified_color
+  border-color: $color_success !important
+
+.ProposalDesc
+  border: 1px solid $color_light_border
+  border-radius: 2px
+  padding: $space_normal
+  padding-bottom: $space_tiny
+  margin: $space_normal 0
+
+.active
+  border-color: #91d5ff !important

@@ -61,6 +61,14 @@ pre {
   padding: $space_normal;
 }
 
+.ant-descriptions-item-label {
+  color: $color_muted;
+}
+
+.ant-tooltip {
+  max-width: 350px;
+}
+
 .ant-descriptions-header {
   margin-bottom: $space_tiny;
   border-bottom: 1px solid $color_light_border;
@@ -244,7 +252,6 @@ pre {
 .DfBookPage {
   @extend .DfBoxShadow;
   margin: $space_big 0;
-  padding: $space_big;
   background-color: #fff;
   border-radius: $border_radius_normal;
 }
@@ -260,6 +267,7 @@ pre {
   .DfPostContent {
     @extend .DfBookPage;
     margin-bottom: $space_small;
+    padding: $space_normal;
   }
 
   .DfSpacePreviewOnPostPage > .DfSegment {
