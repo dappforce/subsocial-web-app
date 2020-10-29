@@ -16,7 +16,6 @@ import AuthorPreview from '../../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../../utils/md/SummarizeMd';
 import ViewPostLink from '../ViewPostLink';
 import HiddenPostButton from '../HiddenPostButton';
-import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert';
 import NoData from 'src/components/utils/EmptyList';
 import { VoterButtons } from 'src/components/voting/VoterButtons';
 import Segment from 'src/components/utils/Segment';
@@ -32,6 +31,7 @@ import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/compone
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
+import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels';
 
 type DropdownProps = {
   space: Space
@@ -99,17 +99,18 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
   </div>
 }
 
-type HiddenPostAlertProps = BaseHiddenAlertProps & {
+type HiddenPostAlertProps = EntityStatusProps & {
   post: Post,
   space?: SpaceData
 }
 
 export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   const { post } = props
-  const PostAlert = () => <HiddenAlert struct={post} type={isComment(post.extension) ? 'comment' : 'post'} {...props} />
+  const kind = isComment(post.extension) ? 'comment' : 'post'
+  const PostAlert = () => <HiddenEntityPanel struct={post} type={kind} {...props} />
 
   // TODO fix view Space alert when space is hidden
-  // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenAlert preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
+  // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenEntityPanel preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
 
   return <PostAlert />
 }
@@ -328,7 +329,7 @@ export const useSubscribedPost = (initPost: Post) => {
   const [ post, setPost ] = useState(initPost)
 
   useSubsocialEffect(({ substrate: { api } }) => {
-    let unsub: { (): void | undefined; (): void; };
+    let unsub: { (): void | undefined; (): void; }
 
     const sub = async () => {
       const readyApi = await api;

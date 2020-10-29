@@ -31,6 +31,7 @@ import { getPageOfIds } from '../utils/getIds';
 import { editSpaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
+import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -160,21 +161,23 @@ export const ViewSpace = (props: Props) => {
     return renderMiniPreview();
   } else if (preview) {
     return <Segment>
-      <HiddenSpaceAlert space={space} preview />
+      <EntityStatusGroup>
+        <PendingSpaceOwnershipPanel space={space} preview />
+        <HiddenSpaceAlert space={space} preview />
+      </EntityStatusGroup>
       {renderPreview()}
     </Segment>;
   }
 
   return <>
-    <HiddenSpaceAlert space={space} />
-    <div>
-      <PageContent>
-        <Section>{renderPreview()}</Section>
-        <Section className='DfContentPage mt-4'>
-          <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
-        </Section>
-      </PageContent>
-    </div>
+    <PageContent>
+      <PendingSpaceOwnershipPanel space={space} />
+      <HiddenSpaceAlert space={space} />
+      <Section>{renderPreview()}</Section>
+      <Section className='DfContentPage mt-4'>
+        <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
+      </Section>
+    </PageContent>
   </>
 }
 

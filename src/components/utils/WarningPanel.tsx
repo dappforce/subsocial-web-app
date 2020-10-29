@@ -1,6 +1,6 @@
 import React from 'react'
 import { Alert } from 'antd'
-import { BareProps } from './types';
+import { BareProps } from './types'
 
 export type WarningPanelProps = BareProps & {
   desc: React.ReactNode,
@@ -20,18 +20,18 @@ export const WarningPanel = ({
   className,
   style
 }: WarningPanelProps) => <Alert
-    className={`${className}`}
+    className={className}
     style={style}
     message={
       <div className={`d-flex align-items-center ${centered ? 'justify-content-center' : 'justify-content-between'}`}>
-        {desc}
-        {actions}
+        <div>{desc}</div>
+        <div>{actions}</div>
       </div>
     }
     banner
     showIcon={withIcon}
     closable={closable}
-    type="warning"
+    type='warning'
   />
 
-export default WarningPanel;
+export default WarningPanel

@@ -42,6 +42,6 @@ export const Name = ({
     : <>{title}</>
 }
 
-export const NameWithOwner = withLoadedOwner(Name);
+export const NameWithOwner = withLoadedOwner(Name)
 
-export default Name;
+export default Name

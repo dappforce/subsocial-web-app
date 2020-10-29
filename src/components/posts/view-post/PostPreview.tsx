@@ -29,7 +29,8 @@ export function PostPreview (props: PreviewProps) {
     <HiddenPostAlert post={struct} space={space} preview />
     {asRegularPost || !isSharedPost(extension as PostExtension)
       ? <RegularPreview space={space} {...props} />
-      : <SharedPreview space={space} {...props} />}
+      : <SharedPreview space={space} {...props} />
+    }
   </Segment>
 }
 

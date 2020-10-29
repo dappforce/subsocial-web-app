@@ -65,8 +65,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
     : title
 
   return <>
-    <HiddenPostAlert post={post.struct} />
     <PageContent>
+      <HiddenPostAlert post={post.struct} />
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
         <HeadMeta title={title} desc={mdToText(body)} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
