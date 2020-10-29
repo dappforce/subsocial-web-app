@@ -133,7 +133,7 @@ const Component = (props: Props) => {
               {
                 label: 'Address',
                 value: <CopyAddress address={address}>
-                  <span className='DfGreyLink'>{address}</span>
+                  <span className='DfBlackLink'>{address}</span>
                 </CopyAddress>
               },
               {

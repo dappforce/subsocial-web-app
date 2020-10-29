@@ -40,7 +40,7 @@ export const Name = ({
     : addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
-  return <span className='d-flex'>
+  return <span className='d-flex align-items-center'>
     {asLink
       ? <ViewProfileLink account={{ address }} title={title} className={nameClass} />
       : <>{title}</>}
