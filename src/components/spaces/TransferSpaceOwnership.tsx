@@ -7,7 +7,6 @@ import { Modal, Form, Input, Button } from 'antd'
 import dynamic from 'next/dynamic'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
-import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext'
 import { DfForm } from '../forms'
 import { equalAddresses } from '../substrate'
 
@@ -74,8 +73,6 @@ const TransferOwnershipModal = (props: ModalProps) => {
   if (!currentOwner) {
     return null
   }
-
-  const { substrate } = useSubsocialApi()
 
   const hasValidNewOwner = () => isDef(newOwner)
 

@@ -80,7 +80,7 @@ export const PostPreviewsOnSpace = (props: Props) => {
         ? <CreatePostButton space={space} />
         : null
       }
-      renderItem={(item) =>
+      renderItem={(item: PostWithSomeDetails) =>
         <PostPreview
           key={item.post.struct.id.toString()}
           postDetails={item}
