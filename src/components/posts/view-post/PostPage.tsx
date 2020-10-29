@@ -46,7 +46,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
   const struct = useSubscribedPost(initStruct)
   const postDetails = { ...initialPost, post: { struct, content } }
 
-  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpaces
+  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpace
 
   const { title, body, image, canonical, tags } = content;
 
