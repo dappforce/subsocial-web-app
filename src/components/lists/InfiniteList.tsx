@@ -1,7 +1,7 @@
 import DataList, { DataListProps } from './DataList';
 import { useState, useCallback, useEffect } from 'react';
 import { Loading, isClientSide, isServerSide } from '../utils';
-import { INFINITE_SCROLL_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
+import { DEFAULT_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
 import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ButtonLink from '../utils/ButtonLink';
@@ -38,8 +38,8 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
     ? tryParseInt(pagePath.toString(), DEFAULT_FIRST_PAGE)
     : DEFAULT_FIRST_PAGE
 
-  const offset = (initialPage - 1) * INFINITE_SCROLL_PAGE_SIZE
-  const lastPage = Math.ceil((totalCount - offset) / INFINITE_SCROLL_PAGE_SIZE)
+  const offset = (initialPage - 1) * DEFAULT_PAGE_SIZE
+  const lastPage = Math.ceil((totalCount - offset) / DEFAULT_PAGE_SIZE)
 
   const [ page, setPage ] = useState(initialPage)
   const [ data, setData ] = useState(dataSource || [])
@@ -53,13 +53,13 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   const [ hasMore, setHasMore ] = useState(canHaveMoreData())
 
   const getLinksParams = useLinkParams({
-    defaultSize: INFINITE_SCROLL_PAGE_SIZE,
+    defaultSize: DEFAULT_PAGE_SIZE,
     triggers: [ page ]
   })
 
   const handleInfiniteOnLoad = useCallback(async () => {
     setLoading(true)
-    const newData = await loadMore(page, INFINITE_SCROLL_PAGE_SIZE)
+    const newData = await loadMore(page, DEFAULT_PAGE_SIZE)
     data.push(...newData)
 
     setData([ ...data ])

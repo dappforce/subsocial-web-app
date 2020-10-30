@@ -70,6 +70,7 @@ export const PostPreviewsOnSpace = (props: Props) => {
       loadMore={async (page, size) => {
         if (!isApiReady) return posts
 
+        console.log('SIZE', size)
         const pageIds = getPageOfIds(postIds, { page, size })
 
         return subsocial.findPublicPostsWithAllDetails(pageIds)
