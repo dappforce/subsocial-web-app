@@ -3,7 +3,7 @@ import { ReactiveBase } from '@appbaseio/reactivesearch';
 import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout, Drawer } from 'antd';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import { elasticNodeURL } from 'src/components/utils/env';
+import { elasticNodeURL, elasticPassword, elasticUser } from 'src/components/utils/env';
 
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -63,6 +63,7 @@ export const Navigation = (props: Props): JSX.Element => {
   return <ReactiveBase
     className='fontSizeNormal'
     url={elasticNodeURL}
+    credentials={`${elasticUser}:${elasticPassword}`}
     app={AllElasticIndexes.join(',')}
   >
     <Layout>
