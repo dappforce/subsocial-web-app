@@ -8,16 +8,15 @@ const varsToExport = [
   'LOG_LEVEL',
   'APP_NAME',
   'SUBSTRATE_URL',
-  'ELASTIC_URL',
+  'ES_URL',
+  'ES_READONLY_USER',
+  'ES_READONLY_PASSWORD',
+  'IPFS_URL',
   'OFFCHAIN_URL',
   'OFFCHAIN_WS',
-  'APPS_URL',
-  'IPFS_URL',
   'UI_SHOW_ADVANCED',
   'LAST_RESERVED_SPACE_ID',
-  'CLAIMED_SPACE_IDS',
-  'ES_READONLY_USER',
-  'ES_READONLY_PASSWORD'
+  'CLAIMED_SPACE_IDS'
 ]
 
 function getSerializedVal (varName) {
