@@ -32,7 +32,6 @@
     "storybook": "yarn patch && start-storybook -s ./public -p 3002"
   },
   "devDependencies": {
-    "@appbaseio/reactivesearch": "^3.0.3",
     "@babel/core": "^7.4.3",
     "@babel/runtime": "^7.4.3",
     "@next/bundle-analyzer": "^9.4.4",
