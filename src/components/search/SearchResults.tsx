@@ -97,7 +97,7 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
 }
 
 const AllResultsList = () => <InnerSearchResultList
-  loadingLabel={'Loading all results...'}
+  loadingLabel={'Loading search results...'}
   renderItem={resultToPreview}
 />
 

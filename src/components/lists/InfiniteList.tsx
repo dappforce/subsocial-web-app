@@ -93,28 +93,28 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
     triggers: [ page ]
   })
 
-  const handleInfiniteOnLoad = useCallback(async () => {
+  const handleInfiniteOnLoad = useCallback(async (page: number) => {
     setLoading(true)
     const newData = await loadMore(page, INFINITE_SCROLL_PAGE_SIZE)
     data.push(...newData)
 
     setData([ ...data ])
 
-    if (!canHaveMoreData(data, page)) {
+    if (!canHaveMoreData(newData, page)) {
       setHasMore(false)
     }
 
-    console.log('canHaveMoreData:', canHaveMoreData(data, page))
+    console.log('canHaveMoreData:', canHaveMoreData(newData, page))
     console.log('On page:', page)
 
     setPage(page + 1)
     setLoading(false)
-  }, [ page ])
+  }, [])
 
   useEffect(() => {
     if (hasInitialData) return setPage(page + 1);
 
-    handleInfiniteOnLoad()
+    handleInfiniteOnLoad(page)
   }, [])
 
   if (!hasInitialData && isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
@@ -124,7 +124,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
   return <InfiniteScroll
       dataLength={data.length}
       pullDownToRefreshThreshold={DEFAULT_THRESHOLD}
-      next={handleInfiniteOnLoad}
+      next={() => handleInfiniteOnLoad(page)}
       hasMore={hasMore}
       loader={<Loading label={loadingLabel} />}
     >
