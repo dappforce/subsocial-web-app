@@ -1579,3 +1579,7 @@ a.DfStatItem {
   @extend .DfCard;
   padding: 0;
 }
+
+.DfActivityMsg {
+  color: $color_font_normal !important;
+}

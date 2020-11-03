@@ -105,7 +105,7 @@ export function Notification (props: NotificationType) {
         </div>
         <MutedDiv className='DfDate'>{details}</MutedDiv>
       </div>
-      {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} />}
+      {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} className='mb-2' />}
     </a>
   </Link>
 }

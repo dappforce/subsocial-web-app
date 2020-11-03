@@ -31,8 +31,10 @@ export function DfBgImg (props: BgImgProps) {
 
 type DfBgImageLinkProps = BgImgProps & LinkProps
 
-export const DfBgImageLink = ({ href, as, ...props }: DfBgImageLinkProps) => <Link href={href} as={as}>
-  <a>
-    <DfBgImg {...props}/>
-  </a>
-</Link>
+export const DfBgImageLink = ({ href, as, ...props }: DfBgImageLinkProps) => <div>
+    <Link href={href} as={as}>
+      <a>
+        <DfBgImg {...props}/>
+      </a>
+    </Link>
+  </div>
