@@ -133,6 +133,7 @@ type EsRequestProps = {
   limit?: number
   q?: string
   indexes?: ElasticIndexTypes[]
+  tagsFilter?: string[]
 }
 
 export const getElasticsearchResult = async (request: EsRequestProps): Promise<any> => {

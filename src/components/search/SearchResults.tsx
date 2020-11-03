@@ -73,14 +73,16 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
       return router.query[paramStr]
     }
     const query = getSearchQueryParamFromUrl('q') as string
+    const tab = getSearchQueryParamFromUrl('tab') as ElasticIndexTypes[]
+    const tagsFilter = getSearchQueryParamFromUrl('tags') as string[]
     const offset = (page - 1) * size
 
-    const tab = getSearchQueryParamFromUrl('tab') as ElasticIndexTypes[]
     const res = await getElasticsearchResult({
       q: query,
       limit: size,
       indexes: tab || AllTabKey,
       offset,
+      tagsFilter
     })
 
     console.log('querySearch results:', res)
