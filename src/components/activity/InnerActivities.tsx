@@ -2,7 +2,7 @@ import { InnerActivitiesProps } from "./types"
 import { useSubsocialApi } from "../utils/SubsocialApiContext"
 import { useState, useEffect, useCallback } from "react"
 import { notDef } from "@subsocial/utils"
-import { InfiniteList } from "../lists/InfiniteList"
+import { InfiniteListByPage } from "../lists/InfiniteList"
 import { Loading } from "../utils"
 
 export function InnerActivities<T> ({ address, title, getCount, totalCount, noDataDesc, loadingLabel, loadMore, ...otherProps }: InnerActivitiesProps<T>) {
@@ -19,7 +19,7 @@ export function InnerActivities<T> ({ address, title, getCount, totalCount, noDa
 
   const noData = notDef(total)
 
-  const Activities = useCallback(() => <InfiniteList
+  const Activities = useCallback(() => <InfiniteListByPage
     {...otherProps}
     loadMore={(page, size) => loadMore({ subsocial, address, page, size})}
     loadingLabel={loadingLabel}
