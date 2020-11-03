@@ -17,5 +17,5 @@ export const mdToText = (md?: string) => {
     // strip-markdown renders URLs as:
     // http&#x3A;//hello.com
     // so we need to fix this issue
-    .replaceAll('&#x3A;', ':')
+    .replace(/&#x3A;/g, ':')
 }
