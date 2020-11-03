@@ -143,10 +143,6 @@
     margin-top: .25rem;
   }
 
-  .DfStatItem {
-    font-size: $font_small;
-  }
-
   .DfPageContent {
     min-width: 100% !important;
     max-width: 100% !important;
@@ -224,8 +220,6 @@
   }
 
   .DfSpaceStats {
-    font-size: $font_tiny; /* TODO maybe delete */
-
     .DfStatItem {
       margin-right: $space_tiny;
     }
@@ -252,7 +246,7 @@
   }
 
   .DfPostName {
-    font-size: 1.5rem;
+    font-size: $font_big;
     margin-bottom: $space_normal !important;
     width: 87%;
   }
@@ -287,7 +281,7 @@
 
   .DfSocialLinks {
     margin-top: $space_mini;
-    font-size: 1rem;
+    font-size: $font_normal;
   }
 
   .DfTags {

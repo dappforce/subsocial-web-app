@@ -118,8 +118,8 @@ pre {
 .header {
   margin: 0;
   line-height: normal;
-  display: flex !important;
-  align-items: center;
+  // display: flex !important;
+  // align-items: center;
   font-size: $font_big;
   font-weight: 600;
 }
@@ -497,7 +497,7 @@ hr {
   .DfStatItem {
     margin-right: $space_huge;
 
-    &::last-child {
+    &:last-child {
       margin-right: 0;
     }
   }
@@ -1059,14 +1059,19 @@ hr {
   background: none !important;
 }
 
-a.DfStatItem {
-  @extend .DfBlackLink;
-}
+// a.DfStatItem {
+//   color: $color_muted !important;
+// }
 
 .DfStatItem {
+  color: $color_muted !important;
   font-size: $font_normal;
-  display: inline;
   margin-right: $space_large;
+  display: inline-block;
+
+  &:hover {
+    color: $color_link !important;
+  }
 }
 
 .DfSpaceTitle {

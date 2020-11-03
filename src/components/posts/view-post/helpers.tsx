@@ -26,7 +26,7 @@ import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
-import { useResponsiveSize } from 'src/components/responsive';
+import { useIsMobileWidthOrDevice } from 'src/components/responsive';
 import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
@@ -179,7 +179,7 @@ type PostImageProps = {
 }
 
 const PostImage = ({ post: { content, struct }, space }: PostImageProps) => {
-  const { isMobile } = useResponsiveSize()
+  const isMobile = useIsMobileWidthOrDevice()
   const image = content?.image
 
   if (!image || isEmptyStr(image)) return null
@@ -204,7 +204,7 @@ type PostContentProps = {
 
 export const PostContent: React.FunctionComponent<PostContentProps> = (props) => {
   const { postDetails, content, space, withImage } = props
-  const { isMobile } = useResponsiveSize()
+  const isMobile = useIsMobileWidthOrDevice()
 
   if (!postDetails) return null
 
@@ -310,7 +310,7 @@ export const SharePostContent = (props: PostPreviewProps) => {
 export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props) => {
   const { postDetails, space, withImage = true, withTags } = props
   const { post: { struct, content } } = postDetails
-  const { isMobile } = useResponsiveSize()
+  const isMobile = useIsMobileWidthOrDevice()
 
   if (!struct || !content) return null
 
