@@ -2,7 +2,7 @@ import axios from 'axios';
 import { offchainUrl } from './env';
 import { Activity, Counts } from '@subsocial/types/offchain';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
-import { ElasticIndexTypes } from '../../config/ElasticConfig';
+import { ElasticIndexTypes } from '@subsocial/types/offchain/search';
 
 const log = newLogger('OffchainRequests')
 

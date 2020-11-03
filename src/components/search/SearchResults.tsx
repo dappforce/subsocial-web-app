@@ -2,8 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { Segment } from 'src/components/utils/Segment';
 import { Tabs } from 'antd'
-// TODO: export to types
-import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
+import { ElasticIndex, ElasticIndexTypes } from '@subsocial/types/offchain/search';
 import { useRouter } from 'next/router';
 import Section from '../utils/Section';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
