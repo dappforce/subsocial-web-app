@@ -25,7 +25,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
 
   const [ followersOpen, setFollowersOpen ] = useState(false)
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count)
-  const statLinkCss = 'DfStatItem DfBlackLink'
+  const statLinkCss = 'DfStatItem'
 
   return (
     <div className={`${isMySpace(space) && 'MySpace DfStatItem'}`}>
