@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import Search from '../components/search/Search';
+import SearchInput from '../components/search/SearchInput';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 import AuthorizationPanel from '../components/auth/AuthorizationPanel';
 import Link from 'next/link';
@@ -18,7 +18,7 @@ const InnerMenu = () => {
 
   return isMobile && show
     ? <div className='DfTopBar DfTopBar--search'>
-      <Search/>
+      <SearchInput/>
       <CloseCircleOutlined className='DfCloseSearchIcon' onClick={() => setShow(false)} />
     </div>
     : <div className='DfTopBar'>
@@ -32,7 +32,7 @@ const InnerMenu = () => {
           </a>
         </Link>
       </div>
-      {isNotMobile && <Search/>}
+      {isNotMobile && <SearchInput/>}
       <div className='DfTopBar--rightContent'>
         {isMobile &&
           <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />
