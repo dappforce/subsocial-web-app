@@ -53,7 +53,6 @@ export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps
 }
 
 const canHaveMoreData = (currentPageItems?: any[]) => {
-  console.log('currentPageItems:', currentPageItems?.length)
   return currentPageItems
     ? currentPageItems.length >= INFINITE_SCROLL_PAGE_SIZE
     : true
@@ -103,9 +102,6 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
     if (!canHaveMoreData(newData, page)) {
       setHasMore(false)
     }
-
-    console.log('canHaveMoreData:', canHaveMoreData(newData, page))
-    console.log('On page:', page)
 
     setPage(page + 1)
     setLoading(false)

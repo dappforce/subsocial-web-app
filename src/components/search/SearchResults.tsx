@@ -85,7 +85,6 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
       tagsFilter
     })
 
-    console.log('querySearch results:', res)
     return res
   }
 
@@ -102,8 +101,6 @@ const AllResultsList = () => <InnerSearchResultList
   renderItem={resultToPreview}
 />
 
-type OnTabChangeFn = (key: string) => void;
-
 const ResultsTabs = () => {
   const router = useRouter();
 
@@ -118,7 +115,7 @@ const ResultsTabs = () => {
 
   const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
 
-  const handleTabChange: OnTabChangeFn = (key) => {
+  const handleTabChange = (key: string) => {
     setActiveTabKey(key);
 
     router.query.tab = key;
