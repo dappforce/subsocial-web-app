@@ -1,36 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Input } from "antd";
-import { nonEmptyStr } from "@subsocial/utils";
-import { useRouter } from "next/router";
+import React, { useState, useEffect } from 'react'
+import { Input } from 'antd'
+import { nonEmptyStr } from '@subsocial/utils'
+import { useRouter } from 'next/router'
 
-const { Search } = Input;
+const { Search } = Input
 
 const SearchInput = () => {
-  const router = useRouter();
-  const [searchValue, setSearchValue] = useState<string | undefined>(router.query.q as string);
-  const isSearchPage = router.pathname.includes("search");
+  const router = useRouter()
+  const [searchValue, setSearchValue] = useState<string | undefined>(router.query.q as string)
+  const isSearchPage = router.pathname.includes('search')
 
   useEffect(() => {
-    if (isSearchPage) return;
+    if (isSearchPage) return
 
-    setSearchValue(undefined);
-  }, [isSearchPage]);
+    setSearchValue(undefined)
+  }, [isSearchPage])
 
   const onSearch = (value: string) => {
     const queryPath = {
-      pathname: "/search",
+      pathname: '/search',
       query: {
         ...router.query,
         q: value
       }
-    };
-    return nonEmptyStr(value) && router.replace(queryPath, queryPath);
-  };
+    }
+    return nonEmptyStr(value) && router.replace(queryPath, queryPath)
+  }
 
-  const onChange = (value: string) => setSearchValue(value);
+  const onChange = (value: string) => setSearchValue(value)
 
   return (
-    <div className={"DfSearch"}>
+    <div className={'DfSearch'}>
       <Search
         placeholder="Search for spaces, posts or comments"
         onSearch={onSearch}
@@ -39,7 +39,7 @@ const SearchInput = () => {
         // TODO: autoFocus={true} for mobile while search filed is expanded
       />
     </div>
-  );
-};
+  )
+}
 
-export default SearchInput;
+export default SearchInput
