@@ -103,7 +103,6 @@
     "lodash.isempty": "^4.4.0",
     "lodash.partition": "^4.6.0",
     "lodash.truncate": "^4.4.2",
-    "markdown-to-txt": "^1.0.1",
     "moment-timezone": "^0.5.26",
     "next": "9.5.2",
     "next-optimized-images": "^2.6.2",
