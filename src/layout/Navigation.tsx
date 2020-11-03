@@ -1,6 +1,4 @@
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
-import { ReactiveBase } from '@appbaseio/reactivesearch';
-import { AllElasticIndexes } from '../config/ElasticConfig';
 import { Layout, Drawer } from 'antd';
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
 
@@ -59,11 +57,7 @@ export const Navigation = (props: Props): JSX.Element => {
     [ children ]
   )
 
-  return <ReactiveBase
-    className='fontSizeNormal'
-    app={AllElasticIndexes.join(',')}
-  >
-    <Layout>
+  return <Layout>
       <Header className='DfHeader'>
         <TopMenu />
       </Header>
@@ -72,5 +66,4 @@ export const Navigation = (props: Props): JSX.Element => {
         {content}
       </Layout>
     </Layout>
-  </ReactiveBase>
 }
