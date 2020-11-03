@@ -10,6 +10,7 @@ import { Pluralize } from '../utils/Plularize';
 import { spaceUrl } from '../urls';
 import AboutSpaceLink from './AboutSpaceLink';
 import { isMySpace } from './helpers';
+import { useResponsiveSize } from '../responsive';
 
 type Props = {
   space: Space
@@ -23,6 +24,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
     followers_count: followers
   } = space
 
+  const { isMobile } = useResponsiveSize()
   const [ followersOpen, setFollowersOpen ] = useState(false)
   const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count)
   const statLinkCss = 'DfStatItem'
@@ -39,11 +41,15 @@ export const SpaceStatsRow = ({ space }: Props) => {
         <Pluralize count={followers} singularText='Follower'/>
       </div>
 
-      <MutedSpan><AboutSpaceLink className={statLinkCss} space={space} title='About' /></MutedSpan>
+      {!isMobile && <>
+        <MutedSpan>
+          <AboutSpaceLink className={statLinkCss} space={space} title='About' />
+        </MutedSpan>
 
-      <MutedSpan className='DfStatItem'>
-        <Pluralize count={score} singularText='Point' />
-      </MutedSpan>
+        <MutedSpan className='DfStatItem'>
+          <Pluralize count={score} singularText='Point' />
+        </MutedSpan>
+      </>}
 
       {followersOpen &&
         <SpaceFollowersModal
