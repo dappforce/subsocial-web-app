@@ -23,7 +23,7 @@ export function DfBgImg (props: BgImgProps) {
     height: height,
     minWidth: width,
     minHeight: height,
-    borderRadius: rounded ? '50%' : '0'
+    borderRadius: rounded && '50%'
   }, style);
 
   return <div className={fullClass} style={fullStyle} />;
@@ -31,8 +31,9 @@ export function DfBgImg (props: BgImgProps) {
 
 type DfBgImageLinkProps = BgImgProps & LinkProps
 
-export const DfBgImageLink = ({ href, as, ...props }: DfBgImageLinkProps) => <Link href={href} as={as}>
-  <a>
-    <DfBgImg {...props}/>
-  </a>
-</Link>
+export const DfBgImageLink = ({ href, as, ...props }: DfBgImageLinkProps) =>
+  <Link href={href} as={as}>
+    <a>
+      <DfBgImg {...props}/>
+    </a>
+  </Link>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { nonEmptyStr } from '@subsocial/utils';
+import { isEmptyStr } from '@subsocial/utils';
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import { ViewSpace } from '../../spaces/ViewSpace';
 import { DfBgImageLink } from '../../utils/DfBgImg';
@@ -179,38 +179,44 @@ type PostImageProps = {
 }
 
 const PostImage = ({ post: { content, struct }, space }: PostImageProps) => {
-  if (!content) return null;
-
   const { isMobile } = useResponsiveSize()
+  const image = content?.image
 
-  const { image } = content;
+  if (!image || isEmptyStr(image)) return null
 
-  return nonEmptyStr(image)
-    ? <DfBgImageLink
-        href={'/[spaceId]/posts/[postId]'}
-        as={postUrl(space, struct)}
-        src={resolveIpfsUrl(image)}
-        size={isMobile ? 100 : 160}
-        className='DfPostImagePreview' /* add onError handler */ />
-    : null
+  return <DfBgImageLink
+    href={'/[spaceId]/posts/[postId]'}
+    as={postUrl(space, struct)}
+    src={resolveIpfsUrl(image)}
+    size={isMobile ? undefined : 170}
+    className='DfPostImagePreview'
+    // TODO add onError handler
+    // TODO lazy load image.
+  />
 }
 
 type PostContentProps = {
   postDetails: PostWithSomeDetails,
   space: Space,
   content?: PostContentType
+  withImage?: boolean
 }
 
-export const PostContent: React.FunctionComponent<PostContentProps> = ({ postDetails, content, space }) => {
-  if (!postDetails) return null;
+export const PostContent: React.FunctionComponent<PostContentProps> = (props) => {
+  const { postDetails, content, space, withImage } = props
+  const { isMobile } = useResponsiveSize()
+
+  if (!postDetails) return null
 
   const { post: { struct: post } } = postDetails
-  const postContent = content || postDetails.post.content;
+  const postContent = content || postDetails.post.content
 
-  if (!postContent) return null;
+  if (!postContent) return null
 
-  const { title, body } = postContent;
+  const { title, body } = postContent
+
   return <div className='DfContent'>
+    {isMobile && withImage && <PostImage post={postDetails.post} space={space} />}
     <PostName space={space} post={post} title={title} withLink />
     <SummarizeMd md={body} more={renderPostLink(space, post, 'See More')} />
   </div>
@@ -224,7 +230,8 @@ type PostActionsPanelProps = {
   withBorder?: boolean
 }
 
-const ShowCommentsAction = ({ postDetails: { post: { struct: { replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => {
+const ShowCommentsAction = ({ postDetails, preview, toogleCommentSection }: PostActionsPanelProps) => {
+  const { post: { struct: { replies_count } } } = postDetails
   const title = 'Comment'
 
   return <Action onClick={toogleCommentSection} title={title}>
@@ -263,6 +270,7 @@ export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = 
 type PostPreviewProps = {
   postDetails: PostWithSomeDetails
   space: SpaceData
+  withImage?: boolean
   withTags?: boolean
 }
 
@@ -300,8 +308,9 @@ export const SharePostContent = (props: PostPreviewProps) => {
 }
 
 export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props) => {
-  const { postDetails, space, withTags } = props
+  const { postDetails, space, withImage = true, withTags } = props
   const { post: { struct, content } } = postDetails
+  const { isMobile } = useResponsiveSize()
 
   if (!struct || !content) return null
 
@@ -312,11 +321,11 @@ export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
           <PostDropDownMenu post={struct} space={space.struct} withEditButton />
         </div>
-        <PostContent postDetails={postDetails} space={space.struct} />
+        <PostContent postDetails={postDetails} space={space.struct} withImage={withImage} />
         {withTags && <ViewTags tags={content?.tags} />}
         {/* {withStats && <StatsPanel id={post.id}/>} */}
       </div>
-      <PostImage post={postDetails.post} space={space.struct} />
+      {!isMobile && withImage && <PostImage post={postDetails.post} space={space.struct} />}
     </div>
   </div>
 }

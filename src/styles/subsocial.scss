@@ -238,7 +238,7 @@ pre {
 .DfBookPage {
   @extend .DfBoxShadow;
   margin: $space_big 0;
-  padding: $space_big;
+  padding: $space_normal;
   background-color: #fff;
   border-radius: $border_radius_normal;
 }
@@ -561,7 +561,7 @@ hr {
 
   .DfReactionsAction {
     button:first-of-type {
-      margin-left: -$space_normal;
+      // margin-left: -$space_normal;
       margin-right: $space_normal;
     }
   }
@@ -618,6 +618,10 @@ hr {
   .DfPostImagePreview {
     margin-left: $space_normal;
     margin-bottom: $space_normal;
+    border-radius: $border_radius_normal;
+    border: 1px solid $color_light_border;
+    background-color: #f0f0f0;
+    height: 170px;
   }
 }
 

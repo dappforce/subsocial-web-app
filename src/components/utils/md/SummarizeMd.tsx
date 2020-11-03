@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { isEmptyStr } from '@subsocial/utils'
 import { mdToText, mdToTextAsync, summarize } from 'src/utils'
+import { useResponsiveSize } from 'src/components/responsive'
+
+const MOBILE_SUMMARY_LEN = 120
+const DESKTOP_SUMMARY_LEN = 220
 
 type Props = {
   md?: string
@@ -8,10 +12,19 @@ type Props = {
   more?: JSX.Element
 }
 
-export const SummarizeMd = ({ md, limit, more }: Props) => {
+export const SummarizeMd = ({ md, limit: initialLimit, more }: Props) => {
+  const { isMobile } = useResponsiveSize()
+
   if (isEmptyStr(md)) return null
 
-  const getSummary = (s?: string): string => summarize(s, limit)
+  const limit = initialLimit
+    ? initialLimit
+    : (isMobile
+      ? MOBILE_SUMMARY_LEN
+      : DESKTOP_SUMMARY_LEN
+    )
+
+  const getSummary = (s?: string) => !s ? '' : summarize(s, limit)
 
   // Here we get the first version of markdown to text.
   // It is not perfect but sync. and this allows us to return a result immediately
