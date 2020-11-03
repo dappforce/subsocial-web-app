@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { useMediaQuery } from 'react-responsive'
+import { isMobileDevice } from 'src/config/Size.config';
 
 export type ResponsiveSizeState = {
   isMobile: boolean,
@@ -20,17 +21,24 @@ const contextStub: ResponsiveSizeState = {
 export const ResponsiveSizeContext = createContext<ResponsiveSizeState>(contextStub)
 
 export function ResponsiveSizeProvider (props: React.PropsWithChildren<any>) {
-  const isDesktop = useMediaQuery({ minWidth: 992 })
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 })
-  const isMobile = useMediaQuery({ maxWidth: 767 })
-  const isNotMobile = useMediaQuery({ minWidth: 768 })
-  const isNotDesktop = useMediaQuery({ maxWidth: 991 })
+  const value = {
+    isDesktop: useMediaQuery({ minWidth: 992 }),
+    isTablet: useMediaQuery({ minWidth: 768, maxWidth: 991 }),
+    isMobile: useMediaQuery({ maxWidth: 767 }),
+    isNotMobile: useMediaQuery({ minWidth: 768 }),
+    isNotDesktop: useMediaQuery({ maxWidth: 991 })
+  }
 
-  return <ResponsiveSizeContext.Provider value={{ isDesktop, isMobile, isNotMobile, isTablet, isNotDesktop }}>
+  return <ResponsiveSizeContext.Provider value={value}>
     {props.children}
   </ResponsiveSizeContext.Provider>
 }
 
 export function useResponsiveSize () {
   return useContext(ResponsiveSizeContext)
+}
+
+export function useIsMobileWidthOrDevice () {
+  const { isMobile } = useResponsiveSize()
+  return isMobileDevice || isMobile
 }
