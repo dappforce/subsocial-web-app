@@ -7,7 +7,6 @@ import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
 import { useRouter } from 'next/router';
 import Section from '../utils/Section';
 import { GenericAccountId as AccountId } from '@polkadot/types';
-import { hexToBn } from '@polkadot/util';
 import { registry } from '@subsocial/types/substrate/registry';
 import { ProfilePreviewWithOwner } from '../profiles/address-views';
 import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
@@ -48,9 +47,9 @@ type Props = {
 const resultToPreview = (res: DataResults, i: number) => {
   switch (res._index) {
     case ElasticIndex.spaces:
-      return <DynamicViewSpace id={hexToBn(res._id)} preview withFollowButton />;
+      return <DynamicViewSpace id={new BN(res._id)} preview withFollowButton />;
     case ElasticIndex.posts:
-      return <DynamicPostPreview key={i} id={hexToBn(res._id)} withActions />;
+      return <DynamicPostPreview key={i} id={new BN(res._id)} withActions />;
     case ElasticIndex.profiles:
       return <Segment>
         <ProfilePreviewWithOwner

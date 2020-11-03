@@ -3,7 +3,6 @@ import moment from 'moment-timezone';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName } from '@subsocial/types';
-import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
@@ -77,7 +76,6 @@ const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotif
 
 const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
   const data = postMap.get(postId.toString())
-  console.log('DATA', data, data?.content?.title)
 
   if (!data) return undefined
 
@@ -152,31 +150,29 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
   return undefined;
 }
 
-const getAtivityPreview = (activity: Activity, store: ActivityStore, type: NotifActivitiesType) => {
+const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
   const { event, space_id, post_id, comment_id } = activity;
   const { spaceById, postById } = store;
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
-    getCommentPreview(hexToBn(comment_id), spaceById, postById)
+    getCommentPreview(new BN(comment_id), spaceById, postById)
 
   const getPostPreviewWithMaps = (post_id: string) =>
-    getPostPreview(hexToBn(post_id), spaceById, postById)
+    getPostPreview(new BN(post_id), spaceById, postById)
 
   const getSpacePreviewWithMaps = (space_id: string) =>
-    getSpacePreview(hexToBn(space_id), spaceById)
-
-  const isActivities = type === 'activities'
+    getSpacePreview(new BN(space_id), spaceById)
 
   switch (event) {
     case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
     case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
     case 'CommentCreated': return getCommentPreviewWithMaps(comment_id)
     case 'CommentReplyCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostShared': return isActivities ? undefined : getPostPreviewWithMaps(post_id)
+    case 'PostShared': return getPostPreviewWithMaps(post_id)
     case 'CommentShared': return getCommentPreviewWithMaps(comment_id)
     case 'PostReactionCreated': return getPostPreviewWithMaps(post_id)
     case 'CommentReactionCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostCreated': return isActivities ? getPostPreviewWithMaps(post_id) : undefined
+    case 'PostCreated': return getPostPreviewWithMaps(post_id)
   }
 
   return undefined
@@ -194,7 +190,7 @@ export const getNotification = (activity: Activity, store: ActivityStore, type: 
   const { account, event, date, agg_count } = activity;
   const formatDate = moment(date).format('lll');
   const owner = store.ownerById.get(account);
-  const activityPreview = getAtivityPreview(activity, store, type)
+  const activityPreview = getAtivityPreview(activity, store)
 
   if (!activityPreview) return undefined;
 
