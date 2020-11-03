@@ -77,7 +77,6 @@ const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotif
 
 const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
   const data = postMap.get(postId.toString())
-  console.log('DATA', data, data?.content?.title)
 
   if (!data) return undefined
 
