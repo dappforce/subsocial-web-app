@@ -46,7 +46,7 @@ export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps
 
   const canHaveMoreData: CanHaveMoreDataFn<T> = (data, page) =>
     data
-      ? page ? page < lastPage : false
+      ? (page ? page < lastPage : false)
       : true
 
   return <InnerInfiniteList {...props} canHaveMoreData={canHaveMoreData} />

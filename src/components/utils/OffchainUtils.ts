@@ -135,6 +135,6 @@ export const getElasticsearchResult = async (request: EsQueryParams): Promise<an
       return res.data
     }
   } catch (err) {
-    console.error('Failed to query search data from Elasticsearch. Error:', err)
+    console.error('Failed to query Elasticsearch. Error:', err)
   }
 }
