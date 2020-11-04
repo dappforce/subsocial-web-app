@@ -10,13 +10,14 @@ import { DataListOptProps } from '../lists/DataList'
 import { getElasticsearchResult } from 'src/components/utils/OffchainUtils'
 import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
 import PostPreview from '../posts/view-post/PostPreview'
+import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
 
 const { TabPane } = Tabs
 
 type DataResults = {
   index: string
   id: string
-  data: any
+  data: (AnySubsocialData | PostWithAllDetails)[]
 }
 
 const AllTabKey = 'all'
@@ -41,15 +42,18 @@ const panes = [
 ]
 
 const resultToPreview = ({ data, index, id }: DataResults, i: number) => {
+  const unknownData = data as unknown
   switch (index) {
     case ElasticIndex.spaces:
-      return <ViewSpace key={`${id}-${i}`} spaceData={data} preview withFollowButton />
-    case ElasticIndex.posts:
-      return <PostPreview key={data.post.struct.id.toString()} postDetails={data} withActions />
+      return <ViewSpace key={`${id}-${i}`} spaceData={unknownData as SpaceData} preview withFollowButton />
+    case ElasticIndex.posts: {
+      const postData = unknownData as PostWithAllDetails
+      return <PostPreview key={postData.post.struct.id.toString()} postDetails={postData} withActions />
+    }
     case ElasticIndex.profiles:
       return (
         <Segment>
-          <ProfilePreviewWithOwner key={`${id}-${i}`} address={id} owner={data} />
+          <ProfilePreviewWithOwner key={`${id}-${i}`} address={id} owner={unknownData as ProfileData} />
         </Segment>
       )
     default:
