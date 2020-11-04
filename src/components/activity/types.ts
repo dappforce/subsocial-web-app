@@ -14,7 +14,6 @@ export type BaseActivityProps = {
   address: string,
   totalCount?: number,
   title?: string,
-
 }
 
 export type ActivityProps<T> = BaseActivityProps & {

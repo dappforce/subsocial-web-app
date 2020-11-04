@@ -2,6 +2,7 @@ import axios from 'axios';
 import { offchainUrl } from './env';
 import { Activity, Counts } from '@subsocial/types/offchain';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
+import { EsQueryParams } from '@subsocial/types/offchain/search';
 
 const log = newLogger('OffchainRequests')
 
@@ -126,3 +127,14 @@ export const clearNotifications = async (myAddress: string): Promise<void> =>{
     console.log(`Failed to mark all notifications as read for account: ${myAddress}`, err)
   }
 };
+
+export const getElasticsearchResult = async (request: EsQueryParams): Promise<any> => {
+  try {
+    const res = await axios.get(getOffchainUrl(`/search`), { params: request })
+    if (res.status === 200) {
+      return res.data
+    }
+  } catch (err) {
+    console.error('Failed to query Elasticsearch. Error:', err)
+  }
+}

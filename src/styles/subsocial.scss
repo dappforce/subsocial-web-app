@@ -886,43 +886,8 @@ hr {
 }
 
 .DfSearch {
-  &:first-of-type {
-    margin-top: 0 !important;
-  }
-
   width: 450px;
   min-width: 320px;
-  color: rgba(0, 0, 0, 0.7);
-  z-index: 2;
-  padding: 0 1rem;
-
-  input {
-    border-radius: $border_radius_normal;
-    font-size: $font_normal;
-  }
-
-  input::placeholder {
-    color: #aaa;
-  }
-
-  input:hover {
-    border-color: #1e99ff;
-  }
-
-  input:focus {
-    border-color: #1e99ff;
-    -moz-box-shadow: 0 0 5px #1e99ff;
-    -webkit-box-shadow: 0 0 5px #1e99ff;
-    box-shadow: 0 0 5px #1e99ff;
-  }
-
-  ul {
-    top: 50px;
-  }
-
-  li {
-    line-height: initial;
-  }
 }
 
 .DfBgColor {
