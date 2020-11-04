@@ -2,7 +2,7 @@ import axios from 'axios';
 import { offchainUrl } from './env';
 import { Activity, Counts } from '@subsocial/types/offchain';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
-import { ElasticIndexTypes } from '@subsocial/types/offchain/search';
+import { EsQueryParams } from '@subsocial/types/offchain/search';
 
 const log = newLogger('OffchainRequests')
 
@@ -128,15 +128,7 @@ export const clearNotifications = async (myAddress: string): Promise<void> =>{
   }
 };
 
-type EsRequestProps = {
-  offset?: number
-  limit?: number
-  q?: string
-  indexes?: ElasticIndexTypes[]
-  tagsFilter?: string[]
-}
-
-export const getElasticsearchResult = async (request: EsRequestProps): Promise<any> => {
+export const getElasticsearchResult = async (request: EsQueryParams): Promise<any> => {
   try {
     const res = await axios.get(getOffchainUrl(`/search`), { params: request })
     if (res.status === 200) {
