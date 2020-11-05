@@ -200,7 +200,7 @@ export const getNotification = (activity: Activity, store: ActivityStore, type: 
   const { account, event, date, agg_count } = activity;
   const formatDate = moment(date).format('lll');
   const creator = store.ownerById.get(account);
-  const activityPreview = getAtivityPreview(activity, store, type)
+  const activityPreview = getAtivityPreview(activity, store)
 
   if (!activityPreview) return undefined;
 

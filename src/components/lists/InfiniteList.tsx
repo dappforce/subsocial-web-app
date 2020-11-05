@@ -41,8 +41,8 @@ export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps
     ? tryParseInt(pagePath.toString(), DEFAULT_FIRST_PAGE)
     : DEFAULT_FIRST_PAGE
 
-  const offset = (initialPage - 1) * INFINITE_SCROLL_PAGE_SIZE
-  const lastPage = Math.ceil((totalCount - offset) / INFINITE_SCROLL_PAGE_SIZE)
+  const offset = (initialPage - 1) * DEFAULT_PAGE_SIZE
+  const lastPage = Math.ceil((totalCount - offset) / DEFAULT_PAGE_SIZE)
 
   const canHaveMoreData: CanHaveMoreDataFn<T> = (data, page) =>
     data
@@ -54,7 +54,7 @@ export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps
 
 const canHaveMoreData = (currentPageItems?: any[]) => {
   return currentPageItems
-    ? currentPageItems.length >= INFINITE_SCROLL_PAGE_SIZE
+    ? currentPageItems.length >= DEFAULT_PAGE_SIZE
     : true
 }
 
