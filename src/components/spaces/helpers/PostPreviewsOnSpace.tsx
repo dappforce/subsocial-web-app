@@ -2,7 +2,7 @@ import { PostWithSomeDetails, SpaceData } from '@subsocial/types/dto';
 import { PostId, Space } from '@subsocial/types/substrate/interfaces';
 import React, { useCallback } from 'react';
 import DataList from 'src/components/lists/DataList';
-import { InfiniteList } from 'src/components/lists/InfiniteList';
+import { InfiniteListByPage } from 'src/components/lists/InfiniteList';
 import PostPreview from 'src/components/posts/view-post/PostPreview';
 import { resolveBn } from 'src/components/utils';
 import { getPageOfIds } from 'src/components/utils/getIds';
@@ -62,7 +62,7 @@ export const PostPreviewsOnSpace = (props: Props) => {
     </div>
 
   const PublicPosts = useCallback(() =>
-    <InfiniteList
+    <InfiniteListByPage
       withLoadMoreLink
       loadingLabel='Loading more posts...'
       title={postsSectionTitle()}

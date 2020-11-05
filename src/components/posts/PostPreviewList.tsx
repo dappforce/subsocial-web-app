@@ -26,7 +26,7 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
         setLoaded(true)
       };
 
-      loadData().catch(console.log)
+      loadData().catch(console.warn)
     }, [ false ])
 
     return loaded && posts

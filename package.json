@@ -32,7 +32,6 @@
     "storybook": "yarn patch && start-storybook -s ./public -p 3002"
   },
   "devDependencies": {
-    "@appbaseio/reactivesearch": "^3.0.3",
     "@babel/core": "^7.4.3",
     "@babel/runtime": "^7.4.3",
     "@next/bundle-analyzer": "^9.4.4",
@@ -44,7 +43,7 @@
     "@storybook/addon-viewport": "^5.3.18",
     "@storybook/react": "^5.2.5",
     "@subsocial/config": "0.1.4",
-    "@subsocial/types": "0.4.7",
+    "@subsocial/types": "0.4.8-beta3",
     "@types/faker": "^4.1.7",
     "@types/jest": "^24.0.16",
     "@types/lodash.isempty": "^4.4.6",
@@ -103,7 +102,6 @@
     "lodash.isempty": "^4.4.0",
     "lodash.partition": "^4.6.0",
     "lodash.truncate": "^4.4.2",
-    "markdown-to-txt": "^1.0.1",
     "moment-timezone": "^0.5.26",
     "next": "9.5.2",
     "next-optimized-images": "^2.6.2",
