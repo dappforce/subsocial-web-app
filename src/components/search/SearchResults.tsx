@@ -11,6 +11,7 @@ import { getElasticsearchResult } from 'src/components/utils/OffchainUtils'
 import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
 import PostPreview from '../posts/view-post/PostPreview'
 import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
+import { nonEmptyStr } from '@subsocial/utils'
 
 const { TabPane } = Tabs
 
@@ -75,7 +76,7 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
     }
     const query = getSearchQueryParamFromUrl('q') as string
     const tab = getSearchQueryParamFromUrl('tab') as ElasticIndexTypes[]
-    const tagsFilter = getSearchQueryParamFromUrl('tags') as string[]
+    const tagsFilter = getSearchQueryParamFromUrl('tags')
     const offset = (page - 1) * size
 
     const res = await getElasticsearchResult({
@@ -83,7 +84,7 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
       limit: size,
       indexes: tab || AllTabKey,
       offset,
-      tagsFilter
+      tagsFilter/* : nonEmptyStr(tagsFilter) ? [tagsFilter] : tagsFilter */
     })
 
     return res
@@ -115,11 +116,12 @@ const ResultsTabs = () => {
   const handleTabChange = (key: string) => {
     setActiveTabKey(key)
 
-    router.query.tab = key
-
     const newPath = {
       pathname: router.pathname,
-      query: router.query
+      query: {
+        ...router.query,
+        tab: key
+      }
     }
 
     router.push(newPath, newPath)
