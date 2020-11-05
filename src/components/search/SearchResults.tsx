@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
-import { ReactiveList, ReactiveComponent } from '@appbaseio/reactivesearch';
-import { DynamicViewSpace } from '../spaces/ViewSpace';
-import { Segment } from 'src/components/utils/Segment';
+import React, { useState, useCallback } from 'react'
+import { ViewSpace } from '../spaces/ViewSpace'
+import { Segment } from 'src/components/utils/Segment'
 import { Tabs } from 'antd'
-import { ElasticIndex, ElasticIndexTypes } from '../../config/ElasticConfig';
-import { useRouter } from 'next/router';
-import Section from '../utils/Section';
-import { GenericAccountId as AccountId } from '@polkadot/types';
-import { registry } from '@subsocial/types/substrate/registry';
-import { ProfilePreviewWithOwner } from '../profiles/address-views';
-import { DynamicPostPreview } from '../posts/view-post/DynamicPostPreview';
-import DataList from '../lists/DataList';
+import { ElasticIndex, ElasticIndexTypes } from '@subsocial/types/offchain/search'
+import { useRouter } from 'next/router'
+import Section from '../utils/Section'
+import { ProfilePreviewWithOwner } from '../profiles/address-views'
+import { DataListOptProps } from '../lists/DataList'
+import { getElasticsearchResult } from 'src/components/utils/OffchainUtils'
+import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
+import PostPreview from '../posts/view-post/PostPreview'
+import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
 
 const { TabPane } = Tabs
 
 type DataResults = {
-  _id: string;
-  _index: string;
-};
+  index: string
+  id: string
+  data: (AnySubsocialData | PostWithAllDetails)[]
+}
 
-const AllTabKey = 'all';
+const AllTabKey = 'all'
 
 const panes = [
   {
@@ -38,140 +39,109 @@ const panes = [
     key: 'profiles',
     title: 'Profiles'
   }
-];
+]
 
-type Props = {
-  results: DataResults[]
-};
-
-const resultToPreview = (res: DataResults, i: number) => {
-  switch (res._index) {
+const resultToPreview = ({ data, index, id }: DataResults, i: number) => {
+  const unknownData = data as unknown
+  switch (index) {
     case ElasticIndex.spaces:
-      return <DynamicViewSpace id={new BN(res._id)} preview withFollowButton />;
-    case ElasticIndex.posts:
-      return <DynamicPostPreview key={i} id={new BN(res._id)} withActions />;
+      return <ViewSpace key={`${id}-${i}`} spaceData={unknownData as SpaceData} preview withFollowButton />
+    case ElasticIndex.posts: {
+      const postData = unknownData as PostWithAllDetails
+      return <PostPreview key={postData.post.struct.id.toString()} postDetails={postData} withActions />
+    }
     case ElasticIndex.profiles:
-      return <Segment>
-        <ProfilePreviewWithOwner
-          key={res._id}
-          address={new AccountId(registry, res._id)}
-        />
-      </Segment>;
+      return (
+        <Segment>
+          <ProfilePreviewWithOwner key={`${id}-${i}`} address={id} owner={unknownData as ProfileData} />
+        </Segment>
+      )
     default:
-      return <></>;
+      return <></>
   }
-};
+}
 
-const Previews = (props: Props) => {
-  const { results } = props;
-  return <div className='DfBgColor'>
-    <DataList
-      dataSource={results}
-      renderItem={(res, i) => resultToPreview(res, i)}
-      noDataDesc='No results found'
-    />
-  </div>;
-};
+type InnerSearchResultListProps<T> = DataListOptProps & {
+  loadingLabel?: string
+  renderItem: RenderItemFn<T>
+}
 
-type OnTabChangeFn = (key: string) => void;
+const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultListProps<T>) => {
+  const router = useRouter()
+
+  const querySearch: InnerLoadMoreFn<T> = async (page, size) => {
+    const getSearchQueryParamFromUrl = (paramStr: string) => {
+      return router.query[paramStr]
+    }
+    const query = getSearchQueryParamFromUrl('q') as string
+    const tab = getSearchQueryParamFromUrl('tab') as ElasticIndexTypes[]
+    const tagsFilter = getSearchQueryParamFromUrl('tags') as string[]
+    const offset = (page - 1) * size
+
+    const res = await getElasticsearchResult({
+      q: query,
+      limit: size,
+      indexes: tab || AllTabKey,
+      offset,
+      tagsFilter
+    })
+
+    return res
+  }
+
+  const List = useCallback(() => <InfiniteListByData {...props} loadMore={querySearch} />, [router.asPath])
+
+  return <List />
+}
+
+const AllResultsList = () => (
+  <InnerSearchResultList loadingLabel={'Loading search results...'} renderItem={resultToPreview} />
+)
 
 const ResultsTabs = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   const getTabIndexFromUrl = (): number => {
-    const tabFromUrl = router.query.tab;
-    const tabIndex = panes.findIndex(pane => pane.key === tabFromUrl);
-    return tabIndex < 0 ? 0 : tabIndex;
-  };
+    const tabFromUrl = router.query.tab
+    const tabIndex = panes.findIndex(pane => pane.key === tabFromUrl)
+    return tabIndex < 0 ? 0 : tabIndex
+  }
 
-  const initialTabIndex = getTabIndexFromUrl();
-  const initialTabKey = panes[initialTabIndex].key;
-  const { tags, spaceId } = router.query;
+  const initialTabIndex = getTabIndexFromUrl()
+  const initialTabKey = panes[initialTabIndex].key
 
-  const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey);
+  const [activeTabKey, setActiveTabKey] = useState(initialTabKey)
 
-  const handleTabChange: OnTabChangeFn = (key) => {
-    setActiveTabKey(key);
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key)
 
-    router.query.tab = key;
+    router.query.tab = key
 
     const newPath = {
       pathname: router.pathname,
       query: router.query
     }
 
-    router.push(newPath, newPath);
-  };
+    router.push(newPath, newPath)
+  }
 
-  return <>
+  return (
     <Tabs onChange={handleTabChange} activeKey={activeTabKey.toString()}>
-      {panes.map(({ key, title }) => <TabPane key={key} tab={title} />)}
+      {panes.map(({ key, title }) => (
+        <TabPane key={key} tab={title}>
+          <AllResultsList />
+        </TabPane>
+      ))}
     </Tabs>
-    <ReactiveComponent
-      componentId='spaceId'
-      customQuery={() => {
-        return spaceId === undefined
-          ? null
-          : {
-            query: {
-              term: {
-                space_id: spaceId
-              }
-            }
-          };
-      }}
-    />
+  )
+}
 
-    <ReactiveComponent
-      componentId='tags'
-      customQuery={() => {
-        return tags === undefined
-          ? null
-          : {
-            query: {
-              terms: {
-                tags: (tags as string).split(',')
-              }
-            }
-          };
-      }}
-    />
-
-    <ReactiveComponent
-      componentId='tab'
-      customQuery={() => {
-        return activeTabKey === AllTabKey
-          ? null
-          : {
-            query: {
-              term: {
-                _index: ElasticIndex[activeTabKey as ElasticIndexTypes]
-              }
-            }
-          };
-      }}
-    />
-  </>;
-};
-
-const App = () => {
+const SearchResults = () => {
   return (
     <Section>
-      <ReactiveList
-        componentId='page'
-        dataField='id'
-        react={{ and: [ 'q', 'tab', 'tags', 'spaceId' ] }}
-        showResultStats={false}
-        URLParams={true}
-        loader={' '}
-        render={res => <>
-          <ResultsTabs />
-          <Previews results={res.data} />
-        </>}
-        renderNoResults={() => null}
-      />
+      <ResultsTabs />
     </Section>
-  );
-};
+  )
+}
 
-export default App;
+export default SearchResults

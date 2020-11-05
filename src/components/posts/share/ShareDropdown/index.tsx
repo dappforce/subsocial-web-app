@@ -103,7 +103,7 @@ export const ShareDropdown = (props: ShareMenuProps) => {
     <Button
       className={className}
       title={preview ? title : undefined}
-      style={{ marginRight: !preview ? '-1rem' : '' }}
+      // style={{ marginRight: !preview ? '-1rem' : '' }}
     >
       <IconWithLabel icon={<ShareAltOutlined />} count={shares_count} label={!preview ? title : undefined} />
     </Button>

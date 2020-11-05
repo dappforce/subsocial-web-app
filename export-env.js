@@ -8,7 +8,6 @@ const varsToExport = [
   'LOG_LEVEL',
   'APP_NAME',
   'SUBSTRATE_URL',
-  'ELASTIC_URL',
   'OFFCHAIN_URL',
   'OFFCHAIN_WS',
   'APPS_URL',
