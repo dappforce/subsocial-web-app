@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Input } from 'antd'
 import { nonEmptyStr } from '@subsocial/utils'
 import { useRouter } from 'next/router'
+import { isMobileDevice } from 'src/config/Size.config'
 
 const { Search } = Input
 
@@ -35,6 +36,7 @@ const SearchInput = () => {
         placeholder="Search for spaces, posts or comments"
         onSearch={onSearch}
         value={searchValue}
+        autoFocus={isMobileDevice}
         onChange={e => onChange(e.currentTarget.value)}
         // TODO: autoFocus={true} for mobile while search filed is expanded
       />
