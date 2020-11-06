@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useResponsiveSize } from 'src/components/responsive';
 import { SignInMobileStub } from 'src/components/auth/AuthButtons';
 import { isMobileDevice } from 'src/config/Size.config';
+import { uiShowSearch } from 'src/components/utils/env';
 
 const InnerMenu = () => {
   const { toggle } = useSidebarCollapsed();
@@ -32,9 +33,9 @@ const InnerMenu = () => {
           </a>
         </Link>
       </div>
-      {isNotMobile && <SearchInput/>}
+      {isNotMobile && uiShowSearch && <SearchInput/>}
       <div className='DfTopBar--rightContent'>
-        {isMobile &&
+        {isMobile && uiShowSearch &&
           <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />
         }
         {isMobileDevice

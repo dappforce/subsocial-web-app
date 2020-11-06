@@ -13,6 +13,7 @@ import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
 import { Tabs } from 'antd';
 import Section from '../utils/Section';
 import MyFeed from '../activity/MyFeed';
+import { uiShowFeed } from '../utils/env';
 
 const { TabPane } = Tabs
 
@@ -39,7 +40,7 @@ const LatestUpdate = (props: Props) => {
   )
 }
 
-const HomePage: NextPage<Props> = (props) => {
+const TabsHomePage = (props: Props) => {
   const isSignedIn = useIsSignedIn()
   const defaultKey = isSignedIn ? 'feed' : 'latest'
   const [ key, setKey ] = useState<string>(defaultKey)
@@ -57,6 +58,12 @@ const HomePage: NextPage<Props> = (props) => {
     </Tabs>
   </Section>
 }
+
+const HomePage: NextPage<Props> = (props) => <Section className='m-0'>
+  {uiShowFeed
+    ? <TabsHomePage {...props} />
+    : <LatestUpdate {...props} />}
+</Section>
 
 const LAST_ITEMS_SIZE = 5
 
