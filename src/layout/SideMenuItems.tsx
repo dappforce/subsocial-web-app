@@ -42,7 +42,8 @@ export const DefaultMenu: MenuItem[] = [
 
 export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
   const account = { address: myAddress }
-  const optionsMenuItems = uiShowNotifications
+
+  const notificationsItem = uiShowNotifications
     ? [{
         name: 'My notifications',
         page: [ '/notifications', '/notifications' ],
@@ -52,7 +53,7 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     : []
 
   return [
-    ...optionsMenuItems,
+    ...notificationsItem,
     {
       name: 'My subscriptions',
       page: [ '/accounts/[address]/following',  accountUrl(account, 'following') ],
