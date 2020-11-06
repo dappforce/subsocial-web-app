@@ -11,7 +11,7 @@ let subsocial!: SubsocialApi;
 let isLoadingSubsocial = false
 
 export const newSubsocialApi = (substrateApi: ApiPromise) => {
-  return new SubsocialApi({ substrateApi, ipfsNodeUrl, offchainUrl, context: { useServer: true } })
+  return new SubsocialApi({ substrateApi, ipfsNodeUrl, offchainUrl, useServer: true })
 }
 
 export const getSubsocialApi = async () => {

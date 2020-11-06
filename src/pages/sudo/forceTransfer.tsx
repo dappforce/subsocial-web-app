@@ -41,7 +41,7 @@ function RenderBalances ({ balances, title }: {
         const css = x.balance.gtn(0) ? 'text-success' : 'text-danger'
         return <li key={x.account.toString()}>
           <code className={css + ' mr-3'}>{x.account.toString()} </code>
-          {FormatBalance(x.balance)}
+          {<FormatBalance value={x.balance} />}
         </li>
       })}
     </ol>
@@ -122,7 +122,7 @@ function InnerForm (props: FormProps) {
       <Form.Item
         label='Free tokens per account'
       >
-        {FormatBalance(freeTokensPerAccount)}
+        {<FormatBalance value={freeTokensPerAccount} />}
       </Form.Item>
 
       <Form.Item

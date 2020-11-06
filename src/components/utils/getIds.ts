@@ -26,7 +26,7 @@ export type ParsedPaginationQuery = {
 
 export const parsePageQuery = (props: PaginationQuery): ParsedPaginationQuery => {
   let { page = DEFAULT_FIRST_PAGE, size = DEFAULT_PAGE_SIZE } = props
-  
+
   if (nonEmptyStr(page)) {
     page = tryParseInt(page, DEFAULT_FIRST_PAGE)
   }

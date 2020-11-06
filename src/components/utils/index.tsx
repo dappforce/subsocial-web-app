@@ -10,8 +10,8 @@ import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
-import { hexToBn } from '@polkadot/util'
 import isbot from 'isbot'
+import { hexToBn } from '@polkadot/util'
 export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
