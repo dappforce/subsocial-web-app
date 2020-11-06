@@ -11,7 +11,6 @@ import { getElasticsearchResult } from 'src/components/utils/OffchainUtils'
 import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
 import PostPreview from '../posts/view-post/PostPreview'
 import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
-import { nonEmptyStr } from '@subsocial/utils'
 
 const { TabPane } = Tabs
 
