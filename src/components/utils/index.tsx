@@ -140,4 +140,4 @@ export const resolveBn = (value: BN | string) => {
 
 export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'
 
-export const ErrorPage = () => <Error statusCode={404} />;
+export const PageNotFound = () => <Error statusCode={404} />
