@@ -98,7 +98,7 @@
     "lodash.partition": "^4.6.0",
     "lodash.truncate": "^4.4.2",
     "moment-timezone": "^0.5.26",
-    "next": "9.5.2",
+    "next": "9.5.4",
     "query-string": "^6.2.0",
     "react": "^16.0.0",
     "react-beautiful-dnd": "^13.0.0",
