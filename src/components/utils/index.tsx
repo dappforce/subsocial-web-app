@@ -11,6 +11,7 @@ import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util'
+import Error from 'next/error'
 import isbot from 'isbot'
 export * from './IconWithLabel'
 
@@ -138,3 +139,5 @@ export const resolveBn = (value: BN | string) => {
 }
 
 export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'
+
+export const ErrorPage = () => <Error statusCode={404} />;

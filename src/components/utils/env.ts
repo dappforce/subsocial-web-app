@@ -24,9 +24,15 @@ export const offchainUrl = getEnv('OFFCHAIN_URL') || 'http://localhost:3001'
 export const offchainWs = getEnv('OFFCHAIN_WS') || 'http://localhost:3011'
 export const ipfsNodeUrl = getEnv('IPFS_URL') || 'http://localhost:8080'
 export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944'
-export const uiShowAdvanced = getEnvAsBool('UI_SHOW_ADVANCED')
 export const lastReservedSpaceId = getEnvAsNumber('LAST_RESERVED_SPACE_ID') || 0
 export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new BN(x))
+
+export const uiShowAdvanced = getEnvAsBool('UI_SHOW_ADVANCED')
+export const uiShowFeed = getEnvAsBool('UI_SHOW_FEED')
+export const uiShowNotifications = getEnvAsBool('UI_SHOW_NOTIFS')
+export const uiShowActivity = getEnvAsBool('UI_SHOW_ACTIVITY')
+export const uiShowSearch = getEnvAsBool('UI_SHOW_SEARCH')
+
 
 export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 export const landingPageUrl = 'https://subsocial.network'
