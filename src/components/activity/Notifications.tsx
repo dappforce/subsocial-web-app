@@ -1,8 +1,7 @@
 import React, {  } from 'react';
 import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils';
-import { loadNotifications } from './Notification'
 import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config';
-import { LoadMoreFn, ActivityStore } from './NotificationUtils';
+import { LoadMoreFn, ActivityStore, loadNotifications } from './NotificationUtils';
 
 import { PostData, SpaceData, ProfileData } from '@subsocial/types';
 import { NotificationType } from './NotificationUtils';
@@ -35,9 +34,9 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn, type: NotifA
 
     const offset = (page - 1) * size
 
-    const items = await getActivity(address, offset, DEFAULT_PAGE_SIZE) || []
+    const activities = await getActivity(address, offset, DEFAULT_PAGE_SIZE) || []
 
-    return loadNotifications(subsocial, items, activityStore, type)
+    return loadNotifications({ subsocial, activities , activityStore, type, myAddress: address })
   }
 
 const loadMoreNotifications = getLoadMoreNotificationsFn(getNotifications, 'notifications')
