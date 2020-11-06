@@ -14,7 +14,7 @@ export default {
   activities: {
     AccountFollowed: 'followed a account',
     SpaceFollowed: 'followed a space',
-    SpaceCreated: 'created a  space',
+    SpaceCreated: 'created a space',
     CommentCreated: 'commented on a post',
     CommentReplyCreated: 'replied to a comment on',
     PostSharing: 'shared a post',
