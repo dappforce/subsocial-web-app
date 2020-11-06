@@ -46,7 +46,7 @@ export const NameDetails = ({
     <div className='header DfAccountTitle'>
       <Name owner={owner} address={address} />
       {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
-      {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
+      {withFollowButton && <FollowAccountButton address={address} className='ml-3 float-right' />}
     </div>
     {subtitle && <div className='DfPopup-handle'>{subtitle}</div>}
     {withDetails && <InfoDetails address={address} details={<>Reputation: {struct?.reputation?.toString() || 0}</>} />}
