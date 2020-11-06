@@ -44,7 +44,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
 
   return <div className={`ProfileDetails ${className}`}>
     <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
-    <div className='ml-2 w-100'>
+    <div className='ml-2'>
       <NameDetails owner={owner} address={address} withLabel={withLabel} />
       {!mini && <>
         {withAbout && nonEmptyStr(about) &&
@@ -62,7 +62,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
         </div>
         {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
         {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
-        <EditProfileLink address={address} className='DfGreyLink' />
+        <EditProfileLink address={address} className='DfGreyLink mb-2' />
       </>}
     </div>
   </div>

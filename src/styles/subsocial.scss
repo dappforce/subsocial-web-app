@@ -69,6 +69,23 @@ pre {
   padding: 0;
 }
 
+.ant-descriptions-item-label {
+  color: $color_muted;
+}
+
+.ant-tooltip {
+  max-width: 350px;
+}
+
+.ant-popover-inner-content {
+  max-width: 410px;
+}
+
+.ant-descriptions-header {
+  margin-bottom: $space_tiny;
+  border-bottom: 1px solid $color_light_border;
+}
+
 .DfLinkOnHover {
   &:hover {
     color: $color_link !important;
@@ -804,10 +821,12 @@ hr {
   color: $color_muted;
   display: flex;
   justify-content: flex-start;
-  margin: $space_tiny 0;
+  margin: 0;
+  margin-bottom: $space_tiny;
 
   .DfPopup-link {
     margin-right: $space_normal;
+    @extend .DfGreyLink
   }
 }
 
@@ -1533,4 +1552,8 @@ hr {
 .DfAccountMenu {
   @extend .DfCard;
   padding: 0;
+}
+
+.DfActivityMsg {
+  color: $color_font_normal !important;
 }

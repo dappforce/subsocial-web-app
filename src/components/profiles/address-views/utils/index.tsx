@@ -38,8 +38,8 @@ export const EditProfileLink = ({ address, title = 'Edit profile', ...props }: P
 type CopyAddressProps = {
   address: AnyAccountId,
   message?: string,
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
-export const CopyAddress = ({ address = '', message = 'Address copied', children }: CopyAddressProps) =>
+export const CopyAddress = ({ address = '', message = 'Address copied', children = address }: CopyAddressProps) =>
   <Copy text={address.toString()} message={message}>{children}</Copy>

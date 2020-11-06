@@ -6,7 +6,6 @@ import { ProfileData, AnySubsocialData, CommonStruct, Activity } from '@subsocia
 import Name from '../profiles/address-views/Name';
 import { MutedDiv } from '../utils/MutedText';
 import BN from 'bn.js'
-import { hexToBn } from '@polkadot/util';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { NotificationType, getNotification, ActivityStore } from './NotificationUtils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
@@ -40,9 +39,9 @@ export const loadNotifications = async (
 
   activities.forEach(({ account, space_id, post_id, comment_id }) => {
     nonEmptyStr(account) && fillArray(account, ownerIds, ownerById)
-    nonEmptyStr(space_id) && fillArray(hexToBn(space_id), spaceIds, spaceById)
-    nonEmptyStr(post_id) && fillArray(hexToBn(post_id), postIds, postById)
-    nonEmptyStr(comment_id) && fillArray(hexToBn(comment_id), postIds, postById)
+    nonEmptyStr(space_id) && fillArray(new BN(space_id), spaceIds, spaceById)
+    nonEmptyStr(post_id) && fillArray(new BN(post_id), postIds, postById)
+    nonEmptyStr(comment_id) && fillArray(new BN(comment_id), postIds, postById)
   })
 
   const ownersData = await subsocial.findProfiles(ownerIds)
@@ -105,7 +104,7 @@ export function Notification (props: NotificationType) {
         </div>
         <MutedDiv className='DfDate'>{details}</MutedDiv>
       </div>
-      {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} />}
+      {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} className='mb-2' />}
     </a>
   </Link>
 }

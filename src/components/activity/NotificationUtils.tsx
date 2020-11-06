@@ -3,7 +3,6 @@ import moment from 'moment-timezone';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName } from '@subsocial/types';
-import { hexToBn } from '@polkadot/util';
 import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
@@ -12,6 +11,8 @@ import { NotifActivitiesType } from './Notifications';
 import messages from '../../messages'
 import { summarize } from 'src/utils';
 import { isSharedPost } from '../posts/view-post';
+import AccountId from '@polkadot/types/generic/AccountId';
+import { readMyAddress } from '../auth/MyAccountContext';
 
 export type LoadMoreFn = (
   myAddress: string,
@@ -46,6 +47,7 @@ export type ActivityStore = {
 
 type PreviewNotification = PathLinks & {
   preview: JSX.Element | null,
+  owner: AccountId,
   image?: string,
   msg?: string,
 }
@@ -63,11 +65,15 @@ const renderSubjectPreview = (content?: PostContent, href: string = '') => {
 }
 
 
-const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification => {
+const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification | undefined  => {
   const data = map.get(spaceId.toString())
+
+  if (!data) return undefined
+
   return {
     preview: <ViewSpace spaceData={data} nameOnly withLink />,
     image: data?.content?.image,
+    owner: data?.struct.owner,
     links: {
       href: '/[spaceId]',
       as: data && spaceUrl(data?.struct)
@@ -102,6 +108,7 @@ const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: M
   return {
     preview,
     image,
+    owner: data.struct.owner,
     links: {
       href: '/[spaceId]/posts/[postId]',
       as: postLink
@@ -141,6 +148,7 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
     return {
       preview,
       image,
+      owner: data.struct.owner,
       links: {
         href: '/[spaceId]/posts/[postId]',
         as: postLink
@@ -151,31 +159,29 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
   return undefined;
 }
 
-const getAtivityPreview = (activity: Activity, store: ActivityStore, type: NotifActivitiesType) => {
+const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
   const { event, space_id, post_id, comment_id } = activity;
   const { spaceById, postById } = store;
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
-    getCommentPreview(hexToBn(comment_id), spaceById, postById)
+    getCommentPreview(new BN(comment_id), spaceById, postById)
 
   const getPostPreviewWithMaps = (post_id: string) =>
-    getPostPreview(hexToBn(post_id), spaceById, postById)
+    getPostPreview(new BN(post_id), spaceById, postById)
 
   const getSpacePreviewWithMaps = (space_id: string) =>
-    getSpacePreview(hexToBn(space_id), spaceById)
-
-  const isActivities = type === 'activities'
+    getSpacePreview(new BN(space_id), spaceById)
 
   switch (event) {
     case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
     case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
     case 'CommentCreated': return getCommentPreviewWithMaps(comment_id)
     case 'CommentReplyCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostShared': return isActivities ? undefined : getPostPreviewWithMaps(post_id)
+    case 'PostShared': return getPostPreviewWithMaps(post_id)
     case 'CommentShared': return getCommentPreviewWithMaps(comment_id)
     case 'PostReactionCreated': return getPostPreviewWithMaps(post_id)
     case 'CommentReactionCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostCreated': return isActivities ? getPostPreviewWithMaps(post_id) : undefined
+    case 'PostCreated': return getPostPreviewWithMaps(post_id)
   }
 
   return undefined
@@ -190,18 +196,20 @@ const getNotificationMessage = (msg: string, aggregationCount: number, preview: 
 }
 
 export const getNotification = (activity: Activity, store: ActivityStore, type: NotifActivitiesType): NotificationType | undefined => {
+  const myAddress = readMyAddress()
   const { account, event, date, agg_count } = activity;
   const formatDate = moment(date).format('lll');
-  const owner = store.ownerById.get(account);
-  const activityPreview = getAtivityPreview(activity, store, type)
+  const creator = store.ownerById.get(account);
+  const activityPreview = getAtivityPreview(activity, store)
 
   if (!activityPreview) return undefined;
 
-  const eventMsg = messages[type] as EventsMsg
+  const { preview, msg, owner, ...other } = activityPreview
+  console.log('NotifActivitiesType', account, owner.toString())
+  const msgType: NotifActivitiesType = myAddress === owner.toString() ? 'notifications' : 'activities'
+  const eventMsg = messages[msgType] as EventsMsg
 
-  const { preview, msg = eventMsg[event as EventsName], ...other } = activityPreview
+  const notificationMessage = getNotificationMessage(msg || eventMsg[event as EventsName], agg_count, preview, type === 'notifications')
 
-  const notificationMessage = getNotificationMessage(msg, agg_count, preview, type === 'notifications')
-
-  return { address: account, notificationMessage, details: formatDate, owner, ...other }
+  return { address: account, notificationMessage, details: formatDate, owner: creator, ...other }
 }
