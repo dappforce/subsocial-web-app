@@ -33,10 +33,10 @@ export const kusamaUrl = 'wss://kusama-rpc.polkadot.io'
 
 // UI settings
 export const uiShowAdvanced = getEnvAsBool('UI_SHOW_ADVANCED')
+export const uiShowSearch = getEnvAsBool('UI_SHOW_SEARCH')
 export const uiShowFeed = getEnvAsBool('UI_SHOW_FEED')
 export const uiShowNotifications = getEnvAsBool('UI_SHOW_NOTIFICATIONS')
 export const uiShowActivity = getEnvAsBool('UI_SHOW_ACTIVITY')
-export const uiShowSearch = getEnvAsBool('UI_SHOW_SEARCH')
 
 export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 export const landingPageUrl = 'https://subsocial.network'
