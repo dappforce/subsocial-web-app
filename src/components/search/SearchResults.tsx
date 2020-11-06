@@ -75,7 +75,7 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
     }
     const query = getSearchQueryParamFromUrl('q') as string
     const tab = getSearchQueryParamFromUrl('tab') as ElasticIndexTypes[]
-    const tagsFilter = getSearchQueryParamFromUrl('tags')
+    const tagsFilter = getSearchQueryParamFromUrl('tags') as string[]
     const offset = (page - 1) * size
 
     const res = await getElasticsearchResult({
