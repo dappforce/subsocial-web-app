@@ -9,15 +9,17 @@ type ViewTagProps = {
   tag?: string
 }
 
-const ViewTag = React.memo(({ tag }: ViewTagProps) =>
-  isEmptyStr(tag)
+const ViewTag = React.memo(({ tag }: ViewTagProps) => {
+  const searchLink = `/search?tags=${tag}`
+
+  return isEmptyStr(tag)
     ? null
     : <Tag key={tag} className='mt-2'>
-      <Link href='/search' as={`/search?tags=${tag}`}>
+      <Link href={searchLink} as={searchLink}>
         <a className='DfGreyLink'><TagOutlined />{tag}</a>
       </Link>
     </Tag>
-)
+})
 
 type ViewTagsProps = BaseProps & {
   tags?: string[]
