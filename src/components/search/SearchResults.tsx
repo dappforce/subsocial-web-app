@@ -83,7 +83,7 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
       limit: size,
       indexes: tab || AllTabKey,
       offset,
-      tagsFilter
+      tagsFilter/* : nonEmptyStr(tagsFilter) ? [tagsFilter] : tagsFilter */
     })
 
     return res
@@ -115,11 +115,12 @@ const ResultsTabs = () => {
   const handleTabChange = (key: string) => {
     setActiveTabKey(key)
 
-    router.query.tab = key
-
     const newPath = {
       pathname: router.pathname,
-      query: router.query
+      query: {
+        ...router.query,
+        tab: key
+      }
     }
 
     router.push(newPath, newPath)

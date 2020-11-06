@@ -1,14 +1,14 @@
 import { isEmptyStr } from '@subsocial/utils'
 import truncate from 'lodash.truncate'
 
-export const DEFAULT_SUMMARY_LENGTH = 300
+const DEFAULT_SUMMARY_LEN = 300
 
-export const SEPARATOR = /[.,:;!?()[\]{}\s]+/
+const SEPARATOR = /[.,:;!?()[\]{}\s]+/
 
 /** Shorten a plain text up to `limit` chars. Split by separators. */
 export const summarize = (
-  text?: string,
-  limit: number = DEFAULT_SUMMARY_LENGTH
+  text: string,
+  limit: number = DEFAULT_SUMMARY_LEN
 ): string => {
   if (isEmptyStr(text)) return ''
 

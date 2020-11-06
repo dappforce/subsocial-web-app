@@ -61,14 +61,17 @@
 
   .DfEntirePost {
     .DfPostContent {
-      padding: 1rem;
-      margin: 1rem -1rem;
-      border-radius:0;
+      padding: $space_small;
+      margin-top: $space_normal;
+      // border-radius: 0;
     }
 
     .DfInfoPanel {
       display: block;
+    }
 
+    .DfSpacePreviewOnPostPage > .DfSegment {
+      padding: $space_small;
     }
   }
 
@@ -99,12 +102,12 @@
   li.ant-list-item.ant-list-item-no-flex {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
-    margin-bottom: .5rem;
+    margin-bottom: $space_small;
   }
 
   .infinite-scroll-component {
     .DfSegment {
-      margin-top: .5rem;
+      margin-top: $space_small;
     }
   }
 
@@ -116,7 +119,7 @@
   .DfModal {
     margin: $space_tiny $space_mini;
     padding: $space_normal $space_mini $space_mini $space_mini !important;
-    border-top: .5px solid $color_light_border;
+    border-top: $space_small solid $color_light_border;
 
     .DfContent {
       padding: 0;
@@ -136,14 +139,14 @@
     }
   }
 
-  .DfStatItem {
-    font-size: $font_small;
+  .Df--AddressComponents-details {
+    margin-top: .25rem;
   }
 
   .DfPageContent {
     min-width: 100% !important;
     max-width: 100% !important;
-    padding: 0 1rem;
+    padding: 0 $space_normal;
   }
 
   .DfBurgerIcon {
@@ -211,11 +214,12 @@
     &.DfSegment {
       padding-bottom: 0 !important;
     }
+    .DfPostImagePreview {
+      margin-left: 0 !important;
+    }
   }
 
   .DfSpaceStats {
-    font-size: $font_tiny; /* TODO maybe delete */
-
     .DfStatItem {
       margin-right: $space_tiny;
     }
@@ -224,8 +228,9 @@
   .DfSegment {
     z-index: 1;
     border-radius: 0;
-    margin: 0 -1rem;
-    padding: .5rem;
+    margin-left: -$space_normal;
+    margin-right: -$space_normal;
+    padding: $space_small;
     border-left: 0;
     border-right: 0;
     box-shadow: none;
@@ -241,7 +246,7 @@
   }
 
   .DfPostName {
-    font-size: 2rem;
+    font-size: $font_big;
     margin-bottom: $space_normal !important;
     width: 87%;
   }
@@ -275,7 +280,13 @@
   }
 
   .DfSocialLinks {
-    margin-top: .25rem;
-    font-size: 1rem;
+    margin-top: $space_mini;
+    font-size: $font_normal;
+  }
+
+  .DfTags {
+    .ant-tag {
+      padding: .15rem .4rem;
+    }
   }
 }

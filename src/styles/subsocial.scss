@@ -69,6 +69,23 @@ pre {
   padding: 0;
 }
 
+.ant-descriptions-item-label {
+  color: $color_muted;
+}
+
+.ant-tooltip {
+  max-width: 350px;
+}
+
+.ant-popover-inner-content {
+  max-width: 410px;
+}
+
+.ant-descriptions-header {
+  margin-bottom: $space_tiny;
+  border-bottom: 1px solid $color_light_border;
+}
+
 .DfLinkOnHover {
   &:hover {
     color: $color_link !important;
@@ -118,8 +135,8 @@ pre {
 .header {
   margin: 0;
   line-height: normal;
-  display: flex !important;
-  align-items: center;
+  // display: flex !important;
+  // align-items: center;
   font-size: $font_big;
   font-weight: 600;
 }
@@ -238,7 +255,7 @@ pre {
 .DfBookPage {
   @extend .DfBoxShadow;
   margin: $space_big 0;
-  padding: $space_big;
+  padding: $space_normal;
   background-color: #fff;
   border-radius: $border_radius_normal;
 }
@@ -497,7 +514,7 @@ hr {
   .DfStatItem {
     margin-right: $space_huge;
 
-    &::last-child {
+    &:last-child {
       margin-right: 0;
     }
   }
@@ -561,7 +578,7 @@ hr {
 
   .DfReactionsAction {
     button:first-of-type {
-      margin-left: -$space_normal;
+      // margin-left: -$space_normal;
       margin-right: $space_normal;
     }
   }
@@ -618,6 +635,10 @@ hr {
   .DfPostImagePreview {
     margin-left: $space_normal;
     margin-bottom: $space_normal;
+    border-radius: $border_radius_normal;
+    border: 1px solid $color_light_border;
+    background-color: #f0f0f0;
+    height: 170px;
   }
 }
 
@@ -800,10 +821,12 @@ hr {
   color: $color_muted;
   display: flex;
   justify-content: flex-start;
-  margin: $space_tiny 0;
+  margin: 0;
+  margin-bottom: $space_tiny;
 
   .DfPopup-link {
     margin-right: $space_normal;
+    @extend .DfGreyLink
   }
 }
 
@@ -1020,14 +1043,19 @@ hr {
   background: none !important;
 }
 
-a.DfStatItem {
-  @extend .DfBlackLink;
-}
+// a.DfStatItem {
+//   color: $color_muted !important;
+// }
 
 .DfStatItem {
+  color: $color_muted !important;
   font-size: $font_normal;
-  display: inline;
   margin-right: $space_large;
+  display: inline-block;
+
+  &:hover {
+    color: $color_link !important;
+  }
 }
 
 .DfSpaceTitle {
@@ -1524,4 +1552,8 @@ a.DfStatItem {
 .DfAccountMenu {
   @extend .DfCard;
   padding: 0;
+}
+
+.DfActivityMsg {
+  color: $color_font_normal !important;
 }

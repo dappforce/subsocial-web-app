@@ -8,6 +8,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect';
 import { useMyAddress } from '../auth/MyAccountContext';
 import { BareProps } from '../utils/types';
 import { IconWithLabel } from '../utils';
+import { useResponsiveSize } from '../responsive';
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
@@ -37,9 +38,11 @@ const VoterButton = ({
   preview
 }: VoterButtonProps) => {
 
-  const kind = reaction ? reaction && reaction.kind.toString() : 'None';
+  const { isMobile } = useResponsiveSize()
+  const kind = reaction ? reaction && reaction.kind.toString() : 'None'
   const isUpvote = reactionType === 'Upvote'
   const count = isUpvote ? upvotes_count : downvotes_count
+
   const buildTxParams = () => {
     if (reaction === undefined) {
       return [ id, new ReactionKind(reactionType) ];
@@ -85,7 +88,7 @@ const VoterButton = ({
     <IconWithLabel
       icon={icon}
       count={count}
-      label={!preview ? reactionType : undefined}
+      label={(preview || isMobile) ? undefined : reactionType}
     />
   </TxButton>
 }
