@@ -43,7 +43,7 @@
     "@storybook/addon-viewport": "^5.3.18",
     "@storybook/react": "^5.2.5",
     "@subsocial/config": "^0.4.13",
-    "@subsocial/types": "^0.4.14",
+    "@subsocial/types": "^0.4.15",
     "@types/faker": "^4.1.7",
     "@types/jest": "^24.0.16",
     "@types/lodash.isempty": "^4.4.6",
