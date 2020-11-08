@@ -126,15 +126,15 @@ export const clearNotifications = async (myAddress: string): Promise<void> =>{
   } catch (err) {
     console.log(`Failed to mark all notifications as read for account: ${myAddress}`, err)
   }
-};
+}
 
-export const getElasticsearchResult = async (request: ElasticQueryParams): Promise<any> => {
+export const queryElasticSearch = async (params: ElasticQueryParams): Promise<any> => {
   try {
-    const res = await axios.get(getOffchainUrl(`/search`), { params: request })
+    const res = await axios.get(getOffchainUrl(`/search`), { params })
     if (res.status === 200) {
       return res.data
     }
   } catch (err) {
-    console.error('Failed to query Elasticsearch. Error:', err)
+    console.error('Failed to query Elasticsearch:', err)
   }
 }
