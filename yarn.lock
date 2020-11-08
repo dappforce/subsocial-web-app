@@ -2392,10 +2392,10 @@
   resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.4.13.tgz#1e14bb5075fff9643e8a0471244a55d22066051c"
   integrity sha512-503gEtAShauCsQD6Hp52htp89ugUj7fPx7BCJKwZqrvV0selNz28Q1rwAxxXcVoLc2NoqyDvMe1dJRcYLW5wXg==
 
-"@subsocial/types@^0.4.13":
-  version "0.4.13"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.13.tgz#a6ea6e5529a2c7657ae43157315212560ab513f4"
-  integrity sha512-NfUZTM/NoNakO2wirFGYOozJSixxxeoJuGSkThmVihuVCJDAx1vV3Pf5AtSq+zs7/FebhR8Pp6aDIlqyXwHmxA==
+"@subsocial/types@^0.4.14":
+  version "0.4.14"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.14.tgz#343c58677947088293133fbce7a1ebcedb5c2ade"
+  integrity sha512-DW7K6cqx1O4qINmwVLFVo13tBerShvN9Ww5nzijN/bLnDaWOk474rG7M2WyFo/t+LORZIFfXIAzSDlKlGtZnPg==
   dependencies:
     "@subsocial/utils" latest
     cids "^0.7.1"
