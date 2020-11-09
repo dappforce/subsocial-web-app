@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import Section from '../utils/Section'
 import { ProfilePreviewWithOwner } from '../profiles/address-views'
 import { DataListOptProps } from '../lists/DataList'
-import { getElasticsearchResult } from 'src/components/utils/OffchainUtils'
+import { queryElasticSearch } from 'src/components/utils/OffchainUtils'
 import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
 import PostPreview from '../posts/view-post/PostPreview'
 import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
@@ -69,27 +69,31 @@ type InnerSearchResultListProps<T> = DataListOptProps & {
 const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultListProps<T>) => {
   const router = useRouter()
 
+  const getReqParam = (param: 'tab' | 'q' | 'tags') => {
+    return router.query[param]
+  }
+
   const querySearch: InnerLoadMoreFn<T> = async (page, size) => {
-    const getSearchQueryParamFromUrl = (paramStr: string) => {
-      return router.query[paramStr]
-    }
-    const query = getSearchQueryParamFromUrl('q') as string
-    const tab = getSearchQueryParamFromUrl('tab') as ElasticIndexTypes[]
-    const tagsFilter = getSearchQueryParamFromUrl('tags') as string[]
+    const tab = getReqParam('tab') as ElasticIndexTypes[]
+    const query = getReqParam('q') as string
+    const tags = getReqParam('tags') as string[]
     const offset = (page - 1) * size
 
-    const res = await getElasticsearchResult({
-      q: query,
-      limit: size,
+    const res = await queryElasticSearch({
       indexes: tab || AllTabKey,
+      q: query,
+      tags,
       offset,
-      tagsFilter/* : nonEmptyStr(tagsFilter) ? [tagsFilter] : tagsFilter */
+      limit: size,
     })
 
     return res
   }
 
-  const List = useCallback(() => <InfiniteListByData {...props} loadMore={querySearch} />, [router.asPath])
+  const List = useCallback(() =>
+    <InfiniteListByData {...props} loadMore={querySearch} />,
+    [ router.asPath ]
+  )
 
   return <List />
 }

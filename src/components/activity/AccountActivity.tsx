@@ -7,6 +7,7 @@ import { getLoadMoreNotificationsFn, NotifActivities } from './Notifications';
 import { BaseActivityProps } from './types';
 import { getLoadMoreFeedFn, FeedActivities } from './FeedActivities';
 import { Loading } from '../utils';
+import { uiShowActivity } from '../utils/env';
 
 const { TabPane } = Tabs
 
@@ -60,6 +61,8 @@ const PostActivities = (props: BaseActivityProps) => <FeedActivities
 />
 
 export const AccountActivity = ({ address, spacesData, mySpaceIds }: ActivitiesByAddressProps) => {
+  if (!uiShowActivity) return null
+
   const [ counts, setCounts ] = useState<Counts>()
 
   useEffect(() => {

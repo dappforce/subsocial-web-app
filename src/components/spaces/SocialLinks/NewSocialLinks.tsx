@@ -3,13 +3,13 @@ import { Form, Input, Button, Space, Collapse } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { FormListFieldData, FormListOperation } from 'antd/lib/form/FormList';
 import { getLinkIcon, hasSocialMediaProfiles, LinkLabel, getLinkBrand } from './utils';
-import { NamedLinks } from '@subsocial/types';
+import { NamedLink } from '@subsocial/types';
 const { Panel } = Collapse;
 
 type NewSocialLinksProps = {
-  name: string,
-  collapsed: boolean,
-  links?: string[] | NamedLinks[],
+  name: string
+  collapsed: boolean
+  links?: NamedLink[] | string[]
   isDynamic?: boolean
 }
 
