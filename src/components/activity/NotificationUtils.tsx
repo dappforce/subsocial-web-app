@@ -11,7 +11,6 @@ import { NotifActivitiesType } from './Notifications';
 import messages from '../../messages'
 import { summarize } from 'src/utils';
 import { isSharedPost } from '../posts/view-post';
-import AccountId from '@polkadot/types/generic/AccountId';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import { Name } from '../profiles/address-views/Name';
