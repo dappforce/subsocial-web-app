@@ -251,7 +251,7 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
   return undefined;
 }
 
-const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
+const getAtivityPreview = (activity: Activity, store: ActivityStore, type: NotifActivitiesType) => {
   const { event, space_id, post_id, comment_id } = activity;
   const { spaceById, postById } = store;
 
@@ -264,16 +264,18 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore) => {
   const getSpacePreviewWithMaps = (space_id: string) =>
     getSpacePreview(new BN(space_id), spaceById)
 
+  const isActivity = type === 'activities'
+
   switch (event) {
     case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
     case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
     case 'CommentCreated': return getCommentPreviewWithMaps(comment_id)
     case 'CommentReplyCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostShared': return getPostPreviewWithMaps(post_id)
+    case 'PostShared': return isActivity ? undefined : getPostPreviewWithMaps(post_id)
     case 'CommentShared': return getCommentPreviewWithMaps(comment_id)
     case 'PostReactionCreated': return getPostPreviewWithMaps(post_id)
     case 'CommentReactionCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostCreated': return getPostPreviewWithMaps(post_id)
+    case 'PostCreated': return isActivity ? getPostPreviewWithMaps(post_id) : undefined
   }
 
   return undefined
@@ -295,7 +297,7 @@ export const getNotification = ({ type, activityStore, activity, myAddress }: Ge
   const { account, event, date, agg_count } = activity;
   const formatDate = moment(date).format('lll');
   const creator = activityStore.ownerById.get(account);
-  const activityPreview = getAtivityPreview(activity, activityStore)
+  const activityPreview = getAtivityPreview(activity, activityStore, type)
 
   if (!activityPreview) return undefined;
 
