@@ -15,7 +15,7 @@ const SearchInput = () => {
     if (isSearchPage) return
 
     setSearchValue(undefined)
-  }, [isSearchPage])
+  }, [ isSearchPage ])
 
   const onSearch = (value: string) => {
     const queryPath = {
@@ -38,7 +38,6 @@ const SearchInput = () => {
         value={searchValue}
         autoFocus={isMobileDevice}
         onChange={e => onChange(e.currentTarget.value)}
-        // TODO: autoFocus={true} for mobile while search filed is expanded
       />
     </div>
   )
