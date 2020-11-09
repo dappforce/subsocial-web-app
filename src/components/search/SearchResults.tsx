@@ -119,11 +119,12 @@ const ResultsTabs = () => {
   const handleTabChange = (key: string) => {
     setActiveTabKey(key)
 
-    router.query.tab = key
-
     const newPath = {
       pathname: router.pathname,
-      query: router.query
+      query: {
+        ...router.query,
+        tab: key
+      }
     }
 
     router.push(newPath, newPath)

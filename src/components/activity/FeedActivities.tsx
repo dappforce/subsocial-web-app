@@ -1,5 +1,4 @@
 import React, {  } from 'react';
-import { hexToBn } from '@polkadot/util';
 import { isDef } from '@subsocial/utils';
 import { LoadMoreFn } from './NotificationUtils';
 import { PostWithAllDetails } from '@subsocial/types';
@@ -23,7 +22,7 @@ export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'c
 
     const offset = (page - 1) * size
     const activity = await getActivity(address, offset, size) || []
-    const postIds = activity.map(x => hexToBn(x[keyId]))
+    const postIds = activity.map(x => new BN(x[keyId]))
 
     return postsFromActivity(subsocial, postIds)
   }

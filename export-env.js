@@ -18,7 +18,8 @@ const varsToExport = [
   'UI_SHOW_NOTIFICATIONS',
   'UI_SHOW_ACTIVITY',
   'LAST_RESERVED_SPACE_ID',
-  'CLAIMED_SPACE_IDS'
+  'CLAIMED_SPACE_IDS',
+  'DAG_HTTP_TYPE'
 ]
 
 function getSerializedVal (varName) {

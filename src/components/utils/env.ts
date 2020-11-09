@@ -1,4 +1,5 @@
 import BN from 'bn.js'
+import {  } from '@subsocial/api/utils/types'
 
 function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process;
@@ -37,6 +38,8 @@ export const uiShowSearch = getEnvAsBool('UI_SHOW_SEARCH')
 export const uiShowFeed = getEnvAsBool('UI_SHOW_FEED')
 export const uiShowNotifications = getEnvAsBool('UI_SHOW_NOTIFICATIONS')
 export const uiShowActivity = getEnvAsBool('UI_SHOW_ACTIVITY')
+
+export const dagHttpType = getEnv('DAG_HTTP_TYPE')?.toLowerCase() || 'post'
 
 export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 export const landingPageUrl = 'https://subsocial.network'

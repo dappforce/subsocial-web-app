@@ -72,7 +72,7 @@ export const Loading = ({ label }: LoadingProps) =>
     {label && <em className='ml-3 text-muted'>{label}</em>}
   </div>
 
-export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
+export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
 };
