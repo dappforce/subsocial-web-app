@@ -1,4 +1,5 @@
 import BN from 'bn.js'
+import {  } from '@subsocial/api/utils/types'
 
 function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process;
@@ -27,6 +28,8 @@ export const substrateUrl = getEnv('SUBSTRATE_URL') || 'ws://127.0.0.1:9944'
 export const uiShowAdvanced = getEnvAsBool('UI_SHOW_ADVANCED')
 export const lastReservedSpaceId = getEnvAsNumber('LAST_RESERVED_SPACE_ID') || 0
 export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new BN(x))
+
+export const dagHttpType = getEnv('DAG_HTTP_TYPE')?.toLowerCase() || 'post'
 
 export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 export const landingPageUrl = 'https://subsocial.network'
