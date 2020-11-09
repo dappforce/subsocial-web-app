@@ -178,6 +178,8 @@ const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotif
 const getAccountPreview = (accountId: string, map: Map<string, ProfileData>): PreviewNotification | undefined  => {
   const data = map.get(accountId)
 
+  console.log('data', data)
+
   if (!data) return undefined
 
   return {
@@ -191,17 +193,24 @@ const getAccountPreview = (accountId: string, map: Map<string, ProfileData>): Pr
   }
 }
 
-const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
+type GetPostPreviewProsp = {
+  postId: BN,
+  event: EventsName,
+  spaceMap: Map<string, SpaceData>,
+  postMap: Map<string, PostData>
+}
+
+const getPostPreview = ({ postId, postMap, spaceMap, event } :GetPostPreviewProsp): PreviewNotification | undefined => {
   const data = postMap.get(postId.toString())
 
   if (!data) return undefined
 
   const isShared = isSharedPost(data.struct.extension)
 
-  if (isShared) {
+  if (event === 'PostCreated' && isShared) {
     const msg = messages['activities'].PostSharing
     const sharedPostId = data.struct.extension.asSharedPost
-    const postPreview = getPostPreview(sharedPostId, spaceMap, postMap)
+    const postPreview = getPostPreview({ postId: sharedPostId, spaceMap, postMap, event })
     return postPreview
       ? { ...postPreview, msg }
       : undefined
@@ -210,6 +219,8 @@ const getPostPreview = (postId: BN, spaceMap: Map<string, SpaceData>, postMap: M
   const spaceId = data?.struct.space_id.unwrapOr(undefined)
   const space = spaceId && spaceMap.get(spaceId.toString())?.struct
   const postLink = space && data && postUrl(space, data.struct)
+
+  console.log('POST-LINK', postLink, space)
 
   if (!postLink) return undefined
 
@@ -272,19 +283,27 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
 const getAtivityPreview = (activity: Activity, store: ActivityStore, type: NotifActivitiesType) => {
   const { event, space_id, post_id, comment_id, following_id } = activity;
   const { spaceById, postById, ownerById } = store;
+  const eventName = event as EventsName
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
     getCommentPreview(new BN(comment_id), spaceById, postById)
 
   const getPostPreviewWithMaps = (post_id: string) =>
-    getPostPreview(new BN(post_id), spaceById, postById)
+    getPostPreview({
+      postId: new BN(post_id),
+      spaceMap: spaceById,
+      postMap: postById,
+      event: eventName
+    })
 
   const getSpacePreviewWithMaps = (space_id: string) =>
     getSpacePreview(new BN(space_id), spaceById)
 
   const isActivity = type === 'activities'
 
-  switch (event) {
+  console.log('NOIF', activity)
+
+  switch (eventName) {
     case 'AccountFollowed': return getAccountPreview(following_id, ownerById)
     case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
     case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
@@ -295,9 +314,9 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
     case 'PostReactionCreated': return getPostPreviewWithMaps(post_id)
     case 'CommentReactionCreated': return getCommentPreviewWithMaps(comment_id)
     case 'PostCreated': return isActivity ? getPostPreviewWithMaps(post_id) : undefined
+    default: return undefined
   }
 
-  return undefined
 }
 
 const getNotificationMessage = (msg: string, aggregationCount: number, preview: JSX.Element | null, withAggregation: boolean) => {
