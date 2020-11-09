@@ -13,7 +13,6 @@ import { AnyAccountId } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util'
 import Error from 'next/error'
 import isbot from 'isbot'
-import { hexToBn } from '@polkadot/util'
 export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
@@ -73,7 +72,7 @@ export const Loading = ({ label }: LoadingProps) =>
     {label && <em className='ml-3 text-muted'>{label}</em>}
   </div>
 
-export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
+export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
 };
