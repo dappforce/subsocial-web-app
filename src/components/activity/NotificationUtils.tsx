@@ -178,10 +178,6 @@ const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotif
 const getAccountPreview = (accountId: string, map: Map<string, ProfileData>): PreviewNotification | undefined  => {
   const data = map.get(accountId)
 
-  console.log('data', data)
-
-  if (!data) return undefined
-
   return {
     preview: <Name owner={data} address={accountId}/>,
     image: data?.content?.avatar,
@@ -219,8 +215,6 @@ const getPostPreview = ({ postId, postMap, spaceMap, event } :GetPostPreviewPros
   const spaceId = data?.struct.space_id.unwrapOr(undefined)
   const space = spaceId && spaceMap.get(spaceId.toString())?.struct
   const postLink = space && data && postUrl(space, data.struct)
-
-  console.log('POST-LINK', postLink, space)
 
   if (!postLink) return undefined
 
@@ -301,8 +295,6 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
 
   const isActivity = type === 'activities'
 
-  console.log('NOIF', activity)
-
   switch (eventName) {
     case 'AccountFollowed': return getAccountPreview(following_id, ownerById)
     case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
@@ -340,7 +332,6 @@ export const getNotification = ({ type, activityStore, activity, myAddress }: Ge
   if (!activityPreview) return undefined;
 
   const { preview, msg, owner, ...other } = activityPreview
-  console.log('NotifActivitiesType', account, owner.toString())
   const msgType: NotifActivitiesType = myAddress === owner.toString() ? 'notifications' : 'activities'
   const eventMsg = messages[msgType] as EventsMsg
 
