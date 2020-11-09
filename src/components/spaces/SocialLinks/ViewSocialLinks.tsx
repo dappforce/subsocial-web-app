@@ -1,5 +1,5 @@
 import React from 'react'
-import { NamedLinks } from '@subsocial/types'
+import { NamedLink } from '@subsocial/types'
 import { getLinkBrand, getLinkIcon } from './utils'
 import { MailOutlined } from '@ant-design/icons'
 import { isEmptyStr } from '@subsocial/utils'
@@ -18,7 +18,7 @@ const SocialLink = ({ link }: SocialLinkProps) => {
 }
 
 type SocialLinksProps = {
-  links: string[] | NamedLinks[]
+  links: string[] | NamedLink[]
 }
 
 export const ViewSocialLinks = ({ links }: SocialLinksProps) => {

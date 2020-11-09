@@ -15,7 +15,7 @@ export function InnerActivities<T> ({ address, title, getCount, totalCount, noDa
     getCount
       ? getCount(address).then(setTotalCount)
       : setTotalCount(0)
-  }, [])
+  }, [ address ])
 
   const noData = notDef(total)
 
@@ -27,7 +27,7 @@ export function InnerActivities<T> ({ address, title, getCount, totalCount, noDa
     noDataDesc={noDataDesc}
     totalCount={total || 0}
 
-  />, [ address, isApiReady, noData ])
+  />, [ isApiReady, noData, total ])
 
   if (!isApiReady || noData) return <Loading label={loadingLabel} />
 

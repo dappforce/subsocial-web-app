@@ -37,8 +37,8 @@ export const SpaceStatsRow = ({ space }: Props) => {
         </a>
       </Link>
 
-      <div onClick={() => setFollowersOpen(true)} className={statLinkCss}>
-        <Pluralize count={followers} singularText='Follower'/>
+      <div onClick={() => setFollowersOpen(true)} className={statLinkCss} style={{ cursor: 'pointer' }}>
+        <Pluralize count={followers} singularText='Follower' />
       </div>
 
       {!isMobile && <>

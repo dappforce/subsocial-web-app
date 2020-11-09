@@ -907,6 +907,17 @@ hr {
 .DfSearch {
   width: 450px;
   min-width: 320px;
+  display: flex;
+
+  .ant-input-search>.ant-input-group>.ant-input-group-addon {
+    left: -1px;
+    padding: 0;
+    border: 0;
+  }
+  .ant-btn-icon-only {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
 }
 
 .DfBgColor {
