@@ -2,11 +2,11 @@ import React from 'react'
 import moment from 'moment-timezone';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
-import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData } from '@subsocial/types';
+import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData, AnyAccountId } from '@subsocial/types';
 import BN from 'bn.js'
 import Link from 'next/link';
 import { nonEmptyStr } from '@subsocial/utils';
-import { postUrl, spaceUrl } from '../urls';
+import { postUrl, spaceUrl, accountUrl } from '../urls';
 import { NotifActivitiesType } from './Notifications';
 import messages from '../../messages'
 import { summarize } from 'src/utils';
@@ -14,6 +14,7 @@ import { isSharedPost } from '../posts/view-post';
 import AccountId from '@polkadot/types/generic/AccountId';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { SubsocialApi } from '@subsocial/api/subsocial';
+import { Name } from '../profiles/address-views/Name';
 
 export type LoadMoreFn = (
   myAddress: string,
@@ -48,7 +49,7 @@ export type ActivityStore = {
 
 type PreviewNotification = PathLinks & {
   preview: JSX.Element | null,
-  owner: AccountId,
+  owner: AnyAccountId,
   image?: string,
   msg?: string,
 }
@@ -93,8 +94,9 @@ export const loadNotifications = async ({
   const spaceIds: BN[] = []
   const postIds: BN[] = []
 
-  activities.forEach(({ account, space_id, post_id, comment_id }) => {
+  activities.forEach(({ account, following_id, space_id, post_id, comment_id }) => {
     nonEmptyStr(account) && fillArray(account, ownerIds, ownerById)
+    nonEmptyStr(following_id) && fillArray(following_id, ownerIds, ownerById)
     nonEmptyStr(space_id) && fillArray(new BN(space_id), spaceIds, spaceById)
     nonEmptyStr(post_id) && fillArray(new BN(post_id), postIds, postById)
     nonEmptyStr(comment_id) && fillArray(new BN(comment_id), postIds, postById)
@@ -169,6 +171,22 @@ const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotif
     links: {
       href: '/[spaceId]',
       as: data && spaceUrl(data?.struct)
+    }
+  }
+}
+
+const getAccountPreview = (accountId: string, map: Map<string, ProfileData>): PreviewNotification | undefined  => {
+  const data = map.get(accountId)
+
+  if (!data) return undefined
+
+  return {
+    preview: <Name owner={data} address={accountId}/>,
+    image: data?.content?.avatar,
+    owner: accountId,
+    links: {
+      href: '/accounts/[address]',
+      as: data && accountUrl({ address: accountId })
     }
   }
 }
@@ -252,8 +270,8 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
 }
 
 const getAtivityPreview = (activity: Activity, store: ActivityStore, type: NotifActivitiesType) => {
-  const { event, space_id, post_id, comment_id } = activity;
-  const { spaceById, postById } = store;
+  const { event, space_id, post_id, comment_id, following_id } = activity;
+  const { spaceById, postById, ownerById } = store;
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
     getCommentPreview(new BN(comment_id), spaceById, postById)
@@ -267,6 +285,7 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
   const isActivity = type === 'activities'
 
   switch (event) {
+    case 'AccountFollowed': return getAccountPreview(following_id, ownerById)
     case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
     case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
     case 'CommentCreated': return getCommentPreviewWithMaps(comment_id)
