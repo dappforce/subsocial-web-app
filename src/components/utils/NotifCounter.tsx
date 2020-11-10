@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { offchainWs } from './env'
 import { useMyAddress } from '../auth/MyAccountContext';
+import { newLogger } from '@subsocial/utils';
 
 export type NotifCounterContextProps = {
   unreadCount: number
@@ -8,7 +9,9 @@ export type NotifCounterContextProps = {
 
 export const NotifCounterContext = createContext<NotifCounterContextProps>({ unreadCount: 0 });
 
-export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
+const log = newLogger(NotifCounterProvider.name)
+
+export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
   const myAddress = useMyAddress()
 
   const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })
@@ -37,15 +40,15 @@ export const NotifCounterProvider = (props: React.PropsWithChildren<{}>) => {
       setWs(ws)
 
       ws.onopen = () => {
-        console.log('Connected to Notifications Counter Web Socket')
+        log.info('Connected to Notifications Counter Web Socket')
         ws.send(myAddress?.toString());
         setWsConnected(true)
         ws.onmessage = (msg: MessageEvent) => {
           const unreadCount = msg.data
           setContextValue({ unreadCount })
-          console.log('Received a new value for unread notifications:', unreadCount)
+          log.info('Received a new value for unread notifications:', unreadCount)
         }
-        ws.onerror = (error) => { console.log('NotificationCounter Websocket Error:', error) }
+        ws.onerror = (error) => { log.info('NotificationCounter Websocket Error:', error) }
       };
 
       ws.onclose = () => {
