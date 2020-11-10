@@ -2380,10 +2380,10 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@0.4.20":
-  version "0.4.20"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.20.tgz#ffdcbe656807ed1be79586c9e9c6c950a31b83b6"
-  integrity sha512-owxdyN5ys6USfW94LLnP5/ointWyaTet4HpImgvTskzG0eMBUYEFguZt/soR9GhBqaYxuIS4bj1kSl0EMFJSPA==
+"@subsocial/api@^0.4.21":
+  version "0.4.21"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.21.tgz#ed03639b162be85a9f980c4cabbc70465af048a4"
+  integrity sha512-P65+LiCzlUtYANIt5HEEuqRCtNiu2Hdd/IxDdRKLShjcBK1OE1PRC9E6+SWdkgDH0pwwnOXRdKhhkPSMrQsj/w==
   dependencies:
     "@polkadot/api" "1.28.1"
     "@subsocial/utils" "^0.4.15"
