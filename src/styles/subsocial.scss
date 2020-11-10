@@ -37,6 +37,10 @@ pre {
 /* Common Resusable Classes */
 /* ---------------------------------------- */
 
+.FontNormal {
+  font-size: $font_normal !important
+}
+
 .DfSegment {
   background-color: #fff;
   padding: $space_normal;
@@ -825,6 +829,7 @@ hr {
   margin-bottom: $space_tiny;
 
   .DfPopup-link {
+    font-size: $font_normal;
     margin-right: $space_normal;
     @extend .DfGreyLink
   }
