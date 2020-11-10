@@ -74,7 +74,7 @@ function SideMenu () {
       style={{ height: '100%', borderRight: 0 }}
     >
       {menuItems.map((item, i) => isDivider(item)
-        ? <Menu.Divider key={`divider- ${i}`} />
+        ? <Menu.Divider key={`divider-${i}`} />
         : renderPageLink(item, unreadCount)
       )}
       {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />}
