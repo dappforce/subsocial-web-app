@@ -7,7 +7,7 @@ import { DfForm, DfFormButtons } from 'src/components/forms'
 import { showErrorMessage, showSuccessMessage } from 'src/components/utils/Message'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { Balance } from '@polkadot/types/interfaces'
-import { nonEmptyStr, pluralize } from '@subsocial/utils'
+import { nonEmptyStr, pluralize, newLogger } from '@subsocial/utils'
 import { formatBalance } from '@polkadot/util'
 import { FormatBalance } from 'src/components/profiles/address-views/utils/Balance'
 import BN from 'bn.js'
@@ -47,6 +47,8 @@ function RenderBalances ({ balances, title }: {
     </ol>
   </> : null
 }
+
+const log = newLogger('ForceTransfer')
 
 function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
@@ -147,7 +149,7 @@ function InnerForm (props: FormProps) {
             .filter(nonEmptyStr)
             .map(x => x.trim())
 
-          console.log({ accs })
+          log.info({ accs })
 
           setAccounts(accs)
         }}>Read balances</Button>
