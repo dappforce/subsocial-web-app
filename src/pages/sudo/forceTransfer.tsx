@@ -149,7 +149,7 @@ function InnerForm (props: FormProps) {
             .filter(nonEmptyStr)
             .map(x => x.trim())
 
-          log.info({ accs })
+          log.debug({ accs })
 
           setAccounts(accs)
         }}>Read balances</Button>
