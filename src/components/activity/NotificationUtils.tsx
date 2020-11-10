@@ -334,7 +334,7 @@ export const getNotification = ({ type, activityStore, activity, myAddress }: Ge
   const msgType: NotifActivitiesType = myAddress === owner.toString() ? 'notifications' : 'activities'
   const eventMsg = messages[msgType] as EventsMsg
 
-  const notificationMessage = getNotificationMessage(msg || eventMsg[event as EventsName], agg_count, preview, type === 'notifications')
+  const notificationMessage = getNotificationMessage(msg || eventMsg[event as EventsName], agg_count - 1, preview, type === 'notifications')
 
   return { address: account, notificationMessage, details: formatDate, owner: creator, ...other }
 }
