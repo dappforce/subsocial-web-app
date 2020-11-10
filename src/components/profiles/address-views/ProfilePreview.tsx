@@ -62,7 +62,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
         </div>
         {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
         {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
-        <EditProfileLink address={address} className='DfGreyLink mb-2' />
+        <EditProfileLink address={address} className='DfGreyLink FontNormal mb-2' />
       </>}
     </div>
   </div>
