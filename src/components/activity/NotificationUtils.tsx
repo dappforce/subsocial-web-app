@@ -147,14 +147,14 @@ export const loadNotifications = async ({
     .filter(x => x !== undefined) as NotificationType[]
 }
 
-const renderSubjectPreview = (content?: PostContent, href: string = '') => {
+const renderSubjectPreview = (content?: PostContent, href = '') => {
   if (!content) return null
 
   const { title, body } = content
   const name = summarize(title || body || 'link', SUMMARIZE_LIMIT)
   return nonEmptyStr(name) || nonEmptyStr(href) ?
-  <Link href='/[spaceId]/posts/[postId]' as={href}><a>{name}</a></Link>
-  : null
+    <Link href='/[spaceId]/posts/[postId]' as={href}><a>{name}</a></Link>
+    : null
 }
 
 
@@ -331,7 +331,7 @@ export const getNotification = ({ type, activityStore, activity, myAddress }: Ge
   if (!activityPreview) return undefined;
 
   const { preview, msg, owner, ...other } = activityPreview
-  const msgType: NotifActivitiesType = myAddress === owner.toString() ? 'notifications' : 'activities'
+  const msgType: NotifActivitiesType = myAddress === owner.toString() ? type : 'activities'
   const eventMsg = messages[msgType] as EventsMsg
 
   const notificationMessage = getNotificationMessage(msg || eventMsg[event as EventsName], agg_count - 1, preview, type === 'notifications')

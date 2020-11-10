@@ -10,7 +10,7 @@ import { LoadMoreProps, BaseActivityProps, ActivityProps } from './types';
 import { InnerActivities } from './InnerActivities';
 type StructId = string
 
-export const NotifActivities = ({ loadMore ,...props }: ActivityProps<NotificationType>) => {
+export const NotifActivities = ({ loadMore, ...props }: ActivityProps<NotificationType>) => {
   const activityStore: ActivityStore = {
     spaceById: new Map<StructId, SpaceData>(),
     postById: new Map<StructId, PostData>(),
@@ -36,7 +36,7 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn, type: NotifA
 
     const activities = await getActivity(address, offset, DEFAULT_PAGE_SIZE) || []
 
-    return loadNotifications({ subsocial, activities , activityStore, type, myAddress: address })
+    return loadNotifications({ subsocial, activities, activityStore, type, myAddress: address })
   }
 
 const loadMoreNotifications = getLoadMoreNotificationsFn(getNotifications, 'notifications')

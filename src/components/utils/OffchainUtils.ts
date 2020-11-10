@@ -31,8 +31,8 @@ const axiosRequest = async (url: string) => {
 
     return res;
   } catch (err) {
-      log.error('Failed request to offchain with error', err)
-      return err
+    log.error('Failed request to offchain with error', err)
+    return err
   }
 }
 
