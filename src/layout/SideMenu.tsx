@@ -29,7 +29,7 @@ const renderPageLink = (item: PageLink, unreadCount?: number) => {
   return item.isAdvanced
     ? (
       <Menu.Item key={item.page[0]} >
-        <a href={item.page[0]} target='_blank'>
+        <a href={item.page[0]} rel='noreferrer' target='_blank'>
           {icon}
           <span>{item.name}</span>
         </a>
@@ -74,7 +74,7 @@ function SideMenu () {
       style={{ height: '100%', borderRight: 0 }}
     >
       {menuItems.map((item, i) => isDivider(item)
-        ? <Menu.Divider key={'divider-' + i} />
+        ? <Menu.Divider key={`divider- ${i}`} />
         : renderPageLink(item, unreadCount)
       )}
       {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />}

@@ -11,7 +11,7 @@ export const NotifCounterContext = createContext<NotifCounterContextProps>({ unr
 
 const log = newLogger(NotifCounterProvider.name)
 
-export function NotifCounterProvider (props: React.PropsWithChildren<any>) {
+export function NotifCounterProvider (props: React.PropsWithChildren<unknown>) {
   const myAddress = useMyAddress()
 
   const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })

@@ -128,7 +128,7 @@ export const clearNotifications = async (myAddress: string): Promise<void> =>{
   }
 }
 
-export const queryElasticSearch = async (params: ElasticQueryParams): Promise<any> => {
+export const queryElasticSearch = async (params: ElasticQueryParams) => {
   try {
     const res = await axios.get(getOffchainUrl(`/search`), { params })
     if (res.status === 200) {
