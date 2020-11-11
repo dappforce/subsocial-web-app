@@ -56,7 +56,6 @@ const Component = (props: Props) => {
     address,
     size = LARGE_AVATAR_SIZE,
     owner,
-    spacesData,
     mySpaceIds
   } = props;
 
