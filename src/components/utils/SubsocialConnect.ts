@@ -12,7 +12,7 @@ let isLoadingSubsocial = false
 
 export const newSubsocialApi = (substrateApi: ApiPromise) => {
   return new SubsocialApi({ substrateApi, ipfsNodeUrl, offchainUrl, useServer: {
-    httpRequestType: dagHttpType as any
+    httpRequestMethod: dagHttpMethod as any
   }})
 }
 
