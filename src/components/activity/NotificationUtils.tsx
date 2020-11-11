@@ -147,7 +147,7 @@ export const loadNotifications = async ({
     .filter(x => x !== undefined) as NotificationType[]
 }
 
-const renderSubjectPreview = (content?: PostContent, href: string = '') => {
+const renderSubjectPreview = (content?: PostContent, href = '') => {
   if (!content) return null
 
   const { title, body } = content
@@ -158,7 +158,7 @@ const renderSubjectPreview = (content?: PostContent, href: string = '') => {
 }
 
 
-const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification | undefined  => {
+const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification | undefined => {
   const data = map.get(spaceId.toString())
 
   if (!data) return undefined
@@ -174,7 +174,7 @@ const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotif
   }
 }
 
-const getAccountPreview = (accountId: string, map: Map<string, ProfileData>): PreviewNotification | undefined  => {
+const getAccountPreview = (accountId: string, map: Map<string, ProfileData>): PreviewNotification | undefined => {
   const data = map.get(accountId)
 
   return {

@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React from 'react';
 import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils';
 import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config';
 import { LoadMoreFn, ActivityStore, loadNotifications } from './NotificationUtils';

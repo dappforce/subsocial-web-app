@@ -56,7 +56,7 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
     ...notificationsItem,
     {
       name: 'My subscriptions',
-      page: [ '/accounts/[address]/following',  accountUrl(account, 'following') ],
+      page: [ '/accounts/[address]/following', accountUrl(account, 'following') ],
       icon: <StarOutlined />
     },
     {
