@@ -14,6 +14,6 @@ module.exports = {
     'no-multi-spaces': 'error',
     'space-before-function-paren': [ 'warn', 'always' ],
     'non-nullish value': 'off',
-    'react/display-name ': 'off'
+    'react/display-name': 'off'
   }
 }
