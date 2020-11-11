@@ -14,6 +14,7 @@ import { isSharedPost } from '../posts/view-post';
 import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import { Name } from '../profiles/address-views/Name';
+import { equalAddresses } from '../substrate';
 
 export type LoadMoreFn = (
   myAddress: string,
@@ -331,7 +332,7 @@ export const getNotification = ({ type, activityStore, activity, myAddress }: Ge
   if (!activityPreview) return undefined;
 
   const { preview, msg, owner, ...other } = activityPreview
-  const msgType: NotifActivitiesType = myAddress === owner.toString() ? 'notifications' : 'activities'
+  const msgType: NotifActivitiesType = equalAddresses(myAddress, owner) ? type : 'activities'
   const eventMsg = messages[msgType] as EventsMsg
 
   const notificationMessage = getNotificationMessage(msg || eventMsg[event as EventsName], agg_count - 1, preview, type === 'notifications')

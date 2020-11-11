@@ -203,7 +203,7 @@ export function InnerForm (props: FormProps) {
           { max: DESC_MAX_LEN, message: maxLenError('Description', DESC_MAX_LEN) }
         ]}
       >
-        <DfMdEditor onChange={onDescChanged} />
+        <DfMdEditor autoSaveId='space' onChange={onDescChanged} />
       </Form.Item>
 
       <Form.Item
@@ -219,7 +219,7 @@ export function InnerForm (props: FormProps) {
           placeholder="Press 'Enter' or 'Tab' key to add tags"
         >
           {tags.map((tag, i) =>
-            <Select.Option key={i} value={tag} children={tag} />
+            <Select.Option key={i} value={tag}>{tag}</Select.Option>
           )}
         </Select>
       </Form.Item>

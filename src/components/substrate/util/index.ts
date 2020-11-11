@@ -7,15 +7,19 @@ import { toShortAddress, resolveBn } from 'src/components/utils'
 import { Codec } from '@polkadot/types/types'
 import { SubstrateId, AnyAccountId } from '@subsocial/types'
 import { SubmittableResult } from '@polkadot/api'
-import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
-import { SubsocialApi } from '@subsocial/api/subsocial';
+import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
+import { SubsocialApi } from '@subsocial/api/subsocial'
 import { asAccountId } from '@subsocial/api/utils'
 export * from './getTxParams'
 export * from './queryToProps'
-export { isEqual } from './isEqual';
-export { triggerChange } from './triggerChange';
+export { isEqual } from './isEqual'
+export { triggerChange } from './triggerChange'
 
-function toString<DFT> (value?: { toString: () => string }, _default?: DFT): string | DFT | undefined {
+function toString<DFT> (
+  value?: { toString: () => string },
+  _default?: DFT
+): string | DFT | undefined {
+
   return value && typeof value.toString === 'function'
     ? value.toString()
     : _default
@@ -62,21 +66,19 @@ export const getSpaceId = async (idOrHandle: string, subsocial?: SubsocialApi): 
 }
 
 export function getNewIdFromEvent (txResult: SubmittableResult): BN | undefined {
-  let id: BN | undefined;
+  let id: BN | undefined
 
   txResult.events.find(event => {
-    const {
-      event: { data, method }
-    } = event;
-    if (method.indexOf(`Created`) >= 0) {
-      const [ /* owner */, newId ] = data.toArray();
-      id = newId as unknown as BN;
-      return true;
+    const { event: { data, method } } = event
+    if (method.indexOf('Created') >= 0) {
+      const [ /* owner */, newId ] = data.toArray()
+      id = newId as unknown as BN
+      return true
     }
-    return false;
-  });
+    return false
+  })
 
-  return id;
+  return id
 }
 
 export const getAccountId = async (addressOrHandle: string): Promise<AnyAccountId | undefined> => {
@@ -89,7 +91,7 @@ export const getAccountId = async (addressOrHandle: string): Promise<AnyAccountI
   }
 }
 
-type MaybeAccAddr = undefined | string | GenericAccountId
+type MaybeAccAddr = undefined | AnyAccountId
 
 export function equalAddresses (addr1: MaybeAccAddr, addr2: MaybeAccAddr) {
   if (addr1 === addr2) {
@@ -115,7 +117,7 @@ export const getProfileName = (options: GetNameOptions) => {
 
 export const unwrapSubstrateId = (optId?: Option<Codec>): SubstrateId | undefined => {
   if (optId instanceof Option) {
-    return optId.unwrapOr(undefined) as any
+    return optId.unwrapOr(undefined) as SubstrateId | undefined
   }
 
   return optId && optId as SubstrateId
