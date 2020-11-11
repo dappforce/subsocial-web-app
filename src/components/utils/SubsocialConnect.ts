@@ -1,6 +1,6 @@
 import { api as apiFromContext } from '../substrate';
 import { Api as SubstrateApi } from '@subsocial/api/substrateConnect'
-import { offchainUrl, substrateUrl, ipfsNodeUrl, dagHttpType } from './env';
+import { offchainUrl, substrateUrl, ipfsNodeUrl, dagHttpMethod } from './env';
 import { ApiPromise } from '@polkadot/api';
 import { newLogger } from '@subsocial/utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
