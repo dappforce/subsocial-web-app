@@ -33,10 +33,11 @@ import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
 import { KusamaProposalView } from 'src/components/kusama/KusamaProposalDesc';
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels';
+import MovePostLink from '../MovePostLink';
 
 type DropdownProps = {
   space: Space
-  post: Post
+  postDetails: PostWithSomeDetails
   withEditButton?: boolean
 }
 
@@ -58,7 +59,8 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
 }
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) => {
-  const { space, post, withEditButton = false } = props
+  const { space, postDetails, withEditButton = false } = props
+  const { post: { struct: post } } = postDetails
   const isMyPost = isMyAddress(post.owner);
   const postId = post.id
   const postKey = `post-${postId.toString()}`
@@ -77,6 +79,9 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
       </Menu.Item>}
       {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
         <HiddenPostButton post={post} asLink />
+      </Menu.Item>}
+      {isMyPost && !isComment(post.extension) && <Menu.Item key={`move-${postKey}`}>
+        <MovePostLink post={post} />
       </Menu.Item>}
       <Menu.Item key={`view-reaction-${postKey}`} >
         <ReactionModal postId={postId} />
@@ -320,7 +325,7 @@ export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props
       <div className='w-100'>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
-          <PostDropDownMenu post={struct} space={space.struct} withEditButton />
+          <PostDropDownMenu postDetails={postDetails} space={space.struct} withEditButton />
         </div>
         <KusamaProposalView proposal={content.ext?.proposal} />
         <PostContent postDetails={postDetails} space={space.struct} withImage={withImage} />

@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
-import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate';
+import { withCalls, withMulti, getTxParams, spacesQueryToProp } from 'src/components/substrate';
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
-import { withMyAccount, MyAccountProps } from '../../utils/MyAccount';
+import { withMyAccount, MyAccountProps } from 'src/components/utils/MyAccount';
 import { LabeledValue } from 'antd/lib/select';
-import SelectSpacePreview from '../../utils/SelectSpacePreview';
+import SelectSpacePreview from 'src/components/utils/SelectSpacePreview';
 import BN from 'bn.js';
 import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes';
 import { useForm, Controller, ErrorMessage } from 'react-hook-form';
-import { useSubsocialApi } from '../../utils/SubsocialApiContext';
+import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext';
 import { IpfsCid } from '@subsocial/types/substrate/interfaces';
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
 import dynamic from 'next/dynamic';
-import { buildSharePostValidationSchema } from '../PostValidation';
-import { isEmptyArray } from '@subsocial/utils';
-import DfMdEditor from '../../utils/DfMdEditor';
-import { DynamicPostPreview } from '../view-post/DynamicPostPreview';
-import { CreateSpaceButton } from '../../spaces/helpers';
+import { buildSharePostValidationSchema } from 'src/components/posts/PostValidation';
+import { isEmptyArray, nonEmptyArr } from '@subsocial/utils';
+import DfMdEditor from 'src/components/utils/DfMdEditor';
+import { DynamicPostPreview } from 'src/components/posts/view-post/DynamicPostPreview';
+import { CreateSpaceButton } from 'src/components/spaces/helpers';
 import styles from './index.module.sass'
+import modalStyles from 'src/components/posts/modals/index.module.sass'
+import NoData from 'src/components/utils/EmptyList';
 
-const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
+const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false });
 
 type Props = MyAccountProps & {
   postId: BN
@@ -69,8 +71,8 @@ const InnerShareModal = (props: Props) => {
     return [ spaceId, extension, new IpfsContent(hash) ];
   };
 
-  const renderTxButton = () =>
-    <TxButton
+  const renderTxButton = () => nonEmptyArr(spaceIds)
+    ? <TxButton
       type='primary'
       label={`Create a post`}
       disabled={isSubmitting}
@@ -86,20 +88,15 @@ const InnerShareModal = (props: Props) => {
       successMessage='Shared to your space'
       failedMessage='Failed to share'
     />
+    : <CreateSpaceButton>Create my first space</CreateSpaceButton>
 
   const renderShareView = () => {
     if (isEmptyArray(spaceIds)) {
-      return (
-        <CreateSpaceButton>
-          <a className='ui button primary'>
-            Create my first space
-          </a>
-        </CreateSpaceButton>
-      )
+      return <NoData description='You need to have at least one space to share post'/>
     }
 
-    return <div className={styles.DfShareModalBody}>
-      <span className={styles.DfShareModalSelector}>
+    return <div className={modalStyles.DfPostActionModalBody}>
+      <span className={modalStyles.DfPostActionModalSelector}>
         <SelectSpacePreview
           spaceIds={spaceIds || []}
           onSelect={saveSpace}
@@ -108,7 +105,7 @@ const InnerShareModal = (props: Props) => {
         />
       </span>
 
-      <form style={{ margin: '1rem 0' }}>
+      <form style={{margin: '0.75rem 0'}}>
         <Controller
           control={control}
           as={<DfMdEditor />}
@@ -133,7 +130,7 @@ const InnerShareModal = (props: Props) => {
     onCancel={onClose}
     visible={open}
     title={'Share post'}
-    className={styles.DfShareModal}
+    className={modalStyles.DfPostActionModal}
     footer={
       <>
         <Button onClick={onClose}>Cancel</Button>

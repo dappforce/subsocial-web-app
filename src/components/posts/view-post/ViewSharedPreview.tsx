@@ -13,7 +13,7 @@ export const SharedPreview: ComponentType = (props) => {
   return <>
     <div className='DfRow'>
       <PostCreator postDetails={postDetails} space={space} withSpaceName />
-      <PostDropDownMenu space={space.struct} post={struct}/>
+      <PostDropDownMenu space={space.struct} postDetails={postDetails}/>
     </div>
     <SharePostContent postDetails={postDetails} space={space} />
     {withActions && <PostActionsPanel postDetails={postDetails} space={space.struct} toogleCommentSection={() => setCommentsSection(!commentsSection)} preview />}
