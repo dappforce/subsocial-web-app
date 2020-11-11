@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import SearchInput from '../components/search/SearchInput';
-import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import AuthorizationPanel from '../components/auth/AuthorizationPanel';
-import Link from 'next/link';
-import { useResponsiveSize } from 'src/components/responsive';
-import { SignInMobileStub } from 'src/components/auth/AuthButtons';
-import { isMobileDevice } from 'src/config/Size.config';
-import { uiShowSearch } from 'src/components/utils/env';
+import React, { useState } from 'react'
+import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
+import SearchInput from '../components/search/SearchInput'
+import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
+import AuthorizationPanel from '../components/auth/AuthorizationPanel'
+import Link from 'next/link'
+import { useResponsiveSize } from 'src/components/responsive'
+import { SignInMobileStub } from 'src/components/auth/AuthButtons'
+import { isMobileDevice } from 'src/config/Size.config'
+import { uiShowSearch } from 'src/components/utils/env'
 
 const InnerMenu = () => {
-  const { toggle } = useSidebarCollapsed();
+  const { toggle } = useSidebarCollapsed()
   const { isNotMobile, isMobile } = useResponsiveSize()
-  const [ show, setShow ] = useState(false);
+  const [ show, setShow ] = useState(false)
 
   const logoImg = '/subsocial-logo.svg'
 
@@ -43,7 +43,7 @@ const InnerMenu = () => {
           : <AuthorizationPanel />
         }
       </div>
-    </div>;
-};
+    </div>
+}
 
-export default InnerMenu;
+export default InnerMenu

@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import {  } from '@subsocial/api/utils/types'
+import { } from '@subsocial/api/utils/types'
 
 function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process;

@@ -12,6 +12,8 @@ module.exports = {
     'quotes': [ 'warn', 'single' ],
     'array-bracket-spacing' : [ 'warn', 'always' ],
     'no-multi-spaces': 'error',
-    'space-before-function-paren': [ 'warn', 'always' ]
+    'space-before-function-paren': [ 'warn', 'always' ],
+    'non-nullish value': 'off',
+    'react/display-name ': 'off'
   }
 }

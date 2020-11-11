@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React from 'react';
 import { isDef } from '@subsocial/utils';
 import { LoadMoreFn } from './NotificationUtils';
 import { PostWithAllDetails } from '@subsocial/types';
