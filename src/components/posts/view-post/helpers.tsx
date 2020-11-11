@@ -32,6 +32,7 @@ import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels';
+import MovePostLink from '../MovePostLink';
 
 type DropdownProps = {
   space: Space
