@@ -148,7 +148,7 @@ export function InnerForm (props: FormProps) {
           { max: DESC_MAX_LEN, message: maxLenError('Description', DESC_MAX_LEN) }
         ]}
       >
-        <DfMdEditor onChange={onDescChanged} />
+        <DfMdEditor autoSaveId='profile' onChange={onDescChanged} />
       </Form.Item>
 
       <DfFormButtons
