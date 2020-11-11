@@ -5,7 +5,7 @@ import { useIsSignedIn, useMyAddress } from '../components/auth/MyAccountContext
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
 import Link from 'next/link'
 import { newLogger } from '@subsocial/utils'
-import { useNotifCounter } from '../components/utils/NotifCounter'
+// import { useNotifCounter } from '../components/utils/NotifCounter'
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
 import { OnBoardingCard } from 'src/components/onboarding'
 import { useAuth } from 'src/components/auth/AuthContext'
@@ -58,7 +58,7 @@ function SideMenu () {
   const { asPath } = useRouter()
   const myAddress = useMyAddress()
   const isLoggedIn = useIsSignedIn()
-  const { unreadCount } = useNotifCounter()
+  // const { unreadCount } = useNotifCounter()
   const { state: { showOnBoarding } } = useAuth()
   const { isNotMobile } = useResponsiveSize()
 
@@ -75,7 +75,7 @@ function SideMenu () {
     >
       {menuItems.map((item, i) => isDivider(item)
         ? <Menu.Divider key={`divider-${i}`} />
-        : renderPageLink(item, unreadCount)
+        : renderPageLink(item/* , unreadCount */)
       )}
       {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />}
       {isLoggedIn && <Menu.Divider />}
