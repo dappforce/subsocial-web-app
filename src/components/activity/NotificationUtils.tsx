@@ -312,10 +312,10 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
 
 const getNotificationMessage = (msg: string, aggregationCount: number, preview: JSX.Element | null, withAggregation: boolean) => {
   const aggregationMsg = withAggregation
-    ? aggregationCount > 0 && <>{' and'} <Pluralize count={aggregationCount} singularText='other person' pluralText='other people' /></>
-    : undefined;
+    ? aggregationCount > 0 && <>&nbsp;{'and'} <Pluralize count={aggregationCount} singularText='other person' pluralText='other people' /></>
+    : undefined
 
-  return <span className="DfActivityMsg">{aggregationMsg} {msg} {preview}</span>
+  return <span className="DfActivityMsg">{aggregationMsg}&nbsp;{msg}&nbsp;{preview}</span>
 }
 
 type GetNotificationProps = InnerNotificationsProps & {

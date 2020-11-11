@@ -42,7 +42,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
     setFollowingOpen(true);
   };
 
-  return <div className={`ProfileDetails ${className}`}>
+  return <div className={`ProfileDetails d-flex ${className}`}>
     <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
     <div className='ml-2'>
       <NameDetails owner={owner} address={address} withLabel={withLabel} />

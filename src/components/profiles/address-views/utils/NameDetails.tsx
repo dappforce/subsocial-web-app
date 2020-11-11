@@ -42,10 +42,12 @@ export const NameDetails = ({
   }
 
   return <>
-    <div className='header'>
-      <Name owner={owner} address={address} />
-      {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
-      <KusamaRolesTags address={address} />
+    <div className='header d-flex justify-content-between'>
+      <span>
+        <Name owner={owner} address={address} />
+        {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
+        <KusamaRolesTags address={address} />
+      </span>
       {withFollowButton && <FollowAccountButton address={address} className='ml-3 float-right' />}
     </div>
     {extensionName && <div className='DfPopup-handle'>{extensionName}</div>}
