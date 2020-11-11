@@ -1,13 +1,13 @@
-import React, { useReducer, createContext, useContext, useEffect } from 'react';
-import store from 'store';
-import { newLogger, nonEmptyStr } from '@subsocial/utils';
-import { AccountId } from '@polkadot/types/interfaces';
-import { equalAddresses } from '../substrate';
-import { ProfileData } from '@subsocial/types';
-import useSubsocialEffect from '../api/useSubsocialEffect';
-import { SocialAccount } from '@subsocial/types/substrate/interfaces';
+import React, { useReducer, createContext, useContext, useEffect } from 'react'
+import store from 'store'
+import { newLogger, nonEmptyStr } from '@subsocial/utils'
+import { AnyAccountId } from '@subsocial/types'
+import { equalAddresses } from '../substrate'
+import { ProfileData } from '@subsocial/types'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { Option } from '@polkadot/types'
-import { resolveCidOfContent } from '@subsocial/api/utils';
+import { resolveCidOfContent } from '@subsocial/api/utils'
 
 const log = newLogger('MyAccountContext')
 
@@ -52,31 +52,31 @@ type MyAccountAction = {
 
 function reducer (state: MyAccountState, action: MyAccountAction): MyAccountState {
   function forget () {
-    log.info('Forget my address and injected accounts');
-    store.remove(MY_ADDRESS);
-    return { ...state, address: undefined };
+    log.info('Forget my address and injected accounts')
+    store.remove(MY_ADDRESS)
+    return { ...state, address: undefined }
   }
 
-  let address: string | undefined;
+  let address: string | undefined
 
   switch (action.type) {
     case 'reload':
-      address = readMyAddress();
-      log.info(`Reload my address: ${print(address)}`);
-      return { ...state, address, inited: true };
+      address = readMyAddress()
+      log.info(`Reload my address: ${print(address)}`)
+      return { ...state, address, inited: true }
 
     case 'setAddress':
-      address = action.address;
+      address = action.address
       if (!equalAddresses(address, state.address)) {
         if (address) {
-          log.info(`Set my new address: ${print(address)}`);
+          log.info(`Set my new address: ${print(address)}`)
           storeMyAddress(address)
-          return { ...state, address, inited: true };
+          return { ...state, address, inited: true }
         } else {
-          return forget();
+          return forget()
         }
       }
-      return state;
+      return state
 
     case 'setAccount': {
       const account = action.account
@@ -84,21 +84,21 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
     }
 
     case 'forget':
-      return forget();
+      return forget()
 
     default:
-      throw new Error('No action type provided');
+      throw new Error('No action type provided')
   }
 }
 
 function functionStub () {
-  log.error(`Function needs to be set in ${MyAccountProvider.name}`);
+  log.error(`Function needs to be set in ${MyAccountProvider.name}`)
 }
 
 const initialState = {
   inited: false,
   address: undefined
-};
+}
 
 export type MyAccountContextProps = {
   state: MyAccountState,
@@ -112,12 +112,12 @@ const contextStub: MyAccountContextProps = {
   dispatch: functionStub,
   setAddress: functionStub,
   signOut: functionStub
-};
+}
 
-export const MyAccountContext = createContext<MyAccountContextProps>(contextStub);
+export const MyAccountContext = createContext<MyAccountContextProps>(contextStub)
 
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
-  const [ state, dispatch ] = useReducer(reducer, initialState);
+  const [ state, dispatch ] = useReducer(reducer, initialState)
 
   const { inited, address } = state
 
@@ -130,7 +130,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   useSubsocialEffect(({ substrate: { api }, subsocial: { ipfs } }) => {
     if (!inited || !address) return
 
-    let unsub: { (): void | undefined; (): void; };
+    let unsub: { (): void | undefined; (): void; }
 
     const sub = async () => {
       const readyApi = await api
@@ -162,12 +162,13 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
     dispatch,
     setAddress: (address: string) => dispatch({ type: 'setAddress', address }),
     signOut: () => dispatch({ type: 'forget' })
-  };
+  }
+
   return (
     <MyAccountContext.Provider value={contextValue}>
       {props.children}
     </MyAccountContext.Provider>
-  );
+  )
 }
 
 export function useMyAccount () {
@@ -178,7 +179,7 @@ export function useMyAddress () {
   return useMyAccount().state.address
 }
 
-export function isMyAddress (anotherAddress?: string | AccountId) {
+export function isMyAddress (anotherAddress?: AnyAccountId) {
   return equalAddresses(useMyAddress(), anotherAddress)
 }
 

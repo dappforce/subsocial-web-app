@@ -3,11 +3,12 @@ import SimpleMDEReact from 'react-simplemde-editor'
 import { MdEditorProps } from './types'
 import store from 'store'
 
-const getSavedContent = (id?: string): string | undefined => {
+/** Get auto saved content of editor from the local storage. */
+const getAutoSavedContent = (id?: string): string | undefined => {
   return id ? store.get(`smde_${id}`) : undefined
 }
 
-const DEFAULT_DELAY = 5000
+const AUTO_SAVE_INTERVAL_MILLIS = 5000
 
 const MdEditor = ({
   className,
@@ -16,7 +17,7 @@ const MdEditor = ({
   onChange = () => {},
   value,
   autoSaveId,
-  delay = DEFAULT_DELAY,
+  autoSaveIntervalMillis = AUTO_SAVE_INTERVAL_MILLIS,
   ...otherProps
 }: MdEditorProps) => {
   const { toolbar = true, ...otherOptions } = options
@@ -27,19 +28,22 @@ const MdEditor = ({
     ? {
       enabled: true,
       uniqueId: autoSaveId,
-      delay
+      delay: autoSaveIntervalMillis
     }
     : undefined
 
+  const newOptions = {
+    previewClass: 'markdown-body',
+    autosave,
+    ...otherOptions
+  }
+
   return <SimpleMDEReact
     className={`DfMdEditor ${classToolbar} ${className}`}
-    options={{
-      previewClass: 'markdown-body',
-      autosave,
-      ...otherOptions }}
-    value={value || getSavedContent(autoSaveId)}
+    value={value || getAutoSavedContent(autoSaveId)}
     events={events}
     onChange={onChange}
+    options={newOptions}
     {...otherProps}
   />
 }

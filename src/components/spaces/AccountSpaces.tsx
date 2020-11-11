@@ -20,7 +20,7 @@ import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.confi
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
-  mySpaceIds: SpaceId[]
+  mySpaceIds: SpaceId[] // TODO rename to just `spaceIds`
 }
 
 type BaseProps = {
@@ -34,7 +34,11 @@ type Props = Partial<LoadSpacesType> & BaseProps
 
 const log = newLogger('AccountSpaces')
 
-export const useLoadAccoutPublicSpaces = (address?: AnyAccountId, initialSpaceIds?: SpaceId[]): LoadSpacesProps | undefined => {
+export const useLoadAccoutPublicSpaces = (
+  address?: AnyAccountId,
+  initialSpaceIds?: SpaceId[]
+): LoadSpacesProps | undefined => {
+
   if (!address) return undefined
 
   const { query } = useRouter()
@@ -43,36 +47,35 @@ export const useLoadAccoutPublicSpaces = (address?: AnyAccountId, initialSpaceId
   const page = query.page || DEFAULT_FIRST_PAGE
   const size = query.size || DEFAULT_PAGE_SIZE
 
-  const mySpaceIdsLength = mySpaceIds.length
+  const spacesCount = mySpaceIds.length
 
   useSubsocialEffect(({ substrate }) => {
-    if (mySpaceIdsLength) return
+    if (spacesCount) return
 
-    const loadMySpaceIds = async () => {
-      const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-
+    const loadSpaceIds = async () => {
+      const mySpaceIds = await substrate.spaceIdsByOwner(address)
       setSpaceIds(mySpaceIds)
     }
 
-    loadMySpaceIds().catch((err) => log.error('Failed load my space ids. Error: ', err))
-
-  }, [ address ])
+    loadSpaceIds().catch((err) =>
+      log.error('Failed to load space ids by account', address.toString(), err)
+    )
+  }, [ address.toString() ])
 
   useSubsocialEffect(({ subsocial, substrate }) => {
-    if (!mySpaceIdsLength) return
+    if (!spacesCount) return
 
-    const loadMySpaces = async () => {
-      const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
+    const loadSpaces = async () => {
+      const mySpaceIds = await substrate.spaceIdsByOwner(address)
       const pageIds = getPageOfIds(mySpaceIds, query)
-
       const spacesData = await subsocial.findPublicSpaces(pageIds)
-
       setSpacesData(spacesData)
     }
 
-    loadMySpaces().catch((err) => log.error('Failed load my spaces. Error: ', err))
-
-  }, [ address, mySpaceIdsLength, page, size ])
+    loadSpaces().catch((err) =>
+      log.error('Failed to load spaces by account', address.toString(), err)
+    )
+  }, [ address.toString(), spacesCount, page, size ])
 
   if (!spacesData.length) return undefined
 
@@ -84,7 +87,7 @@ export const useLoadAccoutPublicSpaces = (address?: AnyAccountId, initialSpaceId
 }
 
 const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
-  const isMySpaces = isMyAddress(address as string)
+  const isMySpaces = isMyAddress(address)
   const [ myUnlistedSpaces, setMyUnlistedSpaces ] = useState<SpaceData[]>()
 
   useSubsocialEffect(({ subsocial }) => {
@@ -93,7 +96,7 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
     subsocial.findUnlistedSpaces(mySpaceIds)
       .then(setMyUnlistedSpaces)
       .catch((err) =>
-        log.error('Failed to load unlisted spaces. Error: ', err)
+        log.error('Failed to load unlisted spaces by account', address.toString(), err)
       )
   }, [ mySpaceIds.length, isMySpaces ])
 
