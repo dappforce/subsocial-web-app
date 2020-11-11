@@ -151,7 +151,7 @@ const Component = (props: Props) => {
       {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
       {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
-    <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} spacesData={spacesData} />
+    <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} />
   </PageContent>;
 };
 
@@ -195,12 +195,10 @@ ProfilePage.getInitialProps = async (props): Promise<any> => {
 
   const owner = await subsocial.findProfile(addressStr)
   const mySpaceIds = await substrate.spaceIdsByOwner(addressStr)
-  const spacesData = await subsocial.findPublicSpaces(mySpaceIds)
 
   return {
     address: accountId,
     owner,
-    spacesData,
     mySpaceIds
   };
 };

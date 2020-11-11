@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ViewSpace } from './ViewSpace'
 import PaginatedList from 'src/components/lists/PaginatedList'
 import { NextPage } from 'next'
@@ -16,6 +16,7 @@ import { return404 } from '../utils/next'
 import { getPageOfIds } from '../utils/getIds'
 import { useRouter } from 'next/router'
 import DataList from '../lists/DataList'
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -33,27 +34,53 @@ type Props = Partial<LoadSpacesType> & BaseProps
 
 const log = newLogger('AccountSpaces')
 
-export const useLoadAccoutPublicSpaces = (address?: AnyAccountId): LoadSpacesProps | undefined => {
-
+export const useLoadAccoutPublicSpaces = (address?: AnyAccountId, initialSpaceIds?: SpaceId[]): LoadSpacesProps | undefined => {
   if (!address) return undefined
 
   const { query } = useRouter()
-  const [ state, setState ] = useState<LoadSpacesProps>()
+  const [ mySpaceIds, setSpaceIds ] = useState<SpaceId[]>(initialSpaceIds || [])
+  const [ spacesData, setSpacesData ] = useState<SpaceData[]>([])
+  const page = query.page || DEFAULT_FIRST_PAGE
+  const size = query.size || DEFAULT_PAGE_SIZE
 
-  useSubsocialEffect(({ subsocial, substrate }) => {
-    const loadMySpaces = async () => {
+  const mySpaceIdsLength = mySpaceIds.length
+
+  useSubsocialEffect(({ substrate }) => {
+    if (mySpaceIdsLength) return
+
+    const loadMySpaceIds = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
-      const pageIds = getPageOfIds(mySpaceIds, query)
-      const spacesData = await subsocial.findPublicSpaces(pageIds)
 
-      setState({ mySpaceIds, spacesData, address })
+      setSpaceIds(mySpaceIds)
     }
 
-    loadMySpaces().catch((err) => log.error('Failed load my spaces. Error: %', err))
+    loadMySpaceIds().catch((err) => log.error('Failed load my space ids. Error: ', err))
 
   }, [ address ])
 
-  return state
+  useSubsocialEffect(({ subsocial, substrate }) => {
+    if (!mySpaceIdsLength) return
+
+    const loadMySpaces = async () => {
+      const mySpaceIds = await substrate.spaceIdsByOwner(address as string)
+      const pageIds = getPageOfIds(mySpaceIds, query)
+
+      const spacesData = await subsocial.findPublicSpaces(pageIds)
+
+      setSpacesData(spacesData)
+    }
+
+    loadMySpaces().catch((err) => log.error('Failed load my spaces. Error: ', err))
+
+  }, [ address, mySpaceIdsLength, page, size ])
+
+  if (!spacesData.length) return undefined
+
+  return {
+    spacesData,
+    mySpaceIds,
+    address
+  }
 }
 
 const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
@@ -66,7 +93,7 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
     subsocial.findUnlistedSpaces(mySpaceIds)
       .then(setMyUnlistedSpaces)
       .catch((err) =>
-        log.error('Failed to load unlisted spaces. Error: %', err)
+        log.error('Failed to load unlisted spaces. Error: ', err)
       )
   }, [ mySpaceIds.length, isMySpaces ])
 
@@ -86,8 +113,8 @@ const SpacePreview = (space: SpaceData) =>
 
 const PublicSpaces = (props: LoadSpacesProps) => {
   const { spacesData, mySpaceIds, address, withTitle } = props
-  const noSpaces = !mySpaceIds.length
-  const totalCount = mySpaceIds.length
+  const totalCount = mySpaceIds?.length
+  const noSpaces = totalCount === 0
   const isMy = isMyAddress(address)
 
   const title = withTitle
@@ -125,10 +152,10 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
   /> : null
 }
 
-export const AccountSpaces = ({ mySpaceIds, withTitle = true, ...props}: Props) => {
-  const state = mySpaceIds
-    ? { mySpaceIds, withTitle, ...props } as LoadSpacesProps
-    : useLoadAccoutPublicSpaces(props.address)
+export const AccountSpaces = ({ spacesData, mySpaceIds, withTitle = true, ...props}: Props) => {
+  const state = mySpaceIds && spacesData
+    ? { withTitle, spacesData, mySpaceIds, ...props } as LoadSpacesProps
+    : useLoadAccoutPublicSpaces(props.address, mySpaceIds)
 
   if (!state) return <Loading label='Loading public spaces'/>
 
@@ -156,7 +183,6 @@ AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const mySpaceIds = await substrate.spaceIdsByOwner(address)
   const pageIds = getPageOfIds(mySpaceIds, query)
   const spacesData = await subsocial.findPublicSpaces(pageIds)
-
   return {
     spacesData,
     mySpaceIds,

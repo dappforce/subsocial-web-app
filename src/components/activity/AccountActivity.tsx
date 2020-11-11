@@ -60,7 +60,7 @@ const PostActivities = (props: BaseActivityProps) => <FeedActivities
   loadingLabel='Loading posts...'
 />
 
-export const AccountActivity = ({ address, spacesData, mySpaceIds }: ActivitiesByAddressProps) => {
+export const AccountActivity = ({ address, mySpaceIds }: ActivitiesByAddressProps) => {
   if (!uiShowActivity) return null
 
   const [ counts, setCounts ] = useState<Counts>()
@@ -93,7 +93,7 @@ export const AccountActivity = ({ address, spacesData, mySpaceIds }: ActivitiesB
       <FollowActivities address={address} totalCount={followsCount} />
     </TabPane>
     <TabPane tab={getTabTitle('Spaces', spacesCount)} key='spaces'>
-      <AccountSpaces address={address} spacesData={spacesData} mySpaceIds={mySpaceIds} withTitle={false} />
+      <AccountSpaces address={address} mySpaceIds={mySpaceIds} withTitle={false} />
     </TabPane>
     <TabPane tab={getTabTitle('All', activitiesCount)} key='all'>
       <AllActivities address={address} totalCount={activitiesCount} />
