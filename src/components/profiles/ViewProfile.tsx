@@ -1,46 +1,46 @@
-import React, { useState, useCallback } from 'react';
-import { DfMd } from '../utils/DfMd';
-import Link from 'next/link';
+import React, { useState, useCallback } from 'react'
+import { DfMd } from '../utils/DfMd'
+import Link from 'next/link'
 
-import { AccountId } from '@polkadot/types/interfaces';
-import { ZERO } from '../utils/index';
-import { HeadMeta } from '../utils/HeadMeta';
+import { AccountId } from '@polkadot/types/interfaces'
+import { ZERO } from '../utils/index'
+import { HeadMeta } from '../utils/HeadMeta'
 import { isEmptyStr } from '@subsocial/utils'
-import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
+import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal'
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
-import dynamic from 'next/dynamic';
-import { MutedDiv } from '../utils/MutedText';
-import { isMyAddress } from '../auth/MyAccountContext';
-import Section from '../utils/Section';
-import { Pluralize } from '../utils/Plularize';
+import dynamic from 'next/dynamic'
+import { MutedDiv } from '../utils/MutedText'
+import { isMyAddress } from '../auth/MyAccountContext'
+import Section from '../utils/Section'
+import { Pluralize } from '../utils/Plularize'
 
 import {
   EllipsisOutlined,
   PlusOutlined
-} from '@ant-design/icons';
+} from '@ant-design/icons'
 
-import { Menu, Dropdown, Button } from 'antd';
-import { NextPage } from 'next';
-import BN from 'bn.js';
-import isEmpty from 'lodash.isempty';
-import { ProfileContent } from '@subsocial/types/offchain';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { ProfileData, SpaceData } from '@subsocial/types';
-import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner';
-import { getAccountId } from '../substrate';
-import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
-import Avatar from './address-views/Avatar';
-import Name from './address-views/Name';
-import MyEntityLabel from '../utils/MyEntityLabel';
-import { Balance } from './address-views/utils/Balance';
-import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils';
-import { mdToText } from 'src/utils';
-import { SpaceId } from '@subsocial/types/substrate/interfaces';
-import { AccountActivity } from '../activity/AccountActivity';
-import { PageContent } from '../main/PageWrapper';
+import { Menu, Dropdown, Button } from 'antd'
+import { NextPage } from 'next'
+import BN from 'bn.js'
+import isEmpty from 'lodash.isempty'
+import { ProfileContent } from '@subsocial/types/offchain'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { ProfileData, SpaceData } from '@subsocial/types'
+import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner'
+import { getAccountId } from '../substrate'
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
+import Avatar from './address-views/Avatar'
+import Name from './address-views/Name'
+import MyEntityLabel from '../utils/MyEntityLabel'
+import { Balance } from './address-views/utils/Balance'
+import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils'
+import { mdToText } from 'src/utils'
+import { SpaceId } from '@subsocial/types/substrate/interfaces'
+import { AccountActivity } from '../activity/AccountActivity'
+import { PageContent } from '../main/PageWrapper'
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
-const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
+const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
 
 export type Props = {
   address: AccountId,
@@ -58,22 +58,22 @@ const Component = (props: Props) => {
     owner,
     spacesData,
     mySpaceIds
-  } = props;
+  } = props
 
-  const [ followersOpen, setFollowersOpen ] = useState(false);
-  const [ followingOpen, setFollowingOpen ] = useState(false);
+  const [ followersOpen, setFollowersOpen ] = useState(false)
+  const [ followingOpen, setFollowingOpen ] = useState(false)
 
-  const isMyAccount = isMyAddress(address);
+  const isMyAccount = isMyAddress(address)
 
-  const noProfile = isEmpty(owner?.profile);
-  const followers = owner ? new BN(owner.struct.followers_count) : ZERO;
-  const following = owner ? new BN(owner.struct.following_accounts_count) : ZERO;
-  const reputation = owner ? owner.struct.reputation : ZERO;
+  const noProfile = isEmpty(owner?.profile)
+  const followers = owner ? new BN(owner.struct.followers_count) : ZERO
+  const following = owner ? new BN(owner.struct.following_accounts_count) : ZERO
+  const reputation = owner ? owner.struct.reputation : ZERO
 
   const {
     avatar,
     about
-  } = owner?.content || {} as ProfileContent;
+  } = owner?.content || {} as ProfileContent
 
   const createProfileButton = noProfile && isMyAccount &&
     <Link href='/accounts/new' as='/accounts/new'>
@@ -81,7 +81,7 @@ const Component = (props: Props) => {
         <PlusOutlined />
         Create profile
       </Button>
-    </Link>;
+    </Link>
 
   const DropDownMenu = useCallback(() => {
 
@@ -94,7 +94,7 @@ const Component = (props: Props) => {
           <div onClick={() => setOpen(true)} >View edit history</div>
         </Menu.Item>} */}
       </Menu>
-    );
+    )
 
     return <>
       {isMyAccount &&
@@ -104,10 +104,10 @@ const Component = (props: Props) => {
       }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
     </>
-  }, [ address, isMyAccount ]);
+  }, [ address, isMyAccount ])
 
-  const hasFollowers = followers.gt(ZERO);
-  const hasFollowing = following.gt(ZERO);
+  const hasFollowers = followers.gt(ZERO)
+  const hasFollowing = following.gt(ZERO)
 
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
@@ -152,8 +152,8 @@ const Component = (props: Props) => {
       {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
     <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} spacesData={spacesData} />
-  </PageContent>;
-};
+  </PageContent>
+}
 
 const ProfilePage: NextPage<Props> = (props) => {
   const { address, owner } = props
@@ -162,17 +162,17 @@ const ProfilePage: NextPage<Props> = (props) => {
     name,
     avatar,
     about
-  } = owner?.content || {} as ProfileContent;
+  } = owner?.content || {} as ProfileContent
 
   const isOnlyAddress = isEmptyStr(name)
 
   const getName = () => {
     if (isOnlyAddress) {
-      return address.toString();
+      return address.toString()
     } else {
-      return name;
+      return name
     }
-  };
+  }
 
   return <>
     <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
@@ -181,10 +181,10 @@ const ProfilePage: NextPage<Props> = (props) => {
 }
 
 ProfilePage.getInitialProps = async (props): Promise<any> => {
-  const { query: { address }, res } = props;
+  const { query: { address }, res } = props
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
-  const accountId = await getAccountId(address as string);
+  const accountId = await getAccountId(address as string)
 
   if (!accountId && res) {
     res.statusCode = 404
@@ -202,10 +202,10 @@ ProfilePage.getInitialProps = async (props): Promise<any> => {
     owner,
     spacesData,
     mySpaceIds
-  };
-};
+  }
+}
 
-export default ProfilePage;
+export default ProfilePage
 
 export const ViewProfile = withLoadedOwner(Component)
 

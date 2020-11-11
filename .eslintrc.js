@@ -7,7 +7,11 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'semi': ["warn", "never"],
-    'react/prop-types': 'off'
+    'semi': [ 'warn', 'never' ],
+    'react/prop-types': 'off',
+    'quotes': [ 'warn', 'single' ],
+    'array-bracket-spacing' : [ 'warn', 'always' ],
+    'no-multi-spaces': 'error',
+    'space-before-function-paren': [ 'warn', 'always' ]
   }
 }
