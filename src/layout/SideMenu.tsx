@@ -1,15 +1,15 @@
-import React, {  } from 'react';
-import { Menu, Badge } from 'antd';
-import Router, { useRouter } from 'next/router';
-import { useIsSignedIn, useMyAddress } from '../components/auth/MyAccountContext';
-import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import Link from 'next/link';
-import { newLogger } from '@subsocial/utils';
-import { useNotifCounter } from '../components/utils/NotifCounter';
-import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems';
-import { OnBoardingCard } from 'src/components/onboarding';
-import { useAuth } from 'src/components/auth/AuthContext';
-import { useResponsiveSize } from 'src/components/responsive';
+import React, { } from 'react'
+import { Menu, Badge } from 'antd'
+import Router, { useRouter } from 'next/router'
+import { useIsSignedIn, useMyAddress } from '../components/auth/MyAccountContext'
+import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
+import Link from 'next/link'
+import { newLogger } from '@subsocial/utils'
+import { useNotifCounter } from '../components/utils/NotifCounter'
+import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
+import { OnBoardingCard } from 'src/components/onboarding'
+import { useAuth } from 'src/components/auth/AuthContext'
+import { useResponsiveSize } from 'src/components/responsive'
 
 const log = newLogger(SideMenu.name)
 
@@ -29,7 +29,7 @@ const renderPageLink = (item: PageLink, unreadCount?: number) => {
   return item.isAdvanced
     ? (
       <Menu.Item key={item.page[0]} >
-        <a href={item.page[0]} target='_blank'>
+        <a href={item.page[0]} rel='noreferrer' target='_blank'>
           {icon}
           <span>{item.name}</span>
         </a>
@@ -74,7 +74,7 @@ function SideMenu () {
       style={{ height: '100%', borderRight: 0 }}
     >
       {menuItems.map((item, i) => isDivider(item)
-        ? <Menu.Divider key={'divider-' + i} />
+        ? <Menu.Divider key={`divider-${i}`} />
         : renderPageLink(item, unreadCount)
       )}
       {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />}
