@@ -18,6 +18,7 @@ export default {
     CommentCreated: 'commented on a post',
     CommentReplyCreated: 'replied to a comment on',
     PostSharing: 'shared a post',
+    PostShared: 'shared a post',
     CommentShared: 'shared a comment',
     PostReactionCreated: 'reacted to a post',
     CommentReactionCreated: 'reacted to a comment',

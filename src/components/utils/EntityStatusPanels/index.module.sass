@@ -1,0 +1,45 @@
+@import 'src/styles/subsocial-vars.scss'
+
+$_padding: $space_normal
+$_border: 1px solid $color_warn_border
+
+.DfEntityStatus
+  display: block
+  margin-bottom: $space_normal
+
+  \:global .ant-btn
+    background-color: transparent
+    margin-left: $space_tiny
+
+.DfEntityStatusOnPage
+  padding-top: $_padding
+  padding-bottom: $_padding
+  border: $_border
+  border-radius: $border_radius_normal
+
+  \:global .ant-alert-icon
+    margin-top: $space_tiny
+
+.RadiusesForPreview
+  border-top-left-radius: $border_radius_normal
+  border-top-right-radius: $border_radius_normal
+
+.SpacingForPreview
+  margin: -$space_normal
+  margin-bottom: $space_normal
+
+.DfEntityStatusInPreview
+  @extend .SpacingForPreview
+  @extend .RadiusesForPreview
+  border-bottom: $_border
+
+.DfEntityStatusGroup
+  @extend .SpacingForPreview
+
+  .DfEntityStatusInPreview
+    margin: 0
+    border-radius: 0
+    border-bottom: $_border
+
+    &:first-child
+      @extend .RadiusesForPreview

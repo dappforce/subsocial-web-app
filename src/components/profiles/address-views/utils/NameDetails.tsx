@@ -5,11 +5,12 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import { isMyAddress } from 'src/components/auth/MyAccountContext';
 import MyEntityLabel from 'src/components/utils/MyEntityLabel';
-import { InfoDetails } from '../AuthorPreview';
 import { AddressProps } from './types';
-import { useExtensionName } from '.';
+import { CopyAddress, useExtensionName } from '.';
 import Name from '../Name';
 import { KusamaRolesTags } from 'src/components/kusama/KusamaRoles';
+import { InfoPanel } from '../InfoSection';
+import { Balance } from './Balance';
 
 const FollowAccountButton = dynamic(() => import('../../../utils/FollowAccountButton'), { ssr: false });
 
@@ -23,8 +24,7 @@ export const NameDetails = ({
   owner = {} as ProfileData,
   address,
   withFollowButton = true,
-  withLabel,
-  withDetails = true
+  withLabel
 }: Props) => {
 
   const { content, struct } = owner
@@ -32,15 +32,13 @@ export const NameDetails = ({
   const shortAddress = toShortAddress(address)
   const extensionName = useExtensionName(address)
 
-  let subtitle = null
+  const optionItems = []
 
   if (content && nonEmptyStr(content.name)) {
-    subtitle = extensionName
-      ? <>
-        <div>{extensionName}</div>
-        <div>{shortAddress}</div>
-      </>
-      : shortAddress
+    optionItems.push({
+      label: 'Address',
+      value: <CopyAddress address={address}>{shortAddress}</CopyAddress>
+    })
   }
 
   return <>
@@ -48,10 +46,24 @@ export const NameDetails = ({
       <Name owner={owner} address={address} />
       {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       <KusamaRolesTags address={address} />
-      {withFollowButton && <FollowAccountButton address={address} className='ml-3' />}
+      {withFollowButton && <FollowAccountButton address={address} className='ml-3 float-right' />}
     </div>
-    {subtitle && <div className='DfPopup-handle'>{subtitle}</div>}
-    {withDetails && <InfoDetails address={address} details={<>Reputation: {struct?.reputation?.toString() || 0}</>} />}
+    {extensionName && <div className='DfPopup-handle'>{extensionName}</div>}
+    <InfoPanel
+      layout='horizontal'
+      column={1}
+      items={[
+        ...optionItems,
+        {
+          label: 'Balance',
+          value: <Balance address={address} />
+        },
+        {
+          label: 'Reputation',
+          value: struct?.reputation?.toString() || 0
+        }
+      ]}
+    />
   </>
 }
 

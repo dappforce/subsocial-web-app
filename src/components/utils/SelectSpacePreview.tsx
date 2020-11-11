@@ -1,11 +1,12 @@
+/* eslint-disable react/display-name */
 import React, { useState } from 'react'
-import { Select } from 'antd';
-import { LabeledValue } from 'antd/lib/select';
+import { Select } from 'antd'
+import { LabeledValue } from 'antd/lib/select'
 import BN from 'bn.js'
-import useSubsocialEffect from '../api/useSubsocialEffect';
-import { isEmptyArray } from '@subsocial/utils';
-import { SpaceData } from '@subsocial/types/dto';
-import { SpaceAvatar } from '../spaces/helpers';
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { isEmptyArray } from '@subsocial/utils'
+import { SpaceData } from '@subsocial/types/dto'
+import { SpaceAvatar } from '../spaces/helpers'
 
 
 type Props = {
@@ -36,8 +37,8 @@ const SelectSpacePreview = (props: Props) => {
       const idStr = id.toString()
 
       return <Select.Option value={idStr} key={idStr}>
-        <div className={`ProfileDetails DfPreview`}>
-          <SpaceAvatar address={owner} space={struct} avatar={image} size={imageSize} asLink={false}  />
+        <div className={'ProfileDetails DfPreview'}>
+          <SpaceAvatar address={owner} space={struct} avatar={image} size={imageSize} asLink={false} />
           <div className='content'>
             <div className='handle'>{name}</div>
           </div>
@@ -58,7 +59,7 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
         setCurrentSpacesData(spacesData)
       }
 
-      loadSpaces();
+      loadSpaces()
     }, [ spaceIds ])
 
     if (isEmptyArray(spaceIds)) return null

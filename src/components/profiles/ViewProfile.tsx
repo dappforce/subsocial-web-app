@@ -105,7 +105,7 @@ const Component = (props: Props) => {
       }
       {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
     </>
-  }, [ isMyAccount ]);
+  }, [ address, isMyAccount ]);
 
   const hasFollowers = followers.gt(ZERO);
   const hasFollowing = following.gt(ZERO);

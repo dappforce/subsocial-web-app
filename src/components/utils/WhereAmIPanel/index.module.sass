@@ -1,16 +1,26 @@
 @import 'src/styles/subsocial-vars.scss'
 
-$border: 1px solid $color_warn_border
+$_border: 1px solid $color_warn_border
+$_height: 40px
 
 .DfActionButton
   margin-left: $space_normal
   color: $color_volcano !important
   border-color: $color_volcano !important
 
+.Wrapper
+  margin-top: 3rem
+
+@media (max-width: 767px)
+  .Wrapper
+    height: $_height
+    margin-top: 2rem
+
 .DfWhereAmIPanel
+  z-index: 1000
   position: fixed
-  width: 100%
   bottom: 0px
   left: 0px
-  height: 40px
-  border-top: $border
+  width: 100%
+  height: $_height
+  border-top: $_border

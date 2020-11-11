@@ -11,6 +11,7 @@ import { Moment } from '@polkadot/types/interfaces';
 import { isMyAddress } from '../auth/MyAccountContext';
 import { AnyAccountId } from '@subsocial/types';
 import { hexToBn } from '@polkadot/util'
+import Error from 'next/error'
 import isbot from 'isbot'
 export * from './IconWithLabel'
 
@@ -71,7 +72,7 @@ export const Loading = ({ label }: LoadingProps) =>
     {label && <em className='ml-3 text-muted'>{label}</em>}
   </div>
 
-export const formatUnixDate = (_seconds: number | BN | Moment, format: string = 'lll') => {
+export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return moment(new Date(seconds)).format(format);
 };
@@ -144,3 +145,5 @@ export const resolveBn = (value: BN | string) => {
 export const startWithUpperCase = (str: string) => str.replace(/(?:^\s*|\s+)(\S?)/g, (b) => b.toUpperCase())
 
 export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'
+
+export const PageNotFound = () => <Error statusCode={404} />

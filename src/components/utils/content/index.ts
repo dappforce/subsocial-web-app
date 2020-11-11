@@ -1,4 +1,4 @@
-import { SpaceContent, PostContent, NamedLinks } from "@subsocial/types"
+import { SpaceContent, PostContent, NamedLink } from "@subsocial/types"
 import { nonEmptyStr } from "@subsocial/utils"
 
 export const getNonEmptySpaceContent = (content: SpaceContent): SpaceContent => {
@@ -28,7 +28,7 @@ const getNonEmptyStrings = (inputArr: string[] = []): string[] => {
   return res
 }
 
-type Link = string | NamedLinks
+type Link = string | NamedLink
 
 const getNonEmptyLinks = (inputArr: Link[] = []): Link[] => {
   const res: Link[] = []

@@ -1,19 +1,19 @@
-import styles from './TransferSpaceOwnership.module.sass'
-
 import AccountId from '@polkadot/types/generic/AccountId'
 import { asAccountId } from '@subsocial/api/utils'
+import { Space } from '@subsocial/types/substrate/interfaces'
 import { isDef, nonEmptyStr } from '@subsocial/utils'
-import { Modal, Form, Input, Button } from 'antd'
+import { Button, Form, Input, Modal } from 'antd'
 import dynamic from 'next/dynamic'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
 import { DfForm } from '../forms'
 import { equalAddresses } from '../substrate'
+import styles from './TransferSpaceOwnership.module.sass'
 
 const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false })
 
 type LinkProps = {
-  currentOwner: AccountId
+  space: Space
 }
 
 export const TransferOwnershipLink = (props: LinkProps) => {
@@ -44,10 +44,11 @@ type FieldName = keyof FormValues
 const fieldName = (name: FieldName): FieldName => name
 
 const TransferOwnershipModal = (props: ModalProps) => {
-  const { currentOwner, open, onClose: initialOnClose } = props
+  const { space, open, onClose: initialOnClose } = props
   const [ form ] = Form.useForm()
   const [ newOwner, setNewOwner ] = useState<AccountId>()
   const newOwnerRef = useRef(null)
+  const currentOwner = space.owner
 
   useEffect(() => {
     if (!open) return
@@ -56,7 +57,7 @@ const TransferOwnershipModal = (props: ModalProps) => {
     if (!c) return
 
     (c as any).focus()
-  }, [ currentOwner?.toString(), open ])
+  }, [ currentOwner.toString(), open ])
 
   const resetState = () => {
     setNewOwner(undefined)
@@ -70,10 +71,6 @@ const TransferOwnershipModal = (props: ModalProps) => {
     }
   }
 
-  if (!currentOwner) {
-    return null
-  }
-
   const hasValidNewOwner = () => isDef(newOwner)
 
   const onTxSuccess: TxCallback = () => {
@@ -85,7 +82,7 @@ const TransferOwnershipModal = (props: ModalProps) => {
   }
 
   const getTxParams = () => {
-    return [ /* TODO spaceId, newOwner */ ]
+    return [ space.id, newOwner ]
   }
 
   const renderTxButton = () =>
