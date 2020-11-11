@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { ViewSpace } from './ViewSpace'
 import PaginatedList from 'src/components/lists/PaginatedList'
 import { NextPage } from 'next'
