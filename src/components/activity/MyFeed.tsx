@@ -1,65 +1,36 @@
-import React, { useCallback } from 'react';
-import { hexToBn } from '@polkadot/util';
-import { useMyAddress } from '../auth/MyAccountContext';
-import NotAuthorized from '../auth/NotAuthorized';
-import { getNewsFeed } from '../utils/OffchainUtils';
-import { HeadMeta } from '../utils/HeadMeta';
-import { InfiniteList } from '../lists/InfiniteList';
-import PostPreview from '../posts/view-post/PostPreview';
-import { PostWithAllDetails } from '@subsocial/types';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { Loading } from '../utils';
-import { SubsocialApi } from '@subsocial/api/subsocial';
-import { isDef } from '@subsocial/utils';
-import { ParsedPaginationQuery } from '../utils/getIds';
+import { getLoadMoreFeedFn, FeedActivities } from "./FeedActivities"
+import { BaseActivityProps } from "./types"
+import { getFeedCount, getNewsFeed } from "../utils/OffchainUtils"
+import { useMyAddress } from "../auth/MyAccountContext"
+import NotAuthorized from "../auth/NotAuthorized"
+import HeadMeta from "../utils/HeadMeta"
 
-const title = 'My feed'
+const TITLE = 'My feed'
 const loadingLabel = 'Loading your feed...'
 
 type MyFeedProps = {
-  withTitle?: boolean
+  title?: string
 }
 
-type LoadMoreProps = ParsedPaginationQuery & {
-  subsocial: SubsocialApi
-  myAddress?: string
-}
+const loadMoreFeed = getLoadMoreFeedFn(getNewsFeed, 'post_id')
 
-const loadMore = async (props: LoadMoreProps) => {
-  const { subsocial, myAddress, page, size } = props
+export const InnerMyFeed = (props: BaseActivityProps) => <FeedActivities
+  {...props}
+  loadMore={loadMoreFeed}
+  loadingLabel={loadingLabel}
+  noDataDesc='Your feed is empty. Try to follow more spaces ;)'
+  getCount={getFeedCount}
+/>
 
-  if (!myAddress) return []
 
-  const offset = (page - 1) * size
-  const activity = await getNewsFeed(myAddress, offset, size)
-  const postIds = activity.map(x => hexToBn(x.post_id))
-  const posts = await subsocial.findPublicPostsWithAllDetails(postIds)
-  return posts.filter(x => isDef(x.space))
-}
-
-export const InnerMyFeed = ({ withTitle }: MyFeedProps) => {
+export const MyFeed = ({ title }: MyFeedProps) => {
   const myAddress = useMyAddress()
-  const { subsocial, isApiReady } = useSubsocialApi()
-
-  const Feed = useCallback(() => <InfiniteList
-    loadingLabel={loadingLabel}
-    title={withTitle ? title : undefined}
-    noDataDesc='Your feed is empty. Try to follow more spaces ;)'
-    renderItem={(x: PostWithAllDetails) => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />}
-    loadMore={(page, size) => loadMore({ subsocial, myAddress, page, size })}
-  />, [ myAddress, isApiReady ])
-
-  if (!isApiReady) return <Loading label={loadingLabel} />
 
   if (!myAddress) return <NotAuthorized />
 
-  return <Feed />
-}
-
-export const MyFeed = (props: MyFeedProps) => {
   return <>
-    <HeadMeta title={title} />
-    <InnerMyFeed {...props}/>
+    <HeadMeta title={TITLE} />
+    <InnerMyFeed title={title} address={myAddress} />
   </>
 }
 

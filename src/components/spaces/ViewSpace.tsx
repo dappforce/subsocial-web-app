@@ -8,7 +8,6 @@ import dynamic from 'next/dynamic';
 import Error from 'next/error';
 import React, { useCallback } from 'react';
 import { Segment } from 'src/components/utils/Segment';
-
 import { isHidden, resolveBn } from '../utils';
 import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
@@ -32,6 +31,7 @@ import { getPageOfIds } from '../utils/getIds';
 import { editSpaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
+import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -120,34 +120,32 @@ export const ViewSpace = (props: Props) => {
       <div className='DfSpaceBody'>
         <Avatar />
         <div className='ml-2 w-100'>
-          <span className='mb-3'>
-            <div className='d-flex justify-content-between mb-3'>
-              {title}
-              <span className='d-flex align-items-center'>
-                <DropdownMenu className='mx-2' spaceData={spaceData} />
-                {isMy &&
-                  <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
-                    <EditOutlined /> Edit
-                  </ButtonLink>
-                }
-                {withFollowButton &&
-                  <FollowSpaceButton spaceId={id} />
-                }
-              </span>
-            </div>
-          </span>
+          <div className='d-flex justify-content-between'>
+            {title}
+            <span className='d-flex align-items-center'>
+              <DropdownMenu className='mx-2' spaceData={spaceData} />
+              {isMy &&
+                <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
+                  <EditOutlined /> Edit
+                </ButtonLink>
+              }
+              {withFollowButton &&
+                <FollowSpaceButton spaceId={id} />
+              }
+            </span>
+          </div>
 
           {nonEmptyStr(about) &&
-            <div className='description mb-2'>
+            <div className='description mt-3'>
               <SummarizeMd md={about} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
             </div>
           }
 
-          {withTags && <ViewTags tags={tags} />}
+          {withTags && <ViewTags tags={tags} className='mt-2' />}
 
-          {withStats && <span className='d-flex justify-content-between flex-wrap'>
+          {withStats && <span className='d-flex justify-content-between flex-wrap mt-3'>
             <SpaceStatsRow space={space} />
             {!preview && <ContactInfo {...contactInfo} />}
           </span>}
@@ -163,21 +161,23 @@ export const ViewSpace = (props: Props) => {
     return renderMiniPreview();
   } else if (preview) {
     return <Segment>
-      <HiddenSpaceAlert space={space} preview />
+      <EntityStatusGroup>
+        <PendingSpaceOwnershipPanel space={space} preview />
+        <HiddenSpaceAlert space={space} preview />
+      </EntityStatusGroup>
       {renderPreview()}
     </Segment>;
   }
 
   return <>
-    <HiddenSpaceAlert space={space} />
-    <div>
-      <PageContent>
-        <Section>{renderPreview()}</Section>
-        <Section className='DfContentPage mt-4'>
-          <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
-        </Section>
-      </PageContent>
-    </div>
+    <PageContent>
+      <PendingSpaceOwnershipPanel space={space} />
+      <HiddenSpaceAlert space={space} />
+      <Section>{renderPreview()}</Section>
+      <Section className='DfContentPage mt-4'>
+        <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
+      </Section>
+    </PageContent>
   </>
 }
 

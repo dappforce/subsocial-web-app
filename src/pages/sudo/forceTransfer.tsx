@@ -7,7 +7,7 @@ import { DfForm, DfFormButtons } from 'src/components/forms'
 import { showErrorMessage, showSuccessMessage } from 'src/components/utils/Message'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { Balance } from '@polkadot/types/interfaces'
-import { nonEmptyStr, pluralize } from '@subsocial/utils'
+import { nonEmptyStr, pluralize, newLogger } from '@subsocial/utils'
 import { formatBalance } from '@polkadot/util'
 import { FormatBalance } from 'src/components/profiles/address-views/utils/Balance'
 import BN from 'bn.js'
@@ -41,12 +41,14 @@ function RenderBalances ({ balances, title }: {
         const css = x.balance.gtn(0) ? 'text-success' : 'text-danger'
         return <li key={x.account.toString()}>
           <code className={css + ' mr-3'}>{x.account.toString()} </code>
-          {FormatBalance(x.balance)}
+          {<FormatBalance value={x.balance} />}
         </li>
       })}
     </ol>
   </> : null
 }
+
+const log = newLogger('ForceTransfer')
 
 function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
@@ -117,12 +119,12 @@ function InnerForm (props: FormProps) {
   const hasZeroBalances = zeroBalances.length > 0
 
   return <div {...props}>
-    <DfForm form={form}>
+    <DfForm form={form} layout='vertical'>
 
       <Form.Item
         label='Free tokens per account'
       >
-        {FormatBalance(freeTokensPerAccount)}
+        {<FormatBalance value={freeTokensPerAccount} />}
       </Form.Item>
 
       <Form.Item
@@ -147,7 +149,7 @@ function InnerForm (props: FormProps) {
             .filter(nonEmptyStr)
             .map(x => x.trim())
 
-          console.log({ accs })
+          log.debug({ accs })
 
           setAccounts(accs)
         }}>Read balances</Button>

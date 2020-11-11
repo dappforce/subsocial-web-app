@@ -1,22 +1,25 @@
-import React, { useState } from 'react';
-import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import Search from '../components/search/Search';
-import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
-import AuthorizationPanel from '../components/auth/AuthorizationPanel';
-import Link from 'next/link';
-import { useResponsiveSize } from 'src/components/responsive';
+import React, { useState } from 'react'
+import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
+import SearchInput from '../components/search/SearchInput'
+import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
+import AuthorizationPanel from '../components/auth/AuthorizationPanel'
+import Link from 'next/link'
+import { useResponsiveSize } from 'src/components/responsive'
+import { SignInMobileStub } from 'src/components/auth/AuthButtons'
+import { isMobileDevice } from 'src/config/Size.config'
+import { uiShowSearch } from 'src/components/utils/env'
 
 const InnerMenu = () => {
-  const { toggle } = useSidebarCollapsed();
+  const { toggle } = useSidebarCollapsed()
   const { isNotMobile, isMobile } = useResponsiveSize()
-  const [ show, setShow ] = useState(false);
+  const [ show, setShow ] = useState(false)
 
-  const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
+  const logoImg = '/subsocial-logo.svg'
 
   return isMobile && show
     ? <div className='DfTopBar DfTopBar--search'>
-      <Search/>
+      <SearchInput/>
       <CloseCircleOutlined className='DfCloseSearchIcon' onClick={() => setShow(false)} />
     </div>
     : <div className='DfTopBar'>
@@ -25,18 +28,22 @@ const InnerMenu = () => {
           <MenuOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
         <Link href='/' as='/'>
-          <a className={`DfBrand ${isMobile ? 'mobile' : ''}`}>
+          <a className='DfBrand'>
             <img src={logoImg} alt='Subsocial' />
           </a>
         </Link>
       </div>
-      {isNotMobile && <Search/>}
+      {isNotMobile && uiShowSearch && <SearchInput/>}
       <div className='DfTopBar--rightContent'>
-        {isMobile &&
-          <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />}
-        <AuthorizationPanel />
+        {isMobile && uiShowSearch &&
+          <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />
+        }
+        {isMobileDevice
+          ? <SignInMobileStub />
+          : <AuthorizationPanel />
+        }
       </div>
-    </div>;
-};
+    </div>
+}
 
-export default InnerMenu;
+export default InnerMenu

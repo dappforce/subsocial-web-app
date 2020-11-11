@@ -4,15 +4,18 @@ import { PaginationConfig } from 'antd/lib/pagination';
 import Section from 'src/components/utils/Section';
 import NoData from 'src/components/utils/EmptyList';
 
-export type DataListProps<T extends any> = {
-  totalCount?: number,
-  dataSource: T[],
-  renderItem: (item: T, index: number) => JSX.Element,
+export type DataListOptProps = {
   title?: React.ReactNode,
   level?: number,
   noDataDesc?: React.ReactNode,
   noDataExt?: React.ReactNode,
   className?: string,
+}
+
+export type DataListProps<T extends any> = DataListOptProps & {
+  totalCount?: number,
+  dataSource: T[],
+  renderItem: (item: T, index: number) => JSX.Element,
   paginationConfig?: PaginationConfig,
   children?: React.ReactNode
 }

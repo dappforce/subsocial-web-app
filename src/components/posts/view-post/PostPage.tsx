@@ -45,7 +45,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
   const struct = useSubscribedPost(initStruct)
   const postDetails = { ...initialPost, post: { struct, content } }
 
-  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpaces
+  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpace
 
   const { title, body, image, canonical, tags } = content;
 
@@ -65,18 +65,20 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
     : title
 
   return <>
-    <HiddenPostAlert post={post.struct} />
     <PageContent>
+      <HiddenPostAlert post={post.struct} />
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
         <HeadMeta title={title} desc={mdToText(body)} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
           <h1 className='DfPostName'>{titleMsg}</h1>
           <PostDropDownMenu postDetails={postDetails} space={spaceStruct} withEditButton />
         </div>
+
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
           {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
         </div>
+
         <div className='DfPostContent'>
           {ext
             ? <SharePostContent postDetails={postDetails} space={space} />
@@ -85,13 +87,15 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
                 <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
               </div>}
               {body && <DfMd source={body} />}
+              <ViewTags tags={tags} className='mt-2' />
             </>}
         </div>
-        <ViewTags tags={tags} />
+        
         <div className='DfRow'>
           <PostActionsPanel postDetails={postDetails} space={space.struct} />
         </div>
-        <div className='my-3'>
+
+        <div className='DfSpacePreviewOnPostPage'>
           <ViewSpace
             spaceData={spaceData}
             withFollowButton
@@ -100,6 +104,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
             preview
           />
         </div>
+
         <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
       </Section>
     </PageContent>

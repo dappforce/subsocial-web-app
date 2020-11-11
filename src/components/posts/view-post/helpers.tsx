@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { nonEmptyStr } from '@subsocial/utils';
+import { isEmptyStr } from '@subsocial/utils';
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
 import { ViewSpace } from '../../spaces/ViewSpace';
 import { DfBgImageLink } from '../../utils/DfBgImg';
@@ -16,7 +16,6 @@ import AuthorPreview from '../../profiles/address-views/AuthorPreview';
 import SummarizeMd from '../../utils/md/SummarizeMd';
 import ViewPostLink from '../ViewPostLink';
 import HiddenPostButton from '../HiddenPostButton';
-import HiddenAlert, { BaseHiddenAlertProps } from 'src/components/utils/HiddenAlert';
 import NoData from 'src/components/utils/EmptyList';
 import { VoterButtons } from 'src/components/voting/VoterButtons';
 import Segment from 'src/components/utils/Segment';
@@ -27,12 +26,12 @@ import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
 import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
-import { useResponsiveSize } from 'src/components/responsive';
+import { useIsMobileWidthOrDevice } from 'src/components/responsive';
 import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
-import MovePostLink from 'src/components/posts/MovePostLink';
+import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels';
 
 type DropdownProps = {
   space: Space
@@ -104,17 +103,18 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
   </div>
 }
 
-type HiddenPostAlertProps = BaseHiddenAlertProps & {
+type HiddenPostAlertProps = EntityStatusProps & {
   post: Post,
   space?: SpaceData
 }
 
 export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   const { post } = props
-  const PostAlert = () => <HiddenAlert struct={post} type={isComment(post.extension) ? 'comment' : 'post'} {...props} />
+  const kind = isComment(post.extension) ? 'comment' : 'post'
+  const PostAlert = () => <HiddenEntityPanel struct={post} type={kind} {...props} />
 
   // TODO fix view Space alert when space is hidden
-  // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenAlert preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
+  // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenEntityPanel preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
 
   return <PostAlert />
 }
@@ -183,38 +183,44 @@ type PostImageProps = {
 }
 
 const PostImage = ({ post: { content, struct }, space }: PostImageProps) => {
-  if (!content) return null;
+  const isMobile = useIsMobileWidthOrDevice()
+  const image = content?.image
 
-  const { isMobile } = useResponsiveSize()
+  if (!image || isEmptyStr(image)) return null
 
-  const { image } = content;
-
-  return nonEmptyStr(image)
-    ? <DfBgImageLink
-        href={'/[spaceId]/posts/[postId]'}
-        as={postUrl(space, struct)}
-        src={resolveIpfsUrl(image)}
-        size={isMobile ? 100 : 160}
-        className='DfPostImagePreview' /* add onError handler */ />
-    : null
+  return <DfBgImageLink
+    href={'/[spaceId]/posts/[postId]'}
+    as={postUrl(space, struct)}
+    src={resolveIpfsUrl(image)}
+    size={isMobile ? undefined : 170}
+    className='DfPostImagePreview'
+    // TODO add onError handler
+    // TODO lazy load image.
+  />
 }
 
 type PostContentProps = {
   postDetails: PostWithSomeDetails,
   space: Space,
   content?: PostContentType
+  withImage?: boolean
 }
 
-export const PostContent: React.FunctionComponent<PostContentProps> = ({ postDetails, content, space }) => {
-  if (!postDetails) return null;
+export const PostContent: React.FunctionComponent<PostContentProps> = (props) => {
+  const { postDetails, content, space, withImage } = props
+  const isMobile = useIsMobileWidthOrDevice()
+
+  if (!postDetails) return null
 
   const { post: { struct: post } } = postDetails
-  const postContent = content || postDetails.post.content;
+  const postContent = content || postDetails.post.content
 
-  if (!postContent) return null;
+  if (!postContent) return null
 
-  const { title, body } = postContent;
+  const { title, body } = postContent
+
   return <div className='DfContent'>
+    {isMobile && withImage && <PostImage post={postDetails.post} space={space} />}
     <PostName space={space} post={post} title={title} withLink />
     <SummarizeMd md={body} more={renderPostLink(space, post, 'See More')} />
   </div>
@@ -228,7 +234,8 @@ type PostActionsPanelProps = {
   withBorder?: boolean
 }
 
-const ShowCommentsAction = ({ postDetails: { post: { struct: { replies_count } } }, preview, toogleCommentSection }: PostActionsPanelProps) => {
+const ShowCommentsAction = ({ postDetails, preview, toogleCommentSection }: PostActionsPanelProps) => {
+  const { post: { struct: { replies_count } } } = postDetails
   const title = 'Comment'
 
   return <Action onClick={toogleCommentSection} title={title}>
@@ -264,17 +271,14 @@ export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = 
   );
 };
 
-type InfoForPostPreviewProps = {
-  postDetails: PostWithSomeDetails,
+type PostPreviewProps = {
+  postDetails: PostWithSomeDetails
   space: SpaceData
+  withImage?: boolean
+  withTags?: boolean
 }
 
-type SharedPostContentProps = {
-  postDetails: PostWithSomeDetails,
-  space: SpaceData
-}
-
-const SharedPostMd = (props: SharedPostContentProps) => {
+const SharedPostMd = (props: PostPreviewProps) => {
   const { postDetails, space } = props
   const { post: { struct, content } } = postDetails
 
@@ -283,7 +287,7 @@ const SharedPostMd = (props: SharedPostContentProps) => {
     : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
 }
 
-export const SharePostContent = (props: SharedPostContentProps) => {
+export const SharePostContent = (props: PostPreviewProps) => {
   const { postDetails: { ext } } = props
 
   const OriginalPost = () => {
@@ -307,9 +311,12 @@ export const SharePostContent = (props: SharedPostContentProps) => {
   </div>
 }
 
-export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> = ({ postDetails, space }) => {
-  const { post: { struct, content } } = postDetails;
-  if (!struct || !content) return null;
+export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props) => {
+  const { postDetails, space, withImage = true, withTags } = props
+  const { post: { struct, content } } = postDetails
+  const isMobile = useIsMobileWidthOrDevice()
+
+  if (!struct || !content) return null
 
   return <div className='DfInfo'>
     <div className='DfRow'>
@@ -318,11 +325,11 @@ export const InfoPostPreview: React.FunctionComponent<InfoForPostPreviewProps> =
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
           <PostDropDownMenu postDetails={postDetails} space={space.struct} withEditButton />
         </div>
-        <PostContent postDetails={postDetails} space={space.struct} />
-        <ViewTags tags={content?.tags} />
+        <PostContent postDetails={postDetails} space={space.struct} withImage={withImage} />
+        {withTags && <ViewTags tags={content?.tags} />}
         {/* {withStats && <StatsPanel id={post.id}/>} */}
       </div>
-      <PostImage post={postDetails.post} space={space.struct} />
+      {!isMobile && withImage && <PostImage post={postDetails.post} space={space.struct} />}
     </div>
   </div>
 }
@@ -335,7 +342,7 @@ export const useSubscribedPost = (initPost: Post) => {
   const [ post, setPost ] = useState(initPost)
 
   useSubsocialEffect(({ substrate: { api } }) => {
-    let unsub: { (): void | undefined; (): void; };
+    let unsub: { (): void | undefined; (): void; }
 
     const sub = async () => {
       const readyApi = await api;

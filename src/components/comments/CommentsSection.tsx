@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment';
 import { NewComment } from './CreateComment';
@@ -11,7 +11,6 @@ import { Pluralize } from '../utils/Plularize';
 import ViewPostLink from '../posts/ViewPostLink';
 import { CommentsTree } from './CommentTree';
 import Section from '../utils/Section';
-import { Input } from 'antd';
 
 type CommentSectionProps = {
   space: Space,
@@ -23,16 +22,12 @@ type CommentSectionProps = {
 
 export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [], withBorder }) => {
   const { post: { struct } } = post
-  const [ asStub, setAsStub ] = useState(true)
   const { replies_count } = struct
   const totalCount = replies_count.toString()
 
   return <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
     <h3><Pluralize count={totalCount} singularText='comment' /></h3>
-    {asStub
-      ? <Input className='mb-2' size='large' placeholder='Write a comment...' onClick={() => setAsStub(false)} />
-      : <NewComment post={struct} />
-    }
+    <NewComment post={struct} asStub />
     <CommentsTree rootPost={struct} parent={struct} space={space} replies={replies} />
   </Section>
 })

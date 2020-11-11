@@ -1,7 +1,7 @@
 import DataList, { DataListProps } from './DataList';
 import { useState, useCallback, useEffect } from 'react';
-import { Loading, isClientSide } from '../utils';
-import { INFINITE_SCROLL_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
+import { Loading, isClientSide, isServerSide } from '../utils';
+import { DEFAULT_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
 import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ButtonLink from '../utils/ButtonLink';
@@ -11,25 +11,65 @@ import { tryParseInt } from 'src/utils';
 
 const DEFAULT_THRESHOLD = isClientSide() ? window.innerHeight / 3 : undefined
 
-const canHaveMoreData = (currentPageItems?: any[]) =>
-  currentPageItems
-    ? currentPageItems.length >= INFINITE_SCROLL_PAGE_SIZE
-    : true
+export type RenderItemFn<T> = (item: T, index: number) => JSX.Element
+export type InnerLoadMoreFn<T> = (page: number, size: number) => Promise<T[]>
+export type CanHaveMoreDataFn<T> = (data: T[] | undefined, page: number) => boolean
 
-type InfiniteListProps<T> = Partial<DataListProps<T>> & {
-  loadMore: (page: number, size: number) => Promise<T[]>
-  renderItem: (item: T, index: number) => JSX.Element
+type InnerInfiniteListProps<T> = Partial<DataListProps<T>> & {
+  loadMore: InnerLoadMoreFn<T>,
+  renderItem: RenderItemFn<T>
+  totalCount?: number,
   loadingLabel?: string,
   withLoadMoreLink?: boolean // Helpful for SEO
+  canHaveMoreData: CanHaveMoreDataFn<T>
 }
 
-export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
+type InfiniteListPropsByData<T> = Omit<InnerInfiniteListProps<T>, 'canHaveMoreData'>
+
+type InfiniteListByPageProps<T> = InfiniteListPropsByData<T> & {
+  totalCount: number,
+}
+
+export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps<T>) => {
+  const {
+    totalCount,
+  } = props
+
+  const { query: { page: pagePath } } = useRouter()
+
+  const initialPage = pagePath
+    ? tryParseInt(pagePath.toString(), DEFAULT_FIRST_PAGE)
+    : DEFAULT_FIRST_PAGE
+
+  const offset = (initialPage - 1) * DEFAULT_PAGE_SIZE
+  const lastPage = Math.ceil((totalCount - offset) / DEFAULT_PAGE_SIZE)
+
+  const canHaveMoreData: CanHaveMoreDataFn<T> = (data, page) =>
+    data
+      ? (page ? page < lastPage : false)
+      : true
+
+  return <InnerInfiniteList {...props} canHaveMoreData={canHaveMoreData} />
+}
+
+const canHaveMoreData = (currentPageItems?: any[]) => {
+  return currentPageItems
+    ? currentPageItems.length >= DEFAULT_PAGE_SIZE
+    : true
+}
+
+export const InfiniteListByData = <T extends any>(props: InfiniteListPropsByData<T>) =>
+  <InnerInfiniteList {...props} canHaveMoreData={canHaveMoreData} />
+
+const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
   const {
     loadingLabel = 'Loading data...',
     withLoadMoreLink = false,
     dataSource,
     renderItem,
     loadMore,
+    totalCount,
+    canHaveMoreData,
     ...otherProps
   } = props
 
@@ -43,33 +83,34 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
 
   const [ page, setPage ] = useState(initialPage)
   const [ data, setData ] = useState(dataSource || [])
-  const [ hasMore, setHasMore ] = useState(canHaveMoreData(dataSource))
   const [ loading, setLoading ] = useState(false)
 
+  const [ hasMore, setHasMore ] = useState(canHaveMoreData(dataSource, page))
+
   const getLinksParams = useLinkParams({
-    defaultSize: INFINITE_SCROLL_PAGE_SIZE,
+    defaultSize: DEFAULT_PAGE_SIZE,
     triggers: [ page ]
   })
 
-  const handleInfiniteOnLoad = useCallback(async () => {
+  const handleInfiniteOnLoad = useCallback(async (page: number) => {
     setLoading(true)
-    const newData = await loadMore(page, INFINITE_SCROLL_PAGE_SIZE)
-
-    if (!canHaveMoreData(newData)) {
-      setHasMore(false)
-    }
-
+    const newData = await loadMore(page, DEFAULT_PAGE_SIZE)
     data.push(...newData)
 
     setData([ ...data ])
+
+    if (!canHaveMoreData(newData, page)) {
+      setHasMore(false)
+    }
+
     setPage(page + 1)
     setLoading(false)
-  }, [ page ])
+  }, [])
 
   useEffect(() => {
     if (hasInitialData) return setPage(page + 1);
 
-    handleInfiniteOnLoad()
+    handleInfiniteOnLoad(page)
   }, [])
 
   if (!hasInitialData && isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
@@ -79,16 +120,17 @@ export const InfiniteList = <T extends any>(props: InfiniteListProps<T>) => {
   return <InfiniteScroll
       dataLength={data.length}
       pullDownToRefreshThreshold={DEFAULT_THRESHOLD}
-      next={handleInfiniteOnLoad}
+      next={() => handleInfiniteOnLoad(page)}
       hasMore={hasMore}
       loader={<Loading label={loadingLabel} />}
     >
       <DataList
         {...otherProps}
+        totalCount={totalCount}
         dataSource={data}
         renderItem={renderItem}
       />
-      {withLoadMoreLink && !loading && hasMore &&
+      {withLoadMoreLink && !loading && hasMore && isServerSide() &&
         <ButtonLink block {...linkProps} className='mb-2'>Load more</ButtonLink>
       }
     </InfiniteScroll>

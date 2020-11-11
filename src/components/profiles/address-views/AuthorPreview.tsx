@@ -53,7 +53,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return <div
-    className={`ui--AddressComponents' ${isPadded ? 'padded' : ''} ${className}`}
+    className={`ui--AddressComponents ${isPadded ? 'padded' : ''} ${className}`}
     style={style}
   >
     <div className='ui--AddressComponents-info d-flex'>

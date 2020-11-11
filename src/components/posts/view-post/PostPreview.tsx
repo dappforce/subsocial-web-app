@@ -6,6 +6,7 @@ import { Segment } from 'src/components/utils/Segment';
 import { isSharedPost, withSubscribedPost } from './helpers';
 
 export type BarePreviewProps = {
+  withTags?: boolean,
   withActions?: boolean,
   replies?: PostWithAllDetails[],
   asRegularPost?: boolean
@@ -28,7 +29,8 @@ export function PostPreview (props: PreviewProps) {
     <HiddenPostAlert post={struct} space={space} preview />
     {asRegularPost || !isSharedPost(extension as PostExtension)
       ? <RegularPreview space={space} {...props} />
-      : <SharedPreview space={space} {...props} />}
+      : <SharedPreview space={space} {...props} />
+    }
   </Segment>
 }
 

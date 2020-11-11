@@ -3,7 +3,11 @@ import { CommentSection } from '../../comments/CommentsSection';
 import { PostCreator, PostDropDownMenu, PostActionsPanel, SharePostContent } from './helpers';
 import { InnerPreviewProps } from '.';
 
-export const SharedPreview: React.FunctionComponent<InnerPreviewProps> = ({ postDetails, space, withActions, replies }) => {
+type ComponentType = React.FunctionComponent<InnerPreviewProps>
+
+export const SharedPreview: ComponentType = (props) => {
+  const { postDetails, space, withActions, replies } = props
+  const { struct } = postDetails.post
   const [ commentsSection, setCommentsSection ] = useState(false)
 
   return <>
@@ -14,5 +18,5 @@ export const SharedPreview: React.FunctionComponent<InnerPreviewProps> = ({ post
     <SharePostContent postDetails={postDetails} space={space} />
     {withActions && <PostActionsPanel postDetails={postDetails} space={space.struct} toogleCommentSection={() => setCommentsSection(!commentsSection)} preview />}
     {commentsSection && <CommentSection post={postDetails} space={space.struct} replies={replies} withBorder/>}
-  </>;
-};
+  </>
+}

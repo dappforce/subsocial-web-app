@@ -142,7 +142,7 @@ const InnerForm = (props: OuterProps & FormikProps<FormValues>) => {
   };
 
   const goToView = (id: BN) => {
-    Router.push('[spaceId]', '/' + id.toString()).catch(console.log);
+    Router.push('[spaceId]', '/' + id.toString()).catch(console.warn);
   };
 
   const newTxParams = (hash: IpfsCid) => {
@@ -316,7 +316,7 @@ function LoadStruct (props: LoadStructProps) {
 
     cid && ipfs.findSpace(cid).then(json => {
       setJson(json);
-    }).catch(err => console.log(err));
+    }).catch(console.warn);
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

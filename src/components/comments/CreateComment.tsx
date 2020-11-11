@@ -10,22 +10,26 @@ import { useMyAccount } from '../auth/MyAccountContext';
 import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils';
 import { isHiddenPost, HiddenPostAlert } from '../posts/view-post';
 
-const InnerEditComment = dynamic(() => import('./InnerEditComment'), { ssr: false });
+const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false });
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
 
 type NewCommentProps = {
   post: Post
   callback?: (id?: BN) => void
-  withCancel?: boolean
+  withCancel?: boolean,
+  asStub?: boolean
 }
 
-export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel }) => {
+export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
   const { id: parentId, extension } = post;
   const dispatch = useDispatch();
   const { subsocial } = useSubsocialApi()
   const { state: { address, account } } = useMyAccount()
 
-  if (isHiddenPost(post)) return <HiddenPostAlert post={post} desc='You cannot comment on an unlisted post' className='mt-3' />
+  if (isHiddenPost(post)) {
+    const msg = 'You cannot comment on this post because it is unlisted'
+    return <HiddenPostAlert post={post} desc={msg} className='mt-3' />
+  }
 
   const parentIdStr = parentId.toString()
 
@@ -89,9 +93,10 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
       }}
     />
 
-  return <InnerEditComment
+  return <CommentEditor
     callback={callback}
     CommentTxButton={buildTxButton}
     withCancel={withCancel}
+    asStub={asStub}
   />
 }

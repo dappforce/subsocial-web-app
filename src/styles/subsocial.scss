@@ -37,6 +37,10 @@ pre {
 /* Common Resusable Classes */
 /* ---------------------------------------- */
 
+.FontNormal {
+  font-size: $font_normal !important
+}
+
 .DfSegment {
   background-color: #fff;
   padding: $space_normal;
@@ -55,17 +59,40 @@ pre {
   color: #999;
 }
 
-.ant-modal-body {
-  padding: $space_small;
+.ant-modal-header,
+.ant-modal-body,
+.ant-modal-footer {
+  padding: $space_normal;
+}
+
+.ant-modal-title {
+  font-size: $font_large;
 }
 
 .ant-list-lg.ant-list-item {
   padding: 0;
 }
 
+.ant-descriptions-item-label {
+  color: $color_muted;
+}
+
+.ant-tooltip {
+  max-width: 350px;
+}
+
+.ant-popover-inner-content {
+  max-width: 410px;
+}
+
+.ant-descriptions-header {
+  margin-bottom: $space_tiny;
+  border-bottom: 1px solid $color_light_border;
+}
+
 .DfLinkOnHover {
   &:hover {
-    color: $color_link;
+    color: $color_link !important;
     cursor: pointer;
     text-decoration: none;
   }
@@ -112,8 +139,8 @@ pre {
 .header {
   margin: 0;
   line-height: normal;
-  display: flex !important;
-  align-items: center;
+  // display: flex !important;
+  // align-items: center;
   font-size: $font_big;
   font-weight: 600;
 }
@@ -166,17 +193,18 @@ pre {
 }
 
 .DfTags {
-  margin: 0;
-  margin-bottom: $space_normal;
-  font-size: $font_normal;
-
   .anticon {
     color: #bbb !important;
     margin-right: .35rem !important;
   }
 
-  .ant-tag:hover {
-    background-color: #fff;
+  .ant-tag {
+    font-size: .85rem;
+    padding: .25rem .5rem;
+
+    &:hover {
+      background-color: #fff;
+    }
   }
 
   a {
@@ -201,10 +229,6 @@ pre {
 @media (min-width: 1200px) {
   .DfBrand {
     font-size: $font_normal;
-
-    img {
-      max-width: 160px;
-    }
   }
 }
 
@@ -215,7 +239,7 @@ pre {
   cursor: pointer;
 
   img {
-    max-width: 200px;
+    max-width: 160px;
     margin-top: -5px;
   }
 }
@@ -235,7 +259,7 @@ pre {
 .DfBookPage {
   @extend .DfBoxShadow;
   margin: $space_big 0;
-  padding: $space_big;
+  padding: $space_normal;
   background-color: #fff;
   border-radius: $border_radius_normal;
 }
@@ -248,22 +272,17 @@ pre {
 .DfEntirePost {
   /* padding: 0 $space_tiny; */
 
-  .DfCommentSection {
-    margin-top: $space_small
-  }
-
   .DfPostContent {
     @extend .DfBookPage;
     margin-bottom: $space_small;
-
-    .DfSharedSummary {
-      margin-top: -$space_normal;
-    }
   }
 
-  .DfCommentAction {
-    cursor: pointer;
-    @extend .DfBlackLink;
+  .DfSpacePreviewOnPostPage > .DfSegment {
+    @extend .DfBookPage;
+  }
+
+  .DfCommentSection {
+    margin-top: $space_small
   }
 }
 
@@ -346,7 +365,7 @@ pre {
 
 .ProfileDetails {
   display: flex !important;
-  align-items: center;
+
   .content {
     padding: 0 $space_small;
   }
@@ -499,7 +518,7 @@ hr {
   .DfStatItem {
     margin-right: $space_huge;
 
-    &::last-child {
+    &:last-child {
       margin-right: 0;
     }
   }
@@ -563,7 +582,7 @@ hr {
 
   .DfReactionsAction {
     button:first-of-type {
-      margin-left: -$space_normal;
+      // margin-left: -$space_normal;
       margin-right: $space_normal;
     }
   }
@@ -589,7 +608,7 @@ hr {
 
 .DfSharedSummary {
   .DfPostBody {
-    margin: $space_small 0 $space_large 0;
+    margin-bottom: $space_large;
   }
 }
 
@@ -620,6 +639,10 @@ hr {
   .DfPostImagePreview {
     margin-left: $space_normal;
     margin-bottom: $space_normal;
+    border-radius: $border_radius_normal;
+    border: 1px solid $color_light_border;
+    background-color: #f0f0f0;
+    height: 170px;
   }
 }
 
@@ -717,7 +740,6 @@ hr {
 
   .DfSection-title {
     border-bottom: 1px solid $color_light_border;
-    margin: 0rem;
     display: flex;
   }
 
@@ -804,10 +826,13 @@ hr {
   color: $color_muted;
   display: flex;
   justify-content: flex-start;
-  margin: $space_tiny 0;
+  margin: 0;
+  margin-bottom: $space_tiny;
 
   .DfPopup-link {
+    font-size: $font_normal;
     margin-right: $space_normal;
+    @extend .DfGreyLink
   }
 }
 
@@ -818,6 +843,12 @@ hr {
 }
 
 .DfMdEditor {
+
+  .CodeMirror {
+    font-size: 1rem;
+    padding: 6.5px 11px; /* padding from ant design input */
+  }
+
   .CodeMirror-scroll {
     min-height: 5rem !important;
   }
@@ -841,6 +872,16 @@ hr {
 
     &.fullscreen {
       z-index: 1000;
+    }
+  }
+
+  &.hideToolbar {
+    .editor-toolbar {
+      display: none;
+    }
+
+    .CodeMirror {
+      border-radius: $border_radius_normal;
     }
   }
 
@@ -870,42 +911,18 @@ hr {
 }
 
 .DfSearch {
-  &:first-of-type {
-    margin-top: 0 !important;
-  }
-
   width: 450px;
   min-width: 320px;
-  color: rgba(0, 0, 0, 0.7);
-  z-index: 2;
-  padding: 0 1rem;
+  display: flex;
 
-  input {
-    border-radius: .5rem;
-    font-size: $font_normal;
+  .ant-input-search>.ant-input-group>.ant-input-group-addon {
+    left: -1px;
+    padding: 0;
+    border: 0;
   }
-
-  input::placeholder {
-    color: #aaa;
-  }
-
-  input:hover {
-    border-color: #1e99ff;
-  }
-
-  input:focus {
-    border-color: #1e99ff;
-    -moz-box-shadow: 0 0 5px #1e99ff;
-    -webkit-box-shadow: 0 0 5px #1e99ff;
-    box-shadow: 0 0 5px #1e99ff;
-  }
-
-  ul {
-    top: 50px;
-  }
-
-  li {
-    line-height: initial;
+  .ant-btn-icon-only {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
   }
 }
 
@@ -939,7 +956,7 @@ hr {
 }
 
 .DfDataList {
-  padding-top: $space_tiny;
+  margin-top: $space_tiny;
 
   .DfSegment {
     margin: $space_normal 0;
@@ -1043,14 +1060,19 @@ hr {
   background: none !important;
 }
 
-a.DfStatItem {
-  @extend .DfBlackLink;
-}
+// a.DfStatItem {
+//   color: $color_muted !important;
+// }
 
 .DfStatItem {
+  color: $color_muted !important;
   font-size: $font_normal;
-  display: inline;
   margin-right: $space_large;
+  display: inline-block;
+
+  &:hover {
+    color: $color_link !important;
+  }
 }
 
 .DfSpaceTitle {
@@ -1272,8 +1294,8 @@ a.DfStatItem {
 .DfNotificationItem {
   display: flex;
   width: 100%;
+  color: $color_font_normal;
   min-height: 60px;
-  margin-top: 1rem;
 
   .DfNotificationContent {
     margin: 0 $space_small;
@@ -1283,6 +1305,10 @@ a.DfStatItem {
   a {
     @extend .DfBlackLink;
     font-weight: bold;
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -1364,7 +1390,7 @@ a.DfStatItem {
     flex-direction: column;
     line-height: normal;
     padding: $space_tiny;
-    padding-top: $space_normal;
+    padding-top: .85rem;
     padding-left: 0;
 
     a {
@@ -1443,7 +1469,7 @@ a.DfStatItem {
   }
 
   .DfActionButtonsBlock {
-    padding: $space_tiny 0;
+    margin: $space_tiny 0;
   }
 }
 
@@ -1464,7 +1490,16 @@ a.DfStatItem {
   }
 
   .DfActionButtonsBlock {
-    padding: $space_small 0;
+    margin: $space_small 0;
+  }
+}
+
+.DfCommentAction {
+  cursor: pointer;
+  color: $color_muted;
+
+  &:hover {
+    color: $color_link !important;
   }
 }
 
@@ -1536,7 +1571,6 @@ a.DfStatItem {
   padding: 0;
 }
 
-.DfHiddenButton {
-  margin-left: $space_normal;
-  border-color: yellow;
+.DfActivityMsg {
+  color: $color_font_normal !important;
 }

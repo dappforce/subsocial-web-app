@@ -15,13 +15,28 @@ function print (x?: any): string {
   return typeof x?.toString === 'function' ? x.toString() : ''
 }
 
-const MY_ADDRESS = 'df.myAddress';
+const MY_ADDRESS = 'df.myAddress'
+const DID_SIGN_IN = 'df.didSignIn'
+
+function storeDidSignIn () {
+  store.set(DID_SIGN_IN, true)
+}
 
 export function readMyAddress (): string | undefined {
-  const myAddress: string | undefined = store.get(MY_ADDRESS);
-  log.info(`Read my address from the local storage: ${print(myAddress)}`);
-  return myAddress;
+  const myAddress: string | undefined = store.get(MY_ADDRESS)
+  if (nonEmptyStr(myAddress)) {
+    storeDidSignIn()
+  }
+  log.info(`Read my address from the local storage: ${print(myAddress)}`)
+  return myAddress
 }
+
+export function storeMyAddress (myAddress: string) {
+  store.set(MY_ADDRESS, myAddress)
+  storeDidSignIn()
+}
+
+export const didSignIn = (): boolean => store.get(DID_SIGN_IN)
 
 type MyAccountState = {
   inited: boolean,
@@ -52,10 +67,10 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
 
     case 'setAddress':
       address = action.address;
-      if (address !== state.address) {
+      if (!equalAddresses(address, state.address)) {
         if (address) {
           log.info(`Set my new address: ${print(address)}`);
-          store.set(MY_ADDRESS, address);
+          storeMyAddress(address)
           return { ...state, address, inited: true };
         } else {
           return forget();
@@ -108,9 +123,9 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
   useEffect(() => {
     if (!inited) {
-      dispatch({ type: 'reload' });
+      dispatch({ type: 'reload' })
     }
-  }, [ inited ]); // Don't call this effect if `invited` is not changed
+  }, [ inited ]) // Don't call this effect if `invited` is not changed
 
   useSubsocialEffect(({ substrate: { api }, subsocial: { ipfs } }) => {
     if (!inited || !address) return
@@ -126,16 +141,13 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
         if (struct) {
           const profile = struct.profile.unwrapOr(undefined)
-
           const cid = profile && resolveCidOfContent(profile.content)
-
           const content = cid ? await ipfs.findProfile(cid) : undefined
 
           account = { struct, profile, content }
         }
 
         dispatch({ type: 'setAccount', account })
-
       })
     }
 
@@ -159,7 +171,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 }
 
 export function useMyAccount () {
-  return useContext(MyAccountContext);
+  return useContext(MyAccountContext)
 }
 
 export function useMyAddress () {
@@ -170,12 +182,8 @@ export function isMyAddress (anotherAddress?: string | AccountId) {
   return equalAddresses(useMyAddress(), anotherAddress)
 }
 
-export function useIsSignIn () {
+export function useIsSignedIn () {
   return nonEmptyStr(useMyAddress())
 }
 
-export function notSignIn () {
-  return !useIsSignIn()
-}
-
-export default MyAccountProvider;
+export default MyAccountProvider

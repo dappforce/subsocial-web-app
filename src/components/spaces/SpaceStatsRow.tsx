@@ -10,6 +10,7 @@ import { Pluralize } from '../utils/Plularize';
 import { spaceUrl } from '../urls';
 import AboutSpaceLink from './AboutSpaceLink';
 import { isMySpace } from './helpers';
+import { useResponsiveSize } from '../responsive';
 
 type Props = {
   space: Space
@@ -21,30 +22,34 @@ export const SpaceStatsRow = ({ space }: Props) => {
     score,
     posts_count,
     followers_count: followers
-  } = space;
+  } = space
 
-  const [ followersOpen, setFollowersOpen ] = useState(false);
-
-  const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count);
-  const followersClassName = 'DfStatItem DfGreyLink ' + (!followers && 'disable')
+  const { isMobile } = useResponsiveSize()
+  const [ followersOpen, setFollowersOpen ] = useState(false)
+  const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count)
+  const statLinkCss = 'DfStatItem'
 
   return (
     <div className={`${isMySpace(space) && 'MySpace DfStatItem'}`}>
       <Link href='/[spaceId]' as={spaceUrl(space)}>
-        <a className={'DfStatItem ' + (!postsCount && 'disable')}>
+        <a className={statLinkCss}>
           <Pluralize count={postsCount} singularText='Post'/>
         </a>
       </Link>
 
-      <div onClick={() => setFollowersOpen(true)} className={followersClassName}>
-        <Pluralize count={followers} singularText='Follower'/>
+      <div onClick={() => setFollowersOpen(true)} className={statLinkCss} style={{ cursor: 'pointer' }}>
+        <Pluralize count={followers} singularText='Follower' />
       </div>
 
-      <MutedSpan><AboutSpaceLink className='DfGreyLink DfStatItem' space={space} title='About' /></MutedSpan>
+      {!isMobile && <>
+        <MutedSpan>
+          <AboutSpaceLink className={statLinkCss} space={space} title='About' />
+        </MutedSpan>
 
-      <MutedSpan className='DfStatItem'>
-        <Pluralize count={score} singularText='Point' />
-      </MutedSpan>
+        <MutedSpan className='DfStatItem'>
+          <Pluralize count={score} singularText='Point' />
+        </MutedSpan>
+      </>}
 
       {followersOpen &&
         <SpaceFollowersModal

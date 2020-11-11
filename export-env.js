@@ -1,21 +1,26 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { writeFileSync } = require('fs');
+const { writeFileSync } = require('fs')
 
-require('dotenv').config();
+require('dotenv').config()
 
 const varsToExport = [
   'NODE_ENV',
   'LOG_LEVEL',
   'APP_NAME',
   'SUBSTRATE_URL',
-  'ELASTIC_URL',
   'OFFCHAIN_URL',
   'OFFCHAIN_WS',
   'APPS_URL',
   'IPFS_URL',
   'UI_SHOW_ADVANCED',
+  'UI_SHOW_SEARCH',
+  'UI_SHOW_FEED',
+  'UI_SHOW_NOTIFICATIONS',
+  'UI_SHOW_ACTIVITY',
   'LAST_RESERVED_SPACE_ID',
-  'CLAIMED_SPACE_IDS'
+  'CLAIMED_SPACE_IDS',
+  'DAG_HTTP_METHOD'
 ]
 
 function getSerializedVal (varName) {
