@@ -55,7 +55,7 @@ const CopyLink = ({ url }: SomeShareLink) => <Copy text={copyUrl(url)} message='
 
 const ShareMenu = (props: ShareMenuProps) => {
   const { postDetails: { post }, space, onClick } = props
-  const currentPostUrl = postUrl(space, post.struct)
+  const currentPostUrl = postUrl(space, post)
   const title = post.content?.title
   const summary = post.content?.body
 

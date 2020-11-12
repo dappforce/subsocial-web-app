@@ -7,13 +7,12 @@ import { showInfoMessage } from '../utils/Message';
 export const openNewWindow = (url: string) => window.open(url, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400');
 
 export function slugify (text?: AnyText): string | undefined {
-  let slug: string | undefined
-  if (nonEmptyStr(text)) {
-    slug = stringifyText(text)
-    if (slug && !slug.startsWith('@')) {
-      slug = '@' + slug
-    }
+  let slug = stringifyText(text)
+
+  if (slug && !slug.startsWith('@')) {
+    slug = '@' + slug
   }
+
   return slug
 }
 

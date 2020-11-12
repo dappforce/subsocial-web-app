@@ -42,7 +42,7 @@ export function stringifyAny<DFT> (value?: any, _default?: DFT): string | DFT | 
   return _default
 }
 
-export function stringifyText<DFT> (value?: AnyText, _default?: DFT): string | DFT | undefined {
+export function stringifyText<DFT extends string> (value?: AnyText, _default?: DFT): string | DFT | undefined {
   return stringifyAny(value, _default)
 }
 

@@ -14,6 +14,7 @@ type AddReducerType = CaseReducer<PostState, PayloadAction<AddActionType>>
 const serialize = (object?: any) => object ? JSON.parse(JSON.stringify(object)) : undefined
 
 const serializePostWithExt = (item: PostWithSomeDetails): PostWithSomeDetails => {
+  // eslint-disable-next-line prefer-const
   let { post, ext, owner, space } = item
 
   if (owner) {

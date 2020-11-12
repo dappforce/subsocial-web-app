@@ -206,7 +206,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
 }
 
 ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
-  const { query } = props
+  const { query, res } = props
   const { spaceId } = query
   const idOrHandle = spaceId as string
 
@@ -221,6 +221,13 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const spaceData = id && await subsocial.findSpace({ id: id })
   if (!spaceData?.struct) {
     return return404(props)
+  }
+
+  const handle = spaceData.struct.handle.unwrapOr(undefined)
+
+  if (handle && !handle?.eq(idOrHandle) && res) {
+    res.writeHead(301, { Location: `/${handle.toString()}` })
+    res.end()
   }
 
   const ownerId = spaceData?.struct.owner as AccountId
