@@ -8,6 +8,7 @@ import { Space } from '@subsocial/types/substrate/interfaces'
 import { GenericAccountId } from '@polkadot/types/generic'
 import { getPageOfIds, getReversePageOfSpaceIds } from '../getIds'
 import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
+import { fullPath } from 'src/components/urls/helpers'
 
 type SitemapProps = {
   props: NextPageContext,
@@ -16,15 +17,14 @@ type SitemapProps = {
 }
 
 export const createSitemap = ({ props, links, withNextPage }: SitemapProps) => {
-  const { query: { page = DEFAULT_FIRST_PAGE }, pathname, req } = props
-  const host = req?.headers.host || ''
+  const { query: { page = DEFAULT_FIRST_PAGE }, pathname } = props
 
   const nextPageLink = () => {
     const nextPage = (page as string) + 1
     const sitemapType = pathname.split('/').pop()
     return withNextPage
       ? `<url>
-        <loc>https://${host}/sitemaps/${nextPage}/${sitemapType}</loc>
+        <loc>${fullPath(`/sitemaps/${nextPage}/${sitemapType}`)}</loc>
       </url>`
       : ''
   }
@@ -35,7 +35,7 @@ export const createSitemap = ({ props, links, withNextPage }: SitemapProps) => {
         .map((link) => {
           return `
                   <url>
-                      <loc>https://${host}${link}</loc>
+                      <loc>${fullPath(link)}</loc>
                   </url>
               `
         })

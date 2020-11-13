@@ -23,6 +23,7 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
+import { fullPath } from 'src/components/urls/helpers'
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
 export type PostDetailsProps = {
@@ -53,7 +54,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
 
   const spaceStruct = spaceData.struct
 
-  const { title, body, image, canonical = postUrl(spaceStruct, postDetails.post), tags } = content
+  const { title, body, image, canonical = fullPath(postUrl(spaceStruct, postDetails.post)), tags } = content
 
   const goToCommentsId = 'comments'
 

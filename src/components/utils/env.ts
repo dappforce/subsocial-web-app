@@ -44,5 +44,7 @@ export const dagHttpMethod = getEnv('DAG_HTTP_METHOD')?.toLowerCase() || 'post'
 export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 export const landingPageUrl = 'https://subsocial.network'
 
+export const appBaseUrl = getEnv('APP_BASE_URL') || ''
+
 export const lastReservedSpaceId = getEnvAsNumber('LAST_RESERVED_SPACE_ID') || 0
 export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new BN(x))

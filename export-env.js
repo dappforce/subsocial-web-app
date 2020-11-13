@@ -20,7 +20,8 @@ const varsToExport = [
   'UI_SHOW_ACTIVITY',
   'LAST_RESERVED_SPACE_ID',
   'CLAIMED_SPACE_IDS',
-  'DAG_HTTP_METHOD'
+  'DAG_HTTP_METHOD',
+  'APP_BASE_URL'
 ]
 
 function getSerializedVal (varName) {
