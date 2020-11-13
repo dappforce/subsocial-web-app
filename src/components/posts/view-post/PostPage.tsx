@@ -22,7 +22,7 @@ import { mdToText } from 'src/utils'
 import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
-import { PostId, Space } from '@subsocial/types/substrate/interfaces'
+import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
 export type PostDetailsProps = {
@@ -118,6 +118,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
+  const idOrHandle = spaceId as string
 
   const slugStr = slug as string
   const postIdFromUrl = getPostIdFromSlug(slugStr)
@@ -127,11 +128,14 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
   const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postIdFromUrl)
 
-  const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id)
-  const space = extPostData?.space.struct || { id: spaceIdFromPost || spaceId as string } as Space
+  const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id) as SpaceId
+
+  const currentSpace = { id: spaceIdFromPost, handle: idOrHandle } as unknown as Space
+  const currentPostUrl = spaceUrl({ id: spaceIdFromPost, handle: idOrHandle } as unknown as Space, slugStr)
+
+  const space = extPostData?.space.struct || currentSpace
   const post = { struct: { id: postIdFromUrl as PostId }, content: extPostData?.post.content }
   const validPostUrl = postUrl(space, post)
-  const currentPostUrl = spaceUrl(space, slugStr)
 
   if (currentPostUrl !== validPostUrl && res) {
     res.writeHead(301, {
