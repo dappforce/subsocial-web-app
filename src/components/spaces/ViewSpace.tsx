@@ -223,10 +223,10 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
     return return404(props)
   }
 
-  const handle = spaceData.struct.handle.unwrapOr(undefined)
+  const handle = `@${spaceData.struct.handle.unwrapOr(undefined)}`
 
-  if (handle && !handle?.eq(idOrHandle) && res) {
-    res.writeHead(301, { Location: `/${handle.toString()}` })
+  if (handle !== idOrHandle && res) {
+    res.writeHead(301, { Location: spaceUrl(spaceData.struct) })
     res.end()
   }
 
