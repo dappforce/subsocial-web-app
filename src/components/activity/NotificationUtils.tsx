@@ -154,7 +154,7 @@ const renderSubjectPreview = (content?: PostContent, href = '') => {
   const { title, body } = content
   const name = summarize(title || body || 'link', SUMMARIZE_LIMIT)
   return nonEmptyStr(name) || nonEmptyStr(href) ?
-  <Link href='/[spaceId]/posts/[postId]' as={href}><a>{name}</a></Link>
+  <Link href='/[spaceId]/[slug]' as={href}><a>{name}</a></Link>
   : null
 }
 
@@ -214,7 +214,7 @@ const getPostPreview = ({ postId, postMap, spaceMap, event } :GetPostPreviewPros
 
   const spaceId = data?.struct.space_id.unwrapOr(undefined)
   const space = spaceId && spaceMap.get(spaceId.toString())?.struct
-  const postLink = space && data && postUrl(space, data.struct)
+  const postLink = space && data && postUrl(space, data)
 
   if (!postLink) return undefined
 
@@ -225,7 +225,7 @@ const getPostPreview = ({ postId, postMap, spaceMap, event } :GetPostPreviewPros
     image,
     owner: data.struct.owner,
     links: {
-      href: '/[spaceId]/posts/[postId]',
+      href: '/[spaceId]/[slug]',
       as: postLink
     }
   }
@@ -236,7 +236,7 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
   const comment = postMap.get(commetIdStr);
   const commentStruct = comment?.struct;
   const isComment = commentStruct?.extension.isComment
-  if (commentStruct && isComment) {
+  if (comment && commentStruct && isComment) {
     const { root_post_id } = commentStruct.extension.asComment
 
     /* if (parent_id.isSome) {
@@ -254,7 +254,7 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
 
     const spaceId = data?.struct.space_id.unwrapOr(undefined)
     const space = spaceId && spaceMap.get(spaceId.toString())?.struct
-    const postLink = space && data && postUrl(space, commentStruct)
+    const postLink = space && data && postUrl(space, comment)
 
     if (!postLink) return undefined
 
@@ -265,7 +265,7 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
       image,
       owner: data.struct.owner,
       links: {
-        href: '/[spaceId]/posts/[postId]',
+        href: '/[spaceId]/[slug]',
         as: postLink
       }
     }

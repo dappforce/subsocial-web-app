@@ -2386,7 +2386,7 @@
   integrity sha512-JjObSsQywqPJAWrw+d5sQEDwzgdYLjs1dhp2l81jTrPMI0Vof/1jNYzRKcFz9WN/RMnHVXGLY0K6Yr6DAc0D3Q==
   dependencies:
     "@polkadot/api" "1.28.1"
-    "@subsocial/utils" "^0.4.15"
+    "@subsocial/utils" latest
     axios "^0.19.2"
 
 "@subsocial/config@^0.4.23":
@@ -2399,10 +2399,10 @@
   resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.23.tgz#c1a5a5628e991fd91e74e5f20297cad63b8c5b84"
   integrity sha512-O4rZP4rzznnEOtbgpQlTqcN/NJtYGFymPV/0pTladW471nawELuLlzxImP4ytH5/XWOXl4bdWJ1lcuukzkfOVQ==
   dependencies:
-    "@subsocial/utils" "^0.4.15"
+    "@subsocial/utils" latest
     cids "^0.7.1"
 
-"@subsocial/utils@^0.4.23", "@subsocial/utils@latest":
+"@subsocial/utils@^0.4.15", "@subsocial/utils@^0.4.23":
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.4.23.tgz#592714cc3cfb81c7ec38fe0ad15c69ae5b9f1de0"
   integrity sha512-53PSVvyjDdP3cxgbXscQ8n85PWMD96V7zel+p3o6Qj1hl7Ad+jxwpJNsR35sat63NnbJWeUwvG+y7NZG6vJOmg==
@@ -11968,7 +11968,7 @@ resolve@1.1.7:
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
   integrity sha1-IDEU2CrSxe2ejgQRs5ModeiJ6Xs=
 
-resolve@^1.1.6, resolve@^1.10.0, resolve@^1.11.0, resolve@^1.12.0, resolve@^1.18.1, resolve@^1.3.2, resolve@^1.8.1:
+resolve@^1.1.6, resolve@^1.10.0, resolve@^1.11.0, resolve@^1.12.0, resolve@^1.3.2, resolve@^1.8.1:
   version "1.18.1"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.18.1.tgz#018fcb2c5b207d2a6424aee361c5a266da8f4130"
   integrity sha512-lDfCPaMKfOJXjy0dPayzPdF1phampNWr3qFCjAu+rw/qbQmr5jWH5xN2hwh9QKfw9E5v4hwV7A+jrCmL8yjjqA==
@@ -12438,6 +12438,11 @@ slice-ansi@^2.1.0:
     ansi-styles "^3.2.0"
     astral-regex "^1.0.0"
     is-fullwidth-code-point "^2.0.0"
+
+slugify@^1.4.6:
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/slugify/-/slugify-1.4.6.tgz#ef288d920a47fb01c2be56b3487b6722f5e34ace"
+  integrity sha512-ZdJIgv9gdrYwhXqxsH9pv7nXxjUEyQ6nqhngRxoAAOlmMGA28FDq5O4/5US4G2/Nod7d1ovNcgURQJ7kHq50KQ==
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

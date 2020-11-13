@@ -54,7 +54,7 @@ export const ViewComment: FunctionComponent<Props> = ({
   const [ repliesCount, setRepliesCount ] = useState(resolveBn(replies_count))
 
   const isFake = id.toString().startsWith('fake')
-  const commentLink = postUrl(space, struct)
+  const commentLink = postUrl(space, comment.post)
 
   const isRootPostOwner = equalAddresses(
     rootPost?.owner,
@@ -101,7 +101,7 @@ export const ViewComment: FunctionComponent<Props> = ({
         <Button key={`reply-comment-${id}`} className={actionCss} onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <ShareDropdown postDetails={comment} space={space} className={actionCss} />
+        <ShareDropdown key={`dropdown-comment-${id}`} postDetails={comment} space={space} className={actionCss} />
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview
@@ -116,7 +116,7 @@ export const ViewComment: FunctionComponent<Props> = ({
           }
           details={
             <span>
-              <Link href='/[spaceId]/posts/[postId]' as={commentLink}>
+              <Link href='/[spaceId]/[slug]' as={commentLink}>
                 <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
               </Link>
               {' · '}
@@ -124,7 +124,7 @@ export const ViewComment: FunctionComponent<Props> = ({
             </span>
           }
         />
-        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={struct} space={space} />
+        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={comment.post} space={space} />
       </div>}
       content={showEditForm
         ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>

@@ -7,13 +7,12 @@ type ComponentType = React.FunctionComponent<InnerPreviewProps>
 
 export const SharedPreview: ComponentType = (props) => {
   const { postDetails, space, withActions, replies } = props
-  const { struct } = postDetails.post
   const [ commentsSection, setCommentsSection ] = useState(false)
 
   return <>
     <div className='DfRow'>
       <PostCreator postDetails={postDetails} space={space} withSpaceName />
-      <PostDropDownMenu space={space.struct} post={struct}/>
+      <PostDropDownMenu space={space.struct} post={postDetails.post}/>
     </div>
     <SharePostContent postDetails={postDetails} space={space} />
     {withActions && <PostActionsPanel postDetails={postDetails} space={space.struct} toogleCommentSection={() => setCommentsSection(!commentsSection)} preview />}
