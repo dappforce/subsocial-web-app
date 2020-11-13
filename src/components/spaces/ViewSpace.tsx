@@ -28,7 +28,7 @@ import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
 import { BareProps } from '../utils/types';
 import { getPageOfIds } from '../utils/getIds';
-import { editSpaceUrl } from '../urls';
+import { editSpaceUrl, spaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
@@ -200,7 +200,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   const title = name + (isPolkaProject ? ' - Polkadot ecosystem projects' : '')
 
   return <>
-    <HeadMeta title={title} desc={mdToText(about)} image={image} />
+    <HeadMeta title={title} desc={mdToText(about)} image={image} canonical={spaceUrl(spaceData.struct)} />
     <ViewSpace {...props} />
   </>
 }

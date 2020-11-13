@@ -49,11 +49,11 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
 
   const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpace
 
-  const { title, body, image, canonical, tags } = content
-
   if (!spaceData) return <Loading />
 
   const spaceStruct = spaceData.struct
+
+  const { title, body, image, canonical = postUrl(spaceStruct, postDetails.post), tags } = content
 
   const goToCommentsId = 'comments'
 
