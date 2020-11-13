@@ -1,30 +1,29 @@
-import React from 'react';
-import dynamic from 'next/dynamic';
-import { DfMd } from '../../utils/DfMd';
-import { HeadMeta } from '../../utils/HeadMeta';
-import Section from '../../utils/Section';
-import { PostData, PostWithAllDetails } from '@subsocial/types/dto';
-import ViewTags from '../../utils/ViewTags';
-import ViewPostLink from '../ViewPostLink';
-import { CommentSection } from '../../comments/CommentsSection';
-import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, isComment, SharePostContent, useSubscribedPost } from './helpers';
+import React from 'react'
+import dynamic from 'next/dynamic'
+import { DfMd } from '../../utils/DfMd'
+import { HeadMeta } from '../../utils/HeadMeta'
+import Section from '../../utils/Section'
+import { PostData, PostWithAllDetails } from '@subsocial/types/dto'
+import ViewTags from '../../utils/ViewTags'
+import ViewPostLink from '../ViewPostLink'
+import { CommentSection } from '../../comments/CommentsSection'
+import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, isComment, SharePostContent, useSubscribedPost } from './helpers'
 import Error from 'next/error'
-import { NextPage } from 'next';
-import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
-import { getSpaceId, unwrapSubstrateId } from 'src/components/substrate';
-import partition from 'lodash.partition';
-import BN from 'bn.js'
-import { PageContent } from 'src/components/main/PageWrapper';
-import { isHidden, Loading } from 'src/components/utils';
-import { useLoadUnlistedSpace, isHiddenSpace } from 'src/components/spaces/helpers';
-import { resolveIpfsUrl } from 'src/ipfs';
-import { useResponsiveSize } from 'src/components/responsive';
-import { mdToText } from 'src/utils';
-import { ViewSpace } from 'src/components/spaces/ViewSpace';
-import { createPostSlug, getPostIdFromSlug } from '../slugify';
-import { postUrl, spaceUrl } from 'src/components/urls';
-import { PostId, Space } from '@subsocial/types/substrate/interfaces';
-const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false });
+import { NextPage } from 'next'
+import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
+import { unwrapSubstrateId } from 'src/components/substrate'
+import partition from 'lodash.partition'
+import { PageContent } from 'src/components/main/PageWrapper'
+import { isHidden, Loading } from 'src/components/utils'
+import { useLoadUnlistedSpace, isHiddenSpace } from 'src/components/spaces/helpers'
+import { resolveIpfsUrl } from 'src/ipfs'
+import { useResponsiveSize } from 'src/components/responsive'
+import { mdToText } from 'src/utils'
+import { ViewSpace } from 'src/components/spaces/ViewSpace'
+import { getPostIdFromSlug } from '../slugify'
+import { postUrl, spaceUrl } from 'src/components/urls'
+import { PostId, Space } from '@subsocial/types/substrate/interfaces'
+const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
 export type PostDetailsProps = {
   postDetails: PostWithAllDetails,
@@ -40,9 +39,9 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
 
   if (!space || isHiddenSpace(space.struct)) return <PostNotFound />
 
-  const { struct: initStruct, content } = post;
+  const { struct: initStruct, content } = post
 
-  if (!content) return null;
+  if (!content) return null
 
   const { isNotMobile } = useResponsiveSize()
   const struct = useSubscribedPost(initStruct)
@@ -50,11 +49,11 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
 
   const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpace
 
-  const { title, body, image, canonical, tags } = content;
+  const { title, body, image, canonical, tags } = content
 
   if (!spaceData) return <Loading />
 
-  const spaceStruct = spaceData.struct;
+  const spaceStruct = spaceData.struct
 
   const goToCommentsId = 'comments'
 
@@ -112,16 +111,16 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
       </Section>
     </PageContent>
   </>
-};
+}
 
 PostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { spaceId, slug }, res } = props
 
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
-  const idOrHandle = spaceId as string
 
-  const postIdFromUrl = getPostIdFromSlug(slug as string)
+  const slugStr = slug as string
+  const postIdFromUrl = getPostIdFromSlug(slugStr)
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
   const comments = await subsocial.findPublicPostsWithAllDetails([ ...replyIds, postIdFromUrl ])
 
@@ -129,15 +128,12 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postIdFromUrl)
 
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id)
-  const space = extPostData?.space.struct || { id: spaceIdFromPost } as Space
+  const space = extPostData?.space.struct || { id: spaceIdFromPost || spaceId as string } as Space
+  const post = { struct: { id: postIdFromUrl as PostId }, content: extPostData?.post.content }
+  const validPostUrl = postUrl(space, post)
+  const currentPostUrl = spaceUrl(space, slugStr)
 
-  const noValidSpaceUrl = spaceUrl(space) !== `/${idOrHandle}`
-  const noValidPostUrl = slug === postIdFromUrl.toString()
-
-  console.log(noValidSpaceUrl, noValidPostUrl)
-
-  if ((noValidSpaceUrl || noValidPostUrl) && res) {
-    const post = { struct: { id: postIdFromUrl as PostId }, content: extPostData?.post.content }
+  if (currentPostUrl !== validPostUrl && res) {
     res.writeHead(301, {
       Location: postUrl(space, post) })
     res.end()
@@ -147,6 +143,6 @@ PostPage.getInitialProps = async (props): Promise<any> => {
     postDetails: extPostData,
     replies
   }
-};
+}
 
 export default PostPage
