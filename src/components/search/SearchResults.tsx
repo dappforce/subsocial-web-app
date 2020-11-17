@@ -4,13 +4,13 @@ import { Segment } from 'src/components/utils/Segment'
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '@subsocial/types/offchain/search'
 import { useRouter } from 'next/router'
-import Section from '../utils/Section'
 import { ProfilePreviewWithOwner } from '../profiles/address-views'
 import { DataListOptProps } from '../lists/DataList'
 import { queryElasticSearch } from 'src/components/utils/OffchainUtils'
 import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
 import PostPreview from '../posts/view-post/PostPreview'
 import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
+import { PageContent } from '../main/PageWrapper'
 
 const { TabPane } = Tabs
 
@@ -102,7 +102,7 @@ const AllResultsList = () => (
   <InnerSearchResultList loadingLabel={'Loading search results...'} renderItem={resultToPreview} />
 )
 
-const ResultsTabs = () => {
+const SearchResults = () => {
   const router = useRouter()
 
   const getTabIndexFromUrl = (): number => {
@@ -114,7 +114,7 @@ const ResultsTabs = () => {
   const initialTabIndex = getTabIndexFromUrl()
   const initialTabKey = panes[initialTabIndex].key
 
-  const [activeTabKey, setActiveTabKey] = useState(initialTabKey)
+  const [ activeTabKey, setActiveTabKey ] = useState(initialTabKey)
 
   const handleTabChange = (key: string) => {
     setActiveTabKey(key)
@@ -130,22 +130,20 @@ const ResultsTabs = () => {
     router.push(newPath, newPath)
   }
 
-  return (
-    <Tabs onChange={handleTabChange} activeKey={activeTabKey.toString()}>
-      {panes.map(({ key, title }) => (
-        <TabPane key={key} tab={title}>
-          <AllResultsList />
-        </TabPane>
-      ))}
-    </Tabs>
-  )
-}
+  const { q = '', tabs = '', tags = [] } = router.query
 
-const SearchResults = () => {
+  const title = `Search results for ${q} by ${tabs}`
+
   return (
-    <Section>
-      <ResultsTabs />
-    </Section>
+    <PageContent meta={{ title, tags: tags as string[] }}>
+      <Tabs onChange={handleTabChange} activeKey={activeTabKey.toString()}>
+        {panes.map(({ key, title }) => (
+          <TabPane key={key} tab={title}>
+            <AllResultsList />
+          </TabPane>
+        ))}
+      </Tabs>
+    </PageContent>
   )
 }
 
