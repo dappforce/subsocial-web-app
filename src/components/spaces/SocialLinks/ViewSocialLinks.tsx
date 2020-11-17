@@ -5,15 +5,17 @@ import { MailOutlined } from '@ant-design/icons'
 import { isEmptyStr } from '@subsocial/utils'
 
 type SocialLinkProps = {
-  link: string
+  link: string,
+  withTitle?: boolean
 }
 
-const SocialLink = ({ link }: SocialLinkProps) => {
+export const SocialLink = ({ link, withTitle }: SocialLinkProps) => {
   if (isEmptyStr(link)) return null
 
   const brand = getLinkBrand(link)
-  return <a href={link} title={brand} target='_blank' className='DfBlackLink ml-3'>
+  return <a href={link} title={brand} rel="noreferrer" target='_blank' className='DfBlackLink ml-3'>
     {getLinkIcon(brand)}
+    {withTitle && brand}
   </a>
 }
 
