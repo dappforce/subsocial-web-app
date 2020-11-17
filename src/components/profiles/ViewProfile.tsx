@@ -54,8 +54,7 @@ const Component = (props: Props) => {
   const {
     address,
     size = LARGE_AVATAR_SIZE,
-    owner,
-    mySpaceIds
+    owner
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);

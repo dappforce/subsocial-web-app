@@ -1,6 +1,5 @@
 import React from 'react'
 import { PageContent } from 'src/components/main/PageWrapper'
-import HeadMeta from './HeadMeta'
 
 type Props = {
   title: string
