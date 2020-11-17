@@ -2,7 +2,6 @@ import { GenericAccountId as AccountId } from '@polkadot/types'
 import { SpaceContent } from '@subsocial/types/offchain'
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import BN from 'bn.js'
-import { mdToText } from 'src/utils'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import Error from 'next/error'
@@ -227,9 +226,10 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
     return return404(props)
   }
 
-  const handle = `@${spaceData.struct.handle.unwrapOr(undefined)}`
+  const handleValue = spaceData.struct.handle.unwrapOr(undefined)
+  const handle = `@${handleValue}`
 
-  if (handle !== idOrHandle && res) {
+  if (handleValue && handle !== idOrHandle && res) {
     res.writeHead(301, { Location: spaceUrl(spaceData.struct) })
     res.end()
   }

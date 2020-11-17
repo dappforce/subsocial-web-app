@@ -5,21 +5,22 @@ import { NextPage } from 'next'
 import Error from 'next/error'
 import React, { useCallback, useState } from 'react'
 
-import { AuthorPreview, ProfilePreview } from '../profiles/address-views'
+import { ProfilePreview } from '../profiles/address-views'
 import { DfMd } from '../utils/DfMd'
 import { return404 } from '../utils/next'
 import Section from '../utils/Section'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
-import { formatUnixDate } from '../utils'
 import ViewTags from '../utils/ViewTags'
-import SpaceStatsRow from './SpaceStatsRow'
 import { ViewSpaceProps } from './ViewSpaceProps'
 import withLoadSpaceDataById from './withLoadSpaceDataById'
 import { PageContent } from '../main/PageWrapper'
 import { getSpaceId } from '../substrate'
 import { SpaceNotFound } from './helpers'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
-import { SocialLink } from './SocialLinks/ViewSocialLinks'
+import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
+import Segment from '../utils/Segment'
+import { appName } from '../utils/env'
+import { ViewSpace } from './ViewSpace'
 
 type Props = ViewSpaceProps
 
@@ -39,19 +40,24 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   const [ content ] = useState(spaceData?.content || {} as SpaceContent)
   const { name, about, image, tags, links, email } = content
 
-  const SpaceAuthor = () =>
+  const SpaceAuthor = () => <Segment>
     <ProfilePreview address={spaceOwnerAddress} owner={owner} />
+  </Segment>
 
   const ConfactInfo = useCallback(() => {
-  const socialLinks = ([ ...links, email ] as string[])
-    .map((x, i) => 
-      ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} withTitle />}))
+    const socialLinks = (links as string[])
+      .map((x, i) => 
+        ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
 
-    return <InfoPanel
-      title={`${name} social links & contact info?`}
-      column={2}
-      items={socialLinks}
-    />
+    return <Section title={`${name} social links & contact info`} className='mb-4'>
+      <InfoPanel
+        column={2}
+        items={[
+          ...socialLinks,
+          { value: <EmailLink link={email} label={name} />}
+        ]}
+      />
+    </Section>
   }, [])
 
   const title = `What is ${name}?`
@@ -69,23 +75,29 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
     title={title}
     className='DfContentPage'
   >
-    <div className='DfRow mt-3'>
-      <SpaceStatsRow space={space} />
-    </div>
-
     {nonEmptyStr(about) &&
       <div className='DfBookPage'>
         <DfMd source={about} />
       </div>
     }
-    <ViewTags tags={tags} />
+    <ViewTags tags={tags} className='mb-4' />
 
-    <Section title={`What is owner ${name} ?`}>
+    <ConfactInfo />
+
+    <Section title={`Owner of ${name} space`} className='mb-4'>
       <SpaceAuthor />
     </Section>
 
-    <ConfactInfo />
-  
+    <Section title={`Follow ${name} on ${appName}`}>
+      <ViewSpace
+        spaceData={spaceData}
+        withFollowButton
+        withTags={false}
+        withStats={true}
+        preview
+      />
+    </Section>
+
   </PageContent>
 }
 
