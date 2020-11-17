@@ -24,7 +24,7 @@ import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpace
 import { UploadCover } from '../uploader'
 import { getNonEmptyPostContent } from '../utils/content'
 import messages from 'src/messages'
-import { clearAutoSaveStorage } from '../utils/DfMdEditor/client'
+import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 
 const log = newLogger('EditPost')
 
@@ -115,7 +115,7 @@ export function InnerForm (props: FormProps) {
 
   const onSuccess: TxCallback = (txResult) => {
     const id = post?.struct.id || getNewIdFromEvent(txResult)
-    clearAutoSaveStorage('post')
+    clearAutoSavedContent('post')
     id && goToView(id)
   }
 
