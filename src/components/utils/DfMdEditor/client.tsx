@@ -10,7 +10,7 @@ const getAutoSavedContent = (id?: AutoSaveType): string | undefined => {
   return id ? store.get(getAutoSaveStorageKey(id)) : undefined
 }
 
-export const clearAutoSaveStorage = (id: AutoSaveType) => store.remove(getAutoSaveStorageKey(id))
+export const clearAutoSavedContent = (id: AutoSaveType) => store.remove(getAutoSaveStorageKey(id))
 
 const AUTO_SAVE_INTERVAL_MILLIS = 5000
 
