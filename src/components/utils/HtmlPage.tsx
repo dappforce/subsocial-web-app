@@ -9,8 +9,7 @@ type Props = {
 
 /** Use this component carefully and not to oftern, because it allows to inject a dangerous HTML. */
 export const HtmlPage = ({ title, html }: Props) =>
-  <PageContent>
-    <HeadMeta title={title} />
+  <PageContent meta={{ title }}>
     <div dangerouslySetInnerHTML={{ __html: html }} />
   </PageContent>
 

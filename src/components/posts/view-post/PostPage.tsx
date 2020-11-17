@@ -1,7 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { DfMd } from '../../utils/DfMd'
-import { HeadMeta } from '../../utils/HeadMeta'
 import Section from '../../utils/Section'
 import { PostData, PostWithAllDetails } from '@subsocial/types/dto'
 import ViewTags from '../../utils/ViewTags'
@@ -68,10 +67,16 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
     : title
 
   return <>
-    <PageContent>
+    <PageContent
+      meta={{ 
+        title,
+        desc: mdToText(body),
+        canonical,
+        tags
+      }}
+    >
       <HiddenPostAlert post={post.struct} />
       <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
-        <HeadMeta title={title} desc={mdToText(body)} image={image} canonical={canonical} tags={tags} />
         <div className='DfRow'>
           <h1 className='DfPostName'>{titleMsg}</h1>
           <PostDropDownMenu post={post} space={spaceStruct} withEditButton />

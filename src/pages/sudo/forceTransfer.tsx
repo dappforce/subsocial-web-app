@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { Input, Form, Button } from 'antd'
 import { OnlySudo } from 'src/components/auth/OnlySudo'
-import { HeadMeta } from 'src/components/utils/HeadMeta'
-import { Section } from 'src/components/utils/Section'
 import { DfForm, DfFormButtons } from 'src/components/forms'
 import { showErrorMessage, showSuccessMessage } from 'src/components/utils/Message'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
@@ -12,6 +10,7 @@ import { formatBalance } from '@polkadot/util'
 import { FormatBalance } from 'src/components/profiles/address-views/utils/Balance'
 import BN from 'bn.js'
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
+import { PageContent } from 'src/components/main/PageWrapper'
 
 type FormValues = Partial<{
   accounts: string
@@ -181,10 +180,9 @@ function InnerForm (props: FormProps) {
 export function Page (props: FormProps) {
   const title = 'Sudo / forceTransfer'
   return <OnlySudo>
-    <HeadMeta title={title} />
-    <Section className='EditEntityBox' title={title}>
+    <PageContent className='EditEntityBox' meta={{ title }} title={title}>
       <InnerForm {...props} />
-    </Section>
+    </PageContent>
   </OnlySudo>
 }
 

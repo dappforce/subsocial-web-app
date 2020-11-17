@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 import PaginatedList from 'src/components/lists/PaginatedList'
-import { HeadMeta } from '../utils/HeadMeta'
 import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
 import { spaceIdForUrl, spaceUrl } from '../urls'
@@ -16,6 +15,7 @@ import BaseAvatar from '../utils/DfAvatar'
 import { isMyAddress } from '../auth/MyAccountContext'
 import { toShortAddress } from '../utils'
 import { getPageOfIds } from '../utils/getIds'
+import { PageContent } from '../main/PageWrapper'
 
 type Props = {
   spacesData: SpaceData[],
@@ -55,10 +55,14 @@ export const ListFollowingSpaces = (props: Props) => {
 
 export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
   const { query: { address } } = useRouter()
-  return <>
-    <HeadMeta title={`Subscriptions of ${address}`} desc={`Spaces that ${address} follows on Subsocial`} />
+  return <PageContent
+    meta={{
+      title: `Subscriptions of ${address}`,
+      desc: `Spaces that ${address} follows on Subsocial`
+    }}
+  >
     <ListFollowingSpaces {...props} />
-  </>
+  </PageContent>
 }
 
 ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {

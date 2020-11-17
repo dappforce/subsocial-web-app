@@ -1,48 +1,47 @@
-import { GenericAccountId as AccountId } from '@polkadot/types';
-import { SpaceContent } from '@subsocial/types/offchain';
-import { nonEmptyStr, isEmptyStr } from '@subsocial/utils';
-import BN from 'bn.js';
-import { mdToText } from 'src/utils';
-import { NextPage } from 'next';
-import dynamic from 'next/dynamic';
-import Error from 'next/error';
-import React, { useCallback } from 'react';
-import { Segment } from 'src/components/utils/Segment';
-import { isHidden, resolveBn } from '../utils';
-import { HeadMeta } from '../utils/HeadMeta';
-import { SummarizeMd } from '../utils/md';
-import MyEntityLabel from '../utils/MyEntityLabel';
-import { return404 } from '../utils/next';
-import Section from '../utils/Section';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { getSpaceId } from '../substrate';
-import ViewTags from '../utils/ViewTags';
-import SpaceStatsRow from './SpaceStatsRow';
-import { ViewSpaceProps } from './ViewSpaceProps';
-import withLoadSpaceDataById from './withLoadSpaceDataById';
-import AboutSpaceLink from './AboutSpaceLink';
-import ViewSpaceLink from './ViewSpaceLink';
-import { PageContent } from '../main/PageWrapper';
-import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers';
-import { ContactInfo } from './SocialLinks/ViewSocialLinks';
-import { MutedSpan } from '../utils/MutedText';
-import { BareProps } from '../utils/types';
-import { getPageOfIds } from '../utils/getIds';
-import { editSpaceUrl, spaceUrl } from '../urls';
-import ButtonLink from '../utils/ButtonLink';
-import { EditOutlined } from '@ant-design/icons';
-import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
-import { fullPath } from '../urls/helpers';
+import { GenericAccountId as AccountId } from '@polkadot/types'
+import { SpaceContent } from '@subsocial/types/offchain'
+import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
+import BN from 'bn.js'
+import { mdToText } from 'src/utils'
+import { NextPage } from 'next'
+import dynamic from 'next/dynamic'
+import Error from 'next/error'
+import React, { useCallback } from 'react'
+import { Segment } from 'src/components/utils/Segment'
+import { isHidden, resolveBn } from '../utils'
+import { SummarizeMd } from '../utils/md'
+import MyEntityLabel from '../utils/MyEntityLabel'
+import { return404 } from '../utils/next'
+import Section from '../utils/Section'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { getSpaceId } from '../substrate'
+import ViewTags from '../utils/ViewTags'
+import SpaceStatsRow from './SpaceStatsRow'
+import { ViewSpaceProps } from './ViewSpaceProps'
+import withLoadSpaceDataById from './withLoadSpaceDataById'
+import AboutSpaceLink from './AboutSpaceLink'
+import ViewSpaceLink from './ViewSpaceLink'
+import { PageContent } from '../main/PageWrapper'
+import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers'
+import { ContactInfo } from './SocialLinks/ViewSocialLinks'
+import { MutedSpan } from '../utils/MutedText'
+import { BareProps } from '../utils/types'
+import { getPageOfIds } from '../utils/getIds'
+import { editSpaceUrl, spaceUrl } from '../urls'
+import ButtonLink from '../utils/ButtonLink'
+import { EditOutlined } from '@ant-design/icons'
+import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
+import { fullPath } from '../urls/helpers'
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
-const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
+const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
 
 type Props = ViewSpaceProps
 
 export const ViewSpace = (props: Props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { spaceData } = props;
+  const { spaceData } = props
 
   if (!spaceData || !spaceData?.struct || isHidden({ struct: spaceData.struct })) {
     return <SpaceNotFound />
@@ -61,14 +60,14 @@ export const ViewSpace = (props: Props) => {
     posts = [],
     onClick,
     imageSize = 64
-  } = props;
+  } = props
 
-  const space = spaceData.struct;
+  const space = spaceData.struct
 
   const {
     id,
     owner
-  } = space;
+  } = space
 
   const { about, name, image, tags, ...contactInfo } = spaceData?.content || {} as SpaceContent
 
@@ -114,7 +113,7 @@ export const ViewSpace = (props: Props) => {
       <SpaceNameAsLink className='mr-3' />
       <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
     </>
-  );
+  )
 
   const renderPreview = () =>
     <div className={primaryClass}>
@@ -126,7 +125,7 @@ export const ViewSpace = (props: Props) => {
             <span className='d-flex align-items-center'>
               <DropdownMenu className='mx-2' spaceData={spaceData} />
               {isMy &&
-                <ButtonLink href={`/[spaceId]/edit`} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
+                <ButtonLink href={'/[spaceId]/edit'} as={editSpaceUrl(space)} className='mr-2 bg-transparent'>
                   <EditOutlined /> Edit
                 </ButtonLink>
               }
@@ -155,11 +154,11 @@ export const ViewSpace = (props: Props) => {
     </div>
 
   if (nameOnly) {
-    return renderNameOnly();
+    return renderNameOnly()
   } else if (dropdownPreview) {
-    return renderDropDownPreview();
+    return renderDropDownPreview()
   } else if (miniPreview) {
-    return renderMiniPreview();
+    return renderMiniPreview()
   } else if (preview) {
     return <Segment>
       <EntityStatusGroup>
@@ -167,19 +166,17 @@ export const ViewSpace = (props: Props) => {
         <HiddenSpaceAlert space={space} preview />
       </EntityStatusGroup>
       {renderPreview()}
-    </Segment>;
+    </Segment>
   }
 
-  return <>
-    <PageContent>
+  return <Section>
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section>{renderPreview()}</Section>
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
       </Section>
-    </PageContent>
-  </>
+  </Section>
 }
 
 // TODO extract getInitialProps, this func is similar in AboutSpace
@@ -192,7 +189,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   }
 
   const id = resolveBn(spaceData.struct.id)
-  const { about, name, image } = spaceData.content
+  const { name, image } = spaceData.content
 
   // Simple check (should be imroved later)
   const isPolkaProject = id.eqn(1) || (id.gtn(1000) && id.ltn(1218))
@@ -200,10 +197,16 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   // Need to add this to a title to improve SEO of Polkadot projects.
   const title = name + (isPolkaProject ? ' - Polkadot ecosystem projects' : '')
 
-  return <>
-    <HeadMeta title={title} desc={mdToText(about)} image={image} canonical={fullPath(spaceUrl(spaceData.struct))} />
+  return <PageContent
+    meta={{
+      title,
+      desc: `Latest news and update from ${title} on Subsocial.`,
+      image,
+      canonical: fullPath(spaceUrl(spaceData.struct))
+    }}
+  >
     <ViewSpace {...props} />
-  </>
+  </PageContent>
 }
 
 ViewSpacePage.getInitialProps = async (props): Promise<Props> => {

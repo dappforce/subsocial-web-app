@@ -1,16 +1,17 @@
 import React from 'react'
 import Link from 'next/link'
-import { HeadMeta } from 'src/components/utils/HeadMeta'
-import { Section } from 'src/components/utils/Section'
+import { PageContent } from 'src/components/main/PageWrapper'
 
-const SudoPage = () =>
-  <>
-    <HeadMeta title='Sudo' />
-    <Section title='Sudo'>
-      <ul>
-        <li><Link href='/sudo/forceTransfer' as='/sudo/forceTransfer'>forceTransfer</Link></li>
-      </ul>
-    </Section>
-  </>
+const TITLE = 'Sudo'
+
+const SudoPage = () => <PageContent meta={{ title: TITLE }} title={TITLE} >
+  <ul>
+    <li>
+      <Link href='/sudo/forceTransfer' as='/sudo/forceTransfer'>
+        forceTransfer
+      </Link>
+    </li>
+  </ul>
+</PageContent>
 
 export default SudoPage

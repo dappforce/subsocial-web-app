@@ -1,7 +1,6 @@
 import React from 'react';
 import { ViewSpace } from './ViewSpace';
 import { NextPage } from 'next';
-import { HeadMeta } from '../utils/HeadMeta';
 import { SpaceData } from '@subsocial/types/dto';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
 import { CreateSpaceButton } from './helpers';
@@ -9,6 +8,7 @@ import { getReversePageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/ge
 import BN from 'bn.js'
 import { ZERO, resolveBn } from '../utils';
 import { PaginatedList } from '../lists/PaginatedList';
+import { PageContent } from '../main/PageWrapper';
 
 type Props = {
   spacesData?: SpaceData[]
@@ -48,10 +48,9 @@ const ListAllSpacesPage: NextPage<Props> = (props) => {
   const { totalSpaceCount = ZERO } = props
   const title = getTitle(resolveBn(totalSpaceCount))
 
-  return <>
-    <HeadMeta title={title} desc='Discover and follow interesting spaces on Subsocial.' />
+  return <PageContent meta={{ title, desc: 'Discover and follow interesting spaces on Subsocial.' }}>
     <ListAllSpaces {...props} />
-  </>
+  </PageContent>
 }
 
 ListAllSpacesPage.getInitialProps = async (props): Promise<Props> => {

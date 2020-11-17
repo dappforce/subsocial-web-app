@@ -2,7 +2,6 @@ import styles from './index.module.sass'
 import React, { useState } from 'react'
 import { Steps, Button } from 'antd'
 import { PageContent } from 'src/components/main/PageWrapper'
-import HeadMeta from '../HeadMeta'
 import Section from '../Section'
 import { Step1ButtonName, Step1Content } from './Step1'
 import { Step2ButtonName, Step2Content } from './Step2'
@@ -42,8 +41,12 @@ export const Faucet = () => {
 
   const title = 'Subsocial Token Faucet (SMN)'
 
-  return <PageContent>
-    <HeadMeta title={title} desc='Get free tokens for a decentralized social network.' />
+  return <PageContent
+    meta={{
+      title,
+      desc: 'Get free tokens for a decentralized social network.'
+    }}
+  >
     <Section className={`DfContentPage ${styles.Faucet}`} title={title}>
       <Steps current={current} className='mt-3'>
         {steps.map(item => (

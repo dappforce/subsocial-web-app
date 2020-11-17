@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { ViewSpace } from './ViewSpace'
 import PaginatedList from 'src/components/lists/PaginatedList'
 import { NextPage } from 'next'
-import { HeadMeta } from '../utils/HeadMeta'
 import { SpaceData } from '@subsocial/types/dto'
 import { SpaceId } from '@subsocial/types/substrate/interfaces'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
@@ -17,6 +16,7 @@ import { getPageOfIds } from '../utils/getIds'
 import { useRouter } from 'next/router'
 import DataList from '../lists/DataList'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
+import { PageContent } from '../main/PageWrapper'
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -168,10 +168,14 @@ export const AccountSpaces = ({ spacesData, mySpaceIds, withTitle = true, ...pro
     </div>
 }
 
-export const AccountSpacesPage: NextPage<Props> = (props: Props) => <>
-  <HeadMeta title='Spaces' desc={`Subsocial spaces owned by ${props.address}`} />
+export const AccountSpacesPage: NextPage<Props> = (props: Props) => <PageContent 
+    meta={{
+      title: 'Spaces',
+      desc: `Subsocial spaces owned by ${props.address}`
+    }}
+  >
   <AccountSpaces {...props} />
-</>
+</PageContent>
 
 AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props

@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 import { Form, Input, Select } from 'antd'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import BN from 'bn.js'
-import HeadMeta from '../utils/HeadMeta'
-import Section from '../utils/Section'
 import { getNewIdFromEvent, equalAddresses, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { PostExtension, PostUpdate, OptionId, OptionBool, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
@@ -25,6 +23,7 @@ import { UploadCover } from '../uploader'
 import { getNonEmptyPostContent } from '../utils/content'
 import messages from 'src/messages'
 import { postUrl } from '../urls'
+import { PageContent } from '../main/PageWrapper'
 
 const log = newLogger('EditPost')
 
@@ -221,17 +220,18 @@ export function InnerForm (props: FormProps) {
 export function FormInSection (props: FormProps) {
   const { space, post } = props
 
-  const pageTitle = post ? `Edit post` : `New post`
+  const pageTitle = post ? 'Edit post' : 'New post'
 
   const sectionTitle =
     <SpacegedSectionTitle space={space} subtitle={pageTitle} />
 
-  return <>
-    <HeadMeta title={pageTitle} />
-    <Section className='EditEntityBox' title={sectionTitle}>
-      <InnerForm {...props} />
-    </Section>
-  </>
+  return <PageContent
+      className='EditEntityBox'
+      meta={{ title: pageTitle }}
+      title={sectionTitle}
+    >
+    <InnerForm {...props} />
+  </PageContent>
 }
 
 function LoadPostThenEdit (props: FormProps) {

@@ -1,16 +1,16 @@
 import React from 'react'
 import { Space } from '@subsocial/types/substrate/interfaces'
-import { ViewComment } from './ViewComment';
-import { NewComment } from './CreateComment';
-import { mdToText } from 'src/utils';
-import { HeadMeta } from '../utils/HeadMeta';
-import { PostWithSomeDetails, PostData } from '@subsocial/types/dto';
-import { NextPage } from 'next';
-import { getProfileName } from '../substrate';
-import { Pluralize } from '../utils/Plularize';
-import ViewPostLink from '../posts/ViewPostLink';
-import { CommentsTree } from './CommentTree';
-import Section from '../utils/Section';
+import { ViewComment } from './ViewComment'
+import { NewComment } from './CreateComment'
+import { mdToText } from 'src/utils'
+import { PostWithSomeDetails, PostData } from '@subsocial/types/dto'
+import { NextPage } from 'next'
+import { getProfileName } from '../substrate'
+import { Pluralize } from '../utils/Plularize'
+import ViewPostLink from '../posts/ViewPostLink'
+import { CommentsTree } from './CommentTree'
+import Section from '../utils/Section'
+import { PageContent } from '../main/PageWrapper'
 
 type CommentSectionProps = {
   space: Space,
@@ -40,19 +40,18 @@ type CommentPageProps = {
 }
 
 export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, space }) => {
-  const { post: { struct, content }, owner } = comment;
-  const { content: postContent } = parentPost;
+  const { post: { struct, content }, owner } = comment
+  const { content: postContent } = parentPost
   const address = struct.owner.toString()
   const profileName = getProfileName({ address, owner }).toString()
 
   const renderResponseTitle = () => <>
     In response to{' '}
-    <ViewPostLink space={space} post={parentPost.struct} title={postContent?.title} />
+    <ViewPostLink space={space} post={parentPost} title={postContent?.title} />
   </>
 
-  return <Section className='DfContentPage DfEntirePost'>
-    <HeadMeta title={`${profileName} commented on ${content?.title}`} desc={mdToText(content?.body)} />
+  return <PageContent meta={{ title: `${profileName} commented on ${content?.title}`, desc: mdToText(content?.body) }} className='DfContentPage DfEntirePost'>
     {renderResponseTitle()}
     <ViewComment space={space} comment={comment} replies={replies} withShowReplies />
-  </Section>
+  </PageContent>
 }
