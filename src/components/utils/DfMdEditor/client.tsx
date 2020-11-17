@@ -1,12 +1,16 @@
 import React from 'react'
 import SimpleMDEReact from 'react-simplemde-editor'
-import { MdEditorProps } from './types'
+import { AutoSaveType, MdEditorProps } from './types'
 import store from 'store'
 
+
+const getAutoSaveStorageKey = (id: AutoSaveType) => `smde_${id}`
 /** Get auto saved content of editor from the local storage. */
-const getAutoSavedContent = (id?: string): string | undefined => {
-  return id ? store.get(`smde_${id}`) : undefined
+const getAutoSavedContent = (id?: AutoSaveType): string | undefined => {
+  return id ? store.get(getAutoSaveStorageKey(id)) : undefined
 }
+
+export const clearAutoSaveStorage = (id: AutoSaveType) => store.remove(getAutoSaveStorageKey(id))
 
 const AUTO_SAVE_INTERVAL_MILLIS = 5000
 
