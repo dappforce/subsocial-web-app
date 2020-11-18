@@ -11,6 +11,7 @@ import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/Infi
 import PostPreview from '../posts/view-post/PostPreview'
 import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
 import { PageContent } from '../main/PageWrapper'
+import { nonEmptyArr } from '@subsocial/utils'
 
 const { TabPane } = Tabs
 
@@ -87,7 +88,7 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
       limit: size,
     })
 
-    return res
+    return res || []
   }
 
   const List = useCallback(() =>
@@ -130,9 +131,11 @@ const SearchResults = () => {
     router.push(newPath, newPath)
   }
 
-  const { q = '', tabs = '', tags = [] } = router.query
+  const { q, tabs, tags } = router.query
 
-  const title = `Search results for ${q} by ${tabs}`
+  const byTags = nonEmptyArr(tags) ? `${tags} tags` : undefined
+  const resultsName = q || byTags || 'all items'
+  const title = `Search results for ${resultsName} by ${tabs}`
 
   return (
     <PageContent meta={{ title, tags: tags as string[] }}>
