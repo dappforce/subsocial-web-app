@@ -1,22 +1,42 @@
+import { seoOverwriteLastUpdate } from './../env';
 import { NextPageContext } from 'next'
 import React from 'react'
 import { getSubsocialApi } from '../SubsocialConnect'
 import BN from 'bn.js'
 import { isDef } from '@subsocial/utils'
 import { accountUrl, postUrl, spaceUrl } from 'src/components/urls'
-import { Space } from '@subsocial/types/substrate/interfaces'
+import { SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { GenericAccountId } from '@polkadot/types/generic'
 import { getPageOfIds, getReversePageOfSpaceIds } from '../getIds'
 import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
 import { fullPath } from 'src/components/urls/helpers'
+import { Option, StorageKey } from '@polkadot/types' 
+
+type Item = {
+  link: string,
+  lastMod?: Date
+}
 
 type SitemapProps = {
   props: NextPageContext,
-  links: string[],
+  items: Item[],
   withNextPage?: boolean
 }
 
-export const createSitemap = ({ props, links, withNextPage }: SitemapProps) => {
+type HasCreatedOrUpdated = {
+  created: WhoAndWhen;
+  updated: Option<WhoAndWhen>;
+}
+
+const getLastModeFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
+  const lastUpdateFromStruct = new Date(updated.unwrapOr(created).time.toNumber())
+  return seoOverwriteLastUpdate &&
+    lastUpdateFromStruct < seoOverwriteLastUpdate
+      ? seoOverwriteLastUpdate
+      : lastUpdateFromStruct
+}
+
+export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
   const { query: { page = DEFAULT_FIRST_PAGE }, pathname } = props
 
   const nextPageLink = () => {
@@ -31,11 +51,14 @@ export const createSitemap = ({ props, links, withNextPage }: SitemapProps) => {
 
   return `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${links
-        .map((link) => {
+      ${items
+        .map(({ link, lastMod }) => {
           return `
                   <url>
                       <loc>${fullPath(link)}</loc>
+                      ${lastMod
+                        ? `<lastmod>${lastMod.toISOString()}</lastmod>`
+                        : ''}
                   </url>
               `
         })
@@ -56,12 +79,13 @@ const sendSiteMap = (props: SitemapProps) => {
 
 export class MainSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const links = [
+    const items: Item []= [
       '/sitemaps/spaces.xml',
       '/sitemaps/posts.xml',
       '/sitemaps/profiles.xml'
-    ]
-    sendSiteMap({ props, links })
+    ].map(link => ({ link }))
+  
+    sendSiteMap({ props, items })
   }
 }
 
@@ -72,11 +96,13 @@ export class SpacesSitemap extends React.Component {
     const nextSpaceId = await substrate.nextSpaceId()
     const spaceIds = await getReversePageOfSpaceIds(nextSpaceId, query)
     const spaces = await substrate.findSpaces({ ids: spaceIds, visibility: 'onlyPublic' })
-    const links = spaces
-      .map((space) => spaceUrl(space))
-      .filter(isDef)
-    
-    sendSiteMap({ props, links, withNextPage: true })
+    const items: Item[] = spaces
+      .map((space) => ({
+          link: spaceUrl(space),
+          lastMod: getLastModeFromStruct(space) 
+        }))
+  
+    sendSiteMap({ props, items, withNextPage: true })
   }
 }
 
@@ -89,23 +115,43 @@ export class PostsSitemap extends React.Component {
     const pageIds = getPageOfIds(allPostIds, query)
     const posts = await subsocial.findPublicPostsWithSomeDetails({ ids: pageIds, withSpace: true })
 
-    const links = posts
-      .map(({ post, space }) => postUrl(space?.struct || { id: post.struct.space_id.unwrap() } as Space, post))
-      .filter(isDef)
+    const items: Item[] = posts
+      .map(({ post, space }) => ({
+        link: postUrl(space?.struct || { id: post.struct.space_id.unwrap() } as Space, post), 
+        lastMod: getLastModeFromStruct(post.struct)
+      }))
     
-    sendSiteMap({ props, links, withNextPage: true })
+    sendSiteMap({ props, items, withNextPage: true })
   }
 }
 
 export class ProfilesSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const { substrate: { api }} = await getSubsocialApi()
-    const profilesEntry = await (await api).query.profiles.socialAccountById.keys()
+    const { substrate } = await getSubsocialApi()
+    const profilesEntry = await (await substrate.api).query.profiles.socialAccountById.keys()
     
-    const links = profilesEntry.map((key) => {
+    const ids = profilesEntry.map((key) => {
       const addressEncoded = '0x' + key.toHex().substr(-64)
-      return accountUrl({ address: new GenericAccountId(key.registry, addressEncoded).toString()})
+      return new GenericAccountId(key.registry, addressEncoded).toString()
     })
-    sendSiteMap({ props, links })
+
+    const socialAccounts = await substrate.findSocialAccounts(ids)
+
+    const items = socialAccounts
+      .map(({ profile: profileOpt }) => {
+        if (profileOpt.isSome) {
+          const profile = profileOpt.unwrap()
+
+          return { 
+            link: accountUrl({ address: profile.created.account }),
+            lastMod: getLastModeFromStruct(profile)
+          }
+        }
+
+        return undefined
+      })
+      .filter(isDef)
+
+    sendSiteMap({ props, items })
   }
 }
