@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import SimpleMDEReact from 'react-simplemde-editor'
 import { AutoSaveType, MdEditorProps } from './types'
 import store from 'store'
@@ -26,6 +26,8 @@ const MdEditor = ({
 }: MdEditorProps) => {
   const { toolbar = true, ...otherOptions } = options
 
+  const autosavedContent = getAutoSavedContent(autoSaveId)
+
   const classToolbar = !toolbar && 'hideToolbar'
 
   const autosave = autoSaveId
@@ -42,9 +44,15 @@ const MdEditor = ({
     ...otherOptions
   }
 
+  useEffect(() => {
+    if (!autosave || !autosavedContent) return
+
+    onChange(autosavedContent)
+  }, [])
+
   return <SimpleMDEReact
     className={`DfMdEditor ${classToolbar} ${className}`}
-    value={value || getAutoSavedContent(autoSaveId)}
+    value={value || autosavedContent}
     events={events}
     onChange={onChange}
     options={newOptions}
