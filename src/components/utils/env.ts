@@ -2,7 +2,7 @@ import BN from 'bn.js'
 import { } from '@subsocial/api/utils/types'
 
 function getEnv (varName: string): string | undefined {
-  const { env } = typeof window === 'undefined' ? process : window.process;
+  const { env } = typeof window === 'undefined' ? process : window.process
   return env[varName]
 }
 
@@ -17,6 +17,15 @@ function getEnvAsArray (varName: string): string[] {
 function getEnvAsNumber (varName: string) {
   const value = getEnv(varName)
   return value ? parseInt(value) : undefined
+}
+
+function getEnvAsDate (varName: string) {
+  const dateStr = getEnv(varName)
+  try {
+    return dateStr ? new Date(dateStr) : undefined
+  } catch (err) {
+    return undefined
+  }
 }
 
 export const nodeEnv = getEnv('NODE_ENV')
@@ -45,6 +54,8 @@ export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 export const landingPageUrl = 'https://subsocial.network'
 
 export const appBaseUrl = getEnv('APP_BASE_URL') || ''
+
+export const seoOverwriteLastUpdate = getEnvAsDate('SEO_OVERWRITE_LAST_UPDATE')
 
 export const lastReservedSpaceId = getEnvAsNumber('LAST_RESERVED_SPACE_ID') || 0
 export const claimedSpaceIds = getEnvAsArray('CLAIMED_SPACE_IDS').map(x => new BN(x))
