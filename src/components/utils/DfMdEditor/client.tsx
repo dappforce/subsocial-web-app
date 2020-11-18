@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react'
 import SimpleMDEReact from 'react-simplemde-editor'
-import { AutoSaveType, MdEditorProps } from './types'
+import { AutoSaveId, MdEditorProps } from './types'
 import store from 'store'
+import { nonEmptyStr } from '@subsocial/utils'
 
+const getStoreKey = (id: AutoSaveId) => `smde_${id}`
 
-const getAutoSaveStorageKey = (id: AutoSaveType) => `smde_${id}`
-/** Get auto saved content of editor from the local storage. */
-const getAutoSavedContent = (id?: AutoSaveType): string | undefined => {
-  return id ? store.get(getAutoSaveStorageKey(id)) : undefined
+/** Get auto saved content for MD editor from the browser's local storage. */
+const getAutoSavedContent = (id?: AutoSaveId): string | undefined => {
+  return id ? store.get(getStoreKey(id)) : undefined
 }
 
-export const clearAutoSavedContent = (id: AutoSaveType) => store.remove(getAutoSaveStorageKey(id))
+export const clearAutoSavedContent = (id: AutoSaveId) =>
+  store.remove(getStoreKey(id))
 
 const AUTO_SAVE_INTERVAL_MILLIS = 5000
 
@@ -18,7 +20,7 @@ const MdEditor = ({
   className,
   options = {},
   events = {},
-  onChange = () => {},
+  onChange = () => void(0),
   value,
   autoSaveId,
   autoSaveIntervalMillis = AUTO_SAVE_INTERVAL_MILLIS,
@@ -45,9 +47,11 @@ const MdEditor = ({
   }
 
   useEffect(() => {
-    if (!autosave || !autosavedContent) return
-
-    onChange(autosavedContent)
+    if (autosave && nonEmptyStr(autosavedContent)) {
+      // Need to trigger onChange event to notify a wrapping Ant D. form
+      // that this editor received a value from local storage.
+      onChange(autosavedContent)
+    }
   }, [])
 
   return <SimpleMDEReact
