@@ -24,6 +24,7 @@ import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
 import { resolveCidOfContent } from '@subsocial/api/utils'
 import { getNonEmptySpaceContent } from '../utils/content'
 import messages from 'src/messages'
+import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 
 const log = newLogger('EditSpace')
 
@@ -130,6 +131,7 @@ export function InnerForm (props: FormProps) {
 
   const onSuccess: TxCallback = (txResult) => {
     const id = space?.struct.id || getNewIdFromEvent(txResult)
+    clearAutoSavedContent('space')
     id && goToView(id)
   }
 
