@@ -67,57 +67,56 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
     ? renderResponseTitle(postDetails.ext?.post)
     : title
 
-  return <>
-    <PageContent
-      meta={{ 
-        title,
-        desc: mdToText(body),
-        canonical,
-        tags
-      }}
-    >
-      <HiddenPostAlert post={post.struct} />
-      <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
-        <div className='DfRow'>
-          <h1 className='DfPostName'>{titleMsg}</h1>
-          <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
-        </div>
+  return <PageContent
+    meta={{ 
+      title,
+      desc: mdToText(body),
+      canonical,
+      tags,
+      image
+    }}
+  >
+    <HiddenPostAlert post={post.struct} />
+    <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
+      <div className='DfRow'>
+        <h1 className='DfPostName'>{titleMsg}</h1>
+        <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
+      </div>
 
-        <div className='DfRow'>
-          <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
-          {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
-        </div>
+      <div className='DfRow'>
+        <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
+        {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
+      </div>
 
-        <div className='DfPostContent'>
-          {ext
-            ? <SharePostContent postDetails={postDetails} space={space} />
-            : <>
-              {image && <div className='d-flex justify-content-center'>
-                <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
-              </div>}
-              {body && <DfMd source={body} />}
-              <ViewTags tags={tags} className='mt-2' />
-            </>}
-        </div>
-        
-        <div className='DfRow'>
-          <PostActionsPanel postDetails={postDetails} space={space.struct} />
-        </div>
+      <div className='DfPostContent'>
+        {ext
+          ? <SharePostContent postDetails={postDetails} space={space} />
+          : <>
+            {image && <div className='d-flex justify-content-center'>
+              <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
+            </div>}
+            {body && <DfMd source={body} />}
+            <ViewTags tags={tags} className='mt-2' />
+          </>}
+      </div>
+      
+      <div className='DfRow'>
+        <PostActionsPanel postDetails={postDetails} space={space.struct} />
+      </div>
 
-        <div className='DfSpacePreviewOnPostPage'>
-          <ViewSpace
-            spaceData={spaceData}
-            withFollowButton
-            withTags={false}
-            withStats={false}
-            preview
-          />
-        </div>
+      <div className='DfSpacePreviewOnPostPage'>
+        <ViewSpace
+          spaceData={spaceData}
+          withFollowButton
+          withTags={false}
+          withStats={false}
+          preview
+        />
+      </div>
 
-        <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
-      </Section>
-    </PageContent>
-  </>
+      <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
+    </Section>
+  </PageContent>
 }
 
 PostPage.getInitialProps = async (props): Promise<any> => {
