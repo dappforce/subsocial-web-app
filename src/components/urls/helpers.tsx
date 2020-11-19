@@ -3,17 +3,17 @@ import { nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
 import { BareProps } from '../utils/types';
 import copy from 'copy-to-clipboard';
 import { showInfoMessage } from '../utils/Message';
+import { appBaseUrl } from '../utils/env';
 
 export const openNewWindow = (url: string) => window.open(url, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400');
 
-export function slugify (text?: AnyText): string | undefined {
-  let slug: string | undefined
-  if (nonEmptyStr(text)) {
-    slug = stringifyText(text)
-    if (slug && !slug.startsWith('@')) {
-      slug = '@' + slug
-    }
+export function slugifyHandle (text?: AnyText): string | undefined {
+  let slug = stringifyText(text)
+
+  if (slug && !slug.startsWith('@')) {
+    slug = '@' + slug
   }
+
   return slug
 }
 
@@ -60,3 +60,12 @@ export const Copy = ({ text, message, children }: CopyProps) => <BlackLink
     showInfoMessage(message)
   }}
 >{children}</BlackLink>
+
+export const fullUrl = (relative: string) => {
+  if (relative.startsWith(appBaseUrl)) return relative
+
+  const base = appBaseUrl.endsWith('/') ? appBaseUrl : appBaseUrl + '/'
+  const pathname = relative.startsWith('/') ? relative.substr(1) : relative
+
+  return base + pathname
+} 

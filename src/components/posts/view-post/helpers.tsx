@@ -27,7 +27,7 @@ import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useIsMobileWidthOrDevice } from 'src/components/responsive';
-import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/components/urls';
+import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasDataForSlug } from 'src/components/urls';
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
@@ -35,7 +35,7 @@ import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/Entit
 
 type DropdownProps = {
   space: Space
-  post: Post
+  post: PostData
   withEditButton?: boolean
 }
 
@@ -58,12 +58,13 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) => {
   const { space, post, withEditButton = false } = props
-  const isMyPost = isMyAddress(post.owner);
-  const postId = post.id
+  const { struct } = post
+  const isMyPost = isMyAddress(struct.owner)
+  const postId = struct.id
   const postKey = `post-${postId.toString()}`
 
   const editPostProps = {
-    href: '/[spaceId]/posts/[postId]/edit',
+    href: '/[spaceId]/[slug]/edit',
     as: editPostUrl(space, post)
   }
 
@@ -75,7 +76,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
         </Link>
       </Menu.Item>}
       {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
-        <HiddenPostButton post={post} asLink />
+        <HiddenPostButton post={struct} asLink />
       </Menu.Item>}
       <Menu.Item key={`view-reaction-${postKey}`} >
         <ReactionModal postId={postId} />
@@ -115,18 +116,18 @@ export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   return <PostAlert />
 }
 
-export const renderPostLink = (space: HasSpaceIdOrHandle, post: HasPostId, title?: string) =>
+export const renderPostLink = (space: HasSpaceIdOrHandle, post: HasDataForSlug, title?: string) =>
   <ViewPostLink space={space} post={post} title={title} className='DfBlackLink' />
 
 type PostNameProps = {
   space: HasSpaceIdOrHandle,
-  post: HasPostId,
+  post: HasDataForSlug,
   title?: string,
   withLink?: boolean
 }
 
 export const PostName: React.FunctionComponent<PostNameProps> = ({ space, post, title, withLink }) => {
-  if (!space?.id || !post?.id || !title) return null
+  if (!space?.id || !post?.struct.id || !title) return null
 
   return (
     <div className={'header DfPostTitle--preview'}>
@@ -144,8 +145,8 @@ type PostCreatorProps = {
 
 export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDetails, size, withSpaceName, space }) => {
   if (isEmpty(postDetails.post)) return null;
-  const { post: { struct }, owner } = postDetails;
-  const { created: { time }, owner: postOwnerAddress } = struct;
+  const { post, owner } = postDetails;
+  const { created: { time }, owner: postOwnerAddress } = post.struct;
 
   // TODO replace on loaded space after refactor this components
 
@@ -163,7 +164,7 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
             <ViewSpace spaceData={space} nameOnly withLink />
           </div>{' • '}</>
         }
-        {space && <Link href='/[spaceId]/posts/[postId]' as={postUrl(space.struct, struct)}>
+        {space && <Link href='/[spaceId]/[slug]' as={postUrl(space.struct, post)}>
           <a className='DfGreyLink'>
             {formatUnixDate(time)}
           </a>
@@ -178,15 +179,16 @@ type PostImageProps = {
   space: Space
 }
 
-const PostImage = ({ post: { content, struct }, space }: PostImageProps) => {
+const PostImage = ({ post, space }: PostImageProps) => {
+  const { content } = post
   const isMobile = useIsMobileWidthOrDevice()
   const image = content?.image
 
   if (!image || isEmptyStr(image)) return null
 
   return <DfBgImageLink
-    href={'/[spaceId]/posts/[postId]'}
-    as={postUrl(space, struct)}
+    href={'/[spaceId]/[slug]'}
+    as={postUrl(space, post)}
     src={resolveIpfsUrl(image)}
     size={isMobile ? undefined : 170}
     className='DfPostImagePreview'
@@ -208,7 +210,7 @@ export const PostContent: React.FunctionComponent<PostContentProps> = (props) =>
 
   if (!postDetails) return null
 
-  const { post: { struct: post } } = postDetails
+  const { post } = postDetails
   const postContent = content || postDetails.post.content
 
   if (!postContent) return null
@@ -216,7 +218,7 @@ export const PostContent: React.FunctionComponent<PostContentProps> = (props) =>
   const { title, body } = postContent
 
   return <div className='DfContent'>
-    {isMobile && withImage && <PostImage post={postDetails.post} space={space} />}
+    {isMobile && withImage && <PostImage post={post} space={space} />}
     <PostName space={space} post={post} title={title} withLink />
     <SummarizeMd md={body} more={renderPostLink(space, post, 'See More')} />
   </div>
@@ -275,12 +277,12 @@ type PostPreviewProps = {
 }
 
 const SharedPostMd = (props: PostPreviewProps) => {
-  const { postDetails, space } = props
-  const { post: { struct, content } } = postDetails
+  const { postDetails: { post }, space } = props
+  const { struct, content } = post
 
   return isComment(struct.extension)
     ? <DfMd source={content?.body} className='DfPostBody' />
-    : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, struct, 'See More')} />
+    : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, post, 'See More')} />
 }
 
 export const SharePostContent = (props: PostPreviewProps) => {
@@ -319,7 +321,7 @@ export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props
       <div className='w-100'>
         <div className='DfRow'>
           <PostCreator postDetails={postDetails} space={space} withSpaceName />
-          <PostDropDownMenu post={struct} space={space.struct} withEditButton />
+          <PostDropDownMenu post={postDetails.post} space={space.struct} withEditButton />
         </div>
         <PostContent postDetails={postDetails} space={space.struct} withImage={withImage} />
         {withTags && <ViewTags tags={content?.tags} />}

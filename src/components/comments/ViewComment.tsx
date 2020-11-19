@@ -8,7 +8,8 @@ import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
 import { pluralize } from '../utils/Plularize';
 import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment';
@@ -18,6 +19,8 @@ import { CommentBody } from './helpers';
 import { equalAddresses } from '../substrate';
 import { postUrl } from '../urls';
 import { ShareDropdown } from '../posts/share/ShareDropdown';
+
+dayjs.extend(relativeTime)
 
 type Props = {
   rootPost?: Post,
@@ -54,7 +57,7 @@ export const ViewComment: FunctionComponent<Props> = ({
   const [ repliesCount, setRepliesCount ] = useState(resolveBn(replies_count))
 
   const isFake = id.toString().startsWith('fake')
-  const commentLink = postUrl(space, struct)
+  const commentLink = postUrl(space, comment.post)
 
   const isRootPostOwner = equalAddresses(
     rootPost?.owner,
@@ -101,7 +104,7 @@ export const ViewComment: FunctionComponent<Props> = ({
         <Button key={`reply-comment-${id}`} className={actionCss} onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <ShareDropdown postDetails={comment} space={space} className={actionCss} />
+        <ShareDropdown key={`dropdown-comment-${id}`} postDetails={comment} space={space} className={actionCss} />
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview
@@ -116,15 +119,15 @@ export const ViewComment: FunctionComponent<Props> = ({
           }
           details={
             <span>
-              <Link href='/[spaceId]/posts/[postId]' as={commentLink}>
-                <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
+              <Link href='/[spaceId]/[slug]' as={commentLink}>
+                <a className='DfGreyLink'>{dayjs(formatUnixDate(time)).fromNow()}</a>
               </Link>
               {' · '}
               {pluralize(score, 'Point')}
             </span>
           }
         />
-        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={struct} space={space} />
+        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={comment.post} space={space} />
       </div>}
       content={showEditForm
         ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>

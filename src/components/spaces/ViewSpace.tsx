@@ -28,10 +28,11 @@ import { ContactInfo } from './SocialLinks/ViewSocialLinks';
 import { MutedSpan } from '../utils/MutedText';
 import { BareProps } from '../utils/types';
 import { getPageOfIds } from '../utils/getIds';
-import { editSpaceUrl } from '../urls';
+import { editSpaceUrl, spaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
+import { fullUrl, slugifyHandle } from '../urls/helpers';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -200,13 +201,13 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   const title = name + (isPolkaProject ? ' - Polkadot ecosystem projects' : '')
 
   return <>
-    <HeadMeta title={title} desc={mdToText(about)} image={image} />
+    <HeadMeta title={title} desc={mdToText(about)} image={image} canonical={fullUrl(spaceUrl(spaceData.struct))} />
     <ViewSpace {...props} />
   </>
 }
 
 ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
-  const { query } = props
+  const { query, res } = props
   const { spaceId } = query
   const idOrHandle = spaceId as string
 
@@ -221,6 +222,13 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
   const spaceData = id && await subsocial.findSpace({ id: id })
   if (!spaceData?.struct) {
     return return404(props)
+  }
+
+  const handle = slugifyHandle(spaceData.struct.handle.unwrapOr(undefined))
+
+  if (handle && handle !== idOrHandle && res) {
+    res.writeHead(301, { Location: spaceUrl(spaceData.struct) })
+    res.end()
   }
 
   const ownerId = spaceData?.struct.owner as AccountId

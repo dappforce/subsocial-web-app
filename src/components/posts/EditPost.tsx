@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Form, Input, Select } from 'antd'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import BN from 'bn.js'
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
 import { getNewIdFromEvent, equalAddresses, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { PostExtension, PostUpdate, OptionId, OptionBool, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
-import { IpfsCid } from '@subsocial/types/substrate/interfaces'
+import { IpfsCid, PostId } from '@subsocial/types/substrate/interfaces'
 import { PostContent, PostData } from '@subsocial/types'
 import { registry } from '@subsocial/types/substrate/registry'
 import { newLogger } from '@subsocial/utils'
@@ -24,6 +24,7 @@ import { withLoadSpaceFromUrl, CanHaveSpaceProps } from '../spaces/withLoadSpace
 import { UploadCover } from '../uploader'
 import { getNonEmptyPostContent } from '../utils/content'
 import messages from 'src/messages'
+import { postUrl } from '../urls'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 
 const log = newLogger('EditPost')
@@ -63,6 +64,7 @@ const RegularPostExt = new PostExtension({ RegularPost: new Null(registry) })
 
 export function InnerForm (props: FormProps) {
   const { space, post } = props
+  const router = useRouter()
   const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
@@ -120,7 +122,8 @@ export function InnerForm (props: FormProps) {
   }
 
   const goToView = (postId: BN) => {
-    Router.push('/[spaceId]/posts/[postId]', `/${spaceId}/posts/${postId}`)
+    const content = getFieldValues() as PostContent
+    router.push('/[spaceId]/[slug]', postUrl(space.struct, { struct: { id: postId as PostId }, content }))
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
 

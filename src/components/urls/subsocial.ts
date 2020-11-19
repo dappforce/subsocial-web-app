@@ -2,7 +2,8 @@ import { Space, Post, SpaceId } from '@subsocial/types/substrate/interfaces'
 import { stringifyNumber, AnyAddress, AnyText, stringifyAddress } from '../substrate'
 import { newLogger, notDef } from '@subsocial/utils'
 import BN from 'bn.js'
-import { slugify, stringifySubUrls } from './helpers'
+import { slugifyHandle, stringifySubUrls } from './helpers'
+import { createPostSlug, HasTitleOrBody } from '../posts/slugify'
 
 const log = newLogger('URLs')
 
@@ -26,7 +27,7 @@ export function spaceIdForUrl ({ id, handle }: HasSpaceIdOrHandle): string {
     return ''
   }
 
-  return slugify(handle) || stringifyNumber(id) as string
+  return slugifyHandle(handle) || stringifyNumber(id) as string
 }
 
 /** /[spaceId] */
@@ -55,25 +56,29 @@ export function aboutSpaceUrl (space: HasSpaceIdOrHandle): string {
 // --------------------------------------------------
 
 export type HasPostId = Pick<Post, 'id'>
+export type HasDataForSlug = {
+  struct: HasPostId,
+  content?: HasTitleOrBody
+}
 
 /** /[spaceId]/posts/new */
 export function newPostUrl (space: HasSpaceIdOrHandle): string {
   return spaceUrl(space, 'posts', 'new')
 }
 
-/** /[spaceId]/posts/[postId] */
-export function postUrl (space: HasSpaceIdOrHandle, post: HasPostId, ...subUrls: string[]): string {
-  if (notDef(post.id)) {
+/** /[spaceId]/[slug] */
+export function postUrl (space: HasSpaceIdOrHandle, { struct, content }: HasDataForSlug, ...subUrls: string[]): string {
+  if (notDef(struct.id)) {
     log.warn(`${postUrl.name}: Post id is undefined`)
     return ''
   }
 
-  const postId = stringifyNumber(post.id) as string
-  return spaceUrl(space, 'posts', postId, ...subUrls)
+  const slug = createPostSlug(struct.id, content)
+  return spaceUrl(space, slug, ...subUrls)
 }
 
-/** /[spaceId]/posts/[postId]/edit */
-export function editPostUrl (space: HasSpaceIdOrHandle, post: HasPostId): string {
+/** /[spaceId]/[slug]/edit */
+export function editPostUrl (space: HasSpaceIdOrHandle, post: HasDataForSlug): string {
   return postUrl(space, post, 'edit')
 }
 
@@ -91,7 +96,7 @@ export function accountIdForUrl ({ address, handle }: HasAddressOrHandle): strin
     return ''
   }
 
-  return slugify(handle) || stringifyAddress(address) as string
+  return slugifyHandle(handle) || stringifyAddress(address) as string
 }
 
 function urlWithAccount (baseUrl: string, account: HasAddressOrHandle, ...subUrls: string[]): string {

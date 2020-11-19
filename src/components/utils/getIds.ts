@@ -1,9 +1,9 @@
 import BN from 'bn.js'
-import { ZERO } from ".";
-import { claimedSpaceIds, lastReservedSpaceId } from "./env";
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from "src/config/ListData.config"
+import { ZERO } from '.'
+import { claimedSpaceIds, lastReservedSpaceId } from './env'
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { nonEmptyStr } from '@subsocial/utils'
-import { tryParseInt } from "src/utils"
+import { tryParseInt } from 'src/utils'
 
 export const getLastNIds = (nextId: BN, size: number): BN[] => {
   const idsCount = nextId.lten(size) ? nextId.toNumber() - 1 : size
