@@ -1,4 +1,3 @@
-/* eslint-disable node/no-deprecated-api */
 /* eslint-disable @typescript-eslint/no-var-requires */
 // const withBundleAnalyzer = require('@next/bundle-analyzer')
 const withImages = require('next-images')
@@ -70,7 +69,7 @@ module.exports = withPlugins([
   ],
   {
   ...nextConfig,
-  async redirects() {
+  async redirects () {
     return [
       {
         source: '/spaces/:spaceId(@.*)/:details*',

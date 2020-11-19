@@ -1,3 +1,4 @@
+import React from 'react';
 import { AnyText, stringifyText } from '../substrate';
 import { nonEmptyStr, nonEmptyArr } from '@subsocial/utils';
 import { BareProps } from '../utils/types';
