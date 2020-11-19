@@ -1,3 +1,3 @@
-import { SpacesSitemap } from 'src/components/utils/sitemaps'
+import { SpacesSitemap } from 'src/components/sitemap'
 
 export default SpacesSitemap
