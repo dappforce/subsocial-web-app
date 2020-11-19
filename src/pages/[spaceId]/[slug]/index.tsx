@@ -1,3 +1,3 @@
-import PostPage from '../../../components/posts/view-post/PostPage';// TODO redirect to /[spaceId]
+import PostPage from '../../../components/posts/view-post/PostPage'
 
-export default PostPage;
+export default PostPage
