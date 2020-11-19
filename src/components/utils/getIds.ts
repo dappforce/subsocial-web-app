@@ -41,7 +41,7 @@ export const parsePageQuery = (props: PaginationQuery): ParsedPaginationQuery =>
   }
 }
 
-export const getPageOfIds = (ids: BN[], query: PaginationQuery) => {
+export const getPageOfIds = <T = BN>(ids: T[], query: PaginationQuery): T[] => {
   const { page, size } = parsePageQuery(query)
   const offset = (page - 1) * size
   const pageOfIds = []

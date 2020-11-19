@@ -7,7 +7,7 @@ import { Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { GenericAccountId } from '@polkadot/types/generic'
 import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
 import { fullUrl } from 'src/components/urls/helpers'
-import { Option } from '@polkadot/types' 
+import { Option, StorageKey } from '@polkadot/types' 
 import { seoOverwriteLastUpdate } from '../utils/env'
 import { getReversePageOfSpaceIds, getPageOfIds } from '../utils/getIds'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
@@ -91,7 +91,7 @@ export class MainSitemap extends React.Component {
       '/spaces',
       '/sitemaps/1/spaces.xml',
       '/sitemaps/1/posts.xml',
-      '/sitemaps/profiles.xml'
+      '/sitemaps/1/profiles.xml'
     ].map(link => ({
       link,
       lastMod: dayjs().startOf('day'),
@@ -142,10 +142,13 @@ export class PostsSitemap extends React.Component {
 
 export class ProfilesSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
+    const { query } = props
     const { substrate } = await getSubsocialApi()
-    const profilesEntry = await (await substrate.api).query.profiles.socialAccountById.keys()
+    const profileKeys = await (await substrate.api).query.profiles.socialAccountById.keys()
     
-    const ids = profilesEntry.map((key) => {
+    const pageKeys = getPageOfIds<StorageKey>(profileKeys, query)
+
+    const ids = pageKeys.map((key) => {
       const addressEncoded = '0x' + key.toHex().substr(-64)
       return new GenericAccountId(key.registry, addressEncoded).toString()
     })
@@ -167,6 +170,6 @@ export class ProfilesSitemap extends React.Component {
       })
       .filter(isDef)
 
-    sendSiteMap({ props, items })
+    sendSiteMap({ props, items, withNextPage: true })
   }
 }
