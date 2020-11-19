@@ -12,6 +12,7 @@ import { seoOverwriteLastUpdate } from '../utils/env'
 import { getReversePageOfSpaceIds, getPageOfIds } from '../utils/getIds'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
 import dayjs, { Dayjs } from 'dayjs'
+import { tryParseInt } from 'src/utils'
 
 type Item = {
   link: string,
@@ -39,10 +40,11 @@ const getLastModeFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
 }
 
 export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
-  const { query: { page = DEFAULT_FIRST_PAGE }, pathname } = props
+  const { query: { page }, pathname } = props
 
   const nextPageLink = () => {
-    const nextPage = (page as string) + 1
+    const pageNumber = tryParseInt((page as string), DEFAULT_FIRST_PAGE) 
+    const nextPage = pageNumber + 1
     const sitemapType = pathname.split('/').pop()
     return withNextPage
       ? `<url>
@@ -55,7 +57,7 @@ export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       ${items
         .map(({ link, lastMod, changefreq }) => {
-          const mainTag = link.includes('sitemap') ? 'sitemap' : 'url'
+          const mainTag = link.includes('/sitemaps/') ? 'sitemap' : 'url'
           return `
             <${mainTag}>
               <loc>${fullUrl(link)}</loc>
@@ -87,9 +89,9 @@ export class MainSitemap extends React.Component {
     const items: Item []= [
       '/',
       '/spaces/all',
-      '/sitemaps/spaces.xml',
-      '/sitemaps/posts.xml',
-      '/sitemaps/profiles.xml',
+      '/sitemaps/1/spaces.xml',
+      '/sitemaps/1/posts.xml',
+      '/sitemaps/1/profiles.xml'
     ].map(link => ({
       link,
       lastMod: dayjs().startOf('day'),
