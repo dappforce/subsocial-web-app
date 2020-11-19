@@ -24,6 +24,7 @@ import { getNonEmptyPostContent } from '../utils/content'
 import messages from 'src/messages'
 import { postUrl } from '../urls'
 import { PageContent } from '../main/PageWrapper'
+import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 
 const log = newLogger('EditPost')
 
@@ -115,6 +116,7 @@ export function InnerForm (props: FormProps) {
 
   const onSuccess: TxCallback = (txResult) => {
     const id = post?.struct.id || getNewIdFromEvent(txResult)
+    clearAutoSavedContent('post')
     id && goToView(id)
   }
 

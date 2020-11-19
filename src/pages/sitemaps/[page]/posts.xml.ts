@@ -1,3 +1,3 @@
-import { PostsSitemap } from 'src/components/utils/sitemaps'
+import { PostsSitemap } from 'src/components/sitemap'
 
 export default PostsSitemap

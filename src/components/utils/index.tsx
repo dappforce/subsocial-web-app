@@ -4,7 +4,7 @@ import queryString from 'query-string'
 import React from 'react';
 import { Option } from '@polkadot/types';
 import { LoadingOutlined } from '@ant-design/icons';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import { Profile, SocialAccount, Post, Space } from '@subsocial/types/substrate/interfaces';
 import { ProfileContent } from '@subsocial/types/offchain';
 import { Moment } from '@polkadot/types/interfaces';
@@ -74,7 +74,7 @@ export const Loading = ({ label }: LoadingProps) =>
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
-  return moment(new Date(seconds)).format(format);
+  return dayjs(new Date(seconds)).format(format);
 };
 
 export const fakeClientId = () => `fake-${new Date().getTime().toString()}`

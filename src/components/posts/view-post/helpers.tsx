@@ -58,8 +58,8 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) => {
   const { space, post, withEditButton = false } = props
-  const struct = post.struct
-  const isMyPost = isMyAddress(struct.owner);
+  const { struct } = post
+  const isMyPost = isMyAddress(struct.owner)
   const postId = struct.id
   const postKey = `post-${postId.toString()}`
 

@@ -21,7 +21,8 @@ const varsToExport = [
   'LAST_RESERVED_SPACE_ID',
   'CLAIMED_SPACE_IDS',
   'DAG_HTTP_METHOD',
-  'APP_BASE_URL'
+  'APP_BASE_URL',
+  'SEO_OVERWRITE_LAST_UPDATE'
 ]
 
 function getSerializedVal (varName) {
