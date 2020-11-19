@@ -19,7 +19,7 @@ export const createPostSlug = (postId: BN, content?: HasTitleOrBody) => {
       ? title 
       : body
 
-    slug = slugify(summarize(text, { limit: MAX_SLUG_LENGTH, omission: '' }), { replacement: SLUG_SEPARATOR })
+    slug = slugify(summarize(text, { limit: MAX_SLUG_LENGTH, omission: '' }), { separator: SLUG_SEPARATOR })
   }
 
   return isEmptyStr(slug)

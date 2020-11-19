@@ -9,6 +9,7 @@ import BN from 'bn.js'
 import { ZERO, resolveBn } from '../utils';
 import { PaginatedList } from '../lists/PaginatedList';
 import { PageContent } from '../main/PageWrapper';
+import { fullUrl } from '../urls/helpers';
 
 type Props = {
   spacesData?: SpaceData[]
@@ -48,7 +49,12 @@ const ListAllSpacesPage: NextPage<Props> = (props) => {
   const { totalSpaceCount = ZERO } = props
   const title = getTitle(resolveBn(totalSpaceCount))
 
-  return <PageContent meta={{ title, desc: 'Discover and follow interesting spaces on Subsocial.' }}>
+  return <PageContent
+    meta={{
+      title,
+      desc: 'Discover and follow interesting spaces on Subsocial.',
+      canonical: fullUrl('/spaces')
+    }}>
     <ListAllSpaces {...props} />
   </PageContent>
 }

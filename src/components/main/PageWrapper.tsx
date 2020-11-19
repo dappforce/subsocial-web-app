@@ -34,7 +34,7 @@ export const createTitle = (title: string) => {
     return DEFAULT_TITLE
   }
 
-  const leftPart = summarize(title, MAX_TITLE_LEN)
+  const leftPart = summarize(title, { limit: MAX_TITLE_LEN })
   return `${leftPart} - Subsocial`
 }
 
@@ -42,7 +42,7 @@ const DEFAULT_SUBSOCIAL_IMG = '/subsocial-sign.png'
 
 export function HeadMeta (props: HeadMetaProps) {
   const { title, desc, image, canonical, tags } = props
-  const summary = desc ? summarize(desc, MAX_DESC_LEN) : undefined
+  const summary = desc ? summarize(desc, { limit: MAX_DESC_LEN }) : undefined
   const img = nonEmptyStr(image) ? resolveIpfsUrl(image) : DEFAULT_SUBSOCIAL_IMG
 
   return <div>
