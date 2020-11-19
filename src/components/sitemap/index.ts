@@ -91,7 +91,7 @@ export class MainSitemap extends React.Component {
       '/spaces',
       '/sitemaps/1/spaces.xml',
       '/sitemaps/1/posts.xml',
-      '/sitemaps/profiles.xml'
+      '/sitemaps/1/profiles.xml'
     ].map(link => ({
       link,
       lastMod: dayjs().startOf('day'),
@@ -142,6 +142,7 @@ export class PostsSitemap extends React.Component {
 
 export class ProfilesSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
+    const { query } = props
     const { substrate } = await getSubsocialApi()
     const profilesEntry = await (await substrate.api).query.profiles.socialAccountById.keys()
     
@@ -150,7 +151,9 @@ export class ProfilesSitemap extends React.Component {
       return new GenericAccountId(key.registry, addressEncoded).toString()
     })
 
-    const socialAccounts = await substrate.findSocialAccounts(ids)
+    const pageIds = getPageOfIds<string>(ids, query)
+
+    const socialAccounts = await substrate.findSocialAccounts(pageIds)
 
     const items = socialAccounts
       .map(({ profile: profileOpt }) => {
@@ -167,6 +170,6 @@ export class ProfilesSitemap extends React.Component {
       })
       .filter(isDef)
 
-    sendSiteMap({ props, items })
+    sendSiteMap({ props, items, withNextPage: true })
   }
 }
