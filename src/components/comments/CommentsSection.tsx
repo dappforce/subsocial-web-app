@@ -47,7 +47,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
 
   const renderResponseTitle = () => <>
     In response to{' '}
-    <ViewPostLink space={space} post={parentPost.struct} title={postContent?.title} />
+    <ViewPostLink space={space} post={parentPost} title={postContent?.title} />
   </>
 
   return <Section className='DfContentPage DfEntirePost'>
