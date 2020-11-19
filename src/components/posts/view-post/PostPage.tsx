@@ -54,7 +54,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
 
   const spaceStruct = spaceData.struct
 
-  const { title, body, image, canonical = fullPath(postUrl(spaceStruct, postDetails.post)), tags } = content
+  const { title, body, image, tags } = content
+  const canonical = content.canonical || fullPath(postUrl(spaceStruct, postDetails.post))
 
   const goToCommentsId = 'comments'
 
@@ -132,7 +133,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id) as SpaceId
 
   const currentSpace = { id: spaceIdFromPost, handle: idOrHandle } as unknown as Space
-  const currentPostUrl = spaceUrl({ id: spaceIdFromPost, handle: idOrHandle } as unknown as Space, slugStr)
+  const currentPostUrl = spaceUrl(currentSpace, slugStr)
 
   const space = extPostData?.space.struct || currentSpace
   const post = { struct: { id: postIdFromUrl as PostId }, content: extPostData?.post.content }
