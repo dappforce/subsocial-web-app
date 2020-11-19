@@ -2,7 +2,7 @@
   "compilerOptions": {
     /* Basic Options */
     "target": "esnext",                       /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
-    "jsx": "preserve",                           /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
+    "jsx": "react",                           /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     "declaration": true,                      /* Generates corresponding '.d.ts' file. */
     "strict": true,                           /* Enable all strict type-checking options. */
     "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
@@ -12,7 +12,6 @@
     "allowSyntheticDefaultImports": true,     /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
     "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
     "experimentalDecorators": true,           /* Enables experimental support for ES7 decorators. */
-
     "skipLibCheck": true,
     "baseUrl": ".",
     "lib": [
@@ -35,7 +34,8 @@
   "exclude": [
     "node_modules",
     "**/*.stories.tsx",
-    "**/*.stories.ts"
+    "**/*.stories.ts",
+    "test"
   ],
   "include": [
     "next-env.d.ts",
