@@ -30,7 +30,7 @@ export const createPostSlug = (postId: BN, content?: HasTitleOrBody) => {
 export const getPostIdFromSlug = (slug: string) => {
   const postId = slug.split(SLUG_SEPARATOR).pop()
 
-  if (!postId) throw new Error('PostId not found in post slug')
+  if (!postId) throw new Error('Post id not found in post slug')
 
   return new BN(postId)
 }
