@@ -8,7 +8,7 @@ import { Space, Post } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
 import { pluralize } from '../utils/Plularize';
 import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment';
@@ -117,7 +117,7 @@ export const ViewComment: FunctionComponent<Props> = ({
           details={
             <span>
               <Link href='/[spaceId]/[slug]' as={commentLink}>
-                <a className='DfGreyLink'>{moment(formatUnixDate(time)).fromNow()}</a>
+                <a className='DfGreyLink'>{dayjs(formatUnixDate(time)).fromNow()}</a>
               </Link>
               {' · '}
               {pluralize(score, 'Point')}

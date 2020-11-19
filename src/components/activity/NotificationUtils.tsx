@@ -1,5 +1,5 @@
 import React from 'react'
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData, AnyAccountId } from '@subsocial/types';
@@ -325,7 +325,7 @@ type GetNotificationProps = InnerNotificationsProps & {
 
 export const getNotification = ({ type, activityStore, activity, myAddress }: GetNotificationProps): NotificationType | undefined => {
   const { account, event, date, agg_count } = activity;
-  const formatDate = moment(date).format('lll');
+  const formatDate = dayjs(date).format('lll');
   const creator = activityStore.ownerById.get(account);
   const activityPreview = getAtivityPreview(activity, activityStore, type)
 
