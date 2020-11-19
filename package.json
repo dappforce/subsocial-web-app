@@ -20,7 +20,7 @@
   "scripts": {
     "check": "yarn lint",
     "lint": "tsc --noEmit && eslint '*/**/*.{ts,tsx}' --quiet --fix",
-    "test": "yarn patch && echo jest",
+    "test": "yarn patch && yarn jest",
     "dev": "yarn patch && next -p 3003",
     "analyze": "yarn patch && ANALYZE=true next build",
     "build": "yarn patch && next build",
