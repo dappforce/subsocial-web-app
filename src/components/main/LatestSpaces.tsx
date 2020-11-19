@@ -35,7 +35,7 @@ export const LatestSpaces = (props: Props) => {
       }
     />
     {canHaveMoreSpaces &&
-      <ButtonLink block href='/spaces/all' as='/spaces/all' className='mb-2'>
+      <ButtonLink block href='/spaces' as='/spaces' className='mb-2'>
         See all spaces
       </ButtonLink>
     }

@@ -30,7 +30,7 @@ const InnerPanel = React.memo(() => {
     <WarningPanel
       className={styles.DfWhereAmIPanel}
       desc={msg}
-      actions={[ <LearnMoreButton /> ]}
+      actions={[ <LearnMoreButton key='learn-more' /> ]}
       closable
       centered
     />

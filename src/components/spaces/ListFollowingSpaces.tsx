@@ -43,7 +43,7 @@ export const ListFollowingSpaces = (props: Props) => {
         )}
         noDataDesc='You are not following any space yet'
         noDataExt={
-          <ButtonLink href='/spaces/all' as='/spaces/all'>
+          <ButtonLink href='/spaces' as='/spaces'>
             Explore spaces
           </ButtonLink>
         }

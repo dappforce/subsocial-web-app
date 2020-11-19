@@ -10,7 +10,7 @@ export const AllSpacesLink = ({
   title = 'See all',
   ...otherProps
 }: Props) =>
-  <Link href='/spaces/all' as='/spaces/all'>
+  <Link href='/spaces' as='/spaces'>
     <a
       className='DfGreyLink text-uppercase'
       style={{ fontSize: '1rem' }}

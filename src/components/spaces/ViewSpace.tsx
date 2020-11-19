@@ -2,14 +2,12 @@ import { GenericAccountId as AccountId } from '@polkadot/types';
 import { SpaceContent } from '@subsocial/types/offchain';
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils';
 import BN from 'bn.js';
-import { mdToText } from 'src/utils';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Error from 'next/error';
 import React, { useCallback } from 'react';
 import { Segment } from 'src/components/utils/Segment';
 import { isHidden, resolveBn } from '../utils';
-import { HeadMeta } from '../utils/HeadMeta';
 import { SummarizeMd } from '../utils/md';
 import MyEntityLabel from '../utils/MyEntityLabel';
 import { return404 } from '../utils/next';
@@ -198,14 +196,12 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   // Need to add this to a title to improve SEO of Polkadot projects.
   const title = name + (isPolkaProject ? ' - Polkadot ecosystem projects' : '')
 
-  return <>
-    <HeadMeta title={title} desc={mdToText(about)} image={image} canonical={fullUrl(spaceUrl(spaceData.struct))} />
   return <PageContent
     meta={{
       title,
       desc: `Latest news and update from ${title} on Subsocial.`,
       image,
-      canonical: fullPath(spaceUrl(spaceData.struct))
+      canonical: fullUrl(spaceUrl(spaceData.struct))
     }}
   >
     <ViewSpace {...props} />

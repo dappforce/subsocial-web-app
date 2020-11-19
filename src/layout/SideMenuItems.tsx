@@ -28,7 +28,7 @@ export const isPageLink = (item: MenuItem): item is PageLink =>
 export const DefaultMenu: MenuItem[] = [
   {
     name: 'Explore',
-    page: [ '/spaces/all' ],
+    page: [ '/spaces' ],
     icon: <GlobalOutlined />
   },
   {

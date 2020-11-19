@@ -88,10 +88,10 @@ export class MainSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const items: Item []= [
       '/',
-      '/spaces/all',
+      '/spaces',
       '/sitemaps/1/spaces.xml',
       '/sitemaps/1/posts.xml',
-      '/sitemaps/1/profiles.xml'
+      '/sitemaps/profiles.xml'
     ].map(link => ({
       link,
       lastMod: dayjs().startOf('day'),
