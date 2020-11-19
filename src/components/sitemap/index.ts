@@ -6,7 +6,7 @@ import { accountUrl, postUrl, spaceUrl } from 'src/components/urls'
 import { Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { GenericAccountId } from '@polkadot/types/generic'
 import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
-import { fullPath } from 'src/components/urls/helpers'
+import { fullUrl } from 'src/components/urls/helpers'
 import { Option } from '@polkadot/types' 
 import { seoOverwriteLastUpdate } from '../utils/env'
 import { getReversePageOfSpaceIds, getPageOfIds } from '../utils/getIds'
@@ -46,7 +46,7 @@ export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
     const sitemapType = pathname.split('/').pop()
     return withNextPage
       ? `<url>
-        <loc>${fullPath(`/sitemaps/${nextPage}/${sitemapType}`)}</loc>
+        <loc>${fullUrl(`/sitemaps/${nextPage}/${sitemapType}`)}</loc>
       </url>`
       : ''
   }
@@ -58,7 +58,7 @@ export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
           const mainTag = link.includes('sitemap') ? 'sitemap' : 'url'
           return `
             <${mainTag}>
-              <loc>${fullPath(link)}</loc>
+              <loc>${fullUrl(link)}</loc>
               ${lastMod
                 ? `<lastmod>${lastMod.format('YYYY-MM-DD')}</lastmod>`
                 : ''}
@@ -95,6 +95,8 @@ export class MainSitemap extends React.Component {
       lastMod: dayjs().startOf('day'),
       changefreq: 'daily'
     }))
+
+    items.push({ link: '/faucet' })
   
     sendSiteMap({ props, items })
   }
