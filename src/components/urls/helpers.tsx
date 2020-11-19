@@ -7,7 +7,7 @@ import { appBaseUrl } from '../utils/env';
 
 export const openNewWindow = (url: string) => window.open(url, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400');
 
-export function slugify (text?: AnyText): string | undefined {
+export function slugifyHandle (text?: AnyText): string | undefined {
   let slug = stringifyText(text)
 
   if (slug && !slug.startsWith('@')) {
@@ -61,7 +61,11 @@ export const Copy = ({ text, message, children }: CopyProps) => <BlackLink
   }}
 >{children}</BlackLink>
 
-export const fullPath = (relative: string) => { 
-  const pathname = relative.startsWith('/') ? relative : '/' + relative
-  return appBaseUrl + pathname
+export const fullUrl = (relative: string) => {
+  if (relative.startsWith(appBaseUrl)) return relative
+
+  const base = appBaseUrl.endsWith('/') ? appBaseUrl : appBaseUrl + '/'
+  const pathname = relative.startsWith('/') ? relative.substr(1) : relative
+
+  return base + pathname
 } 

@@ -27,7 +27,7 @@ import { PreviewProps } from './PostPreview';
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs';
 import { useIsMobileWidthOrDevice } from 'src/components/responsive';
-import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId, HasDataForSlug } from 'src/components/urls';
+import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasDataForSlug } from 'src/components/urls';
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
@@ -58,8 +58,8 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
 
 export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) => {
   const { space, post, withEditButton = false } = props
-  const struct = post.struct
-  const isMyPost = isMyAddress(struct.owner);
+  const { struct } = post
+  const isMyPost = isMyAddress(struct.owner)
   const postId = struct.id
   const postKey = `post-${postId.toString()}`
 

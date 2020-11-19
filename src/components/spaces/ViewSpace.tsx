@@ -32,7 +32,7 @@ import { editSpaceUrl, spaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
-import { fullPath } from '../urls/helpers';
+import { fullUrl, slugifyHandle } from '../urls/helpers';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false });
@@ -201,7 +201,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   const title = name + (isPolkaProject ? ' - Polkadot ecosystem projects' : '')
 
   return <>
-    <HeadMeta title={title} desc={mdToText(about)} image={image} canonical={fullPath(spaceUrl(spaceData.struct))} />
+    <HeadMeta title={title} desc={mdToText(about)} image={image} canonical={fullUrl(spaceUrl(spaceData.struct))} />
     <ViewSpace {...props} />
   </>
 }
@@ -224,9 +224,9 @@ ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
     return return404(props)
   }
 
-  const handle = `@${spaceData.struct.handle.unwrapOr(undefined)}`
+  const handle = slugifyHandle(spaceData.struct.handle.unwrapOr(undefined))
 
-  if (handle !== idOrHandle && res) {
+  if (handle && handle !== idOrHandle && res) {
     res.writeHead(301, { Location: spaceUrl(spaceData.struct) })
     res.end()
   }

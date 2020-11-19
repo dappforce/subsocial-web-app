@@ -5,14 +5,12 @@ import { appBaseUrl } from 'src/components/utils/env'
 const createRobotsTxt = () => `
   User-agent: *
   Disallow: /_next/static/
-  Disallow: /*edit
-  Disallow: /*new
+  Disallow: /*/edit
+  Disallow: /*/new
   Disallow: /sudo
   Disallow: /feed
   Disallow: /notifications
   Disallow: /search
-
-  Allow: /faucet
 
   Sitemap: ${appBaseUrl}/sitemap.xml
 `

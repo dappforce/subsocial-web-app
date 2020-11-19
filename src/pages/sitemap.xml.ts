@@ -1,3 +1,3 @@
-import { MainSitemap } from 'src/components/utils/sitemaps'
+import { MainSitemap } from 'src/components/sitemap'
 
 export default MainSitemap

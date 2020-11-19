@@ -1,3 +1,3 @@
-import { ProfilesSitemap } from 'src/components/utils/sitemaps'
+import { ProfilesSitemap } from 'src/components/sitemap'
 
 export default ProfilesSitemap

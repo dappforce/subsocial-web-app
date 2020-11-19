@@ -1,5 +1,6 @@
 import BN from 'bn.js'
 import { } from '@subsocial/api/utils/types'
+import dayjs from 'dayjs'
 
 function getEnv (varName: string): string | undefined {
   const { env } = typeof window === 'undefined' ? process : window.process
@@ -22,7 +23,7 @@ function getEnvAsNumber (varName: string) {
 function getEnvAsDate (varName: string) {
   const dateStr = getEnv(varName)
   try {
-    return dateStr ? new Date(dateStr) : undefined
+    return dateStr ? dayjs(dateStr) : undefined
   } catch (err) {
     return undefined
   }

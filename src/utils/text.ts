@@ -5,10 +5,18 @@ const DEFAULT_SUMMARY_LEN = 300
 
 const SEPARATOR = /[.,:;!?()[\]{}\s]+/
 
+type SummarizeOpt = {
+  limit?: number,
+  omission?: string;
+}
+
 /** Shorten a plain text up to `limit` chars. Split by separators. */
 export const summarize = (
   text: string,
-  limit: number = DEFAULT_SUMMARY_LEN
+  {
+    limit = DEFAULT_SUMMARY_LEN,
+    omission
+  }: SummarizeOpt
 ): string => {
   if (isEmptyStr(text)) return ''
 
@@ -18,6 +26,7 @@ export const summarize = (
     ? text
     : truncate(text, {
       length: limit,
-      separator: SEPARATOR
+      separator: SEPARATOR,
+      omission
     })
 }

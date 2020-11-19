@@ -1,20 +1,22 @@
-import { seoOverwriteLastUpdate } from './../env';
 import { NextPageContext } from 'next'
 import React from 'react'
-import { getSubsocialApi } from '../SubsocialConnect'
 import BN from 'bn.js'
 import { isDef } from '@subsocial/utils'
 import { accountUrl, postUrl, spaceUrl } from 'src/components/urls'
-import { SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
+import { Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { GenericAccountId } from '@polkadot/types/generic'
-import { getPageOfIds, getReversePageOfSpaceIds } from '../getIds'
 import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
-import { fullPath } from 'src/components/urls/helpers'
-import { Option, StorageKey } from '@polkadot/types' 
+import { fullUrl } from 'src/components/urls/helpers'
+import { Option } from '@polkadot/types' 
+import { seoOverwriteLastUpdate } from '../utils/env'
+import { getReversePageOfSpaceIds, getPageOfIds } from '../utils/getIds'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import dayjs, { Dayjs } from 'dayjs'
 
 type Item = {
   link: string,
-  lastMod?: Date
+  lastMod?: Dayjs,
+  changefreq?: 'daily'
 }
 
 type SitemapProps = {
@@ -29,7 +31,7 @@ type HasCreatedOrUpdated = {
 }
 
 const getLastModeFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
-  const lastUpdateFromStruct = new Date(updated.unwrapOr(created).time.toNumber())
+  const lastUpdateFromStruct = dayjs(updated.unwrapOr(created).time.toNumber())
   return seoOverwriteLastUpdate &&
     lastUpdateFromStruct < seoOverwriteLastUpdate
       ? seoOverwriteLastUpdate
@@ -44,7 +46,7 @@ export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
     const sitemapType = pathname.split('/').pop()
     return withNextPage
       ? `<url>
-        <loc>${fullPath(`/sitemaps/${nextPage}/${sitemapType}`)}</loc>
+        <loc>${fullUrl(`/sitemaps/${nextPage}/${sitemapType}`)}</loc>
       </url>`
       : ''
   }
@@ -52,15 +54,18 @@ export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
   return `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       ${items
-        .map(({ link, lastMod }) => {
+        .map(({ link, lastMod, changefreq }) => {
+          const mainTag = link.includes('sitemap') ? 'sitemap' : 'url'
           return `
-                  <url>
-                      <loc>${fullPath(link)}</loc>
-                      ${lastMod
-                        ? `<lastmod>${lastMod.toISOString()}</lastmod>`
-                        : ''}
-                  </url>
-              `
+            <${mainTag}>
+              <loc>${fullUrl(link)}</loc>
+              ${lastMod
+                ? `<lastmod>${lastMod.format('YYYY-MM-DD')}</lastmod>`
+                : ''}
+              ${changefreq
+                ? `<changefreq>${changefreq}</changefreq>`
+                : ''}
+            </${mainTag}>`
         })
         .join('')}
         ${nextPageLink()}
@@ -80,10 +85,18 @@ const sendSiteMap = (props: SitemapProps) => {
 export class MainSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const items: Item []= [
+      '/',
+      '/spaces/all',
       '/sitemaps/spaces.xml',
       '/sitemaps/posts.xml',
-      '/sitemaps/profiles.xml'
-    ].map(link => ({ link }))
+      '/sitemaps/profiles.xml',
+    ].map(link => ({
+      link,
+      lastMod: dayjs().startOf('day'),
+      changefreq: 'daily'
+    }))
+
+    items.push({ link: '/faucet' })
   
     sendSiteMap({ props, items })
   }

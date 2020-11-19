@@ -1,5 +1,5 @@
 import React from 'react'
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import { ViewSpace } from '../spaces/ViewSpace';
 import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData, AnyAccountId } from '@subsocial/types';
@@ -152,7 +152,7 @@ const renderSubjectPreview = (content?: PostContent, href = '') => {
   if (!content) return null
 
   const { title, body } = content
-  const name = summarize(title || body || 'link', SUMMARIZE_LIMIT)
+  const name = summarize(title || body || 'link', { limit: SUMMARIZE_LIMIT })
   return nonEmptyStr(name) || nonEmptyStr(href) ?
   <Link href='/[spaceId]/[slug]' as={href}><a>{name}</a></Link>
   : null
@@ -325,7 +325,7 @@ type GetNotificationProps = InnerNotificationsProps & {
 
 export const getNotification = ({ type, activityStore, activity, myAddress }: GetNotificationProps): NotificationType | undefined => {
   const { account, event, date, agg_count } = activity;
-  const formatDate = moment(date).format('lll');
+  const formatDate = dayjs(date).format('lll');
   const creator = activityStore.ownerById.get(account);
   const activityPreview = getAtivityPreview(activity, activityStore, type)
 

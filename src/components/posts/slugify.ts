@@ -5,7 +5,7 @@ import BN from 'bn.js'
 import { summarize } from 'src/utils'
 import Router from 'next/router'
 
-const DEFAULT_SLUG_LENGTH = 60
+const MAX_SLUG_LENGTH = 60
 const SLUG_SEPARATOR = '-'
 
 export type HasTitleOrBody = Pick<PostContent, 'body' | 'title'>
@@ -19,7 +19,7 @@ export const createPostSlug = (postId: BN, content?: HasTitleOrBody) => {
       ? title 
       : body
 
-    slug = slugify(summarize(text, DEFAULT_SLUG_LENGTH), { replacement: SLUG_SEPARATOR })
+    slug = slugify(summarize(text, { limit: MAX_SLUG_LENGTH, omission: '' }), { replacement: SLUG_SEPARATOR })
   }
 
   return isEmptyStr(slug)

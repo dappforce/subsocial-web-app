@@ -2,7 +2,7 @@ import { Space, Post, SpaceId } from '@subsocial/types/substrate/interfaces'
 import { stringifyNumber, AnyAddress, AnyText, stringifyAddress } from '../substrate'
 import { newLogger, notDef } from '@subsocial/utils'
 import BN from 'bn.js'
-import { slugify, stringifySubUrls } from './helpers'
+import { slugifyHandle, stringifySubUrls } from './helpers'
 import { createPostSlug, HasTitleOrBody } from '../posts/slugify'
 
 const log = newLogger('URLs')
@@ -27,7 +27,7 @@ export function spaceIdForUrl ({ id, handle }: HasSpaceIdOrHandle): string {
     return ''
   }
 
-  return slugify(handle) || stringifyNumber(id) as string
+  return slugifyHandle(handle) || stringifyNumber(id) as string
 }
 
 /** /[spaceId] */
@@ -96,7 +96,7 @@ export function accountIdForUrl ({ address, handle }: HasAddressOrHandle): strin
     return ''
   }
 
-  return slugify(handle) || stringifyAddress(address) as string
+  return slugifyHandle(handle) || stringifyAddress(address) as string
 }
 
 function urlWithAccount (baseUrl: string, account: HasAddressOrHandle, ...subUrls: string[]): string {
