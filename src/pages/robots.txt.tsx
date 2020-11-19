@@ -12,8 +12,6 @@ const createRobotsTxt = () => `
   Disallow: /notifications
   Disallow: /search
 
-  Allow: /faucet
-
   Sitemap: ${appBaseUrl}/sitemap.xml
 `
 
