@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Form, Input, Select } from 'antd'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import BN from 'bn.js'
 import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'

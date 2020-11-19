@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { pluralize } from '../utils/Plularize';
 import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { EditComment } from './UpdateComment';
 import { CommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment';
@@ -18,6 +19,8 @@ import { CommentBody } from './helpers';
 import { equalAddresses } from '../substrate';
 import { postUrl } from '../urls';
 import { ShareDropdown } from '../posts/share/ShareDropdown';
+
+dayjs.extend(relativeTime)
 
 type Props = {
   rootPost?: Post,
