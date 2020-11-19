@@ -1,16 +1,16 @@
-import { seoOverwriteLastUpdate } from './../env';
 import { NextPageContext } from 'next'
 import React from 'react'
-import { getSubsocialApi } from '../SubsocialConnect'
 import BN from 'bn.js'
 import { isDef } from '@subsocial/utils'
 import { accountUrl, postUrl, spaceUrl } from 'src/components/urls'
-import { SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
+import { Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { GenericAccountId } from '@polkadot/types/generic'
-import { getPageOfIds, getReversePageOfSpaceIds } from '../getIds'
 import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
 import { fullPath } from 'src/components/urls/helpers'
-import { Option, StorageKey } from '@polkadot/types' 
+import { Option } from '@polkadot/types' 
+import { seoOverwriteLastUpdate } from '../utils/env'
+import { getReversePageOfSpaceIds, getPageOfIds } from '../utils/getIds'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
 
 type Item = {
   link: string,
@@ -54,13 +54,12 @@ export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
       ${items
         .map(({ link, lastMod }) => {
           return `
-                  <url>
-                      <loc>${fullPath(link)}</loc>
-                      ${lastMod
-                        ? `<lastmod>${lastMod.toISOString()}</lastmod>`
-                        : ''}
-                  </url>
-              `
+            <url>
+              <loc>${fullPath(link)}</loc>
+              ${lastMod
+                ? `<lastmod>${lastMod.toISOString()}</lastmod>`
+                : ''}
+            </url>`
         })
         .join('')}
         ${nextPageLink()}
