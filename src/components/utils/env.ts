@@ -1,5 +1,4 @@
 import BN from 'bn.js'
-import { } from '@subsocial/api/utils/types'
 import dayjs from 'dayjs'
 
 function getEnv (varName: string): string | undefined {
