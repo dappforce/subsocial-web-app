@@ -18,6 +18,7 @@ import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN } from 'src/config/Validations
 import { UploadAvatar } from '../uploader'
 import { resolveCidOfContent } from '@subsocial/api/utils'
 import messages from 'src/messages'
+import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 
 const log = newLogger('EditProfile')
 
@@ -105,6 +106,7 @@ export function InnerForm (props: FormProps) {
   }
 
   const onSuccess: TxCallback = () => {
+    clearAutoSavedContent('profile')
     goToView()
   }
 
