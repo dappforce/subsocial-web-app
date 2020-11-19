@@ -152,7 +152,7 @@ const renderSubjectPreview = (content?: PostContent, href = '') => {
   if (!content) return null
 
   const { title, body } = content
-  const name = summarize(title || body || 'link', SUMMARIZE_LIMIT)
+  const name = summarize(title || body || 'link', { limit: SUMMARIZE_LIMIT })
   return nonEmptyStr(name) || nonEmptyStr(href) ?
   <Link href='/[spaceId]/[slug]' as={href}><a>{name}</a></Link>
   : null

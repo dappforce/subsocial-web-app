@@ -24,7 +24,7 @@ export const SummarizeMd = ({ md, limit: initialLimit, more }: Props) => {
       : DESKTOP_SUMMARY_LEN
     )
 
-  const getSummary = (s?: string) => !s ? '' : summarize(s, limit)
+  const getSummary = (s?: string) => !s ? '' : summarize(s, { limit })
 
   const text = mdToText(md)?.trim() || ''
   const summary = getSummary(text)
