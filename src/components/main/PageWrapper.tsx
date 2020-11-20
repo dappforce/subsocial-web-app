@@ -6,6 +6,7 @@ import Head from 'next/head'
 import { isEmptyStr, nonEmptyStr, nonEmptyArr } from '@subsocial/utils'
 import { summarize } from 'src/utils'
 import { resolveIpfsUrl } from 'src/ipfs'
+import { fullUrl } from '../urls/helpers'
 
 type HeadMetaProps = {
   title: string,
@@ -51,14 +52,14 @@ export function HeadMeta (props: HeadMetaProps) {
       <title>{createTitle(title)}</title>
       <meta name='description' content={summary} />
       {nonEmptyArr(tags) && <meta name='keywords' content={tags?.join(', ')} />}
-      {nonEmptyStr(canonical) && <link rel='canonical' href={canonical} />}
+      {nonEmptyStr(canonical) && <link rel='canonical' href={fullUrl(canonical)} />}
 
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={img} />
       <meta property='og:title' content={title} />
       <meta property='og:description' content={summary} />
 
-      <meta name='twitter:card' content='summary' />
+      <meta name='twitter:card' content='summary_large_image' />
       <meta name='twitter:site' content={SITE_NAME} />
       <meta name='twitter:image' content={img} />
       <meta name='twitter:title' content={title} />
