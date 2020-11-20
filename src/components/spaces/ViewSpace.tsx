@@ -199,7 +199,7 @@ const ViewSpacePage: NextPage<Props> = (props) => {
       title,
       desc: `Latest news and updates from ${name} on Subsocial.`,
       image,
-      canonical: fullUrl(spaceUrl(spaceData.struct))
+      canonical: spaceUrl(spaceData.struct)
     }}
   >
     <ViewSpace {...props} />

@@ -21,6 +21,7 @@ import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
 import Segment from '../utils/Segment'
 import { appName } from '../utils/env'
 import { ViewSpace } from './ViewSpace'
+import { aboutSpaceUrl } from '../urls'
 
 type Props = ViewSpaceProps
 
@@ -69,7 +70,8 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
     meta={{
       title,
       desc,
-      image
+      image,
+      canonical: aboutSpaceUrl(space)
     }}
     level={1}
     title={title}

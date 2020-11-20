@@ -4,7 +4,7 @@ import { PageContent } from 'src/components/main/PageWrapper'
 
 const TITLE = 'Sudo'
 
-const SudoPage = () => <PageContent meta={{ title: TITLE }} title={TITLE} >
+const SudoPage = () => <PageContent meta={{ title: TITLE }} title={TITLE}>
   <ul>
     <li>
       <Link href='/sudo/forceTransfer' as='/sudo/forceTransfer'>

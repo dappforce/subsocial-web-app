@@ -11,6 +11,7 @@ import ViewPostLink from '../posts/ViewPostLink'
 import { CommentsTree } from './CommentTree'
 import Section from '../utils/Section'
 import { PageContent } from '../main/PageWrapper'
+import { postUrl } from '../urls'
 
 type CommentSectionProps = {
   space: Space,
@@ -50,8 +51,16 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
     <ViewPostLink space={space} post={parentPost} title={postContent?.title} />
   </>
 
-  return <PageContent meta={{ title: `${profileName} commented on ${content?.title}`, desc: mdToText(content?.body) }} className='DfContentPage DfEntirePost'>
-    {renderResponseTitle()}
-    <ViewComment space={space} comment={comment} replies={replies} withShowReplies />
-  </PageContent>
+  const meta = {
+    title: `${profileName} commented on ${content?.title}`,
+    desc: mdToText(content?.body),
+    canonical: postUrl(space, comment.post),
+  }
+
+  return (
+    <PageContent meta={meta} className='DfContentPage DfEntirePost'>
+      {renderResponseTitle()}
+      <ViewComment space={space} comment={comment} replies={replies} withShowReplies />
+    </PageContent>
+  )
 }

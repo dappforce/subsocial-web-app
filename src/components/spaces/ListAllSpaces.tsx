@@ -53,7 +53,7 @@ const ListAllSpacesPage: NextPage<Props> = (props) => {
     meta={{
       title,
       desc: 'Discover and follow interesting spaces on Subsocial.',
-      canonical: fullUrl('/spaces')
+      canonical: '/spaces'
     }}>
     <ListAllSpaces {...props} />
   </PageContent>

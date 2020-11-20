@@ -16,6 +16,7 @@ export const OnBoardingPage = ({
   const { state: { currentStep } } = useAuth()
   const step = onlyStep || currentStep
   const desc = stepItems[step].content
+
   return (
     <PageContent meta={{ title, desc }}>
       <div className='DfOnBoardingPage'>

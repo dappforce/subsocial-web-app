@@ -133,9 +133,9 @@ const SearchResults = () => {
 
   const { q, tabs, tags } = router.query
 
-  const byTags = nonEmptyArr(tags) ? `${tags} tags` : undefined
+  const byTags = nonEmptyArr(tags) ? `${tags} tag(s)` : undefined
   const resultsName = q || byTags || 'all items'
-  const title = `Search results for ${resultsName} by ${tabs}`
+  const title = `Search results for ${resultsName} in ${tabs}`
 
   return (
     <PageContent meta={{ title, tags: tags as string[] }}>

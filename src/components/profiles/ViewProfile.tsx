@@ -37,6 +37,7 @@ import { mdToText } from 'src/utils';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
 import { AccountActivity } from '../activity/AccountActivity';
 import { PageContent } from '../main/PageWrapper';
+import { accountUrl } from '../urls';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
@@ -172,7 +173,8 @@ const ProfilePage: NextPage<Props> = (props) => {
     meta={{
       title: getName(),
       desc: mdToText(about),
-      image: avatar
+      image: avatar,
+      canonical: accountUrl({ address })
     }}
   >
     <Component {...props} />
