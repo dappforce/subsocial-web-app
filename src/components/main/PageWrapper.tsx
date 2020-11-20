@@ -23,14 +23,15 @@ const MAX_DESC_LEN = 300
 
 const SITE_NAME = 'Subsocial Network'
 
-const DEFAULT_TITLE = 'Subsocial - social network on Polkadot & IPFS'
+export const DEFAULT_TITLE =
+  'Subsocial - decentralized social network on Polkadot & IPFS'
 
-// const DEFAULT_DESC =
-//   'Subsocial is a Polkadot ecosystem project supported by Web3 Foundation. ' +
-//   'Subsocial follows SoFi (social finance) principles to bring DeFi features to social networking.'
+export const DEFAULT_DESC =
+  'Subsocial is a Polkadot ecosystem project supported by Web3 Foundation. ' +
+  'Subsocial follows SoFi (social finance) principles to bring DeFi features to social networking.'
 
 export const createTitle = (title: string) => {
-  if (isEmptyStr(title)) {
+  if (isEmptyStr(title) || title === DEFAULT_TITLE) {
     return DEFAULT_TITLE
   }
 
@@ -42,7 +43,7 @@ const DEFAULT_SUBSOCIAL_IMG = '/subsocial-sign.png'
 
 export function HeadMeta (props: HeadMetaProps) {
   const { title, desc, image, canonical, tags } = props
-  const summary = desc ? summarize(desc, { limit: MAX_DESC_LEN }) : undefined
+  const summary = desc ? summarize(desc, { limit: MAX_DESC_LEN }) : DEFAULT_DESC
   const img = nonEmptyStr(image) ? resolveIpfsUrl(image) : DEFAULT_SUBSOCIAL_IMG
 
   return <div>

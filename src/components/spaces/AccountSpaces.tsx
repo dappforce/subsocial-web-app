@@ -168,14 +168,15 @@ export const AccountSpaces = ({ spacesData, mySpaceIds, withTitle = true, ...pro
     </div>
 }
 
-export const AccountSpacesPage: NextPage<Props> = (props: Props) => <PageContent 
+export const AccountSpacesPage: NextPage<Props> = (props: Props) =>
+  <PageContent 
     meta={{
-      title: 'Spaces',
+      title: 'Account spaces',
       desc: `Subsocial spaces owned by ${props.address}`
     }}
   >
-  <AccountSpaces {...props} />
-</PageContent>
+    <AccountSpaces {...props} />
+  </PageContent>
 
 AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props
