@@ -44,7 +44,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
     <ProfilePreview address={spaceOwnerAddress} owner={owner} />
   </Segment>
 
-  const ConfactInfo = useCallback(() => {
+  const ContactInfo = useCallback(() => {
     const socialLinks = (links as string[])
       .map((x, i) => 
         ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
@@ -82,7 +82,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
     }
     <ViewTags tags={tags} className='mb-4' />
 
-    <ConfactInfo />
+    <ContactInfo />
 
     <Section title={`Owner of ${name} space`} className='mb-4'>
       <SpaceAuthor />

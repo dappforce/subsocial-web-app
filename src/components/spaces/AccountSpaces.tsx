@@ -190,6 +190,7 @@ AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const mySpaceIds = await substrate.spaceIdsByOwner(address)
   const pageIds = getPageOfIds(mySpaceIds, query)
   const spacesData = await subsocial.findPublicSpaces(pageIds)
+
   return {
     spacesData,
     mySpaceIds,

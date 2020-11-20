@@ -16,6 +16,9 @@ export const SocialLink = ({ link, label, className }: SocialLinkProps) => {
   const brand = getLinkBrand(link)
   return <a href={link} title={brand} rel="noreferrer" target='_blank' className={`DfBlackLink ${className}`}>
     {getLinkIcon(brand)}
+
+    {/* TODO refactor this */}
+
     {label && <>
       <span className='ml-2'>{label}</span>
       <span className='ml-1'>{brand}</span>
@@ -37,12 +40,7 @@ type ContactInfoProps = SocialLinksProps & {
   email: string
 }
 
-type EmailLink = BareProps & {
-  link: string,
-  label?: string
-}
-
-export const EmailLink = ({ link, label, className }: EmailLink) => 
+export const EmailLink = ({ link, label, className }: SocialLinkProps) => 
   <a className={`DfBlackLink ${className}`} href={`maito:${link}`} title='Email'>
     <MailOutlined />
     {label && <span className='ml-2'>{`${label} email`}</span>}

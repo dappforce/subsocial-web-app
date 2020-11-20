@@ -31,6 +31,7 @@ import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
 import { fullUrl, slugifyHandle } from '../urls/helpers';
+import { isPolkaProject } from 'src/utils';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
@@ -190,16 +191,13 @@ const ViewSpacePage: NextPage<Props> = (props) => {
   const id = resolveBn(spaceData.struct.id)
   const { name, image } = spaceData.content
 
-  // Simple check (should be imroved later)
-  const isPolkaProject = id.eqn(1) || (id.gtn(1000) && id.ltn(1218))
-
-  // Need to add this to a title to improve SEO of Polkadot projects.
-  const title = name + (isPolkaProject ? ' - Polkadot ecosystem projects' : '')
+  // We add this to a title to improve SEO of Polkadot projects.
+  const title = name + (isPolkaProject(id) ? ' - Polkadot ecosystem projects' : '')
 
   return <PageContent
     meta={{
       title,
-      desc: `Latest news and update from ${title} on Subsocial.`,
+      desc: `Latest news and updates from ${name} on Subsocial.`,
       image,
       canonical: fullUrl(spaceUrl(spaceData.struct))
     }}

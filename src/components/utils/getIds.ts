@@ -41,11 +41,44 @@ export const parsePageQuery = (props: PaginationQuery): ParsedPaginationQuery =>
   }
 }
 
+export const getPageOfIdsWithRespectToNextId = (nextId: BN, query: PaginationQuery): BN[] => {
+  const { page, size } = parsePageQuery(query)
+
+  // TODO ideally this function should operate with BN-s, not numbers.
+
+  const maxId = nextId.subn(1).toNumber()
+  const firstId = 1 + (page - 1) * size
+  let lastId = firstId + size - 1
+
+  // The first id of this page is greater than max existing id.
+  // This means that requeted page does not exist.
+  if (firstId > maxId) {
+    return []
+  }
+
+  // This page is not full, i.e. has less result than a requested page size.
+  if (lastId > maxId) {
+    lastId = maxId
+  }
+
+  const ids: BN[] = []
+  for (let id = firstId; id <= lastId; id++) {
+    ids.push(new BN(id))
+  }
+
+  return ids
+}
+
 export const getPageOfIds = <T = BN>(ids: T[], query: PaginationQuery): T[] => {
   const { page, size } = parsePageQuery(query)
   const offset = (page - 1) * size
-  const pageOfIds = []
 
+  // If requested page is out of range of input array.
+  if (offset >= ids.length) {
+    return []
+  }
+
+  const pageOfIds = []
   for (let i = offset; i < offset + size; i++) {
     pageOfIds.push(ids[i])
   }
