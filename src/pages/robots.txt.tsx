@@ -14,7 +14,9 @@ const createRobotsTxt = () => `
   Disallow: /notifications
   Disallow: /search
 
-  Sitemap: ${appBaseUrl}/sitemap.xml
+  Sitemap: ${appBaseUrl}/sitemap/profiles/index.xml
+  Sitemap: ${appBaseUrl}/sitemap/spaces/index.xml
+  Sitemap: ${appBaseUrl}/sitemap/posts/index.xml
 `
 
 class Robots extends React.Component {

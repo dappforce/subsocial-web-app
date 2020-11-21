@@ -7,8 +7,15 @@ import React from 'react'
 import { accountUrl, postUrl, spaceUrl } from 'src/components/urls'
 import { fullUrl } from 'src/components/urls/helpers'
 import { seoOverwriteLastUpdate } from '../utils/env'
-import { canHaveNextPostPage, canHaveNextSpacePage, getPageOfIds, getReversePageOfPostIds, getReversePageOfSpaceIds, parsePageQuery } from '../utils/getIds'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
+import {
+  approxCountOfPostPages,
+  approxCountOfSpacePages,
+  getPageOfIds,
+  getReversePageOfPostIds,
+  getReversePageOfSpaceIds,
+  parsePageQuery
+} from '../utils/getIds'
 
 /** See https://www.sitemaps.org/protocol.html#changefreqdef */
 type ChangeFreq =
@@ -29,17 +36,11 @@ type UrlItem = {
   priority?: number
 }
 
-/** See https://www.sitemaps.org/protocol.html#sitemapIndex_sitemap */
-type SitemapItem = {
-  loc: string
-  lastmod?: string
-}
-
 type ResourceType = 'profiles' | 'spaces' | 'posts'
 
 type HasCreatedOrUpdated = {
-  created: WhoAndWhen;
-  updated: Option<WhoAndWhen>;
+  created: WhoAndWhen
+  updated: Option<WhoAndWhen>
 }
 
 const getLastModFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
@@ -48,64 +49,37 @@ const getLastModFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
     ? seoOverwriteLastUpdate
     : lastUpdateFromStruct
 }
-
-/** See https://www.sitemaps.org/protocol.html#sitemapIndex_sitemap */
-function renderSitemapItems (items: SitemapItem[]) {
-  const defaultLastmod = todayLastmod()
-  return items.map(({ loc, lastmod = defaultLastmod }) =>
-    `<sitemap>
-      <loc>${fullUrl(loc)}</loc>
-      <lastmod>${lastmod}</lastmod>
-    </sitemap>`
-  ).join('')
-}
-
-/** See https://www.sitemaps.org/protocol.html#sitemapIndexXMLExample */
-function renderSitemapIndex (items: SitemapItem[]) {
-  return (
-   `<?xml version="1.0" encoding="UTF-8"?>
-    <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${renderSitemapItems(items)}
-    </sitemapindex>`
-  )
-}
-
+  
 function todayLastmod () {
   return dayjs().startOf('day').format('YYYY-MM-DD')
 }
 
-type PageLoc = {
+type ResourceSitemapIndex = {
   resource: ResourceType
-  page: number
+  totalPages: number
 }
-
-function pageLocOfSitemapIndex ({ page, resource }: PageLoc) {
-  return `/sitemap/${page}/${resource}/index.xml`
-}
-
-function pageLocOfUrlSet ({ page, resource }: PageLoc) {
-  return `/sitemap/${page}/${resource}/urlset.xml`
-}
-
-type SitemapIndexPage = {
-  resource: ResourceType
-  page: number
-  withNextPage?: boolean
-}
-
-function resourcePageToSitemapItems ({ resource, page, withNextPage }: SitemapIndexPage) {
+  
+/** See https://www.sitemaps.org/protocol.html#sitemapIndexXMLExample */
+function renderSitemapIndexOfResource ({ resource, totalPages }: ResourceSitemapIndex) {
   const lastmod = todayLastmod()
-  const items: SitemapItem[] = [ { lastmod, loc: pageLocOfUrlSet({ resource, page }) } ]
-  if (withNextPage) {
-    const loc = pageLocOfSitemapIndex({ resource, page: page + 1 })
-    items.push({ lastmod, loc })
-  }
-  return items
-}
+  const items: string[] = []
 
-function renderSitemapIndexOfResource (input: SitemapIndexPage) {
-  const items = resourcePageToSitemapItems(input)
-  return renderSitemapIndex(items)
+  for (let page = 1; page <= totalPages; page++) {
+    const loc = `/sitemap/${resource}/urlset.xml?page=${page}`
+    items.push(`
+      <sitemap>
+        <loc>${fullUrl(loc)}</loc>
+        <lastmod>${lastmod}</lastmod>
+      </sitemap>`
+    )
+  }
+
+  return (
+    `<?xml version="1.0" encoding="UTF-8"?>
+    <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      ${items.join('\n')}
+    </sitemapindex>`
+  )
 }
 
 /** See https://www.sitemaps.org/protocol.html */
@@ -136,30 +110,13 @@ function sendXml ({ res }: NextPageContext, xml: string) {
   }
 }
 
-const resources: ResourceType[] = [
-  'profiles',
-  'spaces',
-  'posts'
-]
-
-export class MainSitemap extends React.Component {
-  static async getInitialProps (props: NextPageContext) {
-    const lastmod = todayLastmod()
-    const firstPages: SitemapItem[] = resources.map(resource => (
-      { lastmod, loc: pageLocOfSitemapIndex({ resource, page: 1 }) }
-    ))
-    sendXml(props, renderSitemapIndex(firstPages))
-  }
-}
-
 export class SpacesSitemapIndex extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const query = parsePageQuery(props.query)
-    const { page } = query
     const { substrate } = await getSubsocialApi()
     const nextSpaceId = await substrate.nextSpaceId()
-    const withNextPage = canHaveNextSpacePage(nextSpaceId, query)
-    const xml = renderSitemapIndexOfResource({ resource: 'spaces', page, withNextPage })
+    const totalPages = approxCountOfSpacePages(nextSpaceId, query)
+    const xml = renderSitemapIndexOfResource({ resource: 'spaces', totalPages })
     sendXml(props, xml)
   }
 }
@@ -167,22 +124,21 @@ export class SpacesSitemapIndex extends React.Component {
 export class PostsSitemapIndex extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const query = parsePageQuery(props.query)
-    const { page } = query
     const subsocial = await getSubsocialApi()
     const nextPostId = await subsocial.substrate.nextPostId()
-    const withNextPage = canHaveNextPostPage(nextPostId, query)
-    const xml = renderSitemapIndexOfResource({ resource: 'posts', page, withNextPage })
+    const totalPages = approxCountOfPostPages(nextPostId, query)
+    const xml = renderSitemapIndexOfResource({ resource: 'posts', totalPages })
     sendXml(props, xml)
   }
 }
 
 export class ProfilesSitemapIndex extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const { page, size } = parsePageQuery(props.query)
+    const { size } = parsePageQuery(props.query)
     const { substrate } = await getSubsocialApi()
     const profileKeys = await (await substrate.api).query.profiles.socialAccountById.keys()
-    const withNextPage = page < Math.ceil(profileKeys.length / size)
-    const xml = renderSitemapIndexOfResource({ resource: 'profiles', page, withNextPage })
+    const totalPages = Math.ceil(profileKeys.length / size)
+    const xml = renderSitemapIndexOfResource({ resource: 'profiles', totalPages })
     sendXml(props, xml)
   }
 }
