@@ -74,10 +74,10 @@ export const Loading = ({ label }: LoadingProps) =>
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
-  return dayjs(new Date(seconds)).format(format);
+  return dayjs(seconds).format(format);
 };
 
-export const fakeClientId = () => `fake-${new Date().getTime().toString()}`
+export const fakeClientId = () => `fake-${new Date().getTime()}`
 
 type VisibilityProps = {
   struct: Post | Space

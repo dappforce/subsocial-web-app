@@ -30,7 +30,7 @@ import { editSpaceUrl, spaceUrl } from '../urls';
 import ButtonLink from '../utils/ButtonLink';
 import { EditOutlined } from '@ant-design/icons';
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
-import { fullUrl, slugifyHandle } from '../urls/helpers';
+import { slugifyHandle } from '../urls/helpers';
 import { isPolkaProject } from 'src/utils';
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';

@@ -19,6 +19,12 @@ import MainPage from '../layout/MainPage'
 import { Provider } from 'react-redux'
 import store from 'src/redux/store'
 
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+dayjs.extend(relativeTime)
+dayjs.extend(localizedFormat)
+
 function MyApp (props) {
   const { Component, pageProps } = props
   return (
