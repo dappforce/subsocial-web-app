@@ -6,7 +6,7 @@ import { NextPageContext } from 'next'
 import React from 'react'
 import { accountUrl, postUrl, spaceUrl } from 'src/components/urls'
 import { fullUrl } from 'src/components/urls/helpers'
-import { seoOverwriteLastUpdate } from '../utils/env'
+import { seoSitemapLastmod, seoSitemapPageSize } from '../utils/env'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
 import {
   approxCountOfPostPages,
@@ -14,6 +14,7 @@ import {
   getPageOfIds,
   getReversePageOfPostIds,
   getReversePageOfSpaceIds,
+  ParsedPaginationQuery,
   parsePageQuery
 } from '../utils/getIds'
 
@@ -45,8 +46,8 @@ type HasCreatedOrUpdated = {
 
 const getLastModFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
   const lastUpdateFromStruct = dayjs(updated.unwrapOr(created).time.toNumber())
-  return seoOverwriteLastUpdate && lastUpdateFromStruct.isBefore(seoOverwriteLastUpdate)
-    ? seoOverwriteLastUpdate
+  return seoSitemapLastmod && lastUpdateFromStruct.isBefore(seoSitemapLastmod)
+    ? seoSitemapLastmod
     : lastUpdateFromStruct
 }
   
@@ -59,7 +60,11 @@ type ResourceSitemapIndex = {
   totalPages: number
 }
   
-/** See https://www.sitemaps.org/protocol.html#sitemapIndexXMLExample */
+/**
+ * Sitemap file must have no more than 50,000 URLs and must be no larger than 50 MB.
+ * 
+ * See https://www.sitemaps.org/protocol.html#sitemapIndexXMLExample
+ */
 function renderSitemapIndexOfResource ({ resource, totalPages }: ResourceSitemapIndex) {
   const lastmod = todayLastmod()
   const items: string[] = []
@@ -82,13 +87,18 @@ function renderSitemapIndexOfResource ({ resource, totalPages }: ResourceSitemap
   )
 }
 
-/** See https://www.sitemaps.org/protocol.html */
-export function renderUrlSet (items: UrlItem[]) {
+/**
+ * Sitemap index files may not list more than 50,000 sitemaps
+ * and must be no larger than 50 MB.
+ * 
+ * See https://www.sitemaps.org/protocol.html
+ */
+function renderUrlSet (items: UrlItem[]) {
   return (
    `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${items.map(({ loc, lastmod, changefreq }) =>
-       `<url>
+      ${items.map(({ loc, lastmod, changefreq }) => `
+        <url>
           <loc>${fullUrl(loc)}</loc>
           ${lastmod
             ? `<lastmod>${lastmod.format('YYYY-MM-DD')}</lastmod>`
@@ -97,7 +107,7 @@ export function renderUrlSet (items: UrlItem[]) {
             ? `<changefreq>${changefreq}</changefreq>`
             : ''}
         </url>`
-      ).join('')}
+      ).join('\n')}
     </urlset>`
   )
 }
@@ -110,9 +120,14 @@ function sendXml ({ res }: NextPageContext, xml: string) {
   }
 }
 
+const getPageAndSize = (props: NextPageContext): ParsedPaginationQuery => {
+  const { page } = parsePageQuery(props.query)
+  return { page, size: seoSitemapPageSize }
+}
+
 export class SpacesSitemapIndex extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const query = parsePageQuery(props.query)
+    const query = getPageAndSize(props)
     const { substrate } = await getSubsocialApi()
     const nextSpaceId = await substrate.nextSpaceId()
     const totalPages = approxCountOfSpacePages(nextSpaceId, query)
@@ -123,7 +138,7 @@ export class SpacesSitemapIndex extends React.Component {
 
 export class PostsSitemapIndex extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const query = parsePageQuery(props.query)
+    const query = getPageAndSize(props)
     const subsocial = await getSubsocialApi()
     const nextPostId = await subsocial.substrate.nextPostId()
     const totalPages = approxCountOfPostPages(nextPostId, query)
@@ -134,7 +149,7 @@ export class PostsSitemapIndex extends React.Component {
 
 export class ProfilesSitemapIndex extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const { size } = parsePageQuery(props.query)
+    const { size } = getPageAndSize(props)
     const { substrate } = await getSubsocialApi()
     const profileKeys = await (await substrate.api).query.profiles.socialAccountById.keys()
     const totalPages = Math.ceil(profileKeys.length / size)
@@ -145,7 +160,7 @@ export class ProfilesSitemapIndex extends React.Component {
 
 export class SpacesUrlSet extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const { query } = props
+    const query = getPageAndSize(props)
     const { substrate } = await getSubsocialApi()
     const nextSpaceId = await substrate.nextSpaceId()
     const ids = getReversePageOfSpaceIds(nextSpaceId, query)
@@ -163,7 +178,7 @@ export class SpacesUrlSet extends React.Component {
 
 export class PostsUrlSet extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const { query } = props
+    const query = getPageAndSize(props)
     const subsocial = await getSubsocialApi()
     const nextPostId = await subsocial.substrate.nextPostId()
     const ids = getReversePageOfPostIds(nextPostId, query)
@@ -181,7 +196,7 @@ export class PostsUrlSet extends React.Component {
 
 export class ProfilesUrlSet extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const { query } = props
+    const query = getPageAndSize(props)
     const { substrate } = await getSubsocialApi()
     const profileKeys = await (await substrate.api).query.profiles.socialAccountById.keys()
     const pageKeys = getPageOfIds<StorageKey>(profileKeys, query)
