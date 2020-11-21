@@ -8,6 +8,7 @@ const varsToExport = [
   'NODE_ENV',
   'LOG_LEVEL',
   'APP_NAME',
+  'APP_BASE_URL',
   'SUBSTRATE_URL',
   'OFFCHAIN_URL',
   'OFFCHAIN_WS',
@@ -18,11 +19,11 @@ const varsToExport = [
   'UI_SHOW_FEED',
   'UI_SHOW_NOTIFICATIONS',
   'UI_SHOW_ACTIVITY',
+  'SEO_SITEMAP_LASTMOD',
+  'SEO_SITEMAP_PAGE_SIZE',
   'LAST_RESERVED_SPACE_ID',
   'CLAIMED_SPACE_IDS',
-  'DAG_HTTP_METHOD',
-  'APP_BASE_URL',
-  'SEO_OVERWRITE_LAST_UPDATE'
+  'DAG_HTTP_METHOD'
 ]
 
 function getSerializedVal (varName) {
