@@ -1,29 +1,41 @@
+import { Option, StorageKey } from '@polkadot/types'
+import { GenericAccountId } from '@polkadot/types/generic'
+import { Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
+import dayjs, { Dayjs } from 'dayjs'
 import { NextPageContext } from 'next'
 import React from 'react'
-import { isDef } from '@subsocial/utils'
 import { accountUrl, postUrl, spaceUrl } from 'src/components/urls'
-import { Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
-import { GenericAccountId } from '@polkadot/types/generic'
-import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
 import { fullUrl } from 'src/components/urls/helpers'
-import { Option, StorageKey } from '@polkadot/types' 
 import { seoOverwriteLastUpdate } from '../utils/env'
 import { canHaveNextPostPage, canHaveNextSpacePage, getPageOfIds, getReversePageOfPostIds, getReversePageOfSpaceIds, parsePageQuery } from '../utils/getIds'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
-import dayjs, { Dayjs } from 'dayjs'
-import { tryParseInt } from 'src/utils'
 
-type Item = {
-  link: string,
-  lastmod?: Dayjs,
-  changefreq?: 'daily'
+/** See https://www.sitemaps.org/protocol.html#changefreqdef */
+type ChangeFreq =
+  'always' |
+  'hourly' |
+  'daily' |
+  'weekly' |
+  'monthly' |
+  'yearly' |
+  'never'
+
+/** See https://www.sitemaps.org/protocol.html#urldef */
+type UrlItem = {
+  loc: string
+  lastmod?: Dayjs
+  changefreq?: ChangeFreq
+  /** From 0.0 to 1.0 */
+  priority?: number
 }
 
-type SitemapProps = {
-  props: NextPageContext,
-  items: Item[],
-  withNextPage?: boolean
+/** See https://www.sitemaps.org/protocol.html#sitemapIndex_sitemap */
+type SitemapItem = {
+  loc: string
+  lastmod?: string
 }
+
+type ResourceType = 'profiles' | 'spaces' | 'posts'
 
 type HasCreatedOrUpdated = {
   created: WhoAndWhen;
@@ -37,130 +49,185 @@ const getLastModFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
     : lastUpdateFromStruct
 }
 
-export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
-  const { query: { page }, pathname } = props
-
-  const nextPageLink = () => {
-    const pageNumber = tryParseInt((page as string), DEFAULT_FIRST_PAGE) 
-    const nextPage = pageNumber + 1
-    const sitemapType = pathname.split('/').pop()
-
-    return withNextPage
-      ? `<sitemap>
-        <loc>${fullUrl(`/sitemaps/${nextPage}/${sitemapType}`)}</loc>
-        <changefreq>daily</changefreq>
-      </sitemap>`
-      : ''
-  }
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${items
-      .map(({ link, lastmod, changefreq }) => {
-        const itemTag = link.includes('/sitemaps/') ? 'sitemap' : 'url'
-        return `
-          <${itemTag}>
-            <loc>${fullUrl(link)}</loc>
-            ${lastmod
-              ? `<lastmod>${lastmod.format('YYYY-MM-DD')}</lastmod>`
-              : ''}
-            ${changefreq
-              ? `<changefreq>${changefreq}</changefreq>`
-              : ''}
-          </${itemTag}>`
-      })
-      .join('')
-    }
-    ${nextPageLink()}
-  </urlset>`
+/** See https://www.sitemaps.org/protocol.html#sitemapIndex_sitemap */
+function renderSitemapItems (items: SitemapItem[]) {
+  const defaultLastmod = todayLastmod()
+  return items.map(({ loc, lastmod = defaultLastmod }) =>
+    `<sitemap>
+      <loc>${fullUrl(loc)}</loc>
+      <lastmod>${lastmod}</lastmod>
+    </sitemap>`
+  ).join('')
 }
 
-const sendSiteMap = (props: SitemapProps) => {
-  const { req, res } = props.props
-  if (req && res) {
-    // if (!props.items.length) {
-    //   res.statusCode = 404
-    //   res.setHeader('Content-Type', 'text/plain')
-    //   res.write('Not Found (404)')
-    //   res.end()
-    // } else {
-      res.setHeader('Content-Type', 'text/xml')
-      res.write(createSitemap(props))
-      res.end()
-    // }
-  }
-  return void(0)
+/** See https://www.sitemaps.org/protocol.html#sitemapIndexXMLExample */
+function renderSitemapIndex (items: SitemapItem[]) {
+  return (
+   `<?xml version="1.0" encoding="UTF-8"?>
+    <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      ${renderSitemapItems(items)}
+    </sitemapindex>`
+  )
 }
 
-const linksUpdatedDaily = [
-  '/',
-  '/spaces',
-  '/sitemaps/1/spaces.xml',
-  '/sitemaps/1/posts.xml',
-  '/sitemaps/1/profiles.xml'
+function todayLastmod () {
+  return dayjs().startOf('day').format('YYYY-MM-DD')
+}
+
+type PageLoc = {
+  resource: ResourceType
+  page: number
+}
+
+function pageLocOfSitemapIndex ({ page, resource }: PageLoc) {
+  return `/sitemap/${page}/${resource}/index.xml`
+}
+
+function pageLocOfUrlSet ({ page, resource }: PageLoc) {
+  return `/sitemap/${page}/${resource}/urlset.xml`
+}
+
+type SitemapIndexPage = {
+  resource: ResourceType
+  page: number
+  withNextPage?: boolean
+}
+
+function resourcePageToSitemapItems ({ resource, page, withNextPage }: SitemapIndexPage) {
+  const lastmod = todayLastmod()
+  const items: SitemapItem[] = [ { lastmod, loc: pageLocOfUrlSet({ resource, page }) } ]
+  if (withNextPage) {
+    const loc = pageLocOfSitemapIndex({ resource, page: page + 1 })
+    items.push({ lastmod, loc })
+  }
+  return items
+}
+
+function renderSitemapIndexOfResource (input: SitemapIndexPage) {
+  const items = resourcePageToSitemapItems(input)
+  return renderSitemapIndex(items)
+}
+
+/** See https://www.sitemaps.org/protocol.html */
+export function renderUrlSet (items: UrlItem[]) {
+  return (
+   `<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      ${items.map(({ loc, lastmod, changefreq }) =>
+       `<url>
+          <loc>${fullUrl(loc)}</loc>
+          ${lastmod
+            ? `<lastmod>${lastmod.format('YYYY-MM-DD')}</lastmod>`
+            : ''}
+          ${changefreq
+            ? `<changefreq>${changefreq}</changefreq>`
+            : ''}
+        </url>`
+      ).join('')}
+    </urlset>`
+  )
+}
+
+function sendXml ({ res }: NextPageContext, xml: string) {
+  if (res) {
+    res.setHeader('Content-Type', 'text/xml')
+    res.write(xml)
+    res.end()
+  }
+}
+
+const resources: ResourceType[] = [
+  'profiles',
+  'spaces',
+  'posts'
 ]
 
 export class MainSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
-    const lastmod = dayjs().startOf('day')
-
-    const items: Item [] = linksUpdatedDaily.map(link => ({
-      link,
-      lastmod,
-      changefreq: 'daily'
-    }))
-
-    items.push({ link: '/faucet' })
-  
-    sendSiteMap({ props, items })
+    const lastmod = todayLastmod()
+    const firstPages: SitemapItem[] = resources.map(resource => (
+      { lastmod, loc: pageLocOfSitemapIndex({ resource, page: 1 }) }
+    ))
+    sendXml(props, renderSitemapIndex(firstPages))
   }
 }
 
-export class SpacesSitemap extends React.Component {
+export class SpacesSitemapIndex extends React.Component {
+  static async getInitialProps (props: NextPageContext) {
+    const query = parsePageQuery(props.query)
+    const { page } = query
+    const { substrate } = await getSubsocialApi()
+    const nextSpaceId = await substrate.nextSpaceId()
+    const withNextPage = canHaveNextSpacePage(nextSpaceId, query)
+    const xml = renderSitemapIndexOfResource({ resource: 'spaces', page, withNextPage })
+    sendXml(props, xml)
+  }
+}
+
+export class PostsSitemapIndex extends React.Component {
+  static async getInitialProps (props: NextPageContext) {
+    const query = parsePageQuery(props.query)
+    const { page } = query
+    const subsocial = await getSubsocialApi()
+    const nextPostId = await subsocial.substrate.nextPostId()
+    const withNextPage = canHaveNextPostPage(nextPostId, query)
+    const xml = renderSitemapIndexOfResource({ resource: 'posts', page, withNextPage })
+    sendXml(props, xml)
+  }
+}
+
+export class ProfilesSitemapIndex extends React.Component {
+  static async getInitialProps (props: NextPageContext) {
+    const { page, size } = parsePageQuery(props.query)
+    const { substrate } = await getSubsocialApi()
+    const profileKeys = await (await substrate.api).query.profiles.socialAccountById.keys()
+    const withNextPage = page < Math.ceil(profileKeys.length / size)
+    const xml = renderSitemapIndexOfResource({ resource: 'profiles', page, withNextPage })
+    sendXml(props, xml)
+  }
+}
+
+export class SpacesUrlSet extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const { query } = props
     const { substrate } = await getSubsocialApi()
     const nextSpaceId = await substrate.nextSpaceId()
     const ids = getReversePageOfSpaceIds(nextSpaceId, query)
     const spaces = await substrate.findSpaces({ ids, visibility: 'onlyPublic' })
-    const withNextPage = canHaveNextSpacePage(nextSpaceId, query)
 
-    const items: Item[] = spaces
-      .map((space) => ({
-        link: spaceUrl(space),
-        lastmod: getLastModFromStruct(space) 
-      }))
+    const items: UrlItem[] = spaces.map((space) => ({
+      loc: spaceUrl(space),
+      lastmod: getLastModFromStruct(space),
+      changefreq: 'daily'
+    }))
   
-    sendSiteMap({ props, items, withNextPage })
+    sendXml(props, renderUrlSet(items))
   }
 }
 
-export class PostsSitemap extends React.Component {
+export class PostsUrlSet extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const { query } = props
     const subsocial = await getSubsocialApi()
     const nextPostId = await subsocial.substrate.nextPostId()
     const ids = getReversePageOfPostIds(nextPostId, query)
     const posts = await subsocial.findPublicPostsWithSomeDetails({ ids, withSpace: true })
-    const withNextPage = canHaveNextPostPage(nextPostId, query)
 
-    const items: Item[] = posts
-      .map(({ post, space }) => ({
-        link: postUrl(space?.struct || { id: post.struct.space_id.unwrap() } as Space, post), 
-        lastmod: getLastModFromStruct(post.struct)
-      }))
+    const items: UrlItem[] = posts.map(({ post, space }) => ({
+      loc: postUrl(space?.struct || { id: post.struct.space_id.unwrap() } as Space, post), 
+      lastmod: getLastModFromStruct(post.struct),
+      changefreq: 'weekly'
+    }))
     
-    sendSiteMap({ props, items, withNextPage })
+    sendXml(props, renderUrlSet(items))
   }
 }
 
-export class ProfilesSitemap extends React.Component {
+export class ProfilesUrlSet extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const { query } = props
-    const { page, size } = parsePageQuery(query)
     const { substrate } = await getSubsocialApi()
     const profileKeys = await (await substrate.api).query.profiles.socialAccountById.keys()
-    const withNextPage = page < Math.ceil(profileKeys.length / size)
     const pageKeys = getPageOfIds<StorageKey>(profileKeys, query)
 
     const ids: string[] = []
@@ -171,23 +238,19 @@ export class ProfilesSitemap extends React.Component {
       }
     })
 
-    const socialAccounts = await substrate.findSocialAccounts(ids)
+    const items: UrlItem[] = []
+    const socialAccounts = (await substrate.findSocialAccounts(ids))
+    socialAccounts.forEach(({ profile: profileOpt }) => {
+      if (profileOpt.isSome) {
+        const profile = profileOpt.unwrap()
+        items.push({ 
+          loc: accountUrl({ address: profile.created.account }),
+          lastmod: getLastModFromStruct(profile),
+          changefreq: 'weekly'
+        })
+      }
+    })
 
-    const items = socialAccounts
-      .map(({ profile: profileOpt }) => {
-        if (profileOpt.isSome) {
-          const profile = profileOpt.unwrap()
-
-          return { 
-            link: accountUrl({ address: profile.created.account }),
-            lastmod: getLastModFromStruct(profile)
-          }
-        }
-
-        return undefined
-      })
-      .filter(isDef)
-
-    sendSiteMap({ props, items, withNextPage })
+    sendXml(props, renderUrlSet(items))
   }
 }

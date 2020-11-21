@@ -5,14 +5,16 @@ import { appBaseUrl } from 'src/components/utils/env'
 const createRobotsTxt = () => `
   User-agent: *
   Disallow: /_next/static/
-  Disallow: /*/edit
   Disallow: /*/new
+  Disallow: /*/*/new
+  Disallow: /*/edit
+  Disallow: /*/*/edit
   Disallow: /sudo
   Disallow: /feed
   Disallow: /notifications
   Disallow: /search
 
-  Sitemap: ${appBaseUrl}/sitemap.xml
+  Sitemap: ${appBaseUrl}/sitemap/index.xml
 `
 
 class Robots extends React.Component {
