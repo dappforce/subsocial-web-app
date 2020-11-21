@@ -1,7 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { DfMd } from '../../utils/DfMd'
-import { HeadMeta } from '../../utils/HeadMeta'
 import Section from '../../utils/Section'
 import { PostData, PostWithAllDetails } from '@subsocial/types/dto'
 import ViewTags from '../../utils/ViewTags'
@@ -23,7 +22,7 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
-import { fullUrl } from 'src/components/urls/helpers'
+
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
 export type PostDetailsProps = {
@@ -55,7 +54,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
   const spaceStruct = spaceData.struct
 
   const { title, body, image, tags } = content
-  const canonical = content.canonical || fullUrl(postUrl(spaceStruct, postDetails.post))
+  const canonical = content.canonical || postUrl(spaceStruct, postDetails.post)
 
   const goToCommentsId = 'comments'
 
@@ -68,51 +67,56 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
     ? renderResponseTitle(postDetails.ext?.post)
     : title
 
-  return <>
-    <PageContent>
-      <HiddenPostAlert post={post.struct} />
-      <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
-        <HeadMeta title={title} desc={mdToText(body)} image={image} canonical={canonical} tags={tags} />
-        <div className='DfRow'>
-          <h1 className='DfPostName'>{titleMsg}</h1>
-          <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
-        </div>
+  return <PageContent
+    meta={{ 
+      title,
+      desc: mdToText(body),
+      image,
+      tags,
+      canonical,
+    }}
+  >
+    <HiddenPostAlert post={post.struct} />
+    <Section className='DfContentPage DfEntirePost'> {/* TODO Maybe delete <Section /> because <PageContent /> includes it */}
+      <div className='DfRow'>
+        <h1 className='DfPostName'>{titleMsg}</h1>
+        <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
+      </div>
 
-        <div className='DfRow'>
-          <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
-          {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
-        </div>
+      <div className='DfRow'>
+        <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
+        {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
+      </div>
 
-        <div className='DfPostContent'>
-          {ext
-            ? <SharePostContent postDetails={postDetails} space={space} />
-            : <>
-              {image && <div className='d-flex justify-content-center'>
-                <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
-              </div>}
-              {body && <DfMd source={body} />}
-              <ViewTags tags={tags} className='mt-2' />
-            </>}
-        </div>
-        
-        <div className='DfRow'>
-          <PostActionsPanel postDetails={postDetails} space={space.struct} />
-        </div>
+      <div className='DfPostContent'>
+        {ext
+          ? <SharePostContent postDetails={postDetails} space={space} />
+          : <>
+            {image && <div className='d-flex justify-content-center'>
+              <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
+            </div>}
+            {body && <DfMd source={body} />}
+            <ViewTags tags={tags} className='mt-2' />
+          </>}
+      </div>
+      
+      <div className='DfRow'>
+        <PostActionsPanel postDetails={postDetails} space={space.struct} />
+      </div>
 
-        <div className='DfSpacePreviewOnPostPage'>
-          <ViewSpace
-            spaceData={spaceData}
-            withFollowButton
-            withTags={false}
-            withStats={false}
-            preview
-          />
-        </div>
+      <div className='DfSpacePreviewOnPostPage'>
+        <ViewSpace
+          spaceData={spaceData}
+          withFollowButton
+          withTags={false}
+          withStats={false}
+          preview
+        />
+      </div>
 
-        <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
-      </Section>
-    </PageContent>
-  </>
+      <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
+    </Section>
+  </PageContent>
 }
 
 PostPage.getInitialProps = async (props): Promise<any> => {

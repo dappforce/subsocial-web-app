@@ -1,9 +1,9 @@
-import { getLoadMoreFeedFn, FeedActivities } from "./FeedActivities"
-import { BaseActivityProps } from "./types"
-import { getFeedCount, getNewsFeed } from "../utils/OffchainUtils"
-import { useMyAddress } from "../auth/MyAccountContext"
-import NotAuthorized from "../auth/NotAuthorized"
-import HeadMeta from "../utils/HeadMeta"
+import { getLoadMoreFeedFn, FeedActivities } from './FeedActivities'
+import { BaseActivityProps } from './types'
+import { getFeedCount, getNewsFeed } from '../utils/OffchainUtils'
+import { useMyAddress } from '../auth/MyAccountContext'
+import NotAuthorized from '../auth/NotAuthorized'
+import { PageContent } from '../main/PageWrapper'
 
 const TITLE = 'My feed'
 const loadingLabel = 'Loading your feed...'
@@ -28,10 +28,9 @@ export const MyFeed = ({ title }: MyFeedProps) => {
 
   if (!myAddress) return <NotAuthorized />
 
-  return <>
-    <HeadMeta title={TITLE} />
+  return <PageContent meta={{ title: TITLE }}>
     <InnerMyFeed title={title} address={myAddress} />
-  </>
+  </PageContent>
 }
 
 export default MyFeed

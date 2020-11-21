@@ -101,12 +101,12 @@ const isSocialBrandLink = (brand: SocialBrand, link: string): boolean => {
   return !!socialLinksRegExp[brand].find(r => r.test(link))
 }
 
-export const getLinkBrand = (link: string): SocialBrand | undefined => {
+export const getLinkBrand = (link: string): LinkLabel | undefined => {
   for (const key in socialLinksRegExp) {
     const brand = key as SocialBrand
     if (isSocialBrandLink(brand, link)) {
       return brand
     }
   }
-  return undefined
+  return 'Website'
 }

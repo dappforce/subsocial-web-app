@@ -1,72 +1,105 @@
-import { SpaceContent } from '@subsocial/types/offchain';
-import { nonEmptyStr } from '@subsocial/utils';
-import { mdToText } from 'src/utils';
-import { NextPage } from 'next';
-import Error from 'next/error';
-import React, { useState } from 'react';
+import { SpaceContent } from '@subsocial/types/offchain'
+import { nonEmptyStr } from '@subsocial/utils'
+import { mdToText } from 'src/utils'
+import { NextPage } from 'next'
+import Error from 'next/error'
+import React, { useCallback, useState } from 'react'
 
-import { AuthorPreview } from '../profiles/address-views';
-import { DfMd } from '../utils/DfMd';
-import { HeadMeta } from '../utils/HeadMeta';
-import { return404 } from '../utils/next';
-import Section from '../utils/Section';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { formatUnixDate } from '../utils';
-import ViewTags from '../utils/ViewTags';
-import SpaceStatsRow from './SpaceStatsRow';
-import { ViewSpaceProps } from './ViewSpaceProps';
-import withLoadSpaceDataById from './withLoadSpaceDataById';
-import { PageContent } from '../main/PageWrapper';
-import { getSpaceId } from '../substrate';
-import { SpaceNotFound } from './helpers';
+import { ProfilePreview } from '../profiles/address-views'
+import { DfMd } from '../utils/DfMd'
+import { return404 } from '../utils/next'
+import Section from '../utils/Section'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import ViewTags from '../utils/ViewTags'
+import { ViewSpaceProps } from './ViewSpaceProps'
+import withLoadSpaceDataById from './withLoadSpaceDataById'
+import { PageContent } from '../main/PageWrapper'
+import { getSpaceId } from '../substrate'
+import { SpaceNotFound } from './helpers'
+import { InfoPanel } from '../profiles/address-views/InfoSection'
+import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
+import Segment from '../utils/Segment'
+import { appName } from '../utils/env'
+import { ViewSpace } from './ViewSpace'
+import { aboutSpaceUrl } from '../urls'
 
 type Props = ViewSpaceProps
 
 export const AboutSpacePage: NextPage<Props> = (props) => {
   if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
 
-  const { spaceData } = props;
+  const { spaceData } = props
 
   if (!spaceData || !spaceData?.struct) {
     return <SpaceNotFound />
   }
 
-  const { owner } = props;
-  const space = spaceData.struct;
-  const { created: { time }, owner: spaceOwnerAddress } = space;
+  const { owner } = props
+  const space = spaceData.struct
+  const { owner: spaceOwnerAddress } = space
 
-  const [ content ] = useState(spaceData?.content || {} as SpaceContent);
-  const { name, about, image, tags } = content;
+  const [ content ] = useState(spaceData?.content || {} as SpaceContent)
+  const { name, about, image, tags, links, email } = content
 
-  const SpaceAuthor = () =>
-    <AuthorPreview
-      address={spaceOwnerAddress}
-      owner={owner}
-      withFollowButton
-      isShort={true}
-      isPadded={false}
-      details={<div>Created on {formatUnixDate(time)}</div>}
-    />
+  const SpaceAuthor = () => <Segment>
+    <ProfilePreview address={spaceOwnerAddress} owner={owner} />
+  </Segment>
 
-  const title = `About ${name}`
+  const ContactInfo = useCallback(() => {
+    const socialLinks = (links as string[])
+      .map((x, i) => 
+        ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
+
+    return <Section title={`${name} social links & contact info`} className='mb-4'>
+      <InfoPanel
+        column={2}
+        items={[
+          ...socialLinks,
+          { value: <EmailLink link={email} label={name} />}
+        ]}
+      />
+    </Section>
+  }, [])
+
+  const title = `What is ${name}?`
 
   // TODO extract WithSpaceNav
+  const desc = mdToText(about)
 
-  return <PageContent>
-    <HeadMeta title={title} desc={mdToText(about)} image={image} />
-      <Section className='DfContentPage' level={1} title={title}>
-        <div className='DfRow mt-3'>
-          <SpaceAuthor />
-          <SpaceStatsRow space={space} />
-        </div>
+  return <PageContent
+    meta={{
+      title,
+      desc,
+      image,
+      canonical: aboutSpaceUrl(space)
+    }}
+    level={1}
+    title={title}
+    className='DfContentPage'
+  >
+    {nonEmptyStr(about) &&
+      <div className='DfBookPage'>
+        <DfMd source={about} />
+      </div>
+    }
+    <ViewTags tags={tags} className='mb-4' />
 
-        {nonEmptyStr(about) &&
-          <div className='DfBookPage'>
-            <DfMd source={about} />
-          </div>
-        }
-        <ViewTags tags={tags} />
+    <ContactInfo />
+
+    <Section title={`Owner of ${name} space`} className='mb-4'>
+      <SpaceAuthor />
     </Section>
+
+    <Section title={`Follow ${name} on ${appName}`}>
+      <ViewSpace
+        spaceData={spaceData}
+        withFollowButton
+        withTags={false}
+        withStats={true}
+        preview
+      />
+    </Section>
+
   </PageContent>
 }
 

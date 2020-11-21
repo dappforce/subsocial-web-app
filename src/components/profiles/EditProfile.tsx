@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Form, Input } from 'antd'
 import Router from 'next/router'
-import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
 import { getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
@@ -19,6 +18,7 @@ import { UploadAvatar } from '../uploader'
 import { resolveCidOfContent } from '@subsocial/api/utils'
 import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
+import { PageContent } from '../main/PageWrapper'
 
 const log = newLogger('EditProfile')
 
@@ -179,12 +179,11 @@ export function FormInSection (props: FormProps) {
   const { owner } = props
   const title = owner?.profile ? `Edit profile` : `New profile`
 
-  return <>
-    <HeadMeta title={title} />
+  return <PageContent meta={{ title }}>
     <Section className='EditEntityBox' title={title}>
       <InnerForm {...props} />
     </Section>
-  </>
+  </PageContent>
 }
 
 export const EditProfile = withMyProfile(FormInSection)

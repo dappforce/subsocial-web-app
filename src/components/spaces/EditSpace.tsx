@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Form, Input, Select } from 'antd'
 import Router from 'next/router'
 import BN from 'bn.js'
-import HeadMeta from '../utils/HeadMeta'
 import Section from '../utils/Section'
 import { getNewIdFromEvent, equalAddresses, stringifyText, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
@@ -25,6 +24,7 @@ import { resolveCidOfContent } from '@subsocial/api/utils'
 import { getNonEmptySpaceContent } from '../utils/content'
 import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
+import { PageContent } from '../main/PageWrapper'
 
 const log = newLogger('EditSpace')
 
@@ -278,12 +278,11 @@ export function FormInSection (props: Partial<FormProps>) {
   //   load()
   // }, [])
 
-  return <>
-    <HeadMeta title={title} />
+  return <PageContent meta={{ title }}>
     <Section className='EditEntityBox' title={title}>
       <InnerForm {...props} {...consts} />
     </Section>
-  </>
+  </PageContent>
 }
 
 const CannotEditSpace = <NoData description='You do not have permission to edit this space' />

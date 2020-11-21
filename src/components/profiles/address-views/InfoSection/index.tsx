@@ -6,7 +6,7 @@ import Section from 'src/components/utils/Section';
 import styles from './index.module.sass'
 
 export type DescItem = {
-  label: React.ReactNode,
+  label?: React.ReactNode,
   value: React.ReactNode
 }
 

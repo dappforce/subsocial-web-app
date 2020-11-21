@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { HeadMeta } from '../utils/HeadMeta';
 import { LatestSpaces } from './LatestSpaces';
 import { LatestPosts } from './LatestPosts';
 import { SpaceData, PostWithAllDetails } from '@subsocial/types';
-import { PageContent } from './PageWrapper';
+import { DEFAULT_DESC, DEFAULT_TITLE, PageContent } from './PageWrapper';
 import partition from 'lodash.partition';
 import { isComment } from '../posts/view-post';
 import { useIsSignedIn } from '../auth/MyAccountContext';
@@ -28,11 +27,7 @@ const LatestUpdate = (props: Props) => {
   const { spacesData, postsData, commentData } = props;
 
   return (
-    <PageContent>
-      <HeadMeta
-        title='Latest posts and spaces'
-        desc='Subsocial is an open decentralized social network'
-      />
+    <PageContent meta={{ title: DEFAULT_TITLE, desc: DEFAULT_DESC }}>
       <LatestPosts {...props} postsData={postsData} type='post' />
       <LatestPosts {...props} postsData={commentData} type='comment' />
       <LatestSpaces {...props} spacesData={spacesData} />

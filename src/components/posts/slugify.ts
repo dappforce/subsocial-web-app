@@ -1,6 +1,6 @@
 import { PostContent } from '@subsocial/types'
 import { isEmptyStr, nonEmptyStr } from '@subsocial/utils'
-import slugify from 'slugify'
+import slugify from '@sindresorhus/slugify'
 import BN from 'bn.js'
 import { summarize } from 'src/utils'
 import Router from 'next/router'
@@ -19,7 +19,7 @@ export const createPostSlug = (postId: BN, content?: HasTitleOrBody) => {
       ? title 
       : body
 
-    slug = slugify(summarize(text, { limit: MAX_SLUG_LENGTH, omission: '' }), { replacement: SLUG_SEPARATOR })
+    slug = slugify(summarize(text, { limit: MAX_SLUG_LENGTH, omission: '' }), { separator: SLUG_SEPARATOR })
   }
 
   return isEmptyStr(slug)

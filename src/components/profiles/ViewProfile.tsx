@@ -4,7 +4,6 @@ import Link from 'next/link';
 
 import { AccountId } from '@polkadot/types/interfaces';
 import { ZERO } from '../utils/index';
-import { HeadMeta } from '../utils/HeadMeta';
 import { isEmptyStr } from '@subsocial/utils'
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal';
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
@@ -38,6 +37,7 @@ import { mdToText } from 'src/utils';
 import { SpaceId } from '@subsocial/types/substrate/interfaces';
 import { AccountActivity } from '../activity/AccountActivity';
 import { PageContent } from '../main/PageWrapper';
+import { accountUrl } from '../urls';
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false });
@@ -55,8 +55,7 @@ const Component = (props: Props) => {
   const {
     address,
     size = LARGE_AVATAR_SIZE,
-    owner,
-    mySpaceIds
+    owner
   } = props;
 
   const [ followersOpen, setFollowersOpen ] = useState(false);
@@ -111,8 +110,7 @@ const Component = (props: Props) => {
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
 
-  return <PageContent>
-    <Section className='mb-3'>
+  return <Section className='mb-3'>
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
         <div className='ml-3 w-100'>
@@ -150,12 +148,10 @@ const Component = (props: Props) => {
       {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
       {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
-    <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} />
-  </PageContent>;
 };
 
 const ProfilePage: NextPage<Props> = (props) => {
-  const { address, owner } = props
+  const { address, owner, mySpaceIds } = props
 
   const {
     name,
@@ -173,10 +169,17 @@ const ProfilePage: NextPage<Props> = (props) => {
     }
   };
 
-  return <>
-    <HeadMeta title={getName()} desc={mdToText(about)} image={avatar} />
+  return <PageContent
+    meta={{
+      title: getName(),
+      desc: mdToText(about),
+      image: avatar,
+      canonical: accountUrl({ address })
+    }}
+  >
     <Component {...props} />
-  </>
+    <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} />
+  </PageContent>
 }
 
 ProfilePage.getInitialProps = async (props): Promise<any> => {

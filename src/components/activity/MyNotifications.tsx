@@ -1,7 +1,7 @@
-import { useMyAddress } from "../auth/MyAccountContext"
-import NotAuthorized from "../auth/NotAuthorized"
-import HeadMeta from "../utils/HeadMeta"
-import { Notifications } from "./Notifications"
+import { useMyAddress } from '../auth/MyAccountContext'
+import NotAuthorized from '../auth/NotAuthorized'
+import { PageContent } from '../main/PageWrapper'
+import { Notifications } from './Notifications'
 
 const NOTIFICATION_TITLE = 'My notifications'
 
@@ -10,10 +10,9 @@ export const MyNotifications = () => {
 
   if (!myAddress) return <NotAuthorized />
 
-  return <>
-    <HeadMeta title={NOTIFICATION_TITLE} />
+  return <PageContent meta={{ title: NOTIFICATION_TITLE }}>
     <Notifications title={NOTIFICATION_TITLE} address={myAddress} />
-  </>
+  </PageContent>
 }
 
 export default MyNotifications
