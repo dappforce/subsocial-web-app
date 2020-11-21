@@ -22,7 +22,7 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
-import { fullUrl } from 'src/components/urls/helpers'
+
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
 export type PostDetailsProps = {

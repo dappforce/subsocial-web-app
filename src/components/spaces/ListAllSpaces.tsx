@@ -9,7 +9,6 @@ import BN from 'bn.js'
 import { ZERO, resolveBn } from '../utils';
 import { PaginatedList } from '../lists/PaginatedList';
 import { PageContent } from '../main/PageWrapper';
-import { fullUrl } from '../urls/helpers';
 
 type Props = {
   spacesData?: SpaceData[]

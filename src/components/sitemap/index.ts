@@ -8,7 +8,7 @@ import { DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
 import { fullUrl } from 'src/components/urls/helpers'
 import { Option, StorageKey } from '@polkadot/types' 
 import { seoOverwriteLastUpdate } from '../utils/env'
-import { getPageOfIds, getPageOfIdsWithRespectToNextId } from '../utils/getIds'
+import { canHaveNextPostPage, canHaveNextSpacePage, getPageOfIds, getReversePageOfPostIds, getReversePageOfSpaceIds, parsePageQuery } from '../utils/getIds'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
 import dayjs, { Dayjs } from 'dayjs'
 import { tryParseInt } from 'src/utils'
@@ -78,16 +78,16 @@ export const createSitemap = ({ props, items, withNextPage }: SitemapProps) => {
 const sendSiteMap = (props: SitemapProps) => {
   const { req, res } = props.props
   if (req && res) {
-    if (!props.items.length) {
-      res.statusCode = 404
-      res.setHeader('Content-Type', 'text/plain')
-      res.write('Not Found (404)')
-      res.end()
-    } else {
+    // if (!props.items.length) {
+    //   res.statusCode = 404
+    //   res.setHeader('Content-Type', 'text/plain')
+    //   res.write('Not Found (404)')
+    //   res.end()
+    // } else {
       res.setHeader('Content-Type', 'text/xml')
       res.write(createSitemap(props))
       res.end()
-    }
+    // }
   }
   return void(0)
 }
@@ -121,8 +121,9 @@ export class SpacesSitemap extends React.Component {
     const { query } = props
     const { substrate } = await getSubsocialApi()
     const nextSpaceId = await substrate.nextSpaceId()
-    const spaceIds = getPageOfIdsWithRespectToNextId(nextSpaceId, query)
-    const spaces = await substrate.findSpaces({ ids: spaceIds, visibility: 'onlyPublic' })
+    const ids = getReversePageOfSpaceIds(nextSpaceId, query)
+    const spaces = await substrate.findSpaces({ ids, visibility: 'onlyPublic' })
+    const withNextPage = canHaveNextSpacePage(nextSpaceId, query)
 
     const items: Item[] = spaces
       .map((space) => ({
@@ -130,7 +131,7 @@ export class SpacesSitemap extends React.Component {
         lastmod: getLastModFromStruct(space) 
       }))
   
-    sendSiteMap({ props, items, withNextPage: true })
+    sendSiteMap({ props, items, withNextPage })
   }
 }
 
@@ -139,8 +140,9 @@ export class PostsSitemap extends React.Component {
     const { query } = props
     const subsocial = await getSubsocialApi()
     const nextPostId = await subsocial.substrate.nextPostId()
-    const postIds = getPageOfIdsWithRespectToNextId(nextPostId, query)
-    const posts = await subsocial.findPublicPostsWithSomeDetails({ ids: postIds, withSpace: true })
+    const ids = getReversePageOfPostIds(nextPostId, query)
+    const posts = await subsocial.findPublicPostsWithSomeDetails({ ids, withSpace: true })
+    const withNextPage = canHaveNextPostPage(nextPostId, query)
 
     const items: Item[] = posts
       .map(({ post, space }) => ({
@@ -148,20 +150,25 @@ export class PostsSitemap extends React.Component {
         lastmod: getLastModFromStruct(post.struct)
       }))
     
-    sendSiteMap({ props, items, withNextPage: true })
+    sendSiteMap({ props, items, withNextPage })
   }
 }
 
 export class ProfilesSitemap extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const { query } = props
+    const { page, size } = parsePageQuery(query)
     const { substrate } = await getSubsocialApi()
     const profileKeys = await (await substrate.api).query.profiles.socialAccountById.keys()
+    const withNextPage = page < Math.ceil(profileKeys.length / size)
     const pageKeys = getPageOfIds<StorageKey>(profileKeys, query)
 
-    const ids = pageKeys.map((key) => {
-      const addressEncoded = '0x' + key.toHex().substr(-64)
-      return new GenericAccountId(key.registry, addressEncoded).toString()
+    const ids: string[] = []
+    pageKeys.forEach((key) => {
+      if (key) {
+        const addressEncoded = '0x' + key.toHex().substr(-64)
+        ids.push(new GenericAccountId(key.registry, addressEncoded).toString())
+      }
     })
 
     const socialAccounts = await substrate.findSocialAccounts(ids)
@@ -181,6 +188,6 @@ export class ProfilesSitemap extends React.Component {
       })
       .filter(isDef)
 
-    sendSiteMap({ props, items, withNextPage: true })
+    sendSiteMap({ props, items, withNextPage })
   }
 }
