@@ -1,20 +1,24 @@
 import BN from 'bn.js'
-import { ZERO } from '.'
+import { ONE } from '.'
 import { claimedSpaceIds, lastReservedSpaceId } from './env'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { nonEmptyStr } from '@subsocial/utils'
 import { tryParseInt } from 'src/utils'
 
 export const getLastNIds = (nextId: BN, size: number): BN[] => {
-  const idsCount = nextId.lten(size) ? nextId.toNumber() - 1 : size
+  let minId = nextId.subn(size)
+  if (minId.lt(ONE)) {
+    minId = ONE
+  }
 
-  return new Array<BN>(idsCount)
-    .fill(ZERO)
-    .map((_, index) =>
-      nextId.sub(new BN(index + 1)))
+  const ids: BN[] = []
+  for (let id = nextId.sub(ONE); id.gte(minId); id = id.sub(ONE)) {
+    ids.push(id)
+  }
+  return ids
 }
 
-type PaginationQuery = {
+export type PaginationQuery = {
   page?: number | string | string[]
   size?: number | string | string[]
 }
@@ -41,34 +45,6 @@ export const parsePageQuery = (props: PaginationQuery): ParsedPaginationQuery =>
   }
 }
 
-export const getPageOfIdsWithRespectToNextId = (nextId: BN, query: PaginationQuery): BN[] => {
-  const { page, size } = parsePageQuery(query)
-
-  // TODO ideally this function should operate with BN-s, not numbers.
-
-  const maxId = nextId.subn(1).toNumber()
-  const firstId = 1 + (page - 1) * size
-  let lastId = firstId + size - 1
-
-  // The first id of this page is greater than max existing id.
-  // This means that requeted page does not exist.
-  if (firstId > maxId) {
-    return []
-  }
-
-  // This page is not full, i.e. has less result than a requested page size.
-  if (lastId > maxId) {
-    lastId = maxId
-  }
-
-  const ids: BN[] = []
-  for (let id = firstId; id <= lastId; id++) {
-    ids.push(new BN(id))
-  }
-
-  return ids
-}
-
 export const getPageOfIds = <T = BN>(ids: T[], query: PaginationQuery): T[] => {
   const { page, size } = parsePageQuery(query)
   const offset = (page - 1) * size
@@ -89,19 +65,53 @@ export const getPageOfIds = <T = BN>(ids: T[], query: PaginationQuery): T[] => {
 export const approxCountOfPublicSpaces = (nextId: BN) =>
   nextId.subn(lastReservedSpaceId + 1)
 
+export const approxCountOfPostPages = (nextId: BN, query: PaginationQuery) => {
+  const { size } = parsePageQuery(query)
+  const totalCount = nextId.subn(1).toNumber()
+  return Math.ceil(totalCount / size)
+}
+
+export const approxCountOfSpacePages = (nextId: BN, query: PaginationQuery) => {
+  const { size } = parsePageQuery(query)
+  const totalCount = approxCountOfPublicSpaces(nextId).toNumber()
+  return Math.ceil(totalCount / size)
+}
+
+export const canHaveNextPostPage = (nextId: BN, query: PaginationQuery) => {
+  const { page } = parsePageQuery(query)
+  return page < approxCountOfPostPages(nextId, query)
+}
+
+export const canHaveNextSpacePage = (nextId: BN, query: PaginationQuery) => {
+  const { page } = parsePageQuery(query)
+  return page < approxCountOfSpacePages(nextId, query)
+}
+
 const reverseClaimedSpaceIds = claimedSpaceIds.reverse()
 
-export const getReversePageOfSpaceIds = (nextId: BN, query: PaginationQuery) => {
+const getReversePageOfIds = (nextId: BN, query: PaginationQuery) => {
   const { page, size } = parsePageQuery(query)
   const offset = (page - 1) * size
   const nextPageId = nextId.subn(offset)
-  let ids = getLastNIds(nextPageId, size)
+  return getLastNIds(nextPageId, size)
+}
+
+export const getReversePageOfPostIds = getReversePageOfIds
+
+export const getReversePageOfSpaceIds = (nextId: BN, query: PaginationQuery) => {
+  let ids = getReversePageOfIds(nextId, query)
+  if (!ids.length) {
+    return []
+  }
 
   const lowId = ids[ids.length - 1]
-  // If there is a reserved space id among found ids:
+  
+  // Exclude ids of reserved spaces:
   if (lowId.lten(lastReservedSpaceId)) {
     ids = ids.filter(id => id.gtn(lastReservedSpaceId))
   }
+  
+  const { size } = parsePageQuery(query)
 
   return ids.length < size
     ? [ ...ids, ...reverseClaimedSpaceIds ]
