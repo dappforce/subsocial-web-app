@@ -80,11 +80,11 @@ type PageLoc = {
 }
 
 function pageLocOfSitemapIndex ({ page, resource }: PageLoc) {
-  return `/sitemaps/${page}/${resource}-sitemapindex.xml`
+  return `/sitemap/${page}/${resource}/index.xml`
 }
 
 function pageLocOfUrlSet ({ page, resource }: PageLoc) {
-  return `/sitemaps/${page}/${resource}-urlset.xml`
+  return `/sitemap/${page}/${resource}/urlset.xml`
 }
 
 type SitemapIndexPage = {
