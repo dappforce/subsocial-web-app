@@ -25,6 +25,7 @@ import messages from 'src/messages'
 import { postUrl } from '../urls'
 import { PageContent } from '../main/PageWrapper'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
+import { getPostIdFromSlug } from './slugify'
 
 const log = newLogger('EditPost')
 
@@ -122,7 +123,8 @@ export function InnerForm (props: FormProps) {
 
   const goToView = (postId: BN) => {
     const content = getFieldValues() as PostContent
-    router.push('/[spaceId]/[slug]', postUrl(space.struct, { struct: { id: postId as PostId }, content }))
+    const postData = { struct: { id: postId as PostId }, content }
+    router.push('/[spaceId]/[slug]', postUrl(space.struct, postData))
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
 
@@ -237,22 +239,20 @@ export function FormInSection (props: FormProps) {
 }
 
 function LoadPostThenEdit (props: FormProps) {
-  const { postId } = useRouter().query
+  const { slug } = useRouter().query
+  const postId = getPostIdFromSlug(slug as string)
   const myAddress = useMyAddress()
   const [ isLoaded, setIsLoaded ] = useState(false)
   const [ post, setPost ] = useState<PostData>()
 
   useSubsocialEffect(({ subsocial }) => {
     const load = async () => {
-      if (typeof postId !== 'string') return
-
       setIsLoaded(false)
-      const id = new BN(postId)
-      setPost(await subsocial.findPost({ id }))
+      setPost(await subsocial.findPost({ id: postId }))
       setIsLoaded(true)
     }
     load()
-  }, [ postId ])
+  }, [ postId.toString() ])
 
   if (!isLoaded) return <Loading label='Loading the post...' />
 
