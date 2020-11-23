@@ -15,7 +15,7 @@ export const summarize = (
   text: string,
   {
     limit = DEFAULT_SUMMARY_LEN,
-    omission
+    omission = '...'
   }: SummarizeOpt
 ): string => {
   if (isEmptyStr(text)) return ''
