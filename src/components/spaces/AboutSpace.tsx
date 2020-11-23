@@ -50,13 +50,12 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
       .map((x, i) => 
         ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
 
+    email && socialLinks.push({ value: <EmailLink link={email} label={name} /> })
+
     return <Section title={`${name} social links & contact info`} className='mb-4'>
       <InfoPanel
         column={2}
-        items={[
-          ...socialLinks,
-          { value: <EmailLink link={email} label={name} />}
-        ]}
+        items={socialLinks}
       />
     </Section>
   }, [])
@@ -73,20 +72,22 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
       image,
       canonical: aboutSpaceUrl(space)
     }}
-    level={1}
-    title={title}
-    className='DfContentPage'
   >
-    {nonEmptyStr(about) &&
-      <div className='DfBookPage'>
-        <DfMd source={about} />
-      </div>
-    }
-    <ViewTags tags={tags} className='mb-4' />
+    <Section 
+      level={1}
+      title={title}
+      className='DfContentPage'
+    >
+      {nonEmptyStr(about) &&
+        <div className='DfBookPage'>
+          <DfMd source={about} />
+        </div>
+      }
+      <ViewTags tags={tags} className='mb-4' />
 
     <ContactInfo />
 
-    <Section title={`Owner of ${name} space`} className='mb-4'>
+    <Section title={`Owner of ${name} on Subsocial`} className='mb-4'>
       <SpaceAuthor />
     </Section>
 
@@ -98,6 +99,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
         withStats={true}
         preview
       />
+    </Section>
     </Section>
 
   </PageContent>
