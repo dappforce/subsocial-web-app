@@ -1,6 +1,6 @@
-import { ParsedPaginationQuery } from "../utils/getIds"
-import { SubsocialApi } from "@subsocial/api/subsocial"
-import { ActivityStore } from "./NotificationUtils"
+import { ParsedPaginationQuery } from '../utils/getIds'
+import { SubsocialApi } from '@subsocial/api/subsocial'
+import { ActivityStore } from './NotificationUtils'
 
 export type LoadMoreProps = ParsedPaginationQuery & {
   subsocial: SubsocialApi
