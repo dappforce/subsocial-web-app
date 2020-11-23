@@ -41,16 +41,11 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   const [ content ] = useState(spaceData?.content || {} as SpaceContent)
   const { name, about, image, tags, links, email } = content
 
-  const SpaceAuthor = () => <Segment>
-    <ProfilePreview address={spaceOwnerAddress} owner={owner} />
-  </Segment>
-
   const ContactInfo = useCallback(() => {
-    const socialLinks = (links as string[])
-      .map((x, i) => 
-        ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
+    const socialLinks = (links as string[]).map((x, i) => 
+      ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
 
-    email && socialLinks.push({ value: <EmailLink link={email} label={name} /> })
+    nonEmptyStr(email) && socialLinks.push({ value: <EmailLink link={email} label={name} /> })
 
     return <Section title={`${name} social links & contact info`} className='mb-4'>
       <InfoPanel
@@ -62,17 +57,14 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const title = `What is ${name}?`
 
-  // TODO extract WithSpaceNav
-  const desc = mdToText(about)
+  const meta = {
+    title,
+    desc: mdToText(about),
+    image,
+    canonical: aboutSpaceUrl(space)
+  }
 
-  return <PageContent
-    meta={{
-      title,
-      desc,
-      image,
-      canonical: aboutSpaceUrl(space)
-    }}
-  >
+  return <PageContent meta={meta}>
     <Section 
       level={1}
       title={title}
@@ -83,25 +75,27 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
           <DfMd source={about} />
         </div>
       }
+
       <ViewTags tags={tags} className='mb-4' />
 
-    <ContactInfo />
+      <ContactInfo />
 
-    <Section title={`Owner of ${name} on Subsocial`} className='mb-4'>
-      <SpaceAuthor />
-    </Section>
+      <Section title={`Owner of ${name} on ${appName}`} className='mb-4'>
+        <Segment>
+          <ProfilePreview address={spaceOwnerAddress} owner={owner} />
+        </Segment>
+      </Section>
 
-    <Section title={`Follow ${name} on ${appName}`}>
-      <ViewSpace
-        spaceData={spaceData}
-        withFollowButton
-        withTags={false}
-        withStats={true}
-        preview
-      />
+      <Section title={`Follow ${name} on ${appName}`}>
+        <ViewSpace
+          spaceData={spaceData}
+          withFollowButton
+          withTags={false}
+          withStats={true}
+          preview
+        />
+      </Section>
     </Section>
-    </Section>
-
   </PageContent>
 }
 
