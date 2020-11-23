@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import SimpleMDE from 'easymde'
 import SimpleMDEReact from 'react-simplemde-editor'
 import { AutoSaveId, MdEditorProps } from './types'
 import store from 'store'
@@ -40,7 +41,7 @@ const MdEditor = ({
     }
     : undefined
 
-  const newOptions = {
+  const newOptions: SimpleMDE.Options = {
     previewClass: 'markdown-body',
     autosave,
     ...otherOptions

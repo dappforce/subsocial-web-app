@@ -1,3 +1,5 @@
+import styles from './CommentEditor.module.sass'
+
 import React, { useState } from 'react'
 import { MyAccountProps } from '../utils/MyAccount'
 import { useForm, Controller, ErrorMessage } from 'react-hook-form'
@@ -94,11 +96,19 @@ export const CommentEditor = (props: Props) => {
     <form onClick={showToolbar}>
       <Controller
         control={control}
-        as={<DfMdEditor options={{ placeholder: 'Write a comment...', toolbar, autofocus: toolbar }} />}
+        as={
+          <DfMdEditor
+            options={{
+              placeholder: 'Write a comment...',
+              toolbar,
+              autofocus: toolbar
+            }}
+          />
+        }
         name={Fields.body}
         value={body}
         defaultValue={body}
-        className={errors[Fields.body] && 'error'}
+        className={`${styles.DfCommentEditor} ${errors[Fields.body] && 'error'}`}
       />
       <div className='DfError'>
         <ErrorMessage errors={errors} name={Fields.body} />
