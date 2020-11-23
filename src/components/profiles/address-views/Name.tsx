@@ -1,11 +1,11 @@
 import React from 'react'
-import { toShortAddress } from 'src/components/utils';
-import { AddressProps } from './utils/types';
-import { ProfileData } from '@subsocial/types';
-import { withLoadedOwner } from './utils/withLoadedOwner';
-import ViewProfileLink from '../ViewProfileLink';
-import { useExtensionName } from './utils';
-import { MutedSpan } from 'src/components/utils/MutedText';
+import { toShortAddress } from 'src/components/utils'
+import { AddressProps } from './utils/types'
+import { ProfileData } from '@subsocial/types'
+import { withLoadedOwner } from './utils/withLoadedOwner'
+import ViewProfileLink from '../ViewProfileLink'
+import { useExtensionName } from './utils'
+import { MutedSpan } from 'src/components/utils/MutedText'
 
 type Props = AddressProps & {
   isShort?: boolean,

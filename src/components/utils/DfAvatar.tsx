@@ -1,9 +1,9 @@
 import React, { CSSProperties } from 'react'
-import { nonEmptyStr } from '@subsocial/utils';
-import { DfBgImg } from 'src/components/utils/DfBgImg';
-import IdentityIcon from 'src/components/utils/IdentityIcon';
-import { AnyAccountId } from '@subsocial/types/substrate';
-import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config';
+import { nonEmptyStr } from '@subsocial/utils'
+import { DfBgImg } from 'src/components/utils/DfBgImg'
+import IdentityIcon from 'src/components/utils/IdentityIcon'
+import { AnyAccountId } from '@subsocial/types/substrate'
+import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config'
 
 export type BaseAvatarProps = {
   size?: number,
@@ -19,7 +19,7 @@ export const BaseAvatar = ({ size = DEFAULT_AVATAR_SIZE, avatar, style, address 
       style={style}
       size={size}
       value={address}
-    />;
+    />
 
   if (!icon) return null
 

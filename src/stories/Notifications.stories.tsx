@@ -1,6 +1,6 @@
-import React from 'react';
-import { Notification } from '../components/activity/Notification';
-import { mockProfileDataAlice } from './mocks/SocialProfileMocks';
+import React from 'react'
+import { Notification } from '../components/activity/Notification'
+import { mockProfileDataAlice } from './mocks/SocialProfileMocks'
 import { mockAccountAlice } from './mocks/AccountMocks'
 import { mockSpaceDataAlice } from './mocks/SpaceMocks'
 import { ViewSpace } from '../components/spaces/ViewSpace'

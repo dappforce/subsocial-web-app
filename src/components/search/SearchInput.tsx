@@ -8,7 +8,7 @@ const { Search } = Input
 
 const SearchInput = () => {
   const router = useRouter()
-  const [searchValue, setSearchValue] = useState<string | undefined>(router.query.q as string)
+  const [ searchValue, setSearchValue ] = useState<string | undefined>(router.query.q as string)
   const isSearchPage = router.pathname.includes('search')
 
   useEffect(() => {

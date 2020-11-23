@@ -1,8 +1,8 @@
-import * as Yup from 'yup';
-import { minLenError, maxLenError } from '../utils/forms/validation';
+import * as Yup from 'yup'
+import { minLenError, maxLenError } from '../utils/forms/validation'
 
-const TITLE_MIN_LEN = 2;
-const TITLE_MAX_LEN = 50;
+const TITLE_MIN_LEN = 2
+const TITLE_MAX_LEN = 50
 
 export const validationSchema = Yup.object().shape({
   navTabs: Yup.array().of(

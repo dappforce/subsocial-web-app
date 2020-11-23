@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { CommentSection } from '../../comments/CommentsSection';
-import { PostCreator, PostDropDownMenu, PostActionsPanel, SharePostContent } from './helpers';
-import { InnerPreviewProps } from '.';
+import React, { useState } from 'react'
+import { CommentSection } from '../../comments/CommentsSection'
+import { PostCreator, PostDropDownMenu, PostActionsPanel, SharePostContent } from './helpers'
+import { InnerPreviewProps } from '.'
 
 type ComponentType = React.FunctionComponent<InnerPreviewProps>
 

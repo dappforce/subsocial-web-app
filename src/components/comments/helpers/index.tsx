@@ -1,9 +1,9 @@
-import React from 'react';
-import { HiddenPostAlert } from 'src/components/posts/view-post';
-import { DfMd } from 'src/components/utils/DfMd';
+import React from 'react'
+import { HiddenPostAlert } from 'src/components/posts/view-post'
+import { DfMd } from 'src/components/utils/DfMd'
 import { CommentData } from '@subsocial/types/dto'
 import styles from './index.module.sass'
-import { HasPostId } from 'src/components/urls';
+import { HasPostId } from 'src/components/urls'
 
 type CommentBodyProps = {
   comment: CommentData

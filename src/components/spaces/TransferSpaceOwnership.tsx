@@ -88,7 +88,7 @@ const TransferOwnershipModal = (props: ModalProps) => {
   const renderTxButton = () =>
     <TxButton
       type='primary'
-      label={`Transfer ownership`}
+      label={'Transfer ownership'}
       disabled={!hasValidNewOwner()}
       params={getTxParams}
       tx={'spaceOwnership.transferSpaceOwnership'}
@@ -124,7 +124,7 @@ const TransferOwnershipModal = (props: ModalProps) => {
         rules={[
           { required: true, message: 'Account address is required.' },
           ({ getFieldValue }) => ({
-            validator(_rule, value) {
+            validator (_rule, value) {
               const fail = (errMsg: string) => {
                 setNewOwner(undefined)
                 return Promise.reject(errMsg)

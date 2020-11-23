@@ -1,8 +1,8 @@
-import React from 'react';
-import { List } from 'antd';
-import { PaginationConfig } from 'antd/lib/pagination';
-import Section from 'src/components/utils/Section';
-import NoData from 'src/components/utils/EmptyList';
+import React from 'react'
+import { List } from 'antd'
+import { PaginationConfig } from 'antd/lib/pagination'
+import Section from 'src/components/utils/Section'
+import NoData from 'src/components/utils/EmptyList'
 
 export type DataListOptProps = {
   title?: React.ReactNode,
@@ -32,11 +32,11 @@ export function DataList<T extends any> (props: DataListProps<T>) {
     noDataExt,
     paginationConfig,
     children
-  } = props;
+  } = props
 
   const total = totalCount || dataSource.length
 
-  const hasData = total > 0;
+  const hasData = total > 0
 
   const list = hasData
     ? <List

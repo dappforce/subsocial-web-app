@@ -1,6 +1,6 @@
-import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit';
-import { Store } from '../types';
-import { PostWithAllDetails } from '@subsocial/types';
+import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit'
+import { Store } from '../types'
+import { PostWithAllDetails } from '@subsocial/types'
 
 export type CommentsState = Record<string, string[]>
 
@@ -68,7 +68,7 @@ export const commentSlice = createSlice({
     editCommentReducer,
     removeCommentReducer
   }
-});
+})
 
 export const getComments = (store: Store, parentId: string): PostWithAllDetails[] => {
   const { replyIdsByPostId, postById } = store
@@ -81,9 +81,9 @@ export const getComments = (store: Store, parentId: string): PostWithAllDetails[
       .filter(x => x !== undefined)
     : []
   return res
-};
+}
 
-export const getCommentsStore = (state: Store) => state.replyIdsByPostId;
+export const getCommentsStore = (state: Store) => state.replyIdsByPostId
 
 export const {
   addCommentReducer: addComments,
@@ -91,4 +91,4 @@ export const {
   removeCommentReducer: removeComment
 } = commentSlice.actions
 
-export default commentSlice.reducer;
+export default commentSlice.reducer

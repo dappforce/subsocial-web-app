@@ -1,4 +1,4 @@
-import { NavTab } from "@subsocial/types/offchain";
+import { NavTab } from '@subsocial/types/offchain'
 
 export const mockNavTabs: NavTab[] = [
   {

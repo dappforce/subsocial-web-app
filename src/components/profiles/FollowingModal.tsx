@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
-import { withCalls, withMulti, profileFollowsQueryToProp } from '../substrate';
-import { GenericAccountId as AccountId } from '@polkadot/types';
-import { Modal, Button } from 'antd';
-import { ProfilePreviewWithOwner } from './address-views';
-import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import { withCalls, withMulti, profileFollowsQueryToProp } from '../substrate'
+import { GenericAccountId as AccountId } from '@polkadot/types'
+import { Modal, Button } from 'antd'
+import { ProfilePreviewWithOwner } from './address-views'
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 
 type Props = {
   following?: AccountId[],
@@ -12,8 +12,8 @@ type Props = {
 };
 
 const InnerFollowingModal = (props: Props) => {
-  const { following, followingCount } = props;
-  const [ open, setOpen ] = useState(false);
+  const { following, followingCount } = props
+  const [ open, setOpen ] = useState(false)
 
   const renderFollowing = () => {
     return following && following.map((account) =>
@@ -24,8 +24,8 @@ const InnerFollowingModal = (props: Props) => {
           mini
         />
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -40,12 +40,12 @@ const InnerFollowingModal = (props: Props) => {
         {renderFollowing()}
       </Modal>
     </>
-  );
-};
+  )
+}
 
 export const AccountFollowingModal = withMulti(
   InnerFollowingModal,
   withCalls<Props>(
     profileFollowsQueryToProp('accountsFollowedByAccount', { paramName: 'id', propName: 'following' })
   )
-);
+)

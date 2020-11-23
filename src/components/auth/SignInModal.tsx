@@ -1,11 +1,11 @@
-import React from 'react';
+import React from 'react'
 
-import Modal from 'antd/lib/modal';
-import { Divider, Alert } from 'antd';
-import { OnBoardingButton } from '../onboarding';
-import { ModalKind, useAuth, StepsEnum, CompletedSteps } from './AuthContext';
-import { AccountSelector } from '../profile-selector/AccountSelector';
-import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks';
+import Modal from 'antd/lib/modal'
+import { Divider, Alert } from 'antd'
+import { OnBoardingButton } from '../onboarding'
+import { ModalKind, useAuth, StepsEnum, CompletedSteps } from './AuthContext'
+import { AccountSelector } from '../profile-selector/AccountSelector'
+import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks'
 
 type ModalProps = {
   open: boolean
@@ -44,7 +44,7 @@ const getModalContent = (kind: ModalKind, completedSteps: CompletedSteps) => {
           content.warn = 'You need some tokens to continue.'
           return content
         }
-        return content;
+        return content
       }
       case 'SwitchAccount': {
         content.title = 'Switch account'
@@ -67,7 +67,7 @@ const getModalContent = (kind: ModalKind, completedSteps: CompletedSteps) => {
 
     switch (kind) {
       case 'OnBoarding': {
-        content.title = `Sign in` // TODO maybe add ' with Polkadot{.js} extension' text
+        content.title = 'Sign in' // TODO maybe add ' with Polkadot{.js} extension' text
         return content
       }
       case 'AuthRequired': {
@@ -107,13 +107,13 @@ export const SignInModalView = ({ open, hide, kind, completedSteps }: ModalViewP
       <Divider className='mt-3 m-0' />
       <PrivacyPolicyLinks />
     </>
-  </Modal> : null;
+  </Modal> : null
 }
 
 export const SignInModal = (props: ModalProps) => {
   const { state: { completedSteps } } = useAuth()
 
   return <SignInModalView completedSteps={completedSteps} {...props} />
-};
+}
 
-export default SignInModal;
+export default SignInModal

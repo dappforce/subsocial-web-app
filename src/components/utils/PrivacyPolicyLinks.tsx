@@ -8,4 +8,4 @@ export const PrivacyPolicyLinks = () => (
   </div>
 )
 
-export default PrivacyPolicyLinks;
+export default PrivacyPolicyLinks

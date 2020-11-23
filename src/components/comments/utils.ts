@@ -1,12 +1,12 @@
-import { addComments, removeComment } from 'src/redux/slices/replyIdsByPostIdSlice';
-import { addPost, removePost, editPost } from 'src/redux/slices/postByIdSlice';
-import { Dispatch } from '@reduxjs/toolkit';
-import { PostsStoreType } from 'src/redux/types';
-import { PostData, PostWithSomeDetails, CommentContent, PostContent, ProfileData } from '@subsocial/types';
-import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
-import { IpfsCid } from '@subsocial/types/substrate/interfaces';
-import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { FVoid } from '../utils/types';
+import { addComments, removeComment } from 'src/redux/slices/replyIdsByPostIdSlice'
+import { addPost, removePost, editPost } from 'src/redux/slices/postByIdSlice'
+import { Dispatch } from '@reduxjs/toolkit'
+import { PostsStoreType } from 'src/redux/types'
+import { PostData, PostWithSomeDetails, CommentContent, PostContent, ProfileData } from '@subsocial/types'
+import { SubsocialIpfsApi } from '@subsocial/api/ipfs'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { FVoid } from '../utils/types'
 
 type Reply<T> = {
   replyId: T,
@@ -24,12 +24,12 @@ type EditCommentStore = {
 }
 
 export const useRemoveReplyFromStore = (dispatch: Dispatch, reply: Reply<string>) => {
-  dispatch(removeComment(reply));
+  dispatch(removeComment(reply))
   dispatch(removePost({ postId: reply.replyId }))
 }
 
 export const useSetReplyToStore = (dispatch: Dispatch, { reply, comment }: SetCommentStore<string | string[]>) => {
-  dispatch(addComments(reply));
+  dispatch(addComments(reply))
   dispatch(addPost({ posts: comment }))
 }
 

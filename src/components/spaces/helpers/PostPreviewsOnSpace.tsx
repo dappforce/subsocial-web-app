@@ -1,16 +1,16 @@
-import { PostWithSomeDetails, SpaceData } from '@subsocial/types/dto';
-import { PostId, Space } from '@subsocial/types/substrate/interfaces';
-import React, { useCallback } from 'react';
-import DataList from 'src/components/lists/DataList';
-import { InfiniteListByPage } from 'src/components/lists/InfiniteList';
-import PostPreview from 'src/components/posts/view-post/PostPreview';
-import { resolveBn } from 'src/components/utils';
-import { getPageOfIds } from 'src/components/utils/getIds';
-import { Pluralize } from 'src/components/utils/Plularize';
-import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext';
-import { isMySpace } from './common';
-import { CreatePostButton } from './CreatePostButton';
-import { useLoadUnlistedPostsByOwner } from './useLoadUnlistedPostsByOwner';
+import { PostWithSomeDetails, SpaceData } from '@subsocial/types/dto'
+import { PostId, Space } from '@subsocial/types/substrate/interfaces'
+import React, { useCallback } from 'react'
+import DataList from 'src/components/lists/DataList'
+import { InfiniteListByPage } from 'src/components/lists/InfiniteList'
+import PostPreview from 'src/components/posts/view-post/PostPreview'
+import { resolveBn } from 'src/components/utils'
+import { getPageOfIds } from 'src/components/utils/getIds'
+import { Pluralize } from 'src/components/utils/Plularize'
+import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext'
+import { isMySpace } from './common'
+import { CreatePostButton } from './CreatePostButton'
+import { useLoadUnlistedPostsByOwner } from './useLoadUnlistedPostsByOwner'
 
 type Props = {
   spaceData: SpaceData

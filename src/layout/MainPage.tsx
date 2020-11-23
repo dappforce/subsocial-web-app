@@ -1,6 +1,6 @@
-import React from 'react';
-import { registerSubsocialTypes } from '../components/types';
-import ClientLayout from './ClientLayout';
+import React from 'react'
+import { registerSubsocialTypes } from '../components/types'
+import ClientLayout from './ClientLayout'
 import { WhereAmIPanel } from 'src/components/utils/WhereAmIPanel'
 
 const Page: React.FunctionComponent = ({ children }) => <>
@@ -9,11 +9,11 @@ const Page: React.FunctionComponent = ({ children }) => <>
   </>
 
 const NextLayout: React.FunctionComponent = (props) => {
-  registerSubsocialTypes();
+  registerSubsocialTypes()
 
   return <ClientLayout>
     <Page {...props} />
-  </ClientLayout>;
-};
+  </ClientLayout>
+}
 
-export default NextLayout;
+export default NextLayout

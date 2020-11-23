@@ -1,12 +1,12 @@
-import React, { useReducer, createContext, useContext, useEffect, useState } from 'react';
-import { SubsocialApi } from '@subsocial/api/subsocial';
-import { SubsocialSubstrateApi } from '@subsocial/api/substrate';
-import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
-import { newSubsocialApi } from './SubsocialConnect';
-import { ApiPromise } from '@polkadot/api';
-import { newLogger } from '@subsocial/utils';
-import { useSubstrate } from '../substrate';
-import { controlledMessage } from './Message';
+import React, { useReducer, createContext, useContext, useEffect, useState } from 'react'
+import { SubsocialApi } from '@subsocial/api/subsocial'
+import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
+import { SubsocialIpfsApi } from '@subsocial/api/ipfs'
+import { newSubsocialApi } from './SubsocialConnect'
+import { ApiPromise } from '@polkadot/api'
+import { newLogger } from '@subsocial/utils'
+import { useSubstrate } from '../substrate'
+import { controlledMessage } from './Message'
 // import { isDevMode } from './env';
 
 const log = newLogger('SubsocialApiContext')
@@ -66,7 +66,7 @@ export type SubsocialApiProps = {
 }
 
 const createSubsocialState = (api?: ApiPromise) => {
-  if (!api) return emptyState;
+  if (!api) return emptyState
 
   const subsocial = newSubsocialApi(api)
   const { substrate, ipfs } = subsocial

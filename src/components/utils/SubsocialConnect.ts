@@ -1,13 +1,13 @@
-import { api as apiFromContext } from '../substrate';
+import { api as apiFromContext } from '../substrate'
 import { Api as SubstrateApi } from '@subsocial/api/substrateConnect'
-import { offchainUrl, substrateUrl, ipfsNodeUrl, dagHttpMethod } from './env';
-import { ApiPromise } from '@polkadot/api';
-import { newLogger } from '@subsocial/utils';
-import { SubsocialApi } from '@subsocial/api/subsocial';
+import { offchainUrl, substrateUrl, ipfsNodeUrl, dagHttpMethod } from './env'
+import { ApiPromise } from '@polkadot/api'
+import { newLogger } from '@subsocial/utils'
+import { SubsocialApi } from '@subsocial/api/subsocial'
 
 const log = newLogger('SubsocialConnect')
 
-let subsocial!: SubsocialApi;
+let subsocial!: SubsocialApi
 let isLoadingSubsocial = false
 
 export const newSubsocialApi = (substrateApi: ApiPromise) => {
@@ -26,7 +26,7 @@ export const getSubsocialApi = async () => {
   return subsocial
 }
 
-let api: ApiPromise;
+let api: ApiPromise
 let isLoadingSubstrate = false
 
 const getSubstrateApi = async () => {

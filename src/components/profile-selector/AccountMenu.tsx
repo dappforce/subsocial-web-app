@@ -1,8 +1,8 @@
 import React from 'react'
-import { SignOutButton } from 'src/components/auth/AuthButtons';
-import { AccountSelector } from './AccountSelector';
-import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks';
-import { Divider } from 'antd';
+import { SignOutButton } from 'src/components/auth/AuthButtons'
+import { AccountSelector } from './AccountSelector'
+import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks'
+import { Divider } from 'antd'
 
 export const AccountMenu = () => {
   return <div className='DfAccountMenu'>
@@ -14,4 +14,4 @@ export const AccountMenu = () => {
   </div>
 }
 
-export default AccountMenu;
+export default AccountMenu

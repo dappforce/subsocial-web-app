@@ -1,10 +1,10 @@
-import React from 'react';
-import { Space } from '@subsocial/types/substrate/interfaces';
-import { ViewSpace } from '../spaces/ViewSpace';
-import { SpaceData } from '@subsocial/types/dto';
-import { CreateSpaceButton, AllSpacesLink } from '../spaces/helpers';
-import DataList from '../lists/DataList';
-import { ButtonLink } from 'src/components/utils/ButtonLink';
+import React from 'react'
+import { Space } from '@subsocial/types/substrate/interfaces'
+import { ViewSpace } from '../spaces/ViewSpace'
+import { SpaceData } from '@subsocial/types/dto'
+import { CreateSpaceButton, AllSpacesLink } from '../spaces/helpers'
+import DataList from '../lists/DataList'
+import { ButtonLink } from 'src/components/utils/ButtonLink'
 
 type Props = {
   spacesData: SpaceData[]

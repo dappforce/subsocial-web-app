@@ -1,3 +1,3 @@
-import ViewSpace from '../../../components/spaces/ViewSpace';
+import ViewSpace from '../../../components/spaces/ViewSpace'
 
-export default ViewSpace;
+export default ViewSpace

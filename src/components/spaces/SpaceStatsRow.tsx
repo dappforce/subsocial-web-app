@@ -1,16 +1,16 @@
-import { Space } from '@subsocial/types/substrate/interfaces';
-import BN from 'bn.js';
-import Link from 'next/link';
-import React, { useState } from 'react';
+import { Space } from '@subsocial/types/substrate/interfaces'
+import BN from 'bn.js'
+import Link from 'next/link'
+import React, { useState } from 'react'
 
-import { SpaceFollowersModal } from '../profiles/AccountsListModal';
-import { ZERO } from '../utils';
-import { MutedSpan } from '../utils/MutedText';
-import { Pluralize } from '../utils/Plularize';
-import { spaceUrl } from '../urls';
-import AboutSpaceLink from './AboutSpaceLink';
-import { isMySpace } from './helpers';
-import { useResponsiveSize } from '../responsive';
+import { SpaceFollowersModal } from '../profiles/AccountsListModal'
+import { ZERO } from '../utils'
+import { MutedSpan } from '../utils/MutedText'
+import { Pluralize } from '../utils/Plularize'
+import { spaceUrl } from '../urls'
+import AboutSpaceLink from './AboutSpaceLink'
+import { isMySpace } from './helpers'
+import { useResponsiveSize } from '../responsive'
 
 type Props = {
   space: Space

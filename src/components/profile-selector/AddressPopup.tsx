@@ -1,11 +1,11 @@
 import React from 'react'
-import { Dropdown } from 'antd';
+import { Dropdown } from 'antd'
 import Address from '../profiles/address-views/Name'
 import Avatar from '../profiles/address-views/Avatar'
-import { AddressProps } from '../profiles/address-views/utils/types';
-import { withLoadedOwner, withMyProfile } from '../profiles/address-views/utils/withLoadedOwner';
-import { InfoDetails } from '../profiles/address-views';
-import { AccountMenu } from 'src/components/profile-selector/AccountMenu';
+import { AddressProps } from '../profiles/address-views/utils/types'
+import { withLoadedOwner, withMyProfile } from '../profiles/address-views/utils/withLoadedOwner'
+import { InfoDetails } from '../profiles/address-views'
+import { AccountMenu } from 'src/components/profile-selector/AccountMenu'
 import styles from './AccountSelector.module.sass'
 
 type SelectAddressType = AddressProps & {
@@ -34,7 +34,7 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
 }) => {
   const menu = (
     <AccountMenu />
-  );
+  )
 
   return <Dropdown
     overlay={menu}
@@ -48,4 +48,4 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
 }
 
 export const AddressPreviewWithOwner = withLoadedOwner(SelectAddressPreview)
-export const MyAccountPopup = withMyProfile(AddressPopup);
+export const MyAccountPopup = withMyProfile(AddressPopup)

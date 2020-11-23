@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { AnyAccountId } from '@subsocial/types'
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { useSubstrateContext } from 'src/components/substrate';
-import { Copy } from 'src/components/urls/helpers';
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
+import { useSubstrateContext } from 'src/components/substrate'
+import { Copy } from 'src/components/urls/helpers'
 import Link from 'next/link'
-import { BareProps } from 'src/components/utils/types';
-import { isMyAddress } from 'src/components/auth/MyAccountContext';
-import { accountUrl } from 'src/components/urls';
+import { BareProps } from 'src/components/utils/types'
+import { isMyAddress } from 'src/components/auth/MyAccountContext'
+import { accountUrl } from 'src/components/urls'
 
 export const useExtensionName = (address: AnyAccountId) => {
   const [ extensionName, setExtensionName ] = useState<string>()

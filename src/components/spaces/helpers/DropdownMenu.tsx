@@ -22,7 +22,7 @@ export const DropdownMenu = (props: Props) => {
   const buildMenu = () =>
     <Menu>
       <Menu.Item key={`edit-space-${spaceKey}`}>
-        <Link href={`/[spaceId]/edit`} as={editSpaceUrl(struct)}>
+        <Link href={'/[spaceId]/edit'} as={editSpaceUrl(struct)}>
           <a className='item'>Edit space</a>
         </Link>
       </Menu.Item>

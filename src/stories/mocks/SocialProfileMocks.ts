@@ -1,7 +1,7 @@
-import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces';
-import BN from 'bn.js';
-import { u32 } from '@polkadot/types';
-import { ProfileContent, ProfileData } from '@subsocial/types';
+import { SocialAccount, Profile } from '@subsocial/types/substrate/interfaces'
+import BN from 'bn.js'
+import { u32 } from '@polkadot/types'
+import { ProfileContent, ProfileData } from '@subsocial/types'
 
 export const mockSocialAccountAlice = {
   reputation: new BN(100) as u32,

@@ -19,7 +19,7 @@
   },
   "scripts": {
     "check": "yarn lint",
-    "lint": "tsc --noEmit && eslint '*/**/*.{ts,tsx}' --quiet --fix",
+    "lint": "tsc && eslint --cache 'src/**/*.{ts,tsx,js}' --fix",
     "test": "yarn patch && echo \"skipping tests\"",
     "dev": "yarn patch && next -p 3003",
     "analyze": "yarn patch && ANALYZE=true next build",

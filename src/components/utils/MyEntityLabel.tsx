@@ -1,6 +1,6 @@
 import React from 'react'
-import { Tag } from 'antd';
-import { useResponsiveSize } from '../responsive';
+import { Tag } from 'antd'
+import { useResponsiveSize } from '../responsive'
 
 type Props = React.PropsWithChildren<{
   isMy?: boolean

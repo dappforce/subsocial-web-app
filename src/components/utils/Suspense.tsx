@@ -1,3 +1,3 @@
-import { Suspense } from 'react';
+import { Suspense } from 'react'
 
-export default Suspense;
+export default Suspense

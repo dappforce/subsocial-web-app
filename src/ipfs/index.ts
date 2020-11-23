@@ -1,4 +1,4 @@
-import { ipfsNodeUrl } from 'src/components/utils/env';
+import { ipfsNodeUrl } from 'src/components/utils/env'
 import CID from 'cids'
 
 const getPath = (cid: string) => `ipfs/${cid}`

@@ -18,7 +18,7 @@ export const isMySpace = (space?: Space) =>
   isDef(space) && isMyAddress(space.owner)
 
 export const createNewPostLinkProps = (space: Space) => ({
-  href: `/[spaceId]/posts/new`,
+  href: '/[spaceId]/posts/new',
   as: newPostUrl(space)
 })
 

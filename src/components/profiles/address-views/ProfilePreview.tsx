@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import { AddressProps } from './utils/types'
-import Avatar from './Avatar';
-import { nonEmptyStr } from '@subsocial/utils';
-import { Pluralize } from 'src/components/utils/Plularize';
-import NameDetails from './utils/NameDetails';
-import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal';
-import { ProfileContent, ProfileData } from '@subsocial/types';
-import { withLoadedOwner, withMyProfile } from './utils/withLoadedOwner';
-import { SummarizeMd } from 'src/components/utils/md';
-import ViewProfileLink from '../ViewProfileLink';
-import { LARGE_AVATAR_SIZE } from 'src/config/Size.config';
+import Avatar from './Avatar'
+import { nonEmptyStr } from '@subsocial/utils'
+import { Pluralize } from 'src/components/utils/Plularize'
+import NameDetails from './utils/NameDetails'
+import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal'
+import { ProfileContent, ProfileData } from '@subsocial/types'
+import { withLoadedOwner, withMyProfile } from './utils/withLoadedOwner'
+import { SummarizeMd } from 'src/components/utils/md'
+import ViewProfileLink from '../ViewProfileLink'
+import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { EditProfileLink } from './utils'
 
 type ProfilePreviewProps = AddressProps & {
@@ -20,27 +20,27 @@ type ProfilePreviewProps = AddressProps & {
 }
 
 export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ address, withLabel, className, withAbout = false, owner = {} as ProfileData, size, mini = false }) => { // TODO fix CSS style
-  const [ followersOpen, setFollowersOpen ] = useState(false);
-  const [ followingOpen, setFollowingOpen ] = useState(false);
+  const [ followersOpen, setFollowersOpen ] = useState(false)
+  const [ followingOpen, setFollowingOpen ] = useState(false)
 
-  const { struct, content = {} as ProfileContent } = owner;
+  const { struct, content = {} as ProfileContent } = owner
   const { about, avatar } = content
   const accountForUrl = { address }
 
-  const followers = struct ? struct.followers_count.toString() : '0';
-  const following = struct ? struct.following_accounts_count.toString() : '0';
+  const followers = struct ? struct.followers_count.toString() : '0'
+  const following = struct ? struct.following_accounts_count.toString() : '0'
 
   const openFollowersModal = () => {
-    if (!followers) return;
+    if (!followers) return
 
-    setFollowersOpen(true);
-  };
+    setFollowersOpen(true)
+  }
 
   const openFollowingModal = () => {
-    if (!following) return;
+    if (!following) return
 
-    setFollowingOpen(true);
-  };
+    setFollowingOpen(true)
+  }
 
   return <div className={`ProfileDetails ${className}`}>
     <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />

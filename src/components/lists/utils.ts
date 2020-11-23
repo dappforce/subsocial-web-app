@@ -1,6 +1,6 @@
-import { useCallback } from "react"
-import { useRouter } from "next/router"
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from "src/config/ListData.config"
+import { useCallback } from 'react'
+import { useRouter } from 'next/router'
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 
 type ParamsHookProps = {
   triggers?: any[]

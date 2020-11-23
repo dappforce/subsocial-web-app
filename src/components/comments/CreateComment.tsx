@@ -1,17 +1,17 @@
-import React from 'react';
-import { PostExtension, Comment, OptionId, IpfsContent } from '@subsocial/types/substrate/classes';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
-import { IpfsCid, Post } from '@subsocial/types/substrate/interfaces';
-import dynamic from 'next/dynamic';
-import { getNewIdFromEvent, getTxParams } from '../substrate';
+import React from 'react'
+import { PostExtension, Comment, OptionId, IpfsContent } from '@subsocial/types/substrate/classes'
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
+import { IpfsCid, Post } from '@subsocial/types/substrate/interfaces'
+import dynamic from 'next/dynamic'
+import { getNewIdFromEvent, getTxParams } from '../substrate'
 import BN from 'bn.js'
-import { useDispatch } from 'react-redux';
-import { useMyAccount } from '../auth/MyAccountContext';
-import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils';
-import { isHiddenPost, HiddenPostAlert } from '../posts/view-post';
+import { useDispatch } from 'react-redux'
+import { useMyAccount } from '../auth/MyAccountContext'
+import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils'
+import { isHiddenPost, HiddenPostAlert } from '../posts/view-post'
 
-const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false });
-const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false });
+const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
+const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
 type NewCommentProps = {
   post: Post
@@ -21,8 +21,8 @@ type NewCommentProps = {
 }
 
 export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
-  const { id: parentId, extension } = post;
-  const dispatch = useDispatch();
+  const { id: parentId, extension } = post
+  const dispatch = useDispatch()
   const { subsocial } = useSubsocialApi()
   const { state: { address, account } } = useMyAccount()
 
@@ -41,7 +41,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
 
   const newExtension = new PostExtension({ Comment: commentExt })
 
-  const newTxParams = (cid: IpfsCid) => [ new OptionId(), newExtension, new IpfsContent(cid) ];
+  const newTxParams = (cid: IpfsCid) => [ new OptionId(), newExtension, new IpfsContent(cid) ]
 
   const onFailedReduxAction = (id: string) =>
     useRemoveReplyFromStore(dispatch, { replyId: id, parentId: parentIdStr })
@@ -83,7 +83,7 @@ export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, cal
         onFailed && onFailed(txResult)
       }}
       onSuccess={(txResult) => {
-        const id = getNewIdFromEvent(txResult);
+        const id = getNewIdFromEvent(txResult)
         id && fakeId && onSuccessReduxAction(id, fakeId)
         onSuccess && onSuccess(txResult)
       }}

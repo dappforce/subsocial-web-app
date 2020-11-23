@@ -1,10 +1,10 @@
-import React from 'react';
-import { DfBgImageLink } from '../utils/DfBgImg';
-import { nonEmptyStr } from '@subsocial/utils';
+import React from 'react'
+import { DfBgImageLink } from '../utils/DfBgImg'
+import { nonEmptyStr } from '@subsocial/utils'
 import Avatar from '../profiles/address-views/Avatar'
-import Name from '../profiles/address-views/Name';
-import { MutedDiv } from '../utils/MutedText';
-import { NotificationType } from './NotificationUtils';
+import Name from '../profiles/address-views/Name'
+import { MutedDiv } from '../utils/MutedText'
+import { NotificationType } from './NotificationUtils'
 import Link from 'next/link'
 
 export function Notification (props: NotificationType) {

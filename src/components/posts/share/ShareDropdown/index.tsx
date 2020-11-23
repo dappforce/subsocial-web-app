@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { PostWithSomeDetails } from '@subsocial/types';
-import { Menu, Dropdown, Button } from 'antd';
-import { ShareLink, Copy } from 'src/components/urls/helpers';
-import { facebookShareUrl, postUrl, twitterShareUrl, linkedInShareUrl, redditShareUrl, copyUrl } from 'src/components/urls';
-import { IconWithLabel } from 'src/components/utils';
+import React, { useState } from 'react'
+import { PostWithSomeDetails } from '@subsocial/types'
+import { Menu, Dropdown, Button } from 'antd'
+import { ShareLink, Copy } from 'src/components/urls/helpers'
+import { facebookShareUrl, postUrl, twitterShareUrl, linkedInShareUrl, redditShareUrl, copyUrl } from 'src/components/urls'
+import { IconWithLabel } from 'src/components/utils'
 import {
   FacebookOutlined,
   TwitterOutlined,
@@ -12,11 +12,11 @@ import {
   ShareAltOutlined,
   LinkOutlined
 } from '@ant-design/icons'
-import SpaceShareLink from '../SpaceShareLink';
-import { Space } from '@subsocial/types/substrate/interfaces';
+import SpaceShareLink from '../SpaceShareLink'
+import { Space } from '@subsocial/types/substrate/interfaces'
 
 import styles from './index.module.sass'
-import { FVoid } from 'src/components/utils/types';
+import { FVoid } from 'src/components/utils/types'
 
 type ShareMenuProps = {
   postDetails: PostWithSomeDetails,

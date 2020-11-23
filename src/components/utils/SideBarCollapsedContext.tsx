@@ -1,8 +1,8 @@
 import React, { useReducer, createContext, useContext, useEffect } from 'react'
 import store from 'store'
-import { newLogger } from '@subsocial/utils';
-import { isHomePage } from '.';
-import { useResponsiveSize } from '../responsive';
+import { newLogger } from '@subsocial/utils'
+import { isHomePage } from '.'
+import { useResponsiveSize } from '../responsive'
 const log = newLogger('Sidebar collapsed context')
 
 export const SIDEBAR_COLLAPSED = 'df.colapsed'

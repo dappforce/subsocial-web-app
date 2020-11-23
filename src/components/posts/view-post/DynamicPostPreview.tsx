@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { newLogger } from '@subsocial/utils';
-import { PostWithAllDetails } from '@subsocial/types/dto';
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { InnerPreviewProps } from './ViewRegularPreview';
-import PostPreview, { BarePreviewProps } from './PostPreview';
-import { AnyPostId } from '@subsocial/types';
+import React, { useState } from 'react'
+import { newLogger } from '@subsocial/utils'
+import { PostWithAllDetails } from '@subsocial/types/dto'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
+import { InnerPreviewProps } from './ViewRegularPreview'
+import PostPreview, { BarePreviewProps } from './PostPreview'
+import { AnyPostId } from '@subsocial/types'
 
 const log = newLogger(DynamicPostPreview.name)
 

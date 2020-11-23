@@ -1,23 +1,23 @@
-import React, { FunctionComponent, useState } from 'react';
-import { /* CaretDownOutlined, CaretUpOutlined, */ CommentOutlined, NotificationOutlined } from '@ant-design/icons';
-import { Comment, Button, Tag } from 'antd';
-import { PostWithSomeDetails } from '@subsocial/types/dto';
-import { CommentContent } from '@subsocial/types';
-import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
-import { Space, Post } from '@subsocial/types/substrate/interfaces';
-import Link from 'next/link';
-import { pluralize } from '../utils/Plularize';
-import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils';
-import dayjs from 'dayjs';
-import { EditComment } from './UpdateComment';
+import React, { FunctionComponent, useState } from 'react'
+import { /* CaretDownOutlined, CaretUpOutlined, */ CommentOutlined, NotificationOutlined } from '@ant-design/icons'
+import { Comment, Button, Tag } from 'antd'
+import { PostWithSomeDetails } from '@subsocial/types/dto'
+import { CommentContent } from '@subsocial/types'
+import { AuthorPreview } from '../profiles/address-views/AuthorPreview'
+import { Space, Post } from '@subsocial/types/substrate/interfaces'
+import Link from 'next/link'
+import { pluralize } from '../utils/Plularize'
+import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils'
+import dayjs from 'dayjs'
+import { EditComment } from './UpdateComment'
 import { CommentsTree } from './CommentTree'
-import { NewComment } from './CreateComment';
-import { VoterButtons } from '../voting/VoterButtons';
-import { PostDropDownMenu } from '../posts/view-post';
-import { CommentBody } from './helpers';
-import { equalAddresses } from '../substrate';
-import { postUrl } from '../urls';
-import { ShareDropdown } from '../posts/share/ShareDropdown';
+import { NewComment } from './CreateComment'
+import { VoterButtons } from '../voting/VoterButtons'
+import { PostDropDownMenu } from '../posts/view-post'
+import { CommentBody } from './helpers'
+import { equalAddresses } from '../substrate'
+import { postUrl } from '../urls'
+import { ShareDropdown } from '../posts/share/ShareDropdown'
 
 type Props = {
   rootPost?: Post,
@@ -48,9 +48,9 @@ export const ViewComment: FunctionComponent<Props> = ({
     replies_count
   } = struct
 
-  const [ showEditForm, setShowEditForm ] = useState(false);
-  const [ showReplyForm, setShowReplyForm ] = useState(false);
-  const [ showReplies ] = useState(withShowReplies);
+  const [ showEditForm, setShowEditForm ] = useState(false)
+  const [ showReplyForm, setShowReplyForm ] = useState(false)
+  const [ showReplies ] = useState(withShowReplies)
   const [ repliesCount, setRepliesCount ] = useState(resolveBn(replies_count))
 
   const isFake = id.toString().startsWith('fake')
@@ -134,6 +134,6 @@ export const ViewComment: FunctionComponent<Props> = ({
       {ChildPanel}
     </Comment>
   </div>
-};
+}
 
-export default ViewComment;
+export default ViewComment

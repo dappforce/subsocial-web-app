@@ -1,15 +1,15 @@
-import { Option } from '@polkadot/types';
-import AccountId from '@polkadot/types/generic/AccountId';
-import { Space } from '@subsocial/types/substrate/interfaces';
-import { newLogger } from '@subsocial/utils';
-import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { useMyAddress } from 'src/components/auth/MyAccountContext';
-import { ViewProfileLink } from 'src/components/profiles/ViewProfileLink';
-import { equalAddresses } from 'src/components/substrate';
-import { TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { EntityStatusPanel, EntityStatusProps } from './EntityStatusPanel';
+import { Option } from '@polkadot/types'
+import AccountId from '@polkadot/types/generic/AccountId'
+import { Space } from '@subsocial/types/substrate/interfaces'
+import { newLogger } from '@subsocial/utils'
+import dynamic from 'next/dynamic'
+import React, { useState } from 'react'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
+import { useMyAddress } from 'src/components/auth/MyAccountContext'
+import { ViewProfileLink } from 'src/components/profiles/ViewProfileLink'
+import { equalAddresses } from 'src/components/substrate'
+import { TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { EntityStatusPanel, EntityStatusProps } from './EntityStatusPanel'
 
 const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false })
 
@@ -67,18 +67,18 @@ export const PendingSpaceOwnershipPanel = ({
   const AcceptOwnershipButton = () =>
     <TxButton
       size='small'
-      tx={`spaceOwnership.acceptPendingOwnership`}
+      tx={'spaceOwnership.acceptPendingOwnership'}
       params={getTxParams}
       onSuccess={onSuccess}
       label='Accept'
-      successMessage={`You accepted a space ownership`}
-      failedMessage={`Failed to accepted a space ownership`}
+      successMessage={'You accepted a space ownership'}
+      failedMessage={'Failed to accepted a space ownership'}
     />
 
   const RejectOwnershipButton = () =>
     <TxButton
       size='small'
-      tx={`spaceOwnership.rejectPendingOwnership`}
+      tx={'spaceOwnership.rejectPendingOwnership'}
       params={getTxParams}
       onSuccess={onSuccess}
       label={iAmCurrentOwner
@@ -86,12 +86,12 @@ export const PendingSpaceOwnershipPanel = ({
         : 'Reject'
       }
       successMessage={iAmCurrentOwner
-        ? `You canceled the transfer of ownership`
-        : `You rejected the space ownership`
+        ? 'You canceled the transfer of ownership'
+        : 'You rejected the space ownership'
       }
       failedMessage={iAmCurrentOwner
-        ? `Failed to cancel the transfer of ownership`
-        : `Failed to rejected the space ownership`
+        ? 'Failed to cancel the transfer of ownership'
+        : 'Failed to rejected the space ownership'
       }
     />
 
@@ -100,8 +100,8 @@ export const PendingSpaceOwnershipPanel = ({
       {...otherProps}
       desc={<span className='mr-2'>Accept ownership of this space?</span>}
       actions={[
-        <AcceptOwnershipButton />,
-        <RejectOwnershipButton />
+        <AcceptOwnershipButton key='accept' />,
+        <RejectOwnershipButton key='reject' />
       ]}
     />
   } else if (iAmCurrentOwner) {
@@ -116,7 +116,7 @@ export const PendingSpaceOwnershipPanel = ({
     return <EntityStatusPanel
       {...otherProps}
       desc={<span className='mr-2'>{desc}</span>}
-      actions={[ <RejectOwnershipButton /> ]}
+      actions={[ <RejectOwnershipButton key='reject' /> ]}
     />
   }
   

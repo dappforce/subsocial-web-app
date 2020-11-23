@@ -181,7 +181,7 @@ AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props
   const { address } = query
 
-  if (!address || typeof address !== 'string') {
+  if (!address || typeof address !== 'string') { 
     return return404(props) as any
   }
 

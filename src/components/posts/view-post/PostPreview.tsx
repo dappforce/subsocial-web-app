@@ -1,9 +1,9 @@
-import React from 'react';
-import { RegularPreview, SharedPreview, HiddenPostAlert } from '.';
-import { PostWithSomeDetails, PostWithAllDetails, SpaceData } from '@subsocial/types';
-import { PostExtension } from '@subsocial/types/substrate/classes';
-import { Segment } from 'src/components/utils/Segment';
-import { isSharedPost, withSubscribedPost } from './helpers';
+import React from 'react'
+import { RegularPreview, SharedPreview, HiddenPostAlert } from '.'
+import { PostWithSomeDetails, PostWithAllDetails, SpaceData } from '@subsocial/types'
+import { PostExtension } from '@subsocial/types/substrate/classes'
+import { Segment } from 'src/components/utils/Segment'
+import { isSharedPost, withSubscribedPost } from './helpers'
 
 export type BarePreviewProps = {
   withTags?: boolean,

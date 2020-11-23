@@ -1,37 +1,37 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { isEmptyStr } from '@subsocial/utils';
-import { formatUnixDate, IconWithLabel, isVisible } from '../../utils';
-import { ViewSpace } from '../../spaces/ViewSpace';
-import { DfBgImageLink } from '../../utils/DfBgImg';
-import isEmpty from 'lodash.isempty';
-import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/icons';
-import { Menu, Dropdown, Button } from 'antd';
-import { isMyAddress } from '../../auth/MyAccountContext';
-import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces';
-import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto';
-import { PostContent as PostContentType } from '@subsocial/types';
-import ViewTags from '../../utils/ViewTags';
-import AuthorPreview from '../../profiles/address-views/AuthorPreview';
-import SummarizeMd from '../../utils/md/SummarizeMd';
-import ViewPostLink from '../ViewPostLink';
-import HiddenPostButton from '../HiddenPostButton';
-import NoData from 'src/components/utils/EmptyList';
-import { VoterButtons } from 'src/components/voting/VoterButtons';
-import Segment from 'src/components/utils/Segment';
-import { RegularPreview, PostDetailsProps } from '.';
-import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters';
-import { isHidden } from '@subsocial/api/utils/visibility-filter';
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { PreviewProps } from './PostPreview';
+import React, { useState } from 'react'
+import Link from 'next/link'
+import { isEmptyStr } from '@subsocial/utils'
+import { formatUnixDate, IconWithLabel, isVisible } from '../../utils'
+import { ViewSpace } from '../../spaces/ViewSpace'
+import { DfBgImageLink } from '../../utils/DfBgImg'
+import isEmpty from 'lodash.isempty'
+import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/icons'
+import { Menu, Dropdown, Button } from 'antd'
+import { isMyAddress } from '../../auth/MyAccountContext'
+import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces'
+import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto'
+import { PostContent as PostContentType } from '@subsocial/types'
+import ViewTags from '../../utils/ViewTags'
+import AuthorPreview from '../../profiles/address-views/AuthorPreview'
+import SummarizeMd from '../../utils/md/SummarizeMd'
+import ViewPostLink from '../ViewPostLink'
+import HiddenPostButton from '../HiddenPostButton'
+import NoData from 'src/components/utils/EmptyList'
+import { VoterButtons } from 'src/components/voting/VoterButtons'
+import Segment from 'src/components/utils/Segment'
+import { RegularPreview, PostDetailsProps } from '.'
+import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters'
+import { isHidden } from '@subsocial/api/utils/visibility-filter'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
+import { PreviewProps } from './PostPreview'
 import { Option } from '@polkadot/types'
-import { resolveIpfsUrl } from 'src/ipfs';
-import { useIsMobileWidthOrDevice } from 'src/components/responsive';
-import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasDataForSlug } from 'src/components/urls';
-import { ShareDropdown } from '../share/ShareDropdown';
-import { ButtonLink } from 'src/components/utils/ButtonLink';
-import { DfMd } from 'src/components/utils/DfMd';
-import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels';
+import { resolveIpfsUrl } from 'src/ipfs'
+import { useIsMobileWidthOrDevice } from 'src/components/responsive'
+import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasDataForSlug } from 'src/components/urls'
+import { ShareDropdown } from '../share/ShareDropdown'
+import { ButtonLink } from 'src/components/utils/ButtonLink'
+import { DfMd } from 'src/components/utils/DfMd'
+import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
 
 type DropdownProps = {
   space: Space
@@ -39,9 +39,9 @@ type DropdownProps = {
   withEditButton?: boolean
 }
 
-export const isRegularPost = (extension: PostExtension): boolean => extension.isRegularPost || (extension as any).RegularPost === null; // Hack because SSR serializes objects and this drops all methods.
-export const isSharedPost = (extension: PostExtension): boolean => extension.isSharedPost || (extension as any).SharedPost;
-export const isComment = (extension: PostExtension): boolean => extension.isComment || (extension as any).Comment;
+export const isRegularPost = (extension: PostExtension): boolean => extension.isRegularPost || (extension as any).RegularPost === null // Hack because SSR serializes objects and this drops all methods.
+export const isSharedPost = (extension: PostExtension): boolean => extension.isSharedPost || (extension as any).SharedPost
+export const isComment = (extension: PostExtension): boolean => extension.isComment || (extension as any).Comment
 
 type ReactionModalProps = {
   postId: PostId
@@ -144,9 +144,9 @@ type PostCreatorProps = {
 }
 
 export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDetails, size, withSpaceName, space }) => {
-  if (isEmpty(postDetails.post)) return null;
-  const { post, owner } = postDetails;
-  const { created: { time }, owner: postOwnerAddress } = post.struct;
+  if (isEmpty(postDetails.post)) return null
+  const { post, owner } = postDetails
+  const { created: { time }, owner: postOwnerAddress } = post.struct
 
   // TODO replace on loaded space after refactor this components
 
@@ -171,8 +171,8 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
         </Link>}
       </div>}
     />
-  </>;
-};
+  </>
+}
 
 type PostImageProps = {
   post: PostData,
@@ -251,7 +251,7 @@ const Action: React.FunctionComponent<{ onClick?: () => void, title?: string }> 
 
 export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
   const { postDetails, space, preview, withBorder } = props
-  const { post: { struct } } = postDetails;
+  const { post: { struct } } = postDetails
 
   const ReactionsAction = () =>
     <VoterButtons post={struct} className='DfAction' preview={preview} />
@@ -266,8 +266,8 @@ export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = 
       {preview && <ShowCommentsAction {...props} />}
       <ShareDropdown postDetails={postDetails} space={space} className='DfAction' preview={preview} />
     </div>
-  );
-};
+  )
+}
 
 type PostPreviewProps = {
   postDetails: PostWithSomeDetails
@@ -343,9 +343,9 @@ export const useSubscribedPost = (initPost: Post) => {
     let unsub: { (): void | undefined; (): void; }
 
     const sub = async () => {
-      const readyApi = await api;
+      const readyApi = await api
       unsub = await readyApi.query.posts.postById(initPost.id, (data: Option<Post>) => {
-        setPost(data.unwrapOr(post));
+        setPost(data.unwrapOr(post))
       })
     }
 

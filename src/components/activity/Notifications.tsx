@@ -1,13 +1,13 @@
-import React from 'react';
-import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils';
-import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config';
-import { LoadMoreFn, ActivityStore, loadNotifications } from './NotificationUtils';
+import React from 'react'
+import { getNotifications, getNotificationsCount } from '../utils/OffchainUtils'
+import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
+import { LoadMoreFn, ActivityStore, loadNotifications } from './NotificationUtils'
 
-import { PostData, SpaceData, ProfileData } from '@subsocial/types';
-import { NotificationType } from './NotificationUtils';
+import { PostData, SpaceData, ProfileData } from '@subsocial/types'
+import { NotificationType } from './NotificationUtils'
 import { Notification } from './Notification'
-import { LoadMoreProps, BaseActivityProps, ActivityProps } from './types';
-import { InnerActivities } from './InnerActivities';
+import { LoadMoreProps, BaseActivityProps, ActivityProps } from './types'
+import { InnerActivities } from './InnerActivities'
 type StructId = string
 
 export const NotifActivities = ({ loadMore ,...props }: ActivityProps<NotificationType>) => {

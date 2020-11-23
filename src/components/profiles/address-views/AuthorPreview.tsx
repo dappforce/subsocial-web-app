@@ -1,15 +1,15 @@
 import React from 'react'
-import { ProfileData } from '@subsocial/types';
-import { Popover } from 'antd';
-import Avatar from './Avatar';
-import ProfilePreview from './ProfilePreview';
-import { toShortAddress } from 'src/components/utils';
-import AccountId from '@polkadot/types/generic/AccountId';
-import { withLoadedOwner } from './utils/withLoadedOwner';
-import { ExtendedAddressProps } from './utils/types';
-import ViewProfileLink from '../ViewProfileLink';
+import { ProfileData } from '@subsocial/types'
+import { Popover } from 'antd'
+import Avatar from './Avatar'
+import ProfilePreview from './ProfilePreview'
+import { toShortAddress } from 'src/components/utils'
+import AccountId from '@polkadot/types/generic/AccountId'
+import { withLoadedOwner } from './utils/withLoadedOwner'
+import { ExtendedAddressProps } from './utils/types'
+import ViewProfileLink from '../ViewProfileLink'
 import BN from 'bn.js'
-import { Balance } from './utils/Balance';
+import { Balance } from './utils/Balance'
 
 export type InfoProps = {
   address?: string | AccountId,
@@ -28,7 +28,7 @@ export const InfoDetails: React.FunctionComponent<InfoProps> = ({
       }
       {details && <div>{details}</div>}
     </div>
-  </>;
+  </>
 }
 
 export const AuthorPreview = (props: ExtendedAddressProps) => {
@@ -43,7 +43,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     afterName,
     details,
     children
-  } = props;
+  } = props
 
   const avatar = owner.content?.avatar
 
@@ -80,6 +80,6 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
   </div>
 }
 
-export const AuthorPreviewWithOwner = withLoadedOwner(AuthorPreview);
+export const AuthorPreviewWithOwner = withLoadedOwner(AuthorPreview)
 
-export default AuthorPreviewWithOwner;
+export default AuthorPreviewWithOwner

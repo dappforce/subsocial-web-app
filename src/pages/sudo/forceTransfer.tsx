@@ -9,7 +9,7 @@ import { nonEmptyStr, pluralize, newLogger } from '@subsocial/utils'
 import { formatBalance } from '@polkadot/util'
 import { FormatBalance } from 'src/components/profiles/address-views/utils/Balance'
 import BN from 'bn.js'
-import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
+import { SubmittableExtrinsic } from '@polkadot/api/promise/types'
 import { PageContent } from 'src/components/main/PageWrapper'
 
 type FormValues = Partial<{
@@ -58,11 +58,11 @@ function InnerForm (props: FormProps) {
   const [ freeTokensPerAccount, setFreeTokensPerAccount ] = useState<BN>(new BN(0))
 
   useSubsocialEffect(({ substrate }) => {
-    let unsub: (() => void) | undefined;
+    let unsub: (() => void) | undefined
     let isSubscribe = true
 
     const sub = async () => {
-      const api = await substrate.api;
+      const api = await substrate.api
       const sudo = await api.query.sudo.key()
 
       // WARN: do not move this code to global level: here we need Substrate API ready.

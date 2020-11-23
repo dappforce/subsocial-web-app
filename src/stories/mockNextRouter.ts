@@ -1,5 +1,5 @@
-import Router, { Router as RouterClass } from 'next/router';
-import { UrlObject } from 'url';
+import Router, { Router as RouterClass } from 'next/router'
+import { UrlObject } from 'url'
 
 type Url = UrlObject | string
 

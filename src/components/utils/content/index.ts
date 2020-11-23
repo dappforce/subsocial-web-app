@@ -1,5 +1,5 @@
-import { SpaceContent, PostContent, NamedLink } from "@subsocial/types"
-import { nonEmptyStr } from "@subsocial/utils"
+import { SpaceContent, PostContent, NamedLink } from '@subsocial/types'
+import { nonEmptyStr } from '@subsocial/utils'
 
 export const getNonEmptySpaceContent = (content: SpaceContent): SpaceContent => {
   const { tags, links, ...rest } = content

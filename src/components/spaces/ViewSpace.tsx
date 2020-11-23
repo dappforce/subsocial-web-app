@@ -1,37 +1,37 @@
-import { GenericAccountId as AccountId } from '@polkadot/types';
-import { SpaceContent } from '@subsocial/types/offchain';
-import { nonEmptyStr, isEmptyStr } from '@subsocial/utils';
-import BN from 'bn.js';
-import { NextPage } from 'next';
-import dynamic from 'next/dynamic';
-import Error from 'next/error';
-import React, { useCallback } from 'react';
-import { Segment } from 'src/components/utils/Segment';
-import { isHidden, resolveBn } from '../utils';
-import { SummarizeMd } from '../utils/md';
-import MyEntityLabel from '../utils/MyEntityLabel';
-import { return404 } from '../utils/next';
-import Section from '../utils/Section';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { getSpaceId } from '../substrate';
-import ViewTags from '../utils/ViewTags';
-import SpaceStatsRow from './SpaceStatsRow';
-import { ViewSpaceProps } from './ViewSpaceProps';
-import withLoadSpaceDataById from './withLoadSpaceDataById';
-import AboutSpaceLink from './AboutSpaceLink';
-import ViewSpaceLink from './ViewSpaceLink';
-import { PageContent } from '../main/PageWrapper';
-import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers';
-import { ContactInfo } from './SocialLinks/ViewSocialLinks';
-import { MutedSpan } from '../utils/MutedText';
-import { BareProps } from '../utils/types';
-import { getPageOfIds } from '../utils/getIds';
-import { editSpaceUrl, spaceUrl } from '../urls';
-import ButtonLink from '../utils/ButtonLink';
-import { EditOutlined } from '@ant-design/icons';
-import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels';
-import { slugifyHandle } from '../urls/helpers';
-import { isPolkaProject } from 'src/utils';
+import { GenericAccountId as AccountId } from '@polkadot/types'
+import { SpaceContent } from '@subsocial/types/offchain'
+import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
+import BN from 'bn.js'
+import { NextPage } from 'next'
+import dynamic from 'next/dynamic'
+import Error from 'next/error'
+import React, { useCallback } from 'react'
+import { Segment } from 'src/components/utils/Segment'
+import { isHidden, resolveBn } from '../utils'
+import { SummarizeMd } from '../utils/md'
+import MyEntityLabel from '../utils/MyEntityLabel'
+import { return404 } from '../utils/next'
+import Section from '../utils/Section'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { getSpaceId } from '../substrate'
+import ViewTags from '../utils/ViewTags'
+import SpaceStatsRow from './SpaceStatsRow'
+import { ViewSpaceProps } from './ViewSpaceProps'
+import withLoadSpaceDataById from './withLoadSpaceDataById'
+import AboutSpaceLink from './AboutSpaceLink'
+import ViewSpaceLink from './ViewSpaceLink'
+import { PageContent } from '../main/PageWrapper'
+import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers'
+import { ContactInfo } from './SocialLinks/ViewSocialLinks'
+import { MutedSpan } from '../utils/MutedText'
+import { BareProps } from '../utils/types'
+import { getPageOfIds } from '../utils/getIds'
+import { editSpaceUrl, spaceUrl } from '../urls'
+import ButtonLink from '../utils/ButtonLink'
+import { EditOutlined } from '@ant-design/icons'
+import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
+import { slugifyHandle } from '../urls/helpers'
+import { isPolkaProject } from 'src/utils'
 
 // import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
