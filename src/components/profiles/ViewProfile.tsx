@@ -201,7 +201,7 @@ ProfilePage.getInitialProps = async (props): Promise<any> => {
   return {
     address: accountId,
     owner,
-    mySpaceIds
+    mySpaceIds: mySpaceIds.reverse()
   };
 };
 
