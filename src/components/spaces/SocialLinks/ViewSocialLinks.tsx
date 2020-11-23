@@ -16,12 +16,8 @@ export const SocialLink = ({ link, label, className }: SocialLinkProps) => {
   const brand = getLinkBrand(link)
   return <a href={link} title={brand} rel="noreferrer" target='_blank' className={`DfBlackLink ${className}`}>
     {getLinkIcon(brand)}
-
-    {/* TODO refactor this */}
-
     {label && <>
-      <span className='ml-2'>{label}</span>
-      <span className='ml-1'>{brand}</span>
+      <span className='ml-2'>{`${label} ${brand}`}</span>
     </>}
   </a>
 }
