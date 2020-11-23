@@ -1,6 +1,6 @@
-import React from 'react';
-import { LatestSpaces } from '../components/main/LatestSpaces';
-import { mockSpaceDataAlice, mockSpaceDataBob } from './mocks/SpaceMocks';
+import React from 'react'
+import { LatestSpaces } from '../components/main/LatestSpaces'
+import { mockSpaceDataAlice, mockSpaceDataBob } from './mocks/SpaceMocks'
 
 export default {
   title: 'Spaces | List'

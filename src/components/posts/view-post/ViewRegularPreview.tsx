@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { SpaceData } from '@subsocial/types/dto';
-import { CommentSection } from '../../comments/CommentsSection';
-import { InfoPostPreview, PostActionsPanel, PostNotFound } from './helpers';
-import { PreviewProps } from './PostPreview';
-import { isVisible } from 'src/components/utils';
+import React, { useState } from 'react'
+import { SpaceData } from '@subsocial/types/dto'
+import { CommentSection } from '../../comments/CommentsSection'
+import { InfoPostPreview, PostActionsPanel, PostNotFound } from './helpers'
+import { PreviewProps } from './PostPreview'
+import { isVisible } from 'src/components/utils'
 
 export type InnerPreviewProps = PreviewProps & {
   space: SpaceData

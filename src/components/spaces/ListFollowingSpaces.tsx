@@ -50,7 +50,7 @@ export const ListFollowingSpaces = (props: Props) => {
       />
     </div>
   )
-};
+}
 
 
 export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
@@ -80,7 +80,7 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
     totalCount: followedSpaceIds.length,
     spacesData
   }
-};
+}
 
 // TODO extract to a separate file:
 

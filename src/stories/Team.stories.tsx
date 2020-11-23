@@ -1,6 +1,6 @@
-import React from 'react';
-import { EditTeamMember } from '../components/spaces/EditTeamMember';
-import { suggestedCompanies, suggestedEmployerTypes } from './mocks/TeamMocks';
+import React from 'react'
+import { EditTeamMember } from '../components/spaces/EditTeamMember'
+import { suggestedCompanies, suggestedEmployerTypes } from './mocks/TeamMocks'
 
 export default {
   title: 'Spaces | Team'

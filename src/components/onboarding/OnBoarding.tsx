@@ -1,12 +1,12 @@
 import React from 'react'
-import { Steps } from 'antd';
-import { useAuth, StepsEnum } from '../auth/AuthContext';
-import { SignInButton } from '../auth/AuthButtons';
-import ButtonLink from '../utils/ButtonLink';
-import { CreateSpaceButton } from '../spaces/helpers';
-import { isMobileDevice } from 'src/config/Size.config';
+import { Steps } from 'antd'
+import { useAuth, StepsEnum } from '../auth/AuthContext'
+import { SignInButton } from '../auth/AuthButtons'
+import ButtonLink from '../utils/ButtonLink'
+import { CreateSpaceButton } from '../spaces/helpers'
+import { isMobileDevice } from 'src/config/Size.config'
 
-const { Step } = Steps;
+const { Step } = Steps
 
 export type CurrentStep = {
   currentStep: StepsEnum
@@ -18,7 +18,7 @@ type Props = {
   progressDot?: boolean
 }
 
-const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobileDevice && mobileText) ? mobileText : text;
+const getMobilyFriendlyText = (text: string, mobileText?: string) => (isMobileDevice && mobileText) ? mobileText : text
 
 type StepItem = {
   title: string,
@@ -85,7 +85,7 @@ export const OnBoardingView = ({ direction = 'vertical', size = 'default', progr
         {steps}
       </Steps>
     </div>
-  );
+  )
 }
 
 export const OnBoarding = (props: Props) => {

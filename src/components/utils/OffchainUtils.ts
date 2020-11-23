@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { offchainUrl } from './env';
-import { Activity, Counts } from '@subsocial/types/offchain';
-import { newLogger, nonEmptyStr } from '@subsocial/utils';
-import { ElasticQueryParams } from '@subsocial/types/offchain/search';
+import axios from 'axios'
+import { offchainUrl } from './env'
+import { Activity, Counts } from '@subsocial/types/offchain'
+import { newLogger, nonEmptyStr } from '@subsocial/utils'
+import { ElasticQueryParams } from '@subsocial/types/offchain/search'
 
 const log = newLogger('OffchainRequests')
 
@@ -24,12 +24,12 @@ const createActivityUrlByAddress = (address: string, activityType?: ActivityType
 
 const axiosRequest = async (url: string) => {
   try {
-    const res = await axios.get(url);
+    const res = await axios.get(url)
     if (res.status !== 200) {
       log.error('Failed request to offchain with status', res.status)
     }
 
-    return res;
+    return res
   } catch (err) {
       log.error('Failed request to offchain with error', err)
       return err
@@ -119,7 +119,7 @@ export const getActivityCounts = async (address: string): Promise<Counts> => {
 // TODO require refactor
 export const clearNotifications = async (myAddress: string): Promise<void> =>{
   try {
-    const res = await axios.post(getOffchainUrl(`/notifications/${myAddress}/readAll`));
+    const res = await axios.post(getOffchainUrl(`/notifications/${myAddress}/readAll`))
     if (res.status !== 200) {
       console.warn('Failed to mark all notifications as read for account:', myAddress, 'res.status:', res.status)
     }

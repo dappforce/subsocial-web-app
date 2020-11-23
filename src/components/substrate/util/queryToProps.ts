@@ -6,22 +6,22 @@ export function queryToProp (
   apiQuery: string,
   paramNameOrOpts?: string | QueryOptions
 ): [ string, QueryOptions ] {
-  let paramName: string | undefined;
-  let propName: string | undefined;
+  let paramName: string | undefined
+  let propName: string | undefined
 
   if (typeof paramNameOrOpts === 'string') {
-    paramName = paramNameOrOpts;
+    paramName = paramNameOrOpts
   } else if (paramNameOrOpts) {
-    paramName = paramNameOrOpts.paramName;
-    propName = paramNameOrOpts.propName;
+    paramName = paramNameOrOpts.paramName
+    propName = paramNameOrOpts.propName
   }
 
   // If prop name is still undefined, derive it from the name of storage item:
   if (!propName) {
-    propName = apiQuery.split('.').slice(-1)[0];
+    propName = apiQuery.split('.').slice(-1)[0]
   }
 
-  return [ apiQuery, { paramName, propName } ];
+  return [ apiQuery, { paramName, propName } ]
 }
 
 const palletQueryToProp = (pallet: PalletName, storageItem: string, paramNameOrOpts?: string | QueryOptions) => {

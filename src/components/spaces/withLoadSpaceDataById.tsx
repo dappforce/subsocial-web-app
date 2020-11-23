@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import useSubsocialEffect from '../api/useSubsocialEffect';
-import { Loading } from '../utils';
-import NoData from '../utils/EmptyList';
+import React, { useState } from 'react'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { Loading } from '../utils'
+import NoData from '../utils/EmptyList'
 import { SpaceData, ProfileData } from '@subsocial/types/dto'
-import { ViewSpaceProps } from './ViewSpaceProps';
+import { ViewSpaceProps } from './ViewSpaceProps'
 
 type Props = ViewSpaceProps
 
@@ -24,7 +24,7 @@ export const withLoadSpaceDataById = (Component: React.ComponentType<Props>) => 
           setSpaceData(spaceData)
           const ownerId = spaceData.struct.owner
           const owner = await subsocial.findProfile(ownerId)
-          setOwner(owner);
+          setOwner(owner)
         }
       }
       loadData()

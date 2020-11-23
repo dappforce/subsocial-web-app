@@ -268,11 +268,11 @@ export const useKusamaIdentity = (address: AnyAccountId) => {
 
   if (!kusamaDetails) return undefined
 
-  const info: KusamaInfo = {} as KusamaInfo;
+  const info: KusamaInfo = {} as KusamaInfo
 
   identityInfoKeys.forEach(key => { info[key] = hexToString(kusamaDetails.info[key].asRaw.toString()) })
 
-  return info;
+  return info
 }
 
 export const KusamaIdentity = ({ address }: KusamaBareProps) => {

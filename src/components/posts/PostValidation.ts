@@ -1,13 +1,13 @@
-import * as Yup from 'yup';
-import { maxLenError, minLenError, urlValidation } from '../utils/forms/validation';
-import { pluralize } from '../utils/Plularize';
+import * as Yup from 'yup'
+import { maxLenError, minLenError, urlValidation } from '../utils/forms/validation'
+import { pluralize } from '../utils/Plularize'
 
-const TITLE_MIN_LEN = 3;
-const TITLE_MAX_LEN = 100;
+const TITLE_MIN_LEN = 3
+const TITLE_MAX_LEN = 100
 
 const MAX_TAGS_PER_POST = 10
 
-const POST_MAX_LEN = 10000;
+const POST_MAX_LEN = 10000
 
 export const buildValidationSchema = () => Yup.object().shape({
   title: Yup.string()

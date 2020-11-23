@@ -1,9 +1,9 @@
-import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils';
-import { TagOutlined } from '@ant-design/icons';
-import { Tag } from 'antd';
-import Link from 'next/link';
-import React from 'react';
-import { BaseProps } from '@polkadot/react-identicon/types';
+import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils'
+import { TagOutlined } from '@ant-design/icons'
+import { Tag } from 'antd'
+import Link from 'next/link'
+import React from 'react'
+import { BaseProps } from '@polkadot/react-identicon/types'
 
 type ViewTagProps = {
   tag?: string

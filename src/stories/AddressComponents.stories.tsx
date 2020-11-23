@@ -1,6 +1,6 @@
-import React from 'react';
-import { AuthorPreview, ProfilePreview, AddressPopup } from '../components/profiles/address-views';
-import { mockProfileDataAlice } from './mocks/SocialProfileMocks';
+import React from 'react'
+import { AuthorPreview, ProfilePreview, AddressPopup } from '../components/profiles/address-views'
+import { mockProfileDataAlice } from './mocks/SocialProfileMocks'
 import { mockAccountAlice } from './mocks/AccountMocks'
 
 export default {

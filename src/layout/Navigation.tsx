@@ -1,14 +1,14 @@
-import React, { FunctionComponent, useEffect, useMemo } from 'react';
-import { Layout, Drawer } from 'antd';
-import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext';
+import React, { FunctionComponent, useEffect, useMemo } from 'react'
+import { Layout, Drawer } from 'antd'
+import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
 
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 
-const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false });
-const Menu = dynamic(() => import('./SideMenu'), { ssr: false });
+const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false })
+const Menu = dynamic(() => import('./SideMenu'), { ssr: false })
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content } = Layout
 
 interface Props {
   children: React.ReactNode;

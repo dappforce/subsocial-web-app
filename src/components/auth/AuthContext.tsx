@@ -1,9 +1,9 @@
-import React, { useState, createContext, useContext, useEffect } from 'react';
-import { useIsSignedIn, useMyAddress } from 'src/components/auth/MyAccountContext';
-import useSubsocialEffect from '../api/useSubsocialEffect';
+import React, { useState, createContext, useContext, useEffect } from 'react'
+import { useIsSignedIn, useMyAddress } from 'src/components/auth/MyAccountContext'
+import useSubsocialEffect from '../api/useSubsocialEffect'
 import store from 'store'
-import SignInModal from './SignInModal';
-import { useRouter } from 'next/router';
+import SignInModal from './SignInModal'
+import { useRouter } from 'next/router'
 
 const ONBOARDED_ACCS = 'df.onboarded'
 
@@ -65,7 +65,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
 
   const noOnBoarded = !address || !onBoardedAccounts.includes(address)
   const [ showOnBoarding, setShowOnBoarding ] = useState(noOnBoarded)
-  const [ showModal, setShowModal ] = useState<boolean>(false);
+  const [ showModal, setShowModal ] = useState<boolean>(false)
   const [ kind, setKind ] = useState<ModalKind>()
   const [ hasTokens, setTokens ] = useState(false)
   const [ hasOwnSpaces, setSpaces ] = useState(false)
@@ -98,7 +98,7 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       })
     }
 
-    let step = StepsEnum.Disabled;
+    let step = StepsEnum.Disabled
     const subBalance = async () => {
       if (!address) return
 
@@ -113,10 +113,10 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
           setTokens(true)
         }
         subSpace(!isEmptyBalanse)
-      });
+      })
     }
 
-    subBalance();
+    subBalance()
 
     return () => {
       unsubSpace && unsubSpace()

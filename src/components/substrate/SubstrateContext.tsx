@@ -9,10 +9,10 @@ import { newLogger, isNum, isDef } from '@subsocial/utils'
 import { appName, isDevMode, substrateUrl } from '../utils/env'
 import { cacheSubstrateMetadata, getSubstrateMetadataRecord as getCachedSubstrateMetadata } from '../../storage/substrate'
 import registry from '@subsocial/types/substrate/registry'
-import { formatBalance } from '@polkadot/util';
+import { formatBalance } from '@polkadot/util'
 
-const DEFAULT_DECIMALS = registry.createType('u32', 12);
-const DEFAULT_SS58 = registry.createType('u32', 28);
+const DEFAULT_DECIMALS = registry.createType('u32', 12)
+const DEFAULT_SS58 = registry.createType('u32', 28)
 const DEFAULT_TOKEN = registry.createType('Text', 'SMN')
 
 const log = newLogger('SubstrateContext')
@@ -83,7 +83,7 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, apiState: 'ERROR', apiError: err }
     }
     case 'SET_KEYRING': {
-      log.info(`✅ Loaded accounts with Keyring`)
+      log.info('✅ Loaded accounts with Keyring')
       return { ...state, keyring: action.payload, keyringState: 'READY' }
     }
     case 'KEYRING_ERROR': {
@@ -207,12 +207,12 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
 
       registry.setChainProperties(properties)
 
-      const tokenSymbol = properties.tokenSymbol.unwrapOr(DEFAULT_TOKEN).toString();
-      const tokenDecimals = properties.tokenDecimals.unwrapOr(DEFAULT_DECIMALS).toNumber();
+      const tokenSymbol = properties.tokenSymbol.unwrapOr(DEFAULT_TOKEN).toString()
+      const tokenDecimals = properties.tokenDecimals.unwrapOr(DEFAULT_DECIMALS).toNumber()
       formatBalance.setDefaults({
         decimals: tokenDecimals,
         unit: tokenSymbol
-      });
+      })
 
       const ss58Format = properties.ss58Format.unwrapOr(undefined)
       ss58Format && setSs58Fromat(ss58Format.toNumber())

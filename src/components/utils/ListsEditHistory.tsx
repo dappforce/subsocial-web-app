@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 // import { withMulti, withCalls } from '../substrate';
 // import { Modal, Comment as SuiComment, Button } from 'semantic-ui-react';
 // import { Post, Space, PostId, SpaceId, CommentId, Comment, SpaceHistoryRecord, CommentHistoryRecord, PostHistoryRecord, ProfileHistoryRecord, Profile, VecProfileHistoryRecord, SocialAccount, OptionText } from '@subsocial/types/substrate/interfaces/subsocial';
@@ -14,7 +14,7 @@ import React from 'react';
 // import { DfBgImg } from './DfBgImg';
 // import dynamic from 'next/dynamic';
 // import { AccountId } from '@polkadot/types/interfaces';
-export default <></>;
+export default <></>
 
 // const AddressComponents = dynamic(() => import('./AddressComponents'), { ssr: false });
 

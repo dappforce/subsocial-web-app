@@ -1,12 +1,12 @@
-import React from 'react';
-import { isDef } from '@subsocial/utils';
-import { LoadMoreFn } from './NotificationUtils';
-import { PostWithAllDetails } from '@subsocial/types';
-import PostPreview from '../posts/view-post/PostPreview';
-import { LoadMoreProps, ActivityProps } from './types';
-import { SubsocialApi } from '@subsocial/api/subsocial';
+import React from 'react'
+import { isDef } from '@subsocial/utils'
+import { LoadMoreFn } from './NotificationUtils'
+import { PostWithAllDetails } from '@subsocial/types'
+import PostPreview from '../posts/view-post/PostPreview'
+import { LoadMoreProps, ActivityProps } from './types'
+import { SubsocialApi } from '@subsocial/api/subsocial'
 import BN from 'bn.js'
-import { InnerActivities } from './InnerActivities';
+import { InnerActivities } from './InnerActivities'
 
 const postsFromActivity = async (subsocial: SubsocialApi, postIds: BN[]): Promise<PostWithAllDetails[]> => {
   const posts = await subsocial.findPublicPostsWithAllDetails(postIds)

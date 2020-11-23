@@ -1,9 +1,9 @@
-import React from 'react';
-import { SpaceNav, SpaceNavProps } from '../components/spaces/SpaceNav';
-import { NavigationEditor } from '../components/spaces/NavigationEditor';
-import { mockSpaceId, mockSpaceStruct, mockSpaceJson } from './mocks/SpaceMocks';
-import { mockAccountAlice } from './mocks/AccountMocks';
-import { mockNavTabs } from './mocks/NavTabsMocks';
+import React from 'react'
+import { SpaceNav, SpaceNavProps } from '../components/spaces/SpaceNav'
+import { NavigationEditor } from '../components/spaces/NavigationEditor'
+import { mockSpaceId, mockSpaceStruct, mockSpaceJson } from './mocks/SpaceMocks'
+import { mockAccountAlice } from './mocks/AccountMocks'
+import { mockNavTabs } from './mocks/NavTabsMocks'
 
 export default {
   title: 'Spaces | Navigation'

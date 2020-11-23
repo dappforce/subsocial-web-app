@@ -80,7 +80,7 @@ export function TxButton ({
     icon: <LoadingOutlined />
   })
 
-  let unsub: VoidFn | undefined;
+  let unsub: VoidFn | undefined
 
   const isAuthRequired = !accountId || !hasTokens
   const buttonLabel = label || children

@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate';
-import { Modal } from 'antd';
-import Button from 'antd/lib/button';
-import { withMyAccount, MyAccountProps } from '../../utils/MyAccount';
-import { LabeledValue } from 'antd/lib/select';
-import SelectSpacePreview from '../../utils/SelectSpacePreview';
-import BN from 'bn.js';
-import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes';
-import { useForm, Controller, ErrorMessage } from 'react-hook-form';
-import { useSubsocialApi } from '../../utils/SubsocialApiContext';
-import { IpfsCid } from '@subsocial/types/substrate/interfaces';
-import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import dynamic from 'next/dynamic';
-import { buildSharePostValidationSchema } from '../PostValidation';
-import { isEmptyArray } from '@subsocial/utils';
-import DfMdEditor from '../../utils/DfMdEditor';
-import { DynamicPostPreview } from '../view-post/DynamicPostPreview';
-import { CreateSpaceButton } from '../../spaces/helpers';
+import React, { useState } from 'react'
+import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate'
+import { Modal } from 'antd'
+import Button from 'antd/lib/button'
+import { withMyAccount, MyAccountProps } from '../../utils/MyAccount'
+import { LabeledValue } from 'antd/lib/select'
+import SelectSpacePreview from '../../utils/SelectSpacePreview'
+import BN from 'bn.js'
+import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes'
+import { useForm, Controller, ErrorMessage } from 'react-hook-form'
+import { useSubsocialApi } from '../../utils/SubsocialApiContext'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
+import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import dynamic from 'next/dynamic'
+import { buildSharePostValidationSchema } from '../PostValidation'
+import { isEmptyArray } from '@subsocial/utils'
+import DfMdEditor from '../../utils/DfMdEditor'
+import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
+import { CreateSpaceButton } from '../../spaces/helpers'
 import styles from './index.module.sass'
 
-const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false });
+const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
 type Props = MyAccountProps & {
   postId: BN
@@ -33,46 +33,46 @@ const Fields = {
 }
 
 const InnerShareModal = (props: Props) => {
-  const { open, onClose, postId, spaceIds } = props;
+  const { open, onClose, postId, spaceIds } = props
 
   if (!spaceIds) {
     return null
   }
 
-  const extension = new PostExtension({ SharedPost: postId as SharedPost });
+  const extension = new PostExtension({ SharedPost: postId as SharedPost })
 
   const { ipfs } = useSubsocialApi()
-  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>();
-  const [ spaceId, setSpaceId ] = useState(spaceIds[0]);
+  const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
+  const [ spaceId, setSpaceId ] = useState(spaceIds[0])
 
   const { control, errors, formState, watch } = useForm({
     validationSchema: buildSharePostValidationSchema(),
     reValidateMode: 'onBlur',
     mode: 'onBlur'
-  });
+  })
 
-  const body = watch(Fields.body, '');
-  const { isSubmitting } = formState;
+  const body = watch(Fields.body, '')
+  const { isSubmitting } = formState
 
   const onTxFailed: TxFailedCallback = () => {
-    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err));
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
     // TODO show a failure message
     onClose()
-  };
+  }
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
     onClose()
-  };
+  }
 
   const newTxParams = (hash: IpfsCid) => {
-    return [ spaceId, extension, new IpfsContent(hash) ];
-  };
+    return [ spaceId, extension, new IpfsContent(hash) ]
+  }
 
   const renderTxButton = () =>
     <TxButton
       type='primary'
-      label={`Create a post`}
+      label={'Create a post'}
       disabled={isSubmitting}
       params={() => getTxParams({
         json: { body },
@@ -123,11 +123,11 @@ const InnerShareModal = (props: Props) => {
       </form>
       <DynamicPostPreview id={postId} asRegularPost />
     </div>
-  };
+  }
 
   const saveSpace = (value: string | number | LabeledValue) => {
-    setSpaceId(new BN(value as string));
-  };
+    setSpaceId(new BN(value as string))
+  }
 
   return <Modal
     onCancel={onClose}
@@ -149,6 +149,6 @@ export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
   withCalls<Props>(
-    spacesQueryToProp(`spaceIdsByOwner`, { paramName: 'address', propName: 'spaceIds' })
+    spacesQueryToProp('spaceIdsByOwner', { paramName: 'address', propName: 'spaceIds' })
   )
-);
+)

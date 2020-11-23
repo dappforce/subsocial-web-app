@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import BN from 'bn.js';
-import { Loading } from '../../utils';
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { PostWithAllDetails } from '@subsocial/types';
-import PostPreview from './PostPreview';
-import DataList from 'src/components/lists/DataList';
+import React, { useState } from 'react'
+import BN from 'bn.js'
+import { Loading } from '../../utils'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
+import { PostWithAllDetails } from '@subsocial/types'
+import PostPreview from './PostPreview'
+import DataList from 'src/components/lists/DataList'
 
 type OuterProps = {
   postIds: BN[]
@@ -27,7 +27,7 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
         const extPostData = await subsocial.findPublicPostsWithAllDetails(postIds)
         extPostData && setPosts(extPostData)
         setLoaded(true)
-      };
+      }
 
       loadData().catch(console.warn)
     }, [ false ])

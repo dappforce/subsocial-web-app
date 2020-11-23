@@ -1,5 +1,5 @@
-import React from 'react';
-import { BareProps } from 'src/components/utils/types';
+import React from 'react'
+import { BareProps } from 'src/components/utils/types'
 
 type Props = React.PropsWithChildren<BareProps & {
   id?: string,
@@ -11,14 +11,14 @@ type Props = React.PropsWithChildren<BareProps & {
 export const Section = ({ title, level = 2, className, id, children }: Props) => {
 
   const renderTitle = () => {
-    if (!title) return null;
+    if (!title) return null
 
-    const className = 'DfSection-title';
+    const className = 'DfSection-title'
     return React.createElement(
       `h${level}`,
       { className },
       title
-    );
+    )
   }
 
   return (
@@ -28,7 +28,7 @@ export const Section = ({ title, level = 2, className, id, children }: Props) =>
         {children}
       </section>
     </div>
-  );
+  )
 }
 
 export default Section

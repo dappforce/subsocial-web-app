@@ -1,7 +1,7 @@
-import { newLogger } from '@subsocial/utils';
-import { CommonContent } from '@subsocial/types';
-import { IpfsCid } from '@subsocial/types/substrate/interfaces';
-import { SubsocialIpfsApi } from '@subsocial/api/ipfs';
+import { newLogger } from '@subsocial/utils'
+import { CommonContent } from '@subsocial/types'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
+import { SubsocialIpfsApi } from '@subsocial/api/ipfs'
 
 const log = newLogger('BuildTxParams')
 

@@ -1,6 +1,6 @@
-import React from 'react';
-import { PageContent } from '../components/main/PageWrapper';
-import { MockAuthProvider, StepsEnum } from '../components/auth/AuthContext';
+import React from 'react'
+import { PageContent } from '../components/main/PageWrapper'
+import { MockAuthProvider, StepsEnum } from '../components/auth/AuthContext'
 import { OnBoardingCard } from '../components/onboarding'
 
 export default {

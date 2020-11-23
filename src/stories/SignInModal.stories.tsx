@@ -1,9 +1,9 @@
-import React from 'react';
-import { LatestSpaces } from '../components/main/LatestSpaces';
-import { PageContent } from '../components/main/PageWrapper';
-import { mockSpaceDataAlice, mockSpaceDataBob } from './mocks/SpaceMocks';
-import { MockAuthProvider, StepsEnum, ModalKind } from '../components/auth/AuthContext';
-import SignInModal from '../components/auth/SignInModal';
+import React from 'react'
+import { LatestSpaces } from '../components/main/LatestSpaces'
+import { PageContent } from '../components/main/PageWrapper'
+import { mockSpaceDataAlice, mockSpaceDataBob } from './mocks/SpaceMocks'
+import { MockAuthProvider, StepsEnum, ModalKind } from '../components/auth/AuthContext'
+import SignInModal from '../components/auth/SignInModal'
 
 export default {
   title: 'Auth | SignInModal'

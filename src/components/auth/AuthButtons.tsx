@@ -1,8 +1,8 @@
-import React from 'react';
-import Button, { ButtonSize, ButtonType } from 'antd/lib/button';
-import { useAuth, ModalKind } from './AuthContext';
-import { useMyAccount } from './MyAccountContext';
-import { useSubsocialApi } from '../utils/SubsocialApiContext';
+import React from 'react'
+import Button, { ButtonSize, ButtonType } from 'antd/lib/button'
+import { useAuth, ModalKind } from './AuthContext'
+import { useMyAccount } from './MyAccountContext'
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
 
 type InnerAuthButtonProps = {
   type?: ButtonType

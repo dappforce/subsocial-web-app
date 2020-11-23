@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { PauseOutlined } from '@ant-design/icons';
-import { List } from 'antd';
-import { NavTab } from '@subsocial/types/offchain';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { PauseOutlined } from '@ant-design/icons'
+import { List } from 'antd'
+import { NavTab } from '@subsocial/types/offchain'
 
 export interface Props {
   tabs: NavTab[],
@@ -15,12 +15,12 @@ const ReorderNavTabs = (props: Props) => {
   const [ tabs, setTabs ] = useState(initialTabs)
 
   const reorder = (list: NavTab[], startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [ removed ] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
+    const result = Array.from(list)
+    const [ removed ] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
 
-    return result;
-  };
+    return result
+  }
 
   useEffect(() => {
     setTabs(initialTabs)
@@ -43,7 +43,7 @@ const ReorderNavTabs = (props: Props) => {
       tabs,
       result.source.index,
       result.destination.index
-    );
+    )
 
     setTabs(newTabs)
 

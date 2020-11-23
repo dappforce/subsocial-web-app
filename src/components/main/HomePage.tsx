@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { NextPage } from 'next';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { LatestSpaces } from './LatestSpaces';
-import { LatestPosts } from './LatestPosts';
-import { SpaceData, PostWithAllDetails } from '@subsocial/types';
-import { DEFAULT_DESC, DEFAULT_TITLE, PageContent } from './PageWrapper';
-import partition from 'lodash.partition';
-import { isComment } from '../posts/view-post';
-import { useIsSignedIn } from '../auth/MyAccountContext';
-import { getLastNSpaceIds, getLastNIds } from '../utils/getIds';
-import { Tabs } from 'antd';
-import Section from '../utils/Section';
-import MyFeed from '../activity/MyFeed';
-import { uiShowFeed } from '../utils/env';
+import React, { useState, useEffect } from 'react'
+import { NextPage } from 'next'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { LatestSpaces } from './LatestSpaces'
+import { LatestPosts } from './LatestPosts'
+import { SpaceData, PostWithAllDetails } from '@subsocial/types'
+import { DEFAULT_DESC, DEFAULT_TITLE, PageContent } from './PageWrapper'
+import partition from 'lodash.partition'
+import { isComment } from '../posts/view-post'
+import { useIsSignedIn } from '../auth/MyAccountContext'
+import { getLastNSpaceIds, getLastNIds } from '../utils/getIds'
+import { Tabs } from 'antd'
+import Section from '../utils/Section'
+import MyFeed from '../activity/MyFeed'
+import { uiShowFeed } from '../utils/env'
 
 const { TabPane } = Tabs
 
@@ -24,7 +24,7 @@ type Props = {
 }
 
 const LatestUpdate = (props: Props) => {
-  const { spacesData, postsData, commentData } = props;
+  const { spacesData, postsData, commentData } = props
 
   return (
     <PageContent meta={{ title: DEFAULT_TITLE, desc: DEFAULT_DESC }}>
@@ -63,18 +63,18 @@ const HomePage: NextPage<Props> = (props) => <Section className='m-0'>
 const LAST_ITEMS_SIZE = 5
 
 HomePage.getInitialProps = async (): Promise<Props> => {
-  const subsocial = await getSubsocialApi();
+  const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
   const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE);
+  const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE)
   const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
   const spacesData = publicSpacesData.slice(0, LAST_ITEMS_SIZE)
   const canHaveMoreSpaces = publicSpacesData.length >= LAST_ITEMS_SIZE
 
-  const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE);
-  const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds);
+  const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE)
+  const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds)
   const [ publicCommentData, publicPostsData ] =
     partition(allPostsData, (x) => isComment(x.post.struct.extension))
 
@@ -89,4 +89,4 @@ HomePage.getInitialProps = async (): Promise<Props> => {
   }
 }
 
-export default HomePage;
+export default HomePage

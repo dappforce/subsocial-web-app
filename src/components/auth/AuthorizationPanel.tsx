@@ -1,6 +1,6 @@
-import React from 'react';
-import { useMyAddress } from './MyAccountContext';
-import { MyAccountPopup } from '../profiles/address-views';
+import React from 'react'
+import { useMyAddress } from './MyAccountContext'
+import { MyAccountPopup } from '../profiles/address-views'
 import { SignInButton } from './AuthButtons'
 
 export const AuthorizationPanel = () => {
@@ -12,4 +12,4 @@ export const AuthorizationPanel = () => {
   </>
 }
 
-export default AuthorizationPanel;
+export default AuthorizationPanel

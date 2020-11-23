@@ -1,7 +1,7 @@
-import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit';
-import { PostData, PostWithSomeDetails } from '@subsocial/types';
-import { Store, PostsStoreType } from '../types';
-import { Profile, Space } from '@subsocial/types/substrate/interfaces';
+import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit'
+import { PostData, PostWithSomeDetails } from '@subsocial/types'
+import { Store, PostsStoreType } from '../types'
+import { Profile, Space } from '@subsocial/types/substrate/interfaces'
 
 export type PostState = Record<string, any>
 
@@ -88,9 +88,9 @@ export const postSlice = createSlice({
     editPostReducer,
     removePostReducer
   }
-});
+})
 
-export const getPost = (state: Store) => state.postById;
+export const getPost = (state: Store) => state.postById
 
 export const {
   addPostReducer: addPost,
@@ -98,4 +98,4 @@ export const {
   removePostReducer: removePost
 } = postSlice.actions
 
-export default postSlice.reducer;
+export default postSlice.reducer

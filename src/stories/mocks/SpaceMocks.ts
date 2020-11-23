@@ -1,17 +1,17 @@
 import { mockNavTabs } from './NavTabsMocks'
 import U32 from '@polkadot/types/primitive/U32'
-import { registry } from '@subsocial/types/substrate/registry';
+import { registry } from '@subsocial/types/substrate/registry'
 import BN from 'bn.js'
 import { i32, u16, u32, Null } from '@polkadot/types'
 import { SpaceContent } from '@subsocial/types/offchain'
 import { Space, SpaceId, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
-import { Vec } from '@polkadot/types/codec';
-import { SpaceHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types';
+import { Vec } from '@polkadot/types/codec'
+import { SpaceHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types'
 import { SpaceData } from '@subsocial/types/dto'
-import { Content, IpfsContent, OptionText, OptionId } from '@subsocial/types/substrate/classes';
-import AccountId from '@polkadot/types/generic/AccountId';
-import { Moment, BlockNumber } from '@polkadot/types/interfaces';
+import { Content, IpfsContent, OptionText, OptionId } from '@subsocial/types/substrate/classes'
+import AccountId from '@polkadot/types/generic/AccountId'
+import { Moment, BlockNumber } from '@polkadot/types/interfaces'
 
 type NewSpaceProps = {
   id?: number | BN,

@@ -1,10 +1,10 @@
 import React from 'react'
-import { Form, Input, Button, Space, Collapse } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { FormListFieldData, FormListOperation } from 'antd/lib/form/FormList';
-import { getLinkIcon, hasSocialMediaProfiles, LinkLabel, getLinkBrand } from './utils';
-import { NamedLink } from '@subsocial/types';
-const { Panel } = Collapse;
+import { Form, Input, Button, Space, Collapse } from 'antd'
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { FormListFieldData, FormListOperation } from 'antd/lib/form/FormList'
+import { getLinkIcon, hasSocialMediaProfiles, LinkLabel, getLinkBrand } from './utils'
+import { NamedLink } from '@subsocial/types'
+const { Panel } = Collapse
 
 type NewSocialLinksProps = {
   name: string
@@ -100,7 +100,7 @@ const dynamicSocialLinks = (): InnerFieldListFn => {
 
             <MinusCircleOutlined
               onClick={() => {
-                remove(field.name);
+                remove(field.name)
               }}
             />
           </Space>
@@ -110,7 +110,7 @@ const dynamicSocialLinks = (): InnerFieldListFn => {
           <Button
             type="dashed"
             onClick={() => {
-              add();
+              add()
             }}
             block
           >
@@ -118,7 +118,7 @@ const dynamicSocialLinks = (): InnerFieldListFn => {
           </Button>
         </Form.Item>
       </div>
-    );
+    )
   }
 }
 

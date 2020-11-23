@@ -1,6 +1,6 @@
 import React from 'react'
-import { useAuth, StepsEnum } from '../auth/AuthContext';
-import { OnBoarding, OnBoardingButton, CurrentStep } from '.';
+import { useAuth, StepsEnum } from '../auth/AuthContext'
+import { OnBoarding, OnBoardingButton, CurrentStep } from '.'
 
 const onBoadingTitle = <h3 className='mb-3'>Get started with Subsocial</h3>
 
@@ -20,7 +20,7 @@ export const OnBoardingCard = () => {
   const { state: { currentStep, showOnBoarding } } = useAuth()
 
   const initialized = currentStep !== StepsEnum.Disabled
-  if (!showOnBoarding) return null;
+  if (!showOnBoarding) return null
 
   return <OnBoardingCardView initialized={initialized} />
 }
@@ -37,7 +37,7 @@ export const OnBoardingMobileCardView = ({ currentStep }: OnBoardingMobileCardVi
 export const OnBoardingMobileCard = () => {
   const { state: { currentStep, showOnBoarding } } = useAuth()
 
-  if (!showOnBoarding || currentStep === StepsEnum.Disabled) return null;
+  if (!showOnBoarding || currentStep === StepsEnum.Disabled) return null
 
   return <OnBoardingMobileCardView currentStep={currentStep} />
 }

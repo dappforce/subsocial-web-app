@@ -1,13 +1,13 @@
-import DataList, { DataListProps } from './DataList';
-import { useState, useCallback, useEffect } from 'react';
-import { Loading, isClientSide, isServerSide } from '../utils';
-import { DEFAULT_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config';
-import { nonEmptyArr, isEmptyArray } from '@subsocial/utils';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import ButtonLink from '../utils/ButtonLink';
-import { useLinkParams } from './utils';
-import { useRouter } from 'next/router';
-import { tryParseInt } from 'src/utils';
+import DataList, { DataListProps } from './DataList'
+import { useState, useCallback, useEffect } from 'react'
+import { Loading, isClientSide, isServerSide } from '../utils'
+import { DEFAULT_PAGE_SIZE, DEFAULT_FIRST_PAGE } from 'src/config/ListData.config'
+import { nonEmptyArr, isEmptyArray } from '@subsocial/utils'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import ButtonLink from '../utils/ButtonLink'
+import { useLinkParams } from './utils'
+import { useRouter } from 'next/router'
+import { tryParseInt } from 'src/utils'
 
 const DEFAULT_THRESHOLD = isClientSide() ? window.innerHeight / 3 : undefined
 
@@ -108,7 +108,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
   }, [])
 
   useEffect(() => {
-    if (hasInitialData) return setPage(page + 1);
+    if (hasInitialData) return setPage(page + 1)
 
     handleInfiniteOnLoad(page)
   }, [])

@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 import { mockProfileDataAlice } from './mocks/SocialProfileMocks'
-import { AddressPopup } from '../components/profiles/address-views';
-import { mockAccountAlice } from './mocks/AccountMocks';
-import { AccountSelectorView } from '../components/profile-selector/AccountSelector';
+import { AddressPopup } from '../components/profiles/address-views'
+import { mockAccountAlice } from './mocks/AccountMocks'
+import { AccountSelectorView } from '../components/profile-selector/AccountSelector'
 
 export default {
   title: 'Auth | AccountSelector'

@@ -1,11 +1,11 @@
-import { Button } from "antd";
-import React from "react";
-import { didSignIn } from "src/components/auth/MyAccountContext";
-import { useResponsiveSize } from "src/components/responsive";
-import { isBot, isServerSide } from "..";
-import { landingPageUrl } from "../env";
-import WarningPanel from "../WarningPanel";
-import styles from './index.module.sass';
+import { Button } from 'antd'
+import React from 'react'
+import { didSignIn } from 'src/components/auth/MyAccountContext'
+import { useResponsiveSize } from 'src/components/responsive'
+import { isBot, isServerSide } from '..'
+import { landingPageUrl } from '../env'
+import WarningPanel from '../WarningPanel'
+import styles from './index.module.sass'
 
 const LearnMoreButton = React.memo(() =>
   <Button

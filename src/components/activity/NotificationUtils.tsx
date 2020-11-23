@@ -1,20 +1,20 @@
 import React from 'react'
-import dayjs from 'dayjs';
-import { ViewSpace } from '../spaces/ViewSpace';
-import { Pluralize } from '../utils/Plularize';
-import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData, AnyAccountId } from '@subsocial/types';
+import dayjs from 'dayjs'
+import { ViewSpace } from '../spaces/ViewSpace'
+import { Pluralize } from '../utils/Plularize'
+import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData, AnyAccountId } from '@subsocial/types'
 import BN from 'bn.js'
-import Link from 'next/link';
-import { nonEmptyStr } from '@subsocial/utils';
-import { postUrl, spaceUrl, accountUrl } from '../urls';
-import { NotifActivitiesType } from './Notifications';
+import Link from 'next/link'
+import { nonEmptyStr } from '@subsocial/utils'
+import { postUrl, spaceUrl, accountUrl } from '../urls'
+import { NotifActivitiesType } from './Notifications'
 import messages from '../../messages'
-import { summarize } from 'src/utils';
-import { isSharedPost } from '../posts/view-post';
-import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces';
-import { SubsocialApi } from '@subsocial/api/subsocial';
-import { Name } from '../profiles/address-views/Name';
-import { equalAddresses } from '../substrate';
+import { summarize } from 'src/utils'
+import { isSharedPost } from '../posts/view-post'
+import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces'
+import { SubsocialApi } from '@subsocial/api/subsocial'
+import { Name } from '../profiles/address-views/Name'
+import { equalAddresses } from '../substrate'
 
 export type LoadMoreFn = (
   myAddress: string,
@@ -219,7 +219,7 @@ const getPostPreview = ({ postId, postMap, spaceMap, event } :GetPostPreviewPros
   if (!postLink) return undefined
 
   const preview = renderSubjectPreview(data?.content, postLink)
-  const image = data?.content?.image;
+  const image = data?.content?.image
   return {
     preview,
     image,
@@ -233,8 +233,8 @@ const getPostPreview = ({ postId, postMap, spaceMap, event } :GetPostPreviewPros
 
 const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, postMap: Map<string, PostData>): PreviewNotification | undefined => {
   const commetIdStr = commentId.toString()
-  const comment = postMap.get(commetIdStr);
-  const commentStruct = comment?.struct;
+  const comment = postMap.get(commetIdStr)
+  const commentStruct = comment?.struct
   const isComment = commentStruct?.extension.isComment
   if (comment && commentStruct && isComment) {
     const { root_post_id } = commentStruct.extension.asComment
@@ -259,7 +259,7 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
     if (!postLink) return undefined
 
     const preview = renderSubjectPreview(data?.content, postLink)
-    const image = data?.content?.image;
+    const image = data?.content?.image
     return {
       preview,
       image,
@@ -271,12 +271,12 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
     }
 
   }
-  return undefined;
+  return undefined
 }
 
 const getAtivityPreview = (activity: Activity, store: ActivityStore, type: NotifActivitiesType) => {
-  const { event, space_id, post_id, comment_id, following_id } = activity;
-  const { spaceById, postById, ownerById } = store;
+  const { event, space_id, post_id, comment_id, following_id } = activity
+  const { spaceById, postById, ownerById } = store
   const eventName = event as EventsName
 
   const getCommentPreviewWithMaps = (comment_id: string) =>
@@ -314,7 +314,7 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
 const getNotificationMessage = (msg: string, aggregationCount: number, preview: JSX.Element | null, withAggregation: boolean) => {
   const aggregationMsg = withAggregation
     ? aggregationCount > 0 && <>{' and'} <Pluralize count={aggregationCount} singularText='other person' pluralText='other people' /></>
-    : undefined;
+    : undefined
 
   return <span className="DfActivityMsg">{aggregationMsg} {msg} {preview}</span>
 }
@@ -324,12 +324,12 @@ type GetNotificationProps = InnerNotificationsProps & {
 }
 
 export const getNotification = ({ type, activityStore, activity, myAddress }: GetNotificationProps): NotificationType | undefined => {
-  const { account, event, date, agg_count } = activity;
-  const formatDate = dayjs(date).format('lll');
-  const creator = activityStore.ownerById.get(account);
+  const { account, event, date, agg_count } = activity
+  const formatDate = dayjs(date).format('lll')
+  const creator = activityStore.ownerById.get(account)
   const activityPreview = getAtivityPreview(activity, activityStore, type)
 
-  if (!activityPreview) return undefined;
+  if (!activityPreview) return undefined
 
   const { preview, msg, owner, ...other } = activityPreview
   const msgType: NotifActivitiesType = equalAddresses(myAddress, owner) ? type : 'activities'

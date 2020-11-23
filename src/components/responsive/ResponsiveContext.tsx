@@ -1,6 +1,6 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { isMobileDevice } from 'src/config/Size.config';
+import { isMobileDevice } from 'src/config/Size.config'
 
 export type ResponsiveSizeState = {
   isMobile: boolean,

@@ -1,15 +1,15 @@
 /* eslint-disable no-mixed-operators */
 import BN from 'bn.js'
 import queryString from 'query-string'
-import React from 'react';
-import { Option } from '@polkadot/types';
-import { LoadingOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
-import { Profile, SocialAccount, Post, Space } from '@subsocial/types/substrate/interfaces';
-import { ProfileContent } from '@subsocial/types/offchain';
-import { Moment } from '@polkadot/types/interfaces';
-import { isMyAddress } from '../auth/MyAccountContext';
-import { AnyAccountId } from '@subsocial/types';
+import React from 'react'
+import { Option } from '@polkadot/types'
+import { LoadingOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
+import { Profile, SocialAccount, Post, Space } from '@subsocial/types/substrate/interfaces'
+import { ProfileContent } from '@subsocial/types/offchain'
+import { Moment } from '@polkadot/types/interfaces'
+import { isMyAddress } from '../auth/MyAccountContext'
+import { AnyAccountId } from '@subsocial/types'
 import { hexToBn } from '@polkadot/util'
 import Error from 'next/error'
 import isbot from 'isbot'
@@ -25,8 +25,8 @@ export const ONE = new BN(1)
 // --------------------------------------
 
 export function getUrlParam (location: Location, paramName: string, deflt?: string): string | undefined {
-  const params = queryString.parse(location.search);
-  return params[paramName] ? params[paramName] as string : deflt;
+  const params = queryString.parse(location.search)
+  return params[paramName] ? params[paramName] as string : deflt
 }
 
 // Next.js utils
@@ -58,8 +58,8 @@ type LoadSocialAccount = PropsWithSocialAccount & {
 
 export function withRequireProfile<P extends LoadSocialAccount> (Component: React.ComponentType<P>) {
   return function (props: P) {
-    return <Component {...props} requireProfile />;
-  };
+    return <Component {...props} requireProfile />
+  }
 }
 
 type LoadingProps = {
@@ -74,8 +74,8 @@ export const Loading = ({ label }: LoadingProps) =>
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
-  return dayjs(seconds).format(format);
-};
+  return dayjs(seconds).format(format)
+}
 
 export const fakeClientId = () => `fake-${new Date().getTime()}`
 
@@ -90,9 +90,9 @@ export const isVisible = ({ struct: { hidden, owner }, address }: VisibilityProp
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
 
 export const toShortAddress = (_address: AnyAccountId) => {
-  const address = (_address || '').toString();
+  const address = (_address || '').toString()
 
-  return address.length > 13 ? `${address.slice(0, 6)}…${address.slice(-6)}` : address;
+  return address.length > 13 ? `${address.slice(0, 6)}…${address.slice(-6)}` : address
 }
 
 export const gtZero = (n?: BN | number | string): boolean => {
@@ -111,24 +111,24 @@ export const gtZero = (n?: BN | number | string): boolean => {
 }
 
 export const calcVotingPercentage = (upvotesCount: BN, downvotesCount: BN) => {
-  const totalCount = upvotesCount.add(downvotesCount);
-  if (totalCount.eq(ZERO)) return 0;
+  const totalCount = upvotesCount.add(downvotesCount)
+  if (totalCount.eq(ZERO)) return 0
 
-  const per = upvotesCount.toNumber() / totalCount.toNumber() * 100;
-  const ceilPer = Math.ceil(per);
+  const per = upvotesCount.toNumber() / totalCount.toNumber() * 100
+  const ceilPer = Math.ceil(per)
 
   if (per >= 50) {
     return {
       percantage: ceilPer,
       color: 'green'
-    };
+    }
   } else {
     return {
       percantage: 100 - ceilPer,
       color: 'red'
-    };
+    }
   }
-};
+}
 
 export const resolveBn = (value: BN | string) => {
   try {

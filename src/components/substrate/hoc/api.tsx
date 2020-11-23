@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useRef } from 'react';
-import { DefaultProps, ApiProps } from './types';
-import useSubstrate from '../useSubstrate';
+import React, { useRef } from 'react'
+import { DefaultProps, ApiProps } from './types'
+import useSubstrate from '../useSubstrate'
 
 export default function withApi <P extends ApiProps> (
   Inner: React.ComponentType<P>,

@@ -47,7 +47,7 @@ export function SubstrateWebConsole () {
       substrate.util = require('@polkadot/util')
       log.info('Exported window.substrate.util')
 
-      substrate.crypto = require('@polkadot/util-crypto');
+      substrate.crypto = require('@polkadot/util-crypto')
       log.info('Exported window.substrate.crypto')
     }
   }

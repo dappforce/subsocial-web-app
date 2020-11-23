@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { PostWithSomeDetails } from '@subsocial/types/dto';
-import { PostExtension } from '@subsocial/types/substrate/classes';
-import { EditOutlined } from '@ant-design/icons';
+import { PostWithSomeDetails } from '@subsocial/types/dto'
+import { PostExtension } from '@subsocial/types/substrate/classes'
+import { EditOutlined } from '@ant-design/icons'
 import { ShareModal } from '../ShareModal'
-import { isRegularPost } from '../view-post';
-import { IconWithLabel } from '../../utils';
-import { useAuth } from '../../auth/AuthContext';
+import { isRegularPost } from '../view-post'
+import { IconWithLabel } from '../../utils'
+import { useAuth } from '../../auth/AuthContext'
 
 type Props = {
   postDetails: PostWithSomeDetails

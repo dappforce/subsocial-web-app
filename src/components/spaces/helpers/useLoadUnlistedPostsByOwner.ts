@@ -1,9 +1,9 @@
-import { PostWithSomeDetails } from '@subsocial/types/dto';
-import { AnyAccountId } from '@subsocial/types/substrate';
-import { PostId } from '@subsocial/types/substrate/interfaces';
-import { useState } from 'react';
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect';
-import { isMyAddress } from 'src/components/auth/MyAccountContext';
+import { PostWithSomeDetails } from '@subsocial/types/dto'
+import { AnyAccountId } from '@subsocial/types/substrate'
+import { PostId } from '@subsocial/types/substrate/interfaces'
+import { useState } from 'react'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
+import { isMyAddress } from 'src/components/auth/MyAccountContext'
 
 type Props = {
   owner: AnyAccountId

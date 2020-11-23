@@ -1,7 +1,7 @@
-import React from 'react';
-import { Space, Post } from '@subsocial/types/substrate/interfaces';
-import { TxCallback } from 'src/components/substrate/SubstrateTxButton';
-import { TxDiv } from 'src/components/substrate/TxDiv';
+import React from 'react'
+import { Space, Post } from '@subsocial/types/substrate/interfaces'
+import { TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { TxDiv } from 'src/components/substrate/TxDiv'
 import TxButton from 'src/components/utils/TxButton'
 import Router from 'next/router'
 
@@ -23,7 +23,7 @@ export function HiddenButton (props: HiddenButtonProps) {
   const extrinsic = type === 'space' ? 'spaces.updateSpace' : 'posts.updatePost'
 
   const onTxSuccess: TxCallback = () => {
-    setVisibility && setVisibility(!hidden);
+    setVisibility && setVisibility(!hidden)
     Router.reload()
   }
 
@@ -43,4 +43,4 @@ export function HiddenButton (props: HiddenButtonProps) {
   />
 }
 
-export default HiddenButton;
+export default HiddenButton

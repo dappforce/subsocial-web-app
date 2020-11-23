@@ -1,14 +1,14 @@
-import React from 'react';
-import { ViewSpace } from './ViewSpace';
-import { NextPage } from 'next';
-import { SpaceData } from '@subsocial/types/dto';
-import { getSubsocialApi } from '../utils/SubsocialConnect';
-import { CreateSpaceButton } from './helpers';
-import { getReversePageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/getIds';
+import React from 'react'
+import { ViewSpace } from './ViewSpace'
+import { NextPage } from 'next'
+import { SpaceData } from '@subsocial/types/dto'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { CreateSpaceButton } from './helpers'
+import { getReversePageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/getIds'
 import BN from 'bn.js'
-import { ZERO, resolveBn } from '../utils';
-import { PaginatedList } from '../lists/PaginatedList';
-import { PageContent } from '../main/PageWrapper';
+import { ZERO, resolveBn } from '../utils'
+import { PaginatedList } from '../lists/PaginatedList'
+import { PageContent } from '../main/PageWrapper'
 
 type Props = {
   spacesData?: SpaceData[]

@@ -1,7 +1,7 @@
-import React from 'react';
-import { InnerEditPost } from '../components/posts/EditPost';
-import { mockSpaceId } from './mocks/SpaceMocks';
-import { mockPostJson, mockPostStruct, mockPostValidation } from './mocks/PostMocks';
+import React from 'react'
+import { InnerEditPost } from '../components/posts/EditPost'
+import { mockSpaceId } from './mocks/SpaceMocks'
+import { mockPostJson, mockPostStruct, mockPostValidation } from './mocks/PostMocks'
 
 export default {
   title: 'Posts | Edit'

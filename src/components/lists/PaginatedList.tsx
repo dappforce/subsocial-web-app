@@ -1,57 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import isEmpty from 'lodash.isempty';
-import { PaginationConfig } from 'antd/lib/pagination';
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config';
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import isEmpty from 'lodash.isempty'
+import { PaginationConfig } from 'antd/lib/pagination'
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../../config/ListData.config'
 // import { newLogger } from '@subsocial/utils';
-import Link from 'next/link';
-import DataList, { DataListProps } from './DataList';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import ButtonLink from '../utils/ButtonLink';
-import { useLinkParams } from './utils';
+import Link from 'next/link'
+import DataList, { DataListProps } from './DataList'
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import ButtonLink from '../utils/ButtonLink'
+import { useLinkParams } from './utils'
 
 // const log = newLogger(DataList.name)
 
 export function PaginatedList<T extends any> (props: DataListProps<T>) {
-  const { dataSource, totalCount } = props;
+  const { dataSource, totalCount } = props
 
   const total = totalCount || dataSource.length
 
-  const router = useRouter();
+  const router = useRouter()
 
   const { query } = router
-  const { address, ...routerQuery } = query;
+  const { address, ...routerQuery } = query
 
-  const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE);
-  const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
+  const [ currentPage, setCurrentPage ] = useState(DEFAULT_FIRST_PAGE)
+  const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE)
   const lastPage = Math.ceil(total / pageSize)
 
   const getLinksParams = useLinkParams({ defaultSize: pageSize, triggers: [ currentPage ]})
 
   useEffect(() => {
-    let isSubscribe = true;
+    let isSubscribe = true
 
     if (isEmpty(routerQuery) && isSubscribe) {
-      setPageSize(DEFAULT_PAGE_SIZE);
-      setCurrentPage(DEFAULT_FIRST_PAGE);
+      setPageSize(DEFAULT_PAGE_SIZE)
+      setCurrentPage(DEFAULT_FIRST_PAGE)
     } else {
-      const page = parseInt(routerQuery.page as string, 10);
-      const _pageSize = parseInt(routerQuery.size as string, 10);
+      const page = parseInt(routerQuery.page as string, 10)
+      const _pageSize = parseInt(routerQuery.size as string, 10)
 
       if (isSubscribe) {
         const currentPage = page > 0 ? page : DEFAULT_PAGE_SIZE
         const currentSize = _pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE
-        setCurrentPage(currentPage);
-        setPageSize(currentSize);
+        setCurrentPage(currentPage)
+        setPageSize(currentSize)
       }
     }
 
-    return () => { isSubscribe = false; };
-  }, [ false ]);
+    return () => { isSubscribe = false }
+  }, [ false ])
 
-  const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString());
-  const hasData = total > 0;
-  const noPagination = !hasData || total <= pageSize;
+  const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString())
+  const hasData = total > 0
+  const noPagination = !hasData || total <= pageSize
 
   const paginationConfig = (): PaginationConfig | undefined => {
     if (noPagination) return undefined
@@ -61,13 +61,13 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
       total,
       defaultCurrent: DEFAULT_FIRST_PAGE,
       onChange: page => {
-        setCurrentPage(page);
+        setCurrentPage(page)
       },
       pageSize,
       pageSizeOptions,
       showSizeChanger: hasData,
       onShowSizeChange: (_, size: number) => {
-        setPageSize(size);
+        setPageSize(size)
         const { href, as } = getLinksParams(currentPage, size)
         router.push(href, as)
       },

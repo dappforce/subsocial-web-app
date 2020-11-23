@@ -187,9 +187,9 @@ export function InnerForm (props: FormProps) {
               const handle = getFieldValue(fieldName('handle'))
               const isUnique = await isHandleUnique(substrate, handle, space?.struct.id)
               if (isUnique) {
-                return Promise.resolve();
+                return Promise.resolve()
               }
-              return Promise.reject(new Error('This handle is already taken. Please choose another.'));
+              return Promise.reject(new Error('This handle is already taken. Please choose another.'))
             }
           })
         ]}
@@ -265,7 +265,7 @@ export function FormInSection (props: Partial<FormProps>) {
     maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.spaces.maxHandleLen, 50)
   })
   const { space } = props
-  const title = space ? `Edit space` : `New space`
+  const title = space ? 'Edit space' : 'New space'
 
   // useSubsocialEffect(({ substrate }) => {
   //   const load = async () => {

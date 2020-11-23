@@ -1,17 +1,17 @@
-import IdentityIcon from 'src/components/utils/IdentityIcon';
-import { NavTab } from '@subsocial/types/offchain';
-import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils';
-import { Menu } from 'antd';
-import BN from 'bn.js';
-import Link from 'next/link';
-import React from 'react';
+import IdentityIcon from 'src/components/utils/IdentityIcon'
+import { NavTab } from '@subsocial/types/offchain'
+import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
+import { Menu } from 'antd'
+import BN from 'bn.js'
+import Link from 'next/link'
+import React from 'react'
 
-import { DfBgImg } from '../utils/DfBgImg';
-import FollowSpaceButton from '../utils/FollowSpaceButton';
-import { SummarizeMd } from '../utils/md';
-import { aboutSpaceUrl, spaceUrl } from '../urls';
-import AboutSpaceLink from './AboutSpaceLink';
-import { DropdownMenu, EditMenuLink } from './helpers';
+import { DfBgImg } from '../utils/DfBgImg'
+import FollowSpaceButton from '../utils/FollowSpaceButton'
+import { SummarizeMd } from '../utils/md'
+import { aboutSpaceUrl, spaceUrl } from '../urls'
+import AboutSpaceLink from './AboutSpaceLink'
+import { DropdownMenu, EditMenuLink } from './helpers'
 import { SpaceData } from '@subsocial/types/dto'
 
 export type SpaceContent = {
@@ -33,14 +33,14 @@ export const SpaceNav = (props: SpaceNavProps) => {
   const {
     spaceData,
     imageSize = 100
-  } = props;
+  } = props
 
   const {
     struct: space,
     content
   } = spaceData
 
-  if (!content) return null;
+  if (!content) return null
 
   const { id, owner } = space
   const { about, image, navTabs, name } = content

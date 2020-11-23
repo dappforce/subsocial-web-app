@@ -71,7 +71,7 @@ export function InnerForm (props: FormProps) {
     }
 
     if (!isProfile) {
-      return [ new IpfsContent(cid) ];
+      return [ new IpfsContent(cid) ]
     } else {
       // Update only dirty values.
 
@@ -97,9 +97,9 @@ export function InnerForm (props: FormProps) {
 
   const goToView = () => {
     if (address) {
-      Router.push('/accounts/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err));
+      Router.push('/accounts/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err))
     }
-  };
+  }
 
   const onFailed: TxFailedCallback = () => {
     IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
@@ -177,7 +177,7 @@ export function InnerForm (props: FormProps) {
 
 export function FormInSection (props: FormProps) {
   const { owner } = props
-  const title = owner?.profile ? `Edit profile` : `New profile`
+  const title = owner?.profile ? 'Edit profile' : 'New profile'
 
   return <PageContent meta={{ title }}>
     <Section className='EditEntityBox' title={title}>

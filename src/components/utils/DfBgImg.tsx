@@ -1,6 +1,6 @@
-import React, { CSSProperties } from 'react';
-import { resolveIpfsUrl } from 'src/ipfs';
-import Link, { LinkProps } from 'next/link';
+import React, { CSSProperties } from 'react'
+import { resolveIpfsUrl } from 'src/ipfs'
+import Link, { LinkProps } from 'next/link'
 
 export type BgImgProps = {
   src: string,
@@ -13,9 +13,9 @@ export type BgImgProps = {
 };
 
 export function DfBgImg (props: BgImgProps) {
-  const { src, size, height = size, width = size, rounded = false, className, style } = props;
+  const { src, size, height = size, width = size, rounded = false, className, style } = props
 
-  const fullClass = 'DfBgImg ' + className;
+  const fullClass = 'DfBgImg ' + className
 
   const fullStyle = Object.assign({
     backgroundImage: `url(${resolveIpfsUrl(src)})`,
@@ -24,9 +24,9 @@ export function DfBgImg (props: BgImgProps) {
     minWidth: width,
     minHeight: height,
     borderRadius: rounded && '50%'
-  }, style);
+  }, style)
 
-  return <div className={fullClass} style={fullStyle} />;
+  return <div className={fullClass} style={fullStyle} />
 }
 
 type DfBgImageLinkProps = BgImgProps & LinkProps

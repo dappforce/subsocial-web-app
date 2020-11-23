@@ -1,10 +1,10 @@
-import React, { useContext, createContext } from 'react';
+import React, { useContext, createContext } from 'react'
 
 type Storybook = {
   isStorybook: boolean
 }
 
-export const StorybookContext = createContext<Storybook>({ isStorybook: false });
+export const StorybookContext = createContext<Storybook>({ isStorybook: false })
 
 export const useStorybookContext = () =>
   useContext(StorybookContext)
