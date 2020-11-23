@@ -51,6 +51,6 @@ export const ContactInfo = ({ links, email }: ContactInfoProps) => {
 
   return <div>
     {links && <ViewSocialLinks links={links} />}
-    {email && <EmailLink className={links && 'mr-3'} link={email} />}
+    {email && <EmailLink className={links && 'ml-3'} link={email} />}
   </div>
 }

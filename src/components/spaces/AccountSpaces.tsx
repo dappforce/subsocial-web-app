@@ -54,7 +54,7 @@ export const useLoadAccoutPublicSpaces = (
 
     const loadSpaceIds = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(address)
-      setSpaceIds(mySpaceIds)
+      setSpaceIds(mySpaceIds.reverse())
     }
 
     loadSpaceIds().catch((err) =>
@@ -62,11 +62,10 @@ export const useLoadAccoutPublicSpaces = (
     )
   }, [ address.toString() ])
 
-  useSubsocialEffect(({ subsocial, substrate }) => {
+  useSubsocialEffect(({ subsocial }) => {
     if (!spacesCount) return
 
     const loadSpaces = async () => {
-      const mySpaceIds = await substrate.spaceIdsByOwner(address)
       const pageIds = getPageOfIds(mySpaceIds, query)
       const spacesData = await subsocial.findPublicSpaces(pageIds)
       setSpacesData(spacesData)

@@ -6,6 +6,7 @@ import { AddressProps } from '../profiles/address-views/utils/types';
 import { withLoadedOwner, withMyProfile } from '../profiles/address-views/utils/withLoadedOwner';
 import { InfoDetails } from '../profiles/address-views';
 import { AccountMenu } from 'src/components/profile-selector/AccountMenu';
+import styles from './AccountSelector.module.sass'
 
 type SelectAddressType = AddressProps & {
   withShortAddress?: boolean
@@ -38,7 +39,7 @@ export const AddressPopup: React.FunctionComponent<AddressProps> = ({
   return <Dropdown
     overlay={menu}
     trigger={[ 'click' ]}
-    overlayStyle={{ maxWidth: '366px' }}
+    overlayClassName={styles.DfAccountPopup}
   >
     <span className='DfCurrentAddress icon'>
       <SelectAddressPreview address={address} owner={owner} />
