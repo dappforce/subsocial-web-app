@@ -25,7 +25,7 @@ const MAX_DESC_LEN = 300
 const SITE_NAME = 'Subsocial Network'
 
 export const DEFAULT_TITLE =
-  'Subsocial - decentralized social network on Polkadot & IPFS'
+  'Subsocial - Decentralized social network on Polkadot & IPFS'
 
 export const DEFAULT_DESC =
   'Subsocial is a Polkadot ecosystem project supported by Web3 Foundation. ' +

@@ -97,7 +97,8 @@ export function InnerForm (props: FormProps) {
 
   const goToView = () => {
     if (address) {
-      Router.push('/accounts/[address]', accountUrl({ address })).catch(err => log.error('Error while route:', err))
+      Router.push('/accounts/[address]', accountUrl({ address }))
+        .catch(err => log.error('Failed to redirect to "View Account" page:', err))
     }
   }
 
