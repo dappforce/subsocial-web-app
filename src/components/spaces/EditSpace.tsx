@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Form, Input, Select } from 'antd'
-import Router from 'next/router'
 import BN from 'bn.js'
 import Section from '../utils/Section'
 import { getNewIdFromEvent, equalAddresses, stringifyText, getTxParams } from '../substrate'
@@ -8,7 +7,7 @@ import { TxFailedCallback, TxCallback } from 'src/components/substrate/Substrate
 import { SpaceUpdate, OptionBool, OptionIpfsContent, OptionOptionText, OptionText, OptionId, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { SpaceContent } from '@subsocial/types'
-import { newLogger, isEmptyStr } from '@subsocial/utils'
+import { isEmptyStr } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { useMyAddress } from '../auth/MyAccountContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
@@ -25,8 +24,7 @@ import { getNonEmptySpaceContent } from '../utils/content'
 import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { PageContent } from '../main/PageWrapper'
-
-const log = newLogger('EditSpace')
+import { goToSpacePage } from '../urls/goToPage'
 
 const MAX_TAGS = 10
 
@@ -66,7 +64,6 @@ const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string, 
   if (mySpaceId) return spaceIdByHandle.eq(mySpaceId)
 
   return !spaceIdByHandle
-
 }
 
 export function InnerForm (props: FormProps) {
@@ -132,12 +129,7 @@ export function InnerForm (props: FormProps) {
   const onSuccess: TxCallback = (txResult) => {
     const id = space?.struct.id || getNewIdFromEvent(txResult)
     clearAutoSavedContent('space')
-    id && goToView(id)
-  }
-
-  const goToView = (spaceId: BN) => {
-    Router.push('/[spaceId]', `/${spaceId}`)
-      .catch(err => log.error(`Failed to redirect to a space page. ${err}`))
+    id && goToSpacePage(id)
   }
 
   const onDescChanged = (mdText: string) => {

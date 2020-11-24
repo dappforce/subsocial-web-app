@@ -14,7 +14,7 @@ type OnlySudoProps = React.PropsWithChildren<{}>
 
 export const OnlySudo = ({ children }: OnlySudoProps) => {
   const myAddress = useMyAddress()
-  const [ sudo, setSudo ] = useState<AccountId | undefined>()
+  const [ sudo, setSudo ] = useState<AccountId>()
   
   useSubsocialEffect(({ substrate }) => {
     const load = async () => {

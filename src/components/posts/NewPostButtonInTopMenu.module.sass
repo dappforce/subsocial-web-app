@@ -1,0 +1,21 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.DfSpacePreview
+
+  \:global .ProfileDetails
+    align-items: center
+    padding: $space_small $space_normal
+    
+    border: 1px solid transparent
+    border-radius: $border_radius_normal
+    cursor: pointer
+
+    \:global .handle
+      // font-size: $font_normal
+
+    &:hover
+      border-color: $color_link
+      // background-color: $color_page_bg
+
+      \:global .handle
+        color: $color_link

@@ -3,7 +3,7 @@ import { Space } from '@subsocial/types/substrate/interfaces'
 import { isDef } from '@subsocial/utils'
 import React from 'react'
 import { isMyAddress } from 'src/components/auth/MyAccountContext'
-import { newPostUrl } from 'src/components/urls'
+import { HasSpaceIdOrHandle, newPostUrl } from 'src/components/urls'
 import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
 
@@ -17,7 +17,7 @@ export const isHiddenSpace = (space: Space) =>
 export const isMySpace = (space?: Space) =>
   isDef(space) && isMyAddress(space.owner)
 
-export const createNewPostLinkProps = (space: Space) => ({
+export const createNewPostLinkProps = (space: HasSpaceIdOrHandle) => ({
   href: '/[spaceId]/posts/new',
   as: newPostUrl(space)
 })
