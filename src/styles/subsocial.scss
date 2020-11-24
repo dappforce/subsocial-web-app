@@ -1372,13 +1372,6 @@ hr {
   cursor: pointer;
   margin: 0 1rem;
 
-  &.icon {
-    &:after {
-      content: '▼';
-      zoom: .8;
-    }
-  }
-
   .DfAddressIcon {
     .ui--IdentityIcon {
       display: block;
@@ -1567,8 +1560,10 @@ hr {
 }
 
 .DfAccountMenu {
-  @extend .DfCard;
-  padding: 0;
+  .ant-drawer-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .DfActivityMsg {
