@@ -1,5 +1,5 @@
 import { SpaceContent } from '@subsocial/types/offchain'
-import { nonEmptyStr } from '@subsocial/utils'
+import { isEmptyArray, nonEmptyStr } from '@subsocial/utils'
 import { mdToText } from 'src/utils'
 import { NextPage } from 'next'
 import Error from 'next/error'
@@ -15,7 +15,7 @@ import { ViewSpaceProps } from './ViewSpaceProps'
 import withLoadSpaceDataById from './withLoadSpaceDataById'
 import { PageContent } from '../main/PageWrapper'
 import { getSpaceId } from '../substrate'
-import { SpaceNotFound } from './helpers'
+import { isUnlistedSpace, SpaceNotFound } from './helpers'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
 import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
 import Segment from '../utils/Segment'
@@ -30,7 +30,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const { spaceData } = props
 
-  if (!spaceData || !spaceData?.struct) {
+  if (isUnlistedSpace(spaceData)) {
     return <SpaceNotFound />
   }
 
@@ -39,9 +39,11 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   const { owner: spaceOwnerAddress } = space
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent)
-  const { name, about, image, tags, links, email } = content
+  const { name, about, image, tags, links = [], email } = content
 
   const ContactInfo = useCallback(() => {
+    if (isEmptyArray(links)) return null
+  
     const socialLinks = (links as string[]).map((x, i) => 
       ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
 
