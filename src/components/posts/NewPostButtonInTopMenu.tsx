@@ -18,13 +18,20 @@ import { goToNewPostPage } from '../urls/goToPage'
 
 const log = newLogger('New Post Button In Top Menu')
 
+/**
+ * The logic of this component:
+ * - Shows "Create Space" in top menu if a current user has no spaces yet.
+ * - Shows "New Post" in top menu if a current user has spaces.
+ *   - Redirects to "New Post" page if user has only one space.
+ *   - Opens "Space Selector" modal if user has more than one space.
+ */
 export const NewPostButtonInTopMenu = () => {
   const myAddress = useMyAddress()
   const [ open, setOpen ] = useState<boolean>(false)
   const [ sudo, setSudo ] = useState<AccountId>()
   const [ spacesData, setSpacesData ] = useState<SpaceData[]>()
 
-  // TODO fix copy-paste, see OnlySudo
+  // TODO fix copypasta, see OnlySudo
   useSubsocialEffect(({ substrate }) => {
     // if (!open) return
 
@@ -37,7 +44,7 @@ export const NewPostButtonInTopMenu = () => {
     load()
   }, [ sudo?.toString() ])
 
-  // TODO fix copy-paste, see AccountSpaces
+  // TODO fix copypasta, see AccountSpaces
   useSubsocialEffect(({ subsocial, substrate }) => {
     if (/* !open || */ !sudo || !myAddress) return
 
@@ -53,13 +60,14 @@ export const NewPostButtonInTopMenu = () => {
     )
   }, [ sudo?.toString(), myAddress?.toString() ])
 
-  console.table({
-    sudo: sudo?.toString(),
-    myAddress: myAddress?.toString()
-  })
+  if (!spacesData) {
+    return null
+  }
 
-  // TODO show "Create Space" in top menu if user has not spaces
-  // or at least don't show "New Post" button if a user has no spaces
+  // console.table({
+  //   sudo: sudo?.toString(),
+  //   myAddress: myAddress?.toString()
+  // })
 
   const closeModal = () => setOpen(false)
 
@@ -97,7 +105,7 @@ export const NewPostButtonInTopMenu = () => {
     )}</>
   }
 
-  return <>
+  const NewPostButtonAndModal = () => <>
     <Button icon={<PlusOutlined />} onClick={onNewPostClick}>New post</Button>
     <Modal
       onCancel={closeModal}
@@ -109,4 +117,8 @@ export const NewPostButtonInTopMenu = () => {
       <ListOfSpaces />
     </Modal>
   </>
+
+  return !spacesData.length
+    ? <CreateSpaceButton />
+    : <NewPostButtonAndModal />
 }
