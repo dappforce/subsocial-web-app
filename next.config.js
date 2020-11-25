@@ -71,15 +71,16 @@ module.exports = withPlugins([
   ...nextConfig,
   async redirects () {
     const spaceId = ':spaceId(\\d{1,}|@.*)'
+    const slug = ':slug(.*\\d{1,})*'
     return [
       {
-        source: `/spaces/${spaceId}/posts/:slug*`,
-        destination: '/:spaceId/:slug*',
+        source: `/spaces/${spaceId}/posts/${slug}`,
+        destination: `/:spaceId/${slug}`,
         permanent: true,
       },
       {
-        source: `/spaces/${spaceId}/:slug*`,
-        destination: '/:spaceId/:slug*',
+        source: `/spaces/${spaceId}/${slug}`,
+        destination: `/:spaceId/${slug}`,
         permanent: true,
       },
       {
@@ -88,8 +89,8 @@ module.exports = withPlugins([
         permanent: true,
       },
       {
-        source: `/${spaceId}/posts/:slug*`,
-        destination: '/:spaceId/:slug*',
+        source: `/${spaceId}/posts/${slug}`,
+        destination: `/:spaceId/${slug}`,
         permanent: true,
       }
     ]
