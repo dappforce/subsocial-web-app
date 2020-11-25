@@ -19,6 +19,7 @@ import { resolveCidOfContent } from '@subsocial/api/utils'
 import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { PageContent } from '../main/PageWrapper'
+import { AutoSaveId } from '../utils/DfMdEditor/types'
 
 const log = newLogger('EditProfile')
 
@@ -49,8 +50,11 @@ export function InnerForm (props: FormProps) {
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
   const { owner, address } = props
-  const isProfile = owner?.profile
+  const profile = owner?.profile
   const initialValues = getInitialValues(props)
+
+  // Auto save a profile's about only if we are on a "New Profile" form.
+  const autoSaveId: AutoSaveId | undefined = !profile ? 'profile' : undefined
 
   const getFieldValues = (): FormValues => {
     return form.getFieldsValue() as FormValues
@@ -70,10 +74,13 @@ export function InnerForm (props: FormProps) {
       return prevCid !== cid.toString() ? cid : undefined
     }
 
-    if (!isProfile) {
+    if (!profile) {
+      // If creating a new profile.
       return [ new IpfsContent(cid) ]
     } else {
-      // Update only dirty values.
+      // If updating the existing profile.
+
+      // TODO Update only dirty values.
 
       const update = new ProfileUpdate({
         content: new OptionIpfsContent(getCidIfChanged())
@@ -151,16 +158,16 @@ export function InnerForm (props: FormProps) {
           { max: DESC_MAX_LEN, message: maxLenError('Description', DESC_MAX_LEN) }
         ]}
       >
-        <DfMdEditor autoSaveId='profile' onChange={onDescChanged} />
+        <DfMdEditor autoSaveId={autoSaveId} onChange={onDescChanged} />
       </Form.Item>
 
       <DfFormButtons
         form={form}
         txProps={{
-          label: isProfile
+          label: profile
             ? 'Update profile'
             : 'Create new profile',
-          tx: isProfile
+          tx: profile
             ? 'profiles.updateProfile'
             : 'profiles.createProfile',
           params: pinToIpfsAndBuildTxParams,

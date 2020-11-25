@@ -26,6 +26,7 @@ import { postUrl } from '../urls'
 import { PageContent } from '../main/PageWrapper'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { getPostIdFromSlug } from './slugify'
+import { AutoSaveId } from '../utils/DfMdEditor/types'
 
 const log = newLogger('EditPost')
 
@@ -75,14 +76,19 @@ export function InnerForm (props: FormProps) {
   const initialValues = getInitialValues(props)
   const tags = initialValues.tags || []
 
+  // Auto save a post's body only if we are on a "New Post" form.
+  const autoSaveId: AutoSaveId | undefined = !post ? 'post' : undefined
+
   const getFieldValues = (): FormValues => {
     return form.getFieldsValue() as FormValues
   }
 
   const newTxParams = (cid: IpfsCid) => {
     if (!post) {
+      // If creating a new post.
       return [ spaceId, RegularPostExt, new IpfsContent(cid) ]
     } else {
+      // If updating the existing post.
 
       // TODO Update only changed values.
 
@@ -168,7 +174,7 @@ export function InnerForm (props: FormProps) {
           { max: BODY_MAX_LEN, message: maxLenError('Post body', BODY_MAX_LEN) }
         ]}
       >
-        <DfMdEditor autoSaveId='post' onChange={onBodyChanged} />
+        <DfMdEditor autoSaveId={autoSaveId} onChange={onBodyChanged} />
       </Form.Item>
 
       <Form.Item
