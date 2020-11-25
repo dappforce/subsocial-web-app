@@ -72,25 +72,23 @@ module.exports = withPlugins([
   async redirects () {
     const spaceId = ':spaceId(\\d{1,}|@.*)'
     const slug = ':slug(.*\\d{1,})*'
+    const postPage = '/:spaceId/:slug*'
+
+    // Redirects for all URL formats. DO NOT REMOVE!
     return [
-      {
-        source: `/spaces/${spaceId}/posts/${slug}`,
-        destination: `/:spaceId/${slug}`,
-        permanent: true,
-      },
-      {
-        source: `/spaces/${spaceId}/${slug}`,
-        destination: `/:spaceId/${slug}`,
-        permanent: true,
-      },
       {
         source: '/spaces/all',
         destination: '/spaces',
         permanent: true,
       },
       {
+        source: `/spaces/${spaceId}/posts/${slug}`,
+        destination: postPage,
+        permanent: true,
+      },
+      {
         source: `/${spaceId}/posts/${slug}`,
-        destination: `/:spaceId/${slug}`,
+        destination: postPage,
         permanent: true,
       }
     ]
