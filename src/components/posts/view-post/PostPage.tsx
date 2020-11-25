@@ -22,6 +22,7 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
+import { return404 } from 'src/components/utils/next'
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
@@ -128,6 +129,9 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const slugStr = slug as string
   const postIdFromUrl = getPostIdFromSlug(slugStr)
+
+  if (!postIdFromUrl) return return404(props)
+
   const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
   const comments = await subsocial.findPublicPostsWithAllDetails([ ...replyIds, postIdFromUrl ])
 

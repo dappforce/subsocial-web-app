@@ -23,10 +23,13 @@ export const createPostSlug = (postId: BN, content?: HasTitleOrBody) => {
 }
 
 export const getPostIdFromSlug = (slug: string) => {
-  const postId = slug.split(SLUG_SEPARATOR).pop()
+  try {
+    const postId = slug.split(SLUG_SEPARATOR).pop()
 
-  // TODO think about this error. Better return undefined
-  if (!postId) throw new Error('Post id not found in post slug')
+    if (!postId) return undefined
 
-  return new BN(postId)
+    return new BN(postId)
+  } catch {
+    return undefined
+  }
 }
