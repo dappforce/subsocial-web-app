@@ -25,6 +25,7 @@ import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { PageContent } from '../main/PageWrapper'
 import { goToSpacePage } from '../urls/goToPage'
+import { AutoSaveId } from '../utils/DfMdEditor/types'
 
 const MAX_TAGS = 10
 
@@ -75,6 +76,10 @@ export function InnerForm (props: FormProps) {
 
   const initialValues = getInitialValues(props)
   const tags = initialValues.tags || []
+  const links = initialValues.links
+
+  // Auto save a space's about only if we are on a "New Space" form.
+  const autoSaveId: AutoSaveId | undefined = !space ? 'space' : undefined
 
   const getFieldValues = (): FormValues => {
     return form.getFieldsValue() as FormValues
@@ -95,13 +100,16 @@ export function InnerForm (props: FormProps) {
     }
 
     if (!space) {
+      // If creating a new space.
       return [ new OptionId(), new OptionText(fieldValues.handle), new IpfsContent(cid) ]
     } else {
-      // Update only dirty values.
+      // If updating the existing space.
+      
+      // TODO Update only dirty values.
 
-      // TODO seems like we cannot set a handle to None.
+      // TODO Seems like we cannot set a handle to None. Check it.
 
-      // TODO uupdate SpaceUpdate class
+      // TODO Update SpaceUpdate class
       const update = new SpaceUpdate({
         handle: new OptionOptionText(getValueIfChanged('handle')),
         content: new OptionIpfsContent(getCidIfChanged()),
@@ -139,8 +147,6 @@ export function InnerForm (props: FormProps) {
   const onAvatarChanged = (url?: string) => {
     form.setFieldsValue({ [fieldName('image')]: url })
   }
-
-  const links = initialValues.links
 
   return <>
     <DfForm form={form} validateTrigger={[ 'onBlur' ]} initialValues={initialValues}>
@@ -197,7 +203,7 @@ export function InnerForm (props: FormProps) {
           { max: DESC_MAX_LEN, message: maxLenError('Description', DESC_MAX_LEN) }
         ]}
       >
-        <DfMdEditor autoSaveId='space' onChange={onDescChanged} />
+        <DfMdEditor autoSaveId={autoSaveId} onChange={onDescChanged} />
       </Form.Item>
 
       <Form.Item
