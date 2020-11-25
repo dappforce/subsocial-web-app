@@ -246,13 +246,18 @@ function LoadPostThenEdit (props: FormProps) {
   const [ post, setPost ] = useState<PostData>()
 
   useSubsocialEffect(({ subsocial }) => {
+    if (!postId) return
+
     const load = async () => {
       setIsLoaded(false)
       setPost(await subsocial.findPost({ id: postId }))
       setIsLoaded(true)
     }
+
     load()
-  }, [ postId.toString() ])
+  }, [ postId?.toString() ])
+
+  if (!postId) return <NoData description='Post id not found in URL' />
 
   if (!isLoaded) return <Loading label='Loading the post...' />
 
