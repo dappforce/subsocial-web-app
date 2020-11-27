@@ -77,17 +77,17 @@ type Props = {
   className?: string
 }
 
-export const PageContent: React.FunctionComponent<Props> = ({ leftPanel, rightPanel, meta, level = 1, title, className, children }) => {
+export const PageContent: React.FunctionComponent<Props> = ({ /* leftPanel, rightPanel, */ meta, level = 1, title, className, children }) => {
   const { isNotMobile } = useResponsiveSize()
-  const isPanels = leftPanel || rightPanel
+  // const isPanels = leftPanel || rightPanel
   return <>
     <HeadMeta {...meta} />
     {isNotMobile
-    ? <div className='d-flex w-100'>
-      {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>}
-      <Section className={`DfMainContent ${className}`} level={level} title={title} >{children}</Section>
-      {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>}
-    </div>
+     ? <Section className='DfSectionOuter d-flex w-100'>
+      {/* {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>} */}
+      <Section className={`${className}`} level={level} title={title} >{children}</Section>
+      {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
+    </Section>
     : <>
       {children}
       {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
