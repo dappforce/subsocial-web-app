@@ -31,7 +31,7 @@ export const ActionMenu = () => {
   }
 
   return <>
-  <Menu>
+  <Menu className='FontNormal'>
     <Menu.Item key="following" onClick={openFollowingModal} icon={<StarOutlined />}>
       My following
     </Menu.Item>
@@ -39,7 +39,7 @@ export const ActionMenu = () => {
       My follower
     </Menu.Item>
     <Menu.Item key="edit" icon={<EditOutlined />}>
-      <EditProfileLink address={address} className='FontNormal mb-2' />
+      <EditProfileLink address={address} />
     </Menu.Item>
   </Menu>
   {followersOpen && <AccountFollowersModal
