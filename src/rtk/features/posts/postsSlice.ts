@@ -1,15 +1,16 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { PostContent } from '@subsocial/types'
-import { nonEmptyArr } from '@subsocial/utils'
-import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectOneById, selectManyByIds, ThunkApiConfig, createFetchMany } from 'src/rtk/app/helpers'
+import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectOneById, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getContentIds, NormalizedPost, normalizePostStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
-import { fetchSpaces, FullSpace, selectSpaceById, selectSpacesByIds } from '../spaces/spacesSlice'
+import { FullProfile } from '../profiles/profilesSlice'
+import { fetchSpaces, FullSpace, selectSpacesByIds } from '../spaces/spacesSlice'
 
-export type FullPost = NormalizedPost & PostContent
-
-export type FullPostWithSpace = FullPost & { space?: FullSpace }
+export type FullPost = Omit<NormalizedPost, 'owner'> & PostContent & {
+  space?: FullSpace
+  owner?: FullProfile // or 'ownerProfile'?
+}
 
 const postsAdapter = createEntityAdapter<NormalizedPost>()
 
@@ -24,30 +25,50 @@ export const {
   selectTotal: selectTotalPosts
 } = postsSelectors
 
-export const selectPostById = (state: RootState, id: EntityId): FullPost | undefined =>
+const _selectPostById = (state: RootState, id: EntityId) =>
   selectOneById(state, id, selectPostStructById, selectPostContentById)
 
-export const selectPostsByIds = (state: RootState, ids: EntityId[]): FullPost[] =>
+const _selectPostsByIds = (state: RootState, ids: EntityId[]) =>
   selectManyByIds(state, ids, selectPostStructById, selectPostContentById)
 
-export function selectPostsWithSpaces (state: RootState, ids: EntityId[]): FullPostWithSpace[] {
-  const posts = selectPostsByIds(state, ids)
-  
-  const spaceIds = getUniqueSpaceIds(posts)
-  const spaces = selectSpacesByIds(state, spaceIds)
-  const spaceByIdMap = new Map<EntityId, FullSpace>()
-  spaces.forEach(space => {
-    spaceByIdMap.set(space.id, space)
-  })
+type SelectPostsProps = {
+  ids: EntityId[],
+  withSpace?: boolean,
+  withOwner?: boolean,
+}
 
-  const result: FullPostWithSpace[] = []
+export function selectPosts (state: RootState, props: SelectPostsProps): FullPost[] {
+  const { ids, withSpace = true, withOwner = true } = props
+  const posts = _selectPostsByIds(state, ids)
+  
+  const ownerByIdMap = new Map<EntityId, FullProfile>()
+  if (withOwner) {
+    // TODO impl
+  }
+
+  const spaceByIdMap = new Map<EntityId, FullSpace>()
+  if (withSpace) {
+    const spaceIds = getUniqueSpaceIds(posts)
+    const spaces = selectSpacesByIds(state, spaceIds)
+    spaces.forEach(space => {
+      spaceByIdMap.set(space.id, space)
+    })
+  }
+  
+  const result: FullPost[] = []
   posts.forEach(post => {
     let space: FullSpace | undefined
     const { spaceId } = post
     if (spaceId) {
       space = spaceByIdMap.get(spaceId)
     }
-    result.push({ ...post, space })
+
+    let owner: FullProfile | undefined
+    if (post.owner) {
+      owner = ownerByIdMap.get(post.owner)
+    }
+
+    result.push({ ...post, owner, space })
   })
   return result
 }
@@ -65,13 +86,13 @@ function getUniqueSpaceIds (posts: NormalizedPost[]): EntityId[] {
 const filterNewIds = createFilterNewIds(selectPostIds)
 
 type FetchPostsArgs = ApiAndIds & {
-  withContents?: boolean,
-  withSpaces?: boolean,
+  withContent?: boolean,
+  withSpace?: boolean,
 }
 
 export const fetchPosts = createAsyncThunk<NormalizedPost[], FetchPostsArgs, ThunkApiConfig>(
   'posts/fetchMany',
-  async ({ api, ids, withContents = true, withSpaces = true }, { getState, dispatch }) => {
+  async ({ api, ids, withContent = true, withSpace = true }, { getState, dispatch }) => {
 
     const newIds = filterNewIds(getState(), ids)
     if (!newIds.length) {
@@ -82,17 +103,17 @@ export const fetchPosts = createAsyncThunk<NormalizedPost[], FetchPostsArgs, Thu
     const structs = await api.substrate.findPosts({ ids: idsToBns(newIds) })
     const entities = normalizePostStructs(structs)
 
-    if (withSpaces) {
+    if (withSpace) {
       const spaceIds = getUniqueSpaceIds(entities)
       if (spaceIds.length) {
         await dispatch(fetchSpaces({ api, ids: spaceIds }))
       }
     }
 
-    if (withContents) {
+    if (withContent) {
       const cids = getContentIds(entities)
-      if (nonEmptyArr(cids)) {
-        // TODO combine fetch of space and post contents into one dspatch.
+      if (cids.length) {
+        // TODO combine fetch of spaces' and posts' contents into one dspatch.
         await dispatch(fetchContents({ api, ids: cids }))
       }
     }

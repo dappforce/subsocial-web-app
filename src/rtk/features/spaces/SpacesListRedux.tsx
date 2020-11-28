@@ -1,18 +1,28 @@
+import { EntityId } from '@reduxjs/toolkit'
 import { Button } from 'antd'
-import React, { useState } from 'react'
+import { NextPage } from 'next'
+import React, { FC, useState } from 'react'
 import { PageContent } from 'src/components/main/PageWrapper'
 import { Section } from 'src/components/utils/Section'
-import { useFetchPostsByIds } from '../posts/postsHooks'
-import { useFetchSpacesByIds } from './spacesHooks'
+import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
+import { HasInitialReduxState, initializeStore } from 'src/rtk/app/store'
+import { tryParseInt } from 'src/utils'
+import { useFetchPosts } from '../posts/postsHooks'
+import { fetchPosts } from '../posts/postsSlice'
 
-export const SpacesList = () => {
+type Props = HasInitialReduxState & {
+  ids?: EntityId[]
+}
+
+export const SpacesList: FC<Props> = ({ ids: initialIds = [] }) => {
   // const [ spaceIds, setSpaceIds ] = useState([ '1002', '1003', '1004' ])
   // const spaces = useFetchSpacesByIds(spaceIds)
 
-  const [ ids, setIds ] = useState([ '1', '100', '200' ])
-  const posts = useFetchPostsByIds(ids)
+  const [ ids, setIds ] = useState(initialIds)
+  const posts = useFetchPosts(ids)
 
-  const nextId = parseInt(ids[ids.length - 1]) + 1
+  const lastId = !ids.length ? 0 : tryParseInt(ids[ids.length - 1], 0)
+  const nextId = lastId + 1
 
   return (
     <PageContent meta={{ title: 'Redux' }}>
@@ -34,4 +44,33 @@ export const SpacesList = () => {
   )
 }
 
-export default SpacesList
+const samplePostIds = [ '1', '100', '200' ]
+
+export const SpacesListPage: NextPage<Props> = (props) => {
+  return <SpacesList {...props} />
+}
+
+SpacesListPage.getInitialProps = async ({}): Promise<Props> => {
+  const reduxStore = initializeStore()
+  const { dispatch } = reduxStore
+  
+  const subsocial = await getSubsocialApi()
+  await dispatch(fetchPosts({ api: subsocial, ids: samplePostIds }))
+  const initialReduxState = reduxStore.getState()
+
+  return { initialReduxState, ids: samplePostIds }
+}
+
+// // Alternative way to fetch data on server-side:
+// export const getServerSideProps: GetServerSideProps<Props> = async ({}) => {
+//   const reduxStore = initializeStore()
+//   const { dispatch } = reduxStore
+  
+//   const subsocial = await getSubsocialApi()
+//   await dispatch(fetchPosts({ api: subsocial, ids: samplePostIds }))
+//   const initialReduxState = reduxStore.getState()
+
+//   return { props: { initialReduxState, ids: samplePostIds } }
+// }
+
+// export default SpacesList

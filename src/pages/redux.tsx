@@ -1,5 +1,4 @@
-import dynamic from 'next/dynamic'
+import { SpacesListPage } from 'src/rtk/features/spaces/SpacesListRedux'
+// export { getServerSideProps } from 'src/rtk/features/spaces/SpacesListRedux'
 
-const page = dynamic(() => import('../rtk/features/spaces/SpacesListRedux'), { ssr: false })
-
-export default page
+export default SpacesListPage

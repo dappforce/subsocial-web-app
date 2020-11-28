@@ -18,7 +18,7 @@ import Head from 'next/head'
 import MainPage from '../layout/MainPage'
 import { Provider } from 'react-redux'
 import store from 'src/redux/store'
-import rtkStore from 'src/rtk/app/store'
+import { useStore } from 'src/rtk/app/store'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -28,6 +28,11 @@ dayjs.extend(localizedFormat)
 
 function MyApp (props) {
   const { Component, pageProps } = props
+  const rtkStore = useStore(pageProps.initialReduxState)
+
+  // Debug store
+  // console.log(JSON.stringify(pageProps.initialReduxState, null, 2))
+
   return (
     <>
       <Head>
