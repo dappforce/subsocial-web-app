@@ -1,9 +1,9 @@
 import { Option } from '@polkadot/types/codec'
 import { AccountId } from '@polkadot/types/interfaces/runtime'
 import { bool } from '@polkadot/types/primitive'
+import { EntityId } from '@reduxjs/toolkit'
 import { AnyAccountId, PostContent, ProfileContent, SpaceContent } from '@subsocial/types'
 import { Content, Post, SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
-import { isEmptyArray } from '@subsocial/utils'
 import BN from 'bn.js'
 
 type Id = string
@@ -131,19 +131,27 @@ type SpaceOrPostStruct = SuperCommonStruct & {
   hidden: bool
 }
 
-export function getContentIds (entities: CanHaveContent[]): Cid[] {
-  if (isEmptyArray(entities)) {
-    return []
-  }
+export type SocialAccountWithId = {
+  id: AnyAccountId
+  struct: SocialAccount
+}
 
-  const cids: Cid[] = []
-  entities.forEach(({ contentId }) => {
-    if (contentId) {
-      cids.push(contentId)
+export function getUniqueIds<E = {}> (structs: E[], idFieldName: keyof E): EntityId[] {
+  const ids = new Set<EntityId>()
+  structs.forEach((struct) => {
+    const id = (struct as any)[idFieldName]
+    if (id && !ids.has(id)) {
+      ids.add(id)
     }
   })
-  return cids
+  return Array.from(ids)
 }
+
+export const getUniqueOwnerIds = (entities: HasOwner[]) =>
+  getUniqueIds(entities, 'owner')
+
+export const getUniqueContentIds = (entities: CanHaveContent[]) =>
+  getUniqueIds(entities, 'contentId')
 
 function getUpdatedFields ({ updated }: SuperCommonStruct): CanBeUpdated {
   const maybeUpdated = updated.unwrapOr(undefined)
@@ -323,6 +331,6 @@ export function normalizeProfileStruct (account: AnyAccountId, struct: SocialAcc
   }
 }
 
-// export function normalizeProfileStructs (structs: SocialAccount[]): NormalizedPost[] {
-//   return structs.map(normalizePostStruct)
-// }
+export function normalizeProfileStructs (accounts: SocialAccountWithId[]): NormalizedProfile[] {
+  return accounts.map(({ id, struct }) => normalizeProfileStruct(id, struct))
+}

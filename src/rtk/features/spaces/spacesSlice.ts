@@ -1,10 +1,10 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SpaceContent } from '@subsocial/types'
-import { nonEmptyArr } from '@subsocial/utils'
-import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectOneById, selectManyByIds, ThunkApiConfig, createFetchMany } from 'src/rtk/app/helpers'
-import { getContentIds, NormalizedSpace, normalizeSpaceStructs } from 'src/rtk/app/normalizers'
+import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectOneById, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { getUniqueContentIds, getUniqueOwnerIds, NormalizedSpace, normalizeSpaceStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
+import { fetchProfiles } from '../profiles/profilesSlice'
 
 export type FullSpace = NormalizedSpace & SpaceContent
 
@@ -30,12 +30,13 @@ export const selectSpacesByIds = (state: RootState, ids: EntityId[]): FullSpace[
 const filterNewIds = createFilterNewIds(selectSpaceIds)
 
 type FetchSpacesArgs = ApiAndIds & {
-  withContents?: boolean,
+  withContent?: boolean
+  withOwner?: boolean
 }
 
 export const fetchSpaces = createAsyncThunk<NormalizedSpace[], FetchSpacesArgs, ThunkApiConfig>(
   'spaces/fetchMany',
-  async ({ api, ids, withContents = true }, { getState, dispatch }) => {
+  async ({ api, ids, withContent = true, withOwner = true }, { getState, dispatch }) => {
 
     const newIds = filterNewIds(getState(), ids)
     if (!newIds.length) {
@@ -45,13 +46,25 @@ export const fetchSpaces = createAsyncThunk<NormalizedSpace[], FetchSpacesArgs, 
 
     const structs = await api.substrate.findSpaces({ ids: idsToBns(newIds) })
     const entities = normalizeSpaceStructs(structs)
-
-    if (withContents) {
-      const cids = getContentIds(entities)
-      if (nonEmptyArr(cids)) {
-        await dispatch(fetchContents({ api, ids: cids }))
+    const fetches: Promise<any>[] = []
+    
+    if (withOwner) {
+      const ids = getUniqueOwnerIds(entities)
+      if (ids.length) {
+        // TODO combine fetch of spaces' and posts' owners into one dispatch.
+        fetches.push(dispatch(fetchProfiles({ api, ids })))
       }
     }
+    
+    if (withContent) {
+      const ids = getUniqueContentIds(entities)
+      if (ids.length) {
+        // TODO combine fetch of spaces' and posts' contents into one dispatch.
+        fetches.push(dispatch(fetchContents({ api, ids })))
+      }
+    }
+
+    await Promise.all(fetches)
 
     return entities
   }

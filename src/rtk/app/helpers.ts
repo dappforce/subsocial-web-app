@@ -3,6 +3,7 @@ import { SubsocialApi } from '@subsocial/api'
 import { CommonContent } from '@subsocial/types'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
 import BN from 'bn.js'
+import { asString } from 'src/utils'
 import { HasId, NormalizedSuperCommon } from './normalizers'
 import { RootState } from './rootReducer'
 import { AppDispatch, AppThunk } from './store'
@@ -12,32 +13,42 @@ export type ThunkApiConfig = {
   dispatch: AppDispatch
 }
 
-type StructEntity = HasId & NormalizedSuperCommon
+type StructEntity = HasId & Partial<NormalizedSuperCommon>
 
 type ContentEntity = HasId & CommonContent
 
-type AnyId = string | number | BN
-
 type ApiAndId = {
   api: SubsocialApi
-  id: AnyId
+  id: EntityId
 }
 
 export type ApiAndIds = {
   api: SubsocialApi
-  ids: AnyId[]
+  ids: EntityId[]
 }
 
-export function createFilterNewIds (selectIds: (state: RootState) => EntityId[]) {
-  return (state: RootState, ids: AnyId[]) => {
+export function createFilterNewIds (selectIds: (state: RootState) => EntityId[])
+{
+  return (state: RootState, ids: EntityId[]): string[] => {
     if (isEmptyArray(ids)) return []
 
-    const knownIds = new Set(selectIds(state))
-    return ids.filter(id => !knownIds.has(id.toString()))
+    const knownStrIds = selectIds(state).map(asString)
+    const knownIds = new Set(knownStrIds)
+    const newIds: string[] = []
+
+    ids.forEach(id => {
+      const strId = asString(id)
+      if (!knownIds.has(strId)) {
+        knownIds.add(strId)
+        newIds.push(strId)
+      }
+    })
+
+    return newIds
   }
 }
 
-export function idsToBns (ids: AnyId[]): BN[] {
+export function idsToBns (ids: EntityId[]): BN[] {
   return ids.map(id => BN.isBN(id) ? id : new BN(id))
 }
 
