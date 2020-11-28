@@ -6,6 +6,8 @@ import { fetchSpaces, FullSpace, selectSpacesByIds } from 'src/rtk/features/spac
 
 export const useFetchSpacesByIds = (spaceIds: EntityId[]): FullSpace[] => {
   const dispatch = useAppDispatch()
+
+  // TODO compare by (id + updated_at_block) instead of shallowEqual
   const spaces = useAppSelector(state => selectSpacesByIds(state, spaceIds), shallowEqual)
 
   useSubsocialEffect(({ subsocial }) => {

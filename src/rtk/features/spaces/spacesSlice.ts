@@ -29,9 +29,13 @@ export const selectSpacesByIds = (state: RootState, ids: EntityId[]): FullSpace[
 
 const filterNewIds = createFilterNewIds(selectSpaceIds)
 
-export const fetchSpaces = createAsyncThunk<NormalizedSpace[], ApiAndIds, ThunkApiConfig>(
+type FetchSpacesArgs = ApiAndIds & {
+  withContents?: boolean,
+}
+
+export const fetchSpaces = createAsyncThunk<NormalizedSpace[], FetchSpacesArgs, ThunkApiConfig>(
   'spaces/fetchMany',
-  async ({ api, ids }, { getState, dispatch }) => {
+  async ({ api, ids, withContents = true }, { getState, dispatch }) => {
 
     const newIds = filterNewIds(getState(), ids)
     if (!newIds.length) {
@@ -42,9 +46,11 @@ export const fetchSpaces = createAsyncThunk<NormalizedSpace[], ApiAndIds, ThunkA
     const structs = await api.substrate.findSpaces({ ids: idsToBns(newIds) })
     const entities = normalizeSpaceStructs(structs)
 
-    const cids = getContentIds(entities)
-    if (nonEmptyArr(cids)) {
-      await dispatch(fetchContents({ api, ids: cids }))
+    if (withContents) {
+      const cids = getContentIds(entities)
+      if (nonEmptyArr(cids)) {
+        await dispatch(fetchContents({ api, ids: cids }))
+      }
     }
 
     return entities
