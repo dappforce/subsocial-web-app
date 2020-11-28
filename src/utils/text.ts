@@ -30,3 +30,7 @@ export const summarize = (
       omission
     })
 }
+
+export function asString (x: { toString: () => string }): string {
+  return typeof x === 'string' ? x : x.toString()
+}
