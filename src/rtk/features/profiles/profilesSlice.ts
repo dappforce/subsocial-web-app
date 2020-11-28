@@ -8,6 +8,7 @@ import { RootState } from 'src/rtk/app/rootReducer'
 import { asString } from 'src/utils'
 import { fetchContents, selectProfileContentById } from '../contents/contentsSlice'
 
+// Rename to ProfileData or EnrichedProfile
 export type FullProfile = NormalizedProfile & ProfileContent
 
 const profilesAdapter = createEntityAdapter<NormalizedProfile>()
@@ -31,11 +32,11 @@ export const selectProfiles = (state: RootState, ids: EntityId[]): FullProfile[]
 
 const filterNewIds = createFilterNewIds(selectProfileIds)
 
-type FetchProfilesArgs = ApiAndIds & {
+type FetchArgs = ApiAndIds & {
   withContent?: boolean
 }
 
-export const fetchProfiles = createAsyncThunk<NormalizedProfile[], FetchProfilesArgs, ThunkApiConfig>(
+export const fetchProfiles = createAsyncThunk<NormalizedProfile[], FetchArgs, ThunkApiConfig>(
   'profiles/fetchMany',
   async ({ api, ids: accountIds, withContent = true }, { getState, dispatch }) => {
 

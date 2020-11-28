@@ -1,12 +1,13 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { PostContent } from '@subsocial/types'
-import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectOneById, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, getUniqueIds, getUniqueOwnerIds, NormalizedPost, normalizePostStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
-import { fetchProfiles, FullProfile } from '../profiles/profilesSlice'
-import { fetchSpaces, FullSpace, selectSpacesByIds } from '../spaces/spacesSlice'
+import { fetchProfiles, FullProfile, selectProfiles } from '../profiles/profilesSlice'
+import { fetchSpaces, FullSpace, selectSpaces } from '../spaces/spacesSlice'
 
+// Rename to PostData or EnrichedPost
 export type FullPost = Omit<NormalizedPost, 'owner'> & PostContent & {
   space?: FullSpace
   owner?: FullProfile // or 'ownerProfile'?
@@ -29,25 +30,30 @@ export const {
 const _selectPostsByIds = (state: RootState, ids: EntityId[]) =>
   selectManyByIds(state, ids, selectPostStructById, selectPostContentById)
 
-type SelectPostsProps = {
+type SelectArgs = {
   ids: EntityId[]
   withOwner?: boolean
   withSpace?: boolean
 }
 
-export function selectPosts (state: RootState, props: SelectPostsProps): FullPost[] {
+export function selectPosts (state: RootState, props: SelectArgs): FullPost[] {
   const { ids, withOwner = true, withSpace = true } = props
   const posts = _selectPostsByIds(state, ids)
   
+  // TODO Fix copypasta. Places: selectSpaces & selectPosts
   const ownerByIdMap = new Map<EntityId, FullProfile>()
   if (withOwner) {
-    // TODO impl
+    const ownerIds = getUniqueOwnerIds(posts)
+    const profiles = selectProfiles(state, ownerIds)
+    profiles.forEach(profile => {
+      ownerByIdMap.set(profile.id, profile)
+    })
   }
 
   const spaceByIdMap = new Map<EntityId, FullSpace>()
   if (withSpace) {
     const spaceIds = getUniqueSpaceIds(posts)
-    const spaces = selectSpacesByIds(state, spaceIds)
+    const spaces = selectSpaces(state, { ids: spaceIds, withOwner: false })
     spaces.forEach(space => {
       spaceByIdMap.set(space.id, space)
     })
@@ -55,15 +61,18 @@ export function selectPosts (state: RootState, props: SelectPostsProps): FullPos
   
   const result: FullPost[] = []
   posts.forEach(post => {
+
+    // TODO Fix copypasta. Places: selectSpaces & selectPosts
+    let owner: FullProfile | undefined
+    if (post.owner) {
+      owner = ownerByIdMap.get(post.owner)
+    }
+
+    // TODO Fix copypasta. Places: selectSpaces & selectPosts
     let space: FullSpace | undefined
     const { spaceId } = post
     if (spaceId) {
       space = spaceByIdMap.get(spaceId)
-    }
-
-    let owner: FullProfile | undefined
-    if (post.owner) {
-      owner = ownerByIdMap.get(post.owner)
     }
 
     result.push({ ...post, owner, space })
@@ -75,13 +84,13 @@ const getUniqueSpaceIds = (posts: NormalizedPost[]) => getUniqueIds(posts, 'spac
 
 const filterNewIds = createFilterNewIds(selectPostIds)
 
-type FetchPostsArgs = ApiAndIds & {
+type FetchArgs = ApiAndIds & {
   withContent?: boolean
   withOwner?: boolean
   withSpace?: boolean
 }
 
-export const fetchPosts = createAsyncThunk<NormalizedPost[], FetchPostsArgs, ThunkApiConfig>(
+export const fetchPosts = createAsyncThunk<NormalizedPost[], FetchArgs, ThunkApiConfig>(
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
     const { api, ids, withContent = true, withOwner = true, withSpace = true } = args
@@ -101,7 +110,7 @@ export const fetchPosts = createAsyncThunk<NormalizedPost[], FetchPostsArgs, Thu
     if (withSpace) {
       const ids = getUniqueSpaceIds(entities)
       if (ids.length) {
-        fetches.push(dispatch(fetchSpaces({ api, ids })))
+        fetches.push(dispatch(fetchSpaces({ api, ids, withOwner: false })))
       }
     }
 

@@ -1,12 +1,15 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SpaceContent } from '@subsocial/types'
-import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectOneById, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, getUniqueOwnerIds, NormalizedSpace, normalizeSpaceStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
-import { fetchProfiles } from '../profiles/profilesSlice'
+import { fetchProfiles, FullProfile, selectProfiles } from '../profiles/profilesSlice'
 
-export type FullSpace = NormalizedSpace & SpaceContent
+// Rename to SpaceData or EnrichedSpace
+export type FullSpace = Omit<NormalizedSpace, 'owner'> & SpaceContent & {
+  owner?: FullProfile // or 'ownerProfile'?
+}
 
 const spacesAdapter = createEntityAdapter<NormalizedSpace>()
 
@@ -21,20 +24,53 @@ export const {
   selectTotal: selectTotalSpaces
 } = spacesSelectors
 
-export const selectSpaceById = (state: RootState, id: EntityId): FullSpace | undefined =>
-  selectOneById(state, id, selectSpaceStructById, selectSpaceContentById)
+// const _selectSpace = (state: RootState, id: EntityId): FullSpace | undefined =>
+//   selectOneById(state, id, selectSpaceStructById, selectSpaceContentById)
 
-export const selectSpacesByIds = (state: RootState, ids: EntityId[]): FullSpace[] =>
+const _selectSpacesByIds = (state: RootState, ids: EntityId[]) =>
   selectManyByIds(state, ids, selectSpaceStructById, selectSpaceContentById)
+
+type SelectArgs = {
+  ids: EntityId[]
+  withOwner?: boolean
+}
+
+export function selectSpaces (state: RootState, props: SelectArgs): FullSpace[] {
+  const { ids, withOwner = true } = props
+  const spaces = _selectSpacesByIds(state, ids)
+
+  // TODO Fix copypasta. Places: selectSpaces & selectPosts
+  const ownerByIdMap = new Map<EntityId, FullProfile>()
+  if (withOwner) {
+    const ownerIds = getUniqueOwnerIds(spaces)
+    const profiles = selectProfiles(state, ownerIds)
+    profiles.forEach(profile => {
+      ownerByIdMap.set(profile.id, profile)
+    })
+  }
+  
+  const result: FullSpace[] = []
+  spaces.forEach(space => {
+
+    const res: Partial<FullSpace> = { ...space }
+    // TODO Fix copypasta. Places: selectSpaces & selectPosts
+    if (space.owner) {
+      res.owner = ownerByIdMap.get(space.owner)
+    }
+
+    result.push(res as FullSpace)
+  })
+  return result
+}
 
 const filterNewIds = createFilterNewIds(selectSpaceIds)
 
-type FetchSpacesArgs = ApiAndIds & {
+type FetchArgs = ApiAndIds & {
   withContent?: boolean
   withOwner?: boolean
 }
 
-export const fetchSpaces = createAsyncThunk<NormalizedSpace[], FetchSpacesArgs, ThunkApiConfig>(
+export const fetchSpaces = createAsyncThunk<NormalizedSpace[], FetchArgs, ThunkApiConfig>(
   'spaces/fetchMany',
   async ({ api, ids, withContent = true, withOwner = true }, { getState, dispatch }) => {
 
