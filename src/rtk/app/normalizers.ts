@@ -14,12 +14,24 @@ export type HasId = {
   id: Id
 }
 
+type CanHaveParentId = {
+  parentId?: Id
+}
+
+type CanHaveSpaceId = {
+  spaceId?: Id
+}
+
 type CanHaveContent = {
   contentId?: Cid
 }
 
 type HasOwner = {
-  owner: string
+  owner: string // TODO rename to ownerAccount? to prevent clash with owner: Profile
+}
+
+type CanHaveHandle = {
+  handle?: string
 }
 
 type HasCreated = {
@@ -51,26 +63,26 @@ type NormalizedSpaceOrPost =
   HasOwner &
   CanBeHidden
 
-export type NormalizedSpace = NormalizedSpaceOrPost & {
-  parentId?: Id
-  handle?: string
+export type NormalizedSpace = NormalizedSpaceOrPost & CanHaveParentId & CanHaveHandle & {
   totalPostsCount: number
   hiddenPostsCount: number
   visiblePostsCount: number
+
   followersCount: number
   score: number
   // permissions?: SpacePermissions
 }
 
-export type NormalizedPost = NormalizedSpaceOrPost & {
-  spaceId?: Id
+export type NormalizedPost = NormalizedSpaceOrPost & CanHaveSpaceId & {
   totalRepliesCount: number
   hiddenRepliesCount: number
   visibleRepliesCount: number
+
   sharesCount: number
   upvotesCount: number
   downvotesCount: number
   score: number
+
   isRegularPost: boolean
   isSharedPost: boolean
   isComment: boolean
@@ -133,11 +145,34 @@ export function getContentIds (entities: CanHaveContent[]): Cid[] {
   return cids
 }
 
-function normalizeSuperCommonStruct (struct: SuperCommonStruct): NormalizedSuperCommon {
-  const { created, updated } = struct
-
+function getUpdatedFields ({ updated }: SuperCommonStruct): CanBeUpdated {
   const maybeUpdated = updated.unwrapOr(undefined)
-  const maybeContentId = struct.content.isIpfs ? struct.content.asIpfs.toString() : undefined
+  let res: CanBeUpdated = {
+    isUpdated: updated.isSome,
+  }
+  if (maybeUpdated) {
+    res = {
+      ...res,
+      updatedByAccount: maybeUpdated.account.toString(),
+      updatedAtBlock: maybeUpdated.block.toNumber(),
+      updatedAtTime: maybeUpdated.time.toNumber(),
+    }
+  }
+  return res
+}
+
+function getContentFields ({ content }: SuperCommonStruct): CanHaveContent {
+  let res: CanHaveContent = {}
+  if (content.isIpfs) {
+    res = {
+      contentId: content.asIpfs.toString()
+    }
+  }
+  return res
+}
+
+function normalizeSuperCommonStruct (struct: SuperCommonStruct): NormalizedSuperCommon {
+  const { created } = struct
 
   return {
     // created:
@@ -145,13 +180,8 @@ function normalizeSuperCommonStruct (struct: SuperCommonStruct): NormalizedSuper
     createdAtBlock: created.block.toNumber(),
     createdAtTime: created.time.toNumber(),
 
-    // updated:
-    isUpdated: updated.isSome,
-    updatedByAccount: maybeUpdated?.account.toString(),
-    updatedAtBlock: maybeUpdated?.block.toNumber(),
-    updatedAtTime: maybeUpdated?.time.toNumber(),
-
-    contentId: maybeContentId,
+    ...getUpdatedFields(struct),
+    ...getContentFields(struct),
   }
 }
 
@@ -169,10 +199,25 @@ export function normalizeSpaceStruct (struct: Space): NormalizedSpace {
   const hiddenPostsCount = struct.hidden_posts_count.toNumber()
   const visiblePostsCount = totalPostsCount - hiddenPostsCount
 
+  let parentField: CanHaveParentId = {}
+  if (struct.parent_id.isSome) {
+    parentField = {
+      parentId: struct.parent_id.unwrap().toString()
+    }
+  }
+
+  let handleField: CanHaveHandle = {}
+  if (struct.handle.isSome) {
+    handleField = {
+      handle: struct.handle.unwrap().toString()
+    }
+  }
+
   return {
     ...normalizeSpaceOrPostStruct(struct),
-    parentId: struct.parent_id.unwrapOr(undefined)?.toString(),
-    handle: struct.handle.unwrapOr(undefined)?.toString(),
+    ...parentField,
+    ...handleField,
+
     totalPostsCount,
     hiddenPostsCount,
     visiblePostsCount,
@@ -185,28 +230,47 @@ export function normalizeSpaceStructs (structs: Space[]): NormalizedSpace[] {
   return structs.map(normalizeSpaceStruct)
 }
 
+function flattenPostExtension (struct: Post): NormalizedPostExtension {
+  const { isSharedPost, isComment } = struct.extension
+  let normExt: NormalizedPostExtension = {}
+
+  if (isSharedPost) {
+    const sharedPost: SharedPostExtension = {
+      sharedPostId: struct.extension.asSharedPost.toString()
+    }
+    normExt = sharedPost
+  } else if (isComment) {
+    const { parent_id, root_post_id } = struct.extension.asComment
+    const comment: CommentExtension = {
+      rootPostId: root_post_id.toString()
+    }
+    if (parent_id.isSome) {
+      comment.parentId = parent_id.unwrap().toString()
+    }
+    normExt = comment
+  }
+
+  return normExt
+}
+
 export function normalizePostStruct (struct: Post): NormalizedPost {
   const totalRepliesCount = struct.replies_count.toNumber()
   const hiddenRepliesCount = struct.hidden_replies_count.toNumber()
   const visibleRepliesCount = totalRepliesCount - hiddenRepliesCount
   const { isRegularPost, isSharedPost, isComment } = struct.extension
-
-  let normExt: NormalizedPostExtension = {}
-  if (isSharedPost) {
-    normExt = { sharedPostId: struct.extension.asSharedPost.toString() }
-  }
-  else if (isComment) {
-    const { parent_id, root_post_id } = struct.extension.asComment
-    normExt = {
-      parentId: parent_id.unwrapOr(undefined)?.toString(),
-      rootPostId: root_post_id.toString()
-    } as CommentExtension
+  const extensionFields = flattenPostExtension(struct)
+  
+  let spaceField: CanHaveSpaceId = {}
+  if (struct.space_id.isSome) {
+    spaceField = {
+      spaceId: struct.space_id.unwrap().toString(),
+    }
   }
 
   return {
     ...normalizeSpaceOrPostStruct(struct),
-
-    spaceId: struct.space_id.unwrapOr(undefined)?.toString(),
+    ...spaceField,
+    ...extensionFields,
 
     totalRepliesCount,
     hiddenRepliesCount,
@@ -220,8 +284,6 @@ export function normalizePostStruct (struct: Post): NormalizedPost {
     isRegularPost,
     isSharedPost,
     isComment,
-
-    ...normExt
   }
 }
 
@@ -260,3 +322,7 @@ export function normalizeProfileStruct (account: AnyAccountId, struct: SocialAcc
     ...maybeProfile
   }
 }
+
+// export function normalizeProfileStructs (structs: SocialAccount[]): NormalizedPost[] {
+//   return structs.map(normalizePostStruct)
+// }
