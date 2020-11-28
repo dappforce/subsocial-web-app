@@ -7,8 +7,8 @@ import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice
 import { fetchProfiles, FullProfile, selectProfiles } from '../profiles/profilesSlice'
 
 // Rename to SpaceData or EnrichedSpace
-export type FullSpace = Omit<NormalizedSpace, 'owner'> & SpaceContent & {
-  owner?: FullProfile // or 'ownerProfile'?
+export type FullSpace = NormalizedSpace & SpaceContent & {
+  owner?: FullProfile
 }
 
 const spacesAdapter = createEntityAdapter<NormalizedSpace>()
@@ -51,14 +51,15 @@ export function selectSpaces (state: RootState, props: SelectArgs): FullSpace[] 
   
   const result: FullSpace[] = []
   spaces.forEach(space => {
+    const { ownerId } = space
 
-    const res: Partial<FullSpace> = { ...space }
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
-    if (space.owner) {
-      res.owner = ownerByIdMap.get(space.owner)
+    let owner: FullProfile | undefined
+    if (ownerId) {
+      owner = ownerByIdMap.get(ownerId)
     }
 
-    result.push(res as FullSpace)
+    result.push({ ...space, owner })
   })
   return result
 }

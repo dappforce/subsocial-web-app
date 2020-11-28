@@ -27,7 +27,7 @@ type CanHaveContent = {
 }
 
 type HasOwner = {
-  owner: string // TODO rename to ownerAccount? to prevent clash with owner: Profile
+  ownerId: string
 }
 
 type CanHaveHandle = {
@@ -148,7 +148,7 @@ export function getUniqueIds<E = {}> (structs: E[], idFieldName: keyof E): Entit
 }
 
 export const getUniqueOwnerIds = (entities: HasOwner[]) =>
-  getUniqueIds(entities, 'owner')
+  getUniqueIds(entities, 'ownerId')
 
 export const getUniqueContentIds = (entities: CanHaveContent[]) =>
   getUniqueIds(entities, 'contentId')
@@ -197,7 +197,7 @@ function normalizeSpaceOrPostStruct (struct: SpaceOrPostStruct): NormalizedSpace
   return {
     ...normalizeSuperCommonStruct(struct),
     id: struct.id.toString(),
-    owner: struct.owner.toString(),
+    ownerId: struct.owner.toString(),
     isHidden: struct.hidden.isTrue,
   }
 }
