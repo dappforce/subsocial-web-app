@@ -19,16 +19,18 @@ export type AnySubsocialData =
   CommentData |
   SharedPostData
 
+type PostExtensionData = Exclude<PostWithSomeDetails, 'ext'>
+
 export type PostWithSomeDetails = {
   post: PostData
-  ext?: Exclude<PostWithSomeDetails, 'ext'>
+  ext?: PostExtensionData
   owner?: ProfileData
   space?: SpaceData
 }
 
 export type PostWithAllDetails = {
   post: PostData
-  ext?: Exclude<PostWithSomeDetails, 'ext'>
+  ext?: PostExtensionData
   owner: ProfileData
   space: SpaceData
 }
