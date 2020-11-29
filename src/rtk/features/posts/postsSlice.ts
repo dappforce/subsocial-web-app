@@ -1,16 +1,11 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { PostContent } from '@subsocial/types'
 import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, getUniqueIds, getUniqueOwnerIds, PostStruct, flattenPostStructs } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
-import { fetchProfiles, ProfileData, selectProfiles } from '../profiles/profilesSlice'
-import { fetchSpaces, SpaceData, selectSpaces } from '../spaces/spacesSlice'
-
-export type PostData = PostStruct & PostContent & {
-  owner?: ProfileData
-  space?: SpaceData
-}
+import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
+import { fetchSpaces, selectSpaces } from '../spaces/spacesSlice'
+import { PostData, PostWithSomeDetails, ProfileData, SpaceData } from 'src/rtk/app/dto'
 
 const postsAdapter = createEntityAdapter<PostStruct>()
 
@@ -38,7 +33,7 @@ type SelectArgs = {
   withSpace?: boolean
 }
 
-export function selectPosts (state: RootState, props: SelectArgs): PostData[] {
+export function selectPosts (state: RootState, props: SelectArgs): PostWithSomeDetails[] {
   const { ids, withOwner = true, withSpace = true } = props
   const posts = _selectPostsByIds(state, ids)
   
@@ -61,9 +56,9 @@ export function selectPosts (state: RootState, props: SelectArgs): PostData[] {
     })
   }
   
-  const result: PostData[] = []
+  const result: PostWithSomeDetails[] = []
   posts.forEach(post => {
-    const { ownerId, spaceId } = post
+    const { ownerId, spaceId } = post.struct
 
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
     let owner: ProfileData | undefined
@@ -77,12 +72,14 @@ export function selectPosts (state: RootState, props: SelectArgs): PostData[] {
       space = spaceByIdMap.get(spaceId)
     }
 
-    result.push({ ...post, owner, space })
+    // TODO select post ext
+
+    result.push({ id: post.id, post, owner, space })
   })
   return result
 }
 
-const getUniqueSpaceIds = (posts: PostStruct[]) => getUniqueIds(posts, 'spaceId')
+const getUniqueSpaceIds = (posts: PostData[] | PostStruct[]) => getUniqueIds(posts, 'spaceId')
 
 const filterNewIds = createFilterNewIds(selectPostIds)
 

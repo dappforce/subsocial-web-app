@@ -1,16 +1,18 @@
+import { EntityId } from '@reduxjs/toolkit'
 import { CommonContent, ProfileContent, SpaceContent, PostContent, CommentContent, SharedPostContent } from '@subsocial/types/offchain'
 import { HasId, ProfileStruct, SpaceStruct, PostStruct, CommentStruct, SharedPostStruct } from './flatteners'
 
-type Data<S extends HasId, C extends CommonContent> = {
+export type EntityData<S extends HasId, C extends CommonContent> = {
+  id: EntityId
   struct: S
   content?: C
 }
 
-export type ProfileData = Data<ProfileStruct, ProfileContent>
-export type SpaceData = Data<SpaceStruct, SpaceContent>
-export type PostData = Data<PostStruct, PostContent>
-export type CommentData = Data<CommentStruct, CommentContent>
-export type SharedPostData = Data<SharedPostStruct, SharedPostContent>
+export type ProfileData = EntityData<ProfileStruct, ProfileContent>
+export type SpaceData = EntityData<SpaceStruct, SpaceContent>
+export type PostData = EntityData<PostStruct, PostContent>
+export type CommentData = EntityData<CommentStruct, CommentContent>
+export type SharedPostData = EntityData<SharedPostStruct, SharedPostContent>
 
 export type AnySubsocialData =
   ProfileData |
@@ -21,16 +23,22 @@ export type AnySubsocialData =
 
 type PostExtensionData = Exclude<PostWithSomeDetails, 'ext'>
 
+export type SpaceWithSomeDetails = SpaceData & {
+  owner?: ProfileData
+}
+
 export type PostWithSomeDetails = {
+  id: EntityId
+
+  // TODO flatten post?
   post: PostData
+
   ext?: PostExtensionData
   owner?: ProfileData
   space?: SpaceData
 }
 
-export type PostWithAllDetails = {
-  post: PostData
-  ext?: PostExtensionData
+export type PostWithAllDetails = Omit<PostWithSomeDetails, 'owner' | 'space'> & {
   owner: ProfileData
   space: SpaceData
 }

@@ -2,9 +2,11 @@ import { Option } from '@polkadot/types/codec'
 import { AccountId } from '@polkadot/types/interfaces/runtime'
 import { bool } from '@polkadot/types/primitive'
 import { EntityId } from '@reduxjs/toolkit'
-import { AnyAccountId } from '@subsocial/types'
+import { AnyAccountId, CommonContent } from '@subsocial/types'
 import { Content, Post, SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
+import { notEmptyObj } from '@subsocial/utils'
 import BN from 'bn.js'
+import { EntityData } from './dto'
 
 type Id = string
 
@@ -133,10 +135,15 @@ export type SocialAccountWithId = {
   struct: SocialAccount
 }
 
-export function getUniqueIds<E = {}> (structs: E[], idFieldName: keyof E): EntityId[] {
+type EntityDataWithField<S extends {}> = EntityData<HasId & S, CommonContent> | (HasId & S)
+
+export function getUniqueIds<S extends {}> (structs: EntityDataWithField<S>[], idFieldName: keyof S): EntityId[] {
+  type _EntityData = EntityData<S & HasId, CommonContent>
   const ids = new Set<EntityId>()
-  structs.forEach((struct) => {
-    const id = (struct as any)[idFieldName]
+  structs.forEach((x) => {
+    const edStruct = (x as _EntityData).struct
+    const struct = notEmptyObj(edStruct) ? edStruct : x as S
+    const id = struct[idFieldName] as unknown as EntityId
     if (id && !ids.has(id)) {
       ids.add(id)
     }
@@ -144,10 +151,10 @@ export function getUniqueIds<E = {}> (structs: E[], idFieldName: keyof E): Entit
   return Array.from(ids)
 }
 
-export const getUniqueOwnerIds = (entities: HasOwner[]) =>
+export const getUniqueOwnerIds = (entities: EntityDataWithField<HasOwner>[]) =>
   getUniqueIds(entities, 'ownerId')
 
-export const getUniqueContentIds = (entities: CanHaveContent[]) =>
+export const getUniqueContentIds = (entities: EntityDataWithField<CanHaveContent>[]) =>
   getUniqueIds(entities, 'contentId')
 
 function getUpdatedFields ({ updated }: SuperCommonStruct): CanBeUpdated {

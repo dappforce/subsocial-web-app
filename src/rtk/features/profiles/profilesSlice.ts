@@ -1,14 +1,12 @@
 import { Option } from '@polkadot/types'
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { ProfileContent } from '@subsocial/types'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { ApiAndIds, createFetchOne, createFilterNewIds, selectManyByIds, selectOneById, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, ProfileStruct, flattenProfileStructs, SocialAccountWithId } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { asString } from 'src/utils'
 import { fetchContents, selectProfileContentById } from '../contents/contentsSlice'
-
-export type ProfileData = ProfileStruct & ProfileContent
+import { ProfileData } from 'src/rtk/app/dto'
 
 const profilesAdapter = createEntityAdapter<ProfileStruct>()
 

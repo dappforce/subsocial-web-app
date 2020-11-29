@@ -1,14 +1,10 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { SpaceContent } from '@subsocial/types'
 import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, getUniqueOwnerIds, SpaceStruct, flattenSpaceStructs } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
-import { fetchProfiles, ProfileData, selectProfiles } from '../profiles/profilesSlice'
-
-export type SpaceData = SpaceStruct & SpaceContent & {
-  owner?: ProfileData
-}
+import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
+import { ProfileData, SpaceWithSomeDetails } from 'src/rtk/app/dto'
 
 const spacesAdapter = createEntityAdapter<SpaceStruct>()
 
@@ -34,7 +30,7 @@ type SelectArgs = {
   withOwner?: boolean
 }
 
-export function selectSpaces (state: RootState, props: SelectArgs): SpaceData[] {
+export function selectSpaces (state: RootState, props: SelectArgs): SpaceWithSomeDetails[] {
   const { ids, withOwner = true } = props
   const spaces = _selectSpacesByIds(state, ids)
 
@@ -48,9 +44,9 @@ export function selectSpaces (state: RootState, props: SelectArgs): SpaceData[] 
     })
   }
   
-  const result: SpaceData[] = []
+  const result: SpaceWithSomeDetails[] = []
   spaces.forEach(space => {
-    const { ownerId } = space
+    const { ownerId } = space.struct
 
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
     let owner: ProfileData | undefined

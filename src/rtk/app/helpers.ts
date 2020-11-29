@@ -4,7 +4,8 @@ import { CommonContent } from '@subsocial/types'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import { asString } from 'src/utils'
-import { HasId, FlatSuperCommon } from './flatteners'
+import { EntityData } from './dto'
+import { FlatSuperCommon, HasId } from './flatteners'
 import { RootState } from './rootReducer'
 import { AppDispatch, AppThunk } from './store'
 
@@ -87,9 +88,9 @@ export function selectManyByIds<
   ids: EntityId[],
   selectStructById: SelectByIdFn<S>,
   selectContentById: SelectByIdFn<C>
-): (S & C)[] {
+): EntityData<S, C>[] {
 
-  const result: (S & C)[] = []
+  const result: EntityData<S, C>[] = []
 
   ids.forEach((id) => {
     const struct = selectStructById(state, id)
@@ -98,12 +99,9 @@ export function selectManyByIds<
       const content = selectContentById(state, contentId)
       if (content) {
         result.push({
-          ...struct,
-          ...content,
-
-          // We need to set the id field explicitly
-          // because content also has id that is IPFS CID.
-          id: struct.id
+          id: struct.id,
+          struct,
+          content,
         })
       }
     }
@@ -120,7 +118,7 @@ export function selectOneById<
   id: EntityId,
   selectStructById: SelectByIdFn<S>,
   selectContentById: SelectByIdFn<C>
-): (S & C) | undefined {
+): EntityData<S, C> | undefined {
   const items = selectManyByIds(state, [ id ], selectStructById, selectContentById)
   return getFirstOrUndefined(items)
 }
