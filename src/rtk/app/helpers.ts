@@ -4,7 +4,7 @@ import { CommonContent } from '@subsocial/types'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import { asString } from 'src/utils'
-import { HasId, NormalizedSuperCommon } from './normalizers'
+import { HasId, FlatSuperCommon } from './normalizers'
 import { RootState } from './rootReducer'
 import { AppDispatch, AppThunk } from './store'
 
@@ -13,7 +13,7 @@ export type ThunkApiConfig = {
   dispatch: AppDispatch
 }
 
-type StructEntity = HasId & Partial<NormalizedSuperCommon>
+type StructEntity = HasId & Partial<FlatSuperCommon>
 
 type ContentEntity = HasId & CommonContent
 

@@ -52,18 +52,19 @@ type CanBeHidden = {
   // isPublic: boolean
 }
 
-export type NormalizedSuperCommon =
+export type FlatSuperCommon =
   HasCreated &
   CanBeUpdated &
   CanHaveContent
 
-type NormalizedSpaceOrPost =
-  NormalizedSuperCommon &
+type FlatSpaceOrPost =
+  FlatSuperCommon &
   HasId &
   HasOwner &
   CanBeHidden
 
-export type NormalizedSpace = NormalizedSpaceOrPost & CanHaveParentId & CanHaveHandle & {
+/** Flat space struct. */
+export type SpaceStruct = FlatSpaceOrPost & CanHaveParentId & CanHaveHandle & {
   totalPostsCount: number
   hiddenPostsCount: number
   visiblePostsCount: number
@@ -73,7 +74,8 @@ export type NormalizedSpace = NormalizedSpaceOrPost & CanHaveParentId & CanHaveH
   // permissions?: SpacePermissions
 }
 
-export type NormalizedPost = NormalizedSpaceOrPost & CanHaveSpaceId & {
+/** Flat post struct. */
+export type PostStruct = FlatSpaceOrPost & CanHaveSpaceId & {
   totalRepliesCount: number
   hiddenRepliesCount: number
   visibleRepliesCount: number
@@ -88,7 +90,7 @@ export type NormalizedPost = NormalizedSpaceOrPost & CanHaveSpaceId & {
   isComment: boolean
 }
 
-type NormalizedSocialAccount = HasId & {
+type SocialAccountStruct = HasId & {
   followersCount: number
   followingAccountsCount: number
   followingSpacesCount: number
@@ -105,19 +107,20 @@ type SharedPostExtension = {
   sharedPostId: Id
 }
 
-type NormalizedPostExtension = {} | CommentExtension | SharedPostExtension
+type FlatPostExtension = {} | CommentExtension | SharedPostExtension
 
-type NormalizedSharedPost = NormalizedPost & SharedPostExtension
+type SharedPostStruct = PostStruct & SharedPostExtension
 
-type NormalizedComment = NormalizedPost & CommentExtension
+type CommentStruct = PostStruct & CommentExtension
 
-export type NormalizedProfile =
-  NormalizedSocialAccount &
-  Partial<NormalizedSuperCommon>
+/** Flat account profile struct. */
+export type ProfileStruct =
+  SocialAccountStruct &
+  Partial<FlatSuperCommon>
 
-export type SpaceWithContent = NormalizedSpace & SpaceContent
-export type PostWithContent = NormalizedPost & PostContent
-export type ProfileWithContent = NormalizedProfile & ProfileContent
+export type SpaceWithContent = SpaceStruct & SpaceContent
+export type PostWithContent = PostStruct & PostContent
+export type ProfileWithContent = ProfileStruct & ProfileContent
 
 type SuperCommonStruct = {
   created: WhoAndWhen
@@ -179,7 +182,7 @@ function getContentFields ({ content }: SuperCommonStruct): CanHaveContent {
   return res
 }
 
-function normalizeSuperCommonStruct (struct: SuperCommonStruct): NormalizedSuperCommon {
+function flattenCommonFields (struct: SuperCommonStruct): FlatSuperCommon {
   const { created } = struct
 
   return {
@@ -193,16 +196,16 @@ function normalizeSuperCommonStruct (struct: SuperCommonStruct): NormalizedSuper
   }
 }
 
-function normalizeSpaceOrPostStruct (struct: SpaceOrPostStruct): NormalizedSpaceOrPost {
+function flattenSpaceOrPostStruct (struct: SpaceOrPostStruct): FlatSpaceOrPost {
   return {
-    ...normalizeSuperCommonStruct(struct),
+    ...flattenCommonFields(struct),
     id: struct.id.toString(),
     ownerId: struct.owner.toString(),
     isHidden: struct.hidden.isTrue,
   }
 }
 
-export function normalizeSpaceStruct (struct: Space): NormalizedSpace {
+export function flattenSpaceStruct (struct: Space): SpaceStruct {
   const totalPostsCount = struct.posts_count.toNumber()
   const hiddenPostsCount = struct.hidden_posts_count.toNumber()
   const visiblePostsCount = totalPostsCount - hiddenPostsCount
@@ -222,7 +225,7 @@ export function normalizeSpaceStruct (struct: Space): NormalizedSpace {
   }
 
   return {
-    ...normalizeSpaceOrPostStruct(struct),
+    ...flattenSpaceOrPostStruct(struct),
     ...parentField,
     ...handleField,
 
@@ -234,13 +237,13 @@ export function normalizeSpaceStruct (struct: Space): NormalizedSpace {
   }
 }
 
-export function normalizeSpaceStructs (structs: Space[]): NormalizedSpace[] {
-  return structs.map(normalizeSpaceStruct)
+export function flattenSpaceStructs (structs: Space[]): SpaceStruct[] {
+  return structs.map(flattenSpaceStruct)
 }
 
-function flattenPostExtension (struct: Post): NormalizedPostExtension {
+function flattenPostExtension (struct: Post): FlatPostExtension {
   const { isSharedPost, isComment } = struct.extension
-  let normExt: NormalizedPostExtension = {}
+  let normExt: FlatPostExtension = {}
 
   if (isSharedPost) {
     const sharedPost: SharedPostExtension = {
@@ -261,7 +264,7 @@ function flattenPostExtension (struct: Post): NormalizedPostExtension {
   return normExt
 }
 
-export function normalizePostStruct (struct: Post): NormalizedPost {
+export function flattenPostStruct (struct: Post): PostStruct {
   const totalRepliesCount = struct.replies_count.toNumber()
   const hiddenRepliesCount = struct.hidden_replies_count.toNumber()
   const visibleRepliesCount = totalRepliesCount - hiddenRepliesCount
@@ -276,7 +279,7 @@ export function normalizePostStruct (struct: Post): NormalizedPost {
   }
 
   return {
-    ...normalizeSpaceOrPostStruct(struct),
+    ...flattenSpaceOrPostStruct(struct),
     ...spaceField,
     ...extensionFields,
 
@@ -295,27 +298,27 @@ export function normalizePostStruct (struct: Post): NormalizedPost {
   }
 }
 
-export function normalizePostStructs (structs: Post[]): NormalizedPost[] {
-  return structs.map(normalizePostStruct)
+export function flattenPostStructs (structs: Post[]): PostStruct[] {
+  return structs.map(flattenPostStruct)
 }
 
-export function asNormalizedSharedPost (post: NormalizedPost): NormalizedSharedPost {
+export function asSharedPostStruct (post: PostStruct): SharedPostStruct {
   if (!post.isSharedPost) throw new Error('Not a shared post')
 
-  return post as NormalizedSharedPost
+  return post as SharedPostStruct
 }
 
-export function asNormalizedComment (post: NormalizedPost): NormalizedComment {
+export function asCommentStruct (post: PostStruct): CommentStruct {
   if (!post.isComment) throw new Error('Not a comment')
 
-  return post as NormalizedComment
+  return post as CommentStruct
 }
 
-export function normalizeProfileStruct (account: AnyAccountId, struct: SocialAccount): NormalizedProfile {
+export function flattenProfileStruct (account: AnyAccountId, struct: SocialAccount): ProfileStruct {
   const profile = struct.profile.unwrapOr(undefined)
   const hasProfile = struct.profile.isSome
-  const maybeProfile: Partial<NormalizedSuperCommon> = profile
-    ? normalizeSuperCommonStruct(profile)
+  const maybeProfile: Partial<FlatSuperCommon> = profile
+    ? flattenCommonFields(profile)
     : {}
 
   return {
@@ -331,6 +334,6 @@ export function normalizeProfileStruct (account: AnyAccountId, struct: SocialAcc
   }
 }
 
-export function normalizeProfileStructs (accounts: SocialAccountWithId[]): NormalizedProfile[] {
-  return accounts.map(({ id, struct }) => normalizeProfileStruct(id, struct))
+export function flattenProfileStructs (accounts: SocialAccountWithId[]): ProfileStruct[] {
+  return accounts.map(({ id, struct }) => flattenProfileStruct(id, struct))
 }

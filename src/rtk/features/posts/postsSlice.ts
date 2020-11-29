@@ -1,18 +1,18 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { PostContent } from '@subsocial/types'
 import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { getUniqueContentIds, getUniqueIds, getUniqueOwnerIds, NormalizedPost, normalizePostStructs } from 'src/rtk/app/normalizers'
+import { getUniqueContentIds, getUniqueIds, getUniqueOwnerIds, PostStruct, flattenPostStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, ProfileData, selectProfiles } from '../profiles/profilesSlice'
 import { fetchSpaces, SpaceData, selectSpaces } from '../spaces/spacesSlice'
 
-export type PostData = NormalizedPost & PostContent & {
+export type PostData = PostStruct & PostContent & {
   owner?: ProfileData
   space?: SpaceData
 }
 
-const postsAdapter = createEntityAdapter<NormalizedPost>()
+const postsAdapter = createEntityAdapter<PostStruct>()
 
 const postsSelectors = postsAdapter.getSelectors<RootState>(state => state.posts)
 
@@ -82,7 +82,7 @@ export function selectPosts (state: RootState, props: SelectArgs): PostData[] {
   return result
 }
 
-const getUniqueSpaceIds = (posts: NormalizedPost[]) => getUniqueIds(posts, 'spaceId')
+const getUniqueSpaceIds = (posts: PostStruct[]) => getUniqueIds(posts, 'spaceId')
 
 const filterNewIds = createFilterNewIds(selectPostIds)
 
@@ -92,7 +92,7 @@ type FetchArgs = ApiAndIds & {
   withSpace?: boolean
 }
 
-export const fetchPosts = createAsyncThunk<NormalizedPost[], FetchArgs, ThunkApiConfig>(
+export const fetchPosts = createAsyncThunk<PostStruct[], FetchArgs, ThunkApiConfig>(
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
     const { api, ids, withContent = true, withOwner = true, withSpace = true } = args
@@ -104,7 +104,7 @@ export const fetchPosts = createAsyncThunk<NormalizedPost[], FetchArgs, ThunkApi
     }
 
     const structs = await api.substrate.findPosts({ ids: idsToBns(newIds) })
-    const entities = normalizePostStructs(structs)
+    const entities = flattenPostStructs(structs)
     const fetches: Promise<any>[] = []
 
     // TODO fetch shared post or comment

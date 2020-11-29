@@ -3,14 +3,14 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@r
 import { ProfileContent } from '@subsocial/types'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { ApiAndIds, createFetchOne, createFilterNewIds, selectManyByIds, selectOneById, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { getUniqueContentIds, NormalizedProfile, normalizeProfileStructs, SocialAccountWithId } from 'src/rtk/app/normalizers'
+import { getUniqueContentIds, ProfileStruct, flattenProfileStructs, SocialAccountWithId } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { asString } from 'src/utils'
 import { fetchContents, selectProfileContentById } from '../contents/contentsSlice'
 
-export type ProfileData = NormalizedProfile & ProfileContent
+export type ProfileData = ProfileStruct & ProfileContent
 
-const profilesAdapter = createEntityAdapter<NormalizedProfile>()
+const profilesAdapter = createEntityAdapter<ProfileStruct>()
 
 const profilesSelectors = profilesAdapter.getSelectors<RootState>(state => state.profiles)
 
@@ -35,7 +35,7 @@ type FetchArgs = ApiAndIds & {
   withContent?: boolean
 }
 
-export const fetchProfiles = createAsyncThunk<NormalizedProfile[], FetchArgs, ThunkApiConfig>(
+export const fetchProfiles = createAsyncThunk<ProfileStruct[], FetchArgs, ThunkApiConfig>(
   'profiles/fetchMany',
   async ({ api, ids: accountIds, withContent = true }, { getState, dispatch }) => {
 
@@ -64,7 +64,7 @@ export const fetchProfiles = createAsyncThunk<NormalizedProfile[], FetchArgs, Th
       }
     })
     
-    const entities = normalizeProfileStructs(structWithIdArr)
+    const entities = flattenProfileStructs(structWithIdArr)
     const fetches: Promise<any>[] = []
 
     if (withContent) {

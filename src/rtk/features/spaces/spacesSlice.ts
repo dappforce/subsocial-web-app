@@ -1,16 +1,16 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SpaceContent } from '@subsocial/types'
 import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { getUniqueContentIds, getUniqueOwnerIds, NormalizedSpace, normalizeSpaceStructs } from 'src/rtk/app/normalizers'
+import { getUniqueContentIds, getUniqueOwnerIds, SpaceStruct, flattenSpaceStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
 import { fetchProfiles, ProfileData, selectProfiles } from '../profiles/profilesSlice'
 
-export type SpaceData = NormalizedSpace & SpaceContent & {
+export type SpaceData = SpaceStruct & SpaceContent & {
   owner?: ProfileData
 }
 
-const spacesAdapter = createEntityAdapter<NormalizedSpace>()
+const spacesAdapter = createEntityAdapter<SpaceStruct>()
 
 const spacesSelectors = spacesAdapter.getSelectors<RootState>(state => state.spaces)
 
@@ -70,7 +70,7 @@ type FetchArgs = ApiAndIds & {
   withOwner?: boolean
 }
 
-export const fetchSpaces = createAsyncThunk<NormalizedSpace[], FetchArgs, ThunkApiConfig>(
+export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchArgs, ThunkApiConfig>(
   'spaces/fetchMany',
   async ({ api, ids, withContent = true, withOwner = true }, { getState, dispatch }) => {
 
@@ -81,7 +81,7 @@ export const fetchSpaces = createAsyncThunk<NormalizedSpace[], FetchArgs, ThunkA
     }
 
     const structs = await api.substrate.findSpaces({ ids: idsToBns(newIds) })
-    const entities = normalizeSpaceStructs(structs)
+    const entities = flattenSpaceStructs(structs)
     const fetches: Promise<any>[] = []
     
     if (withOwner) {
