@@ -13,7 +13,7 @@ type CbArgs = {
 type CbFn<Result extends {}> = (props: CbArgs) => Promise<Result>
 
 export const withServerRedux = async <ResultProps extends {} = {}> (
-  component: NextComponentType<NextPageContext, ResultProps>,
+  component: NextComponentType<NextPageContext, ResultProps, ResultProps>,
   cb?: CbFn<ResultProps>
 ) =>
   component.getInitialProps = async (context: NextPageContext) => {

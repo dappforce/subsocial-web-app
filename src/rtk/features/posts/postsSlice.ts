@@ -1,11 +1,10 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, idsToBns, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { getUniqueContentIds, getUniqueOwnerIds, PostStruct, flattenPostStructs, getUniqueSpaceIds } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
 import { fetchSpaces, selectSpaces } from '../spaces/spacesSlice'
-import { PostWithSomeDetails, ProfileData, SpaceData } from 'src/rtk/app/dto'
 
 const postsAdapter = createEntityAdapter<PostStruct>()
 

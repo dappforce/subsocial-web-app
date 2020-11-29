@@ -1,4 +1,4 @@
-import { AsyncThunkAction, EntityId } from '@reduxjs/toolkit'
+import { AsyncThunkAction } from '@reduxjs/toolkit'
 import { getFirstOrUndefined } from '@subsocial/utils'
 import { useState } from 'react'
 import { shallowEqual } from 'react-redux'
