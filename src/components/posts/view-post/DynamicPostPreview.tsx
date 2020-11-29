@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { newLogger } from '@subsocial/utils'
-import { PostWithAllDetails } from '@subsocial/types/dto'
+import { PostWithAllDetails } from 'src/types'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { InnerPreviewProps } from './ViewRegularPreview'
 import PostPreview, { BarePreviewProps } from './PostPreview'

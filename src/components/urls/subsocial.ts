@@ -1,23 +1,22 @@
-import { Space, Post, SpaceId } from '@subsocial/types/substrate/interfaces'
-import { stringifyNumber, AnyAddress, AnyText, stringifyAddress } from '../substrate'
+import { AnyAddress, AnyText, stringifyAddress } from '../substrate'
 import { newLogger, notDef } from '@subsocial/utils'
-import BN from 'bn.js'
 import { slugifyHandle, stringifySubUrls } from './helpers'
 import { createPostSlug, HasTitleOrBody } from '../posts/slugify'
+import { EntityId, PostStruct, SpaceStruct } from 'src/types'
 
 const log = newLogger('URLs')
 
 // Space URLs
 // --------------------------------------------------
 
-export type HasSpaceIdOrHandle = Pick<Space, 'id' | 'handle'>
+export type HasSpaceIdOrHandle = Pick<SpaceStruct, 'id' | 'handle'>
 
 /**
  * WARN: It's not recommended to use this hack.
  * You should pass both space's id and handle in order to construct
  * good looking URLs for spaces and posts that support a space handle.
  */
-export function newSpaceUrlFixture (id: SpaceId | BN): HasSpaceIdOrHandle {
+export function newSpaceUrlFixture (id: EntityId): HasSpaceIdOrHandle {
   return { id } as HasSpaceIdOrHandle
 }
 
@@ -27,7 +26,7 @@ export function spaceIdForUrl ({ id, handle }: HasSpaceIdOrHandle): string {
     return ''
   }
 
-  return slugifyHandle(handle) || stringifyNumber(id) as string
+  return slugifyHandle(handle) || id
 }
 
 /** /[spaceId] */
@@ -55,7 +54,8 @@ export function aboutSpaceUrl (space: HasSpaceIdOrHandle): string {
 // Post URLs
 // --------------------------------------------------
 
-export type HasPostId = Pick<Post, 'id'>
+export type HasPostId = Pick<PostStruct, 'id'>
+
 export type HasDataForSlug = {
   struct: HasPostId,
   content?: HasTitleOrBody

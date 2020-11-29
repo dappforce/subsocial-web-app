@@ -1,6 +1,6 @@
 import React from 'react'
 import { RegularPreview, SharedPreview, HiddenPostAlert } from '.'
-import { PostWithSomeDetails, PostWithAllDetails, SpaceData } from '@subsocial/types'
+import { PostWithSomeDetails, PostWithAllDetails, SpaceData } from 'src/types'
 import { PostExtension } from '@subsocial/types/substrate/classes'
 import { Segment } from 'src/components/utils/Segment'
 import { isSharedPost } from './helpers'
@@ -18,16 +18,16 @@ export type PreviewProps = BarePreviewProps & {
 }
 
 export function PostPreview (props: PreviewProps) {
-  const { postDetails, space: externalSpace, asRegularPost } = props
+  const { postDetails, space: externalSpace } = props
   const { space: globalSpace, post: { struct } } = postDetails
-  const { extension } = struct
+  const { isRegularPost } = struct
   const space = externalSpace || globalSpace
 
   if (!space) return null
 
   return <Segment className='DfPostPreview'>
     <HiddenPostAlert post={struct} space={space} preview />
-    {asRegularPost || !isSharedPost(extension as PostExtension)
+    {isRegularPost
       ? <RegularPreview space={space} {...props} />
       : <SharedPreview space={space} {...props} />
     }

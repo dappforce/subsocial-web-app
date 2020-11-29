@@ -1,26 +1,24 @@
-import React, { useState } from 'react'
-import { PostWithSomeDetails } from '@subsocial/types'
-import { Menu, Dropdown, Button } from 'antd'
-import { ShareLink, Copy } from 'src/components/urls/helpers'
-import { facebookShareUrl, postUrl, twitterShareUrl, linkedInShareUrl, redditShareUrl, copyUrl } from 'src/components/urls'
-import { IconWithLabel } from 'src/components/utils'
+import styles from './index.module.sass'
+
 import {
   FacebookOutlined,
-  TwitterOutlined,
   LinkedinOutlined,
-  RedditOutlined,
-  ShareAltOutlined,
-  LinkOutlined
+  LinkOutlined, RedditOutlined,
+  ShareAltOutlined, TwitterOutlined
 } from '@ant-design/icons'
-import SpaceShareLink from '../SpaceShareLink'
-import { Space } from '@subsocial/types/substrate/interfaces'
-
-import styles from './index.module.sass'
+import { PostWithSomeDetails } from 'src/types'
+import { Button, Dropdown, Menu } from 'antd'
+import React, { useState } from 'react'
+import { copyUrl, facebookShareUrl, linkedInShareUrl, postUrl, redditShareUrl, twitterShareUrl } from 'src/components/urls'
+import { Copy, ShareLink } from 'src/components/urls/helpers'
+import { IconWithLabel } from 'src/components/utils'
 import { FVoid } from 'src/components/utils/types'
+import { SpaceStruct } from 'src/types'
+import SpaceShareLink from '../SpaceShareLink'
 
 type ShareMenuProps = {
   postDetails: PostWithSomeDetails,
-  space: Space,
+  space: SpaceStruct,
   preview?: boolean,
   title?: string
   className?: string,

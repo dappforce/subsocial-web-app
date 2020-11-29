@@ -1,4 +1,4 @@
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { isEmptyStr } from '@subsocial/utils'
 import { useRouter } from 'next/router'

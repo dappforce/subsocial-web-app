@@ -12,6 +12,7 @@ export const tryParseInt = (maybeNum: string | number, def: number): number => {
   }
 }
 
+// TODO get rid of this function once we move from BN ids to string ids.
 export function stringifyBns (ids: BN[]): string[] {
   return ids.map(id => id?.toString())
 }

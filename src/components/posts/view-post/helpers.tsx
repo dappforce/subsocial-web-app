@@ -8,8 +8,8 @@ import isEmpty from 'lodash.isempty'
 import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/icons'
 import { Menu, Dropdown, Button } from 'antd'
 import { isMyAddress } from '../../auth/MyAccountContext'
-import { Post, Space, PostExtension, PostId } from '@subsocial/types/substrate/interfaces'
-import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData } from '@subsocial/types/dto'
+import { Post, PostExtension, PostId } from '@subsocial/types/substrate/interfaces'
+import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData, SpaceStruct, PostStruct } from 'src/types'
 import { PostContent as PostContentType } from '@subsocial/types'
 import ViewTags from '../../utils/ViewTags'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
@@ -33,7 +33,7 @@ import { DfMd } from 'src/components/utils/DfMd'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
 
 type DropdownProps = {
-  space: Space
+  space: SpaceStruct
   post: PostData
   withEditButton?: boolean
 }
@@ -100,13 +100,12 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
 }
 
 type HiddenPostAlertProps = EntityStatusProps & {
-  post: Post,
-  space?: SpaceData
+  post: PostStruct
 }
 
 export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   const { post } = props
-  const kind = isComment(post.extension) ? 'comment' : 'post'
+  const kind = post.isComment ? 'comment' : 'post'
   const PostAlert = () => <HiddenEntityPanel struct={post} type={kind} {...props} />
 
   // TODO fix view Space alert when space is hidden
@@ -175,7 +174,7 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
 
 type PostImageProps = {
   post: PostData,
-  space: Space
+  space: SpaceStruct
 }
 
 const PostImage = ({ post, space }: PostImageProps) => {
@@ -198,7 +197,7 @@ const PostImage = ({ post, space }: PostImageProps) => {
 
 type PostContentProps = {
   postDetails: PostWithSomeDetails,
-  space: Space,
+  space: SpaceStruct,
   content?: PostContentType
   withImage?: boolean
 }
@@ -225,7 +224,7 @@ export const PostContent: React.FunctionComponent<PostContentProps> = (props) =>
 
 type PostActionsPanelProps = {
   postDetails: PostWithSomeDetails,
-  space: Space,
+  space: SpaceStruct,
   toogleCommentSection?: () => void,
   preview?: boolean,
   withBorder?: boolean

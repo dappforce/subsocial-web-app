@@ -1,9 +1,8 @@
 import React from 'react'
-import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewComment } from './ViewComment'
 import { NewComment } from './CreateComment'
 import { mdToText } from 'src/utils'
-import { PostWithSomeDetails, PostData } from '@subsocial/types/dto'
+import { PostWithSomeDetails, PostData } from 'src/types'
 import { NextPage } from 'next'
 import { getProfileName } from '../substrate'
 import { Pluralize } from '../utils/Plularize'
@@ -12,9 +11,10 @@ import { CommentsTree } from './CommentTree'
 import Section from '../utils/Section'
 import { PageContent } from '../main/PageWrapper'
 import { postUrl } from '../urls'
+import { SpaceStruct } from 'src/types'
 
 type CommentSectionProps = {
-  space: Space,
+  space: SpaceStruct,
   post: PostWithSomeDetails,
   replies?: PostWithSomeDetails[],
   hashId?: string,
@@ -36,7 +36,7 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
 type CommentPageProps = {
   comment: PostWithSomeDetails,
   parentPost: PostData,
-  space: Space,
+  space: SpaceStruct,
   replies: PostWithSomeDetails[]
 }
 

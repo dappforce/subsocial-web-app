@@ -1,4 +1,3 @@
-import { Post, Space } from '@subsocial/types/substrate/interfaces'
 import { PostWithSomeDetails } from '@subsocial/types'
 import React, { useState, useCallback } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils'
@@ -13,19 +12,20 @@ import { MutedDiv } from '../utils/MutedText'
 import { isFakeId } from './helpers'
 import DataList from '../lists/DataList'
 import { ZERO, resolveBn } from '../utils'
+import { PostStruct, SpaceStruct } from 'src/types'
 
 const log = newLogger('CommentTree')
 
 type LoadProps = {
-  rootPost?: Post,
-  parent: Post,
-  space: Space,
+  rootPost?: PostStruct,
+  parent: PostStruct,
+  space: SpaceStruct,
   replies?: PostWithSomeDetails[]
 }
 
 type CommentsTreeProps = {
-  rootPost?: Post,
-  space: Space,
+  rootPost?: PostStruct,
+  space: SpaceStruct,
   comments: PostWithSomeDetails[]
 }
 

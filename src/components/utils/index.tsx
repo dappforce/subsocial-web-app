@@ -5,7 +5,7 @@ import React from 'react'
 import { Option } from '@polkadot/types'
 import { LoadingOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import { Profile, SocialAccount, Post, Space } from '@subsocial/types/substrate/interfaces'
+import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { ProfileContent } from '@subsocial/types/offchain'
 import { Moment } from '@polkadot/types/interfaces'
 import { isMyAddress } from '../auth/MyAccountContext'
@@ -13,6 +13,7 @@ import { AnyAccountId } from '@subsocial/types'
 import { hexToBn } from '@polkadot/util'
 import Error from 'next/error'
 import isbot from 'isbot'
+import { PostStruct, SpaceStruct } from 'src/types'
 export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
@@ -77,15 +78,15 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') =
   return dayjs(seconds).format(format)
 }
 
-export const fakeClientId = () => `fake-${new Date().getTime()}`
+export const tmpClientId = () => `tmp-id-${new Date().getTime()}`
 
 type VisibilityProps = {
-  struct: Post | Space
+  struct: PostStruct | SpaceStruct
   address?: AnyAccountId
 }
 
-export const isVisible = ({ struct: { hidden, owner }, address }: VisibilityProps) =>
-  !hidden.valueOf() || isMyAddress(address || owner)
+export const isVisible = ({ struct: { hidden, ownerId }, address }: VisibilityProps) =>
+  !hidden || isMyAddress(address || ownerId)
 
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
 
@@ -137,7 +138,5 @@ export const resolveBn = (value: BN | string) => {
     return hexToBn(value.toString())
   }
 }
-
-export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'
 
 export const PageNotFound = () => <Error statusCode={404} />

@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react'
 import { /* CaretDownOutlined, CaretUpOutlined, */ CommentOutlined, NotificationOutlined } from '@ant-design/icons'
 import { Comment, Button, Tag } from 'antd'
-import { PostWithSomeDetails } from '@subsocial/types/dto'
+import { PostWithSomeDetails } from 'src/types'
 import { CommentContent } from '@subsocial/types'
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview'
 import { Space, Post } from '@subsocial/types/substrate/interfaces'
@@ -18,10 +18,11 @@ import { CommentBody } from './helpers'
 import { equalAddresses } from '../substrate'
 import { postUrl } from '../urls'
 import { ShareDropdown } from '../posts/share/ShareDropdown'
+import { PostStruct, SpaceStruct } from 'src/types'
 
 type Props = {
-  rootPost?: Post,
-  space: Space,
+  rootPost?: PostStruct,
+  space: SpaceStruct,
   comment: PostWithSomeDetails,
   replies?: PostWithSomeDetails[],
   withShowReplies?: boolean
@@ -57,7 +58,7 @@ export const ViewComment: FunctionComponent<Props> = ({
   const commentLink = postUrl(space, comment.post)
 
   const isRootPostOwner = equalAddresses(
-    rootPost?.owner,
+    rootPost?.ownerId,
     struct.owner
   )
 

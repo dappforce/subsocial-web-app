@@ -1,4 +1,4 @@
-import { PostWithSomeDetails } from '@subsocial/types/dto'
+import { PostWithSomeDetails } from 'src/types'
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { PostId } from '@subsocial/types/substrate/interfaces'
 import { useState } from 'react'
@@ -10,6 +10,7 @@ type Props = {
   postIds: PostId[]
 }
 
+// TODO use redux
 export const useLoadUnlistedPostsByOwner = ({ owner, postIds }: Props) => {
   const isMySpaces = isMyAddress(owner)
   const [ myHiddenPosts, setMyHiddenPosts ] = useState<PostWithSomeDetails[]>()

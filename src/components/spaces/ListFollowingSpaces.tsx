@@ -1,4 +1,4 @@
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'

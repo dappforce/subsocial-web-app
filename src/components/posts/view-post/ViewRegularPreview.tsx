@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { CommentSection } from '../../comments/CommentsSection'
 import { InfoPostPreview, PostActionsPanel, PostNotFound } from './helpers'
 import { PreviewProps } from './PostPreview'

@@ -1,16 +1,16 @@
 import { PostContent } from '@subsocial/types'
 import { nonEmptyStr } from '@subsocial/utils'
 import slugify from '@sindresorhus/slugify'
-import BN from 'bn.js'
 import { summarize } from 'src/utils'
+import { EntityId } from 'src/types'
 
 const MAX_SLUG_LENGTH = 60
 const SLUG_SEPARATOR = '-'
 
 export type HasTitleOrBody = Pick<PostContent, 'body' | 'title'>
 
-export const createPostSlug = (postId: BN, content?: HasTitleOrBody) => {
-  let slug = postId.toString()
+export const createPostSlug = (postId: EntityId, content?: HasTitleOrBody) => {
+  let slug: string = '' + postId
 
   if (content) {
     const { title, body } = content
@@ -22,14 +22,6 @@ export const createPostSlug = (postId: BN, content?: HasTitleOrBody) => {
   return slug
 }
 
-export const getPostIdFromSlug = (slug: string) => {
-  try {
-    const postId = slug.split(SLUG_SEPARATOR).pop()
-
-    if (!postId) return undefined
-
-    return new BN(postId)
-  } catch {
-    return undefined
-  }
+export const getPostIdFromSlug = (slug: string): EntityId | undefined => {
+  return slug.split(SLUG_SEPARATOR).pop()
 }

@@ -12,7 +12,7 @@ import { SummarizeMd } from '../utils/md'
 import { aboutSpaceUrl, spaceUrl } from '../urls'
 import AboutSpaceLink from './AboutSpaceLink'
 import { DropdownMenu, EditMenuLink } from './helpers'
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 
 export type SpaceContent = {
   spaceId: BN,

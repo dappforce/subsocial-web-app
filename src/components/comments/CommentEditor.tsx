@@ -10,7 +10,7 @@ import DfMdEditor from '../utils/DfMdEditor'
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
 import { CommentContent } from '@subsocial/types'
 import { Button } from 'antd'
-import { fakeClientId } from '../utils'
+import { tmpClientId } from '../utils'
 import { CommentTxButtonType } from './utils'
 import { getNewIdFromEvent } from '../substrate'
 import BN from 'bn.js'
@@ -40,7 +40,7 @@ export const CommentEditor = (props: Props) => {
   const { content, withCancel, callback, CommentTxButton, asStub } = props
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
-  const [ fakeId ] = useState(fakeClientId())
+  const [ fakeId ] = useState(tmpClientId())
   const [ toolbar, setToolbar ] = useState(!asStub)
 
   const { control, errors, formState, watch, reset } = useForm({

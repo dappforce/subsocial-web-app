@@ -10,7 +10,7 @@ import DataList from '../lists/DataList'
 
 type Props = {
   accounts?: AccountId[],
-  accountsCount: number,
+  // accountsCount: number,
   title: string,
   open: boolean,
   close: () => void

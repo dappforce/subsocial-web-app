@@ -1,10 +1,8 @@
-import { PostWithSomeDetails, SpaceData } from '@subsocial/types/dto'
-import { PostId, Space } from '@subsocial/types/substrate/interfaces'
+import { PostWithSomeDetails, SpaceData, PostId } from 'src/types'
 import React, { useCallback } from 'react'
 import DataList from 'src/components/lists/DataList'
 import { InfiniteListByPage } from 'src/components/lists/InfiniteList'
 import PostPreview from 'src/components/posts/view-post/PostPreview'
-import { resolveBn } from 'src/components/utils'
 import { getPageOfIds } from 'src/components/utils/getIds'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext'
@@ -20,7 +18,9 @@ type Props = {
 
 const UnlistedPosts = ({ spaceData, postIds }: Props) => {
   const { struct: space } = spaceData
-  const { myHiddenPosts, isLoading } = useLoadUnlistedPostsByOwner({ owner: space.owner, postIds })
+
+  // TODO use redux
+  const { myHiddenPosts, isLoading } = useLoadUnlistedPostsByOwner({ owner: space.ownerId, postIds })
 
   if (isLoading) return null
 
@@ -31,7 +31,7 @@ const UnlistedPosts = ({ spaceData, postIds }: Props) => {
     dataSource={myHiddenPosts}
     renderItem={(item) =>
       <PostPreview
-        key={item.post.struct.id.toString()}
+        key={item.id}
         postDetails={item}
         space={spaceData}
         withActions
@@ -40,23 +40,18 @@ const UnlistedPosts = ({ spaceData, postIds }: Props) => {
   /> : null
 }
 
-const getPublicPostsCount = (space: Space): number =>
-  resolveBn(space.posts_count)
-    .sub(resolveBn(space.hidden_posts_count))
-    .toNumber()
-
 export const PostPreviewsOnSpace = (props: Props) => {
   const { spaceData, posts, postIds } = props
   const { struct: space } = spaceData
-  const publicPostsCount = getPublicPostsCount(space)
+  const { visiblePostsCount } = space
   const { isApiReady, subsocial } = useSubsocialApi()
 
   const postsSectionTitle = () =>
     <div className='w-100 d-flex justify-content-between align-items-baseline'>
       <span style={{ marginRight: '1rem' }}>
-        <Pluralize count={publicPostsCount} singularText='Post'/>
+        <Pluralize count={visiblePostsCount} singularText='Post'/>
       </span>
-      {publicPostsCount > 0 &&
+      {visiblePostsCount > 0 &&
         <CreatePostButton space={space} title={'Write Post'} className='mb-2' />
       }
     </div>
@@ -72,9 +67,10 @@ export const PostPreviewsOnSpace = (props: Props) => {
 
         const pageIds = getPageOfIds(postIds, { page, size })
 
+        // TODO use redux
         return subsocial.findPublicPostsWithAllDetails(pageIds)
       }}
-      totalCount={publicPostsCount}
+      totalCount={visiblePostsCount}
       noDataDesc='No posts yet'
       noDataExt={isMySpace(space)
         ? <CreatePostButton space={space} />
