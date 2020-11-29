@@ -1,8 +1,10 @@
 import axios from 'axios'
 import { offchainUrl } from './env'
-import { Activity, Counts } from '@subsocial/types/offchain'
+import { Counts } from '@subsocial/types/offchain'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { ElasticQueryParams } from '@subsocial/types/offchain/search'
+import { Activity } from '../activity/NotificationUtils'
+import { ReadAllMessage, SessionKeyMessage } from '../../session_keys/createSessionKey';
 
 const log = newLogger('OffchainRequests')
 
@@ -117,14 +119,25 @@ export const getActivityCounts = async (address: string): Promise<Counts> => {
 }
 
 // TODO require refactor
-export const clearNotifications = async (myAddress: string): Promise<void> =>{
+export const clearNotifications = async (myAddress: string, signature: string, message: ReadAllMessage): Promise<void> =>{
   try {
-    const res = await axios.post(getOffchainUrl(`/notifications/${myAddress}/readAll`))
+    const res = await axios.post(getOffchainUrl(`/notifications/readAll`), { myAddress, signature, message })
     if (res.status !== 200) {
       console.warn('Failed to mark all notifications as read for account:', myAddress, 'res.status:', res.status)
     }
   } catch (err) {
     console.log(`Failed to mark all notifications as read for account: ${myAddress}`, err)
+  }
+}
+
+export const insertToSessionKeyTable = async (message: SessionKeyMessage, signature: string) => {
+  try {
+    const res = await axios.post(getOffchainUrl(`/notifications/addSessionKey`), { message, signature })
+    if (res.status !== 200) {
+      console.warn('Failed to insert session key for account:', message.mainKey, 'res.status:', res.status)
+    }
+  } catch (err) {
+    console.log(`Failed to insert session key for account: ${message.mainKey}`, err)
   }
 }
 

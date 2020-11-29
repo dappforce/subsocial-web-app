@@ -8,6 +8,7 @@ import { NotificationType } from './NotificationUtils'
 import { Notification } from './Notification'
 import { LoadMoreProps, BaseActivityProps, ActivityProps } from './types'
 import { InnerActivities } from './InnerActivities'
+import { readAllNotifications } from 'src/session_keys/createSessionKey'
 type StructId = string
 
 export const NotifActivities = ({ loadMore ,...props }: ActivityProps<NotificationType>) => {
@@ -35,7 +36,11 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn, type: NotifA
     const offset = (page - 1) * size
 
     const activities = await getActivity(address, offset, DEFAULT_PAGE_SIZE) || []
-
+    const lastActivity = activities.pop()
+    if (lastActivity && !offset) {
+      const { block_number, event_index } = lastActivity
+      await readAllNotifications(block_number, event_index, address)
+    }
     return loadNotifications({ subsocial, activities , activityStore, type, myAddress: address })
   }
 
