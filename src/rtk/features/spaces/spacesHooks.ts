@@ -2,9 +2,9 @@ import { EntityId } from '@reduxjs/toolkit'
 import { shallowEqual } from 'react-redux'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
-import { fetchSpaces, FullSpace, selectSpaces } from 'src/rtk/features/spaces/spacesSlice'
+import { fetchSpaces, SpaceData, selectSpaces } from 'src/rtk/features/spaces/spacesSlice'
 
-export const useFetchSpaces = (ids: EntityId[]): FullSpace[] => {
+export const useFetchSpaces = (ids: EntityId[]): SpaceData[] => {
   const dispatch = useAppDispatch()
 
   const entities = useAppSelector(state => selectSpaces(state, { ids }), shallowEqual)

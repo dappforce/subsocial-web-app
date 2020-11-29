@@ -4,13 +4,12 @@ import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyById
 import { getUniqueContentIds, getUniqueIds, getUniqueOwnerIds, NormalizedPost, normalizePostStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
-import { fetchProfiles, FullProfile, selectProfiles } from '../profiles/profilesSlice'
-import { fetchSpaces, FullSpace, selectSpaces } from '../spaces/spacesSlice'
+import { fetchProfiles, ProfileData, selectProfiles } from '../profiles/profilesSlice'
+import { fetchSpaces, SpaceData, selectSpaces } from '../spaces/spacesSlice'
 
-// Rename to PostData or EnrichedPost
-export type FullPost = NormalizedPost & PostContent & {
-  owner?: FullProfile
-  space?: FullSpace
+export type PostData = NormalizedPost & PostContent & {
+  owner?: ProfileData
+  space?: SpaceData
 }
 
 const postsAdapter = createEntityAdapter<NormalizedPost>()
@@ -39,12 +38,12 @@ type SelectArgs = {
   withSpace?: boolean
 }
 
-export function selectPosts (state: RootState, props: SelectArgs): FullPost[] {
+export function selectPosts (state: RootState, props: SelectArgs): PostData[] {
   const { ids, withOwner = true, withSpace = true } = props
   const posts = _selectPostsByIds(state, ids)
   
   // TODO Fix copypasta. Places: selectSpaces & selectPosts
-  const ownerByIdMap = new Map<EntityId, FullProfile>()
+  const ownerByIdMap = new Map<EntityId, ProfileData>()
   if (withOwner) {
     const ownerIds = getUniqueOwnerIds(posts)
     const profiles = selectProfiles(state, ownerIds)
@@ -53,7 +52,7 @@ export function selectPosts (state: RootState, props: SelectArgs): FullPost[] {
     })
   }
 
-  const spaceByIdMap = new Map<EntityId, FullSpace>()
+  const spaceByIdMap = new Map<EntityId, SpaceData>()
   if (withSpace) {
     const spaceIds = getUniqueSpaceIds(posts)
     const spaces = selectSpaces(state, { ids: spaceIds, ...withSpaceOwner })
@@ -62,18 +61,18 @@ export function selectPosts (state: RootState, props: SelectArgs): FullPost[] {
     })
   }
   
-  const result: FullPost[] = []
+  const result: PostData[] = []
   posts.forEach(post => {
     const { ownerId, spaceId } = post
 
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
-    let owner: FullProfile | undefined
+    let owner: ProfileData | undefined
     if (ownerId) {
       owner = ownerByIdMap.get(ownerId)
     }
 
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
-    let space: FullSpace | undefined
+    let space: SpaceData | undefined
     if (spaceId) {
       space = spaceByIdMap.get(spaceId)
     }

@@ -16,7 +16,7 @@ type Props = HasInitialReduxState & {
 
 export const SpacesList: FC<Props> = ({ ids: initialIds = [] }) => {
   // const [ spaceIds, setSpaceIds ] = useState([ '1002', '1003', '1004' ])
-  // const spaces = useFetchSpacesByIds(spaceIds)
+  // const spaces = useFetchSpaces(spaceIds)
 
   const [ ids, setIds ] = useState(initialIds)
   const posts = useFetchPosts(ids)

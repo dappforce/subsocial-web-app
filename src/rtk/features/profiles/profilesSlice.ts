@@ -8,8 +8,7 @@ import { RootState } from 'src/rtk/app/rootReducer'
 import { asString } from 'src/utils'
 import { fetchContents, selectProfileContentById } from '../contents/contentsSlice'
 
-// Rename to ProfileData or EnrichedProfile
-export type FullProfile = NormalizedProfile & ProfileContent
+export type ProfileData = NormalizedProfile & ProfileContent
 
 const profilesAdapter = createEntityAdapter<NormalizedProfile>()
 
@@ -24,10 +23,10 @@ export const {
   selectTotal: selectTotalProfiles
 } = profilesSelectors
 
-export const selectProfile = (state: RootState, id: EntityId): FullProfile | undefined =>
+export const selectProfile = (state: RootState, id: EntityId): ProfileData | undefined =>
   selectOneById(state, id, selectProfileStructById, selectProfileContentById)
 
-export const selectProfiles = (state: RootState, ids: EntityId[]): FullProfile[] =>
+export const selectProfiles = (state: RootState, ids: EntityId[]): ProfileData[] =>
   selectManyByIds(state, ids, selectProfileStructById, selectProfileContentById)
 
 const filterNewIds = createFilterNewIds(selectProfileIds)

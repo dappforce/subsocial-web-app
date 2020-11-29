@@ -4,11 +4,10 @@ import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyById
 import { getUniqueContentIds, getUniqueOwnerIds, NormalizedSpace, normalizeSpaceStructs } from 'src/rtk/app/normalizers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
-import { fetchProfiles, FullProfile, selectProfiles } from '../profiles/profilesSlice'
+import { fetchProfiles, ProfileData, selectProfiles } from '../profiles/profilesSlice'
 
-// Rename to SpaceData or EnrichedSpace
-export type FullSpace = NormalizedSpace & SpaceContent & {
-  owner?: FullProfile
+export type SpaceData = NormalizedSpace & SpaceContent & {
+  owner?: ProfileData
 }
 
 const spacesAdapter = createEntityAdapter<NormalizedSpace>()
@@ -24,7 +23,7 @@ export const {
   selectTotal: selectTotalSpaces
 } = spacesSelectors
 
-// const _selectSpace = (state: RootState, id: EntityId): FullSpace | undefined =>
+// const _selectSpace = (state: RootState, id: EntityId): SpaceData | undefined =>
 //   selectOneById(state, id, selectSpaceStructById, selectSpaceContentById)
 
 const _selectSpacesByIds = (state: RootState, ids: EntityId[]) =>
@@ -35,12 +34,12 @@ type SelectArgs = {
   withOwner?: boolean
 }
 
-export function selectSpaces (state: RootState, props: SelectArgs): FullSpace[] {
+export function selectSpaces (state: RootState, props: SelectArgs): SpaceData[] {
   const { ids, withOwner = true } = props
   const spaces = _selectSpacesByIds(state, ids)
 
   // TODO Fix copypasta. Places: selectSpaces & selectPosts
-  const ownerByIdMap = new Map<EntityId, FullProfile>()
+  const ownerByIdMap = new Map<EntityId, ProfileData>()
   if (withOwner) {
     const ownerIds = getUniqueOwnerIds(spaces)
     const profiles = selectProfiles(state, ownerIds)
@@ -49,12 +48,12 @@ export function selectSpaces (state: RootState, props: SelectArgs): FullSpace[] 
     })
   }
   
-  const result: FullSpace[] = []
+  const result: SpaceData[] = []
   spaces.forEach(space => {
     const { ownerId } = space
 
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
-    let owner: FullProfile | undefined
+    let owner: ProfileData | undefined
     if (ownerId) {
       owner = ownerByIdMap.get(ownerId)
     }
