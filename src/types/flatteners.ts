@@ -67,7 +67,7 @@ type FlatSpaceOrPost =
 
 /** Flat space struct. */
 export type SpaceStruct = FlatSpaceOrPost & CanHaveParentId & CanHaveHandle & {
-  totalPostsCount: number
+  postsCount: number
   hiddenPostsCount: number
   visiblePostsCount: number
 
@@ -78,7 +78,7 @@ export type SpaceStruct = FlatSpaceOrPost & CanHaveParentId & CanHaveHandle & {
 
 /** Flat post struct. */
 export type PostStruct = FlatSpaceOrPost & CanHaveSpaceId & {
-  totalRepliesCount: number
+  repliesCount: number
   hiddenRepliesCount: number
   visibleRepliesCount: number
 
@@ -210,9 +210,9 @@ function flattenSpaceOrPostStruct (struct: SpaceOrPostStruct): FlatSpaceOrPost {
 }
 
 export function flattenSpaceStruct (struct: Space): SpaceStruct {
-  const totalPostsCount = struct.posts_count.toNumber()
+  const postsCount = struct.posts_count.toNumber()
   const hiddenPostsCount = struct.hidden_posts_count.toNumber()
-  const visiblePostsCount = totalPostsCount - hiddenPostsCount
+  const visiblePostsCount = postsCount - hiddenPostsCount
 
   let parentField: CanHaveParentId = {}
   if (struct.parent_id.isSome) {
@@ -233,7 +233,7 @@ export function flattenSpaceStruct (struct: Space): SpaceStruct {
     ...parentField,
     ...handleField,
 
-    totalPostsCount,
+    postsCount,
     hiddenPostsCount,
     visiblePostsCount,
     followersCount: struct.followers_count.toNumber(),
@@ -269,9 +269,9 @@ function flattenPostExtension (struct: Post): FlatPostExtension {
 }
 
 export function flattenPostStruct (struct: Post): PostStruct {
-  const totalRepliesCount = struct.replies_count.toNumber()
+  const repliesCount = struct.replies_count.toNumber()
   const hiddenRepliesCount = struct.hidden_replies_count.toNumber()
-  const visibleRepliesCount = totalRepliesCount - hiddenRepliesCount
+  const visibleRepliesCount = repliesCount - hiddenRepliesCount
   const { isRegularPost, isSharedPost, isComment } = struct.extension
   const extensionFields = flattenPostExtension(struct)
   
@@ -287,7 +287,7 @@ export function flattenPostStruct (struct: Post): PostStruct {
     ...spaceField,
     ...extensionFields,
 
-    totalRepliesCount,
+    repliesCount,
     hiddenRepliesCount,
     visibleRepliesCount,
 
