@@ -15,7 +15,7 @@ import { ViewSpaceProps } from './ViewSpaceProps'
 import withLoadSpaceDataById from './withLoadSpaceDataById'
 import { PageContent } from '../main/PageWrapper'
 import { getSpaceId } from '../substrate'
-import { SpaceNotFound } from './helpers'
+import { isUnlistedSpace, SpaceNotFound } from './helpers'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
 import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
 import Segment from '../utils/Segment'
@@ -30,7 +30,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const { spaceData } = props
 
-  if (!spaceData || !spaceData?.struct) {
+  if (isUnlistedSpace(spaceData)) {
     return <SpaceNotFound />
   }
 

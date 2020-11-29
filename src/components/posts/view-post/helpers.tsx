@@ -19,11 +19,10 @@ import HiddenPostButton from '../HiddenPostButton'
 import NoData from 'src/components/utils/EmptyList'
 import { VoterButtons } from 'src/components/voting/VoterButtons'
 import Segment from 'src/components/utils/Segment'
-import { RegularPreview, PostDetailsProps } from '.'
+import { RegularPreview } from '.'
 import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters'
 import { isHidden } from '@subsocial/api/utils/visibility-filter'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { PreviewProps } from './PostPreview'
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
@@ -355,13 +354,4 @@ export const useSubscribedPost = (initPost: Post) => {
   }, [ initPost.id.toString() ])
 
   return post
-}
-
-export const withSubscribedPost = (Component: React.ComponentType<any>) => {
-  return (props: PreviewProps | PostDetailsProps) => {
-    const { postDetails } = props
-    postDetails.post.struct = useSubscribedPost(postDetails.post.struct)
-
-    return <Component {...props}/>
-  }
 }

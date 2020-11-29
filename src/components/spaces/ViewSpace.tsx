@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic'
 import Error from 'next/error'
 import React, { useCallback } from 'react'
 import { Segment } from 'src/components/utils/Segment'
-import { isHidden, resolveBn } from '../utils'
+import { resolveBn } from '../utils'
 import { SummarizeMd } from '../utils/md'
 import MyEntityLabel from '../utils/MyEntityLabel'
 import { return404 } from '../utils/next'
@@ -21,7 +21,7 @@ import withLoadSpaceDataById from './withLoadSpaceDataById'
 import AboutSpaceLink from './AboutSpaceLink'
 import ViewSpaceLink from './ViewSpaceLink'
 import { PageContent } from '../main/PageWrapper'
-import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers'
+import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace, isUnlistedSpace } from './helpers'
 import { ContactInfo } from './SocialLinks/ViewSocialLinks'
 import { MutedSpan } from '../utils/MutedText'
 import { BareProps } from '../utils/types'
@@ -43,8 +43,8 @@ export const ViewSpace = (props: Props) => {
 
   const { spaceData } = props
 
-  if (!spaceData || !spaceData?.struct || isHidden({ struct: spaceData.struct })) {
-    return <SpaceNotFound />
+  if (isUnlistedSpace(spaceData)) {
+    return null
   }
 
   const {
@@ -184,12 +184,12 @@ export const ViewSpace = (props: Props) => {
 const ViewSpacePage: NextPage<Props> = (props) => {
   const { spaceData } = props
 
-  if (!spaceData || !spaceData.content) {
-    return null
+  if (isUnlistedSpace(spaceData)) {
+    return <SpaceNotFound />
   }
 
   const id = resolveBn(spaceData.struct.id)
-  const { name, image } = spaceData.content
+  const { name, image } = spaceData.content as SpaceContent
 
   // We add this to a title to improve SEO of Polkadot projects.
   const title = name + (isPolkaProject(id) ? ' - Polkadot ecosystem projects' : '')
