@@ -1,5 +1,5 @@
 import { SpaceContent } from '@subsocial/types/offchain'
-import { isEmptyArray, nonEmptyStr } from '@subsocial/utils'
+import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils'
 import { mdToText } from 'src/utils'
 import { NextPage } from 'next'
 import Error from 'next/error'
@@ -42,8 +42,8 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   const { name, about, image, tags, links = [], email } = content
 
   const ContactInfo = useCallback(() => {
-    if (isEmptyArray(links)) return null
-  
+    if (isEmptyArray(links) && isEmptyStr(email)) return null
+
     const socialLinks = (links as string[]).map((x, i) => 
       ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
 

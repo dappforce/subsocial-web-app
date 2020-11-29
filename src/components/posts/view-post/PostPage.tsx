@@ -22,6 +22,7 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
+import { return404 } from 'src/components/utils/next'
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
@@ -127,12 +128,15 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   const idOrHandle = spaceId as string
 
   const slugStr = slug as string
-  const postIdFromUrl = getPostIdFromSlug(slugStr)
-  const replyIds = await substrate.getReplyIdsByPostId(postIdFromUrl)
-  const comments = await subsocial.findPublicPostsWithAllDetails([ ...replyIds, postIdFromUrl ])
+  const postId = getPostIdFromSlug(slugStr)
 
-  const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postIdFromUrl))
-  const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postIdFromUrl)
+  if (!postId) return return404(props)
+
+  const replyIds = await substrate.getReplyIdsByPostId(postId)
+  const comments = await subsocial.findPublicPostsWithAllDetails([ ...replyIds, postId ])
+
+  const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postId))
+  const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postId)
 
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id) as SpaceId
 
@@ -140,12 +144,11 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   const currentPostUrl = spaceUrl(currentSpace, slugStr)
 
   const space = extPostData?.space.struct || currentSpace
-  const post = { struct: { id: postIdFromUrl as PostId }, content: extPostData?.post.content }
+  const post = { struct: { id: postId as PostId }, content: extPostData?.post.content }
   const validPostUrl = postUrl(space, post)
 
   if (currentPostUrl !== validPostUrl && res) {
-    res.writeHead(301, {
-      Location: postUrl(space, post) })
+    res.writeHead(301, { Location: postUrl(space, post) })
     res.end()
   }
 
