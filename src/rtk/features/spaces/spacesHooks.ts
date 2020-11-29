@@ -4,15 +4,14 @@ import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { fetchSpaces, FullSpace, selectSpaces } from 'src/rtk/features/spaces/spacesSlice'
 
-export const useFetchSpacesByIds = (spaceIds: EntityId[]): FullSpace[] => {
+export const useFetchSpaces = (ids: EntityId[]): FullSpace[] => {
   const dispatch = useAppDispatch()
 
-  // TODO compare by (id + updated_at_block) instead of shallowEqual
-  const spaces = useAppSelector(state => selectSpaces(state, spaceIds), shallowEqual)
+  const entities = useAppSelector(state => selectSpaces(state, { ids }), shallowEqual)
 
   useSubsocialEffect(({ subsocial }) => {
-    dispatch(fetchSpaces({ api: subsocial, ids: spaceIds }))
-  }, [ spaceIds, dispatch ])
+    dispatch(fetchSpaces({ api: subsocial, ids }))
+  }, [ ids, dispatch ])
 
-  return spaces
+  return entities
 }
