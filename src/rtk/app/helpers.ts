@@ -28,6 +28,12 @@ export type ApiAndIds = {
   ids: EntityId[]
 }
 
+export type SelectManyArgs <T> = T & {
+  ids: EntityId[]
+}
+
+export type FetchManyArgs <T> = T & ApiAndIds
+
 export function createFilterNewIds (selectIds: (state: RootState) => EntityId[])
 {
   return (state: RootState, ids: EntityId[]): string[] => {

@@ -1,7 +1,7 @@
 import { Option } from '@polkadot/types'
-import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
-import { ApiAndIds, createFetchOne, createFilterNewIds, selectManyByIds, selectOneById, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, SelectManyArgs, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, ProfileStruct, flattenProfileStructs, SocialAccountWithId } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { asString } from 'src/utils'
@@ -21,17 +21,21 @@ export const {
   selectTotal: selectTotalProfiles
 } = profilesSelectors
 
-export const selectProfile = (state: RootState, id: EntityId): ProfileData | undefined =>
-  selectOneById(state, id, selectProfileStructById, selectProfileContentById)
+type Args = {
+  withContent?: boolean
+}
 
-export const selectProfiles = (state: RootState, ids: EntityId[]): ProfileData[] =>
+type SelectArgs = SelectManyArgs<Args>
+
+type FetchArgs = FetchManyArgs<Args>
+
+// export const selectProfile = (state: RootState, id: EntityId): ProfileData | undefined =>
+//   selectOneById(state, id, selectProfileStructById, selectProfileContentById)
+
+export const selectProfiles = (state: RootState, { ids }: SelectArgs): ProfileData[] =>
   selectManyByIds(state, ids, selectProfileStructById, selectProfileContentById)
 
 const filterNewIds = createFilterNewIds(selectProfileIds)
-
-type FetchArgs = ApiAndIds & {
-  withContent?: boolean
-}
 
 export const fetchProfiles = createAsyncThunk<ProfileStruct[], FetchArgs, ThunkApiConfig>(
   'profiles/fetchMany',

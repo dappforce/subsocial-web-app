@@ -157,6 +157,9 @@ export const getUniqueOwnerIds = (entities: EntityDataWithField<HasOwner>[]) =>
 export const getUniqueContentIds = (entities: EntityDataWithField<CanHaveContent>[]) =>
   getUniqueIds(entities, 'contentId')
 
+export const getUniqueSpaceIds = (entities: EntityDataWithField<CanHaveSpaceId>[]) =>
+  getUniqueIds(entities, 'spaceId')
+
 function getUpdatedFields ({ updated }: SuperCommonStruct): CanBeUpdated {
   const maybeUpdated = updated.unwrapOr(undefined)
   let res: CanBeUpdated = {

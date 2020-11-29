@@ -1,17 +1,7 @@
-import { EntityId } from '@reduxjs/toolkit'
-import { shallowEqual } from 'react-redux'
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
-import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
+import { EntityId } from 'src/rtk/app/dto'
+import { useFetchEntities } from 'src/rtk/app/hooksCommon'
+import { fetchPosts, selectPosts } from './postsSlice'
 
 export const useFetchPosts = (ids: EntityId[]) => {
-  const dispatch = useAppDispatch()
-
-  const entities = useAppSelector(state => selectPosts(state, { ids }), shallowEqual)
-
-  useSubsocialEffect(({ subsocial }) => {
-    dispatch(fetchPosts({ api: subsocial, ids }))
-  }, [ ids, dispatch ])
-
-  return entities
+  return useFetchEntities(selectPosts, fetchPosts, { ids })
 }

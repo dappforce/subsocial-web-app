@@ -2,12 +2,12 @@ import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
 import { AppDispatch, HasInitialReduxState, initializeStore } from 'src/rtk/app/store'
 import { SubsocialApi } from '@subsocial/api/subsocial'
 
-type CbProps = {
+type CbArgs = {
   dispatch: AppDispatch
   subsocial: SubsocialApi
 }
 
-type CbFn<Result extends {}> = (props: CbProps) => Promise<Result>
+type CbFn<Result extends {}> = (props: CbArgs) => Promise<Result>
 
 export async function withServerRedux
   <ResultProps extends {} = {}>

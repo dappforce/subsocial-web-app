@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, idsToBns, SelectManyArgs, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, getUniqueOwnerIds, SpaceStruct, flattenSpaceStructs } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
@@ -25,10 +25,14 @@ export const {
 const _selectSpacesByIds = (state: RootState, ids: EntityId[]) =>
   selectManyByIds(state, ids, selectSpaceStructById, selectSpaceContentById)
 
-type SelectArgs = {
-  ids: EntityId[]
+type Args = {
+  withContent?: boolean
   withOwner?: boolean
 }
+
+type SelectArgs = SelectManyArgs<Args>
+
+type FetchArgs = FetchManyArgs<Args>
 
 export function selectSpaces (state: RootState, props: SelectArgs): SpaceWithSomeDetails[] {
   const { ids, withOwner = true } = props
@@ -38,7 +42,7 @@ export function selectSpaces (state: RootState, props: SelectArgs): SpaceWithSom
   const ownerByIdMap = new Map<EntityId, ProfileData>()
   if (withOwner) {
     const ownerIds = getUniqueOwnerIds(spaces)
-    const profiles = selectProfiles(state, ownerIds)
+    const profiles = selectProfiles(state, { ids: ownerIds })
     profiles.forEach(profile => {
       ownerByIdMap.set(profile.id, profile)
     })
@@ -61,10 +65,7 @@ export function selectSpaces (state: RootState, props: SelectArgs): SpaceWithSom
 
 const filterNewIds = createFilterNewIds(selectSpaceIds)
 
-type FetchArgs = ApiAndIds & {
-  withContent?: boolean
-  withOwner?: boolean
-}
+// TODO impl forceFetchAndSubscribe
 
 export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchArgs, ThunkApiConfig>(
   'spaces/fetchMany',

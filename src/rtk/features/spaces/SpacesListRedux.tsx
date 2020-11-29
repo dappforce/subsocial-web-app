@@ -7,7 +7,7 @@ import { Section } from 'src/components/utils/Section'
 import { tryParseInt } from 'src/utils'
 import { useFetchPosts } from '../posts/postsHooks'
 import { fetchPosts } from '../posts/postsSlice'
-import { withServerRedux } from './withServerRedux'
+import { withServerRedux } from '../../app/withServerRedux'
 
 type Props = {
   ids?: EntityId[]

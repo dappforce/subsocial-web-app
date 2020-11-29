@@ -1,11 +1,11 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { getUniqueContentIds, getUniqueIds, getUniqueOwnerIds, PostStruct, flattenPostStructs } from 'src/rtk/app/flatteners'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, idsToBns, SelectManyArgs, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { getUniqueContentIds, getUniqueOwnerIds, PostStruct, flattenPostStructs, getUniqueSpaceIds } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
 import { fetchSpaces, selectSpaces } from '../spaces/spacesSlice'
-import { PostData, PostWithSomeDetails, ProfileData, SpaceData } from 'src/rtk/app/dto'
+import { PostWithSomeDetails, ProfileData, SpaceData } from 'src/rtk/app/dto'
 
 const postsAdapter = createEntityAdapter<PostStruct>()
 
@@ -20,18 +20,21 @@ export const {
   selectTotal: selectTotalPosts
 } = postsSelectors
 
-
 const _selectPostsByIds = (state: RootState, ids: EntityId[]) =>
   selectManyByIds(state, ids, selectPostStructById, selectPostContentById)
 
 /** Should we fetch and select a space owner by default? */
 const withSpaceOwner = { withOwner: false }
 
-type SelectArgs = {
-  ids: EntityId[]
+type Args = {
+  withContent?: boolean
   withOwner?: boolean
   withSpace?: boolean
 }
+
+type SelectArgs = SelectManyArgs<Args>
+
+type FetchArgs = FetchManyArgs<Args>
 
 export function selectPosts (state: RootState, props: SelectArgs): PostWithSomeDetails[] {
   const { ids, withOwner = true, withSpace = true } = props
@@ -41,7 +44,7 @@ export function selectPosts (state: RootState, props: SelectArgs): PostWithSomeD
   const ownerByIdMap = new Map<EntityId, ProfileData>()
   if (withOwner) {
     const ownerIds = getUniqueOwnerIds(posts)
-    const profiles = selectProfiles(state, ownerIds)
+    const profiles = selectProfiles(state, { ids: ownerIds })
     profiles.forEach(profile => {
       ownerByIdMap.set(profile.id, profile)
     })
@@ -79,15 +82,7 @@ export function selectPosts (state: RootState, props: SelectArgs): PostWithSomeD
   return result
 }
 
-const getUniqueSpaceIds = (posts: PostData[] | PostStruct[]) => getUniqueIds(posts, 'spaceId')
-
 const filterNewIds = createFilterNewIds(selectPostIds)
-
-type FetchArgs = ApiAndIds & {
-  withContent?: boolean
-  withOwner?: boolean
-  withSpace?: boolean
-}
 
 export const fetchPosts = createAsyncThunk<PostStruct[], FetchArgs, ThunkApiConfig>(
   'posts/fetchMany',
