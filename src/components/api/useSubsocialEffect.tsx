@@ -1,4 +1,4 @@
-import { useEffect, DependencyList } from 'react'
+import { useEffect, DependencyList, useMemo } from 'react'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { isFunction } from '@polkadot/util'
 import { SubsocialApi } from '@subsocial/api/subsocial'
@@ -19,8 +19,12 @@ export default function useSubsocialEffect (
   effect: EffectCallback,
   deps: DependencyList = []
 ): void {
+
+  const _deps = useMemo(() => JSON.stringify(deps), deps)
   const apis = useSubsocialApi()
   const isReady = apis.isApiReady
+
+  // console.log('useSubsocialEffect: deps:', _deps)
 
   useEffect(() => {
     if (isReady && isFunction(effect)) {
@@ -32,5 +36,5 @@ export default function useSubsocialEffect (
         ipfs: apis.ipfs as SubsocialIpfsApi
       })
     }
-  }, [ isReady, ...deps ])
+  }, [ isReady, _deps ])
 }
