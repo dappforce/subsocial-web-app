@@ -3,7 +3,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@r
 import { ProfileContent } from '@subsocial/types'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { ApiAndIds, createFetchOne, createFilterNewIds, selectManyByIds, selectOneById, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { getUniqueContentIds, ProfileStruct, flattenProfileStructs, SocialAccountWithId } from 'src/rtk/app/normalizers'
+import { getUniqueContentIds, ProfileStruct, flattenProfileStructs, SocialAccountWithId } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { asString } from 'src/utils'
 import { fetchContents, selectProfileContentById } from '../contents/contentsSlice'

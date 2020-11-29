@@ -1,7 +1,7 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SpaceContent } from '@subsocial/types'
 import { ApiAndIds, createFetchOne, createFilterNewIds, idsToBns, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { getUniqueContentIds, getUniqueOwnerIds, SpaceStruct, flattenSpaceStructs } from 'src/rtk/app/normalizers'
+import { getUniqueContentIds, getUniqueOwnerIds, SpaceStruct, flattenSpaceStructs } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
 import { fetchProfiles, ProfileData, selectProfiles } from '../profiles/profilesSlice'

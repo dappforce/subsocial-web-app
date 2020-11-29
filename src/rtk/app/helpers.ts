@@ -4,7 +4,7 @@ import { CommonContent } from '@subsocial/types'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import { asString } from 'src/utils'
-import { HasId, FlatSuperCommon } from './normalizers'
+import { HasId, FlatSuperCommon } from './flatteners'
 import { RootState } from './rootReducer'
 import { AppDispatch, AppThunk } from './store'
 

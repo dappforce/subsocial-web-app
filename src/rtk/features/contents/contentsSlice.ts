@@ -1,7 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { CommentContent, CommonContent, PostContent, ProfileContent, SharedPostContent, SpaceContent } from '@subsocial/types'
 import { ApiAndIds, createFilterNewIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
-import { HasId } from 'src/rtk/app/normalizers'
+import { HasId } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 
 /** Content with id */
