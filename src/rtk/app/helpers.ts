@@ -18,19 +18,27 @@ type StructEntity = HasId & Partial<FlatSuperCommon>
 
 type ContentEntity = HasId & CommonContent
 
-type ApiAndId = {
+type ApiArg = {
   api: SubsocialApi
+}
+
+type ApiAndId = ApiArg & {
   id: EntityId
 }
 
-export type ApiAndIds = {
-  api: SubsocialApi
+export type ApiAndIds = ApiArg & {
   ids: EntityId[]
+}
+
+export type SelectOneArgs <T> = T & {
+  id: EntityId
 }
 
 export type SelectManyArgs <T> = T & {
   ids: EntityId[]
 }
+
+export type FetchOneArgs <T> = T & ApiAndId
 
 export type FetchManyArgs <T> = T & ApiAndIds
 

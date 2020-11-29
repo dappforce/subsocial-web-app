@@ -1,16 +1,24 @@
 import { AsyncThunkAction, EntityId } from '@reduxjs/toolkit'
+import { getFirstOrUndefined } from '@subsocial/utils'
 import { useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { FetchManyArgs, SelectManyArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { FetchManyArgs, SelectManyArgs, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 
-type FetchResult<Entity> = {
+type FetchCommonResult<T> = T & {
   loading?: boolean
   error?: Error
-  entities: Entity[]
 }
+
+type FetchOneResult<Entity> = FetchCommonResult<{
+  entity?: Entity
+}>
+
+type FetchManyResult<Entity> = FetchCommonResult<{
+  entities: Entity[]
+}>
 
 type SelectFn<Args, Entity> = (state: RootState, args: SelectManyArgs<Args>) => Entity[]
 
@@ -23,7 +31,7 @@ export function useFetchEntities<Args, Struct, Entity> (
   select: SelectFn<Args, Entity>,
   fetch: FetchFn<Args, Struct>,
   args: SelectManyArgs<Args>
-): FetchResult<Entity> {
+): FetchManyResult<Entity> {
   
   const entities = useAppSelector(state => select(state, args), shallowEqual)
 
@@ -54,5 +62,22 @@ export function useFetchEntities<Args, Struct, Entity> (
     loading,
     error,
     entities,
+  }
+}
+
+export function useFetchEntity<Args, Struct, Entity> (
+  select: SelectFn<Args, Entity>,
+  fetch: FetchFn<Args, Struct>,
+  args: SelectOneArgs<Args>
+): FetchOneResult<Entity> {
+
+  const { id, ..._rest } = args
+  const rest = _rest as unknown as Args
+  const selectManyArgs = { ids: [ id ], ...rest }
+  const { entities, ...props } = useFetchEntities(select, fetch, selectManyArgs)
+
+  return {
+    ...props,
+    entity: getFirstOrUndefined(entities)
   }
 }
