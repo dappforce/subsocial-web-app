@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, idsToBns, SelectManyArgs, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, idsToBns, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, getUniqueOwnerIds, PostStruct, flattenPostStructs, getUniqueSpaceIds } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
@@ -32,11 +32,13 @@ type Args = {
   withSpace?: boolean
 }
 
-type SelectArgs = SelectManyArgs<Args>
+export type SelectPostArgs = SelectOneArgs<Args>
+export type SelectPostsArgs = SelectManyArgs<Args>
 
-type FetchArgs = FetchManyArgs<Args>
+type FetchPostArgs = FetchOneArgs<Args>
+type FetchPostsArgs = FetchManyArgs<Args>
 
-export function selectPosts (state: RootState, props: SelectArgs): PostWithSomeDetails[] {
+export function selectPosts (state: RootState, props: SelectPostsArgs): PostWithSomeDetails[] {
   const { ids, withOwner = true, withSpace = true } = props
   const posts = _selectPostsByIds(state, ids)
   
@@ -84,7 +86,7 @@ export function selectPosts (state: RootState, props: SelectArgs): PostWithSomeD
 
 const filterNewIds = createFilterNewIds(selectPostIds)
 
-export const fetchPosts = createAsyncThunk<PostStruct[], FetchArgs, ThunkApiConfig>(
+export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkApiConfig>(
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
     const { api, ids, withContent = true, withOwner = true, withSpace = true } = args

@@ -18,7 +18,7 @@ export const SpacesList: FC<Props> = ({ ids: initialIds = [] }) => {
   // const spaces = useFetchSpaces(spaceIds)
 
   const [ ids, setIds ] = useState(initialIds)
-  const posts = useFetchPosts(ids)
+  const posts = useFetchPosts({ ids })
 
   const lastId = !ids.length ? 0 : tryParseInt(ids[ids.length - 1], 0)
   const nextId = lastId + 1
@@ -49,12 +49,11 @@ export const SpacesListPage: NextPage<Props> = (props) => {
   return <SpacesList {...props} />
 }
 
-SpacesListPage.getInitialProps = async ({}): Promise<Props> =>
-  withServerRedux(async ({ dispatch, subsocial }) => {
-    const ids = samplePostIds
-    await dispatch(fetchPosts({ api: subsocial, ids }))
-    return { ids }
-  })
+withServerRedux(SpacesListPage, async ({ dispatch, subsocial }) => {
+  const ids = samplePostIds
+  await dispatch(fetchPosts({ api: subsocial, ids }))
+  return { ids }
+})
 
 // // Alternative way to fetch data on server-side:
 // export const getServerSideProps: GetServerSideProps<Props> = async ({}) => {

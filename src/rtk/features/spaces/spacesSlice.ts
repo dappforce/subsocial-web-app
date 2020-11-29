@@ -1,10 +1,11 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, idsToBns, SelectManyArgs, selectManyByIds, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, idsToBns, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { getUniqueContentIds, getUniqueOwnerIds, SpaceStruct, flattenSpaceStructs } from 'src/rtk/app/flatteners'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
 import { ProfileData, SpaceWithSomeDetails } from 'src/rtk/app/dto'
+import { getFirstOrUndefined } from '@subsocial/utils'
 
 const spacesAdapter = createEntityAdapter<SpaceStruct>()
 
@@ -30,11 +31,20 @@ type Args = {
   withOwner?: boolean
 }
 
-type SelectArgs = SelectManyArgs<Args>
+export type SelectSpaceArgs = SelectOneArgs<Args>
+export type SelectSpacesArgs = SelectManyArgs<Args>
 
-type FetchArgs = FetchManyArgs<Args>
+type FetchSpaceArgs = FetchOneArgs<Args>
+type FetchSpacesArgs = FetchManyArgs<Args>
 
-export function selectSpaces (state: RootState, props: SelectArgs): SpaceWithSomeDetails[] {
+// TODO extract a generic function
+export function selectSpace (state: RootState, props: SelectSpaceArgs): SpaceWithSomeDetails | undefined {
+  const { id, ...rest } = props
+  const entities = selectSpaces(state, { ids: [ id ], ...rest })
+  return getFirstOrUndefined(entities)
+}
+
+export function selectSpaces (state: RootState, props: SelectSpacesArgs): SpaceWithSomeDetails[] {
   const { ids, withOwner = true } = props
   const spaces = _selectSpacesByIds(state, ids)
 
@@ -67,7 +77,7 @@ const filterNewIds = createFilterNewIds(selectSpaceIds)
 
 // TODO impl forceFetchAndSubscribe
 
-export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchArgs, ThunkApiConfig>(
+export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, ThunkApiConfig>(
   'spaces/fetchMany',
   async ({ api, ids, withContent = true, withOwner = true }, { getState, dispatch }) => {
 

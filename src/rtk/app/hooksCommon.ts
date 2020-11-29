@@ -25,8 +25,6 @@ type SelectFn<Args, Entity> = (state: RootState, args: SelectManyArgs<Args>) => 
 type FetchFn<Args, Struct> = (args: FetchManyArgs<Args>) =>
   AsyncThunkAction<Struct[], FetchManyArgs<Args>, ThunkApiConfig>
 
-export type FetchEntitiesFn <R> = (ids: EntityId) => R
-
 export function useFetchEntities<Args, Struct, Entity> (
   select: SelectFn<Args, Entity>,
   fetch: FetchFn<Args, Struct>,

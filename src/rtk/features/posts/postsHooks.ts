@@ -1,11 +1,10 @@
-import { EntityId } from 'src/rtk/app/dto'
 import { useFetchEntities, useFetchEntity } from 'src/rtk/app/hooksCommon'
-import { fetchPosts, selectPosts } from './postsSlice'
+import { fetchPosts, SelectPostArgs, selectPosts, SelectPostsArgs } from './postsSlice'
 
-export const useFetchPost = (id: EntityId) => {
-  return useFetchEntity(selectPosts, fetchPosts, { id })
+export const useFetchPost = (args: SelectPostArgs) => {
+  return useFetchEntity(selectPosts, fetchPosts, args)
 }
 
-export const useFetchPosts = (ids: EntityId[]) => {
-  return useFetchEntities(selectPosts, fetchPosts, { ids })
+export const useFetchPosts = (args: SelectPostsArgs) => {
+  return useFetchEntities(selectPosts, fetchPosts, args)
 }

@@ -50,7 +50,7 @@ type CanBeUpdated = {
 }
 
 type CanBeHidden = {
-  isHidden: boolean
+  hidden: boolean // TODO rename to 'isHidden'?
   // isPublic: boolean
 }
 
@@ -205,7 +205,7 @@ function flattenSpaceOrPostStruct (struct: SpaceOrPostStruct): FlatSpaceOrPost {
     ...flattenCommonFields(struct),
     id: struct.id.toString(),
     ownerId: struct.owner.toString(),
-    isHidden: struct.hidden.isTrue,
+    hidden: struct.hidden.isTrue,
   }
 }
 
