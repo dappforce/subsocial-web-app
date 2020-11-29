@@ -1,6 +1,8 @@
-import { EntityId } from '@reduxjs/toolkit'
+import { EntityId as ReduxEntityId } from '@reduxjs/toolkit'
 import { CommonContent, ProfileContent, SpaceContent, PostContent, CommentContent, SharedPostContent } from '@subsocial/types/offchain'
 import { HasId, ProfileStruct, SpaceStruct, PostStruct, CommentStruct, SharedPostStruct } from './flatteners'
+
+export type EntityId = ReduxEntityId
 
 export type EntityData<S extends HasId, C extends CommonContent> = {
   id: EntityId
