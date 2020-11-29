@@ -2,7 +2,7 @@ import { Option } from '@polkadot/types/codec'
 import { AccountId } from '@polkadot/types/interfaces/runtime'
 import { bool } from '@polkadot/types/primitive'
 import { EntityId } from '@reduxjs/toolkit'
-import { AnyAccountId, PostContent, ProfileContent, SpaceContent } from '@subsocial/types'
+import { AnyAccountId } from '@subsocial/types'
 import { Content, Post, SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import BN from 'bn.js'
 
@@ -90,14 +90,6 @@ export type PostStruct = FlatSpaceOrPost & CanHaveSpaceId & {
   isComment: boolean
 }
 
-type SocialAccountStruct = HasId & {
-  followersCount: number
-  followingAccountsCount: number
-  followingSpacesCount: number
-  reputation: number
-  hasProfile: boolean
-}
-
 type CommentExtension = {
   parentId?: Id
   rootPostId: Id
@@ -109,18 +101,20 @@ type SharedPostExtension = {
 
 type FlatPostExtension = {} | CommentExtension | SharedPostExtension
 
-type SharedPostStruct = PostStruct & SharedPostExtension
+export type SharedPostStruct = PostStruct & SharedPostExtension
 
-type CommentStruct = PostStruct & CommentExtension
+export type CommentStruct = PostStruct & CommentExtension
+
+type SocialAccountStruct = HasId & {
+  followersCount: number
+  followingAccountsCount: number
+  followingSpacesCount: number
+  reputation: number
+  hasProfile: boolean
+}
 
 /** Flat account profile struct. */
-export type ProfileStruct =
-  SocialAccountStruct &
-  Partial<FlatSuperCommon>
-
-export type SpaceWithContent = SpaceStruct & SpaceContent
-export type PostWithContent = PostStruct & PostContent
-export type ProfileWithContent = ProfileStruct & ProfileContent
+export type ProfileStruct = SocialAccountStruct & Partial<FlatSuperCommon>
 
 type SuperCommonStruct = {
   created: WhoAndWhen
