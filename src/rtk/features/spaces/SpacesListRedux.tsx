@@ -4,13 +4,12 @@ import { NextPage } from 'next'
 import React, { FC, useState } from 'react'
 import { PageContent } from 'src/components/main/PageWrapper'
 import { Section } from 'src/components/utils/Section'
-import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
-import { HasInitialReduxState, initializeStore } from 'src/rtk/app/store'
 import { tryParseInt } from 'src/utils'
 import { useFetchPosts } from '../posts/postsHooks'
 import { fetchPosts } from '../posts/postsSlice'
+import { withServerRedux } from './withServerRedux'
 
-type Props = HasInitialReduxState & {
+type Props = {
   ids?: EntityId[]
 }
 
@@ -50,16 +49,12 @@ export const SpacesListPage: NextPage<Props> = (props) => {
   return <SpacesList {...props} />
 }
 
-SpacesListPage.getInitialProps = async ({}): Promise<Props> => {
-  const reduxStore = initializeStore()
-  const { dispatch } = reduxStore
-  
-  const subsocial = await getSubsocialApi()
-  await dispatch(fetchPosts({ api: subsocial, ids: samplePostIds }))
-  const initialReduxState = reduxStore.getState()
-
-  return { initialReduxState, ids: samplePostIds }
-}
+SpacesListPage.getInitialProps = async ({}): Promise<Props> =>
+  withServerRedux(async ({ dispatch, subsocial }) => {
+    const ids = samplePostIds
+    await dispatch(fetchPosts({ api: subsocial, ids }))
+    return { ids }
+  })
 
 // // Alternative way to fetch data on server-side:
 // export const getServerSideProps: GetServerSideProps<Props> = async ({}) => {
