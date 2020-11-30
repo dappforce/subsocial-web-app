@@ -30,7 +30,7 @@ type ProfileLink = BareProps & {
 
 export const AccountSpacesLink = ({ address, title = 'Spaces', ...otherProps }: ProfileLink) => <Link href='/accounts/[address]/spaces' as={accountUrl({ address }, 'spaces')}><a {...otherProps}>{title}</a></Link>
 
-export const EditProfileLink = ({ address, title = 'Edit profile', onClick, ...props }: ProfileLink) => isMyAddress(address)
+export const EditProfileLink = ({ address, title = 'Edit my profile', onClick, ...props }: ProfileLink) => isMyAddress(address)
   ? <Link href='/accounts/edit' as='/accounts/edit'>
     <a onClick={onClick} {...props}>{title}</a>
   </Link>
