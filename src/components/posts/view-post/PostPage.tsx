@@ -143,7 +143,8 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   const hasHandle = spaceIdOrHandle.startsWith('@')
   const currentSpace = (hasHandle
     ? { id: spaceIdFromPost, handle: spaceIdOrHandle }
-    : { id: spaceIdFromPost || spaceIdOrHandle}) as unknown as Space
+    : { id: spaceIdFromPost || spaceIdOrHandle}
+  ) as unknown as Space
     
   const currentPostUrl = spaceUrl(currentSpace, slugStr)
 
