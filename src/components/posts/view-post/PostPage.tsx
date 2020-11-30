@@ -55,7 +55,6 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
   const spaceStruct = spaceData.struct
 
   const { title, body, image, tags } = content
-  const canonical = content.canonical || postUrl(spaceStruct, postDetails.post)
 
   const goToCommentsId = 'comments'
 
@@ -74,7 +73,8 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
       desc: mdToText(body),
       image,
       tags,
-      canonical,
+      canonical: postUrl(spaceStruct, postDetails.post),
+      externalCanonical: content.canonical
     }}
   >
     <HiddenPostAlert post={post.struct} />
@@ -125,7 +125,7 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const subsocial = await getSubsocialApi()
   const { substrate } = subsocial
-  const idOrHandle = spaceId as string
+  const spaceIdOrHandle = spaceId as string
 
   const slugStr = slug as string
   const postId = getPostIdFromSlug(slugStr)
@@ -140,7 +140,12 @@ PostPage.getInitialProps = async (props): Promise<any> => {
 
   const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id) as SpaceId
 
-  const currentSpace = { id: spaceIdFromPost, handle: idOrHandle } as unknown as Space
+  const hasHandle = spaceIdOrHandle.startsWith('@')
+  const currentSpace = (hasHandle
+    ? { id: spaceIdFromPost, handle: spaceIdOrHandle }
+    : { id: spaceIdFromPost || spaceIdOrHandle}
+  ) as unknown as Space
+    
   const currentPostUrl = spaceUrl(currentSpace, slugStr)
 
   const space = extPostData?.space.struct || currentSpace
