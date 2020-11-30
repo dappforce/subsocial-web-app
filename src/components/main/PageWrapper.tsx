@@ -83,11 +83,11 @@ export const PageContent: React.FunctionComponent<Props> = ({ /* leftPanel, righ
   return <>
     <HeadMeta {...meta} />
     {isNotMobile
-     ? <div className='DfSectionOuter d-flex w-100'>
+     ? <section className='DfSectionOuter d-flex w-100'>
       {/* {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>} */}
       <Section className={`${className}`} level={level} title={title} >{children}</Section>
       {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
-    </div>
+    </section>
     : <>
       {children}
       {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
