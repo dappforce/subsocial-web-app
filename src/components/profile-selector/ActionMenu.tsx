@@ -35,10 +35,10 @@ export const ActionMenu = () => {
   return <>
   <Menu className='FontNormal'>
     <Menu.Item key="following" onClick={openFollowingModal} icon={<StarOutlined />}>
-      {`My following (${following})`}
+      {`My followings (${following})`}
     </Menu.Item>
     <Menu.Item key="follower" onClick={openFollowersModal} icon={<UserOutlined />}>
-      {`My followers ${followers}`}
+      {`My followers (${followers})`}
     </Menu.Item>
     <Menu.Item key="edit" icon={<EditOutlined />}>
       <EditProfileLink address={address} onClick={close} />
