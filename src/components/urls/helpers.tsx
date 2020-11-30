@@ -66,7 +66,7 @@ export const Copy = ({ text, message, children }: CopyProps) => <BlackLink
   }}
 >{children}</BlackLink>
 
-export const fullUrl = (relative: string) => {
+export const innerFullUrl = (relative: string, appBaseUrl: string) => {
   if (relative.startsWith(appBaseUrl)) return relative
 
   const base = appBaseUrl.endsWith('/') ? appBaseUrl : appBaseUrl + '/'
@@ -74,3 +74,5 @@ export const fullUrl = (relative: string) => {
 
   return base + pathname
 } 
+
+export const fullUrl = (relative: string) => innerFullUrl(relative, appBaseUrl)
