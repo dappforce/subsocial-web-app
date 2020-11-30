@@ -5,11 +5,13 @@ import { useMyAccount } from '../auth/MyAccountContext'
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal'
 import { EditProfileLink } from '../profiles/address-views/utils'
 import { Pluralize } from '../utils/Plularize'
+import { useMyAccountDrawer } from './MyAccountMenu'
 
 export const ActionMenu = () => {
   const { state: { account, address }} = useMyAccount()
   const [ followersOpen, setFollowersOpen ] = useState(false)
   const [ followingOpen, setFollowingOpen ] = useState(false)
+  const { close } = useMyAccountDrawer()
 
   if (!account || !address) return null
 
@@ -33,13 +35,13 @@ export const ActionMenu = () => {
   return <>
   <Menu className='FontNormal'>
     <Menu.Item key="following" onClick={openFollowingModal} icon={<StarOutlined />}>
-      My following
+      {`My following (${following})`}
     </Menu.Item>
     <Menu.Item key="follower" onClick={openFollowersModal} icon={<UserOutlined />}>
-      My follower
+      {`My followers ${followers}`}
     </Menu.Item>
     <Menu.Item key="edit" icon={<EditOutlined />}>
-      <EditProfileLink address={address} />
+      <EditProfileLink address={address} onClick={close} />
     </Menu.Item>
   </Menu>
   {followersOpen && <AccountFollowersModal

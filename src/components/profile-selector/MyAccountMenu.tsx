@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { Drawer } from 'antd'
 import Address from '../profiles/address-views/Name'
 import Avatar from '../profiles/address-views/Avatar'
@@ -30,6 +30,22 @@ export const SelectAddressPreview: React.FunctionComponent<SelectAddressType> = 
   </div>
 )
 
+type MyAccountSectionContextState = {
+  visible: boolean,
+  open: () => void
+  close: () => void
+}
+
+const initValue = {
+  visible: false,
+  open: {} as any,
+  close: {} as any
+}
+
+const MyAccountDrawerContext = createContext<MyAccountSectionContextState>(initValue)
+
+export const useMyAccountDrawer = () => useContext(MyAccountDrawerContext)
+
 export const AccountMenu: React.FunctionComponent<AddressProps> = ({
   address,
   owner
@@ -38,19 +54,24 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({
 
   const [ visible, setVisible ] = useState(false)
 
+  const open = () => setVisible(true)
+  const close = () => setVisible(false)
+
   return <>
     <span className='DfCurrentAddress icon'>
-      <SelectAddressPreview address={address} owner={owner} onClick={() => setVisible(true)} />
+      <SelectAddressPreview address={address} owner={owner} onClick={open} />
     </span>
     <Drawer
       placement="right"
       className='DfAccountMenu'
       width={325}
       closable={true}
-      onClose={() => setVisible(false)}
+      onClose={close}
       visible={visible || false}
     >
-      <MyAccountSection />
+      <MyAccountDrawerContext.Provider value={{ visible, open, close}}>
+        <MyAccountSection />
+      </MyAccountDrawerContext.Provider>
     </Drawer>
   </>
 }
