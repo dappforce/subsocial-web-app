@@ -4,7 +4,7 @@ import { Counts } from '@subsocial/types/offchain'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { ElasticQueryParams } from '@subsocial/types/offchain/search'
 import { Activity } from '../activity/NotificationUtils'
-import { ReadAllMessage, SessionKeyMessage } from '../../session_keys/createSessionKey';
+import { ReadAllMessage, SessionCall, SessionKeyMessage } from '../../session_keys/createSessionKey';
 
 const log = newLogger('OffchainRequests')
 
@@ -119,25 +119,25 @@ export const getActivityCounts = async (address: string): Promise<Counts> => {
 }
 
 // TODO require refactor
-export const clearNotifications = async (myAddress: string, signature: string, message: ReadAllMessage): Promise<void> =>{
+export const clearNotifications = async (sessionCall: SessionCall<ReadAllMessage>): Promise<void> =>{
   try {
-    const res = await axios.post(getOffchainUrl(`/notifications/readAll`), { myAddress, signature, message })
+    const res = await axios.post(getOffchainUrl(`/notifications/readAll`), { sessionCall })
     if (res.status !== 200) {
-      console.warn('Failed to mark all notifications as read for account:', myAddress, 'res.status:', res.status)
+      console.warn('Failed to mark all notifications as read for account:', sessionCall.account, 'res.status:', res.status)
     }
   } catch (err) {
-    console.log(`Failed to mark all notifications as read for account: ${myAddress}`, err)
+    console.log(`Failed to mark all notifications as read for account: ${sessionCall.account}`, err)
   }
 }
 
-export const insertToSessionKeyTable = async (message: SessionKeyMessage, signature: string) => {
+export const insertToSessionKeyTable = async (sessionCall: SessionCall<SessionKeyMessage>) => {
   try {
-    const res = await axios.post(getOffchainUrl(`/notifications/addSessionKey`), { message, signature })
+    const res = await axios.post(getOffchainUrl(`/notifications/addSessionKey`), { sessionCall })
     if (res.status !== 200) {
-      console.warn('Failed to insert session key for account:', message.mainKey, 'res.status:', res.status)
+      console.warn('Failed to insert session key for account:', sessionCall.account, 'res.status:', res.status)
     }
   } catch (err) {
-    console.log(`Failed to insert session key for account: ${message.mainKey}`, err)
+    console.log(`Failed to insert session key for account: ${sessionCall.account}`, err)
   }
 }
 

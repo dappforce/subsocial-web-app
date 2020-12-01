@@ -10,15 +10,18 @@ import registry from '@subsocial/types/substrate/registry'
 import { mnemonicGenerate, mnemonicToMiniSecret, naclKeypairFromSeed } from '@polkadot/util-crypto'
 import { Keypair } from '@polkadot/util-crypto/types'
 
+type Action = 'readAll' | 'addSessionKey'
+type Protocol = 'WebApp' | 'Telegram' | 'Email'
+
 type SessionKeypair = {
   publicKey: string,
-  secretKey: string,
-  source: string
+  secretKey: string
 }
 
 export type SessionKeyMessage = {
   mainKey: string,
-  sessionKey: string
+  sessionKey: string,
+  protocol: Protocol
 }
 
 export type ReadAllMessage = {
@@ -27,7 +30,18 @@ export type ReadAllMessage = {
   eventIndex: number
 }
 
-const generateStoreKey = (address: string) => `${address}_sessionKey`
+type MessageGenericExtends = SessionKeyMessage | ReadAllMessage
+
+type Message<T extends MessageGenericExtends> = {
+  action: Action,
+  args: T
+}
+
+export type SessionCall<T extends MessageGenericExtends> = {
+  account: string,
+  signature: string,
+  message: Message<T>
+}
 
 export const createSessionKey = async (): Promise<SessionKeypair | undefined> => {
   const myAddress = readMyAddress()
@@ -48,9 +62,13 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
   const publicKeyHex = u8aToHex(publicKey)
   const secretKeyHex = u8aToHex(secretKey)
 
-  const message: SessionKeyMessage = {
-    mainKey: address.toString(),
-    sessionKey: publicKey.toString()
+  const message: Message<SessionKeyMessage> = {
+    action: 'addSessionKey',
+    args: {
+      mainKey: address.toString(),
+      sessionKey: publicKey.toString(),
+      protocol: 'WebApp'
+    }
   }
 
   const signature = await signMessage(account.meta.source, address.toString(), JSON.stringify(message))
@@ -58,13 +76,15 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
 
   let sessionKey: SessionKeypair = {
     publicKey: publicKeyHex,
-    secretKey: secretKeyHex,
-    source: account.meta.source
+    secretKey: secretKeyHex
   }
-  const key = generateStoreKey(address.toString())
 
-  store.set(key, sessionKey)
-  insertToSessionKeyTable(message, signature)
+  store.set('df.sessionKey', sessionKey)
+  insertToSessionKeyTable({
+    account: address.toString(),
+    signature,
+    message
+  } as SessionCall<SessionKeyMessage>)
 
   return sessionKey
 }
@@ -78,7 +98,6 @@ export const generateKeyPair = (): Keypair => {
 }
 
 const signMessage = async (source: string, address: string, message: string): Promise<string | undefined> => {
-
   const injector = await web3FromSource(source);
 
   const signRaw = injector?.signer?.signRaw;
@@ -95,16 +114,19 @@ const signMessage = async (source: string, address: string, message: string): Pr
 }
 
 export const readAllNotifications = async (blockNumber: string, eventIndex: number, address: string) => {
-  let sessionKey: SessionKeypair | undefined = store.get(generateStoreKey(address))
+  let sessionKey: SessionKeypair | undefined = store.get('df.sessionKey')
   if (!sessionKey) {
     sessionKey = await createSessionKey()
     if (!sessionKey) return
   }
 
-  const message: ReadAllMessage = {
-    sessionKey: sessionKey.publicKey,
-    blockNumber: blockNumber.toString(),
-    eventIndex: eventIndex
+  const message: Message<ReadAllMessage> = {
+    action: 'readAll',
+    args: {
+      sessionKey: sessionKey.publicKey,
+      blockNumber,
+      eventIndex
+    }
   }
 
   const keypair = {
@@ -112,8 +134,12 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
     secretKey: hexToU8a(sessionKey.secretKey)
   } as Keypair
 
-  const signature = naclSign(stringToHex(JSON.stringify(message)), keypair)
+  const signature = naclSign(JSON.stringify(message), keypair)
   if (!signature) return
 
-  await clearNotifications(address, u8aToHex(signature), message)
+  await clearNotifications({
+    account: address,
+    signature: u8aToHex(signature),
+    message
+  } as SessionCall<ReadAllMessage>)
 }
