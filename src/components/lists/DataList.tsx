@@ -46,6 +46,7 @@ export function DataList<T extends any> (props: DataListProps<T>) {
       pagination={paginationConfig}
       dataSource={dataSource}
       renderItem={(item, index) =>
+        // TODO fix key: do not use Date() value as part of key.
         <List.Item key={`${new Date().getTime()}-${index}`}>
           {renderItem(item, index)}
         </List.Item>

@@ -9,7 +9,7 @@ import { DataListOptProps } from '../lists/DataList'
 import { queryElasticSearch } from 'src/components/utils/OffchainUtils'
 import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
 import PostPreview from '../posts/view-post/PostPreview'
-import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from '@subsocial/types'
+import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from 'src/types'
 import { PageContent } from '../main/PageWrapper'
 import { nonEmptyArr } from '@subsocial/utils'
 
