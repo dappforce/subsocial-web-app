@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { newLogger } from '@subsocial/utils'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { ProfileData } from '@subsocial/types'
+import { ProfileData } from 'src/types'
 import { ExtendedAddressProps } from './types'
 import { Loading } from '../../../utils'
 import { useMyAccount } from 'src/components/auth/MyAccountContext'
