@@ -145,6 +145,7 @@ const InnerShareModal = (props: Props) => {
   </Modal>
 }
 
+// TODO use redux
 export const ShareModal = withMulti(
   InnerShareModal,
   withMyAccount,
