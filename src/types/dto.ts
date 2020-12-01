@@ -37,7 +37,7 @@ export type SpaceWithSomeDetails = SpaceData & {
 export type PostWithSomeDetails = {
   id: EntityId
 
-  // TODO flatten post?
+  // TODO flatten post? (yes)
   post: PostData
 
   ext?: PostExtensionData

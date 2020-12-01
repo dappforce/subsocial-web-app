@@ -43,7 +43,7 @@ type HasCreated = {
 }
 
 type CanBeUpdated = {
-  isUpdated: boolean
+  isUpdated?: boolean
   updatedByAccount?: string
   updatedAtBlock?: number
   updatedAtTime?: number
