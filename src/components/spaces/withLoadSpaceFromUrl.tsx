@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { getSpaceId } from '../substrate'
-import { SpaceData } from '@subsocial/types'
+import { SpaceData } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { Loading } from '../utils'
 import NoData from '../utils/EmptyList'

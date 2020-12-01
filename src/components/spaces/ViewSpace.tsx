@@ -117,9 +117,7 @@ export const ViewSpace = (props: Props) => {
                   <EditOutlined /> Edit
                 </ButtonLink>
               }
-              {withFollowButton &&
-                <FollowSpaceButton spaceId={id} />
-              }
+              {withFollowButton && <FollowSpaceButton spaceId={id} />}
             </span>
           </div>
 

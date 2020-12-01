@@ -1,5 +1,4 @@
 import BN from 'bn.js'
-import { NextPage } from 'next'
 import React, { FC } from 'react'
 import { SpaceId } from 'src/types'
 import { useFetchSpaces } from 'src/rtk/app/hooks'
@@ -71,6 +70,7 @@ withServerRedux(ListAllSpacesPage, async ({ context, subsocial, dispatch }) => {
   const nextSpaceId = await substrate.nextSpaceId()
   const spaceIds = stringifyBns(await getReversePageOfSpaceIds(nextSpaceId, query))
 
+  // TODO fetch only public spaces!
   await dispatch(fetchSpaces({ api: subsocial, ids: spaceIds, withOwner: false }))
   const totalSpaceCount = approxCountOfPublicSpaces(nextSpaceId).toNumber()
 

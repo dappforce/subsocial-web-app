@@ -1,9 +1,7 @@
-import BN from 'bn.js'
 import Link from 'next/link'
 import React, { useState } from 'react'
 
 import { SpaceFollowersModal } from '../profiles/AccountsListModal'
-import { ZERO } from '../utils'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import { spaceUrl } from '../urls'
@@ -53,8 +51,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
       {followersOpen &&
         <SpaceFollowersModal
           id={id}
-          title={<Pluralize count={followersCount} singularText='Follower'/>}
-          accountsCount={followersCount}
+          title={<Pluralize count={followersCount} singularText='Follower' />}
           open={followersOpen}
           close={() => setFollowersOpen(false)}
         />
