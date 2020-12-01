@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { withCalls, withMulti, reactionsQueryToProp } from '../substrate'
 import { Loading } from '../utils'
 import { Modal, Button, Tabs } from 'antd'
@@ -116,16 +116,18 @@ const InnerModalVoters = (props: VotersProps) => {
   )
 }
 
+// TODO use redux
 export const PostVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
     reactionsQueryToProp('reactionIdsByPostId', { paramName: 'id', propName: 'reactionIds' })
   )
-)
+) as FC<VotersProps>
 
+// TODO use redux
 export const CommentVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
     reactionsQueryToProp('reactionIdsByCommentId', { paramName: 'id', propName: 'reactionIds' })
   )
-)
+) as FC<VotersProps>
