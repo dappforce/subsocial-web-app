@@ -40,6 +40,7 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
     if (!myAddress) return isSubscribe && setIsFollower(false)
 
     const load = async () => {
+      // TODO use redux
       const res = await (substrate.isSpaceFollower(myAddress, new BN(spaceId)))
       isSubscribe && setIsFollower(res)
     }

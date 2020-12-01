@@ -78,7 +78,11 @@ export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') =
   return dayjs(seconds).format(format)
 }
 
-export const tmpClientId = () => `tmp-id-${new Date().getTime()}`
+/**
+ * Generate a temporary comment id that will be used on UI until comment is persisted
+ * in the blockchain and replaced with the real data and id from blockchain storage.
+ */
+export const tmpClientId = () => `fake-id-${new Date().getTime()}`
 
 type VisibilityProps = {
   struct: PostStruct | SpaceStruct

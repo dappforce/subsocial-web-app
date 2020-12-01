@@ -1,15 +1,16 @@
 import React from 'react'
-import BN from 'bn.js'
-import { gtZero } from '.'
 
 type IconWithTitleProps = {
   icon: JSX.Element,
-  count?: BN,
+  count?: number,
   label?: string
 }
 
-export const IconWithLabel = ({ icon, label, count = new BN(0) }: IconWithTitleProps) => {
-  const countStr = gtZero(count) ? count.toString() : undefined
+export const IconWithLabel = ({ icon, label, count = 0 }: IconWithTitleProps) => {
+  const countStr = count > 0
+    ? count.toString()
+    : undefined
+
   const text = label
     ? label + (countStr ? ` (${countStr})` : '')
     : countStr
