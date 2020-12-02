@@ -72,22 +72,22 @@ type FetchManyFn<Returned> = AsyncThunk<Returned[], ApiAndIds, {}>
 
 export function createFetchOne<R> (fetchMany: FetchManyFn<R>) {
   return (arg: ApiAndId): AppThunk => async dispatch => {
-    dispatch(fetchMany(toApiAndIds(arg)))
+    await dispatch(fetchMany(toApiAndIds(arg)))
   }
 }
 
-export function createFetchMany<
-  S extends StructEntity,
-  C extends ContentEntity
-> (
-  fetchManyStructs: FetchManyFn<S>,
-  fetchManyContents: FetchManyFn<C>,
-) {
-  return (arg: ApiAndIds): AppThunk => async dispatch => {
-    dispatch(fetchManyStructs(arg))
-    dispatch(fetchManyContents(arg))
-  }
-}
+// export function createFetchMany<
+//   S extends StructEntity,
+//   C extends ContentEntity
+// > (
+//   fetchManyStructs: FetchManyFn<S>,
+//   fetchManyContents: FetchManyFn<C>,
+// ) {
+//   return (arg: ApiAndIds): AppThunk => async dispatch => {
+//     await dispatch(fetchManyStructs(arg))
+//     await dispatch(fetchManyContents(arg))
+//   }
+// }
 
 export type SelectByIdFn<R> = (state: RootState, id: EntityId) => R | undefined
 
