@@ -1,6 +1,6 @@
 import { readMyAddress } from '../components/auth/MyAccountContext';
 import store from 'store'
-import { clearNotifications, insertToSessionKeyTable } from '../components/utils/OffchainUtils';
+import { clearNotifications, insertToSessionKeyTable, getNonce } from '../components/utils/OffchainUtils';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { appName } from '../components/utils/env';
 import { stringToHex, u8aToHex, hexToU8a } from '@polkadot/util';
@@ -10,9 +10,11 @@ import registry from '@subsocial/types/substrate/registry'
 import { mnemonicGenerate, mnemonicToMiniSecret, naclKeypairFromSeed } from '@polkadot/util-crypto'
 import { Keypair } from '@polkadot/util-crypto/types'
 import jsonabc from 'jsonabc'
+import { isEmptyObj } from '@subsocial/utils';
+
+const SESSION_KEY = 'df.session_keys'
 
 type Action = 'readAll' | 'addSessionKey'
-type Protocol = 'WebApp' | 'Telegram' | 'Email'
 
 type SessionKeypair = {
   publicKey: string,
@@ -22,13 +24,14 @@ type SessionKeypair = {
 export type SessionKeyMessage = {
   mainKey: string,
   sessionKey: string,
-  protocol: Protocol
+  nonce: number
 }
 
 export type ReadAllMessage = {
   sessionKey: string,
   blockNumber: string,
-  eventIndex: number
+  eventIndex: number,
+  nonce: number
 }
 
 type MessageGenericExtends = SessionKeyMessage | ReadAllMessage
@@ -43,6 +46,8 @@ export type SessionCall<T extends MessageGenericExtends> = {
   signature: string,
   message: Message<T>
 }
+
+type SessionKeyStorege = Record<string, SessionKeypair>
 
 const JSONstingifySorted = (obj: Object) => JSON.stringify(jsonabc.sortObj(obj))
 
@@ -65,12 +70,17 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
   const publicKeyHex = u8aToHex(publicKey)
   const secretKeyHex = u8aToHex(secretKey)
 
+  const selectedNonce = await getNonce(address.toString())
+  let nonce: number = 1
+  if(!isEmptyObj(selectedNonce))
+    nonce = selectedNonce.nonce + 1
+
   const message: Message<SessionKeyMessage> = {
     action: 'addSessionKey',
     args: {
       mainKey: address.toString(),
       sessionKey: publicKey.toString(),
-      protocol: 'WebApp'
+      nonce
     }
   }
 
@@ -82,7 +92,11 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
     secretKey: secretKeyHex
   }
 
-  store.set('df.sessionKey', sessionKey)
+  const storage: SessionKeyStorege = store.get(SESSION_KEY) || {}
+
+  storage[address.toString()] = sessionKey
+
+  store.set(SESSION_KEY, storage)
   insertToSessionKeyTable({
     account: address.toString(),
     signature,
@@ -117,18 +131,33 @@ const signMessage = async (source: string, address: string, message: string): Pr
 }
 
 export const readAllNotifications = async (blockNumber: string, eventIndex: number, address: string) => {
-  let sessionKey: SessionKeypair | undefined = store.get('df.sessionKey')
+  const sessionKeyStorage: SessionKeyStorege = store.get(SESSION_KEY)
+  let sessionKey: SessionKeypair | undefined = undefined
+
+  for (const key in sessionKeyStorage) {
+    if(key == address) {
+      sessionKey = sessionKeyStorage[key]
+      break
+    }
+  }
+
   if (!sessionKey) {
     sessionKey = await createSessionKey()
     if (!sessionKey) return
   }
+
+  const selectedNonce = await getNonce(address.toString())
+  let nonce: number = 1
+  if(!isEmptyObj(selectedNonce))
+    nonce = selectedNonce.nonce + 1
 
   const message: Message<ReadAllMessage> = {
     action: 'readAll',
     args: {
       sessionKey: sessionKey.publicKey,
       blockNumber,
-      eventIndex
+      eventIndex,
+      nonce
     }
   }
 

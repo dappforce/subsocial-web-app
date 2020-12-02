@@ -141,6 +141,20 @@ export const insertToSessionKeyTable = async (sessionCall: SessionCall<SessionKe
   }
 }
 
+export const getNonce = async (account: string) => {
+  try {
+    console.log("account", account)
+    const params = { account }
+    const res = await axios.post(getOffchainUrl(`/notifications/getNonce`), null, { params })
+    console.log("res", res)
+    if (res.status === 200) {
+      return res.data
+    }
+  } catch (err) {
+    console.log(`Failed to get nonce for account: ${account}`, err)
+  }
+}
+
 export const queryElasticSearch = async (params: ElasticQueryParams): Promise<any> => {
   try {
     const res = await axios.get(getOffchainUrl('/search'), { params })
