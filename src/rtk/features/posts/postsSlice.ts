@@ -1,7 +1,8 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, idsToBns, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
+import { idsToBns } from 'src/types/utils'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
 import { fetchSpaces, selectSpaces } from '../spaces/spacesSlice'
@@ -25,7 +26,10 @@ const _selectPostsByIds = (state: RootState, ids: EntityId[]) =>
 /** Should we fetch and select a space owner by default? */
 const withSpaceOwner = { withOwner: false }
 
+export type PostVisibility = HasHiddenVisibility
+
 type Args = {
+  visibility?: PostVisibility
   withContent?: boolean
   withOwner?: boolean
   withSpace?: boolean
@@ -37,6 +41,7 @@ export type SelectPostsArgs = SelectManyArgs<Args>
 type FetchPostArgs = FetchOneArgs<Args>
 type FetchPostsArgs = FetchManyArgs<Args>
 
+// TODO apply visibility filter
 export function selectPosts (state: RootState, props: SelectPostsArgs): PostWithSomeDetails[] {
   const { ids, withOwner = true, withSpace = true } = props
   const posts = _selectPostsByIds(state, ids)

@@ -23,7 +23,7 @@ import { ProfileContent } from '@subsocial/types/offchain'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
 import { ProfileData, SpaceData } from 'src/types'
 import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner'
-import { getAccountId } from '../substrate'
+import { getAccountId, newFlatApi } from '../substrate'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import Avatar from './address-views/Avatar'
 import Name from './address-views/Name'
@@ -35,12 +35,13 @@ import { SpaceId } from '@subsocial/types/substrate/interfaces'
 import { AccountActivity } from '../activity/AccountActivity'
 import { PageContent } from '../main/PageWrapper'
 import { accountUrl } from '../urls'
+import { AnyAccountId } from '@subsocial/types'
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
 
 export type Props = {
-  address: AccountId,
+  address: AnyAccountId,
   owner?: ProfileData,
   followers?: AccountId[],
   mySpaceIds?: SpaceId[],
@@ -180,20 +181,24 @@ const ProfilePage: NextPage<Props> = (props) => {
   </PageContent>
 }
 
-ProfilePage.getInitialProps = async (props): Promise<any> => {
+ProfilePage.getInitialProps = async (props): Promise<Props> => {
   const { query: { address }, res } = props
+
   const subsocial = await getSubsocialApi()
+  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
+
   const accountId = await getAccountId(address as string)
 
-  if (!accountId && res) {
-    res.statusCode = 404
-    return { statusCode: 404 }
+  if (!accountId ) {
+    if (res) {
+      res.statusCode = 404
+    }
+    return { statusCode: 404 } as any
   }
 
   const addressStr = address as string
-
-  const owner = await subsocial.findProfile(addressStr)
+  const owner = await flatApi.findProfile(addressStr)
   const mySpaceIds = await substrate.spaceIdsByOwner(addressStr)
 
   return {

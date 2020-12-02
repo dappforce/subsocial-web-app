@@ -1,13 +1,12 @@
-import React, { FunctionComponent, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { /* CaretDownOutlined, CaretUpOutlined, */ CommentOutlined, NotificationOutlined } from '@ant-design/icons'
 import { Comment, Button, Tag } from 'antd'
-import { PostWithSomeDetails } from 'src/types'
+import { asCommentData, PostWithSomeDetails } from 'src/types'
 import { CommentContent } from '@subsocial/types'
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview'
-import { Space, Post } from '@subsocial/types/substrate/interfaces'
 import Link from 'next/link'
 import { pluralize } from '../utils/Plularize'
-import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils'
+import { formatUnixDate, IconWithLabel, isHidden } from '../utils'
 import dayjs from 'dayjs'
 import { EditComment } from './UpdateComment'
 import { CommentsTree } from './CommentTree'
@@ -21,15 +20,19 @@ import { ShareDropdown } from '../posts/share/ShareDropdown'
 import { PostStruct, SpaceStruct } from 'src/types'
 
 type Props = {
-  rootPost?: PostStruct,
   space: SpaceStruct,
+  rootPost?: PostStruct,
   comment: PostWithSomeDetails,
   replies?: PostWithSomeDetails[],
   withShowReplies?: boolean
 }
 
-export const ViewComment: FunctionComponent<Props> = ({
-  rootPost, comment, space = { id: 0 } as any as Space, replies, withShowReplies = true
+export const ViewComment: FC<Props> = ({
+  space = { id: 0 } as any as SpaceStruct,
+  rootPost,
+  comment,
+  replies,
+  withShowReplies = true
 }) => {
   const {
     post: {
@@ -43,23 +46,22 @@ export const ViewComment: FunctionComponent<Props> = ({
 
   const {
     id,
-    created: { time },
-    owner: commentOwnerAddress,
+    createdAtTime,
+    ownerId,
     score,
-    replies_count
   } = struct
 
   const [ showEditForm, setShowEditForm ] = useState(false)
   const [ showReplyForm, setShowReplyForm ] = useState(false)
   const [ showReplies ] = useState(withShowReplies)
-  const [ repliesCount, setRepliesCount ] = useState(resolveBn(replies_count))
+  const [ repliesCount, setRepliesCount ] = useState(struct.repliesCount)
 
   const isFake = id.toString().startsWith('fake')
   const commentLink = postUrl(space, comment.post)
 
   const isRootPostOwner = equalAddresses(
     rootPost?.ownerId,
-    struct.owner
+    struct.ownerId
   )
 
   /*   const ViewRepliesLink = () => {
@@ -75,8 +77,8 @@ export const ViewComment: FunctionComponent<Props> = ({
     </Link>
   } */
 
-  const isReplies = repliesCount.gt(ZERO)
-  const isShowChildren = showReplyForm || showReplies || isReplies
+  const hasReplies = repliesCount > 0
+  const isShowChildren = showReplyForm || showReplies || hasReplies
 
   const ChildPanel = isShowChildren ? <div>
     {showReplyForm &&
@@ -84,11 +86,11 @@ export const ViewComment: FunctionComponent<Props> = ({
       post={struct}
       callback={(id) => {
         setShowReplyForm(false)
-        id && setRepliesCount(repliesCount.add(ONE))
+        id && setRepliesCount(repliesCount + 1)
       }}
       withCancel
     />}
-    {/* {isReplies && <ViewRepliesLink />} */}
+    {/* {hasReplies && <ViewRepliesLink />} */}
     {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
   </div> : null
 
@@ -106,7 +108,7 @@ export const ViewComment: FunctionComponent<Props> = ({
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview
-          address={commentOwnerAddress}
+          address={ownerId}
           owner={owner}
           isShort={true}
           isPadded={false}
@@ -118,7 +120,7 @@ export const ViewComment: FunctionComponent<Props> = ({
           details={
             <span>
               <Link href='/[spaceId]/[slug]' as={commentLink}>
-                <a className='DfGreyLink'>{dayjs(formatUnixDate(time)).fromNow()}</a>
+                <a className='DfGreyLink'>{dayjs(formatUnixDate(createdAtTime)).fromNow()}</a>
               </Link>
               {' · '}
               {pluralize(score, 'Point')}
@@ -129,7 +131,7 @@ export const ViewComment: FunctionComponent<Props> = ({
       </div>}
       content={showEditForm
         ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
-        : <CommentBody comment={comment.post} />
+        : <CommentBody comment={asCommentData(comment.post)} />
       }
     >
       {ChildPanel}

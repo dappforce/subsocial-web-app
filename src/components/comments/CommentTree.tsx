@@ -1,5 +1,5 @@
-import { PostWithSomeDetails } from '@subsocial/types'
-import React, { useState, useCallback } from 'react'
+import { PostWithSomeDetails } from 'src/types'
+import React, { useState, useCallback, FC } from 'react'
 import { nonEmptyArr, newLogger } from '@subsocial/utils'
 import ViewComment from './ViewComment'
 import { useSelector, useDispatch } from 'react-redux'
@@ -11,8 +11,8 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { MutedDiv } from '../utils/MutedText'
 import { isFakeId } from './helpers'
 import DataList from '../lists/DataList'
-import { ZERO, resolveBn } from '../utils'
 import { PostStruct, SpaceStruct } from 'src/types'
+import { idToPostId } from 'src/types/utils'
 
 const log = newLogger('CommentTree')
 
@@ -29,20 +29,18 @@ type CommentsTreeProps = {
   comments: PostWithSomeDetails[]
 }
 
-const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, rootPost, space }) => {
+const ViewCommentsTree: FC<CommentsTreeProps> = ({ comments, rootPost, space }) => {
   return nonEmptyArr(comments) ? <DataList
     dataSource={comments}
     renderItem={(item) => {
       const { post: { struct } } = item
-      const key = `comment-${struct.id.toString()}`
-      return <ViewComment key={key} space={space} rootPost={rootPost} comment={item} withShowReplies/>
+      return <ViewComment key={struct.id} space={space} rootPost={rootPost} comment={item} withShowReplies />
     }}
   /> : null
 }
 
 export const DynamicCommentsTree = (props: LoadProps) => {
   const { rootPost, parent: { id: parentId }, space, replies } = props
-  const parentIdStr = parentId.toString()
 
   if (isFakeId(props.parent)) return null
 
@@ -53,16 +51,19 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
   const hasComments = nonEmptyArr(replyComments)
 
-  useSubsocialEffect(({ subsocial, substrate }) => {
+  useSubsocialEffect(({ flatApi, substrate }) => {
     if (!isLoading) return
 
     let isSubscribe = true
 
     const loadComments = async () => {
-      const replyIds = await substrate.getReplyIdsByPostId(parentId)
-      const comments = await subsocial.findPostsWithAllDetails({ ids: replyIds }) || []
+
+      // TODO use redux
+      const replyIds = await substrate.getReplyIdsByPostId(idToPostId(parentId))
+      const comments = await flatApi.findPostsWithAllDetails({ ids: replyIds }) || []
+
       const replyIdsStr = replyIds.map(x => x.toString())
-      const reply = { replyId: replyIdsStr, parentId: parentIdStr }
+      const reply = { replyId: replyIdsStr, parentId }
 
       if (isSubscribe) {
         setComments(comments)
@@ -72,16 +73,17 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 
     if (hasComments) {
       const replyIds = replyComments.map(x => x.post.struct.id.toString())
-      useSetReplyToStore(dispatch, { reply: { replyId: replyIds, parentId: parentIdStr }, comment: replyComments })
+      const reply = { replyId: replyIds, parentId }
+      useSetReplyToStore(dispatch, { reply, comment: replyComments })
     } else {
       loadComments()
         .then(() => isSubscribe && setIsLoading(false))
-        .catch(err => log.error('Failed to load comments: %o', err))
+        .catch(err => log.error('Failed to load comments:', err))
     }
 
     return () => { isSubscribe = false }
 
-  }, [ false ])
+  }, [])
 
   return isLoading && !hasComments
     ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined className='mr-1' /> Loading replies...</MutedDiv>
@@ -89,19 +91,18 @@ export const DynamicCommentsTree = (props: LoadProps) => {
 }
 
 export const CommentsTree = (props: LoadProps) => {
-  const { parent: { id: parentId, replies_count } } = props
-
-  const count = resolveBn(replies_count)
-  const parentIdStr = parentId.toString()
-
-  const comments = useSelector((store: Store) => getComments(store, parentIdStr))
+  const { parent: { id: parentId, repliesCount } } = props
+  const comments = useSelector((store: Store) => getComments(store, parentId))
   const hasComments = nonEmptyArr(comments)
 
-  const Tree = useCallback(() => nonEmptyArr(comments)
-  ? <ViewCommentsTree {...props} comments={comments} />
-  : <DynamicCommentsTree {...props} />, [ comments.length, parentIdStr, count.toString() ])
+  const Tree = useCallback(() =>
+    nonEmptyArr(comments)
+      ? <ViewCommentsTree {...props} comments={comments} />
+      : <DynamicCommentsTree {...props} />,
+    [ parentId, comments.length, repliesCount ]
+  )
 
-  if (count.eq(ZERO) && !hasComments) return null
+  if (!repliesCount && !hasComments) return null
 
   return <Tree />
 }

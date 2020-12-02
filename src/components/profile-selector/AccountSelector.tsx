@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import keyring from '@polkadot/ui-keyring'
 import useSubsocialEffect from '../api/useSubsocialEffect'
-import { ProfileData } from '@subsocial/types'
+import { ProfileData } from 'src/types'
 import { SelectAddressPreview, ProfilePreviewWithOwner } from '../profiles/address-views'
 import { Button, Avatar } from 'antd'
 import { useMyAccount, useMyAddress } from '../auth/MyAccountContext'
@@ -186,6 +186,7 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
       setLocalAddresses(localAddresses)
       setDevelopAddresses(developAddresses)
 
+      // TODO use redux
       const profiles = await subsocial.findProfiles(addresses)
 
       profiles.forEach((item) => {

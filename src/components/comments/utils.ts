@@ -2,7 +2,8 @@ import { addComments, removeComment } from 'src/redux/slices/replyIdsByPostIdSli
 import { addPost, removePost, editPost } from 'src/redux/slices/postByIdSlice'
 import { Dispatch } from '@reduxjs/toolkit'
 import { PostsStoreType } from 'src/redux/types'
-import { PostData, PostWithSomeDetails, CommentContent, PostContent, ProfileData } from '@subsocial/types'
+import { CommentContent, PostContent } from '@subsocial/types'
+import { CommentStruct, PostData, PostWithSomeDetails, ProfileData } from 'src/types'
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
@@ -60,26 +61,41 @@ export type CommentTxButtonType = {
   onFailed?: TxFailedCallback
 }
 
-export const buildMockComment = ({ fakeId, address, owner, content }: MockComment) => {
+export const buildMockComment = ({ fakeId, address, owner, content }: MockComment): PostWithSomeDetails => {
+  const id = fakeId
+
+  const struct: CommentStruct = {
+    id,
+    ownerId: address,
+
+    createdByAccount: address,
+    createdAtBlock: 0,
+    createdAtTime: new Date().getTime(),
+
+    repliesCount: 0,
+    hiddenRepliesCount: 0,
+    visibleRepliesCount: 0,
+
+    sharesCount: 0,
+    upvotesCount: 0,
+    downvotesCount: 0,
+    score: 0,
+    
+    isRegularPost: false,
+    isSharedPost: false,
+    isComment: true,
+
+    rootPostId: '0', // TODO set root Post Id
+    hidden: false,
+  }
+
   return {
+    id,
     owner,
     post: {
-      struct: {
-        id: fakeId,
-        created: {
-          account: address,
-          time: new Date().getTime()
-        },
-        owner: address,
-        score: 0,
-        shares_count: 0,
-        direct_replies_count: 0,
-        space_id: null,
-        extension: { Comment: {} },
-        content: { None: null },
-        hidden: false
-      },
-      content: content
+      id,
+      struct,
+      content: content as PostContent
     }
-  } as any as PostWithSomeDetails
+  }
 }

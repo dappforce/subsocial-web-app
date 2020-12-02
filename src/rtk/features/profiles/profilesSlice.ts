@@ -1,7 +1,7 @@
 import { Option } from '@polkadot/types'
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { CommonVisibility, createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenProfileStructs, getUniqueContentIds, ProfileData, ProfileStruct, SocialAccountWithId } from 'src/types'
 import { asString } from 'src/utils'
@@ -20,7 +20,10 @@ export const {
   selectTotal: selectTotalProfiles
 } = profilesSelectors
 
+export type ProfileVisibility = CommonVisibility
+
 type Args = {
+  visibility?: ProfileVisibility
   withContent?: boolean
 }
 
@@ -33,6 +36,7 @@ type FetchProfilesArgs = FetchManyArgs<Args>
 // export const selectProfile = (state: RootState, id: EntityId): ProfileData | undefined =>
 //   selectOneById(state, id, selectProfileStructById, selectProfileContentById)
 
+// TODO apply visibility filter
 export const selectProfiles = (state: RootState, { ids }: SelectProfilesArgs): ProfileData[] =>
   selectManyByIds(state, ids, selectProfileStructById, selectProfileContentById)
 

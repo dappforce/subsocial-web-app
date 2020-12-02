@@ -2,7 +2,6 @@ import { AsyncThunk, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
 import { CommonContent } from '@subsocial/types'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
-import BN from 'bn.js'
 import { EntityData, FlatSuperCommon, HasId } from 'src/types'
 import { asString } from 'src/utils'
 import { RootState } from './rootReducer'
@@ -16,6 +15,9 @@ export type ThunkApiConfig = {
 type StructEntity = HasId & Partial<FlatSuperCommon>
 
 type ContentEntity = HasId & CommonContent
+
+export type CommonVisibility = 'onlyPublic' | 'onlyUnlisted'
+export type HasHiddenVisibility = CommonVisibility | 'onlyVisible' | 'onlyHidden'
 
 type ApiArg = {
   api: SubsocialApi
@@ -60,10 +62,6 @@ export function createFilterNewIds (selectIds: (state: RootState) => EntityId[])
 
     return newIds
   }
-}
-
-export function idsToBns (ids: EntityId[]): BN[] {
-  return ids.map(id => BN.isBN(id) ? id : new BN(id))
 }
 
 function toApiAndIds ({ api, id }: ApiAndId): ApiAndIds {

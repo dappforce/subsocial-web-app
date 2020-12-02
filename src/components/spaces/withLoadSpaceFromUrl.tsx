@@ -32,13 +32,13 @@ export function withLoadSpaceFromUrl<Props extends CanHaveSpaceProps> (
     const [ isLoaded, setIsLoaded ] = useState(false)
     const [ loadedData, setLoadedData ] = useState<CanHaveSpaceProps>({})
 
-    useSubsocialEffect(({ subsocial }) => {
+    useSubsocialEffect(({ flatApi, subsocial }) => {
       const load = async () => {
         const id = await getSpaceId(idOrHandle, subsocial)
         if (!id) return
 
         setIsLoaded(false)
-        const space = await subsocial.findSpace({ id })
+        const space = await flatApi.findSpace({ id })
         setLoadedData({ space })
         setIsLoaded(true)
       }

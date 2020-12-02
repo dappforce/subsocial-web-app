@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { ViewComment } from './ViewComment'
 import { NewComment } from './CreateComment'
 import { mdToText } from 'src/utils'
@@ -21,13 +21,12 @@ type CommentSectionProps = {
   withBorder?: boolean
 }
 
-export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [], withBorder }) => {
+export const CommentSection: FC<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [], withBorder }) => {
   const { post: { struct } } = post
-  const { replies_count } = struct
-  const totalCount = replies_count.toString()
+  const { repliesCount } = struct
 
   return <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
-    <h3><Pluralize count={totalCount} singularText='comment' /></h3>
+    <h3><Pluralize count={repliesCount} singularText='comment' /></h3>
     <NewComment post={struct} asStub />
     <CommentsTree rootPost={struct} parent={struct} space={space} replies={replies} />
   </Section>
@@ -43,7 +42,7 @@ type CommentPageProps = {
 export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, space }) => {
   const { post: { struct, content }, owner } = comment
   const { content: postContent } = parentPost
-  const address = struct.owner.toString()
+  const address = struct.ownerId
   const profileName = getProfileName({ address, owner }).toString()
 
   const renderResponseTitle = () => <>

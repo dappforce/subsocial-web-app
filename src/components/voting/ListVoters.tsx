@@ -9,7 +9,9 @@ import { MutedDiv } from '../utils/MutedText'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { newLogger, nonEmptyArr, isEmptyArray } from '@subsocial/utils'
 import { AuthorPreviewWithOwner } from '../profiles/address-views'
+
 const { TabPane } = Tabs
+
 const log = newLogger('List voters')
 
 type VotersProps = {
@@ -121,13 +123,5 @@ export const PostVoters = withMulti(
   InnerModalVoters,
   withCalls<VotersProps>(
     reactionsQueryToProp('reactionIdsByPostId', { paramName: 'id', propName: 'reactionIds' })
-  )
-) as FC<VotersProps>
-
-// TODO use redux
-export const CommentVoters = withMulti(
-  InnerModalVoters,
-  withCalls<VotersProps>(
-    reactionsQueryToProp('reactionIdsByCommentId', { paramName: 'id', propName: 'reactionIds' })
   )
 ) as FC<VotersProps>

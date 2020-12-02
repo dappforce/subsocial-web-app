@@ -16,11 +16,11 @@ export type HasId = {
   id: Id
 }
 
-type CanHaveParentId = {
+export type CanHaveParentId = {
   parentId?: Id
 }
 
-type CanHaveSpaceId = {
+export type CanHaveSpaceId = {
   spaceId?: Id
 }
 
@@ -28,28 +28,28 @@ type CanHaveContent = {
   contentId?: Cid
 }
 
-type HasOwner = {
+export type HasOwner = {
   ownerId: string
 }
 
-type CanHaveHandle = {
+export type CanHaveHandle = {
   handle?: string
 }
 
-type HasCreated = {
+export type HasCreated = {
   createdByAccount: string
   createdAtBlock: number
   createdAtTime: number
 }
 
-type CanBeUpdated = {
+export type CanBeUpdated = {
   isUpdated?: boolean
   updatedByAccount?: string
   updatedAtBlock?: number
   updatedAtTime?: number
 }
 
-type CanBeHidden = {
+export type CanBeHidden = {
   hidden: boolean // TODO rename to 'isHidden'?
   // isPublic: boolean
 }
@@ -115,8 +115,11 @@ type SocialAccountStruct = HasId & {
   hasProfile: boolean
 }
 
+// TODO rename to SocialAccount?
 /** Flat account profile struct. */
 export type ProfileStruct = SocialAccountStruct & Partial<FlatSuperCommon>
+
+export type PublicProfileStruct = SocialAccountStruct & FlatSuperCommon
 
 type SuperCommonStruct = {
   created: WhoAndWhen
@@ -316,6 +319,12 @@ export function asCommentStruct (post: PostStruct): CommentStruct {
   if (!post.isComment) throw new Error('Not a comment')
 
   return post as CommentStruct
+}
+
+export function asPublicProfileStruct (profile: ProfileStruct): PublicProfileStruct {
+  if (!profile.hasProfile) throw new Error('Account has no profile')
+
+  return profile as PublicProfileStruct
 }
 
 export function flattenProfileStruct (account: AnyAccountId, struct: SocialAccount): ProfileStruct {

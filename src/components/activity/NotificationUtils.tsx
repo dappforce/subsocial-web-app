@@ -2,7 +2,8 @@ import React from 'react'
 import dayjs from 'dayjs'
 import { ViewSpace } from '../spaces/ViewSpace'
 import { Pluralize } from '../utils/Plularize'
-import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData, AnyAccountId } from '@subsocial/types'
+import { Activity, EventsName, PostContent, AnyAccountId } from '@subsocial/types'
+import { ProfileData, SpaceData, PostData, asSharedPostStruct, PostId, asCommentStruct, SpaceId, AccountId, EntityId } from 'src/types'
 import BN from 'bn.js'
 import Link from 'next/link'
 import { nonEmptyStr } from '@subsocial/utils'
@@ -10,11 +11,9 @@ import { postUrl, spaceUrl, accountUrl } from '../urls'
 import { NotifActivitiesType } from './Notifications'
 import messages from '../../messages'
 import { summarize } from 'src/utils'
-import { isSharedPost } from '../posts/view-post'
-import { SocialAccount, Post } from '@subsocial/types/substrate/interfaces'
 import { SubsocialApi } from '@subsocial/api/subsocial'
 import { Name } from '../profiles/address-views/Name'
-import { equalAddresses } from '../substrate'
+import { equalAddresses, FlatSubsocialApi } from '../substrate'
 
 export type LoadMoreFn = (
   myAddress: string,
@@ -56,16 +55,14 @@ type PreviewNotification = PathLinks & {
 
 const SUMMARIZE_LIMIT = 50
 
-type Struct = Exclude<CommonStruct, SocialAccount>
+type AnyEntityData = SpaceData | PostData | ProfileData
 
-const fillArray = <T extends string | BN>(
-  id: T,
-  structIds: T[],
-  structByIdMap: Map<string, AnySubsocialData>
+const rememberEntityId = (
+  id: EntityId,
+  structIds: EntityId[],
+  structByIdMap: Map<EntityId, AnyEntityData>
 ) => {
-  const struct = structByIdMap.get(id.toString())
-
-  if (!struct) {
+  if (structByIdMap.has(id)) {
     structIds.push(id)
   }
 }
@@ -77,11 +74,13 @@ type InnerNotificationsProps = {
 }
 
 type LoadNotificationsProps = InnerNotificationsProps & {
+  flatApi: FlatSubsocialApi,
   subsocial: SubsocialApi,
   activities: Activity[],
 }
 
 export const loadNotifications = async ({
+  flatApi,
   subsocial,
   activities,
   activityStore,
@@ -90,43 +89,44 @@ export const loadNotifications = async ({
 }: LoadNotificationsProps) => {
   const { spaceById, postById, ownerById } = activityStore
 
-  const ownerIds: string[] = []
-  const spaceIds: BN[] = []
-  const postIds: BN[] = []
+  const ownerIds: AccountId[] = []
+  const spaceIds: SpaceId[] = []
+  const postIds: PostId[] = []
 
   activities.forEach(({ account, following_id, space_id, post_id, comment_id }) => {
-    nonEmptyStr(account) && fillArray(account, ownerIds, ownerById)
-    nonEmptyStr(following_id) && fillArray(following_id, ownerIds, ownerById)
-    nonEmptyStr(space_id) && fillArray(new BN(space_id), spaceIds, spaceById)
-    nonEmptyStr(post_id) && fillArray(new BN(post_id), postIds, postById)
-    nonEmptyStr(comment_id) && fillArray(new BN(comment_id), postIds, postById)
+    nonEmptyStr(account) && rememberEntityId(account, ownerIds, ownerById)
+    nonEmptyStr(following_id) && rememberEntityId(following_id, ownerIds, ownerById)
+    nonEmptyStr(space_id) && rememberEntityId(space_id, spaceIds, spaceById)
+    nonEmptyStr(post_id) && rememberEntityId(post_id, postIds, postById)
+    nonEmptyStr(comment_id) && rememberEntityId(comment_id, postIds, postById)
   })
 
+  // TODO use redux
   const ownersData = await subsocial.findProfiles(ownerIds)
-  const postsData = await subsocial.findPublicPosts(postIds)
+  const postsData = await flatApi.findPublicPosts(postIds)
 
-  function fillMap<T extends AnySubsocialData> (
+  function fillMap<T extends AnyEntityData> (
     data: T[],
-    structByIdMap: Map<string, AnySubsocialData>,
+    structByIdMap: Map<string, T>,
     structName?: 'profile' | 'post'
   ) {
     data.forEach(x => {
-      let id
+      let id: EntityId
 
       switch (structName) {
         case 'profile': {
-          id = (x as ProfileData).profile?.created.account
+          id = (x as ProfileData).id
           break
         }
         case 'post': {
-          const struct = (x.struct as Post)
+          const struct = (x as PostData).struct
           id = struct.id
-          const spaceId = struct.space_id.unwrapOr(undefined)
+          const { spaceId } = struct
           spaceId && spaceIds.push(spaceId)
           break
         }
         default: {
-          id = (x.struct as Struct).id
+          id = (x as SpaceData).id
         }
       }
 
@@ -140,7 +140,7 @@ export const loadNotifications = async ({
   fillMap(ownersData, ownerById, 'profile')
 
   // Only at this point we have ids of spaces that should be loaded:
-  const spacesData = await subsocial.findPublicSpaces(spaceIds)
+  const spacesData = await flatApi.findPublicSpaces(spaceIds)
   fillMap(spacesData, spaceById)
 
   return activities
@@ -159,7 +159,7 @@ const renderSubjectPreview = (content?: PostContent, href = '') => {
 }
 
 
-const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotification | undefined => {
+const getSpacePreview = (spaceId: SpaceId, map: Map<string, SpaceData>): PreviewNotification | undefined => {
   const data = map.get(spaceId.toString())
 
   if (!data) return undefined
@@ -167,7 +167,7 @@ const getSpacePreview = (spaceId: BN, map: Map<string, SpaceData>): PreviewNotif
   return {
     preview: <ViewSpace spaceData={data} nameOnly withLink />,
     image: data?.content?.image,
-    owner: data?.struct.owner,
+    owner: data?.struct.ownerId,
     links: {
       href: '/[spaceId]',
       as: data && spaceUrl(data?.struct)
@@ -190,40 +190,42 @@ const getAccountPreview = (accountId: string, map: Map<string, ProfileData>): Pr
 }
 
 type GetPostPreviewProsp = {
-  postId: BN,
+  postId: PostId,
   event: EventsName,
   spaceMap: Map<string, SpaceData>,
   postMap: Map<string, PostData>
 }
 
 const getPostPreview = ({ postId, postMap, spaceMap, event } :GetPostPreviewProsp): PreviewNotification | undefined => {
-  const data = postMap.get(postId.toString())
+  const data = postMap.get(postId)
 
   if (!data) return undefined
 
-  const isShared = isSharedPost(data.struct.extension)
+  const { isSharedPost } = data.struct
 
-  if (event === 'PostCreated' && isShared) {
+  if (isSharedPost && event === 'PostCreated') {
     const msg = messages['activities'].PostSharing
-    const sharedPostId = data.struct.extension.asSharedPost
+    const { sharedPostId } = asSharedPostStruct(data.struct)
     const postPreview = getPostPreview({ postId: sharedPostId, spaceMap, postMap, event })
+
     return postPreview
       ? { ...postPreview, msg }
       : undefined
   }
 
-  const spaceId = data?.struct.space_id.unwrapOr(undefined)
-  const space = spaceId && spaceMap.get(spaceId.toString())?.struct
+  const spaceId = data?.struct.spaceId
+  const space = spaceId && spaceMap.get(spaceId)?.struct
   const postLink = space && data && postUrl(space, data)
 
   if (!postLink) return undefined
 
   const preview = renderSubjectPreview(data?.content, postLink)
   const image = data?.content?.image
+
   return {
     preview,
     image,
-    owner: data.struct.owner,
+    owner: data.struct.ownerId,
     links: {
       href: '/[spaceId]/[slug]',
       as: postLink
@@ -235,9 +237,10 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
   const commetIdStr = commentId.toString()
   const comment = postMap.get(commetIdStr)
   const commentStruct = comment?.struct
-  const isComment = commentStruct?.extension.isComment
+  const isComment = commentStruct?.isComment === true
+
   if (comment && commentStruct && isComment) {
-    const { root_post_id } = commentStruct.extension.asComment
+    const { rootPostId } = asCommentStruct(commentStruct)
 
     /* if (parent_id.isSome) {
       const msg = eventsMsg.CommentReactionCreated
@@ -246,24 +249,26 @@ const getCommentPreview = (commentId: BN, spaceMap: Map<string, SpaceData>, post
       // const commentPreview = renderSubjectPreview(commentTitle, `/comment?postId=${commentStruct.post_id}&commentId=${commentStruct.id}`)
       // const { preview: postPreview, image } = getPostPreview(postId, postMap);
       // const preview = <>{commentPreview} in {postPreview}</>
-      return { ...getPostPreview(root_post_id, spaceMap, postMap), msg }
+      return { ...getPostPreview(rootPostId, spaceMap, postMap), msg }
     } */
-    const data = postMap.get(root_post_id.toString())
+
+    const data = postMap.get(rootPostId)
 
     if (!data) return undefined
 
-    const spaceId = data?.struct.space_id.unwrapOr(undefined)
-    const space = spaceId && spaceMap.get(spaceId.toString())?.struct
+    const spaceId = data?.struct.spaceId
+    const space = spaceId && spaceMap.get(spaceId)?.struct
     const postLink = space && data && postUrl(space, comment)
 
     if (!postLink) return undefined
 
     const preview = renderSubjectPreview(data?.content, postLink)
     const image = data?.content?.image
+
     return {
       preview,
       image,
-      owner: data.struct.owner,
+      owner: data.struct.ownerId,
       links: {
         href: '/[spaceId]/[slug]',
         as: postLink
@@ -282,16 +287,16 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
   const getCommentPreviewWithMaps = (comment_id: string) =>
     getCommentPreview(new BN(comment_id), spaceById, postById)
 
-  const getPostPreviewWithMaps = (post_id: string) =>
+  const getPostPreviewWithMaps = (postId: string) =>
     getPostPreview({
-      postId: new BN(post_id),
+      postId,
       spaceMap: spaceById,
       postMap: postById,
       event: eventName
     })
 
-  const getSpacePreviewWithMaps = (space_id: string) =>
-    getSpacePreview(new BN(space_id), spaceById)
+  const getSpacePreviewWithMaps = (spaceId: string) =>
+    getSpacePreview(spaceId, spaceById)
 
   const isActivity = type === 'activities'
 
@@ -308,12 +313,13 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
     case 'PostCreated': return isActivity ? getPostPreviewWithMaps(post_id) : undefined
     default: return undefined
   }
-
 }
 
 const getNotificationMessage = (msg: string, aggregationCount: number, preview: JSX.Element | null, withAggregation: boolean) => {
   const aggregationMsg = withAggregation
-    ? aggregationCount > 0 && <>{' and'} <Pluralize count={aggregationCount} singularText='other person' pluralText='other people' /></>
+    ? aggregationCount > 0 && <>{' and '}
+      <Pluralize count={aggregationCount} singularText='other person' pluralText='other people' />
+    </>
     : undefined
 
   return <span className="DfActivityMsg">{aggregationMsg} {msg} {preview}</span>
@@ -323,7 +329,8 @@ type GetNotificationProps = InnerNotificationsProps & {
   activity: Activity,
 }
 
-export const getNotification = ({ type, activityStore, activity, myAddress }: GetNotificationProps): NotificationType | undefined => {
+export const getNotification = (props: GetNotificationProps): NotificationType | undefined => {
+  const { type, activityStore, activity, myAddress } = props
   const { account, event, date, agg_count } = activity
   const formatDate = dayjs(date).format('lll')
   const creator = activityStore.ownerById.get(account)
@@ -335,7 +342,18 @@ export const getNotification = ({ type, activityStore, activity, myAddress }: Ge
   const msgType: NotifActivitiesType = equalAddresses(myAddress, owner) ? type : 'activities'
   const eventMsg = messages[msgType] as EventsMsg
 
-  const notificationMessage = getNotificationMessage(msg || eventMsg[event as EventsName], agg_count - 1, preview, type === 'notifications')
+  const notificationMessage = getNotificationMessage(
+    msg || eventMsg[event as EventsName],
+    agg_count - 1,
+    preview, 
+    type === 'notifications'
+  )
 
-  return { address: account, notificationMessage, details: formatDate, owner: creator, ...other }
+  return {
+    address: account,
+    notificationMessage,
+    details: formatDate,
+    owner: creator,
+    ...other
+  }
 }

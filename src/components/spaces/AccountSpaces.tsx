@@ -17,6 +17,7 @@ import { useRouter } from 'next/router'
 import DataList from '../lists/DataList'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { PageContent } from '../main/PageWrapper'
+import { newFlatApi } from '../substrate'
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -64,12 +65,12 @@ export const useLoadAccoutPublicSpaces = (
     )
   }, [ address.toString() ])
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
     if (!spacesCount) return
 
     const loadSpaces = async () => {
       const pageIds = getPageOfIds(mySpaceIds, query)
-      const spacesData = await subsocial.findPublicSpaces(pageIds)
+      const spacesData = await flatApi.findPublicSpaces(pageIds)
       setSpacesData(spacesData)
     }
 
@@ -91,10 +92,10 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
   const isMySpaces = isMyAddress(address)
   const [ myUnlistedSpaces, setMyUnlistedSpaces ] = useState<SpaceData[]>()
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
     if (!isMySpaces) return setMyUnlistedSpaces([])
 
-    subsocial.findUnlistedSpaces(mySpaceIds)
+    flatApi.findUnlistedSpaces(mySpaceIds)
       .then(setMyUnlistedSpaces)
       .catch((err) =>
         log.error('Failed to load unlisted spaces by account', address.toString(), err)
@@ -188,10 +189,12 @@ AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   }
 
   const subsocial = await getSubsocialApi()
+  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
+
   const mySpaceIds = await substrate.spaceIdsByOwner(address)
   const pageIds = getPageOfIds(mySpaceIds, query)
-  const spacesData = await subsocial.findPublicSpaces(pageIds)
+  const spacesData = await flatApi.findPublicSpaces(pageIds)
 
   return {
     spacesData,

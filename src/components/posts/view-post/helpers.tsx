@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import Link from 'next/link'
 import { isEmptyStr } from '@subsocial/utils'
 import { formatUnixDate, IconWithLabel, isVisible } from '../../utils'
@@ -9,7 +9,7 @@ import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/ico
 import { Menu, Dropdown, Button } from 'antd'
 import { isMyAddress } from '../../auth/MyAccountContext'
 import { Post, PostExtension, PostId } from '@subsocial/types/substrate/interfaces'
-import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData, SpaceStruct, PostStruct } from 'src/types'
+import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData, SpaceStruct, PostStruct, idToPostId, flattenPostStruct } from 'src/types'
 import { PostContent as PostContentType } from '@subsocial/types'
 import ViewTags from '../../utils/ViewTags'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
@@ -21,7 +21,6 @@ import { VoterButtons } from 'src/components/voting/VoterButtons'
 import Segment from 'src/components/utils/Segment'
 import { RegularPreview } from '.'
 import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters'
-import { isHidden } from '@subsocial/api/utils/visibility-filter'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs'
@@ -38,7 +37,6 @@ type DropdownProps = {
   withEditButton?: boolean
 }
 
-export const isRegularPost = (extension: PostExtension): boolean => extension.isRegularPost || (extension as any).RegularPost === null // Hack because SSR serializes objects and this drops all methods.
 export const isSharedPost = (extension: PostExtension): boolean => extension.isSharedPost || (extension as any).SharedPost
 export const isComment = (extension: PostExtension): boolean => extension.isComment || (extension as any).Comment
 
@@ -55,10 +53,10 @@ const ReactionModal = ({ postId }: ReactionModalProps) => {
   </>
 }
 
-export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) => {
+export const PostDropDownMenu: FC<DropdownProps> = (props) => {
   const { space, post, withEditButton = false } = props
   const { struct } = post
-  const isMyPost = isMyAddress(struct.owner)
+  const isMyPost = isMyAddress(struct.ownerId)
   const postId = struct.id
   const postKey = `post-${postId.toString()}`
 
@@ -78,7 +76,7 @@ export const PostDropDownMenu: React.FunctionComponent<DropdownProps> = (props) 
         <HiddenPostButton post={struct} asLink />
       </Menu.Item>}
       <Menu.Item key={`view-reaction-${postKey}`} >
-        <ReactionModal postId={postId} />
+        <ReactionModal postId={idToPostId(postId)} />
       </Menu.Item>
       {/* {edit_history.length > 0 && <Menu.Item key='1'>
           <div onClick={() => setOpen(true)} >View edit history</div>
@@ -109,7 +107,9 @@ export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   const PostAlert = () => <HiddenEntityPanel struct={post} type={kind} {...props} />
 
   // TODO fix view Space alert when space is hidden
-  // const SpaceAlert = () => space && !isOnlyVisible(space.struct) ? <HiddenEntityPanel preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' /> : null
+  // const SpaceAlert = () => space && !isOnlyVisible(space.struct)
+    // ? <HiddenEntityPanel preview={preview} struct={space.struct} type='space' desc='This post is not visible because its space is hidden.' />
+    // : null
 
   return <PostAlert />
 }
@@ -124,7 +124,7 @@ type PostNameProps = {
   withLink?: boolean
 }
 
-export const PostName: React.FunctionComponent<PostNameProps> = ({ space, post, title, withLink }) => {
+export const PostName: FC<PostNameProps> = ({ space, post, title, withLink }) => {
   if (!space?.id || !post?.struct.id || !title) return null
 
   return (
@@ -141,16 +141,17 @@ type PostCreatorProps = {
   size?: number,
 }
 
-export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDetails, size, withSpaceName, space }) => {
+export const PostCreator: FC<PostCreatorProps> = ({ postDetails, size, withSpaceName, space }) => {
   if (isEmpty(postDetails.post)) return null
+
   const { post, owner } = postDetails
-  const { created: { time }, owner: postOwnerAddress } = post.struct
+  const { createdAtTime, ownerId } = post.struct
 
   // TODO replace on loaded space after refactor this components
 
   return <>
     <AuthorPreview
-      address={postOwnerAddress}
+      address={ownerId}
       owner={owner}
       withFollowButton
       isShort={true}
@@ -164,7 +165,7 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
         }
         {space && <Link href='/[spaceId]/[slug]' as={postUrl(space.struct, post)}>
           <a className='DfGreyLink'>
-            {formatUnixDate(time)}
+            {formatUnixDate(createdAtTime)}
           </a>
         </Link>}
       </div>}
@@ -202,7 +203,7 @@ type PostContentProps = {
   withImage?: boolean
 }
 
-export const PostContent: React.FunctionComponent<PostContentProps> = (props) => {
+export const PostContent: FC<PostContentProps> = (props) => {
   const { postDetails, content, space, withImage } = props
   const isMobile = useIsMobileWidthOrDevice()
 
@@ -231,23 +232,23 @@ type PostActionsPanelProps = {
 }
 
 const ShowCommentsAction = ({ postDetails, preview, toogleCommentSection }: PostActionsPanelProps) => {
-  const { post: { struct: { replies_count } } } = postDetails
+  const { post: { struct: { repliesCount } } } = postDetails
   const title = 'Comment'
 
   return <Action onClick={toogleCommentSection} title={title}>
     <IconWithLabel
       icon={<MessageOutlined />}
-      count={replies_count}
+      count={repliesCount}
       label={!preview ? title : undefined}
     />
   </Action>
 }
 
-const Action: React.FunctionComponent<{ onClick?: () => void, title?: string }> =
+const Action: FC<{ onClick?: () => void, title?: string }> =
   ({ children, onClick, title }) =>
     <Button onClick={onClick} title={title} className='DfAction'>{children}</Button>
 
-export const PostActionsPanel: React.FunctionComponent<PostActionsPanelProps> = (props) => {
+export const PostActionsPanel: FC<PostActionsPanelProps> = (props) => {
   const { postDetails, space, preview, withBorder } = props
   const { post: { struct } } = postDetails
 
@@ -278,7 +279,7 @@ const SharedPostMd = (props: PostPreviewProps) => {
   const { postDetails: { post }, space } = props
   const { struct, content } = post
 
-  return isComment(struct.extension)
+  return struct.isComment
     ? <DfMd source={content?.body} className='DfPostBody' />
     : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, post, 'See More')} />
 }
@@ -292,7 +293,7 @@ export const SharePostContent = (props: PostPreviewProps) => {
     const originalPost = ext.post.struct
 
     return <>
-      {isVisible({ struct: originalPost, address: originalPost.owner })
+      {isVisible({ struct: originalPost, address: originalPost.ownerId })
         ? <RegularPreview postDetails={ext as PostWithAllDetails} space={ext.space} />
         : <PostNotFound />
       }
@@ -307,7 +308,7 @@ export const SharePostContent = (props: PostPreviewProps) => {
   </div>
 }
 
-export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props) => {
+export const InfoPostPreview: FC<PostPreviewProps> = (props) => {
   const { postDetails, space, withImage = true, withTags } = props
   const { post: { struct, content } } = postDetails
   const isMobile = useIsMobileWidthOrDevice()
@@ -332,9 +333,7 @@ export const InfoPostPreview: React.FunctionComponent<PostPreviewProps> = (props
 
 export const PostNotFound = () => <NoData description='Post not found' />
 
-export const isHiddenPost = (post: Post) => isHidden(post)
-
-export const useSubscribedPost = (initPost: Post) => {
+export const useSubscribedPost = (initPost: PostStruct) => {
   const [ post, setPost ] = useState(initPost)
 
   useSubsocialEffect(({ substrate: { api } }) => {
@@ -343,14 +342,16 @@ export const useSubscribedPost = (initPost: Post) => {
     const sub = async () => {
       const readyApi = await api
       unsub = await readyApi.query.posts.postById(initPost.id, (data: Option<Post>) => {
-        setPost(data.unwrapOr(post))
+        if (data.isSome) {
+          setPost(flattenPostStruct(data.unwrap()))
+        }
       })
     }
 
     sub()
 
     return () => unsub && unsub()
-  }, [ initPost.id.toString() ])
+  }, [ initPost.id ])
 
   return post
 }

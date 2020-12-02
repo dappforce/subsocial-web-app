@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { Drawer } from 'antd'
 import Address from '../profiles/address-views/Name'
 import Avatar from '../profiles/address-views/Avatar'
@@ -13,7 +13,7 @@ type SelectAddressType = AddressProps & {
   withShortAddress?: boolean
 }
 
-export const SelectAddressPreview: React.FunctionComponent<SelectAddressType> = ({
+export const SelectAddressPreview: FC<SelectAddressType> = ({
   address,
   owner,
   withShortAddress,
@@ -30,7 +30,7 @@ export const SelectAddressPreview: React.FunctionComponent<SelectAddressType> = 
   </div>
 )
 
-export const AccountMenu: React.FunctionComponent<AddressProps> = ({
+export const AccountMenu: FC<AddressProps> = ({
   address,
   owner
 }) => {

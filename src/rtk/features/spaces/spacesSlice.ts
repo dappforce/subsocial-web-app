@@ -1,8 +1,9 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { getFirstOrUndefined } from '@subsocial/utils'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, idsToBns, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenSpaceStructs, getUniqueContentIds, getUniqueOwnerIds, ProfileData, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
+import { idsToBns } from 'src/types/utils'
 import { fetchContents, selectSpaceContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
 
@@ -19,13 +20,10 @@ export const {
   selectTotal: selectTotalSpaces
 } = spacesSelectors
 
-// const _selectSpace = (state: RootState, id: EntityId): SpaceData | undefined =>
-//   selectOneById(state, id, selectSpaceStructById, selectSpaceContentById)
-
-const _selectSpacesByIds = (state: RootState, ids: EntityId[]) =>
-  selectManyByIds(state, ids, selectSpaceStructById, selectSpaceContentById)
+export type SpaceVisibility = HasHiddenVisibility
 
 type Args = {
+  visibility?: SpaceVisibility
   withContent?: boolean
   withOwner?: boolean
 }
@@ -36,6 +34,12 @@ export type SelectSpacesArgs = SelectManyArgs<Args>
 type FetchSpaceArgs = FetchOneArgs<Args>
 type FetchSpacesArgs = FetchManyArgs<Args>
 
+// const _selectSpace = (state: RootState, id: EntityId): SpaceData | undefined =>
+//   selectOneById(state, id, selectSpaceStructById, selectSpaceContentById)
+
+const _selectSpacesByIds = (state: RootState, ids: EntityId[]) =>
+  selectManyByIds(state, ids, selectSpaceStructById, selectSpaceContentById)
+
 // TODO extract a generic function
 export function selectSpace (state: RootState, props: SelectSpaceArgs): SpaceWithSomeDetails | undefined {
   const { id, ...rest } = props
@@ -43,6 +47,7 @@ export function selectSpace (state: RootState, props: SelectSpaceArgs): SpaceWit
   return getFirstOrUndefined(entities)
 }
 
+// TODO apply visibility filter
 export function selectSpaces (state: RootState, props: SelectSpacesArgs): SpaceWithSomeDetails[] {
   const { ids, withOwner = true } = props
   const spaces = _selectSpacesByIds(state, ids)

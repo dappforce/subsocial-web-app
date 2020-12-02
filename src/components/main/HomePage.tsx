@@ -3,16 +3,16 @@ import { NextPage } from 'next'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
 import { LatestSpaces } from './LatestSpaces'
 import { LatestPosts } from './LatestPosts'
-import { SpaceData, PostWithAllDetails } from '@subsocial/types'
+import { SpaceData, PostWithAllDetails } from 'src/types'
 import { DEFAULT_DESC, DEFAULT_TITLE, PageContent } from './PageWrapper'
 import partition from 'lodash.partition'
-import { isComment } from '../posts/view-post'
 import { useIsSignedIn } from '../auth/MyAccountContext'
 import { getLastNSpaceIds, getLastNIds } from '../utils/getIds'
 import { Tabs } from 'antd'
 import Section from '../utils/Section'
 import MyFeed from '../activity/MyFeed'
 import { uiShowFeed } from '../utils/env'
+import { newFlatApi } from '../substrate'
 
 const { TabPane } = Tabs
 
@@ -64,19 +64,22 @@ const LAST_ITEMS_SIZE = 5
 
 HomePage.getInitialProps = async (): Promise<Props> => {
   const subsocial = await getSubsocialApi()
+  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
+
+  // TODO use redux
   const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
   const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE)
-  const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
+  const publicSpacesData = await flatApi.findPublicSpaces(latestSpaceIds)
   const spacesData = publicSpacesData.slice(0, LAST_ITEMS_SIZE)
   const canHaveMoreSpaces = publicSpacesData.length >= LAST_ITEMS_SIZE
 
   const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE)
-  const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds)
+  const allPostsData = await flatApi.findPublicPostsWithAllDetails(latestPostIds)
   const [ publicCommentData, publicPostsData ] =
-    partition(allPostsData, (x) => isComment(x.post.struct.extension))
+    partition(allPostsData, (x) => x.post.struct.isComment)
 
   const postsData = publicPostsData.slice(0, LAST_ITEMS_SIZE)
   const commentData = publicCommentData.slice(0, LAST_ITEMS_SIZE)

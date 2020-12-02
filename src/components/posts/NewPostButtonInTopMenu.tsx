@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 import { Button, Modal } from 'antd'
 import { useMyAddress } from '../auth/MyAccountContext'
 import useSubsocialEffect from '../api/useSubsocialEffect'
-import { SpaceData } from '@subsocial/types'
+import { SpaceData } from 'src/types'
 import { findSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { ViewSpace } from '../spaces/ViewSpace'
 import { createNewPostLinkProps, CreateSpaceButton } from '../spaces/helpers'
@@ -45,13 +45,13 @@ export const NewPostButtonInTopMenu = () => {
   }, [ sudo?.toString() ])
 
   // TODO fix copypasta, see AccountSpaces
-  useSubsocialEffect(({ subsocial, substrate }) => {
+  useSubsocialEffect(({ flatApi, substrate }) => {
     if (/* !open || */ !sudo || !myAddress) return
 
     const loadSpaces = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(myAddress)
       const withoutReservedSpaceIds = findSpaceIdsThatCanSuggestIfSudo(sudo, myAddress, mySpaceIds)
-      const spacesData = await subsocial.findPublicSpaces(withoutReservedSpaceIds)
+      const spacesData = await flatApi.findPublicSpaces(withoutReservedSpaceIds)
       setSpacesData(spacesData)
     }
 
@@ -97,7 +97,7 @@ export const NewPostButtonInTopMenu = () => {
     }
 
     return <>{spacesData.map(s =>
-      <div key={s.struct.id.toString()} className={styles.DfSpacePreview}>
+      <div key={s.id} className={styles.DfSpacePreview}>
         <Link {...createNewPostLinkProps(s.struct)}>
           <ViewSpace onClick={closeModal} spaceData={s} miniPreview withFollowButton={false} />
         </Link>

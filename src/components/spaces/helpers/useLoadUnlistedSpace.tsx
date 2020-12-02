@@ -14,14 +14,14 @@ export const useLoadUnlistedSpace = (address: AnyAccountId) => {
 
   const [ myHiddenSpace, setMyHiddenSpace ] = useState<SpaceData>()
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi, subsocial }) => {
     if (!isMySpace || isEmptyStr(idOrHandle)) return
 
     let isSubscribe = true
 
     const loadSpaceFromId = async () => {
       const id = await getSpaceId(idOrHandle, subsocial)
-      const spaceData = id && await subsocial.findSpace({ id })
+      const spaceData = id && await flatApi.findSpace({ id })
       isSubscribe && spaceData && setMyHiddenSpace(spaceData)
     }
 

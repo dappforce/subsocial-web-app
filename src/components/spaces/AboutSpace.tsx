@@ -12,7 +12,7 @@ import { getSubsocialApi } from '../utils/SubsocialConnect'
 import ViewTags from '../utils/ViewTags'
 import { ViewSpaceProps } from './ViewSpaceProps'
 import { PageContent } from '../main/PageWrapper'
-import { getSpaceId } from '../substrate'
+import { getSpaceId, newFlatApi } from '../substrate'
 import { isUnlistedSpace, SpaceNotFound } from './helpers'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
 import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
@@ -112,13 +112,15 @@ AboutSpacePage.getInitialProps = async (props): Promise<Props> => {
   }
 
   const subsocial = await getSubsocialApi()
-  const spaceData = id && await subsocial.findSpace({ id })
+  const flatApi = newFlatApi(subsocial)
+  const spaceData = id && await flatApi.findSpace({ id })
+
   if (!spaceData?.struct) {
     return return404(props)
   }
 
-  const ownerId = spaceData?.struct.owner
-  const owner = await subsocial.findProfile(ownerId)
+  const { ownerId } = spaceData.struct
+  const owner = await flatApi.findProfile(ownerId)
 
   return {
     spaceData,

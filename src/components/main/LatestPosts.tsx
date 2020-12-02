@@ -1,5 +1,5 @@
 import React from 'react'
-import { PostWithAllDetails } from '@subsocial/types'
+import { PostWithAllDetails } from 'src/types'
 import PostPreview from '../posts/view-post/PostPreview'
 import DataList from '../lists/DataList'
 

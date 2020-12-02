@@ -1,6 +1,6 @@
 import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit'
 import { Store } from '../types'
-import { PostWithAllDetails } from '@subsocial/types'
+import { PostWithAllDetails } from 'src/types'
 
 export type CommentsState = Record<string, string[]>
 

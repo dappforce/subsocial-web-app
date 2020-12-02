@@ -17,10 +17,10 @@ type Props = {
 }
 
 const UnlistedPosts = ({ spaceData, postIds }: Props) => {
-  const { struct: space } = spaceData
+  const { struct: { ownerId } } = spaceData
 
   // TODO use redux
-  const { myHiddenPosts, isLoading } = useLoadUnlistedPostsByOwner({ owner: space.ownerId, postIds })
+  const { myHiddenPosts, isLoading } = useLoadUnlistedPostsByOwner({ owner: ownerId, postIds })
 
   if (isLoading) return null
 
@@ -44,7 +44,7 @@ export const PostPreviewsOnSpace = (props: Props) => {
   const { spaceData, posts, postIds } = props
   const { struct: space } = spaceData
   const { visiblePostsCount } = space
-  const { isApiReady, subsocial } = useSubsocialApi()
+  const { isApiReady, flatApi } = useSubsocialApi()
 
   const postsSectionTitle = () =>
     <div className='w-100 d-flex justify-content-between align-items-baseline'>
@@ -68,7 +68,7 @@ export const PostPreviewsOnSpace = (props: Props) => {
         const pageIds = getPageOfIds(postIds, { page, size })
 
         // TODO use redux
-        return subsocial.findPublicPostsWithAllDetails(pageIds)
+        return flatApi.findPublicPostsWithAllDetails(pageIds)
       }}
       totalCount={visiblePostsCount}
       noDataDesc='No posts yet'

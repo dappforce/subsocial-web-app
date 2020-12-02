@@ -1,6 +1,5 @@
-import { Option, StorageKey } from '@polkadot/types'
+import { StorageKey } from '@polkadot/types'
 import { GenericAccountId } from '@polkadot/types/generic'
-import { Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import dayjs, { Dayjs } from 'dayjs'
 import { NextPageContext } from 'next'
 import React from 'react'
@@ -17,6 +16,8 @@ import {
   ParsedPaginationQuery,
   parsePageQuery
 } from '../utils/getIds'
+import { asPublicProfileStruct, CanBeUpdated, flattenProfileStruct, flattenSpaceStruct, HasCreated } from 'src/types'
+import { newFlatApi } from '../substrate'
 
 /** See https://www.sitemaps.org/protocol.html#changefreqdef */
 type ChangeFreq =
@@ -39,13 +40,13 @@ type UrlItem = {
 
 type ResourceType = 'profiles' | 'spaces' | 'posts'
 
-type HasCreatedOrUpdated = {
-  created: WhoAndWhen
-  updated: Option<WhoAndWhen>
-}
+type HasCreatedOrUpdated =
+  Pick<HasCreated, 'createdAtTime'> &
+  Pick<CanBeUpdated, 'updatedAtTime'>
 
-const getLastModFromStruct = ({ updated, created }: HasCreatedOrUpdated) => {
-  const lastUpdateFromStruct = dayjs(updated.unwrapOr(created).time.toNumber())
+const getLastModFromStruct = ({ createdAtTime, updatedAtTime }: HasCreatedOrUpdated) => {
+  const structTime = updatedAtTime || createdAtTime
+  const lastUpdateFromStruct = dayjs(structTime)
   return seoSitemapLastmod && lastUpdateFromStruct.isBefore(seoSitemapLastmod)
     ? seoSitemapLastmod
     : lastUpdateFromStruct
@@ -166,11 +167,14 @@ export class SpacesUrlSet extends React.Component {
     const ids = getReversePageOfSpaceIds(nextSpaceId, query)
     const spaces = await substrate.findSpaces({ ids, visibility: 'onlyPublic' })
 
-    const items: UrlItem[] = spaces.map((space) => ({
-      loc: spaceUrl(space),
-      lastmod: getLastModFromStruct(space),
-      changefreq: 'daily'
-    }))
+    const items: UrlItem[] = spaces.map((space) => {
+      const flatSpace = flattenSpaceStruct(space)
+      return {
+        loc: spaceUrl(flatSpace),
+        lastmod: getLastModFromStruct(flatSpace),
+        changefreq: 'daily'
+      }
+    })
   
     sendXml(props, renderUrlSet(items))
   }
@@ -180,15 +184,20 @@ export class PostsUrlSet extends React.Component {
   static async getInitialProps (props: NextPageContext) {
     const query = getPageAndSize(props)
     const subsocial = await getSubsocialApi()
+    const flatApi = newFlatApi(subsocial)
+
     const nextPostId = await subsocial.substrate.nextPostId()
     const ids = getReversePageOfPostIds(nextPostId, query)
-    const posts = await subsocial.findPublicPostsWithSomeDetails({ ids, withSpace: true })
+    const posts = await flatApi.findPublicPostsWithSomeDetails({ ids, withSpace: true })
 
-    const items: UrlItem[] = posts.map(({ post, space }) => ({
-      loc: postUrl(space?.struct || { id: post.struct.space_id.unwrap() } as Space, post), 
-      lastmod: getLastModFromStruct(post.struct),
-      changefreq: 'weekly'
-    }))
+    const items: UrlItem[] = posts.map(({ post, space }) => {
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        loc: postUrl(space!, post),
+        lastmod: getLastModFromStruct(post.struct),
+        changefreq: 'weekly'
+      }
+    })
     
     sendXml(props, renderUrlSet(items))
   }
@@ -211,12 +220,16 @@ export class ProfilesUrlSet extends React.Component {
 
     const items: UrlItem[] = []
     const socialAccounts = (await substrate.findSocialAccounts(ids))
-    socialAccounts.forEach(({ profile: profileOpt }) => {
-      if (profileOpt.isSome) {
-        const profile = profileOpt.unwrap()
+    socialAccounts.forEach((socialAcc) => {
+      if (socialAcc.profile.isSome) {
+        const profile = socialAcc.profile.unwrap()
+        const owner = profile.created.account
+        const flatProfile = asPublicProfileStruct(
+          flattenProfileStruct(owner, socialAcc)
+        )
         items.push({ 
-          loc: accountUrl({ address: profile.created.account }),
-          lastmod: getLastModFromStruct(profile),
+          loc: accountUrl({ address: owner }),
+          lastmod: getLastModFromStruct(flatProfile),
           changefreq: 'weekly'
         })
       }

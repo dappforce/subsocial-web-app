@@ -1,5 +1,5 @@
 import { createSlice, CaseReducer, PayloadAction } from '@reduxjs/toolkit'
-import { PostData, PostWithSomeDetails } from '@subsocial/types'
+import { PostData, PostWithSomeDetails } from 'src/types'
 import { Store, PostsStoreType } from '../types'
 import { Profile, Space } from '@subsocial/types/substrate/interfaces'
 

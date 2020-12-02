@@ -6,22 +6,18 @@ import { i32, u16, u32, Null } from '@polkadot/types'
 import { SpaceContent } from '@subsocial/types/offchain'
 import { Space, SpaceId, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
-import { Vec } from '@polkadot/types/codec'
-import { SpaceHistoryRecord } from '@subsocial/types/substrate/interfaces/subsocial/types'
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { Content, IpfsContent, OptionText, OptionId } from '@subsocial/types/substrate/classes'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { Moment, BlockNumber } from '@polkadot/types/interfaces'
 
 type NewSpaceProps = {
   id?: number | BN,
-  account?: AccountId,
-  writers?: AccountId[],
+  ownerId?: AccountId,
   handle?: string,
   content?: Content,
-  posts_count?: number,
-  followers_count?: number,
-  edit_history?: SpaceHistoryRecord[],
+  postsCount?: number,
+  followersCount?: number,
   score?: number
 }
 
@@ -30,13 +26,11 @@ const nextId = (): SpaceId => new BN(++_id) as SpaceId
 
 function newSpaceStructMock ({
   id = nextId(),
-  account = mockAccountAlice,
-  writers = [],
+  ownerId = mockAccountAlice,
   handle,
   content = new IpfsContent(),
-  posts_count = 12,
-  followers_count = 3456,
-  edit_history = [],
+  postsCount = 12,
+  followersCount = 3456,
   score = 678
 }: NewSpaceProps): Space {
   return {
@@ -48,12 +42,11 @@ function newSpaceStructMock ({
     } as WhoAndWhen,
     updated: new Null(registry),
     parent_id: new OptionId(),
-    owner: account,
+    owner: ownerId,
     handle: new OptionText(handle),
     content: content,
-    posts_count: new BN(posts_count) as u16,
-    followers_count: new BN(followers_count) as u32,
-    edit_history: edit_history as unknown as Vec<SpaceHistoryRecord>,
+    posts_count: new BN(postsCount) as u16,
+    followers_count: new BN(followersCount) as u32,
     score: new BN(score) as i32
   } as any as Space // TODO remove any
 }
@@ -61,18 +54,18 @@ function newSpaceStructMock ({
 export const mockSpaceId = nextId()
 
 export const mockSpaceStruct = newSpaceStructMock({
-  account: mockAccountAlice,
+  ownerId: mockAccountAlice,
   handle: 'alice_in_chains',
-  posts_count: 12,
-  followers_count: 4561,
+  postsCount: 12,
+  followersCount: 4561,
   score: 654
 })
 
 export const mockSpaceStructBob = newSpaceStructMock({
-  account: mockAccountBob,
+  ownerId: mockAccountBob,
   handle: 'bobster',
-  posts_count: 0,
-  followers_count: 43,
+  postsCount: 0,
+  followersCount: 43,
   score: 1
 })
 

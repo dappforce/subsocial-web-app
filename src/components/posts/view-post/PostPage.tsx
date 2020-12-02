@@ -2,7 +2,7 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
-import { PostData, PostWithAllDetails } from 'src/types'
+import { idToBn, PostData, PostWithAllDetails, PostWithSomeDetails, SpaceStruct } from 'src/types'
 import ViewTags from '../../utils/ViewTags'
 import ViewPostLink from '../ViewPostLink'
 import { CommentSection } from '../../comments/CommentsSection'
@@ -10,7 +10,7 @@ import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActio
 import Error from 'next/error'
 import { NextPage } from 'next'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
-import { unwrapSubstrateId } from 'src/components/substrate'
+import { newFlatApi } from 'src/components/substrate'
 import partition from 'lodash.partition'
 import { PageContent } from 'src/components/main/PageWrapper'
 import { isHidden, Loading } from 'src/components/utils'
@@ -21,7 +21,6 @@ import { mdToText } from 'src/utils'
 import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
-import { PostId, Space, SpaceId } from '@subsocial/types/substrate/interfaces'
 import { return404 } from 'src/components/utils/next'
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
@@ -32,23 +31,40 @@ export type PostDetailsProps = {
   replies: PostWithAllDetails[]
 }
 
-export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost, replies, statusCode }) => {
-  if (statusCode === 404) return <Error statusCode={statusCode} />
-  if (!initialPost || isHidden({ struct: initialPost.post.struct })) return <PostNotFound />
+export const PostPage: NextPage<PostDetailsProps> = (props) => {
+  const { postDetails: initialPost, replies, statusCode } = props
+
+  if (statusCode === 404) {
+    return <Error statusCode={statusCode} />
+  }
+
+  if (!initialPost || isHidden({ struct: initialPost.post.struct })) {
+    return <PostNotFound />
+  }
 
   const { post, ext, space } = initialPost
 
-  if (!space || isHiddenSpace(space.struct)) return <PostNotFound />
+  if (!space || isHiddenSpace(space.struct)) {
+    return <PostNotFound />
+  }
 
   const { struct: initStruct, content } = post
 
   if (!content) return null
 
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // TODO REFACTOR THIS! HOOKS CANNOT GO AFTER IF-ELSE
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   const { isNotMobile } = useResponsiveSize()
   const struct = useSubscribedPost(initStruct)
-  const postDetails = { ...initialPost, post: { struct, content } }
 
-  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.owner).myHiddenSpace
+  const postDetails: PostWithSomeDetails = {
+    ...initialPost,
+    post: { id: struct.id, struct, content }
+  }
+
+  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.ownerId).myHiddenSpace
 
   if (!spaceData) return <Loading />
 
@@ -64,7 +80,7 @@ export const PostPage: NextPage<PostDetailsProps> = ({ postDetails: initialPost,
     <ViewPostLink space={spaceStruct} post={parentPost} title={parentPost.content?.title} />
   </>
 
-  const titleMsg = isComment(struct.extension)
+  const titleMsg = struct.isComment
     ? renderResponseTitle(postDetails.ext?.post)
     : title
 
@@ -124,27 +140,27 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   const { query: { spaceId, slug }, res } = props
 
   const subsocial = await getSubsocialApi()
+  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
-  const idOrHandle = spaceId as string
 
+  const idOrHandle = spaceId as string
   const slugStr = slug as string
   const postId = getPostIdFromSlug(slugStr)
 
   if (!postId) return return404(props)
 
-  const replyIds = await substrate.getReplyIdsByPostId(postId)
-  const comments = await subsocial.findPublicPostsWithAllDetails([ ...replyIds, postId ])
+  const replyIds = await substrate.getReplyIdsByPostId(idToBn(postId))
+  const comments = await flatApi.findPublicPostsWithAllDetails([ ...replyIds, postId ])
 
-  const [ extPostsData, replies ] = partition(comments, x => x.post.struct.id.eq(postId))
-  const extPostData = extPostsData.pop() || await subsocial.findPostWithAllDetails(postId)
+  const [ extPostsData, replies ] = partition(comments, x => x.post.id === postId)
+  const extPostData = extPostsData.pop() || await flatApi.findPostWithAllDetails(postId)
 
-  const spaceIdFromPost = unwrapSubstrateId(extPostData?.post.struct.space_id) as SpaceId
-
-  const currentSpace = { id: spaceIdFromPost, handle: idOrHandle } as unknown as Space
+  const spaceIdFromPost = extPostData?.post.struct.spaceId
+  const currentSpace = { id: spaceIdFromPost, handle: idOrHandle } as unknown as SpaceStruct
   const currentPostUrl = spaceUrl(currentSpace, slugStr)
 
   const space = extPostData?.space.struct || currentSpace
-  const post = { struct: { id: postId as PostId }, content: extPostData?.post.content }
+  const post = { struct: { id: postId }, content: extPostData?.post.content }
   const validPostUrl = postUrl(space, post)
 
   if (currentPostUrl !== validPostUrl && res) {

@@ -23,14 +23,14 @@ export function withLoadedOwner<P extends Props> (Component: React.ComponentType
     const [ owner, setOwner ] = useState<ProfileData>()
     const [ loaded, setLoaded ] = useState(true)
 
-    useSubsocialEffect(({ subsocial }) => {
+    useSubsocialEffect(({ flatApi }) => {
       if (!address) return
 
       setLoaded(false)
       let isSubscribe = true
 
       const loadContent = async () => {
-        const owner = await subsocial.findProfile(address)
+        const owner = await flatApi.findProfile(address)
         isSubscribe && setOwner(owner)
         setLoaded(true)
       }

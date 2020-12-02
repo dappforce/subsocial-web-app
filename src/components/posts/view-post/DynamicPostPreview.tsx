@@ -15,11 +15,11 @@ export type DynamicPreviewProps = BarePreviewProps & {
 export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }: DynamicPreviewProps) {
   const [ postDetails, setPostStruct ] = useState<PostWithAllDetails>()
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
     let isSubscribe = true
 
     const loadPost = async () => {
-      const extPostData = id && await subsocial.findPostWithAllDetails(id)
+      const extPostData = id && await flatApi.findPostWithAllDetails(id)
       isSubscribe && setPostStruct(extPostData)
     }
 

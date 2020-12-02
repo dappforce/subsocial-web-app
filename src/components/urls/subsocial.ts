@@ -4,7 +4,7 @@ import { slugifyHandle, stringifySubUrls } from './helpers'
 import { createPostSlug, HasTitleOrBody } from '../posts/slugify'
 import { EntityId, PostStruct, SpaceStruct } from 'src/types'
 
-const log = newLogger('URLs')
+const log = newLogger('URL helpers')
 
 // Space URLs
 // --------------------------------------------------

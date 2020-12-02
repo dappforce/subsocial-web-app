@@ -269,8 +269,8 @@ export function FormInSection (props: Partial<FormProps>) {
   //   const load = async () => {
   //     // const api = await substrate.api
   //     setConsts({
-  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
-  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.spaces.maxHandleLen, 50)
+  //       minHandleLen: MIN_HANDLE_LEN, // TODO bnToNum(api.consts.utils.minHandleLen, 5),
+  //       maxHandleLen: MAX_HANDLE_LEN  // TODO bnToNum(api.consts.utils.maxHandleLen, 50)
   //     })
   //   }
   //   load()
