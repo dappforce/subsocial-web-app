@@ -9,6 +9,7 @@ import { GenericAccountId } from '@polkadot/types';
 import registry from '@subsocial/types/substrate/registry'
 import { mnemonicGenerate, mnemonicToMiniSecret, naclKeypairFromSeed } from '@polkadot/util-crypto'
 import { Keypair } from '@polkadot/util-crypto/types'
+import jsonabc from 'jsonabc'
 
 type Action = 'readAll' | 'addSessionKey'
 type Protocol = 'WebApp' | 'Telegram' | 'Email'
@@ -43,6 +44,8 @@ export type SessionCall<T extends MessageGenericExtends> = {
   message: Message<T>
 }
 
+const JSONstingifySorted = (obj: Object) => JSON.stringify(jsonabc.sortObj(obj))
+
 export const createSessionKey = async (): Promise<SessionKeypair | undefined> => {
   const myAddress = readMyAddress()
   const address = new GenericAccountId(registry, myAddress)
@@ -71,7 +74,7 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
     }
   }
 
-  const signature = await signMessage(account.meta.source, address.toString(), JSON.stringify(message))
+  const signature = await signMessage(account.meta.source, address.toString(), JSONstingifySorted(message))
   if (!signature) return
 
   let sessionKey: SessionKeypair = {
@@ -134,7 +137,7 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
     secretKey: hexToU8a(sessionKey.secretKey)
   } as Keypair
 
-  const signature = naclSign(JSON.stringify(message), keypair)
+  const signature = naclSign(JSONstingifySorted(message), keypair)
   if (!signature) return
 
   await clearNotifications({
