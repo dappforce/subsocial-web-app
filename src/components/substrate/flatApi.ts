@@ -1,13 +1,7 @@
 import {
-  EntityId,
-  ProfileId,
-  SpaceId,
-  PostId,
   ProfileData,
   SpaceData,
   PostData,
-  CommentData,
-  SharedPostData,
   PostWithAllDetails,
   PostWithSomeDetails,
 } from 'src/types/dto'
@@ -24,6 +18,7 @@ import {
   convertToNewPostData,
   convertToNewPostWithSomeDetails,
   convertToNewPostWithSomeDetailsArray,
+  convertToNewProfileDataArray,
 } from 'src/types/utils'
 import { SubsocialApi } from '@subsocial/api/subsocial'
 import { FindPostQuery, FindPostsQuery, FindPostsWithDetailsQuery, FindSpaceQuery } from '@subsocial/api/utils/types'
@@ -31,6 +26,7 @@ import { AnyAccountId } from '@subsocial/types'
 
 export type FlatSubsocialApi = {
   findProfile: (id: AnyAccountId) => Promise<ProfileData | undefined>
+  findProfiles: (ids: AnyAccountId[]) => Promise<ProfileData[]>
   // findProfiles: (ids: ProfileId[]) => Promise<ProfileData[]>
 
   findSpace: (query: FindSpaceQuery) => Promise<SpaceData | undefined>
@@ -53,6 +49,15 @@ export function newFlatApi (subsocial: SubsocialApi): FlatSubsocialApi {
     findProfile: async (id) => {
       const old = await subsocial.findProfile(id)
       return !old ? old : convertToNewProfileData(id, old)
+    },
+
+    findProfiles: async (ids) => {
+      return convertToNewProfileDataArray(
+        ids,
+        // TODO ensure that findProfiles() does not swallow None social accounts.
+        // Positions of ids and social accounts results should mutch.
+        await subsocial.findProfiles(ids)
+      )
     },
 
     findSpace: async (query) => {

@@ -6,7 +6,7 @@ import { idToBn, PostData, PostWithAllDetails, PostWithSomeDetails, SpaceStruct 
 import ViewTags from '../../utils/ViewTags'
 import ViewPostLink from '../ViewPostLink'
 import { CommentSection } from '../../comments/CommentsSection'
-import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, isComment, SharePostContent, useSubscribedPost } from './helpers'
+import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, SharePostContent, useSubscribedPost } from './helpers'
 import Error from 'next/error'
 import { NextPage } from 'next'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'

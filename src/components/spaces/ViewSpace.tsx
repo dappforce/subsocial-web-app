@@ -12,7 +12,7 @@ import SpaceStatsRow from './SpaceStatsRow'
 import { ViewSpaceProps } from './ViewSpaceProps'
 import AboutSpaceLink from './AboutSpaceLink'
 import ViewSpaceLink from './ViewSpaceLink'
-import { DropdownMenu, PostPreviewsOnSpace, HiddenSpaceAlert, SpaceAvatar, isMySpace, isUnlistedSpace } from './helpers'
+import { DropdownMenu, HiddenSpaceAlert, SpaceAvatar, isMySpace, isUnlistedSpace, PostPreviewsOnSpace } from './helpers'
 import { ContactInfo } from './SocialLinks/ViewSocialLinks'
 import { MutedSpan } from '../utils/MutedText'
 import { BareProps } from '../utils/types'
@@ -48,8 +48,9 @@ export const ViewSpace = (props: Props) => {
 
     postIds = [],
     posts = [],
+    imageSize = 64,
+    
     onClick,
-    imageSize = 64
   } = props
 
   const { struct: space, content = {} as SpaceContent } = spaceData
@@ -160,10 +161,7 @@ export const ViewSpace = (props: Props) => {
     <HiddenSpaceAlert space={space} />
     <Section>{renderPreview()}</Section>
     <Section className='DfContentPage mt-4'>
-
-      {/* TODO fix PostPreviewsOnSpace component, then uncomment
-      <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} /> */}
-
+      <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} /> 
     </Section>
   </Section>
 }

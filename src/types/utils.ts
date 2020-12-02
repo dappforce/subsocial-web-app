@@ -51,6 +51,14 @@ export function convertToNewProfileData (accountId: AnyAccountId, old: OldProfil
   return { id: struct.id, struct, content: old.content }
 }
 
+export function convertToNewProfileDataArray (accountIds: AnyAccountId[], oldArr: OldProfileData[]): ProfileData[] {
+  return accountIds.map((accountId, i) => {
+    const old = oldArr[i]
+    const struct = flattenProfileStruct(accountId, old.struct)
+    return { id: struct.id, struct, content: old.content }
+  })
+}
+
 export function convertToNewSpaceData (old: OldSpaceData): SpaceData {
   const struct = flattenSpaceStruct(old.struct)
   return { id: struct.id, struct, content: old.content }

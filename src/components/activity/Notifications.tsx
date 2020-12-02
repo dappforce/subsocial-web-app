@@ -28,7 +28,7 @@ export type NotifActivitiesType = 'notifications' | 'activities'
 
 export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn, type: NotifActivitiesType) =>
   async (props: LoadMoreProps) => {
-    const { flatApi, subsocial, address, page, size, activityStore = {} as ActivityStore } = props
+    const { flatApi, address, page, size, activityStore = {} as ActivityStore } = props
 
     if (!address) return []
 
@@ -36,7 +36,7 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn, type: NotifA
 
     const activities = await getActivity(address, offset, DEFAULT_PAGE_SIZE) || []
 
-    return loadNotifications({ flatApi, subsocial, activities, activityStore, type, myAddress: address })
+    return loadNotifications({ flatApi, activities, activityStore, type, myAddress: address })
   }
 
 const loadMoreNotifications = getLoadMoreNotificationsFn(getNotifications, 'notifications')

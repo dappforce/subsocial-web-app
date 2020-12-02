@@ -42,7 +42,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
 
   if (!content) return null
 
-  const { id, owner } = space
+  const { id, ownerId } = space
   const { about, image, navTabs, name } = content
 
   const renderMenuItem = (nt: NavTab) => {
@@ -79,7 +79,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
           <a className='DfBlackLink'>
             {nonEmptyStr(image)
               ? <DfBgImg className='DfAvatar' size={imageSize} src={image as string} rounded />
-              : <IdentityIcon className='image' size={imageSize} value={owner} />
+              : <IdentityIcon className='image' size={imageSize} value={ownerId} />
             }
           </a>
         </Link>

@@ -14,7 +14,7 @@ export const CreatePostButton = (props: Props) => {
 
   if (isHiddenSpace(space)) return null
 
-  return isMyAddress(space.owner)
+  return isMyAddress(space.ownerId)
     ? <ButtonLink
       {...props}
       type='primary'

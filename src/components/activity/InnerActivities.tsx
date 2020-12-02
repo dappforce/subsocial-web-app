@@ -6,7 +6,7 @@ import { InfiniteListByPage } from '../lists/InfiniteList'
 import { Loading } from '../utils'
 
 export function InnerActivities<T> ({ address, title, getCount, totalCount, noDataDesc, loadingLabel, loadMore, ...otherProps }: InnerActivitiesProps<T>) {
-  const { flatApi, subsocial, isApiReady } = useSubsocialApi()
+  const { flatApi, isApiReady } = useSubsocialApi()
   const [ total, setTotalCount ] = useState<number | undefined>(totalCount)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export function InnerActivities<T> ({ address, title, getCount, totalCount, noDa
 
   const Activities = useCallback(() => <InfiniteListByPage
     {...otherProps}
-    loadMore={(page, size) => loadMore({ flatApi, subsocial, address, page, size})}
+    loadMore={(page, size) => loadMore({ flatApi, address, page, size})}
     loadingLabel={loadingLabel}
     title={title ? `${title} (${total})` : null}
     noDataDesc={noDataDesc}

@@ -11,7 +11,6 @@ import { postUrl, spaceUrl, accountUrl } from '../urls'
 import { NotifActivitiesType } from './Notifications'
 import messages from '../../messages'
 import { summarize } from 'src/utils'
-import { SubsocialApi } from '@subsocial/api/subsocial'
 import { Name } from '../profiles/address-views/Name'
 import { equalAddresses, FlatSubsocialApi } from '../substrate'
 
@@ -75,13 +74,11 @@ type InnerNotificationsProps = {
 
 type LoadNotificationsProps = InnerNotificationsProps & {
   flatApi: FlatSubsocialApi,
-  subsocial: SubsocialApi,
   activities: Activity[],
 }
 
 export const loadNotifications = async ({
   flatApi,
-  subsocial,
   activities,
   activityStore,
   type,
@@ -102,7 +99,7 @@ export const loadNotifications = async ({
   })
 
   // TODO use redux
-  const ownersData = await subsocial.findProfiles(ownerIds)
+  const ownersData = await flatApi.findProfiles(ownerIds)
   const postsData = await flatApi.findPublicPosts(postIds)
 
   function fillMap<T extends AnyEntityData> (

@@ -156,7 +156,7 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
   const [ profilesByAddressMap ] = useState(new Map<string, ProfileData>())
   const currentAddress = useMyAddress()
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
     const accounts = keyring.getAccounts()
     if (!accounts) return
 
@@ -187,15 +187,15 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
       setDevelopAddresses(developAddresses)
 
       // TODO use redux
-      const profiles = await subsocial.findProfiles(addresses)
+      const profiles = await flatApi.findProfiles(addresses)
 
       profiles.forEach((item) => {
-        const address = item.profile?.created.account.toString()
+        const address = item.id
         address && profilesByAddressMap.set(address, item)
       })
     }
 
-    loadProfiles().catch(err => console.error(err))// TODO change on logger
+    loadProfiles().catch(err => console.error(err)) // TODO change to logger
   }, [ currentAddress ])
 
   return {
