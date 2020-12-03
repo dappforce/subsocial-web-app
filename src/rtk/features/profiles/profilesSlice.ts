@@ -30,7 +30,7 @@ type Args = {
 export type SelectProfileArgs = SelectOneArgs<Args>
 export type SelectProfilesArgs = SelectManyArgs<Args>
 
-type FetchProfileArgs = FetchOneArgs<Args>
+// type FetchProfileArgs = FetchOneArgs<Args>
 type FetchProfilesArgs = FetchManyArgs<Args>
 
 // export const selectProfile = (state: RootState, id: EntityId): ProfileData | undefined =>

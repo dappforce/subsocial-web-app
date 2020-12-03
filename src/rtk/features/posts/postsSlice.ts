@@ -38,7 +38,7 @@ type Args = {
 export type SelectPostArgs = SelectOneArgs<Args>
 export type SelectPostsArgs = SelectManyArgs<Args>
 
-type FetchPostArgs = FetchOneArgs<Args>
+// type FetchPostArgs = FetchOneArgs<Args>
 type FetchPostsArgs = FetchManyArgs<Args>
 
 // TODO apply visibility filter

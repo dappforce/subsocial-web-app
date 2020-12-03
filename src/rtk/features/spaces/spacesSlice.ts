@@ -31,7 +31,7 @@ type Args = {
 export type SelectSpaceArgs = SelectOneArgs<Args>
 export type SelectSpacesArgs = SelectManyArgs<Args>
 
-type FetchSpaceArgs = FetchOneArgs<Args>
+// type FetchSpaceArgs = FetchOneArgs<Args>
 type FetchSpacesArgs = FetchManyArgs<Args>
 
 // const _selectSpace = (state: RootState, id: EntityId): SpaceData | undefined =>
