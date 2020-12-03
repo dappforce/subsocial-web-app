@@ -76,9 +76,6 @@ type DeleteActionType = {
 
 type DeleteReducerType = CaseReducer<PostState, PayloadAction<DeleteActionType>>
 
-export const removePostReducer: DeleteReducerType = (state, { payload: { postId } }) => {
-  delete state[postId]
-}
 
 export const postSlice = createSlice({
   name: 'postById',
@@ -86,7 +83,6 @@ export const postSlice = createSlice({
   reducers: {
     addPostReducer,
     editPostReducer,
-    removePostReducer
   }
 })
 
@@ -95,7 +91,6 @@ export const getPost = (state: Store) => state.postById
 export const {
   addPostReducer: addPost,
   editPostReducer: editPost,
-  removePostReducer: removePost
 } = postSlice.actions
 
 export default postSlice.reducer

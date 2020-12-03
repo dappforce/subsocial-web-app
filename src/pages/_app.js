@@ -17,7 +17,6 @@ import App from 'next/app'
 import Head from 'next/head'
 import MainPage from '../layout/MainPage'
 import { Provider } from 'react-redux'
-import store from 'src/redux/store'
 import { useStore } from 'src/rtk/app/store'
 
 import dayjs from 'dayjs'
@@ -28,7 +27,7 @@ dayjs.extend(localizedFormat)
 
 function MyApp (props) {
   const { Component, pageProps } = props
-  const rtkStore = useStore(pageProps.initialReduxState)
+  const store = useStore(pageProps.initialReduxState)
 
   // Debug store
   // console.log(JSON.stringify(pageProps.initialReduxState, null, 2))
@@ -46,11 +45,9 @@ function MyApp (props) {
         {/* <link rel="font/ttf" href="/fonts/Merriweather-Bold.ttf" /> */}
       </Head>
       <Provider store={store}>
-        <Provider store={rtkStore}>
-          <MainPage>
-            <Component {...pageProps} />
-          </MainPage>
-        </Provider>
+        <MainPage>
+          <Component {...pageProps} />
+        </MainPage>
       </Provider>
     </>
   )

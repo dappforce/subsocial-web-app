@@ -143,7 +143,8 @@ const posts = createSlice({
   name: 'posts',
   initialState: postsAdapter.getInitialState(),
   reducers: {
-    updatePost: postsAdapter.updateOne
+    upsertPost: postsAdapter.upsertOne,
+    removePost: postsAdapter.removeOne,
   },
   extraReducers: builder => {
     builder.addCase(fetchPosts.fulfilled, postsAdapter.upsertMany)
@@ -152,5 +153,10 @@ const posts = createSlice({
     // })
   }
 })
+
+export const {
+  upsertPost,
+  removePost
+} = posts.actions
 
 export default posts.reducer
