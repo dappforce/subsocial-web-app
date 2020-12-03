@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, /* FetchOneArgs, */ HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
 import { idsToBns } from 'src/types/utils'
@@ -39,7 +39,7 @@ export type SelectPostArgs = SelectOneArgs<Args>
 export type SelectPostsArgs = SelectManyArgs<Args>
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type FetchPostArgs = FetchOneArgs<Args>
+// type FetchPostArgs = FetchOneArgs<Args>
 type FetchPostsArgs = FetchManyArgs<Args>
 
 // TODO apply visibility filter
@@ -144,6 +144,7 @@ const posts = createSlice({
   initialState: postsAdapter.getInitialState(),
   reducers: {
     upsertPost: postsAdapter.upsertOne,
+    upsertPosts: postsAdapter.upsertMany,
     removePost: postsAdapter.removeOne,
   },
   extraReducers: builder => {
@@ -156,6 +157,7 @@ const posts = createSlice({
 
 export const {
   upsertPost,
+  upsertPosts,
   removePost
 } = posts.actions
 

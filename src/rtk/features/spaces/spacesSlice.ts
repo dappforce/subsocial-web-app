@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { getFirstOrUndefined } from '@subsocial/utils'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createFilterNewIds, FetchManyArgs, /* FetchOneArgs, */ HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenSpaceStructs, getUniqueContentIds, getUniqueOwnerIds, ProfileData, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import { idsToBns } from 'src/types/utils'
@@ -32,7 +32,7 @@ export type SelectSpaceArgs = SelectOneArgs<Args>
 export type SelectSpacesArgs = SelectManyArgs<Args>
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type FetchSpaceArgs = FetchOneArgs<Args>
+// type FetchSpaceArgs = FetchOneArgs<Args>
 type FetchSpacesArgs = FetchManyArgs<Args>
 
 // const _selectSpace = (state: RootState, id: EntityId): SpaceData | undefined =>

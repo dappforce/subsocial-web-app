@@ -7,9 +7,9 @@ import { registry } from '@subsocial/types/substrate/registry'
 import { Option } from '@polkadot/types/codec'
 import { getTxParams } from '../substrate'
 import BN from 'bn.js'
-import { useDispatch } from 'react-redux'
-import { useEditReplyToStore, CommentTxButtonType } from './utils'
+import { CommentTxButtonType } from './utils'
 import { PostStruct } from 'src/types'
+import { useUpsetReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -24,7 +24,7 @@ type EditCommentProps = {
 
 export const EditComment: FC<EditCommentProps> = ({ struct, content, callback }) => {
 
-  const dispatch = useDispatch()
+  const upsetReply = useUpsetReplyWithContent()
 
   const newTxParams = (hash: IpfsCid) => {
     const update = new PostUpdate({
@@ -36,10 +36,11 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
     return [ struct.id, update ]
   }
 
-  const { id } = struct
-
   const updatePostToStore = (content: PostContent) =>
-    useEditReplyToStore(dispatch, { replyId: id, comment: { id, struct, content } })
+    upsetReply({
+      reply: struct,
+      content
+    })
 
   const buildTxButton = ({ disabled, json, ipfs, setIpfsCid, onClick, onFailed }: CommentTxButtonType) =>
     <TxButton
