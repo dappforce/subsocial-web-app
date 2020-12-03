@@ -69,6 +69,9 @@ type FlatSpaceOrPost =
 export type SpaceStruct = FlatSpaceOrPost & CanHaveParentId & CanHaveHandle & {
   postsCount: number
   hiddenPostsCount: number
+
+  // TODO maybe we do not need `visiblePostsCount` field here.
+  // It can be easily calculated as (postsCount - hiddenPostsCount)
   visiblePostsCount: number
 
   followersCount: number
@@ -80,6 +83,9 @@ export type SpaceStruct = FlatSpaceOrPost & CanHaveParentId & CanHaveHandle & {
 export type PostStruct = FlatSpaceOrPost & CanHaveSpaceId & {
   repliesCount: number
   hiddenRepliesCount: number
+
+  // TODO maybe we do not need `visibleRepliesCount` field here.
+  // It can be easily calculated as (repliesCount - hiddenRepliesCount)
   visibleRepliesCount: number
 
   sharesCount: number
@@ -115,7 +121,7 @@ type SocialAccountStruct = HasId & {
   hasProfile: boolean
 }
 
-// TODO rename to SocialAccount?
+// TODO rename to SocialAccount or AnonProfileStruct?
 /** Flat account profile struct. */
 export type ProfileStruct = SocialAccountStruct & Partial<FlatSuperCommon>
 

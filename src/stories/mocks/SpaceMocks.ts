@@ -1,60 +1,60 @@
 import { mockNavTabs } from './NavTabsMocks'
 import U32 from '@polkadot/types/primitive/U32'
 import { registry } from '@subsocial/types/substrate/registry'
-import BN from 'bn.js'
-import { i32, u16, u32, Null } from '@polkadot/types'
 import { SpaceContent } from '@subsocial/types/offchain'
-import { Space, SpaceId, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
-import { SpaceData } from 'src/types'
-import { Content, IpfsContent, OptionText, OptionId } from '@subsocial/types/substrate/classes'
-import AccountId from '@polkadot/types/generic/AccountId'
-import { Moment, BlockNumber } from '@polkadot/types/interfaces'
+import { AccountId, SpaceId, SpaceData, SpaceStruct } from 'src/types'
+import { subsocialSpaceCid } from './cids'
 
 type NewSpaceProps = {
-  id?: number | BN,
+  id?: SpaceId,
   ownerId?: AccountId,
   handle?: string,
-  content?: Content,
+  hidden?: boolean,
   postsCount?: number,
   followersCount?: number,
   score?: number
 }
 
 let _id = 10
-const nextId = (): SpaceId => new BN(++_id) as SpaceId
+const nextId = (): SpaceId => `${++_id}`
 
 function newSpaceStructMock ({
   id = nextId(),
-  ownerId = mockAccountAlice,
+  ownerId = mockAccountAlice.toString(),
   handle,
-  content = new IpfsContent(),
+  hidden = false,
   postsCount = 12,
   followersCount = 3456,
   score = 678
-}: NewSpaceProps): Space {
+}: NewSpaceProps): SpaceStruct {
+
+  const hiddenPostsCount = postsCount > 2 ? 2 : 0
+
   return {
-    id: new BN(id) as SpaceId,
-    created: {
-      account,
-      block: new BN(12345) as BlockNumber,
-      time: new BN(1586523823996) as Moment
-    } as WhoAndWhen,
-    updated: new Null(registry),
-    parent_id: new OptionId(),
-    owner: ownerId,
-    handle: new OptionText(handle),
-    content: content,
-    posts_count: new BN(postsCount) as u16,
-    followers_count: new BN(followersCount) as u32,
-    score: new BN(score) as i32
-  } as any as Space // TODO remove any
+    id,
+    createdByAccount: ownerId,
+    createdAtBlock: 12345,
+    createdAtTime: new Date().getTime(),
+
+    ownerId,
+    handle,
+    contentId: subsocialSpaceCid,
+    hidden,
+
+    postsCount,
+    hiddenPostsCount,
+    visiblePostsCount: postsCount - hiddenPostsCount,
+
+    followersCount,
+    score
+  }
 }
 
 export const mockSpaceId = nextId()
 
 export const mockSpaceStruct = newSpaceStructMock({
-  ownerId: mockAccountAlice,
+  ownerId: mockAccountAlice.toString(),
   handle: 'alice_in_chains',
   postsCount: 12,
   followersCount: 4561,
@@ -62,7 +62,7 @@ export const mockSpaceStruct = newSpaceStructMock({
 })
 
 export const mockSpaceStructBob = newSpaceStructMock({
-  ownerId: mockAccountBob,
+  ownerId: mockAccountBob.toString(),
   handle: 'bobster',
   postsCount: 0,
   followersCount: 43,
@@ -95,12 +95,14 @@ export const mockSpaceValidation = {
   spaceMaxLen: 500
 }
 
-export const mockSpaceDataAlice = {
+export const mockSpaceDataAlice: SpaceData = {
+  id: mockSpaceStruct.id,
   struct: mockSpaceStruct,
   content: mockSpaceJson
 }
 
-export const mockSpaceDataBob = {
+export const mockSpaceDataBob: SpaceData = {
+  id: mockSpaceStructBob.id,
   struct: mockSpaceStructBob,
   content: mockSpaceJsonBob
 }

@@ -10,7 +10,11 @@ export type PostId = EntityId
 export type ProfileId = EntityId
 
 export type EntityData<S extends HasId, C extends CommonContent> = {
+
+  // TODO maybe we do not need `id` field here, b/c it can be extracted from `struct`
+  // See the usage of this field. Most of the time it looks like copypasta from struct.id
   id: EntityId
+
   struct: S
   content?: C
 }
