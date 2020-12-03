@@ -38,7 +38,8 @@ type Args = {
 export type SelectPostArgs = SelectOneArgs<Args>
 export type SelectPostsArgs = SelectManyArgs<Args>
 
-// type FetchPostArgs = FetchOneArgs<Args>
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type FetchPostArgs = FetchOneArgs<Args>
 type FetchPostsArgs = FetchManyArgs<Args>
 
 // TODO apply visibility filter
@@ -83,7 +84,7 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
 
     // TODO select post ext
 
-    result.push({ id: post.id, post, owner, space })
+    result.push({ id: post.id, /* TODO ext, */ post, owner, space })
   })
   return result
 }

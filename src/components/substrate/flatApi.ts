@@ -4,8 +4,6 @@ import {
   PostData,
   PostWithAllDetails,
   PostWithSomeDetails,
-} from 'src/types/dto'
-import {
   AnyId,
   idToBn,
   idsToBns,
@@ -19,7 +17,7 @@ import {
   convertToNewPostWithSomeDetails,
   convertToNewPostWithSomeDetailsArray,
   convertToNewProfileDataArray,
-} from 'src/types/utils'
+} from 'src/types'
 import { SubsocialApi } from '@subsocial/api/subsocial'
 import { FindPostQuery, FindPostsQuery, FindPostsWithDetailsQuery, FindSpaceQuery } from '@subsocial/api/utils/types'
 import { AnyAccountId } from '@subsocial/types'

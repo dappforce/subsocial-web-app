@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { PostId, SpaceId } from '@subsocial/types/substrate/interfaces'
+import { PostId, /* SpaceId */ } from '@subsocial/types/substrate/interfaces'
 import {
   ProfileData as OldProfileData,
   SpaceData as OldSpaceData,
@@ -14,7 +14,7 @@ import {
   SpaceData,
   PostData,
   CommentData,
-  SharedPostData,
+  // SharedPostData,
   PostWithAllDetails,
   PostWithSomeDetails,
 } from './dto'
@@ -30,17 +30,17 @@ export function idsToBns (ids: AnyId[]): BN[] {
   return ids.map(idToBn)
 }
 
-export function idToSpaceId (id: AnyId): SpaceId {
-  return idToBn(id) as SpaceId
-}
+// export function idToSpaceId (id: AnyId): SpaceId {
+//   return idToBn(id) as SpaceId
+// }
 
 export function idToPostId (id: AnyId): PostId {
   return idToBn(id) as PostId
 }
 
-export function asSharedPostData (postData: PostData): SharedPostData {
-  return postData as unknown as SharedPostData
-}
+// export function asSharedPostData (postData: PostData): SharedPostData {
+//   return postData as unknown as SharedPostData
+// }
 
 export function asCommentData (postData: PostData): CommentData {
   return postData as unknown as CommentData

@@ -122,9 +122,10 @@ type SocialAccountStruct = HasId & {
 }
 
 // TODO rename to SocialAccount or AnonProfileStruct?
-/** Flat account profile struct. */
+/** Flat representation of a social account that does not have a profile content. */
 export type ProfileStruct = SocialAccountStruct & Partial<FlatSuperCommon>
 
+/** Flat representation of a social account that created a profile content. */
 export type PublicProfileStruct = SocialAccountStruct & FlatSuperCommon
 
 type SuperCommonStruct = {
