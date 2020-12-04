@@ -13,7 +13,6 @@ import { PageContent } from '../main/PageWrapper'
 import { postUrl } from '../urls'
 import { SpaceStruct } from 'src/types'
 import { Loading } from '../utils'
-import { newLogger } from '@subsocial/utils'
 import { useFetchRepliesByParentId } from 'src/rtk/features/replies/repliesHooks'
 
 type CommentSectionProps = {
@@ -29,9 +28,6 @@ export const CommentSection: FC<CommentSectionProps> = React.memo(({ post, hashI
   const { post: { struct } } = post
   const { repliesCount, id } = struct
 
-  // const { entity, loading: loading1 } = useFetchReplyIdsByPostId({ id })
-  // const ids = entity?.replyIds || []
-  // const { entities: replies, loading: loading2 } = useFetchPosts({ ids })
   const { replies, loading } = useFetchRepliesByParentId(id)
 
   if (loading) return <Loading />

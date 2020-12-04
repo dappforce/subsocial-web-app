@@ -49,18 +49,18 @@ export const fetchManyReplyIds = createAsyncThunk<ReplyIdsByPostId[], FetchManyR
     }
     
     const parentIds = idsToBns(ids)
-    const replyIds = await api.substrate.getReplyIdsByPostId(parentIds[0])
-    return [ {
-      id: ids[0],
-      replyIds: bnsToIds(replyIds)
-    } ]
-    // const calls = parentIds.map()
-    // const results = await Promise.all(calls)
-
-    // return results.map((replyIds, i) => ({
-    //   id: ids[i],
+    // const replyIds = await api.substrate.getReplyIdsByPostId(parentIds[0])
+    // return [ {
+    //   id: ids[0],
     //   replyIds: bnsToIds(replyIds)
-    // }))
+    // } ]
+    const calls = parentIds.map(id => api.substrate.getReplyIdsByPostId(id))
+    const results = await Promise.all(calls)
+
+    return results.map((replyIds, i) => ({
+      id: ids[i],
+      replyIds: bnsToIds(replyIds)
+    }))
   }
 )
 

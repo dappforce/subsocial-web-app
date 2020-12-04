@@ -43,7 +43,7 @@ export function useFetchEntities<Args, Struct, Entity> (
   const dispatch = useAppDispatch()
 
   useSubsocialEffect(({ subsocial }) => {
-    console.log('In use Effect')
+    console.log('In use Effect', args)
     if (loading) return
 
     setLoading(true)

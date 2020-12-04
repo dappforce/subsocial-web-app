@@ -5,14 +5,6 @@ import ViewComment from './ViewComment'
 import DataList from '../lists/DataList'
 import { PostStruct, SpaceStruct } from 'src/types'
 
-
-type LoadProps = {
-  rootPost?: PostStruct,
-  parent: PostStruct,
-  space: SpaceStruct,
-  replies?: PostWithSomeDetails[]
-}
-
 type CommentsTreeProps = {
   rootPost?: PostStruct,
   space: SpaceStruct,
@@ -28,57 +20,3 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ comments, rootPost, sp
     }}
   /> : null
 }
-
-// export const DynamicCommentsTree = (props: LoadProps) => {
-//   const { rootPost, parent: { id: parentId }, space, replies } = props
-
-//   if (isFakeId(props.parent)) return null
-
-//   const dispatch = useDispatch()
-
-//   const [ isLoading, setIsLoading ] = useState(true)
-//   const [ replyComments, setComments ] = useState(replies || [])
-
-//   const hasComments = nonEmptyArr(replyComments)
-
-//   useSubsocialEffect(({ flatApi, substrate }) => {
-//     if (!isLoading) return
-
-//     let isSubscribe = true
-
-//     const loadComments = async () => {
-
-//       // TODO use redux
-//       const replyIds = await substrate.getReplyIdsByPostId(idToPostId(parentId))
-//       const comments = await flatApi.findPostsWithAllDetails({ ids: replyIds }) || []
-
-//       const replyIdsStr = replyIds.map(x => x.toString())
-//       const reply = { replyId: replyIdsStr, parentId }
-
-//       if (isSubscribe) {
-//         setComments(comments)
-//         useSetReplyToStore(dispatch, { reply, comment: comments })
-//       }
-//     }
-
-//     if (hasComments) {
-//       const replyIds = replyComments.map(x => x.post.struct.id.toString())
-//       const reply = { replyId: replyIds, parentId }
-//       useSetReplyToStore(dispatch, { reply, comment: replyComments })
-//     } else {
-//       loadComments()
-//         .then(() => isSubscribe && setIsLoading(false))
-//         .catch(err => log.error('Failed to load comments:', err))
-//     }
-
-//     return () => { isSubscribe = false }
-
-//   }, [])
-
-//   return isLoading && !hasComments
-//     ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined className='mr-1' /> Loading replies...</MutedDiv>
-//     : <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />
-// }
-
-export const CommentsTree = (props: LoadProps) => <ViewCommentsTree {...props} comments={[]} />
-
