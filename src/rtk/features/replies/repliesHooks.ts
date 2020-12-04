@@ -5,7 +5,7 @@ import { useFetchEntity } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { useAppSelector } from 'src/rtk/app/store'
 import { HasId, PostId, PostStruct } from 'src/types'
-import { upsetContent } from '../contents/contentsSlice'
+import { upsertContent } from '../contents/contentsSlice'
 import { useFetchPosts } from '../posts/postsHooks'
 import { removePost, upsertPosts } from '../posts/postsSlice'
 import { selectReplyIds, upsertReplyIdsByPostId, fetchManyReplyIds, SelectOneReplyIdsArgs, ReplyIdsByPostId, selectManyReplyIds } from './repliesSlice'
@@ -69,7 +69,7 @@ type CommonReplyArgs = {
   reply: PostStruct
 }
 
-const setUpsetOneArgs = ({ parentId, reply }: CommonReplyArgs) => ({
+const setUpsertOneArgs = ({ parentId, reply }: CommonReplyArgs) => ({
   replies: [ reply ],
   replyIds: {
     id: parentId,
@@ -91,34 +91,35 @@ export const useChangeReplies = () => {
     if (!parentId) return 
     
     removeReply({ replyId: removableId, parentId })
-    upsertReplies(setUpsetOneArgs(args))
+    upsertReplies(setUpsertOneArgs(args))
   }
 }
 
-const useUpsetContent = () => useActions<CommonContent & HasId>(({ dispatch, args }) => {
-    dispatch(upsetContent(args))
+const useUpsertContent = () => useActions<CommonContent & HasId>(({ dispatch, args }) => {
+    dispatch(upsertContent(args))
 })
 
-type UpsetReplyWithContentArgs = Omit<CommonReplyArgs, 'parentId'> & {
+type UpsertReplyWithContentArgs = Omit<CommonReplyArgs, 'parentId'> & {
   content: CommonContent,
   parentId?: PostId
 }
 
-export const useUpsetReplyWithContent = () => {
+export const useUpsertReplyWithContent = () => {
   const upsertReplies = useUpsertReplies()
-  const upsetContent = useUpsetContent()
+  const upsertContent = useUpsertContent()
 
-  return ({ parentId, ...args }: UpsetReplyWithContentArgs) => {
-    parentId && upsertReplies(setUpsetOneArgs({ ...args, parentId }))
-    upsetContent({ id: args.reply.id, ...args.content })
+  return ({ parentId, ...args }: UpsertReplyWithContentArgs) => {
+    parentId && upsertReplies(setUpsertOneArgs({ ...args, parentId }))
+    upsertContent({ id: args.reply.id, ...args.content })
   }
 }
 
 export const useFetchRepliesByParentId = (parentId: PostId) => {
   const { entity, error: error1, loading: loading1 } = useFetchReplyIdsByPostId({ id: parentId })
   const ids = entity ? [ ...entity.replyIds ] : []
-  console.log('ReplyIds', ids)
   const { entities: replies, error: error2, loading: loading2 } = useFetchPosts({ ids }) 
+
+  // console.log('ReplyIds', { entity, error1, loading1 }, { replies, error2, loading2 })
 
   return {
     replies: replies,

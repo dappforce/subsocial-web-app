@@ -9,7 +9,7 @@ import { getTxParams } from '../substrate'
 import BN from 'bn.js'
 import { CommentTxButtonType } from './utils'
 import { PostStruct } from 'src/types'
-import { useUpsetReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
+import { useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -24,7 +24,7 @@ type EditCommentProps = {
 
 export const EditComment: FC<EditCommentProps> = ({ struct, content, callback }) => {
 
-  const upsetReply = useUpsetReplyWithContent()
+  const upsertReply = useUpsertReplyWithContent()
 
   const newTxParams = (hash: IpfsCid) => {
     const update = new PostUpdate({
@@ -37,7 +37,7 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
   }
 
   const updatePostToStore = (content: PostContent) =>
-    upsetReply({
+    upsertReply({
       reply: struct,
       content
     })

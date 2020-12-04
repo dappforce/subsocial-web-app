@@ -9,7 +9,7 @@ import { useMyAccount } from '../auth/MyAccountContext'
 import { buildMockComment, CommentTxButtonType } from './utils'
 import { HiddenPostAlert } from '../posts/view-post'
 import { asCommentStruct, idToPostId, PostStruct } from 'src/types'
-import { useChangeReplies, useRemoveReply, useUpsetReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
+import { useChangeReplies, useRemoveReply, useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -28,7 +28,7 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
   const { state: { address } } = useMyAccount()
   const changeReply = useChangeReplies()
   const removeReply = useRemoveReply()
-  const upsetReply = useUpsetReplyWithContent()
+  const upsertReply = useUpsertReplyWithContent()
 
   if (post.hidden) {
     const msg = 'You cannot comment on this post because it is unlisted'
@@ -71,7 +71,7 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
       })
 
   const onTxReduxAction = (body: string, fakeId: string) =>
-    address && upsetReply({
+    address && upsertReply({
       reply: buildMockComment({ fakeId, address }),
       parentId,
       content: { body }
