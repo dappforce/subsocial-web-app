@@ -45,12 +45,17 @@ export const buildMockComment = ({ fakeId, address }: MockComment): PostStruct =
 
   return {
     id,
-    contentId: fakeId,
 
     ownerId: address,
     createdByAccount: address,
     createdAtBlock: 0,
     createdAtTime: new Date().getTime(),
+
+    hidden: false,
+    contentId: id,
+    isRegularPost: false,
+    isSharedPost: false,
+    isComment: true,
 
     repliesCount: 0,
     hiddenRepliesCount: 0,
@@ -60,10 +65,5 @@ export const buildMockComment = ({ fakeId, address }: MockComment): PostStruct =
     upvotesCount: 0,
     downvotesCount: 0,
     score: 0,
-    isRegularPost: false,
-    isSharedPost: false,
-    isComment: true,
-
-    hidden: false,
   }
 }
