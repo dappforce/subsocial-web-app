@@ -1,18 +1,22 @@
 import { CommonContent } from '@subsocial/types'
 import { Dispatch } from 'react'
 import { useDispatch } from 'react-redux'
+import { useFetchEntity } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { useAppSelector } from 'src/rtk/app/store'
-import { HasId, PostId, PostStruct, ReplyIdsByPostId } from 'src/types'
+import { HasId, PostId, PostStruct } from 'src/types'
 import { upsetContent } from '../contents/contentsSlice'
 import { useFetchPosts } from '../posts/postsHooks'
 import { removePost, upsertPosts } from '../posts/postsSlice'
-import { selectReplyIdsByParentId, upsertReplyIdsByPostId } from './repliesSlice'
+import { selectReplyIds, upsertReplyIdsByPostId, fetchManyReplyIds, SelectOneReplyIdsArgs, ReplyIdsByPostId, selectManyReplyIds } from './repliesSlice'
 
 type CommonDispatchCallbackProps<T> = { dispatch: Dispatch<any>, args: T }
 
 type CommonDispatchCallbackFn<T> = (props: CommonDispatchCallbackProps<T>) => void 
 
+export const useFetchReplyIdsByPostId = (args: SelectOneReplyIdsArgs) => {
+  return useFetchEntity(selectManyReplyIds, fetchManyReplyIds, args)
+}
 
 // ? Change cb on actions[]. And use actions.forEach(action => dispatch(action))
 export const useActions = <T>(cb: CommonDispatchCallbackFn<T>) => {
@@ -27,10 +31,10 @@ type UpsertReplyIdByPostIdProps = {
 }
 
 const removeReplyIdByPostId = (state: RootState, { parentId, replyId: replyIdToRemove }: UpsertReplyIdByPostIdProps) => {
-  const replyIdsByPostId = selectReplyIdsByParentId(state, parentId)
+  const res = selectReplyIds(state, parentId)
 
-  if (!replyIdsByPostId) return
-  const { id, replyIds } = replyIdsByPostId
+  if (!res) return
+  const { id, replyIds } = res
 
   return upsertReplyIdsByPostId({
     replyIds: replyIds.filter(replyId => replyId !== replyIdToRemove),
@@ -48,16 +52,16 @@ export const useRemoveReply = () => {
 }
 
 type UpsertReplies = {
-  replyIdsByPostId: ReplyIdsByPostId,
+  replyIds: ReplyIdsByPostId,
   replies: PostStruct[]
 }
 
 export const useUpsertReplies = () => useActions<UpsertReplies>(({ 
   dispatch,
-  args: { replies, replyIdsByPostId }
+  args: { replies, replyIds }
 }) => {
   dispatch(upsertPosts(replies))
-  dispatch(upsertReplyIdsByPostId(replyIdsByPostId))
+  dispatch(upsertReplyIdsByPostId(replyIds))
 })
 
 type CommonReplyArgs = {
@@ -67,7 +71,7 @@ type CommonReplyArgs = {
 
 const setUpsetOneArgs = ({ parentId, reply }: CommonReplyArgs) => ({
   replies: [ reply ],
-  replyIdsByPostId: {
+  replyIds: {
     id: parentId,
     replyIds: [ reply.id ]
   }
@@ -110,8 +114,15 @@ export const useUpsetReplyWithContent = () => {
   }
 }
 
-export const useGetRepliesByParentId = (parentId: PostId) => {
-  const replyIdsStruct = useAppSelector((state) => selectReplyIdsByParentId(state, parentId))
-  const ids = replyIdsStruct?.replyIds || []
-  return useFetchPosts({ ids })  
+export const useFetchRepliesByParentId = (parentId: PostId) => {
+  const { entity, error: error1, loading: loading1 } = useFetchReplyIdsByPostId({ id: parentId })
+  const ids = entity ? [ ...entity.replyIds ] : []
+  console.log('ReplyIds', ids)
+  const { entities: replies, error: error2, loading: loading2 } = useFetchPosts({ ids }) 
+
+  return {
+    replies: replies,
+    loading: loading2 || loading1,
+    error: error2 || error1
+   }
 }

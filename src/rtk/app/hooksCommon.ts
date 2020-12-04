@@ -1,5 +1,5 @@
 import { AsyncThunkAction } from '@reduxjs/toolkit'
-import { getFirstOrUndefined } from '@subsocial/utils'
+import { getFirstOrUndefined, newLogger } from '@subsocial/utils'
 import { useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
@@ -25,6 +25,8 @@ type SelectFn<Args, Entity> = (state: RootState, args: SelectManyArgs<Args>) => 
 type FetchFn<Args, Struct> = (args: FetchManyArgs<Args>) =>
   AsyncThunkAction<Struct[], FetchManyArgs<Args>, ThunkApiConfig>
 
+const log = newLogger(useFetchEntities.name)
+
 export function useFetchEntities<Args, Struct, Entity> (
   select: SelectFn<Args, Entity>,
   fetch: FetchFn<Args, Struct>,
@@ -41,19 +43,20 @@ export function useFetchEntities<Args, Struct, Entity> (
   const dispatch = useAppDispatch()
 
   useSubsocialEffect(({ subsocial }) => {
+    console.log('In use Effect')
     if (loading) return
 
     setLoading(true)
     setError(undefined)
 
     dispatch(fetch({ api: subsocial, ...args }))
-      .then(() => {
-        setLoading(false)
-      })
       .catch((err) => {
-        setLoading(false)
         setError(err)
+        log.error(error)
       })
+      .finally(() => {
+        setLoading(false)
+      })  
   }, [ dispatch, args ])
 
   return {

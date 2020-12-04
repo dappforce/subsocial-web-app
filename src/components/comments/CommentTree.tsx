@@ -1,13 +1,10 @@
 import { PostWithSomeDetails } from 'src/types'
 import React, { FC } from 'react'
-import { nonEmptyArr, newLogger, isEmptyArray } from '@subsocial/utils'
+import { nonEmptyArr } from '@subsocial/utils'
 import ViewComment from './ViewComment'
 import DataList from '../lists/DataList'
 import { PostStruct, SpaceStruct } from 'src/types'
-import { useGetRepliesByParentId } from 'src/rtk/features/replies/repliesHooks'
-import { Loading } from '../utils'
 
-const log = newLogger('CommentTree')
 
 type LoadProps = {
   rootPost?: PostStruct,
@@ -22,7 +19,7 @@ type CommentsTreeProps = {
   comments: PostWithSomeDetails[]
 }
 
-const ViewCommentsTree: FC<CommentsTreeProps> = ({ comments, rootPost, space }) => {
+export const ViewCommentsTree: FC<CommentsTreeProps> = ({ comments, rootPost, space }) => {
   return nonEmptyArr(comments) ? <DataList
     dataSource={comments}
     renderItem={(item) => {
@@ -83,18 +80,5 @@ const ViewCommentsTree: FC<CommentsTreeProps> = ({ comments, rootPost, space }) 
 //     : <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />
 // }
 
-export const CommentsTree = (props: LoadProps) => {
-  const { parent: { id: parentId, repliesCount } } = props
-  const { loading, entities, error } = useGetRepliesByParentId(parentId)
+export const CommentsTree = (props: LoadProps) => <ViewCommentsTree {...props} comments={[]} />
 
-  if (error) {
-    log.error(error)
-    return null
-  }
-
-  if (loading) return <Loading />
-
-  if (!repliesCount || isEmptyArray(entities)) return null
-
-  return <ViewCommentsTree {...props} comments={entities} />
-}

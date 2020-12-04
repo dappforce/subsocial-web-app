@@ -7,11 +7,14 @@ import { NextPage } from 'next'
 import { getProfileName } from '../substrate'
 import { Pluralize } from '../utils/Plularize'
 import ViewPostLink from '../posts/ViewPostLink'
-import { CommentsTree } from './CommentTree'
+import { ViewCommentsTree } from './CommentTree'
 import Section from '../utils/Section'
 import { PageContent } from '../main/PageWrapper'
 import { postUrl } from '../urls'
 import { SpaceStruct } from 'src/types'
+import { Loading } from '../utils'
+import { newLogger } from '@subsocial/utils'
+import { useFetchRepliesByParentId } from 'src/rtk/features/replies/repliesHooks'
 
 type CommentSectionProps = {
   space: SpaceStruct,
@@ -21,14 +24,22 @@ type CommentSectionProps = {
   withBorder?: boolean
 }
 
-export const CommentSection: FC<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [], withBorder }) => {
+
+export const CommentSection: FC<CommentSectionProps> = React.memo(({ post, hashId, space, withBorder }) => {
   const { post: { struct } } = post
-  const { repliesCount } = struct
+  const { repliesCount, id } = struct
+
+  // const { entity, loading: loading1 } = useFetchReplyIdsByPostId({ id })
+  // const ids = entity?.replyIds || []
+  // const { entities: replies, loading: loading2 } = useFetchPosts({ ids })
+  const { replies, loading } = useFetchRepliesByParentId(id)
+
+  if (loading) return <Loading />
 
   return <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
     <h3><Pluralize count={repliesCount} singularText='comment' /></h3>
     <NewComment post={struct} asStub />
-    <CommentsTree rootPost={struct} parent={struct} space={space} replies={replies} />
+    <ViewCommentsTree rootPost={struct} space={space} comments={replies} />
   </Section>
 })
 

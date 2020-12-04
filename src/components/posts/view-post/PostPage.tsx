@@ -34,6 +34,16 @@ export type PostDetailsProps = {
 export const PostPage: NextPage<PostDetailsProps> = (props) => {
   const { postDetails: initialPost, replies, statusCode } = props
 
+  const { isNotMobile } = useResponsiveSize()
+  // const struct = useSubscribedPost(initStruct)
+
+  // const postDetails: PostWithSomeDetails = {
+  //   ...initialPost,
+  //   post: { id: struct.id, struct, content }
+  // }
+
+  // const spaceData = useLoadUnlistedSpace(struct.ownerId).myHiddenSpace
+
   if (statusCode === 404) {
     return <Error statusCode={statusCode} />
   }
@@ -48,7 +58,9 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
     return <PostNotFound />
   }
 
-  const { struct: initStruct, content } = post
+  const { struct, content } = post
+
+  const postDetails = initialPost
 
   if (!content) return null
 
@@ -56,19 +68,10 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   // TODO REFACTOR THIS! HOOKS CANNOT GO AFTER IF-ELSE
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  const { isNotMobile } = useResponsiveSize()
-  const struct = useSubscribedPost(initStruct)
+  if (!space) return <Loading />
 
-  const postDetails: PostWithSomeDetails = {
-    ...initialPost,
-    post: { id: struct.id, struct, content }
-  }
-
-  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.ownerId).myHiddenSpace
-
-  if (!spaceData) return <Loading />
-
-  const spaceStruct = spaceData.struct
+  const spaceStruct = space.struct
+  const spaceData = space
 
   const { title, body, image, tags } = content
   const canonical = content.canonical || postUrl(spaceStruct, postDetails.post)
@@ -83,6 +86,8 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   const titleMsg = struct.isComment
     ? renderResponseTitle(postDetails.ext?.post)
     : title
+
+  console.log('PostPage', props)
 
   return <PageContent
     meta={{ 

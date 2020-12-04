@@ -6,7 +6,7 @@ import { AnyAccountId, CommonContent } from '@subsocial/types'
 import { Content, Post, SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { notEmptyObj } from '@subsocial/utils'
 import BN from 'bn.js'
-import { EntityData, PostId } from './dto'
+import { EntityData } from './dto'
 
 type Id = string
 
@@ -64,11 +64,6 @@ type FlatSpaceOrPost =
   HasId &
   HasOwner &
   CanBeHidden
-
-
-export type ReplyIdsByPostId = HasId & {
-  replyIds: PostId[]
-}
 
 /** Flat space struct. */
 export type SpaceStruct = FlatSpaceOrPost & CanHaveParentId & CanHaveHandle & {

@@ -9,7 +9,6 @@ import { pluralize } from '../utils/Plularize'
 import { formatUnixDate, IconWithLabel, isHidden } from '../utils'
 import dayjs from 'dayjs'
 import { EditComment } from './UpdateComment'
-import { CommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment'
 import { VoterButtons } from '../voting/VoterButtons'
 import { PostDropDownMenu } from '../posts/view-post'
@@ -31,7 +30,6 @@ export const ViewComment: FC<Props> = ({
   space = { id: 0 } as any as SpaceStruct,
   rootPost,
   comment,
-  replies,
   withShowReplies = true
 }) => {
   const {
@@ -91,7 +89,7 @@ export const ViewComment: FC<Props> = ({
       withCancel
     />}
     {/* {hasReplies && <ViewRepliesLink />} */}
-    {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
+    {/* {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />} */}
   </div> : null
 
   const actionCss = 'DfCommentAction'

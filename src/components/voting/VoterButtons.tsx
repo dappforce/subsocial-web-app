@@ -124,7 +124,7 @@ export const VoterButtons = (props: VoterButtonsProps) => {
     )
 
     return () => { isSubscribe = false }
-  }, [ reloadTrigger, address, post ])
+  }, [ reloadTrigger, address, post.id ])
 
   const renderVoterButton = (reactionType: ReactionType) => <VoterButton
     reaction={reactionState}
