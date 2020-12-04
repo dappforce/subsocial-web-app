@@ -62,7 +62,6 @@ const contents = createSlice({
   name: 'contents',
   initialState: contentsAdapter.getInitialState(),
   reducers: {
-    updateContent: contentsAdapter.updateOne,
     upsertContent: contentsAdapter.upsertOne
   },
   extraReducers: builder => {
@@ -74,8 +73,7 @@ const contents = createSlice({
 })
 
 export const {
-  upsertContent,
-  updateContent
+  upsertContent
 } = contents.actions
 
 export default contents.reducer
