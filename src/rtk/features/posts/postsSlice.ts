@@ -1,4 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
+import { getFirstOrUndefined } from '@subsocial/utils'
 import { createFetchOne, createFilterNewIds, FetchManyArgs, /* FetchOneArgs, */ HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
@@ -87,6 +88,13 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
     result.push({ id: post.id, /* TODO ext, */ post, owner, space })
   })
   return result
+}
+
+// TODO extract a generic function
+export function selectPost (state: RootState, props: SelectPostArgs): PostWithSomeDetails | undefined {
+  const { id, ...rest } = props
+  const entities = selectPosts(state, { ids: [ id ], ...rest })
+  return getFirstOrUndefined(entities)
 }
 
 const filterNewIds = createFilterNewIds(selectPostIds)

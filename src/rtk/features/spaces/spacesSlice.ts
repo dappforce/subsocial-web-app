@@ -41,13 +41,6 @@ type FetchSpacesArgs = FetchManyArgs<Args>
 const _selectSpacesByIds = (state: RootState, ids: EntityId[]) =>
   selectManyByIds(state, ids, selectSpaceStructById, selectSpaceContentById)
 
-// TODO extract a generic function
-export function selectSpace (state: RootState, props: SelectSpaceArgs): SpaceWithSomeDetails | undefined {
-  const { id, ...rest } = props
-  const entities = selectSpaces(state, { ids: [ id ], ...rest })
-  return getFirstOrUndefined(entities)
-}
-
 // TODO apply visibility filter
 export function selectSpaces (state: RootState, props: SelectSpacesArgs): SpaceWithSomeDetails[] {
   const { ids, withOwner = true } = props
@@ -76,6 +69,13 @@ export function selectSpaces (state: RootState, props: SelectSpacesArgs): SpaceW
     result.push({ ...space, owner })
   })
   return result
+}
+
+// TODO extract a generic function
+export function selectSpace (state: RootState, props: SelectSpaceArgs): SpaceWithSomeDetails | undefined {
+  const { id, ...rest } = props
+  const entities = selectSpaces(state, { ids: [ id ], ...rest })
+  return getFirstOrUndefined(entities)
 }
 
 const filterNewIds = createFilterNewIds(selectSpaceIds)

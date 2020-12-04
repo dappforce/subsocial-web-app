@@ -32,9 +32,11 @@ export type HasOwner = {
   ownerId: string
 }
 
-export type CanHaveHandle = {
-  handle?: string
+export type HasHandle = {
+  handle: string
 }
+
+export type CanHaveHandle = Partial<HasHandle>
 
 export type HasCreated = {
   createdByAccount: string

@@ -1,16 +1,15 @@
-import { AnyAddress, AnyText, stringifyAddress } from '../substrate'
+import { AnyAddress, stringifyAddress } from '../substrate'
 import { newLogger, notDef } from '@subsocial/utils'
 import { slugifyHandle, stringifySubUrls } from './helpers'
 import { createPostSlug, HasTitleOrBody } from '../posts/slugify'
-import { EntityId, PostStruct, SpaceStruct } from 'src/types'
+import { EntityId, HasHandle, HasId, PostStruct } from 'src/types'
 
 const log = newLogger('URL helpers')
 
 // Space URLs
 // --------------------------------------------------
 
-export type HasSpaceIdOrHandle = Pick<SpaceStruct, 'id' | 'handle'>
-
+export type HasSpaceIdOrHandle = HasId | HasHandle
 /**
  * WARN: It's not recommended to use this hack.
  * You should pass both space's id and handle in order to construct
@@ -20,7 +19,10 @@ export function newSpaceUrlFixture (id: EntityId): HasSpaceIdOrHandle {
   return { id } as HasSpaceIdOrHandle
 }
 
-export function spaceIdForUrl ({ id, handle }: HasSpaceIdOrHandle): string {
+export function spaceIdForUrl (props: HasSpaceIdOrHandle): string {
+  const id = (props as HasId).id
+  const handle = (props as HasHandle).handle
+
   if (notDef(id) && notDef(handle)) {
     log.warn(`${spaceIdForUrl.name}: Both id and handle are undefined`)
     return ''
@@ -87,16 +89,15 @@ export function editPostUrl (space: HasSpaceIdOrHandle, post: HasDataForSlug): s
 
 export type HasAddressOrHandle = {
   address: AnyAddress
-  handle?: AnyText
 }
 
-export function accountIdForUrl ({ address, handle }: HasAddressOrHandle): string {
-  if (notDef(address) && notDef(handle)) {
-    log.warn(`${accountIdForUrl.name}: Both address and handle are undefined`)
+export function accountIdForUrl ({ address }: HasAddressOrHandle): string {
+  if (notDef(address)) {
+    log.warn(`${accountIdForUrl.name}: Account address is undefined`)
     return ''
   }
 
-  return slugifyHandle(handle) || stringifyAddress(address) as string
+  return stringifyAddress(address) as string
 }
 
 function urlWithAccount (baseUrl: string, account: HasAddressOrHandle, ...subUrls: string[]): string {
