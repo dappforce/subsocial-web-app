@@ -20,14 +20,20 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
     const [ loaded, setLoaded ] = useState(false)
 
     useSubsocialEffect(({ flatApi }) => {
+      let isMounted = true
+
       const loadData = async () => {
         const extPostData = await flatApi.findPublicPostsWithAllDetails(postIds)
-        extPostData && setPosts(extPostData)
-        setLoaded(true)
+        if (isMounted) {
+          extPostData && setPosts(extPostData)
+          setLoaded(true)
+        }
       }
 
       loadData().catch(console.warn)
-    }, [ false ])
+
+      return () => { isMounted = false }
+    }, [])
 
     return loaded && posts
       ? <Component posts={posts} />

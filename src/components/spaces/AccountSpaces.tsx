@@ -46,6 +46,7 @@ export const useLoadAccoutPublicSpaces = (
   const [ mySpaceIds, setSpaceIds ] = useState<SpaceId[]>(initialSpaceIds || [])
   const [ spacesData, setSpacesData ] = useState<SpaceData[]>([])
   const [ loaded, setLoaded ] = useState(false)
+
   const page = query.page || DEFAULT_FIRST_PAGE
   const size = query.size || DEFAULT_PAGE_SIZE
 
@@ -54,29 +55,38 @@ export const useLoadAccoutPublicSpaces = (
   useSubsocialEffect(({ substrate }) => {
     if (spacesCount && loaded) return
 
+    let isMounted = true
+
     const loadSpaceIds = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(address)
-      setSpaceIds(mySpaceIds.reverse())
-      setLoaded(true)
+      if (isMounted) {
+        setSpaceIds(mySpaceIds.reverse())
+        setLoaded(true)
+      }
     }
 
-    loadSpaceIds().catch((err) =>
-      log.error('Failed to load space ids by account', address.toString(), err)
-    )
+    loadSpaceIds().catch((err) => log.error(
+      'Failed to load space ids by account', address.toString(), err))
+
+    return () => { isMounted = false }
   }, [ address.toString() ])
 
   useSubsocialEffect(({ flatApi }) => {
+    let isMounted = true
+
     if (!spacesCount) return
 
     const loadSpaces = async () => {
       const pageIds = getPageOfIds(mySpaceIds, query)
       const spacesData = await flatApi.findPublicSpaces(pageIds)
-      setSpacesData(spacesData)
+      isMounted && setSpacesData(spacesData)
     }
 
     loadSpaces().catch((err) =>
       log.error('Failed to load spaces by account', address.toString(), err)
     )
+
+    return () => { isMounted = false }
   }, [ address.toString(), spacesCount, page, size ])
 
   if (!spacesData.length && !loaded) return undefined
@@ -93,13 +103,17 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
   const [ myUnlistedSpaces, setMyUnlistedSpaces ] = useState<SpaceData[]>()
 
   useSubsocialEffect(({ flatApi }) => {
+    let isMounted = true
+
     if (!isMySpaces) return setMyUnlistedSpaces([])
 
     flatApi.findUnlistedSpaces(mySpaceIds)
-      .then(setMyUnlistedSpaces)
+      .then((res) => isMounted && setMyUnlistedSpaces(res))
       .catch((err) =>
         log.error('Failed to load unlisted spaces by account', address.toString(), err)
       )
+    
+    return () => { isMounted = false }
   }, [ mySpaceIds.length, isMySpaces ])
 
   return {

@@ -72,15 +72,16 @@ const InnerModalVoters = (props: VotersProps) => {
   useSubsocialEffect(({ substrate }) => {
     if (!reactionIds) return toggleTrigger()
 
-    let isSubscribe = true
+    let isMounted = true
 
-    const loadVoters = async () => {
-      const loadedReaction = await substrate.findReactions(reactionIds)
-      isSubscribe && setReactionView(loadedReaction)
+    const load = async () => {
+      const reactions = await substrate.findReactions(reactionIds)
+      isMounted && setReactionView(reactions)
     }
-    loadVoters().catch(err => log.error('Failed to load voters:', err))
 
-    return () => { isSubscribe = false }
+    load().catch(err => log.error('Failed to load reactions:', err))
+
+    return () => { isMounted = false }
   }, [ trigger ])
 
   const renderContent = () => {
@@ -92,7 +93,9 @@ const InnerModalVoters = (props: VotersProps) => {
       { key: 'downvote', title: 'Downvoters', voters: downvoters }
     ]
 
-    if (isEmptyArray(reactionView)) return <MutedDiv className='DfNoVoters'><em>No reactions yet</em></MutedDiv>
+    if (isEmptyArray(reactionView)) {
+      return <MutedDiv className='DfNoVoters'><em>No reactions yet</em></MutedDiv>
+    }
 
     return <Tabs defaultActiveKey={active.toString()} style={{ marginTop: '-1rem' }}>
       {panes.map(({ key, title, voters }) => <TabPane

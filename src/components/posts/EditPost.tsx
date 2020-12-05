@@ -255,13 +255,20 @@ function LoadPostThenEdit (props: FormProps) {
   useSubsocialEffect(({ flatApi }) => {
     if (!postId) return
 
+    let isMounted = true
+    
     const load = async () => {
       setIsLoaded(false)
-      setPost(await flatApi.findPost({ id: idToBn(postId) }))
-      setIsLoaded(true)
+      const res = await flatApi.findPost({ id: idToBn(postId) })
+      if (isMounted) {
+        setPost(res)
+        setIsLoaded(true)
+      }
     }
 
     load()
+
+    return () => { isMounted = false }
   }, [ postId?.toString() ])
 
   if (!postId) return <NoData description='Post id not found in URL' />

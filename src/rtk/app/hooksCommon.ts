@@ -43,20 +43,29 @@ export function useFetchEntities<Args, Struct, Entity> (
   const dispatch = useAppDispatch()
 
   useSubsocialEffect(({ subsocial }) => {
-    console.log('In use Effect', args)
     if (loading) return
 
+    // TODO used for debug:
+    // console.log('useFetchEntities: useEffect: args:', args)
+
+    let isMounted = true
     setLoading(true)
     setError(undefined)
 
     dispatch(fetch({ api: subsocial, ...args }))
       .catch((err) => {
-        setError(err)
-        log.error(error)
+        if (isMounted) {
+          setError(err)
+          log.error(error)
+        }
       })
       .finally(() => {
-        setLoading(false)
-      })  
+        if (isMounted) {
+          setLoading(false)
+        }
+      })
+
+    return () => { isMounted = false }
   }, [ dispatch, args ])
 
   return {

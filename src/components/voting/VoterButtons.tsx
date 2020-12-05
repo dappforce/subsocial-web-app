@@ -100,31 +100,31 @@ type VoterButtonsProps = VoterProps & {
 
 export const VoterButtons = (props: VoterButtonsProps) => {
   const { post, only } = props
+  const myAddress = useMyAddress()
   const [ reactionState, setReactionState ] = useState<Reaction>()
-  const address = useMyAddress()
   const [ reloadTrigger, setReloadTrigger ] = useState(true)
 
   useSubsocialEffect(({ substrate }) => {
-    let isSubscribe = true
+    let isMounted = true
 
     async function reloadReaction () {
-      if (!address) return
+      if (!myAddress) return
 
       // TODO use redux
-      const reactionId = await substrate.getPostReactionIdByAccount(address, idToPostId(post.id))
-      const reaction = await substrate.findReaction(reactionId)
+      const reactionId = await substrate.getPostReactionIdByAccount(myAddress, idToPostId(post.id))
+      if (!isMounted) return
 
-      if (isSubscribe) {
-        setReactionState(reaction)
-      }
+      const reaction = await substrate.findReaction(reactionId)
+      isMounted && setReactionState(reaction)
     }
 
-    reloadReaction().catch(err =>
-      log.error('Failed to load a reaction:', err)
-    )
+    reloadReaction().catch(err => log.error(
+      'Failed to load a reaction on post with id',
+      post.id, 'by account', myAddress, err
+    ))
 
-    return () => { isSubscribe = false }
-  }, [ reloadTrigger, address, post.id ])
+    return () => { isMounted = false }
+  }, [ reloadTrigger, myAddress, post.id ])
 
   const renderVoterButton = (reactionType: ReactionType) => <VoterButton
     reaction={reactionState}
@@ -140,7 +140,6 @@ export const VoterButtons = (props: VoterButtonsProps) => {
     <UpvoteButton />
     <DownvoteButton />
   </>
-
 }
 
 export const UpvoteVoterButton = (props: VoterProps) =>

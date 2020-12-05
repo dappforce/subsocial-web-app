@@ -35,21 +35,22 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
   }
 
   useSubsocialEffect(({ substrate }) => {
-    let isSubscribe = true
+    if (!myAddress) return setIsFollower(false)
 
-    if (!myAddress) return isSubscribe && setIsFollower(false)
+    let isMounted = true
 
     const load = async () => {
       // TODO use redux
-      const res = await (substrate.isSpaceFollower(myAddress, new BN(spaceId)))
-      isSubscribe && setIsFollower(res)
+      const res = await substrate.isSpaceFollower(myAddress, new BN(spaceId))
+      isMounted && setIsFollower(res)
     }
 
     load().catch(err => log.error(
-      `Failed to check if the current account is following a space with id ${spaceId}. Error:`, err)
-    )
+      'Failed to check if the current account is following a space with id', 
+      spaceId, err
+    ))
 
-    return () => { isSubscribe = false }
+    return () => { isMounted = false }
   }, [ myAddress ])
 
   const buildTxParams = () => [ spaceId ]
