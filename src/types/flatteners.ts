@@ -10,7 +10,7 @@ import { EntityData } from './dto'
 
 type Id = string
 
-type Cid = string
+export type Cid = string
 
 export type HasId = {
   id: Id
@@ -32,9 +32,11 @@ export type HasOwner = {
   ownerId: string
 }
 
-export type CanHaveHandle = {
-  handle?: string
+export type HasHandle = {
+  handle: string
 }
+
+export type CanHaveHandle = Partial<HasHandle>
 
 export type HasCreated = {
   createdByAccount: string

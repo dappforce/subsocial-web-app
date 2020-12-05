@@ -265,14 +265,19 @@ export function FormInSection (props: Partial<FormProps>) {
   const title = space ? 'Edit space' : 'New space'
 
   // useSubsocialEffect(({ substrate }) => {
+  //   let isMounted = true
+
   //   const load = async () => {
   //     // const api = await substrate.api
-  //     setConsts({
+  //     isMounted && setConsts({
   //       minHandleLen: MIN_HANDLE_LEN, // TODO bnToNum(api.consts.utils.minHandleLen, 5),
   //       maxHandleLen: MAX_HANDLE_LEN  // TODO bnToNum(api.consts.utils.maxHandleLen, 50)
   //     })
   //   }
+
   //   load()
+
+  //   return () => { isMounted = false }
   // }, [])
 
   return <PageContent meta={{ title }}>

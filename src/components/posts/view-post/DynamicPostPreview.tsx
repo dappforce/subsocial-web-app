@@ -12,31 +12,32 @@ export type DynamicPreviewProps = BarePreviewProps & {
   id: AnyPostId
 }
 
-export function DynamicPostPreview ({ id, withActions, replies, asRegularPost }: DynamicPreviewProps) {
+export function DynamicPostPreview (props: DynamicPreviewProps) {
+  const { id, withActions, replies, asRegularPost } = props
   const [ postDetails, setPostStruct ] = useState<PostWithAllDetails>()
 
   useSubsocialEffect(({ flatApi }) => {
-    let isSubscribe = true
+    let isMounted = true
 
     const loadPost = async () => {
       const extPostData = id && await flatApi.findPostWithAllDetails(id)
-      isSubscribe && setPostStruct(extPostData)
+      isMounted && setPostStruct(extPostData)
     }
 
-    loadPost().catch(err => log.error(`Failed to load post data. ${err}`))
+    loadPost().catch(err => log.error('Failed to load post data:', err))
 
-    return () => { isSubscribe = false }
-  }, [ false ])
+    return () => { isMounted = false }
+  }, [])
 
   if (!postDetails) return null
 
-  const props = {
+  const res: InnerPreviewProps = {
     postDetails: postDetails,
     space: postDetails.space,
     withActions: withActions,
     replies: replies,
     asRegularPost: asRegularPost
-  } as InnerPreviewProps
+  }
 
-  return <PostPreview {...props} />
+  return <PostPreview {...res} />
 }

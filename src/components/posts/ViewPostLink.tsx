@@ -1,9 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasSpaceIdOrHandle, HasDataForSlug, postUrl } from '../urls'
+import { HasDataForSlug, postUrl } from '../urls'
+import { SpaceStruct } from 'src/types'
 
 type Props = {
-  space: HasSpaceIdOrHandle
+  space: SpaceStruct
   post: HasDataForSlug
   title?: string
   hint?: string

@@ -62,7 +62,7 @@ const contents = createSlice({
   name: 'contents',
   initialState: contentsAdapter.getInitialState(),
   reducers: {
-    updateContent: contentsAdapter.updateOne
+    upsertContent: contentsAdapter.upsertOne
   },
   extraReducers: builder => {
     builder.addCase(fetchContents.fulfilled, contentsAdapter.upsertMany)
@@ -71,5 +71,9 @@ const contents = createSlice({
     // })
   }
 })
+
+export const {
+  upsertContent
+} = contents.actions
 
 export default contents.reducer

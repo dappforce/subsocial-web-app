@@ -158,7 +158,10 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
 
   useSubsocialEffect(({ flatApi }) => {
     const accounts = keyring.getAccounts()
+
     if (!accounts) return
+
+    let isMounted = true
 
     const loadProfiles = async () => {
       const extensionAddresses: string[] = []
@@ -190,12 +193,18 @@ export const useAccountSelector = ({ injectedAddresses }: AccountSelectorProps) 
       const profiles = await flatApi.findProfiles(addresses)
 
       profiles.forEach((item) => {
-        const address = item.id
-        address && profilesByAddressMap.set(address, item)
+        if (isMounted) {
+          const address = item.id
+
+          // TODO this looks wrong. You should set this map via setProfilesBy...()
+          address && profilesByAddressMap.set(address, item)
+        }
       })
     }
 
     loadProfiles().catch(err => console.error(err)) // TODO change to logger
+
+    return () => { isMounted = false }
   }, [ currentAddress ])
 
   return {

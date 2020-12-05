@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import Link from 'next/link'
 import { isEmptyStr } from '@subsocial/utils'
-import { formatUnixDate, IconWithLabel, isVisible } from '../../utils'
+import { formatUnixDate, IconWithLabel, isHidden, isVisible } from '../../utils'
 import { ViewSpace } from '../../spaces/ViewSpace'
 import { DfBgImageLink } from '../../utils/DfBgImg'
 import isEmpty from 'lodash.isempty'
@@ -25,7 +25,7 @@ import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
-import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasDataForSlug } from 'src/components/urls'
+import { postUrl, editPostUrl, HasDataForSlug } from 'src/components/urls'
 import { ShareDropdown } from '../share/ShareDropdown'
 import { ButtonLink } from 'src/components/utils/ButtonLink'
 import { DfMd } from 'src/components/utils/DfMd'
@@ -39,6 +39,9 @@ type DropdownProps = {
 
 export const isSharedPost = (extension: PostExtension): boolean => extension.isSharedPost || (extension as any).SharedPost
 export const isComment = (extension: PostExtension): boolean => extension.isComment || (extension as any).Comment
+
+export const isUnlistedPost = (data?: PostData): data is undefined => 
+  !data || !data.struct || isHidden({ struct: data.struct })
 
 type ReactionModalProps = {
   postId: PostId
@@ -114,11 +117,11 @@ export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   return <PostAlert />
 }
 
-export const renderPostLink = (space: HasSpaceIdOrHandle, post: HasDataForSlug, title?: string) =>
+export const renderPostLink = (space: SpaceStruct, post: HasDataForSlug, title?: string) =>
   <ViewPostLink space={space} post={post} title={title} className='DfBlackLink' />
 
 type PostNameProps = {
-  space: HasSpaceIdOrHandle,
+  space: SpaceStruct,
   post: HasDataForSlug,
   title?: string,
   withLink?: boolean

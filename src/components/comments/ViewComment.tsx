@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react'
-import { /* CaretDownOutlined, CaretUpOutlined, */ CommentOutlined, NotificationOutlined } from '@ant-design/icons'
+import React, { FC, useMemo, useState } from 'react'
+import { CommentOutlined, NotificationOutlined } from '@ant-design/icons'
 import { Comment, Button, Tag } from 'antd'
 import { asCommentData, PostWithSomeDetails } from 'src/types'
 import { CommentContent } from '@subsocial/types'
@@ -9,7 +9,6 @@ import { pluralize } from '../utils/Plularize'
 import { formatUnixDate, IconWithLabel, isHidden } from '../utils'
 import dayjs from 'dayjs'
 import { EditComment } from './UpdateComment'
-import { CommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment'
 import { VoterButtons } from '../voting/VoterButtons'
 import { PostDropDownMenu } from '../posts/view-post'
@@ -55,8 +54,9 @@ export const ViewComment: FC<Props> = ({
   const [ showReplyForm, setShowReplyForm ] = useState(false)
   const [ showReplies ] = useState(withShowReplies)
   const [ repliesCount, setRepliesCount ] = useState(struct.repliesCount)
+  // const { replies, loading } = useFetchRepliesByParentId(id)
 
-  const isFake = id.toString().startsWith('fake')
+  const isFake = id.startsWith('fake')
   const commentLink = postUrl(space, comment.post)
 
   const isRootPostOwner = equalAddresses(
@@ -64,35 +64,39 @@ export const ViewComment: FC<Props> = ({
     struct.ownerId
   )
 
-  /*   const ViewRepliesLink = () => {
-    const viewActionMessage = showReplies
-      ? <><CaretUpOutlined /> {'Hide'}</>
-      : <><CaretDownOutlined /> {'View'}</>
+  // const ViewRepliesLink = () => {
+  //   const viewActionMessage = showReplies
+  //     ? <><CaretUpOutlined /> {'Hide'}</>
+  //     : <><CaretDownOutlined /> {'View'}</>
 
-    return <Link href={commentLink}>
-      <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
-        {viewActionMessage}{' '}
-        <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
-      </a>
-    </Link>
-  } */
+  //   return <Link href={commentLink}>
+  //     <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
+  //       {viewActionMessage}{' '}
+  //       <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
+  //     </a>
+  //   </Link>
+  // }
 
-  const hasReplies = repliesCount > 0
+  const hasReplies = replies?.length
   const isShowChildren = showReplyForm || showReplies || hasReplies
 
-  const ChildPanel = isShowChildren ? <div>
-    {showReplyForm &&
-    <NewComment
-      post={struct}
-      callback={(id) => {
-        setShowReplyForm(false)
-        id && setRepliesCount(repliesCount + 1)
-      }}
-      withCancel
-    />}
-    {/* {hasReplies && <ViewRepliesLink />} */}
-    {showReplies && <CommentsTree rootPost={rootPost} parent={struct} replies={replies} space={space} />}
-  </div> : null
+  const ChildPanel = useMemo(() => {
+    return isShowChildren/*  || !loading */
+      ? <div>
+        {showReplyForm &&
+        <NewComment
+          post={struct}
+          callback={(id) => {
+            setShowReplyForm(false)
+            id && setRepliesCount(repliesCount + 1)
+          }}
+          withCancel
+        />}
+        {/* {hasReplies && <ViewRepliesLink />} */}
+        {/* {showReplies && <ViewCommentsTree rootPost={rootPost} comments={replies} space={space} />} */}
+      </div>
+      : null
+  }, [ isShowChildren/* , loading */ ])
 
   const actionCss = 'DfCommentAction'
 

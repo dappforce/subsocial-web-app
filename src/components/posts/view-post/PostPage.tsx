@@ -2,19 +2,15 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
-import { idToBn, PostData, PostWithAllDetails, PostWithSomeDetails, SpaceStruct } from 'src/types'
+import { bnsToIds, idToBn, PostData, PostWithAllDetails } from 'src/types'
 import ViewTags from '../../utils/ViewTags'
 import ViewPostLink from '../ViewPostLink'
 import { CommentSection } from '../../comments/CommentsSection'
-import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostNotFound, PostActionsPanel, SharePostContent, useSubscribedPost } from './helpers'
-import Error from 'next/error'
+import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostActionsPanel, SharePostContent, isUnlistedPost } from './helpers'
 import { NextPage } from 'next'
-import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
-import { newFlatApi } from 'src/components/substrate'
-import partition from 'lodash.partition'
 import { PageContent } from 'src/components/main/PageWrapper'
-import { isHidden, Loading } from 'src/components/utils'
-import { useLoadUnlistedSpace, isHiddenSpace } from 'src/components/spaces/helpers'
+import { Loading } from 'src/components/utils'
+import { isUnlistedSpace } from 'src/components/spaces/helpers'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useResponsiveSize } from 'src/components/responsive'
 import { mdToText } from 'src/utils'
@@ -22,56 +18,48 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { return404 } from 'src/components/utils/next'
+import { withServerRedux } from 'src/rtk/app/withServerRedux'
+import { fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
 
 export type PostDetailsProps = {
-  postDetails: PostWithAllDetails,
-  statusCode?: number,
-  replies: PostWithAllDetails[]
+  postData: PostWithAllDetails,
+  statusCode?: number
 }
 
 export const PostPage: NextPage<PostDetailsProps> = (props) => {
-  const { postDetails: initialPost, replies, statusCode } = props
+  const { postData } = props
 
-  if (statusCode === 404) {
-    return <Error statusCode={statusCode} />
-  }
+  const { isNotMobile } = useResponsiveSize()
 
-  if (!initialPost || isHidden({ struct: initialPost.post.struct })) {
-    return <PostNotFound />
-  }
+  // TODO subscribe to post update
+  // const struct = useSubscribedPost(initStruct)
 
-  const { post, ext, space } = initialPost
+  // const postDetails: PostWithSomeDetails = {
+  //   ...initialPost,
+  //   post: { id: struct.id, struct, content }
+  // }
 
-  if (!space || isHiddenSpace(space.struct)) {
-    return <PostNotFound />
-  }
+  // const spaceData = useLoadUnlistedSpace(struct.ownerId).myHiddenSpace
 
-  const { struct: initStruct, content } = post
+  // if (statusCode === 404) {
+  //   return <Error statusCode={statusCode} />
+  // }
+
+  const { post, ext, space } = postData
+
+  const { struct, content } = post
 
   if (!content) return null
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // TODO REFACTOR THIS! HOOKS CANNOT GO AFTER IF-ELSE
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  if (!space) return <Loading />
 
-  const { isNotMobile } = useResponsiveSize()
-  const struct = useSubscribedPost(initStruct)
-
-  const postDetails: PostWithSomeDetails = {
-    ...initialPost,
-    post: { id: struct.id, struct, content }
-  }
-
-  const spaceData = space || postDetails.space || useLoadUnlistedSpace(struct.ownerId).myHiddenSpace
-
-  if (!spaceData) return <Loading />
-
-  const spaceStruct = spaceData.struct
+  const spaceStruct = space.struct
+  const spaceData = space
 
   const { title, body, image, tags } = content
-  const canonical = content.canonical || postUrl(spaceStruct, postDetails.post)
+  const canonical = content.canonical || postUrl(spaceStruct, postData.post)
 
   const goToCommentsId = 'comments'
 
@@ -81,7 +69,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   </>
 
   const titleMsg = struct.isComment
-    ? renderResponseTitle(postDetails.ext?.post)
+    ? renderResponseTitle(postData.ext?.post)
     : title
 
   return <PageContent
@@ -101,13 +89,13 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
       </div>
 
       <div className='DfRow'>
-        <PostCreator postDetails={postDetails} withSpaceName space={spaceData} />
+        <PostCreator postDetails={postData} withSpaceName space={spaceData} />
         {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
       </div>
 
       <div className='DfPostContent'>
         {ext
-          ? <SharePostContent postDetails={postDetails} space={space} />
+          ? <SharePostContent postDetails={postData} space={space} />
           : <>
             {image && <div className='d-flex justify-content-center'>
               <img src={resolveIpfsUrl(image)} className='DfPostImage' /* add onError handler */ />
@@ -118,7 +106,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
       </div>
       
       <div className='DfRow'>
-        <PostActionsPanel postDetails={postDetails} space={space.struct} />
+        <PostActionsPanel postDetails={postData} space={space.struct} />
       </div>
 
       <div className='DfSpacePreviewOnPostPage'>
@@ -131,36 +119,45 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
         />
       </div>
 
-      <CommentSection post={postDetails} hashId={goToCommentsId} replies={replies} space={spaceStruct} />
+      <CommentSection post={postData} hashId={goToCommentsId} space={spaceStruct} />
     </Section>
   </PageContent>
 }
 
-PostPage.getInitialProps = async (props): Promise<any> => {
-  const { query: { spaceId, slug }, res } = props
+withServerRedux(PostPage, async ({ context, subsocial, dispatch, reduxStore }) => {
+  const { query: { spaceId, slug }, res } = context
 
-  const subsocial = await getSubsocialApi()
-  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
 
-  const idOrHandle = spaceId as string
+  const spaceIdOrHandle = spaceId as string
   const slugStr = slug as string
   const postId = getPostIdFromSlug(slugStr)
 
-  if (!postId) return return404(props)
+  if (!postId) return return404(context)
 
   const replyIds = await substrate.getReplyIdsByPostId(idToBn(postId))
-  const comments = await flatApi.findPublicPostsWithAllDetails([ ...replyIds, postId ])
 
-  const [ extPostsData, replies ] = partition(comments, x => x.post.id === postId)
-  const extPostData = extPostsData.pop() || await flatApi.findPostWithAllDetails(postId)
+  const ids = bnsToIds(replyIds).concat(postId)
 
-  const spaceIdFromPost = extPostData?.post.struct.spaceId
-  const currentSpace = { id: spaceIdFromPost, handle: idOrHandle } as unknown as SpaceStruct
+  await dispatch(fetchPosts({ api: subsocial, ids }))
+  const postData = selectPost(reduxStore.getState(), { id: postId })
+
+  if (!postData ||
+    !postData.space ||
+    isUnlistedSpace(postData.space) ||
+    isUnlistedPost(postData.post)
+  ) return return404(context)
+
+  const { space, post } = postData
+
+  const hasHandle = spaceIdOrHandle.startsWith('@')
+  const currentSpace = (hasHandle
+    ? { handle: spaceIdOrHandle }
+    : { id: spaceIdOrHandle }
+  )
+    
   const currentPostUrl = spaceUrl(currentSpace, slugStr)
 
-  const space = extPostData?.space.struct || currentSpace
-  const post = { struct: { id: postId }, content: extPostData?.post.content }
   const validPostUrl = postUrl(space, post)
 
   if (currentPostUrl !== validPostUrl && res) {
@@ -169,9 +166,8 @@ PostPage.getInitialProps = async (props): Promise<any> => {
   }
 
   return {
-    postDetails: extPostData,
-    replies
+    postData: postData as PostWithAllDetails,
   }
-}
+})
 
 export default PostPage

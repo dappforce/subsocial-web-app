@@ -1,7 +1,6 @@
 import styles from './NewPostButtonInTopMenu.module.sass'
 
 import { PlusOutlined } from '@ant-design/icons'
-import AccountId from '@polkadot/types/generic/AccountId'
 import { newLogger } from '@subsocial/utils'
 import React, { useState } from 'react'
 import { Button, Modal } from 'antd'
@@ -15,8 +14,9 @@ import Link from 'next/link'
 import { Loading } from '../utils'
 import { NoData } from '../utils/EmptyList'
 import { goToNewPostPage } from '../urls/goToPage'
+import { useLoadSudo } from 'src/hooks/useLoadSudo'
 
-const log = newLogger('New Post Button In Top Menu')
+const log = newLogger(NewPostButtonInTopMenu.name)
 
 /**
  * The logic of this component:
@@ -25,39 +25,29 @@ const log = newLogger('New Post Button In Top Menu')
  *   - Redirects to "New Post" page if user has only one space.
  *   - Opens "Space Selector" modal if user has more than one space.
  */
-export const NewPostButtonInTopMenu = () => {
+export function NewPostButtonInTopMenu () {
   const myAddress = useMyAddress()
-  const [ open, setOpen ] = useState<boolean>(false)
-  const [ sudo, setSudo ] = useState<AccountId>()
+  const sudo = useLoadSudo()
   const [ spacesData, setSpacesData ] = useState<SpaceData[]>()
-
-  // TODO fix copypasta, see OnlySudo
-  useSubsocialEffect(({ substrate }) => {
-    // if (!open) return
-
-    const load = async () => {
-      const api = await substrate.api
-      const sudo = await api.query.sudo.key()
-      setSudo(sudo)
-    }
-
-    load()
-  }, [ sudo?.toString() ])
+  const [ open, setOpen ] = useState<boolean>(false)
 
   // TODO fix copypasta, see AccountSpaces
   useSubsocialEffect(({ flatApi, substrate }) => {
     if (/* !open || */ !sudo || !myAddress) return
 
+    let isMounted = true
+
     const loadSpaces = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(myAddress)
       const withoutReservedSpaceIds = findSpaceIdsThatCanSuggestIfSudo(sudo, myAddress, mySpaceIds)
       const spacesData = await flatApi.findPublicSpaces(withoutReservedSpaceIds)
-      setSpacesData(spacesData)
+      isMounted && setSpacesData(spacesData)
     }
 
-    loadSpaces().catch((err) =>
-      log.error('Failed to load spaces by account', myAddress, err)
-    )
+    loadSpaces().catch((err) => log.error(
+      'Failed to load spaces by account', myAddress, err))
+
+    return () => { isMounted = false }
   }, [ sudo?.toString(), myAddress?.toString() ])
 
   if (!spacesData) {

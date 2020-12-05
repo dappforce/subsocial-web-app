@@ -26,19 +26,21 @@ export function withLoadedOwner<P extends Props> (Component: React.ComponentType
     useSubsocialEffect(({ flatApi }) => {
       if (!address) return
 
-      setLoaded(false)
-      let isSubscribe = true
-
+      let isMounted = true
+      
       const loadContent = async () => {
+        setLoaded(false)
         const owner = await flatApi.findProfile(address)
-        isSubscribe && setOwner(owner)
-        setLoaded(true)
+        if (isMounted) {
+          setOwner(owner)
+          setLoaded(true)
+        }
       }
 
-      loadContent().catch(err =>
-        log.error(`Failed to load profile data. ${err}`))
+      loadContent().catch(err => log.error(
+        'Failed to load profile data:', err))
 
-      return () => { isSubscribe = false }
+      return () => { isMounted = false }
     }, [ address?.toString() ])
 
     return loaded

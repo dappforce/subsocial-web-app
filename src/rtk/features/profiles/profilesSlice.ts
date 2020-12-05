@@ -1,7 +1,7 @@
 import { Option } from '@polkadot/types'
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
-import { CommonVisibility, createFetchOne, createFilterNewIds, FetchManyArgs, FetchOneArgs, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { CommonVisibility, createFetchOne, createFilterNewIds, FetchManyArgs, /* FetchOneArgs, */ SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenProfileStructs, getUniqueContentIds, ProfileData, ProfileStruct, SocialAccountWithId } from 'src/types'
 import { asString } from 'src/utils'
@@ -31,7 +31,7 @@ export type SelectProfileArgs = SelectOneArgs<Args>
 export type SelectProfilesArgs = SelectManyArgs<Args>
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type FetchProfileArgs = FetchOneArgs<Args>
+// type FetchProfileArgs = FetchOneArgs<Args>
 type FetchProfilesArgs = FetchManyArgs<Args>
 
 // export const selectProfile = (state: RootState, id: EntityId): ProfileData | undefined =>

@@ -52,12 +52,16 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
     const [ currentSpacesData, setCurrentSpacesData ] = useState<SpaceData[]>([])
 
     useSubsocialEffect(({ flatApi }) => {
+      let isMounted = true
+
       const loadSpaces = async () => {
         const spacesData = await flatApi.findPublicSpaces(spaceIds)
-        setCurrentSpacesData(spacesData)
+        isMounted && setCurrentSpacesData(spacesData)
       }
 
       loadSpaces()
+
+      return () => { isMounted = false }
     }, [ spaceIds ])
 
     if (isEmptyArray(spaceIds)) return null

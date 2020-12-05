@@ -31,24 +31,24 @@ export const PendingSpaceOwnershipPanel = ({
   const currentOwner = space.ownerId
 
   useSubsocialEffect(({ substrate }) => {
+    let isMounted = true
     let unsub: (() => void) | undefined
-    let isSubscribe = true
 
     const sub = async () => {
       const api = await substrate.api
       unsub = await api.query.spaceOwnership.pendingSpaceOwner(spaceId, (res) => {
-        if (isSubscribe && res) {
+        if (isMounted && res) {
           const maybePendingOwner = res as Option<AccountId>
           setPendingOwner(maybePendingOwner.unwrapOr(undefined))
         }
       })
     }
 
-    isSubscribe && sub().catch(err => log.error('Failed to load a pending owner: %o', err))
+    isMounted && sub().catch(err => log.error('Failed to load a pending owner:', err))
 
     return () => {
       unsub && unsub()
-      isSubscribe = false
+      isMounted = false
     }
   }, [ spaceId?.toString(), currentOwner?.toString() ])
 
