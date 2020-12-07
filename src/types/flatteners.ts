@@ -24,7 +24,7 @@ export type CanHaveSpaceId = {
   spaceId?: Id
 }
 
-type CanHaveContent = {
+export type CanHaveContent = {
   contentId?: Cid
 }
 

@@ -299,16 +299,16 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
   const isActivity = type === 'activities'
 
   switch (eventName) {
-    case 'AccountFollowed': return getAccountPreview(following_id, ownerById)
-    case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
-    case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
-    case 'CommentCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'CommentReplyCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostShared': return isActivity ? undefined : getPostPreviewWithMaps(post_id)
-    case 'CommentShared': return getCommentPreviewWithMaps(comment_id)
-    case 'PostReactionCreated': return getPostPreviewWithMaps(post_id)
-    case 'CommentReactionCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostCreated': return isActivity ? getPostPreviewWithMaps(post_id) : undefined
+    case 'AccountFollowed': return getAccountPreview(following_id!, ownerById)
+    case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id!)
+    case 'SpaceCreated': return getSpacePreviewWithMaps(space_id!)
+    case 'CommentCreated': return getCommentPreviewWithMaps(comment_id!)
+    case 'CommentReplyCreated': return getCommentPreviewWithMaps(comment_id!)
+    case 'PostShared': return isActivity ? undefined : getPostPreviewWithMaps(post_id!)
+    case 'CommentShared': return getCommentPreviewWithMaps(comment_id!)
+    case 'PostReactionCreated': return getPostPreviewWithMaps(post_id!)
+    case 'CommentReactionCreated': return getCommentPreviewWithMaps(comment_id!)
+    case 'PostCreated': return isActivity ? getPostPreviewWithMaps(post_id!) : undefined
     default: return undefined
   }
 }

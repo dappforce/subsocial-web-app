@@ -2,7 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@r
 import { getFirstOrUndefined } from '@subsocial/utils'
 import { createFetchOne, createSelectUnknownIds, FetchManyArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
+import { asCommentStruct, flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostId, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
 import { idsToBns } from 'src/types/utils'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
@@ -48,6 +48,19 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
   const { ids, withOwner = true, withSpace = true } = props
   const posts = _selectPostsByIds(state, ids)
   
+  const rootPostIds = new Set<PostId>()
+
+  posts.forEach(({ struct }) => {
+    if (struct.isComment) {
+      const { rootPostId } = asCommentStruct(struct)
+      rootPostIds.add(rootPostId)
+    }
+  })
+
+  const rootPosts = _selectPostsByIds(state, Array.from(rootPostIds))
+
+  const postsMap = selectPostEntities(state)
+
   // TODO Fix copypasta. Places: selectSpaces & selectPosts
   const ownerByIdMap = new Map<EntityId, ProfileData>()
   if (withOwner) {
@@ -60,7 +73,8 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
 
   const spaceByIdMap = new Map<EntityId, SpaceData>()
   if (withSpace) {
-    const spaceIds = getUniqueSpaceIds(posts)
+    const spaceIds = getUniqueSpaceIds(posts.concat(rootPosts))
+
     const spaces = selectSpaces(state, { ids: spaceIds, ...withSpaceOwner })
     spaces.forEach(space => {
       spaceByIdMap.set(space.id, space)
@@ -69,7 +83,8 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
   
   const result: PostWithSomeDetails[] = []
   posts.forEach(post => {
-    const { ownerId, spaceId } = post.struct
+    const { struct } = post
+    const { ownerId, spaceId, isComment } = struct
 
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
     let owner: ProfileData | undefined
@@ -81,6 +96,15 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
     let space: SpaceData | undefined
     if (spaceId) {
       space = spaceByIdMap.get(spaceId)
+    }
+
+    if (isComment) {
+      const { rootPostId } = asCommentStruct(struct)
+      const rootPost = postsMap[rootPostId]
+
+      if (rootPost) {
+        space = spaceByIdMap.get(rootPost.spaceId!)
+      }
     }
 
     // TODO select post ext
@@ -112,19 +136,38 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
 
     const structs = await api.substrate.findPosts({ ids: idsToBns(newIds) })
     const entities = flattenPostStructs(structs)
+
+    const alreadyLoadedIds = new Set(newIds)
+    const rootPostIds = new Set<PostId>()
+
+    entities.forEach((x) => {
+      if (x.isComment) {
+        const { rootPostId } = asCommentStruct(x)
+
+        if (!alreadyLoadedIds.has(rootPostId)) {
+          rootPostIds.add(rootPostId)
+        }
+      }
+    })
+
+    const rootStructs = await api.substrate.findPosts({ ids: idsToBns(Array.from(rootPostIds)) })
+    const commentEntities = flattenPostStructs(rootStructs)
+    
+    const allEntities = entities.concat(commentEntities)
+
     const fetches: Promise<any>[] = []
 
     // TODO fetch shared post or comment
 
     if (withSpace) {
-      const ids = getUniqueSpaceIds(entities)
+      const ids = getUniqueSpaceIds(allEntities)
       if (ids.length) {
         fetches.push(dispatch(fetchSpaces({ api, ids, ...withSpaceOwner })))
       }
     }
 
     if (withOwner) {
-      const ids = getUniqueOwnerIds(entities)
+      const ids = getUniqueOwnerIds(allEntities)
       if (ids.length) {
         // TODO combine fetch of spaces' and posts' owners into one dispatch.
         fetches.push(dispatch(fetchProfiles({ api, ids })))
@@ -132,7 +175,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     }
 
     if (withContent) {
-      const ids = getUniqueContentIds(entities)
+      const ids = getUniqueContentIds(allEntities)
       if (ids.length) {
         // TODO combine fetch of spaces' and posts' contents into one dispatch.
         fetches.push(dispatch(fetchContents({ api, ids })))
@@ -141,7 +184,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
 
     await Promise.all(fetches)
 
-    return entities
+    return allEntities
   }
 )
 

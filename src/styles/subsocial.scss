@@ -1363,7 +1363,8 @@ hr {
   }
 
   .SelectAccountItem:hover {
-    background-color: #e6f7ff;
+    background-color: $color_hover_selectable_bg;
+    color: $color_link;
   }
 }
 

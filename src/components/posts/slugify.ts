@@ -16,7 +16,11 @@ export const createPostSlug = (postId: EntityId, content?: HasTitleOrBody) => {
     const { title, body } = content
     const titleOrBody = nonEmptyStr(title) ? title : body
     const summary = summarize(titleOrBody, { limit: MAX_SLUG_LENGTH, omission: '' })
-    slug = slugify(summary, { separator: SLUG_SEPARATOR }) + '-' + slug
+    const slugifiedSummary = slugify(summary, { separator: SLUG_SEPARATOR })
+    
+    if (nonEmptyStr(slugifiedSummary)) {
+      slug = slugifiedSummary + '-' + slug
+    }
   }
 
   return slug

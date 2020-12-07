@@ -110,3 +110,17 @@ export function convertToNewPostWithSomeDetails (oldData?: OldPostWithSomeDetail
 export function convertToNewPostWithAllDetails (oldData?: OldPostWithAllDetails): PostWithAllDetails | undefined {
   return !oldData ? undefined : convertToNewPostWithAllDetailsArray([ oldData ])[0]
 }
+
+type SpaceOrPostData = PostData | SpaceData
+
+export function isUnlisted (data?: SpaceOrPostData) {
+  if (!data) return true
+
+  const { struct, content } = data
+
+  return struct.hidden || !content
+}
+
+export function isPublic (data?: SpaceOrPostData) {
+  return !isUnlisted(data)
+}

@@ -59,7 +59,6 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   const spaceData = space
 
   const { title, body, image, tags } = content
-  const canonical = content.canonical || postUrl(spaceStruct, postData.post)
 
   const goToCommentsId = 'comments'
 
@@ -78,7 +77,8 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
       desc: mdToText(body),
       image,
       tags,
-      canonical,
+      canonical: postUrl(spaceStruct, postData.post),
+      externalCanonical: content.canonical
     }}
   >
     <HiddenPostAlert post={post.struct} />

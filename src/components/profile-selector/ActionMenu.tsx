@@ -5,10 +5,12 @@ import { useMyAccount } from '../auth/MyAccountContext'
 import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal'
 import { EditProfileLink } from '../profiles/address-views/utils'
 import { Pluralize } from '../utils/Plularize'
+import { useMyAccountDrawer } from './MyAccountMenu'
 
 export const ActionMenu = () => {
   const [ followersOpen, setFollowersOpen ] = useState(false)
   const [ followingOpen, setFollowingOpen ] = useState(false)
+  const { close } = useMyAccountDrawer()
 
   const { state: { account, address }} = useMyAccount()
   const accountStruct = account?.struct
@@ -34,24 +36,22 @@ export const ActionMenu = () => {
 
   return <>
     <Menu className='FontNormal'>
-      <Menu.Item key='following' onClick={openFollowingModal} icon={<StarOutlined />}>
-        My following
+      <Menu.Item key="following" onClick={openFollowingModal} icon={<StarOutlined />}>
+        {`My followings (${followingsCount})`}
       </Menu.Item>
-      <Menu.Item key='follower' onClick={openFollowersModal} icon={<UserOutlined />}>
-        My follower
+      <Menu.Item key="follower" onClick={openFollowersModal} icon={<UserOutlined />}>
+        {`My followers (${followersCount})`}
       </Menu.Item>
-      <Menu.Item key='edit' icon={<EditOutlined />}>
-        <EditProfileLink address={address} />
+      <Menu.Item key="edit" icon={<EditOutlined />}>
+        <EditProfileLink address={address} onClick={close} />
       </Menu.Item>
     </Menu>
-
     {followersOpen && <AccountFollowersModal
       id={address}
       open={followersOpen}
       close={() => setFollowersOpen(false)}
       title={<Pluralize count={followersCount} singularText='Follower' />}
     />}
-
     {followingOpen && <AccountFollowingModal
       id={address}
       open={followingOpen}
