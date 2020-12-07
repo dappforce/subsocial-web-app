@@ -1,39 +1,40 @@
 import { SpaceContent } from '@subsocial/types/offchain'
 import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils'
-import { mdToText } from 'src/utils'
 import { NextPage } from 'next'
 import Error from 'next/error'
 import React, { useCallback, useState } from 'react'
-import { ProfilePreview } from '../profiles/address-views'
-import { DfMd } from '../utils/DfMd'
-import { return404 } from '../utils/next'
-import Section from '../utils/Section'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
-import ViewTags from '../utils/ViewTags'
-import { ViewSpaceProps } from './ViewSpaceProps'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { mdToText } from 'src/utils'
 import { PageContent } from '../main/PageWrapper'
-import { getSpaceId, newFlatApi } from '../substrate'
-import { isUnlistedSpace, SpaceNotFound } from './helpers'
+import { ProfilePreview } from '../profiles/address-views'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
-import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
-import Segment from '../utils/Segment'
-import { appName } from '../utils/env'
-import { ViewSpace } from './ViewSpace'
 import { aboutSpaceUrl } from '../urls'
+import { DfMd } from '../utils/DfMd'
+import { appName } from '../utils/env'
+import Section from '../utils/Section'
+import Segment from '../utils/Segment'
+import ViewTags from '../utils/ViewTags'
+import { isUnlistedSpace, SpaceNotFound } from './helpers'
+import { loadSpaceOnNextReq } from './helpers/loadSpaceOnNextReq'
+import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
+import { ViewSpace } from './ViewSpace'
+import { ViewSpaceProps } from './ViewSpaceProps'
 
 type Props = ViewSpaceProps
 
 export const AboutSpacePage: NextPage<Props> = (props) => {
-  if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
+  const { statusCode, spaceData } = props
 
-  const { spaceData } = props
+  // TODO copypasta, see ViewSpacePage
+  if (statusCode === 404) {
+    return <Error statusCode={statusCode} />
+  }
 
   if (isUnlistedSpace(spaceData)) {
     return <SpaceNotFound />
   }
 
-  const { owner } = props
-  const space = spaceData.struct
+  const { struct: space, owner } = spaceData
   const { ownerId: spaceOwnerAddress } = space
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent)
@@ -99,33 +100,9 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   </PageContent>
 }
 
-// TODO extract getInitialProps, this func is similar in ViewSpace
-
-// TODO refactor, or re-use from ViewSpacePage
-AboutSpacePage.getInitialProps = async (props): Promise<Props> => {
-  const { query: { spaceId } } = props
-  const idOrHandle = spaceId as string
-
-  const id = await getSpaceId(idOrHandle)
-  if (!id) {
-    return return404(props)
-  }
-
-  const subsocial = await getSubsocialApi()
-  const flatApi = newFlatApi(subsocial)
-  const spaceData = id && await flatApi.findSpace({ id })
-
-  if (!spaceData?.struct) {
-    return return404(props)
-  }
-
-  const { ownerId } = spaceData.struct
-  const owner = await flatApi.findProfile(ownerId)
-
-  return {
-    spaceData,
-    owner
-  }
-}
+getInitialPropsWithRedux(AboutSpacePage, async (props) => {
+  const spaceData = await loadSpaceOnNextReq(props, aboutSpaceUrl)
+  return { spaceData }
+})
 
 export default AboutSpacePage

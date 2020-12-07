@@ -1,4 +1,4 @@
-import { AccountId, PostId, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
+import { AccountId, PostId, PostWithSomeDetails, SpaceWithSomeDetails } from 'src/types'
 
 export type ViewSpaceProps = {
   nameOnly?: boolean
@@ -10,8 +10,7 @@ export type ViewSpaceProps = {
   withTags?: boolean
   withStats?: boolean
 
-  spaceData?: SpaceData
-  owner?: ProfileData,
+  spaceData?: SpaceWithSomeDetails
   postIds?: PostId[],
   posts?: PostWithSomeDetails[]
   followers?: AccountId[]

@@ -1,32 +1,33 @@
 import { SpaceContent } from '@subsocial/types/offchain'
 import React, { FC } from 'react'
-import { resolveBn } from '../utils'
-import { return404 } from '../utils/next'
-import { getSpaceId } from '../substrate'
-import { ViewSpaceProps } from './ViewSpaceProps'
-import { PageContent } from '../main/PageWrapper'
-import { SpaceNotFound, isUnlistedSpace } from './helpers'
-import { getPageOfIds } from '../utils/getIds'
-import { spaceUrl } from '../urls'
-import { slugifyHandle } from '../urls/helpers'
-import { isPolkaProject, stringifyBns } from 'src/utils'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
-import { fetchSpace, selectSpace } from 'src/rtk/features/spaces/spacesSlice'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
+import { bnsToIds, idToBn } from 'src/types'
+import { isPolkaProject } from 'src/utils'
+import { PageContent } from '../main/PageWrapper'
+import { spaceUrl } from '../urls'
+import { getPageOfIds } from '../utils/getIds'
+import { isUnlistedSpace, SpaceNotFound } from './helpers'
+import { loadSpaceOnNextReq } from './helpers/loadSpaceOnNextReq'
 import { ViewSpace } from './ViewSpace'
+import { ViewSpaceProps } from './ViewSpaceProps'
+import Error from 'next/error'
 
 type Props = ViewSpaceProps
 
-// TODO extract getInitialProps, this func is similar in AboutSpace
-
 const ViewSpacePage: FC<Props> = (props) => {
-  const { spaceData } = props
+  const { statusCode, spaceData } = props
+
+  // TODO copypasta, see AboutSpacePage
+  if (statusCode === 404) {
+    return <Error statusCode={statusCode} />
+  }
 
   if (isUnlistedSpace(spaceData)) {
     return <SpaceNotFound />
   }
 
-  const id = resolveBn(spaceData.struct.id)
+  const id = idToBn(spaceData.struct.id)
   const { name, image } = spaceData.content as SpaceContent
 
   // We add this to a title to improve SEO of Polkadot projects.
@@ -44,36 +45,16 @@ const ViewSpacePage: FC<Props> = (props) => {
   </PageContent>
 }
 
-getInitialPropsWithRedux(ViewSpacePage, async ({ context, subsocial, dispatch, reduxStore }) => {
-  const { query, res } = context
-  const { spaceId } = query
-  const idOrHandle = spaceId as string
+getInitialPropsWithRedux(ViewSpacePage, async (props) => {
+  const { context, subsocial, dispatch, reduxStore } = props
+  const { query } = context
 
-  // TODO use redux
-  const id = await getSpaceId(idOrHandle)
-  if (!id) {
-    return return404(context)
-  }
-
-  const idStr = id.toString()
-  await dispatch(fetchSpace({ api: subsocial, id: idStr }))
-  const spaceData = selectSpace(reduxStore.getState(), { id: idStr })
-
-  if (!spaceData) {
-    return return404(context)
-  }
-
-  const { struct, owner } = spaceData
-  const handle = slugifyHandle(struct.handle)
-
-  if (handle && handle !== idOrHandle && res) {
-    res.writeHead(301, { Location: spaceUrl(struct) })
-    res.end()
-  }
+  const spaceData = await loadSpaceOnNextReq(props, spaceUrl)
+  const spaceId = idToBn(spaceData.id)
 
   // We need to reverse post ids to display posts in a descending order on a space page.
-  const postIds = (await subsocial.substrate.postIdsBySpaceId(id)).reverse()
-  const pageIds = stringifyBns(getPageOfIds(postIds, query))
+  const postIds = (await subsocial.substrate.postIdsBySpaceId(spaceId)).reverse()
+  const pageIds = bnsToIds(getPageOfIds(postIds, query))
 
   await dispatch(fetchPosts({ api: subsocial, ids: pageIds }))
   const posts = selectPosts(reduxStore.getState(), { ids: pageIds })
@@ -81,8 +62,7 @@ getInitialPropsWithRedux(ViewSpacePage, async ({ context, subsocial, dispatch, r
   return {
     spaceData,
     posts,
-    postIds: stringifyBns(postIds),
-    owner
+    postIds: bnsToIds(postIds),
   }
 })
 

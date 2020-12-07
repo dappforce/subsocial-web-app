@@ -4,7 +4,7 @@ import { SubsocialApi } from '@subsocial/api/subsocial'
 import { NextComponentType, NextPageContext } from 'next'
 import { FlatSubsocialApi, newFlatApi } from 'src/components/substrate'
 
-type CbArgs = {
+export type NextContextWithRedux = {
   context: NextPageContext
   subsocial: SubsocialApi
   flatApi: FlatSubsocialApi
@@ -12,7 +12,7 @@ type CbArgs = {
   reduxStore: AppStore
 }
 
-type CbFn<Result extends {}> = (props: CbArgs) => Promise<Result>
+type CbFn<Result extends {}> = (props: NextContextWithRedux) => Promise<Result>
 
 export const getInitialPropsWithRedux = async <ResultProps extends {} = {}> (
   component: NextComponentType<NextPageContext, ResultProps, ResultProps>,
