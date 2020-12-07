@@ -13,6 +13,7 @@ type HeadMetaProps = {
   desc?: string,
   image?: string,
   canonical?: string,
+  externalCanonical?: string,
   tags?: string[]
 }
 
@@ -43,7 +44,7 @@ export const createTitle = (title: string) => {
 const DEFAULT_SUBSOCIAL_IMG = '/subsocial-sign.png'
 
 export function HeadMeta (props: HeadMetaProps) {
-  const { title, desc, image, canonical, tags } = props
+  const { title, desc, image, canonical, externalCanonical, tags } = props
   const summary = desc ? summarize(desc, { limit: MAX_DESC_LEN }) : DEFAULT_DESC
   const img = nonEmptyStr(image) ? resolveIpfsUrl(image) : DEFAULT_SUBSOCIAL_IMG
 
@@ -52,7 +53,7 @@ export function HeadMeta (props: HeadMetaProps) {
       <title>{createTitle(title)}</title>
       <meta name='description' content={summary} />
       {nonEmptyArr(tags) && <meta name='keywords' content={tags?.join(', ')} />}
-      {nonEmptyStr(canonical) && <link rel='canonical' href={fullUrl(canonical)} />}
+      {nonEmptyStr(canonical) && <link rel='canonical' href={externalCanonical || fullUrl(canonical)} />}
 
       <meta property='og:site_name' content={SITE_NAME} />
       <meta property='og:image' content={img} />
@@ -83,11 +84,11 @@ export const PageContent: FC<Props> = ({ /* leftPanel, rightPanel, */ meta, leve
   return <>
     <HeadMeta {...meta} />
     {isNotMobile
-     ? <div className='DfSectionOuter d-flex w-100'>
+     ? <section className='DfSectionOuter d-flex w-100'>
       {/* {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>} */}
       <Section className={`${className}`} level={level} title={title} >{children}</Section>
       {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
-    </div>
+    </section>
     : <>
       {children}
       {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
