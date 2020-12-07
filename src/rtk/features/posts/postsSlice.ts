@@ -143,17 +143,16 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     entities.forEach((x) => {
       if (x.isComment) {
         const { rootPostId } = asCommentStruct(x)
-
         if (!alreadyLoadedIds.has(rootPostId)) {
           rootPostIds.add(rootPostId)
         }
       }
     })
 
-    const rootStructs = await api.substrate.findPosts({ ids: idsToBns(Array.from(rootPostIds)) })
-    const commentEntities = flattenPostStructs(rootStructs)
-    
-    const allEntities = entities.concat(commentEntities)
+    const newRootIds = selectUnknownPostIds(getState(), Array.from(rootPostIds))
+    const rootStructs = await api.substrate.findPosts({ ids: idsToBns(newRootIds) })
+    const rootEntities = flattenPostStructs(rootStructs)
+    const allEntities = entities.concat(rootEntities)
 
     const fetches: Promise<any>[] = []
 
