@@ -3,6 +3,7 @@ import { List } from 'antd'
 import { PaginationConfig } from 'antd/lib/pagination'
 import Section from 'src/components/utils/Section'
 import NoData from 'src/components/utils/EmptyList'
+import { DataListItemProps } from '.'
 
 export type DataListOptProps = {
   title?: React.ReactNode,
@@ -12,10 +13,9 @@ export type DataListOptProps = {
   className?: string,
 }
 
-export type DataListProps<T extends any> = DataListOptProps & {
+export type DataListProps<T extends any> = DataListOptProps & DataListItemProps<T> & {
   totalCount?: number,
   dataSource: T[],
-  renderItem: (item: T, index: number) => JSX.Element,
   paginationConfig?: PaginationConfig,
   children?: React.ReactNode
 }
@@ -25,6 +25,7 @@ export function DataList<T extends any> (props: DataListProps<T>) {
     dataSource,
     totalCount,
     renderItem,
+    getKey,
     className,
     title,
     level,
@@ -45,12 +46,8 @@ export function DataList<T extends any> (props: DataListProps<T>) {
       size='large'
       pagination={paginationConfig}
       dataSource={dataSource}
-      renderItem={(item, index) =>
-        // TODO fix key: do not use Date() value as part of key.
-        <List.Item key={`${new Date().getTime()}-${index}`}>
-          {renderItem(item, index)}
-        </List.Item>
-      }
+      rowKey={getKey}
+      renderItem={renderItem}
     >
       {children}
     </List>

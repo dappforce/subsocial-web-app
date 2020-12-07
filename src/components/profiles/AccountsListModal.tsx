@@ -34,10 +34,12 @@ const InnerAccountsListModal = (props: InnerProps) => {
       footer={<Button onClick={close}>Close</Button>}
     >
       <DataList
-        dataSource={accounts}
-        renderItem={(item) =>
-          <ProfilePreviewWithOwner key={item.toString()} address={item} size={LARGE_AVATAR_SIZE} mini />}
         noDataDesc='Nothing yet'
+        dataSource={accounts}
+        getKey={item => item.toString()}
+        renderItem={(item) =>
+          <ProfilePreviewWithOwner address={item} size={LARGE_AVATAR_SIZE} mini />
+        }
       />
     </Modal>
   )

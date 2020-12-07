@@ -65,13 +65,17 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 
 type LoadingProps = {
   label?: React.ReactNode
+  style?: React.CSSProperties
+  center?: boolean
 }
 
-export const Loading = ({ label }: LoadingProps) =>
-  <div className='d-flex justify-content-center align-items-center w-100 h-100'>
+export const Loading = ({ label, style, center = true }: LoadingProps) => {
+  const alignCss = center ? 'justify-content-center align-items-center' : ''
+  return <div className={`d-flex w-100 h-100 ${alignCss}`} style={style}>
     <LoadingOutlined />
     {label && <em className='ml-3 text-muted'>{label}</em>}
   </div>
+}
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()

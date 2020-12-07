@@ -124,7 +124,6 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
 
 const SpacePreview = (space: SpaceData) =>
   <ViewSpace
-    key={`space-${space.struct.id.toString()}`}
     spaceData={space}
     withFollowButton
     preview
@@ -147,6 +146,7 @@ const PublicSpaces = (props: LoadSpacesProps) => {
     title={title}
     totalCount={totalCount}
     dataSource={spacesData}
+    getKey={item => item.id}
     renderItem={SpacePreview}
     noDataDesc='No public spaces found'
     noDataExt={noSpaces && isMy &&
@@ -162,13 +162,17 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
 
   if (isLoading) return <Loading />
 
-  const unlistedSpacesCount = myUnlistedSpaces.length
+  const unlistedCount = myUnlistedSpaces.length
+  if (!unlistedCount) return null
 
-  return unlistedSpacesCount ? <DataList
-    title={`Unlisted Spaces (${unlistedSpacesCount})`}
-    dataSource={myUnlistedSpaces}
-    renderItem={SpacePreview}
-  /> : null
+  return (
+    <DataList
+      title={`Unlisted Spaces (${unlistedCount})`}
+      dataSource={myUnlistedSpaces}
+      getKey={item => item.id}
+      renderItem={SpacePreview}
+    />
+  )
 }
 
 export const AccountSpaces = ({ spacesData, mySpaceIds, withTitle = true, ...props}: Props) => {

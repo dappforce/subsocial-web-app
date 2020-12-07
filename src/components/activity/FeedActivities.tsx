@@ -32,7 +32,8 @@ export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'c
 export const FeedActivities = (props: ActivityProps<PostWithAllDetails>) =>
   <InnerActivities
     {...props}
-    renderItem={(x) => <PostPreview key={x.post.id} postDetails={x} withActions />}
+    getKey={item => item.id}
+    renderItem={(x) => <PostPreview postDetails={x} withActions />}
   />
 
 

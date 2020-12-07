@@ -44,6 +44,10 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
 }
 
 const InnerPostPreviewList: FC<ResolvedProps> = ({ posts }) =>
-  <DataList dataSource={posts} renderItem={x => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />} />
+  <DataList
+    dataSource={posts}
+    getKey={item => item.id}
+    renderItem={x => <PostPreview postDetails={x} withActions />}
+  />
 
 export const PostPreviewList = withLoadPostsWithSpaces(InnerPostPreviewList)

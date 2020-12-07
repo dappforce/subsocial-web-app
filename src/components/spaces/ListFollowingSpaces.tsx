@@ -39,8 +39,9 @@ export const ListFollowingSpaces = (props: Props) => {
         title={title}
         totalCount={totalCount}
         dataSource={spacesData}
-        renderItem={(item, index) => (
-          <ViewSpace {...props} key={index} spaceData={item} preview withFollowButton />
+        getKey={item => item.id}
+        renderItem={(item) => (
+          <ViewSpace {...props} spaceData={item} preview withFollowButton />
         )}
         noDataDesc='You are not following any space yet'
         noDataExt={

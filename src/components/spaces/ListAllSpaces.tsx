@@ -34,9 +34,9 @@ export const ListAllSpaces = (props: Props) => {
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
         noDataExt={<CreateSpaceButton />}
+        getKey={item => item.id}
         renderItem={(item) =>
           <ViewSpace
-            key={item.id}
             {...props}
             spaceData={item}
             withFollowButton

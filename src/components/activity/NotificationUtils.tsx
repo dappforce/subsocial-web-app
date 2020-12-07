@@ -32,6 +32,7 @@ export type PathLinks = {
 }
 
 export type NotificationType = PathLinks & {
+  id: string
   address: string
   notificationMessage: React.ReactNode,
   details?: string,
@@ -328,7 +329,7 @@ type GetNotificationProps = InnerNotificationsProps & {
 
 export const getNotification = (props: GetNotificationProps): NotificationType | undefined => {
   const { type, activityStore, activity, myAddress } = props
-  const { account, event, date, agg_count } = activity
+  const { account, block_number, event_index, event, date, agg_count } = activity
   const formatDate = dayjs(date).format('lll')
   const creator = activityStore.ownerById.get(account)
   const activityPreview = getAtivityPreview(activity, activityStore, type)
@@ -347,6 +348,7 @@ export const getNotification = (props: GetNotificationProps): NotificationType |
   )
 
   return {
+    id: `${block_number}-${event_index}`,
     address: account,
     notificationMessage,
     details: formatDate,

@@ -23,6 +23,7 @@ export const LatestSpaces = (props: Props) => {
       dataSource={spaces}
       noDataDesc='No spaces found'
       noDataExt={<CreateSpaceButton />}
+      getKey={item => item.id}
       renderItem={(item) =>
         <ViewSpace
           {...props}

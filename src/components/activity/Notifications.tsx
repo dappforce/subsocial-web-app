@@ -19,7 +19,8 @@ export const NotifActivities = ({ loadMore ,...props }: ActivityProps<Notificati
 
   return <InnerActivities
     {...props}
-    renderItem={(x: NotificationType, key) => <Notification key={key} {...x} />}
+    getKey={x => x.id}
+    renderItem={(x: NotificationType) => <Notification {...x} />}
     loadMore={(props) => loadMore({ ...props, activityStore })}
   />
 }

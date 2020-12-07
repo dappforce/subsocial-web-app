@@ -5,7 +5,8 @@ import { notDef } from '@subsocial/utils'
 import { InfiniteListByPage } from '../lists/InfiniteList'
 import { Loading } from '../utils'
 
-export function InnerActivities<T> ({ address, title, getCount, totalCount, noDataDesc, loadingLabel, loadMore, ...otherProps }: InnerActivitiesProps<T>) {
+export function InnerActivities<T> (props: InnerActivitiesProps<T>) {
+  const { address, title, getCount, totalCount, noDataDesc, loadingLabel, loadMore, ...otherProps } = props
   const { flatApi, isApiReady } = useSubsocialApi()
   const [ total, setTotalCount ] = useState<number | undefined>(totalCount)
 

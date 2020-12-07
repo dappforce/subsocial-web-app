@@ -19,6 +19,7 @@ export const LatestPosts = (props: Props) => {
   return <DataList
     title={`Latest ${type}s`}
     dataSource={postsData}
+    getKey={item => item.id}
     renderItem={(item) =>
       <PostPreview postDetails={item} withActions />
     }

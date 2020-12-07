@@ -24,20 +24,23 @@ const UnlistedPosts = ({ spaceData, postIds }: Props) => {
 
   if (isLoading) return null
 
-  const hiddenPostsCount = myHiddenPosts.length
+  const unlistedCount = myHiddenPosts.length
+  if (!unlistedCount) return null
 
-  return hiddenPostsCount ? <DataList
-    title={<Pluralize count={hiddenPostsCount} singularText={'Unlisted post'} />}
-    dataSource={myHiddenPosts}
-    renderItem={(item) =>
-      <PostPreview
-        key={item.id}
-        postDetails={item}
-        space={spaceData}
-        withActions
-      />
-    }
-  /> : null
+  return (
+    <DataList
+      title={<Pluralize count={unlistedCount} singularText={'Unlisted post'} />}
+      dataSource={myHiddenPosts}
+      getKey={item => item.id}
+      renderItem={(item) =>
+        <PostPreview
+          postDetails={item}
+          space={spaceData}
+          withActions
+        />
+      }
+    />
+  )
 }
 
 export const PostPreviewsOnSpace = (props: Props) => {
@@ -76,9 +79,9 @@ export const PostPreviewsOnSpace = (props: Props) => {
         ? <CreatePostButton space={space} />
         : null
       }
+      getKey={item => item.id}
       renderItem={(item) =>
         <PostPreview
-          key={item.post.struct.id.toString()}
           postDetails={item}
           space={spaceData}
           withActions

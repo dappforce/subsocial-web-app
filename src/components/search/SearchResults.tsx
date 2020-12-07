@@ -7,11 +7,12 @@ import { useRouter } from 'next/router'
 import { ProfilePreviewWithOwner } from '../profiles/address-views'
 import { DataListOptProps } from '../lists/DataList'
 import { queryElasticSearch } from 'src/components/utils/OffchainUtils'
-import { InfiniteListByData, InnerLoadMoreFn, RenderItemFn } from '../lists/InfiniteList'
+import { InfiniteListByData } from '../lists/InfiniteList'
 import PostPreview from '../posts/view-post/PostPreview'
 import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from 'src/types'
 import { PageContent } from '../main/PageWrapper'
 import { nonEmptyArr } from '@subsocial/utils'
+import { DataListItemProps, InnerLoadMoreFn } from '../lists'
 
 const { TabPane } = Tabs
 
@@ -42,19 +43,18 @@ const panes = [
   }
 ]
 
-const resultToPreview = ({ data, index, id }: DataResults, i: number) => {
+const resultToPreview = ({ data, index, id }: DataResults) => {
   const unknownData = data as unknown
   switch (index) {
     case ElasticIndex.spaces:
-      return <ViewSpace key={`${id}-${i}`} spaceData={unknownData as SpaceData} preview withFollowButton />
+      return <ViewSpace spaceData={unknownData as SpaceData} preview withFollowButton />
     case ElasticIndex.posts: {
-      const postData = unknownData as PostWithAllDetails
-      return <PostPreview key={postData.post.struct.id.toString()} postDetails={postData} withActions />
+      return <PostPreview postDetails={unknownData as PostWithAllDetails} withActions />
     }
     case ElasticIndex.profiles:
       return (
         <Segment>
-          <ProfilePreviewWithOwner key={`${id}-${i}`} address={id} owner={unknownData as ProfileData} />
+          <ProfilePreviewWithOwner address={id} owner={unknownData as ProfileData} />
         </Segment>
       )
     default:
@@ -62,9 +62,8 @@ const resultToPreview = ({ data, index, id }: DataResults, i: number) => {
   }
 }
 
-type InnerSearchResultListProps<T> = DataListOptProps & {
+type InnerSearchResultListProps<T> = DataListOptProps & DataListItemProps<T> & {
   loadingLabel?: string
-  renderItem: RenderItemFn<T>
 }
 
 const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultListProps<T>) => {
@@ -99,9 +98,12 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
   return <List />
 }
 
-const AllResultsList = () => (
-  <InnerSearchResultList loadingLabel={'Loading search results...'} renderItem={resultToPreview} />
-)
+const AllResultsList = () =>
+  <InnerSearchResultList
+    loadingLabel={'Loading search results...'}
+    getKey={item => item.id}
+    renderItem={resultToPreview}
+  />
 
 const SearchResults = () => {
   const router = useRouter()
