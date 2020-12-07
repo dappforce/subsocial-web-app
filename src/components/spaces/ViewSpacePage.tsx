@@ -10,7 +10,7 @@ import { getPageOfIds } from '../utils/getIds'
 import { spaceUrl } from '../urls'
 import { slugifyHandle } from '../urls/helpers'
 import { isPolkaProject, stringifyBns } from 'src/utils'
-import { withServerRedux } from 'src/rtk/app/withServerRedux'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { fetchSpace, selectSpace } from 'src/rtk/features/spaces/spacesSlice'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 import { ViewSpace } from './ViewSpace'
@@ -44,7 +44,7 @@ const ViewSpacePage: FC<Props> = (props) => {
   </PageContent>
 }
 
-withServerRedux(ViewSpacePage, async ({ context, subsocial, dispatch, reduxStore }) => {
+getInitialPropsWithRedux(ViewSpacePage, async ({ context, subsocial, dispatch, reduxStore }) => {
   const { query, res } = context
   const { spaceId } = query
   const idOrHandle = spaceId as string

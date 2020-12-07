@@ -7,7 +7,7 @@ import { Section } from 'src/components/utils/Section'
 import { tryParseInt } from 'src/utils'
 import { useFetchPosts } from '../posts/postsHooks'
 import { fetchPosts } from '../posts/postsSlice'
-import { withServerRedux } from '../../app/withServerRedux'
+import { getInitialPropsWithRedux } from '../../app'
 
 type Props = {
   ids?: EntityId[]
@@ -49,7 +49,7 @@ export const SpacesListPage: NextPage<Props> = (props) => {
   return <SpacesList {...props} />
 }
 
-withServerRedux(SpacesListPage, async ({ dispatch, subsocial }) => {
+getInitialPropsWithRedux(SpacesListPage, async ({ dispatch, subsocial }) => {
   const ids = samplePostIds
   await dispatch(fetchPosts({ api: subsocial, ids }))
   return { ids }

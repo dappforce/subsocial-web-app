@@ -11,7 +11,7 @@ import { Tabs } from 'antd'
 import Section from '../utils/Section'
 import MyFeed from '../activity/MyFeed'
 import { uiShowFeed } from '../utils/env'
-import { withServerRedux } from 'src/rtk/app/withServerRedux'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { fetchSpaces, selectSpaces } from 'src/rtk/features/spaces/spacesSlice'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 
@@ -63,7 +63,7 @@ const HomePage: NextPage<Props> = (props) => <Section className='m-0'>
 
 const LAST_ITEMS_SIZE = 5
 
-withServerRedux(HomePage, async ({ subsocial, dispatch, reduxStore }) => {
+getInitialPropsWithRedux(HomePage, async ({ subsocial, dispatch, reduxStore }) => {
   const { substrate } = subsocial
   const { getState } = reduxStore
 

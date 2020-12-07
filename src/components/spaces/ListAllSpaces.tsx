@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { SpaceId } from 'src/types'
 import { useFetchSpaces } from 'src/rtk/app/hooks'
 import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
-import { withServerRedux } from 'src/rtk/app/withServerRedux'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { stringifyBns } from 'src/utils'
 import { PaginatedList } from '../lists/PaginatedList'
 import { PageContent } from '../main/PageWrapper'
@@ -62,7 +62,7 @@ const ListAllSpacesPage: FC<Props> = (props) => {
   </PageContent>
 }
 
-withServerRedux(ListAllSpacesPage, async ({ context, subsocial, dispatch }) => {
+getInitialPropsWithRedux(ListAllSpacesPage, async ({ context, subsocial, dispatch }) => {
   const { query } = context
   const { substrate } = subsocial
 
