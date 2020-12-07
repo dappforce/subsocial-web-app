@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { getFirstOrUndefined } from '@subsocial/utils'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, /* FetchOneArgs, */ HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createSelectUnknownIds, FetchManyArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
 import { idsToBns } from 'src/types/utils'
@@ -97,14 +97,14 @@ export function selectPost (state: RootState, props: SelectPostArgs): PostWithSo
   return getFirstOrUndefined(entities)
 }
 
-const filterNewIds = createFilterNewIds(selectPostIds)
+export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
 
 export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkApiConfig>(
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
     const { api, ids, withContent = true, withOwner = true, withSpace = true } = args
 
-    const newIds = filterNewIds(getState(), ids)
+    const newIds = selectUnknownPostIds(getState(), ids)
     if (!newIds.length) {
       // Nothing to load: all ids are known and their posts are already loaded.
       return []

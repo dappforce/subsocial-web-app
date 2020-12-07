@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { getFirstOrUndefined } from '@subsocial/utils'
-import { createFetchOne, createFilterNewIds, FetchManyArgs, /* FetchOneArgs, */ HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createSelectUnknownIds, FetchManyArgs, /* FetchOneArgs, */ HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenSpaceStructs, getUniqueContentIds, getUniqueOwnerIds, ProfileData, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import { idsToBns } from 'src/types/utils'
@@ -78,7 +78,7 @@ export function selectSpace (state: RootState, props: SelectSpaceArgs): SpaceWit
   return getFirstOrUndefined(entities)
 }
 
-const filterNewIds = createFilterNewIds(selectSpaceIds)
+const selectUnknownSpaceIds = createSelectUnknownIds(selectSpaceIds)
 
 // TODO impl forceFetchAndSubscribe
 
@@ -86,7 +86,7 @@ export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, Thun
   'spaces/fetchMany',
   async ({ api, ids, withContent = true, withOwner = true }, { getState, dispatch }) => {
 
-    const newIds = filterNewIds(getState(), ids)
+    const newIds = selectUnknownSpaceIds(getState(), ids)
     if (!newIds.length) {
       // Nothing to load: all ids are known and their spaces are already loaded.
       return []

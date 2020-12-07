@@ -1,5 +1,5 @@
 import { AsyncThunkAction } from '@reduxjs/toolkit'
-import { getFirstOrUndefined, newLogger } from '@subsocial/utils'
+import { getFirstOrUndefined, isEmptyArray, newLogger } from '@subsocial/utils'
 import { useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
@@ -33,17 +33,18 @@ export function useFetchEntities<Args, Struct, Entity> (
   args: SelectManyArgs<Args>
 ): FetchManyResult<Entity> {
   
-  const entities = useAppSelector(state => select(state, args), shallowEqual)
+  const hasNoIds = isEmptyArray(args.ids)
+  const entities = useAppSelector(state => hasNoIds ? [] : select(state, args), shallowEqual)
 
   // TODO try useMemo for better performance?
   // const entities = useMemo(() => useAppSelector(state => select(state, args), shallowEqual, [ args ])
 
   const [ loading, setLoading ] = useState(false)
-  const [ error, setError ] = useState<Error | undefined>()
+  const [ error, setError ] = useState<Error>()
   const dispatch = useAppDispatch()
 
   useSubsocialEffect(({ subsocial }) => {
-    if (loading) return
+    if (loading || hasNoIds) return
 
     // TODO used for debug:
     // console.log('useFetchEntities: useEffect: args:', args)

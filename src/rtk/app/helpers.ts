@@ -43,8 +43,7 @@ export type FetchOneArgs <T> = T & ApiAndId
 
 export type FetchManyArgs <T> = T & ApiAndIds
 
-export function createFilterNewIds (selectIds: (state: RootState) => EntityId[])
-{
+export function createSelectUnknownIds (selectIds: (state: RootState) => EntityId[]) {
   return (state: RootState, ids: EntityId[]): string[] => {
     if (isEmptyArray(ids)) return []
 

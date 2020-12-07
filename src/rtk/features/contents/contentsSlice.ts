@@ -1,6 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { CommentContent, CommonContent, PostContent, ProfileContent, SharedPostContent, SpaceContent } from '@subsocial/types'
-import { ApiAndIds, createFilterNewIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { ApiAndIds, createSelectUnknownIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { HasId } from 'src/types'
 
@@ -30,7 +30,7 @@ export const {
   selectTotal: selectTotalContents
 } = contentsSelectors
 
-const filterNewIds = createFilterNewIds(selectContentIds)
+const selectUnknownContentIds = createSelectUnknownIds(selectContentIds)
 
 type FetchContentFn<C extends CommonContent> = AsyncThunk<Content<C>[], ApiAndIds, ThunkApiConfig>
 
@@ -38,7 +38,7 @@ export const fetchContents = createAsyncThunk<Content[], ApiAndIds, ThunkApiConf
   'contents/fetchMany',
   async ({ api, ids }, { getState }) => {
 
-    const newIds = filterNewIds(getState(), ids)
+    const newIds = selectUnknownContentIds(getState(), ids)
     if (!newIds.length) {
       // Nothing to load: all ids are known and their contents are already loaded.
       return []
