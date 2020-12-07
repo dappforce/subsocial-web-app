@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import BN from 'bn.js'
 import { Loading } from '../../utils'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { PostWithAllDetails } from '@subsocial/types'
+import { PostWithAllDetails } from 'src/types'
 import PostPreview from './PostPreview'
 import DataList from 'src/components/lists/DataList'
 
@@ -20,17 +20,22 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
     const [ posts, setPosts ] = useState<PostWithAllDetails[]>()
     const [ loaded, setLoaded ] = useState(false)
 
-    useSubsocialEffect(({ subsocial }) => {
+    useSubsocialEffect(({ flatApi }) => {
+      let isMounted = true
       setLoaded(false)
 
       const loadData = async () => {
-        const extPostData = await subsocial.findPublicPostsWithAllDetails(postIds)
-        extPostData && setPosts(extPostData)
-        setLoaded(true)
+        const extPostData = await flatApi.findPublicPostsWithAllDetails(postIds)
+        if (isMounted) {
+          setPosts(extPostData)
+          setLoaded(true)
+        }
       }
 
       loadData().catch(console.warn)
-    }, [ false ])
+
+      return () => { isMounted = false }
+    }, [])
 
     return loaded && posts
       ? <Component posts={posts} />
@@ -38,7 +43,11 @@ export function withLoadPostsWithSpaces<P extends OuterProps> (Component: React.
   }
 }
 
-const InnerPostPreviewList: React.FunctionComponent<ResolvedProps> = ({ posts }) =>
-  <DataList dataSource={posts} renderItem={x => <PostPreview key={x.post.struct.id.toString()} postDetails={x} withActions />} />
+const InnerPostPreviewList: FC<ResolvedProps> = ({ posts }) =>
+  <DataList
+    dataSource={posts}
+    getKey={item => item.id}
+    renderItem={x => <PostPreview postDetails={x} withActions />}
+  />
 
 export const PostPreviewList = withLoadPostsWithSpaces(InnerPostPreviewList)

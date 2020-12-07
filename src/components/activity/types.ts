@@ -1,9 +1,10 @@
 import { ParsedPaginationQuery } from '../utils/getIds'
-import { SubsocialApi } from '@subsocial/api/subsocial'
 import { ActivityStore } from './NotificationUtils'
+import { FlatSubsocialApi } from '../substrate'
+import { DataListItemProps } from '../lists'
 
 export type LoadMoreProps = ParsedPaginationQuery & {
-  subsocial: SubsocialApi
+  flatApi: FlatSubsocialApi
   address?: string,
   activityStore?: ActivityStore
 }
@@ -23,6 +24,4 @@ export type ActivityProps<T> = BaseActivityProps & {
   loadingLabel?: string
 }
 
-export type InnerActivitiesProps<T> = ActivityProps<T> & {
-  renderItem: (item: T, index: number) => JSX.Element,
-}
+export type InnerActivitiesProps<T> = ActivityProps<T> & DataListItemProps<T>

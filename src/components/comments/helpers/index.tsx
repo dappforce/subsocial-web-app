@@ -1,7 +1,7 @@
 import React from 'react'
 import { HiddenPostAlert } from 'src/components/posts/view-post'
 import { DfMd } from 'src/components/utils/DfMd'
-import { CommentData } from '@subsocial/types/dto'
+import { CommentData } from 'src/types'
 import styles from './index.module.sass'
 import { HasPostId } from 'src/components/urls'
 

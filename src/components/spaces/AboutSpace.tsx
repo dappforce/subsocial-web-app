@@ -4,7 +4,6 @@ import { mdToText } from 'src/utils'
 import { NextPage } from 'next'
 import Error from 'next/error'
 import React, { useCallback, useState } from 'react'
-
 import { ProfilePreview } from '../profiles/address-views'
 import { DfMd } from '../utils/DfMd'
 import { return404 } from '../utils/next'
@@ -12,9 +11,8 @@ import Section from '../utils/Section'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
 import ViewTags from '../utils/ViewTags'
 import { ViewSpaceProps } from './ViewSpaceProps'
-import withLoadSpaceDataById from './withLoadSpaceDataById'
 import { PageContent } from '../main/PageWrapper'
-import { getSpaceId } from '../substrate'
+import { getSpaceId, newFlatApi } from '../substrate'
 import { isUnlistedSpace, SpaceNotFound } from './helpers'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
 import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
@@ -36,7 +34,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const { owner } = props
   const space = spaceData.struct
-  const { owner: spaceOwnerAddress } = space
+  const { ownerId: spaceOwnerAddress } = space
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent)
   const { name, about, image, tags, links = [], email } = content
@@ -103,6 +101,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
 // TODO extract getInitialProps, this func is similar in ViewSpace
 
+// TODO refactor, or re-use from ViewSpacePage
 AboutSpacePage.getInitialProps = async (props): Promise<Props> => {
   const { query: { spaceId } } = props
   const idOrHandle = spaceId as string
@@ -113,13 +112,15 @@ AboutSpacePage.getInitialProps = async (props): Promise<Props> => {
   }
 
   const subsocial = await getSubsocialApi()
-  const spaceData = id && await subsocial.findSpace({ id })
+  const flatApi = newFlatApi(subsocial)
+  const spaceData = id && await flatApi.findSpace({ id })
+
   if (!spaceData?.struct) {
     return return404(props)
   }
 
-  const ownerId = spaceData?.struct.owner
-  const owner = await subsocial.findProfile(ownerId)
+  const { ownerId } = spaceData.struct
+  const owner = await flatApi.findProfile(ownerId)
 
   return {
     spaceData,
@@ -128,5 +129,3 @@ AboutSpacePage.getInitialProps = async (props): Promise<Props> => {
 }
 
 export default AboutSpacePage
-
-export const AboutSpace = withLoadSpaceDataById(AboutSpacePage)

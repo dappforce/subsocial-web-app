@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import Section from '../utils/Section'
 import { useResponsiveSize } from '../responsive'
 
@@ -78,7 +78,7 @@ type Props = {
   className?: string
 }
 
-export const PageContent: React.FunctionComponent<Props> = ({ /* leftPanel, rightPanel, */ meta, level = 1, title, className, children }) => {
+export const PageContent: FC<Props> = ({ /* leftPanel, rightPanel, */ meta, level = 1, title, className, children }) => {
   const { isNotMobile } = useResponsiveSize()
   // const isPanels = leftPanel || rightPanel
   return <>

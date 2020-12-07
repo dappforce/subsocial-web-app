@@ -306,6 +306,8 @@ function LoadStruct (props: LoadStructProps) {
   };
 
   useSubsocialEffect(({ ipfs }) => {
+    let isMounted = true
+
     if (!myAddress || !structOpt || structOpt.isNone) return toggleTrigger();
 
     setStruct(structOpt.unwrap());
@@ -315,8 +317,10 @@ function LoadStruct (props: LoadStructProps) {
     const cid = resolveCidOfContent(struct.content)
 
     cid && ipfs.findSpace(cid).then(json => {
-      setJson(json);
+      isMounted && setJson(json);
     }).catch(console.warn);
+
+    return () => { isMounted = false }
   }, [ trigger ]);
 
   if (!myAddress || !structOpt || jsonIsNone) {

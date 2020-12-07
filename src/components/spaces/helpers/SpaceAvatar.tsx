@@ -1,10 +1,10 @@
 import React from 'react'
-import { HasSpaceIdOrHandle } from 'src/components/urls'
 import BaseAvatar, { BaseAvatarProps } from 'src/components/utils/DfAvatar'
+import { SpaceStruct } from 'src/types'
 import ViewSpaceLink from '../ViewSpaceLink'
 
 type Props = BaseAvatarProps & {
-  space: HasSpaceIdOrHandle
+  space: SpaceStruct
   asLink?: boolean
 }
 

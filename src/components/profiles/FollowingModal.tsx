@@ -43,6 +43,7 @@ const InnerFollowingModal = (props: Props) => {
   )
 }
 
+// TODO use redux
 export const AccountFollowingModal = withMulti(
   InnerFollowingModal,
   withCalls<Props>(

@@ -3,6 +3,7 @@ import { Empty } from 'antd'
 import { MutedSpan } from './MutedText'
 
 type Props = React.PropsWithChildren<{
+  style?: React.CSSProperties
   image?: string
   description?: React.ReactNode
 }>
@@ -10,6 +11,7 @@ type Props = React.PropsWithChildren<{
 export const NoData = (props: Props) =>
   <Empty
     className='DfEmpty'
+    style={props.style}
     image={props.image}
     description={
       <MutedSpan>{props.description}</MutedSpan>

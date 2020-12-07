@@ -3,11 +3,10 @@ import store from 'store'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { AnyAccountId } from '@subsocial/types'
 import { equalAddresses } from '../substrate'
-import { ProfileData } from '@subsocial/types'
+import { flattenProfileStruct, ProfileData } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { Option } from '@polkadot/types'
-import { resolveCidOfContent } from '@subsocial/api/utils'
 
 const log = newLogger('MyAccountContext')
 
@@ -137,14 +136,13 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
       unsub = await readyApi.query.profiles.socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
         let account: ProfileData | undefined
-        const struct = optSocialAccount.unwrapOr(undefined)
+        const subtrateStruct = optSocialAccount.unwrapOr(undefined)
 
-        if (struct) {
-          const profile = struct.profile.unwrapOr(undefined)
-          const cid = profile && resolveCidOfContent(profile.content)
-          const content = cid ? await ipfs.findProfile(cid) : undefined
-
-          account = { struct, profile, content }
+        if (subtrateStruct) {
+          const struct = flattenProfileStruct(address, subtrateStruct)
+          const { contentId } = struct
+          const content = contentId ? await ipfs.findProfile(contentId) : undefined
+          account = { id: address, struct, content }
         }
 
         dispatch({ type: 'setAccount', account })

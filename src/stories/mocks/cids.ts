@@ -1,0 +1,1 @@
+export const subsocialSpaceCid = 'bafyreifvfcdq5jhnwkoqtrja4wmvhezhbxcoamuoetrwj4qtj6gu6ldug4'

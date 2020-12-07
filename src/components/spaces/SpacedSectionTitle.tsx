@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useStorybookContext } from '../utils/StorybookContext'
-import { SpaceData } from '@subsocial/types'
+import { SpaceData } from 'src/types'
 import { spaceUrl } from '../urls'
 
 type Props = {
@@ -9,10 +9,7 @@ type Props = {
   subtitle: React.ReactNode
 }
 
-export const SpacegedSectionTitle = ({
-  space,
-  subtitle
-}: Props) => {
+export const SpacegedSectionTitle = ({ space, subtitle }: Props) => {
   const { isStorybook } = useStorybookContext()
   const name = space?.content?.name
 

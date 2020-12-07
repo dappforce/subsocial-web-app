@@ -50,6 +50,7 @@ const InnerStatsPanel = (props: StatsProps) => {
   </>
 }
 
+// TODO use redux
 export default withMulti<StatsProps>(
   InnerStatsPanel,
   withCalls(

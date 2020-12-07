@@ -3,7 +3,6 @@ import { DfMd } from '../utils/DfMd'
 import Link from 'next/link'
 
 import { AccountId } from '@polkadot/types/interfaces'
-import { ZERO } from '../utils/index'
 import { isEmptyStr } from '@subsocial/utils'
 import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal'
 // import { ProfileHistoryModal } from '../utils/ListsEditHistory';
@@ -20,13 +19,11 @@ import {
 
 import { Menu, Dropdown, Button } from 'antd'
 import { NextPage } from 'next'
-import BN from 'bn.js'
-import isEmpty from 'lodash.isempty'
 import { ProfileContent } from '@subsocial/types/offchain'
 import { getSubsocialApi } from '../utils/SubsocialConnect'
-import { ProfileData, SpaceData } from '@subsocial/types'
+import { ProfileData, SpaceData } from 'src/types'
 import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner'
-import { getAccountId } from '../substrate'
+import { getAccountId, newFlatApi } from '../substrate'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import Avatar from './address-views/Avatar'
 import Name from './address-views/Name'
@@ -38,18 +35,19 @@ import { SpaceId } from '@subsocial/types/substrate/interfaces'
 import { AccountActivity } from '../activity/AccountActivity'
 import { PageContent } from '../main/PageWrapper'
 import { accountUrl } from '../urls'
+import { AnyAccountId } from '@subsocial/types'
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
 
 export type Props = {
-  address: AccountId,
+  address: AnyAccountId,
   owner?: ProfileData,
   followers?: AccountId[],
   mySpaceIds?: SpaceId[],
   spacesData?: SpaceData[],
   size?: number
-};
+}
 
 const Component = (props: Props) => {
   const {
@@ -63,10 +61,10 @@ const Component = (props: Props) => {
 
   const isMyAccount = isMyAddress(address)
 
-  const noProfile = isEmpty(owner?.profile)
-  const followers = owner ? new BN(owner.struct.followers_count) : ZERO
-  const following = owner ? new BN(owner.struct.following_accounts_count) : ZERO
-  const reputation = owner ? owner.struct.reputation : ZERO
+  const noProfile = !owner?.struct.hasProfile
+  const followers = owner ? owner.struct.followersCount : 0
+  const following = owner ? owner.struct.followingAccountsCount : 0
+  const reputation = owner ? owner.struct.reputation : 0
 
   const {
     avatar,
@@ -104,8 +102,8 @@ const Component = (props: Props) => {
     </>
   }, [ address, isMyAccount ])
 
-  const hasFollowers = followers.gt(ZERO)
-  const hasFollowing = following.gt(ZERO)
+  const hasFollowers = followers > 0
+  const hasFollowing = following > 0
 
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
@@ -145,8 +143,9 @@ const Component = (props: Props) => {
           </div>
         </div>
       </div>
-      {followersOpen && <AccountFollowersModal id={address} accountsCount={followers.toString()} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
-      {followingOpen && <AccountFollowingModal id={address} accountsCount={following.toString()} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
+      {/* // TODO copypasta. See src/components/profiles/address-views/ProfilePreview.tsx */}
+      {followersOpen && <AccountFollowersModal id={address} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
+      {followingOpen && <AccountFollowingModal id={address} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
 }
 
@@ -182,20 +181,24 @@ const ProfilePage: NextPage<Props> = (props) => {
   </PageContent>
 }
 
-ProfilePage.getInitialProps = async (props): Promise<any> => {
+ProfilePage.getInitialProps = async (props): Promise<Props> => {
   const { query: { address }, res } = props
+
   const subsocial = await getSubsocialApi()
+  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
+
   const accountId = await getAccountId(address as string)
 
-  if (!accountId && res) {
-    res.statusCode = 404
-    return { statusCode: 404 }
+  if (!accountId ) {
+    if (res) {
+      res.statusCode = 404
+    }
+    return { statusCode: 404 } as any
   }
 
   const addressStr = address as string
-
-  const owner = await subsocial.findProfile(addressStr)
+  const owner = await flatApi.findProfile(addressStr)
   const mySpaceIds = await substrate.spaceIdsByOwner(addressStr)
 
   return {

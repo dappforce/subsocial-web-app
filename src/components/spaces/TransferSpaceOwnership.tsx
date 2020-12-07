@@ -1,11 +1,11 @@
 import AccountId from '@polkadot/types/generic/AccountId'
 import { asAccountId } from '@subsocial/api/utils'
-import { Space } from '@subsocial/types/substrate/interfaces'
 import { isDef, nonEmptyStr } from '@subsocial/utils'
 import { Button, Form, Input, Modal } from 'antd'
 import dynamic from 'next/dynamic'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
+import { SpaceStruct } from 'src/types'
 import { DfForm } from '../forms'
 import { equalAddresses } from '../substrate'
 import styles from './TransferSpaceOwnership.module.sass'
@@ -13,7 +13,7 @@ import styles from './TransferSpaceOwnership.module.sass'
 const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false })
 
 type LinkProps = {
-  space: Space
+  space: SpaceStruct
 }
 
 export const TransferOwnershipLink = (props: LinkProps) => {
@@ -48,7 +48,7 @@ const TransferOwnershipModal = (props: ModalProps) => {
   const [ form ] = Form.useForm()
   const [ newOwner, setNewOwner ] = useState<AccountId>()
   const newOwnerRef = useRef(null)
-  const currentOwner = space.owner
+  const currentOwner = space.ownerId
 
   useEffect(() => {
     if (!open) return
@@ -123,6 +123,7 @@ const TransferOwnershipModal = (props: ModalProps) => {
         validateFirst={true} // stop validation on the first rule with error
         rules={[
           { required: true, message: 'Account address is required.' },
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           ({ getFieldValue }) => ({
             validator (_rule, value) {
               const fail = (errMsg: string) => {

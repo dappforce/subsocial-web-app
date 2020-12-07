@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { LikeTwoTone, LikeOutlined, DislikeTwoTone, DislikeOutlined } from '@ant-design/icons'
 import dynamic from 'next/dynamic'
-import { Post, Reaction } from '@subsocial/types/substrate/interfaces/subsocial'
+import { Reaction } from '@subsocial/types/substrate/interfaces/subsocial'
 import { ReactionKind } from '@subsocial/types/substrate/classes'
 import { newLogger } from '@subsocial/utils'
 import useSubsocialEffect from '../api/useSubsocialEffect'
@@ -9,13 +9,14 @@ import { useMyAddress } from '../auth/MyAccountContext'
 import { BareProps } from '../utils/types'
 import { IconWithLabel } from '../utils'
 import { useResponsiveSize } from '../responsive'
+import { idToPostId, PostStruct } from 'src/types'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
 const log = newLogger('VoterButtons')
 
 type VoterProps = BareProps & {
-  post: Post,
+  post: PostStruct,
   preview?: boolean
 }
 
@@ -31,7 +32,7 @@ type VoterButtonProps = VoterProps & {
 const VoterButton = ({
   reactionType,
   reaction,
-  post: { id, upvotes_count, downvotes_count },
+  post: { id, upvotesCount, downvotesCount },
   className,
   style,
   onSuccess,
@@ -41,7 +42,7 @@ const VoterButton = ({
   const { isMobile } = useResponsiveSize()
   const kind = reaction ? reaction && reaction.kind.toString() : 'None'
   const isUpvote = reactionType === 'Upvote'
-  const count = isUpvote ? upvotes_count : downvotes_count
+  const count = isUpvote ? upvotesCount : downvotesCount
 
   const buildTxParams = () => {
     if (reaction === undefined) {
@@ -96,30 +97,34 @@ const VoterButton = ({
 type VoterButtonsProps = VoterProps & {
   only?: 'Upvote' | 'Downvote',
 }
+
 export const VoterButtons = (props: VoterButtonsProps) => {
   const { post, only } = props
+  const myAddress = useMyAddress()
   const [ reactionState, setReactionState ] = useState<Reaction>()
-  const address = useMyAddress()
   const [ reloadTrigger, setReloadTrigger ] = useState(true)
 
   useSubsocialEffect(({ substrate }) => {
-    let isSubscribe = true
+    let isMounted = true
 
     async function reloadReaction () {
-      if (!address) return
+      if (!myAddress) return
 
-      const reactionId = await substrate.getPostReactionIdByAccount(address, post.id)
+      // TODO use redux
+      const reactionId = await substrate.getPostReactionIdByAccount(myAddress, idToPostId(post.id))
+      if (!isMounted) return
+
       const reaction = await substrate.findReaction(reactionId)
-      if (isSubscribe) {
-        setReactionState(reaction)
-      }
+      isMounted && setReactionState(reaction)
     }
 
-    reloadReaction().catch(err =>
-      log.error(`Failed to load a reaction. ${err}`))
+    reloadReaction().catch(err => log.error(
+      'Failed to load a reaction on post with id',
+      post.id, 'by account', myAddress, err
+    ))
 
-    return () => { isSubscribe = false }
-  }, [ reloadTrigger, address, post ])
+    return () => { isMounted = false }
+  }, [ reloadTrigger, myAddress, post.id ])
 
   const renderVoterButton = (reactionType: ReactionType) => <VoterButton
     reaction={reactionState}
@@ -135,8 +140,10 @@ export const VoterButtons = (props: VoterButtonsProps) => {
     <UpvoteButton />
     <DownvoteButton />
   </>
-
 }
 
-export const UpvoteVoterButton = (props: VoterProps) => <VoterButtons only={'Upvote'} {...props} />
-export const DownvoteVoterButton = (props: VoterProps) => <VoterButtons only={'Downvote'} {...props} />
+export const UpvoteVoterButton = (props: VoterProps) =>
+  <VoterButtons only={'Upvote'} {...props} />
+
+export const DownvoteVoterButton = (props: VoterProps) =>
+  <VoterButtons only={'Downvote'} {...props} />

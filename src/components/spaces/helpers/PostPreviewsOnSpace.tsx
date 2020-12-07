@@ -1,10 +1,8 @@
-import { PostWithSomeDetails, SpaceData } from '@subsocial/types/dto'
-import { PostId, Space } from '@subsocial/types/substrate/interfaces'
+import { PostWithSomeDetails, SpaceData, PostId } from 'src/types'
 import React, { useCallback } from 'react'
 import DataList from 'src/components/lists/DataList'
 import { InfiniteListByPage } from 'src/components/lists/InfiniteList'
 import PostPreview from 'src/components/posts/view-post/PostPreview'
-import { resolveBn } from 'src/components/utils'
 import { getPageOfIds } from 'src/components/utils/getIds'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext'
@@ -19,44 +17,44 @@ type Props = {
 }
 
 const UnlistedPosts = ({ spaceData, postIds }: Props) => {
-  const { struct: space } = spaceData
-  const { myHiddenPosts, isLoading } = useLoadUnlistedPostsByOwner({ owner: space.owner, postIds })
+  const { struct: { ownerId } } = spaceData
+
+  // TODO use redux
+  const { myHiddenPosts, isLoading } = useLoadUnlistedPostsByOwner({ owner: ownerId, postIds })
 
   if (isLoading) return null
 
-  const hiddenPostsCount = myHiddenPosts.length
+  const unlistedCount = myHiddenPosts.length
+  if (!unlistedCount) return null
 
-  return hiddenPostsCount ? <DataList
-    title={<Pluralize count={hiddenPostsCount} singularText={'Unlisted post'} />}
-    dataSource={myHiddenPosts}
-    renderItem={(item) =>
-      <PostPreview
-        key={item.post.struct.id.toString()}
-        postDetails={item}
-        space={spaceData}
-        withActions
-      />
-    }
-  /> : null
+  return (
+    <DataList
+      title={<Pluralize count={unlistedCount} singularText={'Unlisted post'} />}
+      dataSource={myHiddenPosts}
+      getKey={item => item.id}
+      renderItem={(item) =>
+        <PostPreview
+          postDetails={item}
+          space={spaceData}
+          withActions
+        />
+      }
+    />
+  )
 }
-
-const getPublicPostsCount = (space: Space): number =>
-  resolveBn(space.posts_count)
-    .sub(resolveBn(space.hidden_posts_count))
-    .toNumber()
 
 export const PostPreviewsOnSpace = (props: Props) => {
   const { spaceData, posts, postIds } = props
   const { struct: space } = spaceData
-  const publicPostsCount = getPublicPostsCount(space)
-  const { isApiReady, subsocial } = useSubsocialApi()
+  const { visiblePostsCount } = space
+  const { isApiReady, flatApi } = useSubsocialApi()
 
   const postsSectionTitle = () =>
     <div className='w-100 d-flex justify-content-between align-items-baseline'>
       <span style={{ marginRight: '1rem' }}>
-        <Pluralize count={publicPostsCount} singularText='Post'/>
+        <Pluralize count={visiblePostsCount} singularText='Post'/>
       </span>
-      {publicPostsCount > 0 &&
+      {visiblePostsCount > 0 &&
         <CreatePostButton space={space} title={'Write Post'} className='mb-2' />
       }
     </div>
@@ -72,17 +70,18 @@ export const PostPreviewsOnSpace = (props: Props) => {
 
         const pageIds = getPageOfIds(postIds, { page, size })
 
-        return subsocial.findPublicPostsWithAllDetails(pageIds)
+        // TODO use redux
+        return flatApi.findPublicPostsWithAllDetails(pageIds)
       }}
-      totalCount={publicPostsCount}
+      totalCount={visiblePostsCount}
       noDataDesc='No posts yet'
       noDataExt={isMySpace(space)
         ? <CreatePostButton space={space} />
         : null
       }
+      getKey={item => item.id}
       renderItem={(item) =>
         <PostPreview
-          key={item.post.struct.id.toString()}
           postDetails={item}
           space={spaceData}
           withActions

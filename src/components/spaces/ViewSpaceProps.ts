@@ -1,7 +1,4 @@
-import BN from 'bn.js'
-import { GenericAccountId as AccountId } from '@polkadot/types'
-import { SpaceData, PostWithSomeDetails, ProfileData } from '@subsocial/types/dto'
-import { PostId } from '@subsocial/types/substrate/interfaces'
+import { AccountId, PostId, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
 
 export type ViewSpaceProps = {
   nameOnly?: boolean
@@ -12,12 +9,13 @@ export type ViewSpaceProps = {
   withFollowButton?: boolean
   withTags?: boolean
   withStats?: boolean
-  id?: BN
+
   spaceData?: SpaceData
   owner?: ProfileData,
   postIds?: PostId[],
   posts?: PostWithSomeDetails[]
   followers?: AccountId[]
+
   imageSize?: number
   onClick?: () => void
   statusCode?: number

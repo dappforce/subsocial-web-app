@@ -5,7 +5,7 @@ import React from 'react'
 import { Option } from '@polkadot/types'
 import { LoadingOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import { Profile, SocialAccount, Post, Space } from '@subsocial/types/substrate/interfaces'
+import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { ProfileContent } from '@subsocial/types/offchain'
 import { Moment } from '@polkadot/types/interfaces'
 import { isMyAddress } from '../auth/MyAccountContext'
@@ -13,6 +13,7 @@ import { AnyAccountId } from '@subsocial/types'
 import { hexToBn } from '@polkadot/util'
 import Error from 'next/error'
 import isbot from 'isbot'
+import { PostStruct, SpaceStruct } from 'src/types'
 export * from './IconWithLabel'
 
 export const ZERO = new BN(0)
@@ -64,28 +65,36 @@ export function withRequireProfile<P extends LoadSocialAccount> (Component: Reac
 
 type LoadingProps = {
   label?: React.ReactNode
+  style?: React.CSSProperties
+  center?: boolean
 }
 
-export const Loading = ({ label }: LoadingProps) =>
-  <div className='d-flex justify-content-center align-items-center w-100 h-100'>
+export const Loading = ({ label, style, center = true }: LoadingProps) => {
+  const alignCss = center ? 'justify-content-center align-items-center' : ''
+  return <div className={`d-flex w-100 h-100 ${alignCss}`} style={style}>
     <LoadingOutlined />
     {label && <em className='ml-3 text-muted'>{label}</em>}
   </div>
+}
 
 export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
   const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
   return dayjs(seconds).format(format)
 }
 
-export const fakeClientId = () => `fake-${new Date().getTime()}`
+/**
+ * Generate a temporary comment id that will be used on UI until comment is persisted
+ * in the blockchain and replaced with the real data and id from blockchain storage.
+ */
+export const tmpClientId = () => `fake-id-${new Date().getTime()}`
 
 type VisibilityProps = {
-  struct: Post | Space
+  struct: PostStruct | SpaceStruct
   address?: AnyAccountId
 }
 
-export const isVisible = ({ struct: { hidden, owner }, address }: VisibilityProps) =>
-  !hidden.valueOf() || isMyAddress(address || owner)
+export const isVisible = ({ struct: { hidden, ownerId }, address }: VisibilityProps) =>
+  !hidden || isMyAddress(address || ownerId)
 
 export const isHidden = (props: VisibilityProps) => !isVisible(props)
 
@@ -137,7 +146,5 @@ export const resolveBn = (value: BN | string) => {
     return hexToBn(value.toString())
   }
 }
-
-export const GhostPrimaryBtnClass = 'ant-btn ant-btn-primary ant-btn-background-ghost'
 
 export const PageNotFound = () => <Error statusCode={404} />

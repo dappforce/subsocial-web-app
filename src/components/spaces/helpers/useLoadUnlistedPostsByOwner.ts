@@ -1,25 +1,34 @@
-import { PostWithSomeDetails } from '@subsocial/types/dto'
+import { PostWithSomeDetails } from 'src/types'
 import { AnyAccountId } from '@subsocial/types/substrate'
-import { PostId } from '@subsocial/types/substrate/interfaces'
+import { PostId } from 'src/types'
 import { useState } from 'react'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { isMyAddress } from 'src/components/auth/MyAccountContext'
+import { newLogger } from '@subsocial/utils'
 
 type Props = {
   owner: AnyAccountId
   postIds: PostId[]
 }
 
-export const useLoadUnlistedPostsByOwner = ({ owner, postIds }: Props) => {
+const log = newLogger(useLoadUnlistedPostsByOwner.name)
+
+// TODO use redux
+export function useLoadUnlistedPostsByOwner ({ owner, postIds }: Props) {
   const isMySpaces = isMyAddress(owner)
   const [ myHiddenPosts, setMyHiddenPosts ] = useState<PostWithSomeDetails[]>()
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
+    let isMounted = true
+
     if (!isMySpaces) return setMyHiddenPosts([])
 
-    subsocial.findUnlistedPostsWithAllDetails(postIds)
-      .then(setMyHiddenPosts)
+    flatApi.findUnlistedPostsWithAllDetails(postIds)
+      .then(res => isMounted && setMyHiddenPosts(res))
+      .catch(err => log.error(
+        'Failed to get unlisted posts with all details by ids:', postIds, err))
 
+    return () => { isMounted = false }
   }, [ postIds.length, isMySpaces ])
 
   return {

@@ -284,7 +284,11 @@ export const KusamaIdentity = ({ address }: KusamaBareProps) => {
     <h3 className='mb-0'>Kusama identity</h3>
     <DataList
       dataSource={identityInfoKeys}
-      renderItem={key => details[key] ? <div key={key}>{`${key.toUpperCase()}: ${details[key]}`}</div> : <></>}
+      getKey={key => key}
+      renderItem={key => details[key]
+        ? <div key={key}>{`${key.toUpperCase()}: ${details[key]}`}</div>
+        : <></>
+      }
     />
   </div>
 }

@@ -1,49 +1,50 @@
-import React from 'react'
-import { Space } from '@subsocial/types/substrate/interfaces'
+import React, { FC } from 'react'
 import { ViewComment } from './ViewComment'
 import { NewComment } from './CreateComment'
 import { mdToText } from 'src/utils'
-import { PostWithSomeDetails, PostData } from '@subsocial/types/dto'
+import { PostWithSomeDetails, PostData } from 'src/types'
 import { NextPage } from 'next'
 import { getProfileName } from '../substrate'
 import { Pluralize } from '../utils/Plularize'
 import ViewPostLink from '../posts/ViewPostLink'
-import { CommentsTree } from './CommentTree'
+import { ViewCommentsTree } from './CommentTree'
 import Section from '../utils/Section'
 import { PageContent } from '../main/PageWrapper'
 import { postUrl } from '../urls'
+import { SpaceStruct } from 'src/types'
 
 type CommentSectionProps = {
-  space: Space,
+  space: SpaceStruct,
   post: PostWithSomeDetails,
   replies?: PostWithSomeDetails[],
   hashId?: string,
   withBorder?: boolean
 }
 
-export const CommentSection: React.FunctionComponent<CommentSectionProps> = React.memo(({ post, hashId, space, replies = [], withBorder }) => {
+export const CommentSection: FC<CommentSectionProps> = ({ post, hashId, space, withBorder }) => {
   const { post: { struct } } = post
-  const { replies_count } = struct
-  const totalCount = replies_count.toString()
+  const { id: parentId, repliesCount } = struct
 
-  return <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
-    <h3><Pluralize count={totalCount} singularText='comment' /></h3>
-    <NewComment post={struct} asStub />
-    <CommentsTree rootPost={struct} parent={struct} space={space} replies={replies} />
-  </Section>
-})
+  return (
+    <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
+      <h3><Pluralize count={repliesCount} singularText='comment' /></h3>
+      <NewComment post={struct} asStub />
+      <ViewCommentsTree space={space} rootPost={struct} parentId={parentId} />
+    </Section>
+  )
+}
 
 type CommentPageProps = {
   comment: PostWithSomeDetails,
   parentPost: PostData,
-  space: Space,
+  space: SpaceStruct,
   replies: PostWithSomeDetails[]
 }
 
-export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, space }) => {
+export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, space }) => {
   const { post: { struct, content }, owner } = comment
   const { content: postContent } = parentPost
-  const address = struct.owner.toString()
+  const address = struct.ownerId
   const profileName = getProfileName({ address, owner }).toString()
 
   const renderResponseTitle = () => <>
@@ -60,7 +61,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
   return (
     <PageContent meta={meta} className='DfContentPage DfEntirePost'>
       {renderResponseTitle()}
-      <ViewComment space={space} comment={comment} replies={replies} withShowReplies />
+      <ViewComment space={space} comment={comment} withShowReplies />
     </PageContent>
   )
 }

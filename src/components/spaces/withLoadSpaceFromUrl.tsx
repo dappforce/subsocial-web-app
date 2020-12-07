@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { getSpaceId } from '../substrate'
-import { SpaceData } from '@subsocial/types'
+import { SpaceData } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { Loading } from '../utils'
 import NoData from '../utils/EmptyList'
 import { isFunction } from '@polkadot/util'
+import { newLogger } from '@subsocial/utils'
 
 type CheckPermissionResult = {
   ok: boolean
@@ -22,6 +23,8 @@ export type CanHaveSpaceProps = {
   space?: SpaceData
 }
 
+const log = newLogger(withLoadSpaceFromUrl.name)
+
 export function withLoadSpaceFromUrl<Props extends CanHaveSpaceProps> (
   Component: React.ComponentType<Props>
 ) {
@@ -32,17 +35,26 @@ export function withLoadSpaceFromUrl<Props extends CanHaveSpaceProps> (
     const [ isLoaded, setIsLoaded ] = useState(false)
     const [ loadedData, setLoadedData ] = useState<CanHaveSpaceProps>({})
 
-    useSubsocialEffect(({ subsocial }) => {
+    useSubsocialEffect(({ flatApi, subsocial }) => {
+      let isMounted = false
+
       const load = async () => {
         const id = await getSpaceId(idOrHandle, subsocial)
-        if (!id) return
+        if (!isMounted || !id) return
 
         setIsLoaded(false)
-        const space = await subsocial.findSpace({ id })
+        const space = await flatApi.findSpace({ id })
+        if (!isMounted) return
+
         setLoadedData({ space })
         setIsLoaded(true)
       }
-      load()
+
+      load().catch(err => log.error(
+        'Failed to load a space by id or handle from URL:', idOrHandle, err
+      ))
+
+      return () => { isMounted = false }
     }, [ idOrHandle ])
 
     if (!isLoaded) return <Loading label='Loading the space...' />

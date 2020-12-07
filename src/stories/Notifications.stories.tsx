@@ -10,4 +10,9 @@ export default {
 }
 
 export const _MyNotifications = () =>
-  <Notification address={mockAccountAlice.toString()} owner={mockProfileDataAlice} details={new Date().toLocaleString()} textActivity={<>and 1 people use here notification <ViewSpace spaceData={mockSpaceDataAlice} nameOnly withLink /></>}/>
+  <Notification
+    address={mockAccountAlice.toString()}
+    owner={mockProfileDataAlice}
+    details={new Date().toLocaleString()}
+    textActivity={<>and 1 people use here notification <ViewSpace spaceData={mockSpaceDataAlice} nameOnly withLink /></>}
+  />

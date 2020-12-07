@@ -5,7 +5,10 @@ type Props = BareProps & SpaceProps & {
   withIcon?: boolean
 }
 
-export const EditMenuLink = ({ space: { id, owner }, withIcon }: Props) => /* isMyAddress(owner)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const EditMenuLink = (_props: Props) => null
+
+/* export const EditMenuLink = ({ space: { id, owner }, withIcon }: Props) => isMyAddress(owner)
   ? <div className='SpaceNavSettings'>
     <Link
       href='/[spaceId]/space-navigation/edit'
@@ -17,4 +20,4 @@ export const EditMenuLink = ({ space: { id, owner }, withIcon }: Props) => /* is
       </a>
     </Link>
   </div>
-  : */ null
+  : null */

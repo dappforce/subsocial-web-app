@@ -1,6 +1,5 @@
 import { Option } from '@polkadot/types'
 import AccountId from '@polkadot/types/generic/AccountId'
-import { Space } from '@subsocial/types/substrate/interfaces'
 import { newLogger } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
@@ -9,6 +8,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountContext'
 import { ViewProfileLink } from 'src/components/profiles/ViewProfileLink'
 import { equalAddresses } from 'src/components/substrate'
 import { TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { SpaceStruct } from 'src/types'
 import { EntityStatusPanel, EntityStatusProps } from './EntityStatusPanel'
 
 const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: false })
@@ -16,7 +16,7 @@ const TxButton = dynamic(() => import('src/components/utils/TxButton'), { ssr: f
 const log = newLogger('PendingSpaceOwnershipPanel')
 
 type Props = EntityStatusProps & {
-  space: Space
+  space: SpaceStruct
 }
 
 export const PendingSpaceOwnershipPanel = ({
@@ -28,27 +28,27 @@ export const PendingSpaceOwnershipPanel = ({
   const myAddress = useMyAddress()
   const [ pendingOwner, setPendingOwner ] = useState<AccountId>()
   const spaceId = space.id
-  const currentOwner = space.owner
+  const currentOwner = space.ownerId
 
   useSubsocialEffect(({ substrate }) => {
+    let isMounted = true
     let unsub: (() => void) | undefined
-    let isSubscribe = true
 
     const sub = async () => {
       const api = await substrate.api
       unsub = await api.query.spaceOwnership.pendingSpaceOwner(spaceId, (res) => {
-        if (isSubscribe && res) {
+        if (isMounted && res) {
           const maybePendingOwner = res as Option<AccountId>
           setPendingOwner(maybePendingOwner.unwrapOr(undefined))
         }
       })
     }
 
-    isSubscribe && sub().catch(err => log.error('Failed to load a pending owner: %o', err))
+    isMounted && sub().catch(err => log.error('Failed to load a pending owner:', err))
 
     return () => {
       unsub && unsub()
-      isSubscribe = false
+      isMounted = false
     }
   }, [ spaceId?.toString(), currentOwner?.toString() ])
 

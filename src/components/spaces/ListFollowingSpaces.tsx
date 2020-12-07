@@ -1,4 +1,4 @@
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -16,6 +16,7 @@ import { isMyAddress } from '../auth/MyAccountContext'
 import { toShortAddress } from '../utils'
 import { getPageOfIds } from '../utils/getIds'
 import { PageContent } from '../main/PageWrapper'
+import { newFlatApi } from '../substrate'
 
 type Props = {
   spacesData: SpaceData[],
@@ -38,8 +39,9 @@ export const ListFollowingSpaces = (props: Props) => {
         title={title}
         totalCount={totalCount}
         dataSource={spacesData}
-        renderItem={(item, index) => (
-          <ViewSpace {...props} key={index} spaceData={item} preview withFollowButton />
+        getKey={item => item.id}
+        renderItem={(item) => (
+          <ViewSpace {...props} spaceData={item} preview withFollowButton />
         )}
         noDataDesc='You are not following any space yet'
         noDataExt={
@@ -68,13 +70,15 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
 ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props
   const address = query.address as string
+
   const subsocial = await getSubsocialApi()
+  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
 
   // TODO sort space ids in a desc order (don't forget to sort by id.toString())
   const followedSpaceIds = await substrate.spaceIdsFollowedByAccount(address)
   const pageIds = getPageOfIds(followedSpaceIds, query)
-  const spacesData = await subsocial.findPublicSpaces(pageIds)
+  const spacesData = await flatApi.findPublicSpaces(pageIds)
 
   return {
     totalCount: followedSpaceIds.length,
@@ -120,6 +124,6 @@ export const buildFollowedItems = (followedSpacesData: SpaceData[]): PageLink[] 
     name: content?.name || '',
     page: [ '/[spaceId]', spaceUrl(struct) ],
     icon: <span className='SpaceMenuIcon'>
-      <BaseAvatar address={struct.owner} avatar={content?.image} size={24} />
+      <BaseAvatar address={struct.ownerId} avatar={content?.image} size={24} />
     </span>
   }))

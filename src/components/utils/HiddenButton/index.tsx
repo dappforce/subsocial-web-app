@@ -1,24 +1,25 @@
 import React from 'react'
-import { Space, Post } from '@subsocial/types/substrate/interfaces'
 import { TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { TxDiv } from 'src/components/substrate/TxDiv'
 import TxButton from 'src/components/utils/TxButton'
 import Router from 'next/router'
+import { PostStruct, SpaceStruct } from 'src/types'
 
-export type FSetVisible = (visible: boolean) => void
+type SetVisibleFn = (visible: boolean) => void
 
-type HiddenButtonProps = {
-  struct: Space | Post,
+type Props = {
+  struct: SpaceStruct | PostStruct,
   newTxParams: () => any[]
   type: 'post' | 'space' | 'comment',
-  setVisibility?: FSetVisible
+  setVisibility?: SetVisibleFn
   label?: string,
   asLink?: boolean
 }
 
-export function HiddenButton (props: HiddenButtonProps) {
+// TODO rename to HiddenButton -> ToggleVisibilityButton
+export function HiddenButton (props: Props) {
   const { struct, newTxParams, label, type, asLink, setVisibility } = props
-  const hidden = struct.hidden.valueOf()
+  const { hidden } = struct
 
   const extrinsic = type === 'space' ? 'spaces.updateSpace' : 'posts.updatePost'
 

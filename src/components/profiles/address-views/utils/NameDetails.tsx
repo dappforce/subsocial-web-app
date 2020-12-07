@@ -1,5 +1,5 @@
 import { toShortAddress } from 'src/components/utils'
-import { ProfileData } from '@subsocial/types'
+import { ProfileData } from 'src/types'
 import { nonEmptyStr } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
 import React from 'react'

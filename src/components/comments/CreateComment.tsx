@@ -1,70 +1,81 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { PostExtension, Comment, OptionId, IpfsContent } from '@subsocial/types/substrate/classes'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
-import { IpfsCid, Post } from '@subsocial/types/substrate/interfaces'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import dynamic from 'next/dynamic'
-import { getNewIdFromEvent, getTxParams } from '../substrate'
+import { getNewIdFromEvent, getTxParams, newFlatApi } from '../substrate'
 import BN from 'bn.js'
-import { useDispatch } from 'react-redux'
 import { useMyAccount } from '../auth/MyAccountContext'
-import { useSetReplyToStore, useRemoveReplyFromStore, useChangeReplyToStore, buildMockComment, CommentTxButtonType } from './utils'
-import { isHiddenPost, HiddenPostAlert } from '../posts/view-post'
+import { buildMockComment, CommentTxButtonType } from './utils'
+import { HiddenPostAlert } from '../posts/view-post'
+import { asCommentStruct, idToPostId, PostStruct } from 'src/types'
+import { useChangeReplies, useRemoveReply, useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
 type NewCommentProps = {
-  post: Post
+  post: PostStruct
   callback?: (id?: BN) => void
-  withCancel?: boolean,
+  withCancel?: boolean
   asStub?: boolean
 }
 
-export const NewComment: React.FunctionComponent<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
-  const { id: parentId, extension } = post
-  const dispatch = useDispatch()
+export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
+  const { id: parentId, isComment } = post
   const { subsocial } = useSubsocialApi()
-  const { state: { address, account } } = useMyAccount()
+  const flatApi = newFlatApi(subsocial)
+  const { state: { address } } = useMyAccount()
+  const changeReply = useChangeReplies()
+  const removeReply = useRemoveReply()
+  const upsertReply = useUpsertReplyWithContent()
 
-  if (isHiddenPost(post)) {
+  if (post.hidden) {
     const msg = 'You cannot comment on this post because it is unlisted'
     return <HiddenPostAlert post={post} desc={msg} className='mt-3' />
   }
 
-  const parentIdStr = parentId.toString()
+  let commentExt: Comment
 
-  const comment = (extension.isComment && extension.asComment) || (extension as any).Comment
+  if (isComment) {
+    const comment = asCommentStruct(post)
+    const commentParentId = comment.parentId ? idToPostId(comment.parentId) : undefined
 
-  const commentExt = comment
-    ? new Comment({ parent_id: new OptionId(parentId), root_post_id: comment.root_post_id })
-    : new Comment({ parent_id: new OptionId(), root_post_id: parentId })
+    commentExt = new Comment({
+      parent_id: new OptionId(commentParentId),
+      root_post_id: idToPostId(comment.rootPostId)
+    })
+  } else {
+    commentExt = new Comment({
+      parent_id: new OptionId(),
+      root_post_id: idToPostId(post.id)
+    })
+  }
 
   const newExtension = new PostExtension({ Comment: commentExt })
 
-  const newTxParams = (cid: IpfsCid) => [ new OptionId(), newExtension, new IpfsContent(cid) ]
+  const newTxParams = (cid: IpfsCid) =>
+    [ new OptionId(), newExtension, new IpfsContent(cid) ]
 
   const onFailedReduxAction = (id: string) =>
-    useRemoveReplyFromStore(dispatch, { replyId: id, parentId: parentIdStr })
+    removeReply({ replyId: id, parentId })
 
   const onSuccessReduxAction = (id: BN, fakeId: string) =>
-    subsocial.findPostWithSomeDetails({ id })
+    flatApi.findPostWithSomeDetails({ id })
       .then(comment => {
-        comment && useChangeReplyToStore(
-          dispatch,
-          { replyId: fakeId, parentId: parentIdStr },
-          {
-            reply: { replyId: id.toString(), parentId: parentIdStr },
-            comment: { ...comment, owner: account }
-          }
-        )
+        comment && changeReply({
+          reply:comment.post.struct,
+          parentId,
+          removableId: fakeId
+        })
       })
 
   const onTxReduxAction = (body: string, fakeId: string) =>
-    address && useSetReplyToStore(dispatch,
-      {
-        reply: { replyId: fakeId, parentId: parentIdStr },
-        comment: buildMockComment({ fakeId, address, owner: account, content: { body } })
-      })
+    address && upsertReply({
+      reply: buildMockComment({ fakeId, address }),
+      parentId,
+      content: { body }
+    })
 
   const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
     <TxButton
