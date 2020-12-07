@@ -18,16 +18,16 @@ export type PreviewProps = BarePreviewProps & {
 export function PostPreview (props: PreviewProps) {
   const { postDetails, space: externalSpace } = props
   const { space: globalSpace, post: { struct } } = postDetails
-  const { isRegularPost } = struct
+  const { isSharedPost } = struct
   const space = externalSpace || globalSpace
 
   if (!space) return null
 
   return <Segment className='DfPostPreview'>
     <HiddenPostAlert post={struct} preview />
-    {isRegularPost
-      ? <RegularPreview space={space} {...props} />
-      : <SharedPreview space={space} {...props} />
+    {isSharedPost
+      ? <SharedPreview space={space} {...props} />
+      : <RegularPreview space={space} {...props} />
     }
   </Segment>
 }
