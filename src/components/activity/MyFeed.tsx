@@ -5,30 +5,26 @@ import { useMyAddress } from '../auth/MyAccountContext'
 import NotAuthorized from '../auth/NotAuthorized'
 import { PageContent } from '../main/PageWrapper'
 
-const TITLE = 'My feed'
+const title = 'My feed'
 const loadingLabel = 'Loading your feed...'
-
-type MyFeedProps = {
-  title?: string
-}
 
 const loadMoreFeed = getLoadMoreFeedFn(getNewsFeed, 'post_id')
 
-export const InnerMyFeed = (props: BaseActivityProps) => <FeedActivities
-  {...props}
-  loadMore={loadMoreFeed}
-  loadingLabel={loadingLabel}
-  noDataDesc='Your feed is empty. Try to follow more spaces ;)'
-  getCount={getFeedCount}
-/>
+const InnerMyFeed = (props: BaseActivityProps) =>
+  <FeedActivities
+    {...props}
+    loadMore={loadMoreFeed}
+    loadingLabel={loadingLabel}
+    noDataDesc='Your feed is empty. Try to follow more spaces ;)'
+    getCount={getFeedCount}
+  />
 
-
-export const MyFeed = ({ title }: MyFeedProps) => {
+export const MyFeed = () => {
   const myAddress = useMyAddress()
 
   if (!myAddress) return <NotAuthorized />
 
-  return <PageContent meta={{ title: TITLE }}>
+  return <PageContent meta={{ title }}>
     <InnerMyFeed title={title} address={myAddress} />
   </PageContent>
 }
