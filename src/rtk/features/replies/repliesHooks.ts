@@ -6,16 +6,15 @@ import { RootState } from 'src/rtk/app/rootReducer'
 import { useAppSelector } from 'src/rtk/app/store'
 import { HasId, PostId, PostStruct } from 'src/types'
 import { upsertContent } from '../contents/contentsSlice'
-import { useFetchPosts } from '../posts/postsHooks'
 import { removePost, upsertPosts } from '../posts/postsSlice'
-import { selectReplyIds, upsertReplyIdsByPostId, fetchManyReplyIds, SelectOneReplyIdsArgs, ReplyIdsByPostId, selectManyReplyIds } from './repliesSlice'
+import { selectReplyIds, upsertReplyIdsByPostId, fetchPostReplyIds, SelectOnePostRepliesArgs, ReplyIdsByPostId, selectManyReplyIds } from './repliesSlice'
 
 type CommonDispatchCallbackProps<T> = { dispatch: Dispatch<any>, args: T }
 
 type CommonDispatchCallbackFn<T> = (props: CommonDispatchCallbackProps<T>) => void 
 
-export const useFetchReplyIdsByPostId = (args: SelectOneReplyIdsArgs) => {
-  return useFetchEntity(selectManyReplyIds, fetchManyReplyIds, args)
+export const useFetchReplyIdsByPostId = (args: SelectOnePostRepliesArgs) => {
+  return useFetchEntity(selectManyReplyIds, fetchPostReplyIds, args)
 }
 
 // ? Change cb on actions[]. And use actions.forEach(action => dispatch(action))
@@ -112,18 +111,4 @@ export const useUpsertReplyWithContent = () => {
     parentId && upsertReplies(setUpsertOneArgs({ ...args, parentId }))
     upsertContent({ id: args.reply.id, ...args.content })
   }
-}
-
-export const useFetchRepliesByParentId = (parentId: PostId) => {
-  const { entity, error: error1, loading: loading1 } = useFetchReplyIdsByPostId({ id: parentId })
-  const ids = entity ? [ ...entity.replyIds ] : []
-  const { entities: replies, error: error2, loading: loading2 } = useFetchPosts({ ids }) 
-
-  // console.log('ReplyIds', { entity, error1, loading1 }, { replies, error2, loading2 })
-
-  return {
-    replies: replies,
-    loading: loading2 || loading1,
-    error: error2 || error1
-   }
 }

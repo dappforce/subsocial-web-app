@@ -12,8 +12,6 @@ import Section from '../utils/Section'
 import { PageContent } from '../main/PageWrapper'
 import { postUrl } from '../urls'
 import { SpaceStruct } from 'src/types'
-import { Loading } from '../utils'
-import { useFetchRepliesByParentId } from 'src/rtk/features/replies/repliesHooks'
 
 type CommentSectionProps = {
   space: SpaceStruct,
@@ -23,21 +21,18 @@ type CommentSectionProps = {
   withBorder?: boolean
 }
 
-
-export const CommentSection: FC<CommentSectionProps> = React.memo(({ post, hashId, space, withBorder }) => {
+export const CommentSection: FC<CommentSectionProps> = ({ post, hashId, space, withBorder }) => {
   const { post: { struct } } = post
-  const { repliesCount, id } = struct
+  const { id: parentId, repliesCount } = struct
 
-  const { replies, loading } = useFetchRepliesByParentId(id)
-
-  if (loading) return <Loading />
-
-  return <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
-    <h3><Pluralize count={repliesCount} singularText='comment' /></h3>
-    <NewComment post={struct} asStub />
-    <ViewCommentsTree rootPost={struct} space={space} comments={replies} />
-  </Section>
-})
+  return (
+    <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
+      <h3><Pluralize count={repliesCount} singularText='comment' /></h3>
+      <NewComment post={struct} asStub />
+      <ViewCommentsTree space={space} rootPost={struct} parentId={parentId} />
+    </Section>
+  )
+}
 
 type CommentPageProps = {
   comment: PostWithSomeDetails,
@@ -46,7 +41,7 @@ type CommentPageProps = {
   replies: PostWithSomeDetails[]
 }
 
-export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, replies, space }) => {
+export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, space }) => {
   const { post: { struct, content }, owner } = comment
   const { content: postContent } = parentPost
   const address = struct.ownerId
@@ -66,7 +61,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, r
   return (
     <PageContent meta={meta} className='DfContentPage DfEntirePost'>
       {renderResponseTitle()}
-      <ViewComment space={space} comment={comment} replies={replies} withShowReplies />
+      <ViewComment space={space} comment={comment} withShowReplies />
     </PageContent>
   )
 }

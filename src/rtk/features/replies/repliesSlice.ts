@@ -1,11 +1,17 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { createFilterNewIds, FetchManyArgs, SelectManyArgs, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { isEmptyArray } from '@subsocial/utils'
+import { createSelectUnknownIds, FetchManyArgs, SelectManyArgs, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { bnsToIds, HasId, idsToBns, PostId } from 'src/types'
+import { bnsToIds, idToBn, PostId, PostWithSomeDetails } from 'src/types'
+import { selectPosts } from '../posts/postsSlice'
 
-export type ReplyIdsByPostId = HasId & {
+export type ReplyIdsByPostId = {
+  /** `id` is a parent id of replies. */
+  id: PostId
   replyIds: PostId[]
 }
+
+export type RepliesByPostIdMap = Record<PostId, PostWithSomeDetails[]>
 
 const replyIdsAdapter = createEntityAdapter<ReplyIdsByPostId>()
 
@@ -14,53 +20,67 @@ const replyIdsSelectors = replyIdsAdapter.getSelectors<RootState>(state => state
 // Rename the exports for readability in component usage
 export const {
   selectById: selectReplyIds,
-  selectIds: selectReplyIdsIds,
+  selectIds: selectParentIds,
   selectEntities: selectReplyIdsEntities,
   selectAll: selectAllReplyIds,
-  selectTotal: selectTotalReplyIds
+  selectTotal: selectTotalParentIds
 } = replyIdsSelectors
 
 type Args = {}
 
-export type SelectManyReplyIdsArgs = SelectManyArgs<Args>
-export type SelectOneReplyIdsArgs = SelectOneArgs<Args>
+export type SelectOnePostRepliesArgs = SelectOneArgs<Args>
+export type SelectManyPostRepliesArgs = SelectManyArgs<Args>
 
-type FetchManyReplyIdsArgs = FetchManyArgs<Args>
+type FetchManyPostRepliesArgs = FetchManyArgs<Args>
 
-const filterNewIds = createFilterNewIds(selectReplyIdsIds)
+const selectUnknownParentIds = createSelectUnknownIds(selectParentIds)
 
-export function selectManyReplyIds (state: RootState, props: SelectManyReplyIdsArgs): ReplyIdsByPostId[] {
-  const ids = new Set(props.ids)
+export function selectManyReplyIds (state: RootState, { ids: parentIds }: SelectManyPostRepliesArgs): ReplyIdsByPostId[] {
+  if (isEmptyArray(parentIds)) return []
 
+  const uniqueParentIds = new Set(parentIds)
   return selectAllReplyIds(state)
-    .filter(({ id }) => ids.has(id))
+    .filter(({ id: parentId }) => uniqueParentIds.has(parentId))
 }
 
-export const fetchManyReplyIds = createAsyncThunk<ReplyIdsByPostId[], FetchManyReplyIdsArgs, ThunkApiConfig>(
+export function selectManyPostReplies (state: RootState, { ids: parentIds }: SelectManyPostRepliesArgs): RepliesByPostIdMap {
+  const replyIds = selectManyReplyIds(state, { ids: parentIds })
+  
+  if (!replyIds.length) return {}
+
+  const res: RepliesByPostIdMap = {}
+  replyIds.forEach(({ id: parentId, replyIds }) => {
+    const replies = selectPosts(state, { ids: replyIds, withSpace: false })
+    res[parentId] = replies
+  })
+
+  return res
+}
+
+export function selectOnePostReplies (state: RootState, { id: parentId }: SelectOnePostRepliesArgs): PostWithSomeDetails[] {
+  return selectManyPostReplies(state, { ids: [ parentId ]})[parentId] || []
+}
+
+export const fetchPostReplyIds = createAsyncThunk<ReplyIdsByPostId[], FetchManyPostRepliesArgs, ThunkApiConfig>(
   'replyIds/fetchMany',
   async (args, { getState }) => {
-    const { api, ids: _ids } = args
+    const { api, ids: _parentIds } = args
     
-    const ids = _ids.map(x => x.toString())
-    const newIds = filterNewIds(getState(), ids)
-    if (!newIds.length) {
+    const parentIds = selectUnknownParentIds(getState(), _parentIds)
+    if (!parentIds.length) {
       // Nothing to load: all ids are known and their replyIds are already loaded.
       return []
     }
     
-    const parentIds = idsToBns(ids)
-    // const replyIds = await api.substrate.getReplyIdsByPostId(parentIds[0])
-    // return [ {
-    //   id: ids[0],
-    //   replyIds: bnsToIds(replyIds)
-    // } ]
-    const calls = parentIds.map(id => api.substrate.getReplyIdsByPostId(id))
+    const calls = parentIds.map((id) => api.substrate.getReplyIdsByPostId(idToBn(id)))
     const results = await Promise.all(calls)
-
-    return results.map((replyIds, i) => ({
-      id: ids[i],
-      replyIds: bnsToIds(replyIds)
-    }))
+  
+    return results.map((bnIds, i) => {
+      return {
+        id: parentIds[i],
+        replyIds: bnsToIds(bnIds)
+      }
+    })
   }
 )
 
@@ -72,7 +92,7 @@ const replyIds = createSlice({
     removeReplyIdsByPostId: replyIdsAdapter.removeOne,
   },
   extraReducers: builder => {
-    builder.addCase(fetchManyReplyIds.fulfilled, replyIdsAdapter.upsertMany)
+    builder.addCase(fetchPostReplyIds.fulfilled, replyIdsAdapter.upsertMany)
   }
 })
 

@@ -1,11 +1,11 @@
-import React, { FC, useMemo, useState } from 'react'
-import { CommentOutlined, NotificationOutlined } from '@ant-design/icons'
+import React, { FC, useState } from 'react'
+import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, NotificationOutlined } from '@ant-design/icons'
 import { Comment, Button, Tag } from 'antd'
-import { asCommentData, PostWithSomeDetails } from 'src/types'
+import { asCommentData, asCommentStruct, PostWithSomeDetails } from 'src/types'
 import { CommentContent } from '@subsocial/types'
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview'
 import Link from 'next/link'
-import { pluralize } from '../utils/Plularize'
+import { Pluralize, pluralize } from '../utils/Plularize'
 import { formatUnixDate, IconWithLabel, isHidden } from '../utils'
 import dayjs from 'dayjs'
 import { EditComment } from './UpdateComment'
@@ -17,86 +17,103 @@ import { equalAddresses } from '../substrate'
 import { postUrl } from '../urls'
 import { ShareDropdown } from '../posts/share/ShareDropdown'
 import { PostStruct, SpaceStruct } from 'src/types'
+import { ViewCommentsTree } from './CommentTree'
 
 type Props = {
   space: SpaceStruct,
   rootPost?: PostStruct,
   comment: PostWithSomeDetails,
-  replies?: PostWithSomeDetails[],
   withShowReplies?: boolean
 }
 
-export const ViewComment: FC<Props> = ({
-  space = { id: 0 } as any as SpaceStruct,
-  rootPost,
-  comment,
-  replies,
-  withShowReplies = true
-}) => {
+export const ViewComment: FC<Props> = (props) => {
+
   const {
-    post: {
-      struct,
-      content
-    },
+    space = { id: 0 } as any as SpaceStruct,
+    rootPost,
+    comment,
+    withShowReplies = true
+  } = props
+
+  const {
+    post: postData,
     owner
   } = comment
 
-  if (isHidden(comment.post)) return null
+  if (isHidden(postData)) return null
+
+  const commentStruct = asCommentStruct(postData.struct)
+  const commentContent = postData.content as CommentContent
 
   const {
     id,
     createdAtTime,
     ownerId,
     score,
-  } = struct
+    repliesCount: initialRepliesCount
+  } = commentStruct
 
   const [ showEditForm, setShowEditForm ] = useState(false)
   const [ showReplyForm, setShowReplyForm ] = useState(false)
-  const [ showReplies ] = useState(withShowReplies)
-  const [ repliesCount, setRepliesCount ] = useState(struct.repliesCount)
-  // const { replies, loading } = useFetchRepliesByParentId(id)
+  const [ repliesCount, setRepliesCount ] = useState(initialRepliesCount)
+  
+  const hasReplies = repliesCount > 0
+  const [ showReplies, setShowReplies ] = useState(withShowReplies && hasReplies)
 
   const isFake = id.startsWith('fake')
   const commentLink = postUrl(space, comment.post)
+  const isRootPostOwner = equalAddresses(rootPost?.ownerId, commentStruct.ownerId)
 
-  const isRootPostOwner = equalAddresses(
-    rootPost?.ownerId,
-    struct.ownerId
+  const ViewRepliesLink = () => {
+    const viewActionMessage = showReplies
+      ? <><CaretUpOutlined /> {'Hide'}</>
+      : <><CaretDownOutlined /> {'View'}</>
+
+    return <>
+      <Link href={commentLink}>
+        <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
+          {viewActionMessage}{' '}
+          <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
+        </a>
+      </Link>
+    </>
+  }
+
+  const commentAuthor = (
+    <div className='DfAuthorBlock'>
+      <AuthorPreview
+        address={ownerId}
+        owner={owner}
+        isShort={true}
+        isPadded={false}
+        size={32}
+        afterName={isRootPostOwner
+          ? <Tag color='blue'><NotificationOutlined /> Post author</Tag>
+          : undefined
+        }
+        details={
+          <span>
+            <Link href='/[spaceId]/[slug]' as={commentLink}>
+              <a className='DfGreyLink'>{dayjs(formatUnixDate(createdAtTime)).fromNow()}</a>
+            </Link>
+            {' · '}
+            {pluralize(score, 'Point')}
+          </span>
+        }
+      />
+      <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={comment.post} space={space} />
+    </div>
   )
 
-  // const ViewRepliesLink = () => {
-  //   const viewActionMessage = showReplies
-  //     ? <><CaretUpOutlined /> {'Hide'}</>
-  //     : <><CaretDownOutlined /> {'View'}</>
-
-  //   return <Link href={commentLink}>
-  //     <a onClick={(event) => { event.preventDefault(); setShowReplies(!showReplies) }}>
-  //       {viewActionMessage}{' '}
-  //       <Pluralize count={repliesCount} singularText='reply' pluralText='replies' />
-  //     </a>
-  //   </Link>
-  // }
-
-  const hasReplies = replies?.length
-  const isShowChildren = showReplyForm || showReplies || hasReplies
-
-  const ChildPanel = useMemo(() => {
-    return isShowChildren/*  || !loading */
-      ? <div>
-        {showReplyForm &&
-        <NewComment
-          post={struct}
-          callback={(id) => {
-            setShowReplyForm(false)
-            id && setRepliesCount(repliesCount + 1)
-          }}
-          withCancel
-        />}
-        {/* {hasReplies && <ViewRepliesLink />} */}
-        {/* {showReplies && <ViewCommentsTree rootPost={rootPost} comments={replies} space={space} />} */}
-      </div>
-      : null
-  }, [ isShowChildren/* , loading */ ])
+  const newCommentForm = showReplyForm &&
+    <NewComment
+      post={commentStruct}
+      callback={(id) => {
+        setShowReplyForm(false)
+        id && setRepliesCount(repliesCount + 1)
+      }}
+      withCancel
+    />
 
   const actionCss = 'DfCommentAction'
 
@@ -104,41 +121,27 @@ export const ViewComment: FC<Props> = ({
     <Comment
       className='DfNewComment'
       actions={isFake ? [] : [
-        <VoterButtons key={`voters-of-comments-${id}`} post={struct} className={actionCss} />,
+        <VoterButtons key={`voters-of-comments-${id}`} post={commentStruct} className={actionCss} />,
         <Button key={`reply-comment-${id}`} className={actionCss} onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
         <ShareDropdown key={`dropdown-comment-${id}`} postDetails={comment} space={space} className={actionCss} />
       ]}
-      author={<div className='DfAuthorBlock'>
-        <AuthorPreview
-          address={ownerId}
-          owner={owner}
-          isShort={true}
-          isPadded={false}
-          size={32}
-          afterName={isRootPostOwner
-            ? <Tag color='blue'><NotificationOutlined /> Post author</Tag>
-            : undefined
-          }
-          details={
-            <span>
-              <Link href='/[spaceId]/[slug]' as={commentLink}>
-                <a className='DfGreyLink'>{dayjs(formatUnixDate(createdAtTime)).fromNow()}</a>
-              </Link>
-              {' · '}
-              {pluralize(score, 'Point')}
-            </span>
-          }
-        />
-        <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={comment.post} space={space} />
-      </div>}
+      author={commentAuthor}
       content={showEditForm
-        ? <EditComment struct={struct} content={content as CommentContent} callback={() => setShowEditForm(false)}/>
+        ? <EditComment struct={commentStruct} content={commentContent} callback={() => setShowEditForm(false)}/>
         : <CommentBody comment={asCommentData(comment.post)} />
       }
     >
-      {ChildPanel}
+      <div>
+        {newCommentForm}
+        {hasReplies && <>
+          {!withShowReplies && <ViewRepliesLink />}
+          {showReplies &&
+            <ViewCommentsTree space={space} rootPost={rootPost} parentId={commentStruct.id} />
+          }
+        </>}
+      </div>
     </Comment>
   </div>
 }
