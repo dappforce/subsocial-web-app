@@ -18,7 +18,7 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { return404 } from 'src/components/utils/next'
-import { withServerRedux } from 'src/rtk/app/withServerRedux'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 
 const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
@@ -124,7 +124,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   </PageContent>
 }
 
-withServerRedux(PostPage, async ({ context, subsocial, dispatch, reduxStore }) => {
+getInitialPropsWithRedux(PostPage, async ({ context, subsocial, dispatch, reduxStore }) => {
   const { query: { spaceId, slug }, res } = context
 
   const { substrate } = subsocial
