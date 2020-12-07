@@ -1,41 +1,40 @@
-import React, { useState, useCallback } from 'react'
-import { DfMd } from '../utils/DfMd'
-import Link from 'next/link'
-
-import { AccountId } from '@polkadot/types/interfaces'
-import { isEmptyStr } from '@subsocial/utils'
-import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal'
-// import { ProfileHistoryModal } from '../utils/ListsEditHistory';
-import dynamic from 'next/dynamic'
-import { MutedDiv } from '../utils/MutedText'
-import { isMyAddress } from '../auth/MyAccountContext'
-import Section from '../utils/Section'
-import { Pluralize } from '../utils/Plularize'
-
 import {
   EllipsisOutlined,
   PlusOutlined
 } from '@ant-design/icons'
-
-import { Menu, Dropdown, Button } from 'antd'
-import { NextPage } from 'next'
+import { AccountId } from '@polkadot/types/interfaces'
+import { AnyAccountId } from '@subsocial/types'
 import { ProfileContent } from '@subsocial/types/offchain'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
-import { ProfileData, SpaceData } from 'src/types'
-import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner'
-import { getAccountId, newFlatApi } from '../substrate'
+import { SpaceId } from '@subsocial/types/substrate/interfaces'
+import { isEmptyStr } from '@subsocial/utils'
+import { Button, Dropdown, Menu } from 'antd'
+import { NextPage } from 'next'
+// import { ProfileHistoryModal } from '../utils/ListsEditHistory';
+import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import React, { useCallback, useState } from 'react'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { fetchProfile, selectProfile } from 'src/rtk/features/profiles/profilesSlice'
+import { ProfileData, SpaceData } from 'src/types'
+import { mdToText } from 'src/utils'
+import { AccountActivity } from '../activity/AccountActivity'
+import { isMyAddress } from '../auth/MyAccountContext'
+import { PageContent } from '../main/PageWrapper'
+import { getAccountId } from '../substrate'
+import { accountUrl } from '../urls'
+import { DfMd } from '../utils/DfMd'
+import { MutedDiv } from '../utils/MutedText'
+import MyEntityLabel from '../utils/MyEntityLabel'
+import { Pluralize } from '../utils/Plularize'
+import Section from '../utils/Section'
+import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal'
 import Avatar from './address-views/Avatar'
 import Name from './address-views/Name'
-import MyEntityLabel from '../utils/MyEntityLabel'
+import { AccountSpacesLink, CopyAddress, EditProfileLink } from './address-views/utils'
 import { Balance } from './address-views/utils/Balance'
-import { CopyAddress, EditProfileLink, AccountSpacesLink } from './address-views/utils'
-import { mdToText } from 'src/utils'
-import { SpaceId } from '@subsocial/types/substrate/interfaces'
-import { AccountActivity } from '../activity/AccountActivity'
-import { PageContent } from '../main/PageWrapper'
-import { accountUrl } from '../urls'
-import { AnyAccountId } from '@subsocial/types'
+import { withLoadedOwner, withMyProfile } from './address-views/utils/withLoadedOwner'
+
 // import { KusamaRolesTags, KusamaIdentity } from '../substrate/KusamaContext';
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
@@ -108,7 +107,8 @@ const Component = (props: Props) => {
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
 
-  return <Section className='mb-3'>
+  return (
+    <Section className='mb-3'>
       <div className='d-flex'>
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={avatar} />
         <div className='ml-3 w-100'>
@@ -147,6 +147,7 @@ const Component = (props: Props) => {
       {followersOpen && <AccountFollowersModal id={address} open={followersOpen} close={() => setFollowersOpen(false)} title={followersText} />}
       {followingOpen && <AccountFollowingModal id={address} open={followingOpen} close={() => setFollowingOpen(false)} title={followingText} />}
     </Section>
+  )
 }
 
 const ProfilePage: NextPage<Props> = (props) => {
@@ -181,24 +182,26 @@ const ProfilePage: NextPage<Props> = (props) => {
   </PageContent>
 }
 
-ProfilePage.getInitialProps = async (props): Promise<Props> => {
-  const { query: { address }, res } = props
-
-  const subsocial = await getSubsocialApi()
-  const flatApi = newFlatApi(subsocial)
+getInitialPropsWithRedux(ProfilePage, async ({ context, subsocial, dispatch, reduxStore }) => {
+  const { query: { address }, res } = context
   const { substrate } = subsocial
 
-  const accountId = await getAccountId(address as string)
+  const addressStr = address as string
+  const accountId = await getAccountId(addressStr)
 
-  if (!accountId ) {
+  if (!accountId) {
     if (res) {
       res.statusCode = 404
     }
     return { statusCode: 404 } as any
   }
 
-  const addressStr = address as string
-  const owner = await flatApi.findProfile(addressStr)
+  await dispatch(fetchProfile({ api: subsocial, id: addressStr }))
+  const owner = selectProfile(reduxStore.getState(), addressStr)
+
+  console.log('owner', owner)
+
+  // TODO use redux
   const mySpaceIds = await substrate.spaceIdsByOwner(addressStr)
 
   return {
@@ -206,7 +209,7 @@ ProfilePage.getInitialProps = async (props): Promise<Props> => {
     owner,
     mySpaceIds: mySpaceIds.reverse()
   }
-}
+})
 
 export default ProfilePage
 

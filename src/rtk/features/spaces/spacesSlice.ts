@@ -35,9 +35,6 @@ export type SelectSpacesArgs = SelectManyArgs<Args>
 // type FetchSpaceArgs = FetchOneArgs<Args>
 type FetchSpacesArgs = FetchManyArgs<Args>
 
-// const _selectSpace = (state: RootState, id: EntityId): SpaceData | undefined =>
-//   selectOneById(state, id, selectSpaceStructById, selectSpaceContentById)
-
 const _selectSpacesByIds = (state: RootState, ids: EntityId[]) =>
   selectManyByIds(state, ids, selectSpaceStructById, selectSpaceContentById)
 
