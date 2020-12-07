@@ -21,22 +21,19 @@ type SessionKeypair = {
   secretKey: string
 }
 
-export type SessionKeyMessage = {
-  mainKey: string,
-  sessionKey: string,
-  nonce: number
+export type AddSessionKeyArgs = {
+  sessionKey: string
 }
 
 export type ReadAllMessage = {
-  sessionKey: string,
   blockNumber: string,
-  eventIndex: number,
-  nonce: number
+  eventIndex: number
 }
 
-type MessageGenericExtends = SessionKeyMessage | ReadAllMessage
+type MessageGenericExtends = AddSessionKeyArgs | ReadAllMessage
 
 type Message<T extends MessageGenericExtends> = {
+  nonce: number,
   action: Action,
   args: T
 }
@@ -52,8 +49,8 @@ type SessionKeyStorege = Record<string, SessionKeypair>
 const JSONstingifySorted = (obj: Object) => JSON.stringify(jsonabc.sortObj(obj))
 
 export const createSessionKey = async (): Promise<SessionKeypair | undefined> => {
-  const myAddress = readMyAddress()
-  const address = new GenericAccountId(registry, myAddress)
+  const address = readMyAddress()
+  // const address = new GenericAccountId(registry, myAddress)
   if (!address) return
 
   const extensions = await web3Enable(appName);
@@ -70,21 +67,20 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
   const publicKeyHex = u8aToHex(publicKey)
   const secretKeyHex = u8aToHex(secretKey)
 
-  const selectedNonce = await getNonce(address.toString())
+  const selectedNonce = await getNonce(address)
   let nonce: number = 1
   if(!isEmptyObj(selectedNonce))
-    nonce = selectedNonce.nonce + 1
+    nonce = parseInt(selectedNonce.nonce) + 1
 
-  const message: Message<SessionKeyMessage> = {
+  const message: Message<AddSessionKeyArgs> = {
+    nonce,
     action: 'addSessionKey',
     args: {
-      mainKey: address.toString(),
-      sessionKey: publicKey.toString(),
-      nonce
+      sessionKey: publicKeyHex
     }
   }
 
-  const signature = await signMessage(account.meta.source, address.toString(), JSONstingifySorted(message))
+  const signature = await signMessage(account.meta.source, address, JSONstingifySorted(message))
   if (!signature) return
 
   let sessionKey: SessionKeypair = {
@@ -94,14 +90,14 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
 
   const storage: SessionKeyStorege = store.get(SESSION_KEY) || {}
 
-  storage[address.toString()] = sessionKey
+  storage[address] = sessionKey
 
   store.set(SESSION_KEY, storage)
   insertToSessionKeyTable({
-    account: address.toString(),
+    account: address,
     signature,
     message
-  } as SessionCall<SessionKeyMessage>)
+  } as SessionCall<AddSessionKeyArgs>)
 
   return sessionKey
 }
@@ -137,27 +133,29 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
   for (const key in sessionKeyStorage) {
     if(key == address) {
       sessionKey = sessionKeyStorage[key]
+      console.log(sessionKey)
       break
     }
   }
+  console.log("before creation")
 
   if (!sessionKey) {
     sessionKey = await createSessionKey()
     if (!sessionKey) return
   }
+  console.log("after creation")
 
   const selectedNonce = await getNonce(address.toString())
   let nonce: number = 1
   if(!isEmptyObj(selectedNonce))
-    nonce = selectedNonce.nonce + 1
+    nonce = parseInt(selectedNonce.nonce) + 1
 
   const message: Message<ReadAllMessage> = {
+    nonce,
     action: 'readAll',
     args: {
-      sessionKey: sessionKey.publicKey,
       blockNumber,
-      eventIndex,
-      nonce
+      eventIndex
     }
   }
 
@@ -168,9 +166,10 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
 
   const signature = naclSign(JSONstingifySorted(message), keypair)
   if (!signature) return
-
+  console.log("before clear")
+  const genericAccount = new GenericAccountId(registry, u8aToHex(keypair.publicKey))
   await clearNotifications({
-    account: address,
+    account:  String(genericAccount),
     signature: u8aToHex(signature),
     message
   } as SessionCall<ReadAllMessage>)

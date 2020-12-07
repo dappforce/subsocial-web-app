@@ -39,22 +39,34 @@ export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
       const ws = new WebSocket(offchainWs)
       setWs(ws)
 
+      // if(ws.OPEN) {
+      //   ws.onmessage = (msg: MessageEvent) => {
+      //     console.log("i`m alive")
+      //     const unreadCount = msg.data
+      //     setContextValue({ unreadCount })
+      //     log.info('Received a new value for unread notifications:', unreadCount)
+      //   }
+      // }
+
+
       ws.onopen = () => {
         log.info('Connected to Notifications Counter Web Socket')
         ws.send(myAddress?.toString());
         setWsConnected(true)
-        ws.onmessage = (msg: MessageEvent) => {
-          const unreadCount = msg.data
-          setContextValue({ unreadCount })
-          log.info('Received a new value for unread notifications:', unreadCount)
-        }
         ws.onerror = (error) => { log.info('NotificationCounter Websocket Error:', error) }
       };
 
       ws.onclose = () => {
         setWsConnected(false)
       };
+
+      ws.onmessage = (msg: MessageEvent) => {
+        const unreadCount = msg.data
+        setContextValue({ unreadCount })
+        log.info('Received a new value for unread notifications:', unreadCount)
+      }
     }
+
 
     subscribe()
   }, [ wsConnected, myAddress ]);

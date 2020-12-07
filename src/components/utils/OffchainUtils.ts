@@ -4,7 +4,7 @@ import { Counts } from '@subsocial/types/offchain'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { ElasticQueryParams } from '@subsocial/types/offchain/search'
 import { Activity } from '../activity/NotificationUtils'
-import { ReadAllMessage, SessionCall, SessionKeyMessage } from '../../session_keys/createSessionKey';
+import { ReadAllMessage, SessionCall, AddSessionKeyArgs } from '../../session_keys/createSessionKey';
 
 const log = newLogger('OffchainRequests')
 
@@ -130,7 +130,7 @@ export const clearNotifications = async (sessionCall: SessionCall<ReadAllMessage
   }
 }
 
-export const insertToSessionKeyTable = async (sessionCall: SessionCall<SessionKeyMessage>) => {
+export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessionKeyArgs>) => {
   try {
     const res = await axios.post(getOffchainUrl(`/notifications/addSessionKey`), { sessionCall })
     if (res.status !== 200) {
