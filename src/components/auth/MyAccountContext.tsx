@@ -3,7 +3,7 @@ import store from 'store'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { AnyAccountId } from '@subsocial/types'
 import { equalAddresses } from '../substrate'
-import { flattenProfileStruct, ProfileData } from 'src/types'
+import { convertToDerivedContent, flattenProfileStruct, ProfileData } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { Option } from '@polkadot/types'
@@ -142,7 +142,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
           const struct = flattenProfileStruct(address, subtrateStruct)
           const { contentId } = struct
           const content = contentId ? await ipfs.findProfile(contentId) : undefined
-          account = { id: address, struct, content }
+          account = { id: address, struct, content: convertToDerivedContent(content) }
         }
 
         dispatch({ type: 'setAccount', account })
