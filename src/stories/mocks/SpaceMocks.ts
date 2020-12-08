@@ -3,7 +3,7 @@ import U32 from '@polkadot/types/primitive/U32'
 import { registry } from '@subsocial/types/substrate/registry'
 import { SpaceContent } from '@subsocial/types/offchain'
 import { mockAccountAlice, mockAccountBob } from './AccountMocks'
-import { AccountId, SpaceId, SpaceData, SpaceStruct } from 'src/types'
+import { AccountId, SpaceId, SpaceData, SpaceStruct, convertToDerivedContent } from 'src/types'
 import { subsocialSpaceCid } from './cids'
 
 type NewSpaceProps = {
@@ -98,13 +98,13 @@ export const mockSpaceValidation = {
 export const mockSpaceDataAlice: SpaceData = {
   id: mockSpaceStruct.id,
   struct: mockSpaceStruct,
-  content: mockSpaceJson
+  content: convertToDerivedContent(mockSpaceJson)
 }
 
 export const mockSpaceDataBob: SpaceData = {
   id: mockSpaceStructBob.id,
   struct: mockSpaceStructBob,
-  content: mockSpaceJsonBob
+  content: convertToDerivedContent(mockSpaceJsonBob)
 }
 
 export const mockSpacesData: SpaceData[] = [
