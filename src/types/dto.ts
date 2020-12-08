@@ -1,4 +1,4 @@
-import { CommonContent, ProfileContent, SpaceContent, PostContent, CommentContent, SharedPostContent } from '@subsocial/types/offchain'
+import * as sub from '@subsocial/types/offchain'
 import { HasId, ProfileStruct, SpaceStruct, PostStruct, CommentStruct, SharedPostStruct } from './flatteners'
 
 export type EntityId = string
@@ -8,6 +8,20 @@ export type PostId = EntityId
 
 /** `ProfileId` is the alias for `AccountId`. */
 export type ProfileId = EntityId
+
+export type SummarizedContent = {
+  summary: string
+  isShowMore: boolean
+}
+
+export type DerivedContent<C extends sub.CommonContent> = C & SummarizedContent
+
+export type CommonContent = sub.CommonContent & SummarizedContent
+export type ProfileContent = DerivedContent<sub.ProfileContent>
+export type SpaceContent = DerivedContent<sub.SpaceContent>
+export type PostContent = DerivedContent<sub.PostContent>
+export type CommentContent = DerivedContent<sub.CommentContent>
+export type SharedPostContent = DerivedContent<sub.SharedPostContent>
 
 export type EntityData<S extends HasId, C extends CommonContent> = {
 

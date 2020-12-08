@@ -1,11 +1,11 @@
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { CommentContent, CommonContent, PostContent, ProfileContent, SharedPostContent, SpaceContent } from '@subsocial/types'
+import { HasId, CommentContent, CommonContent, PostContent, ProfileContent, SharedPostContent, SpaceContent, DerivedContent } from 'src/types'
 import { ApiAndIds, createSelectUnknownIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { HasId } from 'src/types'
+import { mdToText, summarize } from 'src/utils'
 
 /** Content with id */
-type Content<C extends CommonContent = CommonContent> = HasId & C
+type Content<C extends CommonContent = CommonContent> = HasId & DerivedContent<C>
 
 type SelectByIdResult<C extends CommonContent> = SelectByIdFn<Content<C>>
 
@@ -45,8 +45,24 @@ export const fetchContents = createAsyncThunk<Content[], ApiAndIds, ThunkApiConf
     }
 
     const contents = await api.ipfs.getContentArray(newIds as string[])
-    return Object.entries(contents)
-      .map(([ id, content ]) => ({ id, ...content }))
+    return Object.entries(contents).map(([ id, content ]) => {
+      
+      // TODO think how to improve types here.
+      const anyContent = content as any
+      const md = anyContent['about'] || anyContent['body'] || anyContent['title']
+
+      const text = mdToText(md)?.trim() || ''
+      const summary = summarize(text)
+      const isShowMore = text.length > summary.length
+
+      const derivedContent: DerivedContent<CommonContent> = {
+        ...content,
+        summary,
+        isShowMore
+      }
+      
+      return { id, ...derivedContent }
+    })
   }
 )
 
