@@ -82,4 +82,4 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
 
 export const AuthorPreviewWithOwner = withLoadedOwner(AuthorPreview)
 
-export default AuthorPreviewWithOwner
+export default AuthorPreview

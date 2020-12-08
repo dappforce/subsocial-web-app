@@ -1,4 +1,4 @@
-import { SpaceContent } from '@subsocial/types/offchain'
+import { SpaceContent } from 'src/types'
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
 import Error from 'next/error'
@@ -124,7 +124,7 @@ export const ViewSpace = (props: Props) => {
 
           {nonEmptyStr(about) &&
             <div className='description mt-3'>
-              <SummarizeMd md={about} more={
+              <SummarizeMd content={content} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
             </div>

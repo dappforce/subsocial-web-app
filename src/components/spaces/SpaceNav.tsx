@@ -98,7 +98,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
 
       {nonEmptyStr(about) &&
         <div className="SNheadDescription">
-          <SummarizeMd md={about} more={
+          <SummarizeMd content={content} more={
             <AboutSpaceLink space={space} title={'Learn More'} />
           } />
         </div>

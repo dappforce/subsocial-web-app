@@ -1,21 +1,23 @@
 import React from 'react'
 import { isEmptyStr } from '@subsocial/utils'
-import { mdToText, summarize } from 'src/utils'
+import { summarize } from 'src/utils'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
+import { SummarizedContent } from 'src/types'
 
 const MOBILE_SUMMARY_LEN = 120
 const DESKTOP_SUMMARY_LEN = 220
 
 type Props = {
-  md?: string
+  content?: SummarizedContent
   limit?: number
   more?: JSX.Element
 }
 
-export const SummarizeMd = ({ md, limit: initialLimit, more }: Props) => {
+export const SummarizeMd = ({ content, limit: initialLimit, more }: Props) => {
+  const { summary: initialSummary = '', isShowMore = false } = content || {}
   const isMobile = useIsMobileWidthOrDevice()
 
-  if (isEmptyStr(md)) return null
+  if (isEmptyStr(initialSummary)) return null
 
   const limit = initialLimit
     ? initialLimit
@@ -24,18 +26,14 @@ export const SummarizeMd = ({ md, limit: initialLimit, more }: Props) => {
       : DESKTOP_SUMMARY_LEN
     )
 
-  const getSummary = (s?: string) => !s ? '' : summarize(s, { limit })
-
-  const text = mdToText(md)?.trim() || ''
-  const summary = getSummary(text)
-  const showMore = text.length > summary.length
+  const summary = summarize(initialSummary, { limit })
 
   if (isEmptyStr(summary)) return null
 
   return (
     <div className='DfSummary'>
       {summary}
-      {showMore && <span className='DfSeeMore'>{' '}{more}</span>}
+      {isShowMore && <span className='DfSeeMore'>{' '}{more}</span>}
     </div>
   )
 }

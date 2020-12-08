@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import Link from 'next/link'
-import { isEmptyStr } from '@subsocial/utils'
+import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
 import { formatUnixDate, IconWithLabel, isHidden, isVisible } from '../../utils'
 import { ViewSpace } from '../../spaces/ViewSpace'
 import { DfBgImageLink } from '../../utils/DfBgImg'
@@ -10,10 +10,9 @@ import { Menu, Dropdown, Button } from 'antd'
 import { isMyAddress } from '../../auth/MyAccountContext'
 import { Post, PostExtension, PostId } from '@subsocial/types/substrate/interfaces'
 import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData, SpaceStruct, PostStruct, idToPostId, flattenPostStruct } from 'src/types'
-import { PostContent as PostContentType } from '@subsocial/types'
 import ViewTags from '../../utils/ViewTags'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
-import SummarizeMd from '../../utils/md/SummarizeMd'
+import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewPostLink from '../ViewPostLink'
 import HiddenPostButton from '../HiddenPostButton'
 import NoData from 'src/components/utils/EmptyList'
@@ -121,18 +120,19 @@ export const renderPostLink = (space: SpaceStruct, post: HasDataForSlug, title?:
   <ViewPostLink space={space} post={post} title={title} className='DfBlackLink' />
 
 type PostNameProps = {
-  space: SpaceStruct,
-  post: HasDataForSlug,
-  title?: string,
+  post: PostWithSomeDetails,
   withLink?: boolean
 }
 
-export const PostName: FC<PostNameProps> = ({ space, post, title, withLink }) => {
-  if (!space?.id || !post?.struct.id || !title) return null
+export const PostName: FC<PostNameProps> = ({ post: postDetails, withLink }) => {
+  const { space, post } = postDetails
+  const { content: { title } = {} } = post
+
+  if (!post.struct || !space || isEmptyStr(title)) return null
 
   return (
     <div className={'header DfPostTitle--preview'}>
-      {withLink ? renderPostLink(space, post, title) : title}
+      {withLink ? renderPostLink(space.struct, post, title) : title}
     </div>
   )
 }
@@ -202,27 +202,24 @@ const PostImage = ({ post, space }: PostImageProps) => {
 type PostContentProps = {
   postDetails: PostWithSomeDetails,
   space: SpaceStruct,
-  content?: PostContentType
   withImage?: boolean
 }
 
 export const PostContent: FC<PostContentProps> = (props) => {
-  const { postDetails, content, space, withImage } = props
+  const { postDetails, space, withImage } = props
   const isMobile = useIsMobileWidthOrDevice()
 
   if (!postDetails) return null
 
   const { post } = postDetails
-  const postContent = content || postDetails.post.content
+  const { content } = post
 
-  if (!postContent) return null
-
-  const { title, body } = postContent
+  if (!content || isEmptyObj(content)) return null
 
   return <div className='DfContent'>
     {isMobile && withImage && <PostImage post={post} space={space} />}
-    <PostName space={space} post={post} title={title} withLink />
-    <SummarizeMd md={body} more={renderPostLink(space, post, 'See More')} />
+    <PostName post={postDetails} withLink />
+    <SummarizeMd content={content} more={renderPostLink(space, post, 'See More')} />
   </div>
 }
 
@@ -284,7 +281,7 @@ const SharedPostMd = (props: PostPreviewProps) => {
 
   return struct.isComment
     ? <DfMd source={content?.body} className='DfPostBody' />
-    : <SummarizeMd md={content?.body} more={renderPostLink(space.struct, post, 'See More')} />
+    : <SummarizeMd content={content} more={renderPostLink(space.struct, post, 'See More')} />
 }
 
 export const SharePostContent = (props: PostPreviewProps) => {

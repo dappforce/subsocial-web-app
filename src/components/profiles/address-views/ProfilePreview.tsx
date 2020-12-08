@@ -5,7 +5,7 @@ import { nonEmptyStr } from '@subsocial/utils'
 import { Pluralize } from 'src/components/utils/Plularize'
 import NameDetails from './utils/NameDetails'
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal'
-import { ProfileContent } from '@subsocial/types'
+import { ProfileContent } from 'src/types'
 import { ProfileData } from 'src/types'
 import { withLoadedOwner, withMyProfile } from './utils/withLoadedOwner'
 import { SummarizeMd } from 'src/components/utils/md'
@@ -58,7 +58,7 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
       {!mini && <>
         {withAbout && nonEmptyStr(about) &&
           <div className='DfPopup-about'>
-            <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
+            <SummarizeMd content={content} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
           </div>
         }
         <div className='DfPopup-links'>
