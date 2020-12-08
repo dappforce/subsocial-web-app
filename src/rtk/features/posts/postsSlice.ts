@@ -138,7 +138,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
     const { api, ids, withContent = true, withOwner = true, withSpace = true } = args
-
+ 
     const newIds = selectUnknownPostIds(getState(), ids)
     if (!newIds.length) {
       // Nothing to load: all ids are known and their posts are already loaded.

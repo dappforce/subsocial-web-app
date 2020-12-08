@@ -1,8 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { HasId, CommentContent, CommonContent, PostContent, ProfileContent, SharedPostContent, SpaceContent, DerivedContent } from 'src/types'
-import { ApiAndIds, createSelectUnknownIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { HasId, CommentContent, CommonContent, PostContent, ProfileContent, SharedPostContent, SpaceContent, DerivedContent, convertToDerivedContent } from 'src/types'
+import { ApiAndIds, createFetchOne, createSelectUnknownIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { mdToText, summarize } from 'src/utils'
 
 /** Content with id */
 type Content<C extends CommonContent = CommonContent> = HasId & DerivedContent<C>
@@ -46,22 +45,8 @@ export const fetchContents = createAsyncThunk<Content[], ApiAndIds, ThunkApiConf
 
     const contents = await api.ipfs.getContentArray(newIds as string[])
     return Object.entries(contents).map(([ id, content ]) => {
-      
-      // TODO think how to improve types here.
-      const anyContent = content as any
-      const md = anyContent['about'] || anyContent['body'] || anyContent['title']
-
-      const text = mdToText(md)?.trim() || ''
-      const summary = summarize(text)
-      const isShowMore = text.length > summary.length
-
-      const derivedContent: DerivedContent<CommonContent> = {
-        ...content,
-        summary,
-        isShowMore
-      }
-      
-      return { id, ...derivedContent }
+      const derivedContent = convertToDerivedContent(content) as CommentContent
+      return { id, ...derivedContent } 
     })
   }
 )
@@ -72,7 +57,7 @@ export const fetchPostContents = fetchContents as FetchContentFn<PostContent>
 export const fetchCommentContents = fetchContents as FetchContentFn<CommentContent>
 export const fetchSharedPostContents = fetchContents as FetchContentFn<SharedPostContent>
 
-// export const fetchContent = createFetchOne(fetchContents)
+export const fetchContent = createFetchOne(fetchContents)
 
 const contents = createSlice({
   name: 'contents',
