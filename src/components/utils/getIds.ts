@@ -48,14 +48,20 @@ export const parsePageQuery = (props: PaginationQuery): ParsedPaginationQuery =>
 export const getPageOfIds = <T = BN>(ids: T[], query: PaginationQuery): T[] => {
   const { page, size } = parsePageQuery(query)
   const offset = (page - 1) * size
+  const idsCount = ids.length
 
   // If requested page is out of range of input array.
-  if (offset >= ids.length) {
+  if (offset >= idsCount) {
     return []
   }
 
+  let limit = offset + size
+  if (limit > idsCount) {
+    limit = idsCount
+  }
+
   const pageOfIds = []
-  for (let i = offset; i < offset + size; i++) {
+  for (let i = offset; i < limit; i++) {
     pageOfIds.push(ids[i])
   }
 
