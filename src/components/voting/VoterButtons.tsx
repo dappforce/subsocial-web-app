@@ -10,6 +10,7 @@ import { BareProps } from '../utils/types'
 import { IconWithLabel } from '../utils'
 import { useResponsiveSize } from '../responsive'
 import { idToPostId, PostStruct } from 'src/types'
+import { useSubscribedPost } from '../posts/view-post'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
@@ -99,10 +100,13 @@ type VoterButtonsProps = VoterProps & {
 }
 
 export const VoterButtons = (props: VoterButtonsProps) => {
-  const { post, only } = props
+  const { post: initialPost, only, ...voterProps } = props
   const myAddress = useMyAddress()
   const [ reactionState, setReactionState ] = useState<Reaction>()
   const [ reloadTrigger, setReloadTrigger ] = useState(true)
+
+  // TODO use redux + subscribe
+  const post = useSubscribedPost(initialPost)
 
   useSubsocialEffect(({ substrate }) => {
     let isMounted = true
@@ -130,7 +134,8 @@ export const VoterButtons = (props: VoterButtonsProps) => {
     reaction={reactionState}
     reactionType={reactionType}
     onSuccess={() => setReloadTrigger(!reloadTrigger)}
-    {...props}
+    post={post}
+    {...voterProps}
   />
 
   const UpvoteButton = () => only !== 'Downvote' ? renderVoterButton('Upvote') : null
