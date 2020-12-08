@@ -98,7 +98,6 @@ const replyIds = createSlice({
 
 export const {
   upsertReplyIdsByPostId,
-  removeReplyIdsByPostId,
 } = replyIds.actions
 
 export default replyIds.reducer
