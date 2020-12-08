@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import React, { FC } from 'react'
-import { SpaceId } from 'src/types'
+import { SpaceId, SpaceWithSomeDetails } from 'src/types'
 import { useFetchSpaces } from 'src/rtk/app/hooks'
 import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
@@ -12,12 +12,24 @@ import { CreateSpaceButton } from './helpers'
 import { ViewSpace } from './ViewSpace'
 import { Loading } from '../utils'
 
+const getTitle = (count: number | BN) => `Explore Spaces (${count})`
+
+type PreviewProps = {
+  space: SpaceWithSomeDetails
+}
+
+const SpacePreview = React.memo(({ space }: PreviewProps) =>
+  <ViewSpace
+    spaceData={space}
+    withFollowButton
+    preview
+  />
+)
+
 type Props = {
   spaceIds: SpaceId[]
   totalSpaceCount?: number
 }
-
-const getTitle = (count: number | BN) => `Explore Spaces (${count})`
 
 export const ListAllSpaces = (props: Props) => {
   const { spaceIds, totalSpaceCount = 0 } = props
@@ -35,14 +47,7 @@ export const ListAllSpaces = (props: Props) => {
         noDataDesc='There are no spaces yet'
         noDataExt={<CreateSpaceButton />}
         getKey={item => item.id}
-        renderItem={(item) =>
-          <ViewSpace
-            {...props}
-            spaceData={item}
-            withFollowButton
-            preview
-          />
-        }
+        renderItem={(item) => <SpacePreview space={item} />}
       />
     </div>
   )
