@@ -43,6 +43,17 @@ export type SelectPostsArgs = SelectManyArgs<Args>
 // type FetchPostArgs = FetchOneArgs<Args>
 type FetchPostsArgs = FetchManyArgs<Args>
 
+type PostMap<D extends PostWithSomeDetails = PostWithSomeDetails> = Record<PostId, D>
+
+export function selectPostMap
+  <D extends PostWithSomeDetails = PostWithSomeDetails>
+  (state: RootState, props: SelectPostsArgs): PostMap<D>
+{
+  const map: PostMap<D> = {}
+  selectPosts(state, props).forEach((p) => map[p.id] = p as D)
+  return map
+}
+
 // TODO apply visibility filter
 export function selectPosts (state: RootState, props: SelectPostsArgs): PostWithSomeDetails[] {
   const { ids, withOwner = true, withSpace = true } = props
