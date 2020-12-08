@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import { offchainWs } from './env'
 import { useMyAddress } from '../auth/MyAccountContext';
 import { newLogger } from '@subsocial/utils';
+import { w3cwebsocket as W3CWebSocket, IMessageEvent } from "websocket";
 
 export type NotifCounterContextProps = {
   unreadCount: number
@@ -11,13 +12,22 @@ export const NotifCounterContext = createContext<NotifCounterContextProps>({ unr
 
 const log = newLogger(NotifCounterProvider.name)
 
-export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
+export let socket: W3CWebSocket
+
+export const resloveWebSocketConnection = () => {
+  if (!socket) {
+    socket = new W3CWebSocket(offchainWs)
+  }
+  return socket
+}
+
+export function NotifCounterProvider(props: React.PropsWithChildren<{}>) {
   const myAddress = useMyAddress()
 
-  const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })
-  const [ wsConnected, setWsConnected ] = useState(false)
-  const [ ws, setWs ] = useState<WebSocket>()
-  const [ address, setAddress ] = useState(myAddress)
+  const [contextValue, setContextValue] = useState({ unreadCount: 0 })
+  const [wsConnected, setWsConnected] = useState(false)
+  const [ws, setWs] = useState<W3CWebSocket>()
+  const [address, setAddress] = useState(myAddress)
 
   const closeWs = () => {
     if (ws && !(ws.readyState === WebSocket.CLOSING || ws.readyState === WebSocket.CLOSED)) {
@@ -32,44 +42,27 @@ export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
   }
 
   useEffect(() => {
+    if (wsConnected || !myAddress || !offchainWs) return;
 
-    const subscribe = async () => {
-      if (wsConnected || !myAddress || !offchainWs) return;
+    resloveWebSocketConnection()
+    setWs(socket)
 
-      const ws = new WebSocket(offchainWs)
-      setWs(ws)
+    socket.onopen = () => {
+      log.info('Connected to Notifications Counter Web Socket')
+      socket.send(myAddress?.toString());
+      setWsConnected(true)
+      socket.onerror = (error) => { log.error('NotificationCounter Websocket Error:', error) }
+    };
 
-      // if(ws.OPEN) {
-      //   ws.onmessage = (msg: MessageEvent) => {
-      //     console.log("i`m alive")
-      //     const unreadCount = msg.data
-      //     setContextValue({ unreadCount })
-      //     log.info('Received a new value for unread notifications:', unreadCount)
-      //   }
-      // }
-
-
-      ws.onopen = () => {
-        log.info('Connected to Notifications Counter Web Socket')
-        ws.send(myAddress?.toString());
-        setWsConnected(true)
-        ws.onerror = (error) => { log.info('NotificationCounter Websocket Error:', error) }
-      };
-
-      ws.onclose = () => {
-        setWsConnected(false)
-      };
-
-      ws.onmessage = (msg: MessageEvent) => {
-        const unreadCount = msg.data
-        setContextValue({ unreadCount })
-        log.info('Received a new value for unread notifications:', unreadCount)
-      }
+    socket.onclose = () => {
+      setWsConnected(false)
+    };
+    socket.onmessage = (msg: IMessageEvent) => {
+      const unreadCount = msg.data
+      setContextValue({ unreadCount: parseInt(unreadCount.toString()) })
+      log.info('Received a new value for unread notifications:', unreadCount)
     }
-
-
-    subscribe()
-  }, [ wsConnected, myAddress ]);
+  }, [wsConnected, myAddress]);
 
   return (
     <NotifCounterContext.Provider value={contextValue}>

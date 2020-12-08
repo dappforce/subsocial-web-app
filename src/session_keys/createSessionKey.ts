@@ -133,17 +133,14 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
   for (const key in sessionKeyStorage) {
     if(key == address) {
       sessionKey = sessionKeyStorage[key]
-      console.log(sessionKey)
       break
     }
   }
-  console.log("before creation")
 
   if (!sessionKey) {
     sessionKey = await createSessionKey()
     if (!sessionKey) return
   }
-  console.log("after creation")
 
   const selectedNonce = await getNonce(address.toString())
   let nonce: number = 1
@@ -166,9 +163,8 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
 
   const signature = naclSign(JSONstingifySorted(message), keypair)
   if (!signature) return
-  console.log("before clear")
   const genericAccount = new GenericAccountId(registry, u8aToHex(keypair.publicKey))
-  await clearNotifications({
+  clearNotifications({
     account:  String(genericAccount),
     signature: u8aToHex(signature),
     message

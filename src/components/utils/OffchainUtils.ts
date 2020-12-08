@@ -5,6 +5,7 @@ import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { ElasticQueryParams } from '@subsocial/types/offchain/search'
 import { Activity } from '../activity/NotificationUtils'
 import { ReadAllMessage, SessionCall, AddSessionKeyArgs } from '../../session_keys/createSessionKey';
+import { resloveWebSocketConnection } from './NotifCounter';
 
 const log = newLogger('OffchainRequests')
 
@@ -118,16 +119,10 @@ export const getActivityCounts = async (address: string): Promise<Counts> => {
   }
 }
 
-// TODO require refactor
-export const clearNotifications = async (sessionCall: SessionCall<ReadAllMessage>): Promise<void> =>{
-  try {
-    const res = await axios.post(getOffchainUrl(`/notifications/readAll`), { sessionCall })
-    if (res.status !== 200) {
-      console.warn('Failed to mark all notifications as read for account:', sessionCall.account, 'res.status:', res.status)
-    }
-  } catch (err) {
-    console.log(`Failed to mark all notifications as read for account: ${sessionCall.account}`, err)
-  }
+export const clearNotifications = (sessionCall: SessionCall<ReadAllMessage>) => {
+  const socket = resloveWebSocketConnection()
+  // TODO: what if WebSocket is not connected at this point?
+  socket.send(sessionCall)
 }
 
 export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessionKeyArgs>) => {
