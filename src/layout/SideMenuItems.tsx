@@ -44,12 +44,19 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
   const account = { address: myAddress }
 
   const notificationsItem = uiShowNotifications
-    ? [ {
+    ? [
+      {
+        name: 'My feed',
+        page: [ '/feed', '/feed' ],
+        icon: <BellOutlined />,
+      },
+      {
         name: 'My notifications',
         page: [ '/notifications', '/notifications' ],
         icon: <BellOutlined />,
         isNotifications: true
-      } ]
+      },
+    ]
     : []
 
   return [
