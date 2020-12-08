@@ -1,6 +1,6 @@
 export type RowKeyFn<T> = (item: T) => string | string
 
-export type RenderItemFn<T> = (item: T, index: number) => JSX.Element
+export type RenderItemFn<T> = (item: T, index: number) => React.ReactNode
 
 export type InnerLoadMoreFn<T> = (page: number, size: number) => Promise<T[]>
 
