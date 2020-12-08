@@ -8,7 +8,7 @@ import { Option } from '@polkadot/types/codec'
 import { getTxParams } from '../substrate'
 import BN from 'bn.js'
 import { CommentTxButtonType } from './utils'
-import { PostStruct } from 'src/types'
+import { DerivedContent, PostStruct } from 'src/types'
 import { useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
@@ -36,7 +36,7 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
     return [ struct.id, update ]
   }
 
-  const updatePostToStore = (content: PostContent) =>
+  const updatePostToStore = (content: DerivedContent<PostContent>) =>
     upsertReply({
       reply: struct,
       content
@@ -55,11 +55,11 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
       })}
       tx='posts.updatePost'
       onFailed={(txResult) => {
-        updatePostToStore(content as PostContent)
+        updatePostToStore(content as DerivedContent<PostContent>)
         onFailed && onFailed(txResult)
       }}
       onClick={() => {
-        updatePostToStore(json as PostContent)
+        updatePostToStore(json as DerivedContent<PostContent>)
         onClick && onClick()
       }}
     />

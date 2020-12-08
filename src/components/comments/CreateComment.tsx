@@ -8,7 +8,7 @@ import BN from 'bn.js'
 import { useMyAccount } from '../auth/MyAccountContext'
 import { buildMockComment, CommentTxButtonType } from './utils'
 import { HiddenPostAlert } from '../posts/view-post'
-import { asCommentStruct, idToPostId, PostStruct } from 'src/types'
+import { asCommentStruct, convertToDerivedContent, idToPostId, PostStruct } from 'src/types'
 import { useChangeReplies, useRemoveReply, useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
@@ -74,7 +74,7 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
     address && upsertReply({
       reply: buildMockComment({ fakeId, address }),
       parentId,
-      content: { body }
+      content: convertToDerivedContent({ body })
     })
 
   const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
