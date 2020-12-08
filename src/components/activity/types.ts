@@ -2,9 +2,13 @@ import { ParsedPaginationQuery } from '../utils/getIds'
 import { ActivityStore } from './NotificationUtils'
 import { FlatSubsocialApi } from '../substrate'
 import { DataListItemProps } from '../lists'
+import { AppDispatch } from 'src/rtk/app/store'
+import { SubsocialApi } from '@subsocial/api'
 
 export type LoadMoreProps = ParsedPaginationQuery & {
   flatApi: FlatSubsocialApi
+  subsocial: SubsocialApi
+  dispatch: AppDispatch
   address?: string,
   activityStore?: ActivityStore
 }
