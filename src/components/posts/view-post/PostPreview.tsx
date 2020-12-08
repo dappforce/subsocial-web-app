@@ -4,6 +4,7 @@ import { PostWithSomeDetails, PostWithAllDetails, SpaceData } from 'src/types'
 import { Segment } from 'src/components/utils/Segment'
 
 export type BarePreviewProps = {
+  withImage?: boolean,
   withTags?: boolean,
   withActions?: boolean,
   replies?: PostWithAllDetails[],
