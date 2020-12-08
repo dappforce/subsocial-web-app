@@ -67,6 +67,7 @@ export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
   </PageContent>
 }
 
+// TODO this page is not required for SEO
 ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props
   const address = query.address as string

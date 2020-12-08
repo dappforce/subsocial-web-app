@@ -73,6 +73,7 @@ getInitialPropsWithRedux(HomePage, async ({ subsocial, dispatch, reduxStore }) =
   const latestSpaceIds = bnsToIds(getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE))
   await dispatch(fetchSpaces({ api: subsocial, ids: latestSpaceIds }))
 
+  // TODO create selectPublicSpaces
   const allSpacesData = selectSpaces(getState(), { ids: latestSpaceIds })
     .filter(isPublic)
   const spacesData = allSpacesData.slice(0, LAST_ITEMS_SIZE)
@@ -81,6 +82,7 @@ getInitialPropsWithRedux(HomePage, async ({ subsocial, dispatch, reduxStore }) =
   const latestPostIds = bnsToIds(getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE))
   await dispatch(fetchPosts({ api: subsocial, ids: latestPostIds }))
 
+  // TODO create selectPublicPosts
   const allPostsData = selectPosts(getState(), { ids: latestPostIds })
     .filter(({ post }) => isPublic(post)) as PostWithAllDetails[]
 

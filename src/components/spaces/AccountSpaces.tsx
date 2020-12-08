@@ -198,6 +198,7 @@ export const AccountSpacesPage: NextPage<Props> = (props: Props) =>
     <AccountSpaces {...props} />
   </PageContent>
 
+// TODO this page is not required for SEO
 AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props
   const { address } = query
