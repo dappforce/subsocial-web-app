@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { PostId, /* SpaceId */ } from '@subsocial/types/substrate/interfaces'
+import { PostId } from '@subsocial/types/substrate/interfaces'
 import {
   ProfileData as OldProfileData,
   SpaceData as OldSpaceData,
@@ -8,6 +8,8 @@ import {
   PostWithAllDetails as OldPostWithAllDetails,
   AnyAccountId,
   CommonContent,
+  PostContent,
+  SpaceContent,
 } from '@subsocial/types'
 import {
   EntityId,
@@ -15,7 +17,6 @@ import {
   SpaceData,
   PostData,
   CommentData,
-  // SharedPostData,
   PostWithAllDetails,
   PostWithSomeDetails,
   DerivedContent,
@@ -128,11 +129,19 @@ export function isPublic (data?: SpaceOrPostData) {
   return !isUnlisted(data)
 }
 
-export function convertToDerivedContent <T extends CommonContent = CommonContent> (content?: T): DerivedContent<T> | undefined {
+type MaybeSpaceContent = Pick<SpaceContent, 'about'>
+
+type MaybePostContent = Pick<PostContent, 'body' | 'title'>
+
+export function convertToDerivedContent
+  <T extends CommonContent = CommonContent>
+  (content?: T): DerivedContent<T> | undefined
+{
   if (!content) return undefined
-  // TODO think how to improve types here.
-  const anyContent = content as any
-  const md = anyContent['about'] || anyContent['body'] || anyContent['title']
+
+  const maybeSpace = (content as MaybeSpaceContent)
+  const aboutPost = (content as MaybePostContent)
+  const md = maybeSpace.about || aboutPost.body || aboutPost.title
 
   const text = mdToText(md)?.trim() || ''
   const summary = summarize(text)

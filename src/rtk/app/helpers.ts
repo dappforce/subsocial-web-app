@@ -1,8 +1,7 @@
 import { AsyncThunk, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
-import { CommonContent } from '@subsocial/types'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
-import { DerivedContent, EntityData, FlatSuperCommon, HasId } from 'src/types'
+import { CommonContent, EntityData, FlatSuperCommon, HasId } from 'src/types'
 import { asString } from 'src/utils'
 import { RootState } from './rootReducer'
 import { AppDispatch, AppThunk } from './store'
@@ -14,7 +13,7 @@ export type ThunkApiConfig = {
 
 type StructEntity = HasId & Partial<FlatSuperCommon>
 
-type ContentEntity = HasId & DerivedContent<CommonContent>
+type ContentEntity = HasId & CommonContent
 
 export type CommonVisibility = 'onlyPublic' | 'onlyUnlisted'
 export type HasHiddenVisibility = CommonVisibility | 'onlyVisible' | 'onlyHidden'

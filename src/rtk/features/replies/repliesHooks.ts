@@ -1,10 +1,9 @@
-import { CommonContent } from '@subsocial/types'
 import { Dispatch } from 'react'
 import { useDispatch } from 'react-redux'
 import { useFetchEntity } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { useAppSelector } from 'src/rtk/app/store'
-import { DerivedContent, HasId, PostId, PostStruct } from 'src/types'
+import { CommonContent, HasId, PostId, PostStruct } from 'src/types'
 import { upsertContent } from '../contents/contentsSlice'
 import { removePost, upsertPosts } from '../posts/postsSlice'
 import { selectReplyIds, upsertReplyIdsByPostId, fetchPostReplyIds, SelectOnePostRepliesArgs, ReplyIdsByPostId, selectManyReplyIds } from './repliesSlice'
@@ -94,12 +93,12 @@ export const useChangeReplies = () => {
   }
 }
 
-const useUpsertContent = () => useActions<DerivedContent<CommonContent> & HasId>(({ dispatch, args }) => {
+const useUpsertContent = () => useActions<CommonContent & HasId>(({ dispatch, args }) => {
     dispatch(upsertContent(args))
 })
 
 type UpsertReplyWithContentArgs = Omit<CommonReplyArgs, 'parentId'> & {
-  content?: DerivedContent<CommonContent>,
+  content?: CommonContent,
   parentId?: PostId
 }
 
