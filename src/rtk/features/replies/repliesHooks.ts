@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useFetchEntity } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { useAppSelector } from 'src/rtk/app/store'
-import { HasId, PostId, PostStruct } from 'src/types'
+import { DerivedContent, HasId, PostId, PostStruct } from 'src/types'
 import { upsertContent } from '../contents/contentsSlice'
 import { removePost, upsertPosts } from '../posts/postsSlice'
 import { selectReplyIds, upsertReplyIdsByPostId, fetchPostReplyIds, SelectOnePostRepliesArgs, ReplyIdsByPostId, selectManyReplyIds } from './repliesSlice'
@@ -94,12 +94,12 @@ export const useChangeReplies = () => {
   }
 }
 
-const useUpsertContent = () => useActions<CommonContent & HasId>(({ dispatch, args }) => {
+const useUpsertContent = () => useActions<DerivedContent<CommonContent> & HasId>(({ dispatch, args }) => {
     dispatch(upsertContent(args))
 })
 
 type UpsertReplyWithContentArgs = Omit<CommonReplyArgs, 'parentId'> & {
-  content: CommonContent,
+  content?: DerivedContent<CommonContent>,
   parentId?: PostId
 }
 
@@ -107,8 +107,8 @@ export const useUpsertReplyWithContent = () => {
   const upsertReplies = useUpsertReplies()
   const upsertContent = useUpsertContent()
 
-  return ({ parentId, ...args }: UpsertReplyWithContentArgs) => {
+  return ({ parentId, content, ...args }: UpsertReplyWithContentArgs) => {
     parentId && upsertReplies(setUpsertOneArgs({ ...args, parentId }))
-    upsertContent({ id: args.reply.id, ...args.content })
+    content && upsertContent({ id: args.reply.id, ...content })
   }
 }

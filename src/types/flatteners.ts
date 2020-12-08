@@ -6,7 +6,7 @@ import { AnyAccountId, CommonContent } from '@subsocial/types'
 import { Content, Post, SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { notEmptyObj } from '@subsocial/utils'
 import BN from 'bn.js'
-import { EntityData } from './dto'
+import { DerivedContent, EntityData } from './dto'
 
 type Id = string
 
@@ -147,10 +147,10 @@ export type SocialAccountWithId = {
   struct: SocialAccount
 }
 
-type EntityDataWithField<S extends {}> = EntityData<HasId & S, CommonContent> | (HasId & S)
+type EntityDataWithField<S extends {}> = EntityData<HasId & S, DerivedContent<CommonContent>> | (HasId & S)
 
 export function getUniqueIds<S extends {}> (structs: EntityDataWithField<S>[], idFieldName: keyof S): EntityId[] {
-  type _EntityData = EntityData<S & HasId, CommonContent>
+  type _EntityData = EntityData<S & HasId, DerivedContent<CommonContent>>
   const ids = new Set<EntityId>()
   structs.forEach((x) => {
     const edStruct = (x as _EntityData).struct
