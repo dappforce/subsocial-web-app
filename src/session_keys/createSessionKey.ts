@@ -61,7 +61,6 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
 
   const account = allAccounts.find(x => new GenericAccountId(registry, x.address))
   if (!account) return
-
   const {publicKey, secretKey} = generateKeyPair()
 
   const publicKeyHex = u8aToHex(publicKey)
@@ -82,7 +81,6 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
 
   const signature = await signMessage(account.meta.source, address, JSONstingifySorted(message))
   if (!signature) return
-
   let sessionKey: SessionKeypair = {
     publicKey: publicKeyHex,
     secretKey: secretKeyHex
@@ -93,7 +91,7 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
   storage[address] = sessionKey
 
   store.set(SESSION_KEY, storage)
-  insertToSessionKeyTable({
+  await insertToSessionKeyTable({
     account: address,
     signature,
     message

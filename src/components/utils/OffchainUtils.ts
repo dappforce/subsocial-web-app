@@ -122,7 +122,7 @@ export const getActivityCounts = async (address: string): Promise<Counts> => {
 export const clearNotifications = (sessionCall: SessionCall<ReadAllMessage>) => {
   const socket = resloveWebSocketConnection()
   // TODO: what if WebSocket is not connected at this point?
-  socket.send(sessionCall)
+  socket.send(JSON.stringify(sessionCall))
 }
 
 export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessionKeyArgs>) => {
@@ -132,21 +132,19 @@ export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessio
       console.warn('Failed to insert session key for account:', sessionCall.account, 'res.status:', res.status)
     }
   } catch (err) {
-    console.log(`Failed to insert session key for account: ${sessionCall.account}`, err)
+    console.error(`Failed to insert session key for account: ${sessionCall.account}`, err)
   }
 }
 
 export const getNonce = async (account: string) => {
   try {
-    console.log("account", account)
     const params = { account }
     const res = await axios.post(getOffchainUrl(`/notifications/getNonce`), null, { params })
-    console.log("res", res)
     if (res.status === 200) {
       return res.data
     }
   } catch (err) {
-    console.log(`Failed to get nonce for account: ${account}`, err)
+    console.error(`Failed to get nonce for account: ${account}`, err)
   }
 }
 
