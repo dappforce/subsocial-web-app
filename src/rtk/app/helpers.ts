@@ -18,7 +18,7 @@ type ContentEntity = HasId & CommonContent
 export type CommonVisibility = 'onlyPublic' | 'onlyUnlisted'
 export type HasHiddenVisibility = CommonVisibility | 'onlyVisible' | 'onlyHidden'
 
-type ApiArg = {
+export type ApiArg = {
   api: SubsocialApi
 }
 
