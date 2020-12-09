@@ -19,14 +19,6 @@ export type AppStore = typeof emptyStore
 
 let store: AppStore | undefined
 
-if (isDevMode && module.hot && store) {
-  module.hot.accept('./rootReducer', () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const newRootReducer = require('./rootReducer').default
-    store && store.replaceReducer(newRootReducer)
-  })
-}
-
 export type AppDispatch = typeof emptyStore.dispatch
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()
@@ -66,6 +58,14 @@ export const initializeStore = (preloadedState?: RootState) => {
 
   // Create the store once in the client
   if (!store) store = _store
+
+  if (isDevMode && module.hot && store) {
+    module.hot.accept('./rootReducer', () => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const newRootReducer = require('./rootReducer').default
+      store && store.replaceReducer(newRootReducer)
+    })
+  }
 
   return _store
 }
