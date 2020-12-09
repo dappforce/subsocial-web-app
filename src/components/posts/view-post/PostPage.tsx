@@ -13,7 +13,6 @@ import { Loading } from 'src/components/utils'
 import { isUnlistedSpace } from 'src/components/spaces/helpers'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useResponsiveSize } from 'src/components/responsive'
-import { mdToText } from 'src/utils'
 import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
@@ -74,7 +73,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   return <PageContent
     meta={{ 
       title,
-      desc: mdToText(body),
+      desc: content.summary,
       image,
       tags,
       canonical: postUrl(spaceStruct, postData.post),

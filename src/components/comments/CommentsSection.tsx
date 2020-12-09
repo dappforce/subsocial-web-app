@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { ViewComment } from './ViewComment'
 import { NewComment } from './CreateComment'
-import { mdToText } from 'src/utils'
 import { PostWithSomeDetails, PostData } from 'src/types'
 import { NextPage } from 'next'
 import { getProfileName } from '../substrate'
@@ -54,7 +53,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, s
 
   const meta = {
     title: `${profileName} commented on ${content?.title}`,
-    desc: mdToText(content?.body),
+    desc: content?.summary,
     canonical: postUrl(space, comment.post),
   }
 

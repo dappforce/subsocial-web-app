@@ -4,7 +4,6 @@ import {
 } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
 import { AnyAccountId } from '@subsocial/types'
-import { ProfileContent } from '@subsocial/types/offchain'
 import { SpaceId } from '@subsocial/types/substrate/interfaces'
 import { isEmptyStr } from '@subsocial/utils'
 import { Button, Dropdown, Menu } from 'antd'
@@ -16,8 +15,7 @@ import React, { useCallback, useState } from 'react'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { fetchProfile, selectProfile } from 'src/rtk/features/profiles/profilesSlice'
-import { ProfileData, SpaceData } from 'src/types'
-import { mdToText } from 'src/utils'
+import { ProfileContent, ProfileData, SpaceData } from 'src/types'
 import { AccountActivity } from '../activity/AccountActivity'
 import { isMyAddress } from '../auth/MyAccountContext'
 import { PageContent } from '../main/PageWrapper'
@@ -65,10 +63,7 @@ const Component = (props: Props) => {
   const following = owner ? owner.struct.followingAccountsCount : 0
   const reputation = owner ? owner.struct.reputation : 0
 
-  const {
-    avatar,
-    about
-  } = owner?.content || {} as ProfileContent
+  const { avatar, about } = owner?.content || {} as ProfileContent
 
   const createProfileButton = noProfile && isMyAccount &&
     <Link href='/accounts/new' as='/accounts/new'>
@@ -152,13 +147,8 @@ const Component = (props: Props) => {
 
 const ProfilePage: NextPage<Props> = (props) => {
   const { address, owner, mySpaceIds } = props
-
-  const {
-    name,
-    avatar,
-    about
-  } = owner?.content || {} as ProfileContent
-
+  const content = owner?.content || {} as ProfileContent
+  const { name, avatar } = content
   const isOnlyAddress = isEmptyStr(name)
 
   const getName = () => {
@@ -172,7 +162,7 @@ const ProfilePage: NextPage<Props> = (props) => {
   return <PageContent
     meta={{
       title: getName(),
-      desc: mdToText(about),
+      desc: content.summary,
       image: avatar,
       canonical: accountUrl({ address })
     }}

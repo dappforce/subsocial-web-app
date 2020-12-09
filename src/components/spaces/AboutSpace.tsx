@@ -1,10 +1,8 @@
-import { SpaceContent } from '@subsocial/types/offchain'
 import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils'
 import { NextPage } from 'next'
 import Error from 'next/error'
 import React, { useCallback, useState } from 'react'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
-import { mdToText } from 'src/utils'
 import { PageContent } from '../main/PageWrapper'
 import { ProfilePreview } from '../profiles/address-views'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
@@ -19,6 +17,7 @@ import { loadSpaceOnNextReq } from './helpers/loadSpaceOnNextReq'
 import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
 import { ViewSpace } from './ViewSpace'
 import { ViewSpaceProps } from './ViewSpaceProps'
+import { SpaceContent } from 'src/types'
 
 type Props = ViewSpaceProps
 
@@ -60,7 +59,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const meta = {
     title,
-    desc: mdToText(about),
+    desc: content.summary,
     image,
     canonical: aboutSpaceUrl(space)
   }
