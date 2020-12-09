@@ -5,7 +5,7 @@ import spaces from '../features/spaces/spacesSlice'
 import posts from '../features/posts/postsSlice'
 import replyIds from '../features/replies/repliesSlice'
 import followedSpaceIds from '../features/spaceIds/followedSpacesSlice'
-import mySpaceIds from '../features/spaceIds/mySpaceIds'
+import mySpaceIds from '../features/spaceIds/mySpaceIdsSlice'
 
 const rootReducer = combineReducers({
   contents,
