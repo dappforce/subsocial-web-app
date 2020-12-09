@@ -6,6 +6,7 @@ import { newLogger, notDef } from '@subsocial/utils'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import TxButton from './TxButton'
 import AccountId from '@polkadot/types/generic/AccountId'
+import { FollowButtonStub } from './FollowButtonStub'
 
 const log = newLogger('FollowAccountButton')
 
@@ -37,7 +38,11 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
     return () => { isMounted = false }
   }, [ myAddress ])
 
-  if (!address || isMyAddress(address)) return null
+  // I'm signed in and I am looking at my account
+  if (myAddress && isMyAddress(address)) return null
+
+  // I'm not signed in
+  if (!myAddress) return <FollowButtonStub />
 
   const accountId = new GenericAccountId(registry, address)
 
