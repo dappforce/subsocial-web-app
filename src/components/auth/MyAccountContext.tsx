@@ -1,12 +1,14 @@
-import React, { useReducer, createContext, useContext, useEffect } from 'react'
-import store from 'store'
-import { newLogger, nonEmptyStr } from '@subsocial/utils'
-import { AnyAccountId } from '@subsocial/types'
-import { equalAddresses } from '../substrate'
-import { convertToDerivedContent, flattenProfileStruct, ProfileData } from 'src/types'
-import useSubsocialEffect from '../api/useSubsocialEffect'
-import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { Option } from '@polkadot/types'
+import { AnyAccountId } from '@subsocial/types'
+import { SocialAccount } from '@subsocial/types/substrate/interfaces'
+import { newLogger, nonEmptyStr } from '@subsocial/utils'
+import React, { createContext, useContext, useEffect, useReducer } from 'react'
+import { useDispatch } from 'react-redux'
+import { convertToDerivedContent, flattenProfileStruct, ProfileData } from 'src/types'
+import store from 'store'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
+import { equalAddresses } from '../substrate'
 
 const log = newLogger('MyAccountContext')
 
@@ -113,10 +115,16 @@ const contextStub: MyAccountContextProps = {
   signOut: functionStub
 }
 
+type UnsubscribeFn = {
+  (): void | undefined;
+  (): void;
+}
+
 export const MyAccountContext = createContext<MyAccountContextProps>(contextStub)
 
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState)
+  const reduxDispatch = useDispatch()
 
   const { inited, address } = state
 
@@ -129,31 +137,39 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   useSubsocialEffect(({ substrate: { api }, subsocial: { ipfs } }) => {
     if (!inited || !address) return
 
-    let unsub: { (): void | undefined; (): void; }
+    let unsubSocialAccount: UnsubscribeFn
 
-    const sub = async () => {
+    const loadAndSubscribe = async () => {
       const readyApi = await api
 
-      unsub = await readyApi.query.profiles.socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
-        let account: ProfileData | undefined
-        const subtrateStruct = optSocialAccount.unwrapOr(undefined)
+      unsubSocialAccount = await readyApi.query.profiles
+        .socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
+          let account: ProfileData | undefined
+          const subtrateStruct = optSocialAccount.unwrapOr(undefined)
 
-        if (subtrateStruct) {
-          const struct = flattenProfileStruct(address, subtrateStruct)
-          const { contentId } = struct
-          const content = contentId ? await ipfs.findProfile(contentId) : undefined
-          account = { id: address, struct, content: convertToDerivedContent(content) }
-        }
+          if (subtrateStruct) {
+            const struct = flattenProfileStruct(address, subtrateStruct)
+            const { contentId } = struct
+            const content = contentId ? await ipfs.findProfile(contentId) : undefined
+            account = { id: address, struct, content: convertToDerivedContent(content) }
+          }
 
-        dispatch({ type: 'setAccount', account })
-      })
+          dispatch({ type: 'setAccount', account })
+        })
     }
 
-    sub()
+    loadAndSubscribe()
 
-    return () => { unsub && unsub() }
+    return () => {
+      unsubSocialAccount && unsubSocialAccount()
+    }
+  }, [ inited, address ])
 
-  }, [ inited, address || '' ])
+  useSubsocialEffect(({ substrate }) => {
+    if (!inited || !address) return
+
+    reloadSpaceIdsFollowedByAccount({ substrate, dispatch: reduxDispatch, account: address })
+  }, [ reduxDispatch, inited, address ])
 
   const contextValue = {
     state,
