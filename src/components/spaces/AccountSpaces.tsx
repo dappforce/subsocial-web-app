@@ -1,23 +1,23 @@
-import React, { useState } from 'react'
-import { ViewSpace } from './ViewSpace'
-import PaginatedList from 'src/components/lists/PaginatedList'
-import { NextPage } from 'next'
-import { SpaceData } from 'src/types'
+import { AnyAccountId } from '@subsocial/types'
 import { SpaceId } from '@subsocial/types/substrate/interfaces'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { newLogger } from '@subsocial/utils'
+import { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+import PaginatedList from 'src/components/lists/PaginatedList'
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
+import { SpaceData } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { isMyAddress, useMyAddress } from '../auth/MyAccountContext'
-import { Loading } from '../utils'
-import { CreateSpaceButton } from './helpers'
-import { newLogger } from '@subsocial/utils'
-import { AnyAccountId } from '@subsocial/types'
-import { return404 } from '../utils/next'
-import { getPageOfIds } from '../utils/getIds'
-import { useRouter } from 'next/router'
 import DataList from '../lists/DataList'
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { PageContent } from '../main/PageWrapper'
 import { newFlatApi } from '../substrate'
+import { Loading } from '../utils'
+import { getPageOfIds } from '../utils/getIds'
+import { return404 } from '../utils/next'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { CreateSpaceButton } from './helpers'
+import { SpacePreview } from './SpacePreview'
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -122,13 +122,6 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
   }
 }
 
-const SpacePreview = (space: SpaceData) =>
-  <ViewSpace
-    spaceData={space}
-    withFollowButton
-    preview
-  />
-
 const PublicSpaces = (props: LoadSpacesProps) => {
   const { spacesData, mySpaceIds, address, withTitle } = props
   const totalCount = mySpaceIds?.length
@@ -147,7 +140,7 @@ const PublicSpaces = (props: LoadSpacesProps) => {
     totalCount={totalCount}
     dataSource={spacesData}
     getKey={item => item.id}
-    renderItem={SpacePreview}
+    renderItem={item => <SpacePreview space={item} />}
     noDataDesc='No public spaces found'
     noDataExt={noSpaces && isMy &&
       <CreateSpaceButton>
@@ -170,7 +163,7 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
       title={`Unlisted Spaces (${unlistedCount})`}
       dataSource={myUnlistedSpaces}
       getKey={item => item.id}
-      renderItem={SpacePreview}
+      renderItem={item => <SpacePreview space={item} />}
     />
   )
 }

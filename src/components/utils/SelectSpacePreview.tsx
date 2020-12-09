@@ -55,6 +55,7 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
       let isMounted = true
 
       const loadSpaces = async () => {
+        // TODO use redux
         const spacesData = await flatApi.findPublicSpaces(spaceIds)
         isMounted && setCurrentSpacesData(spacesData)
       }
