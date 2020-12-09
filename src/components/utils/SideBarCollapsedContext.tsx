@@ -14,7 +14,7 @@ type SidebarCollapsedState = {
 }
 
 type SidebarCollapsedAction = {
-  type: 'reload' | 'set' | 'forget' | 'forgetExact'
+  type: 'reload' | 'set'
   collapsed?: boolean
 }
 
@@ -57,8 +57,6 @@ export type SidebarCollapsedContextProps = {
   hide: () => void
   show: () => void
   toggle: () => void
-  forget: () => void
-  reloadFollowed: () => void
 }
 
 const contextStub: SidebarCollapsedContextProps = {
@@ -67,8 +65,6 @@ const contextStub: SidebarCollapsedContextProps = {
   hide: functionStub,
   show: functionStub,
   toggle: functionStub,
-  forget: functionStub,
-  reloadFollowed: functionStub
 }
 
 export const SidebarCollapsedContext = createContext<SidebarCollapsedContextProps>(contextStub)
@@ -91,8 +87,6 @@ export function SidebarCollapsedProvider (props: React.PropsWithChildren<{}>) {
     hide: () => dispatch({ type: 'set', collapsed: true }),
     show: () => dispatch({ type: 'set', collapsed: false }),
     toggle: () => dispatch({ type: 'set', collapsed: !state.collapsed }),
-    forget: () => dispatch({ type: 'forget', collapsed: state.collapsed }),
-    reloadFollowed: () => dispatch({ type: 'reload' })
   }
 
   return <SidebarCollapsedContext.Provider value={contextValue}>{props.children}</SidebarCollapsedContext.Provider>
