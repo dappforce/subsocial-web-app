@@ -1,22 +1,19 @@
-import { SpaceData } from 'src/types'
 import { NextPage } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
-
 import PaginatedList from 'src/components/lists/PaginatedList'
-import { useSidebarCollapsed } from '../utils/SideBarCollapsedContext'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
-import { spaceIdForUrl, spaceUrl } from '../urls'
-import { ViewSpace } from './ViewSpace'
-import ButtonLink from '../utils/ButtonLink'
 import { PageLink } from 'src/layout/SideMenuItems'
-import BaseAvatar from '../utils/DfAvatar'
+import { SpaceData } from 'src/types'
 import { isMyAddress } from '../auth/MyAccountContext'
-import { toShortAddress } from '../utils'
-import { getPageOfIds } from '../utils/getIds'
 import { PageContent } from '../main/PageWrapper'
 import { newFlatApi } from '../substrate'
+import { spaceUrl } from '../urls'
+import { toShortAddress } from '../utils'
+import ButtonLink from '../utils/ButtonLink'
+import BaseAvatar from '../utils/DfAvatar'
+import { getPageOfIds } from '../utils/getIds'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { ViewSpace } from './ViewSpace'
 
 type Props = {
   spacesData: SpaceData[],
@@ -54,7 +51,6 @@ export const ListFollowingSpaces = (props: Props) => {
   )
 }
 
-
 export const ListFollowingSpacesPage: NextPage<Props> = (props) => {
   const { query: { address } } = useRouter()
   return <PageContent
@@ -85,39 +81,6 @@ ListFollowingSpacesPage.getInitialProps = async (props): Promise<Props> => {
     totalCount: followedSpaceIds.length,
     spacesData
   }
-}
-
-// TODO extract to a separate file:
-
-export const SpaceLink = (props: { item: SpaceData }) => {
-  const { item } = props
-  const { pathname, query } = useRouter()
-  const { toggle, state: { asDrawer } } = useSidebarCollapsed()
-
-  if (!item) return null
-
-  const idForUrl = spaceIdForUrl(item.struct)
-  const isSelectedSpace = pathname.includes('spaces') &&
-    query.spaceId as string === idForUrl
-
-  return (
-    <Link
-      key={idForUrl}
-      href='/[spaceId]'
-      as={spaceUrl(item.struct)}
-    >
-      <a className={`DfMenuSpaceLink ${isSelectedSpace ? 'DfSelectedSpace' : ''}`}>
-        <ViewSpace
-          key={idForUrl}
-          spaceData={item}
-          miniPreview
-          imageSize={28}
-          onClick={() => asDrawer && toggle()}
-          withFollowButton={false}
-        />
-      </a>
-    </Link>
-  )
 }
 
 export const buildFollowedItems = (followedSpacesData: SpaceData[]): PageLink[] =>
