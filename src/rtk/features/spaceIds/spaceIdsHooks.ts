@@ -3,8 +3,8 @@ import { AccountId } from 'src/types'
 import { fetchSpaceIdsFollowedByAccount, _selectSpaceIdsFollowedByAccount } from './followedSpaceIdsSlice'
 import { fetchSpaceIdsOwnedByAccount, _selectSpaceIdsOwnedByAccount } from './ownedSpaceIdsSlice'
 
-export const useFetchMySpaceIds = (myAccount: AccountId) => {
-  return useFetchOneEntity(_selectSpaceIdsOwnedByAccount, fetchSpaceIdsOwnedByAccount, { id: myAccount })
+export const useFetchOwnedSpaceIds = (owner: AccountId) => {
+  return useFetchOneEntity(_selectSpaceIdsOwnedByAccount, fetchSpaceIdsOwnedByAccount, { id: owner })
 }
 
 export const useFetchFollowedSpaceIds = (follower: AccountId) => {
