@@ -92,7 +92,7 @@ export const SpaceNav = (props: SpaceNavProps) => {
       </div>
 
       <span className='d-flex justify-content-center align-items-center'>
-        <FollowSpaceButton spaceId={id} block />
+        <FollowSpaceButton space={space} block />
         <DropdownMenu spaceData={spaceData} vertical style={{ marginLeft: '.5rem', marginRight: '-.5rem' }} />
       </span>
 
