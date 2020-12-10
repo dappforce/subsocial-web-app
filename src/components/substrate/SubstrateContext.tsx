@@ -42,7 +42,8 @@ export type State = {
   rpc: JsonRpc
   api?: ApiPromise
   apiError?: any
-  apiState?: ApiState
+  apiState?: ApiState,
+  connecting?: boolean,
   keyring?: Keyring
   keyringState?: KeyringState
   keyringError?: Error
@@ -51,6 +52,7 @@ export type State = {
 const INIT_STATE: State = {
   endpoint: substrateUrl,
   types: SubsocialTypes,
+  connecting: true,
   rpc: { ...jsonrpc }
 }
 
@@ -62,7 +64,7 @@ const reducer = (state: State, action: Action): State => {
     }
     case 'CONNECT': {
       log.info(`Connected to Substrate node ${state.endpoint?.toString()}`)
-      return { ...state, api: action.payload, apiState: 'CONNECTING' }
+      return { ...state, api: action.payload, apiState: 'CONNECTING', connecting: true }
     }
     case 'CONNECT_SUCCESS': {
       if (state.apiState !== 'CONNECTING') {
@@ -75,7 +77,7 @@ const reducer = (state: State, action: Action): State => {
         }
         log.info(`✅ Substrate API is ready. ${tookTimeLog}`)
       }
-      return { ...state, apiState: 'READY' }
+      return { ...state, apiState: 'READY', connecting: false }
     }
     case 'CONNECT_ERROR': {
       const err = action.payload
