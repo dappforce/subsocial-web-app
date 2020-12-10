@@ -32,7 +32,7 @@ export const _selectSpaceIdsFollowedByAccount:
     spacesSelectors.selectById(state, follower)
 
 export const selectSpaceIdsFollowedByAccount = (state: RootState, id: AccountId) => 
-_selectSpaceIdsFollowedByAccount(state, { id })?.followedSpaceIds || []
+  _selectSpaceIdsFollowedByAccount(state, { id })?.followedSpaceIds
 
 type Args = {}
 
@@ -42,8 +42,8 @@ type FetchOneRes = SpaceIdsFollowedByAccount | undefined
 
 export const fetchSpaceIdsFollowedByAccount = createAsyncThunk
   <FetchOneRes, FetchOneSpaceIdsArgs, ThunkApiConfig>(
-  'spaces/fetchOne',
-  async ({ api, id }, { getState }) => {
+  'followedSpaceIds/fetchOne',
+  async ({ api, id }, { getState }): Promise<FetchOneRes> => {
 
     const follower = id as AccountId
     const knownSpaceIds = selectSpaceIdsFollowedByAccount(getState(), follower)

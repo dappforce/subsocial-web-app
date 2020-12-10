@@ -34,7 +34,7 @@ export const _selectSpaceIdsOwnedByAccount:
     spacesSelectors.selectById(state, myAddress)
 
 export const selectSpaceIdsOwnedByAccount = (state: RootState, id: AccountId) => 
-  _selectSpaceIdsOwnedByAccount(state, { id })?.mySpaceIds || []
+  _selectSpaceIdsOwnedByAccount(state, { id })?.mySpaceIds
 
 type FetchOneSpaceIdsArgs = FetchOneArgs<Args>
 
@@ -42,8 +42,8 @@ type FetchOneRes = MySpaceIds | undefined
 
 export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
   <FetchOneRes, FetchOneSpaceIdsArgs, ThunkApiConfig>(
-  'spaces/fetchOne',
-  async ({ api, id }, { getState }) => {
+  'ownedSpaceIds/fetchOne',
+  async ({ api, id }, { getState }): Promise<FetchOneRes> => {
 
     const myAddress = id as AccountId
     const knownSpaceIds = selectSpaceIdsOwnedByAccount(getState(), myAddress)
@@ -54,7 +54,6 @@ export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
     }
 
     const spaceIds = await api.substrate.spaceIdsByOwner(myAddress)
-
     return {
       id: myAddress,
       mySpaceIds: bnsToIds(spaceIds)
