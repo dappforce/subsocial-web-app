@@ -1,10 +1,10 @@
 import { useFetchOneEntity } from 'src/rtk/app/hooksCommon'
 import { AccountId } from 'src/types'
 import { fetchSpaceIdsFollowedByAccount, _selectSpaceIdsFollowedByAccount } from './followedSpacesSlice'
-import { fetchMySpaceIdsByAccount, _selectMySpaceIdsByAccount } from './mySpaceIdsSlice'
+import { fetchSpaceIdsOwnedByAccount, _selectSpaceIdsOwnedByAccount } from './ownedSpaceIdsSlice'
 
 export const useFetchMySpaceIds = (myAccount: AccountId) => {
-  return useFetchOneEntity(_selectMySpaceIdsByAccount, fetchMySpaceIdsByAccount, { id: myAccount })
+  return useFetchOneEntity(_selectSpaceIdsOwnedByAccount, fetchSpaceIdsOwnedByAccount, { id: myAccount })
 }
 
 export const useFetchFollowedSpaceIds = (follower: AccountId) => {

@@ -13,7 +13,7 @@ export type MySpaceIds = {
 
 const adapter = createEntityAdapter<MySpaceIds>()
 
-const spacesSelectors = adapter.getSelectors<RootState>(state => state.mySpaceIds)
+const spacesSelectors = adapter.getSelectors<RootState>(state => state.ownedSpaceIds)
 
 // Rename the exports for readability in component usage
 export const {
@@ -26,27 +26,27 @@ export const {
 
 type Args = {}
 
-export const _selectMySpaceIdsByAccount:
+export const _selectSpaceIdsOwnedByAccount:
   SelectOneFn<Args, MySpaceIds | undefined> = (
     state,
     { id: myAddress }
   ) =>
     spacesSelectors.selectById(state, myAddress)
 
-export const selectMySpaceIdsByAccount = (state: RootState, id: AccountId) => 
-  _selectMySpaceIdsByAccount(state, { id })?.mySpaceIds || []
+export const selectSpaceIdsOwnedByAccount = (state: RootState, id: AccountId) => 
+  _selectSpaceIdsOwnedByAccount(state, { id })?.mySpaceIds || []
 
 type FetchOneSpaceIdsArgs = FetchOneArgs<Args>
 
 type FetchOneRes = MySpaceIds | undefined
 
-export const fetchMySpaceIdsByAccount = createAsyncThunk
+export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
   <FetchOneRes, FetchOneSpaceIdsArgs, ThunkApiConfig>(
   'spaces/fetchOne',
   async ({ api, id }, { getState }) => {
 
     const myAddress = id as AccountId
-    const knownSpaceIds = selectMySpaceIdsByAccount(getState(), myAddress)
+    const knownSpaceIds = selectSpaceIdsOwnedByAccount(getState(), myAddress)
     const isKnownFollower = typeof knownSpaceIds !== 'undefined'
     if (isKnownFollower) {
       // Nothing to load: space ids followed by this account are already loaded.
@@ -63,13 +63,13 @@ export const fetchMySpaceIdsByAccount = createAsyncThunk
 )
 
 const slice = createSlice({
-  name: 'mySpaceIds',
+  name: 'ownedSpaceIds',
   initialState: adapter.getInitialState(),
   reducers: {
     upsertMySpaceIdsByAccount: adapter.upsertOne,
   },
   extraReducers: builder => {
-    builder.addCase(fetchMySpaceIdsByAccount.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchSpaceIdsOwnedByAccount.fulfilled, (state, { payload }) => {
       if (payload) adapter.upsertOne(state, payload)
     })
   }
