@@ -24,15 +24,15 @@ export const {
   // selectTotal: selectTotalSpaceFollowers
 } = spacesSelectors
 
-export const _selectSpaceIdsOwnedByAccount:
+export const _selectSpaceIdsFollowedByAccount:
   SelectOneFn<Args, SpaceIdsFollowedByAccount | undefined> = (
     state, 
     { id: follower }
   ) =>
     spacesSelectors.selectById(state, follower)
 
-export const selectSpaceIdsOwnedByAccount = (state: RootState, id: AccountId) => 
-_selectSpaceIdsOwnedByAccount(state, { id })?.followedSpaceIds || []
+export const selectSpaceIdsFollowedByAccount = (state: RootState, id: AccountId) => 
+_selectSpaceIdsFollowedByAccount(state, { id })?.followedSpaceIds || []
 
 type Args = {}
 
@@ -40,13 +40,13 @@ type FetchOneSpaceIdsArgs = FetchOneArgs<Args>
 
 type FetchOneRes = SpaceIdsFollowedByAccount | undefined
 
-export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
+export const fetchSpaceIdsFollowedByAccount = createAsyncThunk
   <FetchOneRes, FetchOneSpaceIdsArgs, ThunkApiConfig>(
-  'followedSpaceIds/fetchOne',
+  'spaces/fetchOne',
   async ({ api, id }, { getState }) => {
 
     const follower = id as AccountId
-    const knownSpaceIds = selectSpaceIdsOwnedByAccount(getState(), follower)
+    const knownSpaceIds = selectSpaceIdsFollowedByAccount(getState(), follower)
     const isKnownFollower = typeof knownSpaceIds !== 'undefined'
     if (isKnownFollower) {
       // Nothing to load: space ids followed by this account are already loaded.
@@ -69,7 +69,7 @@ const slice = createSlice({
     upsertFollowedSpaceIdsByAccount: adapter.upsertOne,
   },
   extraReducers: builder => {
-    builder.addCase(fetchSpaceIdsOwnedByAccount.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchSpaceIdsFollowedByAccount.fulfilled, (state, { payload }) => {
       if (payload) adapter.upsertOne(state, payload)
     })
   }

@@ -2,7 +2,7 @@ import { Vec } from '@polkadot/types'
 import { SubsocialSubstrateApi } from '@subsocial/api'
 import { SpaceId as SubstrateSpaceId } from '@subsocial/types/substrate/interfaces'
 import { AppDispatch } from 'src/rtk/app/store'
-import { upsertFollowedSpaceIdsByAccount } from 'src/rtk/features/spaceIds/followedSpacesSlice'
+import { upsertFollowedSpaceIdsByAccount } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { AccountId, bnsToIds } from 'src/types'
 
 type ReploadSpaceIds = {
