@@ -13,6 +13,7 @@ import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { useAppSelector } from 'src/rtk/app/store'
 import { fetchProfile, selectProfile } from 'src/rtk/features/profiles/profilesSlice'
 import { ProfileContent, ProfileData, SpaceData, SpaceId } from 'src/types'
 import { AccountActivity } from '../activity/AccountActivity'
@@ -49,12 +50,11 @@ const Component = (props: Props) => {
   const {
     address,
     size = LARGE_AVATAR_SIZE,
-    owner
   } = props
 
   const [ followersOpen, setFollowersOpen ] = useState(false)
   const [ followingOpen, setFollowingOpen ] = useState(false)
-
+  const owner = useAppSelector(state => selectProfile(state, address.toString())) || props.owner
   const isMyAccount = isMyAddress(address)
 
   const noProfile = !owner?.struct.hasProfile
