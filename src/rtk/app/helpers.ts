@@ -103,16 +103,20 @@ export function selectManyByIds<
 
   ids.forEach((id) => {
     const struct = selectStructById(state, id)
-    if (struct && nonEmptyStr(struct.contentId)) {
-      const { contentId } = struct
-      const content = selectContentById(state, contentId)
-      // if (content) {
-      result.push({
+    if (struct) {
+      const item: EntityData<S, C> = {
         id: struct.id,
         struct,
-        content,
-      })
-      // }
+      }
+
+      if (nonEmptyStr(struct.contentId)) {
+        const { contentId } = struct
+        const content = selectContentById(state, contentId)
+        item.content = content
+      }
+
+      result.push(item)
+
     }
   })
 
