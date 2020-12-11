@@ -33,7 +33,8 @@ type Args = {
   visibility?: PostVisibility
   withContent?: boolean
   withOwner?: boolean
-  withSpace?: boolean
+  withSpace?: boolean,
+  reload?: boolean
 }
 
 export type SelectPostArgs = SelectOneArgs<Args>
@@ -137,12 +138,16 @@ export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
 export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkApiConfig>(
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
-    const { api, ids, withContent = true, withOwner = true, withSpace = true } = args
+    const { api, ids, withContent = true, withOwner = true, withSpace = true, reload } = args
  
-    const newIds = selectUnknownPostIds(getState(), ids)
-    if (!newIds.length) {
-      // Nothing to load: all ids are known and their posts are already loaded.
-      return []
+    let newIds = ids as string[]
+
+    if (!reload) {
+      newIds = selectUnknownPostIds(getState(), ids)
+      if (!newIds.length) {
+        // Nothing to load: all ids are known and their posts are already loaded.
+        return []
+      }
     }
 
     const structs = await api.substrate.findPosts({ ids: idsToBns(newIds) })
@@ -154,7 +159,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     entities.forEach((x) => {
       if (x.isComment) {
         const { rootPostId } = asCommentStruct(x)
-        if (!alreadyLoadedIds.has(rootPostId)) {
+        if (reload || !alreadyLoadedIds.has(rootPostId)) {
           rootPostIds.add(rootPostId)
         }
       }
