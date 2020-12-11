@@ -35,6 +35,12 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
     return <HiddenPostAlert post={post} desc={msg} className='mt-3' />
   }
 
+  let rootPostId = parentId
+
+  if (post.isComment) {
+    rootPostId = asCommentStruct(post).rootPostId
+  }
+
   let commentExt: Comment
 
   if (isComment) {
@@ -66,7 +72,8 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
         comment && changeReply({
           reply:comment.post.struct,
           parentId,
-          removableId: fakeId
+          removableId: fakeId,
+          rootPostId
         })
       })
 

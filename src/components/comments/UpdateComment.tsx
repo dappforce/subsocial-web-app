@@ -42,7 +42,7 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
       content
     })
 
-  const buildTxButton = ({ disabled, json, ipfs, setIpfsCid, onClick, onFailed }: CommentTxButtonType) =>
+  const buildTxButton = ({ disabled, json, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
     <TxButton
       type='primary'
       label='Edit'
@@ -59,8 +59,11 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
         onFailed && onFailed(txResult)
       }}
       onClick={() => {
-        updatePostToStore(json as PostContent)
         onClick && onClick()
+      }}
+      onSuccess={(txResult) => {
+        updatePostToStore(json as PostContent)
+        onSuccess && onSuccess(txResult)
       }}
     />
 

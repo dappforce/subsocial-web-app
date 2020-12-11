@@ -45,7 +45,6 @@ export const buildMockComment = ({ fakeId, address }: MockComment): PostStruct =
 
   return {
     id,
-
     ownerId: address,
     createdByAccount: address,
     createdAtBlock: 0,
