@@ -18,6 +18,8 @@ import DfMdEditor from '../../utils/DfMdEditor'
 import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
 import { CreateSpaceButton } from '../../spaces/helpers'
 import styles from './index.module.sass'
+import { useGetReloadPost, useGetReloadSpace } from 'src/rtk/app/hooks'
+import { bnToId } from 'src/types'
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
@@ -44,7 +46,8 @@ const InnerShareModal = (props: Props) => {
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
   const [ spaceId, setSpaceId ] = useState(spaceIds[0])
-
+  const reloadPost = useGetReloadPost()
+  const reloadSpace = useGetReloadSpace()
   const { control, errors, formState, watch } = useForm({
     validationSchema: buildSharePostValidationSchema(),
     reValidateMode: 'onBlur',
@@ -62,6 +65,8 @@ const InnerShareModal = (props: Props) => {
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
+    reloadPost({ id: bnToId(postId) })
+    reloadSpace({ id: bnToId(spaceId) })
     onClose()
   }
 
