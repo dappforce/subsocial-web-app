@@ -1,5 +1,4 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import { bnsToIds, idToBn, PostData, PostWithAllDetails } from 'src/types'
@@ -19,8 +18,8 @@ import { postUrl, spaceUrl } from 'src/components/urls'
 import { return404 } from 'src/components/utils/next'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
-
-const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
+import { StatsPanel } from '../PostStats'
+import { useAppSelector } from 'src/rtk/app/store'
 
 export type PostDetailsProps = {
   postData: PostWithAllDetails,
@@ -28,9 +27,11 @@ export type PostDetailsProps = {
 }
 
 export const PostPage: NextPage<PostDetailsProps> = (props) => {
-  const { postData } = props
+  const { postData: initialPostData } = props
 
   const { isNotMobile } = useResponsiveSize()
+
+  const postData = useAppSelector(state => selectPost(state, { id: initialPostData.id })) || initialPostData
 
   // TODO subscribe to post update
   // const struct = useSubscribedPost(initStruct)
@@ -47,7 +48,6 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   // }
 
   const { post, ext, space } = postData
-
   const { struct, content } = post
 
   if (!content) return null
@@ -89,7 +89,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
 
       <div className='DfRow'>
         <PostCreator postDetails={postData} withSpaceName space={spaceData} />
-        {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
+        {isNotMobile && <StatsPanel post={struct} goToCommentsId={goToCommentsId} />}
       </div>
 
       <div className='DfPostContent'>
