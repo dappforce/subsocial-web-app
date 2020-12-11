@@ -11,6 +11,7 @@ import { IconWithLabel } from '../utils'
 import { useResponsiveSize } from '../responsive'
 import { idToPostId, PostStruct } from 'src/types'
 import { useSubscribedPost } from '../posts/view-post'
+import { useGetReloadPost } from 'src/rtk/app/hooks'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
@@ -102,6 +103,7 @@ type VoterButtonsProps = VoterProps & {
 export const VoterButtons = (props: VoterButtonsProps) => {
   const { post: initialPost, only, ...voterProps } = props
   const myAddress = useMyAddress()
+  const reloadPost = useGetReloadPost()
   const [ reactionState, setReactionState ] = useState<Reaction>()
   const [ reloadTrigger, setReloadTrigger ] = useState(true)
 
@@ -133,7 +135,10 @@ export const VoterButtons = (props: VoterButtonsProps) => {
   const renderVoterButton = (reactionType: ReactionType) => <VoterButton
     reaction={reactionState}
     reactionType={reactionType}
-    onSuccess={() => setReloadTrigger(!reloadTrigger)}
+    onSuccess={() => {
+      setReloadTrigger(!reloadTrigger)
+      reloadPost({ id: post.id })
+    }}
     post={post}
     {...voterProps}
   />

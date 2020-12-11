@@ -2,20 +2,21 @@ import React, { FC, useState } from 'react'
 import { withCalls, withMulti, reactionsQueryToProp } from '../substrate'
 import { Loading } from '../utils'
 import { Modal, Button, Tabs } from 'antd'
-import { ReactionId, Reaction, PostId } from '@subsocial/types/substrate/interfaces/subsocial'
+import { ReactionId, Reaction } from '@subsocial/types/substrate/interfaces/subsocial'
 import { Pluralize } from '../utils/Plularize'
 import partition from 'lodash.partition'
 import { MutedDiv } from '../utils/MutedText'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { newLogger, nonEmptyArr, isEmptyArray } from '@subsocial/utils'
 import { AuthorPreviewWithOwner } from '../profiles/address-views'
+import BN from 'bn.js'
 
 const { TabPane } = Tabs
 
 const log = newLogger('List voters')
 
 type VotersProps = {
-  id: PostId,
+  id: BN,
   reactionIds?: ReactionId[],
   active?: number
   open: boolean,
