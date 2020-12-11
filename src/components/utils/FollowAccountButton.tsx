@@ -7,6 +7,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import TxButton from './TxButton'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { FollowButtonStub } from './FollowButtonStub'
+import { useGetReloadProfile } from 'src/rtk/app/hooks'
 
 const log = newLogger('FollowAccountButton')
 
@@ -18,6 +19,7 @@ type FollowAccountButtonProps = {
 function FollowAccountButton (props: FollowAccountButtonProps) {
   const { address, className = '' } = props
   const myAddress = useMyAddress()
+  const reloadProfile = useGetReloadProfile()
   const [ isFollower, setIsFollower ] = useState<boolean>()
 
   useSubsocialEffect(({ substrate }) => {
@@ -64,7 +66,11 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
       ? 'profileFollows.unfollowAccount'
       : 'profileFollows.followAccount'}
     params={buildTxParams}
-    onSuccess={() => setIsFollower(!isFollower)}
+    onSuccess={() => {
+      setIsFollower(!isFollower)
+      reloadProfile({ id: myAddress })
+      reloadProfile({ id: address.toString() })
+    }}
     withSpinner
   />
   </span>
