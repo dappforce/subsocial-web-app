@@ -20,6 +20,9 @@ import { editSpaceUrl } from '../urls'
 import ButtonLink from '../utils/ButtonLink'
 import { EditOutlined } from '@ant-design/icons'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
+import { useAppSelector } from 'src/rtk/app/store'
+import { selectSpace } from 'src/rtk/features/spaces/spacesSlice'
+import { shallowEqual } from 'react-redux'
 
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
 
@@ -30,11 +33,13 @@ export const ViewSpace = (props: Props) => {
     return <Error statusCode={props.statusCode} />
   }
 
-  const { spaceData } = props
+  const { spaceData: initialSpaceData } = props
 
-  if (isUnlistedSpace(spaceData)) {
+  if (isUnlistedSpace(initialSpaceData)) {
     return null
   }
+
+  const spaceData = useAppSelector(state => selectSpace(state, { id: initialSpaceData!.id }), shallowEqual) || initialSpaceData
 
   const {
     preview = false,
@@ -61,7 +66,6 @@ export const ViewSpace = (props: Props) => {
 
   const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
 
-  // TODO useCallback usage here looks wrong
   const Avatar = () => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />
 
   const isMy = isMySpace(space)
