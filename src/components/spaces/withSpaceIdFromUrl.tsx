@@ -3,29 +3,31 @@ import { useRouter } from 'next/router'
 import { SpaceId } from '@subsocial/types/substrate/interfaces'
 import BN from 'bn.js'
 import { getSpaceId } from '../substrate'
-import NoData from '../utils/EmptyList'
+import { newLogger } from '@subsocial/utils'
 
-export function withSpaceIdFromUrl<Props = { spaceId: SpaceId }>
-  (Component: React.ComponentType<Props>) {
+const log = newLogger(withSpaceIdFromUrl.name)
 
+export function withSpaceIdFromUrl
+  <Props = { spaceId: SpaceId }>
+  (Component: React.ComponentType<Props>)
+{
   return function (props: Props) {
     const router = useRouter()
-    const { spaceId } = router.query
-    const idOrHandle = spaceId as string
-    try {
-      const [ id, setId ] = useState<BN>()
+    const [ id, setId ] = useState<BN>()
+    const idOrHandle = router.query.spaceId as string
 
-      useEffect(() => {
-        const getId = async () => {
-          const id = await getSpaceId(idOrHandle)
-          id && setId(id)
-        }
-        getId().catch(err => console.error(err))
-      }, [ false ])
+    useEffect(() => {
+      let isMounted = true
 
-      return !id ? null : <Component spaceId={id} {...props} />
-    } catch (err) {
-      return <NoData description={`Invalid space ID or handle: ${idOrHandle}`}/>
-    }
+      getSpaceId(idOrHandle)
+        .then(res => isMounted && res && setId(res))
+        .catch(err => log.error('Failed to resolve space id by handle from URL', err))
+
+      return () => { isMounted = false }
+    }, [ idOrHandle ])
+
+    if (!id) return null
+
+    return <Component spaceId={id} {...props} />
   }
 }

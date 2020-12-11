@@ -1,53 +1,46 @@
-import React, { useState } from 'react'
+import { notDef } from '@subsocial/utils'
+import React from 'react'
+import { shallowEqual } from 'react-redux'
+import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
+import { selectSpaceIdsFollowedByAccount } from 'src/rtk/features/spaces/followedSpacesSlice'
+import { SpaceId } from 'src/types'
 import { useMyAddress } from '../auth/MyAccountContext'
-import TxButton from './TxButton'
-import { useSidebarCollapsed } from './SideBarCollapsedContext'
-import BN from 'bn.js'
-import { newLogger, notDef } from '@subsocial/utils'
-import useSubsocialEffect from '../api/useSubsocialEffect'
+import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
 import { BaseTxButtonProps } from '../substrate/SubstrateTxButton'
-
-const log = newLogger('FollowSpaceButton')
+import { FollowButtonStub } from './FollowButtonStub'
+import { useSubsocialApi } from './SubsocialApiContext'
+import TxButton from './TxButton'
 
 type FollowSpaceButtonProps = BaseTxButtonProps & {
-  spaceId: BN,
-};
+  spaceId: SpaceId
+}
 
 type InnerFollowSpaceButtonProps = FollowSpaceButtonProps & {
-  myAddress?: string
-};
+  myAddress: string
+}
 
 export function FollowSpaceButton (props: FollowSpaceButtonProps) {
   const myAddress = useMyAddress()
 
-  return <InnerFollowSpaceButton {...props} myAddress={myAddress}/>
+  if (!myAddress) return <FollowButtonStub />
+
+  return <InnerFollowSpaceButton {...props} myAddress={myAddress} />
 }
 
 export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
   const { spaceId, myAddress, ...otherProps } = props
-  const { reloadFollowed } = useSidebarCollapsed()
-  const [ isFollower, setIsFollower ] = useState<boolean>()
+  
+  // TODO This selector be moved to upper list component to improve performance.
+  const followedSpaceIds = useAppSelector(state => selectSpaceIdsFollowedByAccount(state, myAddress), shallowEqual)
+  const isFollower = followedSpaceIds.indexOf(spaceId) >= 0
+
+  const dispatch = useAppDispatch()
+  const { substrate } = useSubsocialApi()
 
   const onTxSuccess = () => {
-    reloadFollowed()
-    setIsFollower(!isFollower)
+    // TODO think maybe it's better to check a single fullow: my account + this space?
+    reloadSpaceIdsFollowedByAccount({ substrate, dispatch, account: myAddress })
   }
-
-  useSubsocialEffect(({ substrate }) => {
-    let isSubscribe = true
-
-    if (!myAddress) return isSubscribe && setIsFollower(false)
-
-    const load = async () => {
-      const res = await (substrate.isSpaceFollower(myAddress, spaceId))
-      isSubscribe && setIsFollower(res)
-    }
-
-    load().catch(err => log.error(
-      `Failed to check if the current account is following a space with id ${spaceId.toString()}. Error:`, err))
-
-    return () => { isSubscribe = false }
-  }, [ myAddress ])
 
   const buildTxParams = () => [ spaceId ]
 
@@ -64,7 +57,8 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
     label={loading ? undefined : label}
     tx={isFollower
       ? 'spaceFollows.unfollowSpace'
-      : 'spaceFollows.followSpace'}
+      : 'spaceFollows.followSpace'
+    }
     params={buildTxParams}
     onSuccess={onTxSuccess}
     withSpinner

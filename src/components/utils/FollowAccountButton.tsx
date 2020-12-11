@@ -6,6 +6,7 @@ import { newLogger, notDef } from '@subsocial/utils'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import TxButton from './TxButton'
 import AccountId from '@polkadot/types/generic/AccountId'
+import { FollowButtonStub } from './FollowButtonStub'
 
 const log = newLogger('FollowAccountButton')
 
@@ -20,22 +21,28 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
   const [ isFollower, setIsFollower ] = useState<boolean>()
 
   useSubsocialEffect(({ substrate }) => {
-    let isSubscribe = true
+    if (!myAddress) return setIsFollower(false)
 
-    if (!myAddress) return isSubscribe && setIsFollower(false)
+    let isMounted = true
 
     const load = async () => {
       const res = await substrate.isAccountFollower(myAddress, address)
-      isSubscribe && setIsFollower(res)
+      isMounted && setIsFollower(res)
     }
 
     load().catch(err => log.error(
-      `Failed to check if account is a follower of another account ${address?.toString()}. ${err}`))
+      'Failed to check if account is a follower of another account',
+      address?.toString(), err
+    ))
 
-    return () => { isSubscribe = false }
+    return () => { isMounted = false }
   }, [ myAddress ])
 
-  if (!address || isMyAddress(address)) return null
+  // I'm signed in and I am looking at my account
+  if (myAddress && isMyAddress(address)) return null
+
+  // I'm not signed in
+  if (!myAddress) return <FollowButtonStub />
 
   const accountId = new GenericAccountId(registry, address)
 

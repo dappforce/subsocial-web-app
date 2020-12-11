@@ -1,107 +1,70 @@
-import { Post, Space } from '@subsocial/types/substrate/interfaces'
-import { PostWithSomeDetails } from '@subsocial/types'
-import React, { useState, useCallback } from 'react'
-import { nonEmptyArr, newLogger } from '@subsocial/utils'
+import { PostId } from 'src/types'
+import React, { FC, useState } from 'react'
+import { isEmptyArray, nonEmptyArr } from '@subsocial/utils'
 import ViewComment from './ViewComment'
-import { useSelector, useDispatch } from 'react-redux'
-import { getComments } from 'src/redux/slices/replyIdsByPostIdSlice'
-import { Store } from 'src/redux/types'
-import { useSetReplyToStore } from './utils'
-import useSubsocialEffect from '../api/useSubsocialEffect'
-import { LoadingOutlined } from '@ant-design/icons'
-import { MutedDiv } from '../utils/MutedText'
-import { isFakeId } from './helpers'
 import DataList from '../lists/DataList'
-import { ZERO, resolveBn } from '../utils'
-
-const log = newLogger('CommentTree')
-
-type LoadProps = {
-  rootPost?: Post,
-  parent: Post,
-  space: Space,
-  replies?: PostWithSomeDetails[]
-}
+import { PostStruct, SpaceStruct } from 'src/types'
+import { shallowEqual } from 'react-redux'
+import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
+import { fetchPosts, selectPost, selectPosts } from 'src/rtk/features/posts/postsSlice'
+import { fetchPostReplyIds, selectReplyIds } from 'src/rtk/features/replies/repliesSlice'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { Loading } from '../utils'
 
 type CommentsTreeProps = {
-  rootPost?: Post,
-  space: Space,
-  comments: PostWithSomeDetails[]
+  space: SpaceStruct,
+  rootPost?: PostStruct,
+  parentId: PostId,
 }
 
-const ViewCommentsTree: React.FunctionComponent<CommentsTreeProps> = ({ comments, rootPost, space }) => {
-  return nonEmptyArr(comments) ? <DataList
-    dataSource={comments}
-    renderItem={(item) => {
-      const { post: { struct } } = item
-      const key = `comment-${struct.id.toString()}`
-      return <ViewComment key={key} space={space} rootPost={rootPost} comment={item} withShowReplies/>
-    }}
-  /> : null
-}
+export const ViewCommentsTree: FC<CommentsTreeProps> = ({ space, rootPost, parentId }) => {
+  const dispatch = useAppDispatch()
+  
+  const comment = useAppSelector(state => selectPost(state, { id: parentId }), shallowEqual)
+  const { repliesCount = 0 } = comment?.post.struct || {}
+  const { replyIds = []} = useAppSelector(state => selectReplyIds(state, parentId), shallowEqual) || {}
+  const postsArgs = { ids: replyIds, withSpace: false }
+  const comments = useAppSelector(state => selectPosts(state, postsArgs), shallowEqual)
+  const [ loading, setLoading ] = useState(false)
 
-export const DynamicCommentsTree = (props: LoadProps) => {
-  const { rootPost, parent: { id: parentId }, space, replies } = props
-  const parentIdStr = parentId.toString()
+  useSubsocialEffect(({ subsocial }) => {
+    if (!repliesCount || nonEmptyArr(replyIds)) return
 
-  if (isFakeId(props.parent)) return null
+    let isMounted = true
+    setLoading(true)
 
-  const dispatch = useDispatch()
+    dispatch(fetchPostReplyIds({ api: subsocial, ids: [ parentId ]}))
+      .then(() => isMounted && setLoading(false))
 
-  const [ isLoading, setIsLoading ] = useState(true)
-  const [ replyComments, setComments ] = useState(replies || [])
+    return () => { isMounted = false }
+  }, [ parentId, repliesCount ])
 
-  const hasComments = nonEmptyArr(replyComments)
+  useSubsocialEffect(({ subsocial }) => {
+    if (isEmptyArray(replyIds) || nonEmptyArr(comments)) return
 
-  useSubsocialEffect(({ subsocial, substrate }) => {
-    if (!isLoading) return
+    let isMounted = true
+    setLoading(true)
 
-    let isSubscribe = true
+    dispatch(fetchPosts({ api: subsocial, ...postsArgs }))
+      .then(() => isMounted && setLoading(false))
 
-    const loadComments = async () => {
-      const replyIds = await substrate.getReplyIdsByPostId(parentId)
-      const comments = await subsocial.findPostsWithAllDetails({ ids: replyIds }) || []
-      const replyIdsStr = replyIds.map(x => x.toString())
-      const reply = { replyId: replyIdsStr, parentId: parentIdStr }
+    return () => { isMounted = false }
+  }, [ parentId, replyIds.length ])
 
-      if (isSubscribe) {
-        setComments(comments)
-        useSetReplyToStore(dispatch, { reply, comment: comments })
-      }
-    }
 
-    if (hasComments) {
-      const replyIds = replyComments.map(x => x.post.struct.id.toString())
-      useSetReplyToStore(dispatch, { reply: { replyId: replyIds, parentId: parentIdStr }, comment: replyComments })
-    } else {
-      loadComments()
-        .then(() => isSubscribe && setIsLoading(false))
-        .catch(err => log.error('Failed to load comments: %o', err))
-    }
+  // console.log('ViewCommentsTree', { parentId, repliesCount, replyIds })
 
-    return () => { isSubscribe = false }
+  if (!comment) return null
 
-  }, [ false ])
+  if (loading) return <Loading label='Loading replies...' center={false} />
 
-  return isLoading && !hasComments
-    ? <MutedDiv className='mt-2 mb-2'><LoadingOutlined className='mr-1' /> Loading replies...</MutedDiv>
-    : <ViewCommentsTree space={space} rootPost={rootPost} comments={replyComments} />
-}
+  if (isEmptyArray(comments)) return null
 
-export const CommentsTree = (props: LoadProps) => {
-  const { parent: { id: parentId, replies_count } } = props
-
-  const count = resolveBn(replies_count)
-  const parentIdStr = parentId.toString()
-
-  const comments = useSelector((store: Store) => getComments(store, parentIdStr))
-  const hasComments = nonEmptyArr(comments)
-
-  const Tree = useCallback(() => nonEmptyArr(comments)
-  ? <ViewCommentsTree {...props} comments={comments} />
-  : <DynamicCommentsTree {...props} />, [ comments.length, parentIdStr, count.toString() ])
-
-  if (count.eq(ZERO) && !hasComments) return null
-
-  return <Tree />
+  return (
+    <DataList
+      dataSource={comments}
+      getKey={comment => comment.id}
+      renderItem={comment => <ViewComment space={space} rootPost={rootPost} comment={comment} />}
+    />
+  )
 }

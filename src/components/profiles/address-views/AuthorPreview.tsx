@@ -1,5 +1,5 @@
-import React from 'react'
-import { ProfileData } from '@subsocial/types'
+import React, { FC } from 'react'
+import { ProfileData } from 'src/types'
 import { Popover } from 'antd'
 import Avatar from './Avatar'
 import ProfilePreview from './ProfilePreview'
@@ -17,7 +17,7 @@ export type InfoProps = {
   details?: JSX.Element
 }
 
-export const InfoDetails: React.FunctionComponent<InfoProps> = ({
+export const InfoDetails: FC<InfoProps> = ({
   details, balance, address
 }) => {
   return <>
@@ -82,4 +82,4 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
 
 export const AuthorPreviewWithOwner = withLoadedOwner(AuthorPreview)
 
-export default AuthorPreviewWithOwner
+export default AuthorPreview

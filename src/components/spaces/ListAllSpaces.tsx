@@ -1,52 +1,49 @@
-import React from 'react'
-import { ViewSpace } from './ViewSpace'
-import { NextPage } from 'next'
-import { SpaceData } from '@subsocial/types/dto'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
-import { CreateSpaceButton } from './helpers'
-import { getReversePageOfSpaceIds, approxCountOfPublicSpaces } from '../utils/getIds'
 import BN from 'bn.js'
-import { ZERO, resolveBn } from '../utils'
+import React, { FC } from 'react'
+import { SpaceId } from 'src/types'
+import { useFetchSpaces } from 'src/rtk/app/hooks'
+import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { stringifyBns } from 'src/utils'
 import { PaginatedList } from '../lists/PaginatedList'
 import { PageContent } from '../main/PageWrapper'
-
-type Props = {
-  spacesData?: SpaceData[]
-  totalSpaceCount?: BN
-}
+import { approxCountOfPublicSpaces, getReversePageOfSpaceIds } from '../utils/getIds'
+import { CreateSpaceButton } from './helpers'
+import { Loading } from '../utils'
+import { SpacePreview } from './SpacePreview'
 
 const getTitle = (count: number | BN) => `Explore Spaces (${count})`
 
+type Props = {
+  spaceIds: SpaceId[]
+  totalSpaceCount?: number
+}
+
 export const ListAllSpaces = (props: Props) => {
-  const { spacesData = [], totalSpaceCount = ZERO } = props
-  const totalCount = resolveBn(totalSpaceCount).toNumber()
-  const title = getTitle(totalCount) // TODO resolve bn when as hex and as BN
+  const { spaceIds, totalSpaceCount = 0 } = props
+  const title = getTitle(totalSpaceCount)
+  const { entities: spacesData, loading } = useFetchSpaces({ ids: spaceIds })
+
+  if (loading) return <Loading label='Loading spaces' />
 
   return (
     <div className='ui huge relaxed middle aligned divided list ProfilePreviews'>
       <PaginatedList
         title={title}
-        totalCount={totalCount}
+        totalCount={totalSpaceCount}
         dataSource={spacesData}
         noDataDesc='There are no spaces yet'
         noDataExt={<CreateSpaceButton />}
-        renderItem={(item: any) =>
-          <ViewSpace
-            key={item.struct.id.toString()}
-            {...props}
-            spaceData={item}
-            withFollowButton
-            preview
-          />
-        }
+        getKey={item => item.id}
+        renderItem={(item) => <SpacePreview space={item} />}
       />
     </div>
   )
 }
 
-const ListAllSpacesPage: NextPage<Props> = (props) => {
-  const { totalSpaceCount = ZERO } = props
-  const title = getTitle(resolveBn(totalSpaceCount))
+const ListAllSpacesPage: FC<Props> = (props) => {
+  const { totalSpaceCount = 0 } = props
+  const title = getTitle(totalSpaceCount)
 
   return <PageContent
     meta={{
@@ -58,20 +55,19 @@ const ListAllSpacesPage: NextPage<Props> = (props) => {
   </PageContent>
 }
 
-ListAllSpacesPage.getInitialProps = async (props): Promise<Props> => {
-  const { query } = props
-  const subsocial = await getSubsocialApi()
+getInitialPropsWithRedux(ListAllSpacesPage, async ({ context, subsocial, dispatch }) => {
+  const { query } = context
   const { substrate } = subsocial
 
+  // TODO use redux
   const nextSpaceId = await substrate.nextSpaceId()
-  const spaceIds = await getReversePageOfSpaceIds(nextSpaceId, query)
-  const spacesData = await subsocial.findPublicSpaces(spaceIds)
-  const totalSpaceCount = approxCountOfPublicSpaces(nextSpaceId)
+  const spaceIds = stringifyBns(await getReversePageOfSpaceIds(nextSpaceId, query))
 
-  return {
-    spacesData,
-    totalSpaceCount
-  }
-}
+  // TODO fetch only public spaces!
+  await dispatch(fetchSpaces({ api: subsocial, ids: spaceIds, withOwner: false, /* TODO visibility: 'public' */ }))
+  const totalSpaceCount = approxCountOfPublicSpaces(nextSpaceId).toNumber()
+
+  return { spaceIds, totalSpaceCount }
+})
 
 export default ListAllSpacesPage

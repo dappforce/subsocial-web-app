@@ -1,5 +1,5 @@
 import { EllipsisOutlined } from '@ant-design/icons'
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { Dropdown, Menu } from 'antd'
 import Link from 'next/link'
 import React from 'react'

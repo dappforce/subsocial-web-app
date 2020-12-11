@@ -24,14 +24,15 @@ export const useExtensionName = (address: AnyAccountId) => {
 
 type ProfileLink = BareProps & {
   address: AnyAccountId,
-  title?: string
+  title?: string,
+  onClick?: () => void
 }
 
 export const AccountSpacesLink = ({ address, title = 'Spaces', ...otherProps }: ProfileLink) => <Link href='/accounts/[address]/spaces' as={accountUrl({ address }, 'spaces')}><a {...otherProps}>{title}</a></Link>
 
-export const EditProfileLink = ({ address, title = 'Edit profile', ...props }: ProfileLink) => isMyAddress(address)
+export const EditProfileLink = ({ address, title = 'Edit my profile', onClick, ...props }: ProfileLink) => isMyAddress(address)
   ? <Link href='/accounts/edit' as='/accounts/edit'>
-    <a {...props}>{title}</a>
+    <a onClick={onClick} {...props}>{title}</a>
   </Link>
   : null
 

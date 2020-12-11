@@ -1,32 +1,29 @@
-import { Space } from '@subsocial/types/substrate/interfaces'
-import BN from 'bn.js'
 import Link from 'next/link'
 import React, { useState } from 'react'
 
 import { SpaceFollowersModal } from '../profiles/AccountsListModal'
-import { ZERO } from '../utils'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import { spaceUrl } from '../urls'
 import AboutSpaceLink from './AboutSpaceLink'
 import { isMySpace } from './helpers'
 import { useResponsiveSize } from '../responsive'
+import { SpaceStruct } from 'src/types'
 
 type Props = {
-  space: Space
+  space: SpaceStruct
 }
 
 export const SpaceStatsRow = ({ space }: Props) => {
   const {
     id,
     score,
-    posts_count,
-    followers_count: followers
+    postsCount,
+    followersCount
   } = space
 
   const { isMobile } = useResponsiveSize()
   const [ followersOpen, setFollowersOpen ] = useState(false)
-  const postsCount = new BN(posts_count).eq(ZERO) ? 0 : new BN(posts_count)
   const statLinkCss = 'DfStatItem'
 
   return (
@@ -38,7 +35,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
       </Link>
 
       <div onClick={() => setFollowersOpen(true)} className={statLinkCss} style={{ cursor: 'pointer' }}>
-        <Pluralize count={followers} singularText='Follower' />
+        <Pluralize count={followersCount} singularText='Follower' />
       </div>
 
       {!isMobile && <>
@@ -54,8 +51,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
       {followersOpen &&
         <SpaceFollowersModal
           id={id}
-          title={<Pluralize count={followers} singularText='Follower'/>}
-          accountsCount={space.followers_count}
+          title={<Pluralize count={followersCount} singularText='Follower' />}
           open={followersOpen}
           close={() => setFollowersOpen(false)}
         />

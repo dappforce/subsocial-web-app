@@ -1,13 +1,17 @@
-import React, { useReducer, createContext, useContext, useEffect } from 'react'
-import store from 'store'
-import { newLogger, nonEmptyStr } from '@subsocial/utils'
-import { AnyAccountId } from '@subsocial/types'
-import { equalAddresses } from '../substrate'
-import { ProfileData } from '@subsocial/types'
-import useSubsocialEffect from '../api/useSubsocialEffect'
-import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { Option } from '@polkadot/types'
-import { resolveCidOfContent } from '@subsocial/api/utils'
+import { AccountInfo } from '@polkadot/types/interfaces'
+import { AnyAccountId } from '@subsocial/types'
+import { SocialAccount } from '@subsocial/types/substrate/interfaces'
+import { newLogger, nonEmptyStr } from '@subsocial/utils'
+import React, { createContext, useContext, useEffect, useReducer } from 'react'
+import { useDispatch } from 'react-redux'
+import { convertToDerivedContent, flattenProfileStruct, ProfileData } from 'src/types'
+import store from 'store'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
+import { equalAddresses } from '../substrate'
+import { ONE } from '../utils'
+import BN from 'bn.js'
 
 const log = newLogger('MyAccountContext')
 
@@ -22,16 +26,15 @@ function storeDidSignIn () {
   store.set(DID_SIGN_IN, true)
 }
 
-export function readMyAddress (): string | undefined {
+function readMyAddress (): string | undefined {
   const myAddress: string | undefined = store.get(MY_ADDRESS)
   if (nonEmptyStr(myAddress)) {
     storeDidSignIn()
   }
-  log.info(`Read my address from the local storage: ${print(myAddress)}`)
   return myAddress
 }
 
-export function storeMyAddress (myAddress: string) {
+function storeMyAddress (myAddress: string) {
   store.set(MY_ADDRESS, myAddress)
   storeDidSignIn()
 }
@@ -39,20 +42,25 @@ export function storeMyAddress (myAddress: string) {
 export const didSignIn = (): boolean => store.get(DID_SIGN_IN)
 
 type MyAccountState = {
-  inited: boolean,
-  address?: string,
-  account?: ProfileData
-};
+  inited: boolean
+  address?: string
+  account?: ProfileData // TODO rename to accountData or profile
+  accountInfo?: AccountInfo
+  clientNonce?: BN
+}
 
 type MyAccountAction = {
-  type: 'reload' | 'setAddress' | 'forget' | 'forgetExact' | 'setAccount',
-  address?: string,
-  account?: ProfileData
-};
+  type: 'reload' | 'setAddress' | 'setAccount' | 'setAccountInfo' | 'incClientNonce' | 'forget'
+  address?: string
+  account?: ProfileData // TODO rename to accountData or profile
+  accountInfo?: AccountInfo
+  clientNonce?: BN
+}
 
 function reducer (state: MyAccountState, action: MyAccountAction): MyAccountState {
+
   function forget () {
-    log.info('Forget my address and injected accounts')
+    log.info('Delete my address from the local storage')
     store.remove(MY_ADDRESS)
     return { ...state, address: undefined }
   }
@@ -62,7 +70,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
   switch (action.type) {
     case 'reload':
       address = readMyAddress()
-      log.info(`Reload my address: ${print(address)}`)
+      log.info(`Reload my address from the local storage: ${print(address)}`)
       return { ...state, address, inited: true }
 
     case 'setAddress':
@@ -79,8 +87,28 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
       return state
 
     case 'setAccount': {
-      const account = action.account
+      const { account } = action
       return { ...state, account }
+    }
+
+    case 'setAccountInfo': {
+      const { accountInfo } = action
+      const clientNonce = accountInfo?.nonce
+      return { ...state, accountInfo, clientNonce }
+    }
+
+    case 'incClientNonce': {
+      const currentNonce = state.clientNonce
+      if (!currentNonce) return state
+
+      const clientNonce = currentNonce.add(ONE)
+      log.debug(
+        'Chain nonce:',
+        state.accountInfo?.nonce.toNumber() || 'n/a',
+        '; New client nonce:',
+        clientNonce?.toNumber() || 'n/a'
+      )
+      return { ...state, clientNonce }
     }
 
     case 'forget':
@@ -91,7 +119,7 @@ function reducer (state: MyAccountState, action: MyAccountAction): MyAccountStat
   }
 }
 
-function functionStub () {
+function functionStub (): any {
   log.error(`Function needs to be set in ${MyAccountProvider.name}`)
 }
 
@@ -101,9 +129,10 @@ const initialState = {
 }
 
 export type MyAccountContextProps = {
-  state: MyAccountState,
-  dispatch: React.Dispatch<MyAccountAction>,
-  setAddress: (address: string) => void,
+  state: MyAccountState
+  dispatch: React.Dispatch<MyAccountAction>
+  setAddress: (address: string) => void
+  incClientNonce: () => void
   signOut: () => void
 };
 
@@ -111,13 +140,20 @@ const contextStub: MyAccountContextProps = {
   state: initialState,
   dispatch: functionStub,
   setAddress: functionStub,
-  signOut: functionStub
+  incClientNonce: functionStub,
+  signOut: functionStub,
+}
+
+type UnsubscribeFn = {
+  (): void | undefined;
+  (): void;
 }
 
 export const MyAccountContext = createContext<MyAccountContextProps>(contextStub)
 
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState)
+  const reduxDispatch = useDispatch()
 
   const { inited, address } = state
 
@@ -130,38 +166,58 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   useSubsocialEffect(({ substrate: { api }, subsocial: { ipfs } }) => {
     if (!inited || !address) return
 
-    let unsub: { (): void | undefined; (): void; }
+    let unsubSocialAccount: UnsubscribeFn
+    let unsubAccountInfo: UnsubscribeFn
 
-    const sub = async () => {
+    const loadAndSubscribe = async () => {
       const readyApi = await api
 
-      unsub = await readyApi.query.profiles.socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
-        let account: ProfileData | undefined
-        const struct = optSocialAccount.unwrapOr(undefined)
+      unsubSocialAccount = await readyApi.query.profiles
+        .socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
+          let account: ProfileData | undefined
+          const subtrateStruct = optSocialAccount.unwrapOr(undefined)
 
-        if (struct) {
-          const profile = struct.profile.unwrapOr(undefined)
-          const cid = profile && resolveCidOfContent(profile.content)
-          const content = cid ? await ipfs.findProfile(cid) : undefined
+          if (subtrateStruct) {
+            const struct = flattenProfileStruct(address, subtrateStruct)
+            const { contentId } = struct
 
-          account = { struct, profile, content }
-        }
+            // TODO use redux to get profile content or do not store profile content in MyAccountContext
+            const content = contentId ? await ipfs.findProfile(contentId) : undefined
+            
+            account = { id: address, struct, content: convertToDerivedContent(content) }
+          }
 
-        dispatch({ type: 'setAccount', account })
-      })
+          log.debug('Social account updated on chain:', account)
+          dispatch({ type: 'setAccount', account })
+        })
+      
+      unsubAccountInfo = await readyApi.query.system
+        .account(address, async (accountInfo: AccountInfo) => {
+          log.debug('Account info updated on chain:', accountInfo.toJSON())
+          dispatch({ type: 'setAccountInfo', accountInfo })
+        })
     }
 
-    sub()
+    loadAndSubscribe()
 
-    return () => { unsub && unsub() }
+    return () => {
+      unsubSocialAccount && unsubSocialAccount()
+      unsubAccountInfo && unsubAccountInfo()
+    }
+  }, [ inited, address ])
 
-  }, [ inited, address || '' ])
+  useSubsocialEffect(({ substrate }) => {
+    if (!inited || !address) return
 
-  const contextValue = {
+    reloadSpaceIdsFollowedByAccount({ substrate, dispatch: reduxDispatch, account: address })
+  }, [ reduxDispatch, inited, address ])
+
+  const contextValue: MyAccountContextProps = {
     state,
     dispatch,
     setAddress: (address: string) => dispatch({ type: 'setAddress', address }),
-    signOut: () => dispatch({ type: 'forget' })
+    incClientNonce: () => dispatch({ type: 'incClientNonce' }),
+    signOut: () => dispatch({ type: 'forget' }),
   }
 
   return (
@@ -177,6 +233,10 @@ export function useMyAccount () {
 
 export function useMyAddress () {
   return useMyAccount().state.address
+}
+
+export function useClientNonce () {
+  return useMyAccount().state.clientNonce
 }
 
 export function isMyAddress (anotherAddress?: AnyAccountId) {

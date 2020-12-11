@@ -1,9 +1,8 @@
 import dynamic from 'next/dynamic'
-import { NextPage } from 'next'
 import { uiShowFeed } from 'src/components/utils/env'
 import { PageNotFound } from 'src/components/utils'
 const MyFeed = dynamic(() => import('../components/activity/MyFeed'), { ssr: false })
 
-export const Page: NextPage<{}> = () => <MyFeed title={'My feed'} />
+export const page = () => <MyFeed />
 
-export default uiShowFeed ? Page : PageNotFound
+export default uiShowFeed ? page : PageNotFound

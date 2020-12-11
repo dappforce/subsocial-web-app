@@ -1,7 +1,7 @@
 import React from 'react'
 import { toShortAddress } from 'src/components/utils'
 import { AddressProps } from './utils/types'
-import { ProfileData } from '@subsocial/types'
+import { ProfileData } from 'src/types'
 import { withLoadedOwner } from './utils/withLoadedOwner'
 import ViewProfileLink from '../ViewProfileLink'
 import { useExtensionName } from './utils'

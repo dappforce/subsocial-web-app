@@ -1,4 +1,4 @@
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { AnyAccountId } from '@subsocial/types/substrate'
 import { isEmptyStr } from '@subsocial/utils'
 import { useRouter } from 'next/router'
@@ -14,20 +14,20 @@ export const useLoadUnlistedSpace = (address: AnyAccountId) => {
 
   const [ myHiddenSpace, setMyHiddenSpace ] = useState<SpaceData>()
 
-  useSubsocialEffect(({ subsocial }) => {
-    if (!isMySpace || isEmptyStr(idOrHandle)) return
+  useSubsocialEffect(({ flatApi, subsocial }) => {
+    let isMounted = true
 
-    let isSubscribe = true
+    if (!isMySpace || isEmptyStr(idOrHandle)) return
 
     const loadSpaceFromId = async () => {
       const id = await getSpaceId(idOrHandle, subsocial)
-      const spaceData = id && await subsocial.findSpace({ id })
-      isSubscribe && spaceData && setMyHiddenSpace(spaceData)
+      const spaceData = id && await flatApi.findSpace({ id })
+      isMounted && spaceData && setMyHiddenSpace(spaceData)
     }
 
     loadSpaceFromId()
 
-    return () => { isSubscribe = false }
+    return () => { isMounted = false }
   }, [ isMySpace ])
 
   return {

@@ -3,10 +3,13 @@ import { SignOutButton } from 'src/components/auth/AuthButtons'
 import { AccountSelector } from './AccountSelector'
 import PrivacyPolicyLinks from '../utils/PrivacyPolicyLinks'
 import { Divider } from 'antd'
+import { ActionMenu } from './ActionMenu'
 
-export const AccountMenu = () => {
-  return <div className='DfAccountMenu'>
+export const MyAccountSection = () => {
+  return <div>
     <AccountSelector />
+    <Divider className='my-0' />
+    <ActionMenu />
     <Divider className='mb-3 mt-0' />
     <SignOutButton />
     <Divider className='mt-3 mb-0' />
@@ -14,4 +17,4 @@ export const AccountMenu = () => {
   </div>
 }
 
-export default AccountMenu
+export default MyAccountSection

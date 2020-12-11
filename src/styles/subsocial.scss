@@ -1362,7 +1362,8 @@ hr {
   }
 
   .SelectAccountItem:hover {
-    background-color: #e6f7ff;
+    background-color: $color_hover_selectable_bg;
+    color: $color_link;
   }
 }
 
@@ -1370,13 +1371,6 @@ hr {
   display: flex;
   cursor: pointer;
   margin: 0 1rem;
-
-  &.icon {
-    &:after {
-      content: "▼";
-      zoom: 0.8;
-    }
-  }
 
   .DfAddressIcon {
     .ui--IdentityIcon {
@@ -1499,12 +1493,6 @@ hr {
   }
 }
 
-/* .DfMainContent {
-  min-width: 428px;
-  max-width: calc(680px + #{$space_normal} * 2);
-  width: calc(680px + #{$space_normal} * 2);
-} */
-
 .DfPanel {
   margin: 0 $space_normal;
   width: $width_panel;
@@ -1563,8 +1551,10 @@ hr {
 }
 
 .DfAccountMenu {
-  @extend .DfCard;
-  padding: 0;
+  .ant-drawer-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .DfActivityMsg {

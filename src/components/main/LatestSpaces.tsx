@@ -1,7 +1,6 @@
 import React from 'react'
-import { Space } from '@subsocial/types/substrate/interfaces'
 import { ViewSpace } from '../spaces/ViewSpace'
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { CreateSpaceButton, AllSpacesLink } from '../spaces/helpers'
 import DataList from '../lists/DataList'
 import { ButtonLink } from 'src/components/utils/ButtonLink'
@@ -24,10 +23,11 @@ export const LatestSpaces = (props: Props) => {
       dataSource={spaces}
       noDataDesc='No spaces found'
       noDataExt={<CreateSpaceButton />}
+      getKey={item => item.id}
       renderItem={(item) =>
         <ViewSpace
           {...props}
-          key={(item.struct as Space).id.toString()}
+          key={item.id}
           spaceData={item}
           withFollowButton
           preview

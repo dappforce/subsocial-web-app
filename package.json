@@ -41,7 +41,7 @@
     "@storybook/addon-viewport": "^5.3.18",
     "@storybook/react": "^5.2.5",
     "@subsocial/config": "^0.4.23",
-    "@subsocial/types": "^0.4.23",
+    "@subsocial/types": "^0.4.26",
     "@types/faker": "^4.1.7",
     "@types/jest": "^24.0.16",
     "@types/jsonabc": "^2.3.1",

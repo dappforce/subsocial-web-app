@@ -1,9 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
-import { HasSpaceIdOrHandle, spaceUrl } from '../urls'
+import { spaceUrl } from '../urls'
+import { SpaceStruct } from 'src/types'
 
 type Props = {
-  space: HasSpaceIdOrHandle
+  space: SpaceStruct
   title?: React.ReactNode
   hint?: string
   className?: string

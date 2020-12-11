@@ -5,8 +5,9 @@ import BN from 'bn.js'
 import { getNewIdFromEvent, equalAddresses, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { PostExtension, PostUpdate, OptionId, OptionBool, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
-import { IpfsCid, PostId } from '@subsocial/types/substrate/interfaces'
-import { PostContent, PostData } from '@subsocial/types'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
+import { PostContent } from '@subsocial/types'
+import { AnyId, idToBn, PostData } from 'src/types'
 import { registry } from '@subsocial/types/substrate/registry'
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
@@ -127,9 +128,9 @@ export function InnerForm (props: FormProps) {
     id && goToView(id)
   }
 
-  const goToView = (postId: BN) => {
+  const goToView = (postId: AnyId) => {
     const content = getFieldValues() as PostContent
-    const postData = { struct: { id: postId as PostId }, content }
+    const postData = { struct: { id: postId.toString() }, content }
     router.push('/[spaceId]/[slug]', postUrl(space.struct, postData))
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
@@ -251,16 +252,23 @@ function LoadPostThenEdit (props: FormProps) {
   const [ isLoaded, setIsLoaded ] = useState(false)
   const [ post, setPost ] = useState<PostData>()
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
     if (!postId) return
 
+    let isMounted = true
+    
     const load = async () => {
       setIsLoaded(false)
-      setPost(await subsocial.findPost({ id: postId }))
-      setIsLoaded(true)
+      const res = await flatApi.findPost({ id: idToBn(postId) })
+      if (isMounted) {
+        setPost(res)
+        setIsLoaded(true)
+      }
     }
 
     load()
+
+    return () => { isMounted = false }
   }, [ postId?.toString() ])
 
   if (!postId) return <NoData description='Post id not found in URL' />
@@ -269,7 +277,7 @@ function LoadPostThenEdit (props: FormProps) {
 
   if (!post) return <NoData description='Post not found' />
 
-  const postOwner = post.struct?.owner
+  const postOwner = post.struct?.ownerId
   const isOwner = equalAddresses(myAddress, postOwner)
   if (!isOwner) return <NoData description='You do not have permission to edit this post' />
 

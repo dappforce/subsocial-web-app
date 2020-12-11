@@ -5,9 +5,8 @@ import { LabeledValue } from 'antd/lib/select'
 import BN from 'bn.js'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { isEmptyArray } from '@subsocial/utils'
-import { SpaceData } from '@subsocial/types/dto'
+import { SpaceData } from 'src/types'
 import { SpaceAvatar } from '../spaces/helpers'
-
 
 type Props = {
   imageSize?: number,
@@ -15,8 +14,7 @@ type Props = {
   onSelect?: (value: string | number | LabeledValue) => void,
   defaultValue?: string,
   spacesData?: SpaceData[]
-};
-
+}
 
 const SelectSpacePreview = (props: Props) => {
   const { spacesData = [], onSelect, defaultValue, imageSize } = props
@@ -31,14 +29,14 @@ const SelectSpacePreview = (props: Props) => {
     {spacesData.map(({ struct, content }) => {
       if (!content) return null
 
-      const { id, owner } = struct
+      const { id, ownerId } = struct
       const { image, name } = content
 
       const idStr = id.toString()
 
       return <Select.Option value={idStr} key={idStr}>
         <div className={'ProfileDetails DfPreview'}>
-          <SpaceAvatar address={owner} space={struct} avatar={image} size={imageSize} asLink={false} />
+          <SpaceAvatar address={ownerId} space={struct} avatar={image} size={imageSize} asLink={false} />
           <div className='content'>
             <div className='handle'>{name}</div>
           </div>
@@ -53,13 +51,18 @@ const GetSpaceData = (Component: React.ComponentType<Props>) => {
     const { spaceIds } = props
     const [ currentSpacesData, setCurrentSpacesData ] = useState<SpaceData[]>([])
 
-    useSubsocialEffect(({ subsocial }) => {
+    useSubsocialEffect(({ flatApi }) => {
+      let isMounted = true
+
       const loadSpaces = async () => {
-        const spacesData = await subsocial.findPublicSpaces(spaceIds)
-        setCurrentSpacesData(spacesData)
+        // TODO use redux
+        const spacesData = await flatApi.findPublicSpaces(spaceIds)
+        isMounted && setCurrentSpacesData(spacesData)
       }
 
       loadSpaces()
+
+      return () => { isMounted = false }
     }, [ spaceIds ])
 
     if (isEmptyArray(spaceIds)) return null

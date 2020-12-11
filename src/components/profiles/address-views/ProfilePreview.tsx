@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { AddressProps } from './utils/types'
 import Avatar from './Avatar'
 import { nonEmptyStr } from '@subsocial/utils'
 import { Pluralize } from 'src/components/utils/Plularize'
 import NameDetails from './utils/NameDetails'
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal'
-import { ProfileContent, ProfileData } from '@subsocial/types'
+import { ProfileContent } from 'src/types'
+import { ProfileData } from 'src/types'
 import { withLoadedOwner, withMyProfile } from './utils/withLoadedOwner'
 import { SummarizeMd } from 'src/components/utils/md'
 import ViewProfileLink from '../ViewProfileLink'
@@ -19,7 +20,15 @@ type ProfilePreviewProps = AddressProps & {
   size?: number
 }
 
-export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ address, withLabel, className, withAbout = false, owner = {} as ProfileData, size, mini = false }) => { // TODO fix CSS style
+export const ProfilePreview: FC<ProfilePreviewProps> = ({
+  address,
+  withLabel,
+  className,
+  withAbout = false,
+  owner = {} as ProfileData,
+  size,
+  mini = false
+}) => {
   const [ followersOpen, setFollowersOpen ] = useState(false)
   const [ followingOpen, setFollowingOpen ] = useState(false)
 
@@ -27,8 +36,8 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
   const { about, avatar } = content
   const accountForUrl = { address }
 
-  const followers = struct ? struct.followers_count.toString() : '0'
-  const following = struct ? struct.following_accounts_count.toString() : '0'
+  const followers = struct ? struct.followersCount : 0
+  const following = struct ? struct.followingAccountsCount : 0
 
   const openFollowersModal = () => {
     if (!followers) return
@@ -49,7 +58,7 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
       {!mini && <>
         {withAbout && nonEmptyStr(about) &&
           <div className='DfPopup-about'>
-            <SummarizeMd md={about} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
+            <SummarizeMd content={content} more={<ViewProfileLink account={accountForUrl} title={'See More'} />} />
           </div>
         }
         <div className='DfPopup-links'>
@@ -60,8 +69,9 @@ export const ProfilePreview: React.FunctionComponent<ProfilePreviewProps> = ({ a
             <Pluralize count={following} singularText='Following'/>
           </div>
         </div>
-        {followersOpen && <AccountFollowersModal id={address} followersCount={followers} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
-        {followingOpen && <AccountFollowingModal id={address} followingCount={following} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
+        {/* // TODO copypasta. See src/components/profiles/ViewProfile.tsx */}
+        {followersOpen && <AccountFollowersModal id={address} open={followersOpen} close={() => setFollowersOpen(false)} title={<Pluralize count={followers} singularText='Follower' />} />}
+        {followingOpen && <AccountFollowingModal id={address} open={followingOpen} close={() => setFollowingOpen(false)} title={<Pluralize count={following} singularText='Following' />} />}
         <EditProfileLink address={address} className='DfGreyLink FontNormal mb-2' />
       </>}
     </div>

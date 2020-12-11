@@ -4,9 +4,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { notDef } from '@subsocial/utils'
 import { InfiniteListByPage } from '../lists/InfiniteList'
 import { Loading } from '../utils'
+import { useDispatch } from 'react-redux'
 
-export function InnerActivities<T> ({ address, title, getCount, totalCount, noDataDesc, loadingLabel, loadMore, ...otherProps }: InnerActivitiesProps<T>) {
-  const { subsocial, isApiReady } = useSubsocialApi()
+export function InnerActivities<T> (props: InnerActivitiesProps<T>) {
+  const { address, title, getCount, totalCount, noDataDesc, loadingLabel, loadMore, ...otherProps } = props
+  const { subsocial, flatApi, isApiReady } = useSubsocialApi()
+  const dispatch = useDispatch()
+
   const [ total, setTotalCount ] = useState<number | undefined>(totalCount)
 
   useEffect(() => {
@@ -21,7 +25,7 @@ export function InnerActivities<T> ({ address, title, getCount, totalCount, noDa
 
   const Activities = useCallback(() => <InfiniteListByPage
     {...otherProps}
-    loadMore={(page, size) => loadMore({ subsocial, address, page, size})}
+    loadMore={(page, size) => loadMore({ subsocial, flatApi, dispatch, address, page, size })}
     loadingLabel={loadingLabel}
     title={title ? `${title} (${total})` : null}
     noDataDesc={noDataDesc}

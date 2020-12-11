@@ -1,33 +1,34 @@
-import { Space, Post, SpaceId } from '@subsocial/types/substrate/interfaces'
-import { stringifyNumber, AnyAddress, AnyText, stringifyAddress } from '../substrate'
+import { AnyAddress, stringifyAddress } from '../substrate'
 import { newLogger, notDef } from '@subsocial/utils'
-import BN from 'bn.js'
 import { slugifyHandle, stringifySubUrls } from './helpers'
 import { createPostSlug, HasTitleOrBody } from '../posts/slugify'
+import { EntityId, HasHandle, HasId, PostStruct } from 'src/types'
 
-const log = newLogger('URLs')
+const log = newLogger('URL helpers')
 
 // Space URLs
 // --------------------------------------------------
 
-export type HasSpaceIdOrHandle = Pick<Space, 'id' | 'handle'>
-
+export type HasSpaceIdOrHandle = HasId | HasHandle
 /**
  * WARN: It's not recommended to use this hack.
  * You should pass both space's id and handle in order to construct
  * good looking URLs for spaces and posts that support a space handle.
  */
-export function newSpaceUrlFixture (id: SpaceId | BN): HasSpaceIdOrHandle {
+export function newSpaceUrlFixture (id: EntityId): HasSpaceIdOrHandle {
   return { id } as HasSpaceIdOrHandle
 }
 
-export function spaceIdForUrl ({ id, handle }: HasSpaceIdOrHandle): string {
+export function spaceIdForUrl (props: HasSpaceIdOrHandle): string {
+  const id = (props as HasId).id
+  const handle = (props as HasHandle).handle
+
   if (notDef(id) && notDef(handle)) {
     log.warn(`${spaceIdForUrl.name}: Both id and handle are undefined`)
     return ''
   }
 
-  return slugifyHandle(handle) || stringifyNumber(id) as string
+  return slugifyHandle(handle) || id
 }
 
 /** /[spaceId] */
@@ -55,7 +56,8 @@ export function aboutSpaceUrl (space: HasSpaceIdOrHandle): string {
 // Post URLs
 // --------------------------------------------------
 
-export type HasPostId = Pick<Post, 'id'>
+export type HasPostId = Pick<PostStruct, 'id'>
+
 export type HasDataForSlug = {
   struct: HasPostId,
   content?: HasTitleOrBody
@@ -87,16 +89,15 @@ export function editPostUrl (space: HasSpaceIdOrHandle, post: HasDataForSlug): s
 
 export type HasAddressOrHandle = {
   address: AnyAddress
-  handle?: AnyText
 }
 
-export function accountIdForUrl ({ address, handle }: HasAddressOrHandle): string {
-  if (notDef(address) && notDef(handle)) {
-    log.warn(`${accountIdForUrl.name}: Both address and handle are undefined`)
+export function accountIdForUrl ({ address }: HasAddressOrHandle): string {
+  if (notDef(address)) {
+    log.warn(`${accountIdForUrl.name}: Account address is undefined`)
     return ''
   }
 
-  return slugifyHandle(handle) || stringifyAddress(address) as string
+  return stringifyAddress(address) as string
 }
 
 function urlWithAccount (baseUrl: string, account: HasAddressOrHandle, ...subUrls: string[]): string {

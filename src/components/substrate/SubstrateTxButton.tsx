@@ -14,10 +14,9 @@ import { Message, showSuccessMessage, showErrorMessage, controlledMessage } from
 import { useAuth } from '../auth/AuthContext'
 import { VoidFn } from '@polkadot/api/types'
 import { LoadingOutlined } from '@ant-design/icons'
+import { useClientNonce, useMyAccount } from '../auth/MyAccountContext'
 
 const log = newLogger('TxButton')
-
-const logStatus = (status: string) => log.debug(status)
 
 export type GetTxParamsFn = () => any[]
 export type GetTxParamsAsyncFn = () => Promise<any[]>
@@ -72,6 +71,8 @@ export function TxButton ({
   const { api, keyring, keyringState } = useSubstrate()
   const [ isSending, , setIsSending ] = useToggle(false)
   const { openSignInModal, state: { completedSteps: { hasTokens } } } = useAuth()
+  const { incClientNonce } = useMyAccount()
+  const nonce = useClientNonce()
 
   const waitMessage = controlledMessage({
     message: 'Waiting for transaction completed...',
@@ -189,7 +190,7 @@ export function TxButton ({
         ? status.asFinalized
         : status.asInBlock
 
-      logStatus(`✅ Tx finalized. Block hash: ${blockHash.toString()}`)
+      log.debug(`✅ Tx finalized. Block hash: ${blockHash.toString()}`)
 
       result.events
         .filter(({ event: { section } }): boolean => section === 'system')
@@ -203,7 +204,7 @@ export function TxButton ({
     } else if (result.isError) {
       doOnFailed(result)
     } else {
-      logStatus(`⏱ Current tx status: ${status.type}`)
+      log.debug(`⏱ Current tx status: ${status.type}`)
     }
 
   }
@@ -213,7 +214,7 @@ export function TxButton ({
 
     if (err) {
       const errMsg = `Tx failed: ${err.toString()}`
-      logStatus(`❌ ${errMsg}`)
+      log.debug(`❌ ${errMsg}`)
       showErrorMessage(errMsg)
     }
 
@@ -229,7 +230,8 @@ export function TxButton ({
     const extrinsic = await getExtrinsic()
 
     try {
-      unsub = await extrinsic.signAndSend(account, onSuccessHandler)
+      unsub = await extrinsic.signAndSend(account, { nonce }, onSuccessHandler)
+      incClientNonce()
       waitMessage.open()
     } catch (err) {
       onFailedHandler(err)
@@ -259,14 +261,14 @@ export function TxButton ({
     unsubscribe()
 
     if (isFunction(onValidate) && !(await onValidate())) {
-      log.info('Cannot send a tx because onValidate() returned false')
+      log.warn('Cannot send a tx because onValidate() returned false')
       return
     }
 
     isFunction(onClick) && onClick()
 
     const txType = unsigned ? 'unsigned' : 'signed'
-    logStatus(`Sending ${txType} tx...`)
+    log.debug(`Sending ${txType} tx...`)
 
     withSpinner && setIsSending(true)
 

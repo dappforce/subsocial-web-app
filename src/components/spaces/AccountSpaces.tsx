@@ -1,22 +1,23 @@
-import React, { useState } from 'react'
-import { ViewSpace } from './ViewSpace'
-import PaginatedList from 'src/components/lists/PaginatedList'
-import { NextPage } from 'next'
-import { SpaceData } from '@subsocial/types/dto'
+import { AnyAccountId } from '@subsocial/types'
 import { SpaceId } from '@subsocial/types/substrate/interfaces'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { newLogger } from '@subsocial/utils'
+import { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+import PaginatedList from 'src/components/lists/PaginatedList'
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
+import { SpaceData } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { isMyAddress, useMyAddress } from '../auth/MyAccountContext'
-import { Loading } from '../utils'
-import { CreateSpaceButton } from './helpers'
-import { newLogger } from '@subsocial/utils'
-import { AnyAccountId } from '@subsocial/types'
-import { return404 } from '../utils/next'
-import { getPageOfIds } from '../utils/getIds'
-import { useRouter } from 'next/router'
 import DataList from '../lists/DataList'
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { PageContent } from '../main/PageWrapper'
+import { newFlatApi } from '../substrate'
+import { Loading } from '../utils'
+import { getPageOfIds } from '../utils/getIds'
+import { return404 } from '../utils/next'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
+import { CreateSpaceButton } from './helpers'
+import { SpacePreview } from './SpacePreview'
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
@@ -44,39 +45,51 @@ export const useLoadAccoutPublicSpaces = (
   const { query } = useRouter()
   const [ mySpaceIds, setSpaceIds ] = useState<SpaceId[]>(initialSpaceIds || [])
   const [ spacesData, setSpacesData ] = useState<SpaceData[]>([])
+  const [ loaded, setLoaded ] = useState(false)
+
   const page = query.page || DEFAULT_FIRST_PAGE
   const size = query.size || DEFAULT_PAGE_SIZE
 
   const spacesCount = mySpaceIds.length
 
   useSubsocialEffect(({ substrate }) => {
-    if (spacesCount) return
+    if (spacesCount && loaded) return
+
+    let isMounted = true
 
     const loadSpaceIds = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(address)
-      setSpaceIds(mySpaceIds.reverse())
+      if (isMounted) {
+        setSpaceIds(mySpaceIds.reverse())
+        setLoaded(true)
+      }
     }
 
-    loadSpaceIds().catch((err) =>
-      log.error('Failed to load space ids by account', address.toString(), err)
-    )
+    loadSpaceIds().catch((err) => log.error(
+      'Failed to load space ids by account', address.toString(), err))
+
+    return () => { isMounted = false }
   }, [ address.toString() ])
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
+    let isMounted = true
+
     if (!spacesCount) return
 
     const loadSpaces = async () => {
       const pageIds = getPageOfIds(mySpaceIds, query)
-      const spacesData = await subsocial.findPublicSpaces(pageIds)
-      setSpacesData(spacesData)
+      const spacesData = await flatApi.findPublicSpaces(pageIds)
+      isMounted && setSpacesData(spacesData)
     }
 
     loadSpaces().catch((err) =>
       log.error('Failed to load spaces by account', address.toString(), err)
     )
+
+    return () => { isMounted = false }
   }, [ address.toString(), spacesCount, page, size ])
 
-  if (!spacesData.length) return undefined
+  if (!spacesData.length && !loaded) return undefined
 
   return {
     spacesData,
@@ -89,14 +102,18 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
   const isMySpaces = isMyAddress(address)
   const [ myUnlistedSpaces, setMyUnlistedSpaces ] = useState<SpaceData[]>()
 
-  useSubsocialEffect(({ subsocial }) => {
+  useSubsocialEffect(({ flatApi }) => {
+    let isMounted = true
+
     if (!isMySpaces) return setMyUnlistedSpaces([])
 
-    subsocial.findUnlistedSpaces(mySpaceIds)
-      .then(setMyUnlistedSpaces)
+    flatApi.findUnlistedSpaces(mySpaceIds)
+      .then((res) => isMounted && setMyUnlistedSpaces(res))
       .catch((err) =>
         log.error('Failed to load unlisted spaces by account', address.toString(), err)
       )
+    
+    return () => { isMounted = false }
   }, [ mySpaceIds.length, isMySpaces ])
 
   return {
@@ -104,14 +121,6 @@ const useLoadUnlistedSpaces = ({ address, mySpaceIds }: LoadSpacesProps) => {
     myUnlistedSpaces: myUnlistedSpaces || []
   }
 }
-
-const SpacePreview = (space: SpaceData) =>
-  <ViewSpace
-    key={`space-${space.struct.id.toString()}`}
-    spaceData={space}
-    withFollowButton
-    preview
-  />
 
 const PublicSpaces = (props: LoadSpacesProps) => {
   const { spacesData, mySpaceIds, address, withTitle } = props
@@ -130,7 +139,8 @@ const PublicSpaces = (props: LoadSpacesProps) => {
     title={title}
     totalCount={totalCount}
     dataSource={spacesData}
-    renderItem={SpacePreview}
+    getKey={item => item.id}
+    renderItem={item => <SpacePreview space={item} />}
     noDataDesc='No public spaces found'
     noDataExt={noSpaces && isMy &&
       <CreateSpaceButton>
@@ -145,13 +155,17 @@ const UnlistedSpaces = (props: LoadSpacesProps) => {
 
   if (isLoading) return <Loading />
 
-  const unlistedSpacesCount = myUnlistedSpaces.length
+  const unlistedCount = myUnlistedSpaces.length
+  if (!unlistedCount) return null
 
-  return unlistedSpacesCount ? <DataList
-    title={`Unlisted Spaces (${unlistedSpacesCount})`}
-    dataSource={myUnlistedSpaces}
-    renderItem={SpacePreview}
-  /> : null
+  return (
+    <DataList
+      title={`Unlisted Spaces (${unlistedCount})`}
+      dataSource={myUnlistedSpaces}
+      getKey={item => item.id}
+      renderItem={item => <SpacePreview space={item} />}
+    />
+  )
 }
 
 export const AccountSpaces = ({ spacesData, mySpaceIds, withTitle = true, ...props}: Props) => {
@@ -177,6 +191,7 @@ export const AccountSpacesPage: NextPage<Props> = (props: Props) =>
     <AccountSpaces {...props} />
   </PageContent>
 
+// TODO this page is not required for SEO
 AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   const { query } = props
   const { address } = query
@@ -186,10 +201,12 @@ AccountSpacesPage.getInitialProps = async (props): Promise<Props> => {
   }
 
   const subsocial = await getSubsocialApi()
+  const flatApi = newFlatApi(subsocial)
   const { substrate } = subsocial
+
   const mySpaceIds = await substrate.spaceIdsByOwner(address)
   const pageIds = getPageOfIds(mySpaceIds, query)
-  const spacesData = await subsocial.findPublicSpaces(pageIds)
+  const spacesData = await flatApi.findPublicSpaces(pageIds)
 
   return {
     spacesData,

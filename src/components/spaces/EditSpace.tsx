@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Form, Input, Select } from 'antd'
-import BN from 'bn.js'
 import Section from '../utils/Section'
 import { getNewIdFromEvent, equalAddresses, stringifyText, getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
@@ -19,13 +18,13 @@ import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 import { UploadAvatar } from '../uploader'
 import { MailOutlined } from '@ant-design/icons'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
-import { resolveCidOfContent } from '@subsocial/api/utils'
 import { getNonEmptySpaceContent } from '../utils/content'
 import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { PageContent } from '../main/PageWrapper'
 import { goToSpacePage } from '../urls/goToPage'
 import { AutoSaveId } from '../utils/DfMdEditor/types'
+import { idToBn, SpaceId } from 'src/types'
 
 const MAX_TAGS = 10
 
@@ -55,14 +54,14 @@ function getInitialValues ({ space }: FormProps): FormValues {
   return {}
 }
 
-const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string, mySpaceId?: BN) => {
+const isHandleUnique = async (substrate: SubsocialSubstrateApi, handle: string, mySpaceId?: SpaceId) => {
   if (isEmptyStr(handle)) return true
 
   const spaceIdByHandle = await substrate.getSpaceIdByHandle(handle.trim().toLowerCase())
 
   if (!spaceIdByHandle) return true
 
-  if (mySpaceId) return spaceIdByHandle.eq(mySpaceId)
+  if (mySpaceId) return spaceIdByHandle.eq(idToBn(mySpaceId))
 
   return !spaceIdByHandle
 }
@@ -95,7 +94,7 @@ export function InnerForm (props: FormProps) {
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
-      const prevCid = resolveCidOfContent(space?.struct?.content)
+      const prevCid = space?.struct.contentId
       return prevCid !== cid.toString() ? cid : undefined
     }
 
@@ -266,14 +265,19 @@ export function FormInSection (props: Partial<FormProps>) {
   const title = space ? 'Edit space' : 'New space'
 
   // useSubsocialEffect(({ substrate }) => {
+  //   let isMounted = true
+
   //   const load = async () => {
   //     // const api = await substrate.api
-  //     setConsts({
-  //       minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
-  //       maxHandleLen: MAX_HANDLE_LEN // bnToNum(api.consts.spaces.maxHandleLen, 50)
+  //     isMounted && setConsts({
+  //       minHandleLen: MIN_HANDLE_LEN, // TODO bnToNum(api.consts.utils.minHandleLen, 5),
+  //       maxHandleLen: MAX_HANDLE_LEN  // TODO bnToNum(api.consts.utils.maxHandleLen, 50)
   //     })
   //   }
+
   //   load()
+
+  //   return () => { isMounted = false }
   // }, [])
 
   return <PageContent meta={{ title }}>
@@ -291,7 +295,7 @@ export function EditSpace (props: FormProps) {
   const myAddress = useMyAddress()
 
   const checkSpacePermission: CheckSpacePermissionFn = space => {
-    const isOwner = space && equalAddresses(myAddress, space.struct.owner)
+    const isOwner = space && equalAddresses(myAddress, space.struct.ownerId)
     return {
       ok: isOwner,
       error: () => CannotEditSpace

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { newLogger } from '@subsocial/utils'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { ProfileData } from '@subsocial/types'
+import { ProfileData } from 'src/types'
 import { ExtendedAddressProps } from './types'
 import { Loading } from '../../../utils'
 import { useMyAccount } from 'src/components/auth/MyAccountContext'
@@ -23,22 +23,24 @@ export function withLoadedOwner<P extends Props> (Component: React.ComponentType
     const [ owner, setOwner ] = useState<ProfileData>()
     const [ loaded, setLoaded ] = useState(true)
 
-    useSubsocialEffect(({ subsocial }) => {
+    useSubsocialEffect(({ flatApi }) => {
       if (!address) return
 
-      setLoaded(false)
-      let isSubscribe = true
-
+      let isMounted = true
+      
       const loadContent = async () => {
-        const owner = await subsocial.findProfile(address)
-        isSubscribe && setOwner(owner)
-        setLoaded(true)
+        setLoaded(false)
+        const owner = await flatApi.findProfile(address)
+        if (isMounted) {
+          setOwner(owner)
+          setLoaded(true)
+        }
       }
 
-      loadContent().catch(err =>
-        log.error(`Failed to load profile data. ${err}`))
+      loadContent().catch(err => log.error(
+        'Failed to load profile data:', err))
 
-      return () => { isSubscribe = false }
+      return () => { isMounted = false }
     }, [ address?.toString() ])
 
     return loaded

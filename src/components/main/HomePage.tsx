@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
 import { LatestSpaces } from './LatestSpaces'
 import { LatestPosts } from './LatestPosts'
-import { SpaceData, PostWithAllDetails } from '@subsocial/types'
+import { SpaceData, PostWithAllDetails, bnsToIds, isPublic } from 'src/types'
 import { DEFAULT_DESC, DEFAULT_TITLE, PageContent } from './PageWrapper'
 import partition from 'lodash.partition'
-import { isComment } from '../posts/view-post'
 import { useIsSignedIn } from '../auth/MyAccountContext'
 import { getLastNSpaceIds, getLastNIds } from '../utils/getIds'
 import { Tabs } from 'antd'
 import Section from '../utils/Section'
 import MyFeed from '../activity/MyFeed'
 import { uiShowFeed } from '../utils/env'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { fetchSpaces, selectSpaces } from 'src/rtk/features/spaces/spacesSlice'
+import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 
 const { TabPane } = Tabs
 
@@ -62,21 +63,31 @@ const HomePage: NextPage<Props> = (props) => <Section className='m-0'>
 
 const LAST_ITEMS_SIZE = 5
 
-HomePage.getInitialProps = async (): Promise<Props> => {
-  const subsocial = await getSubsocialApi()
+getInitialPropsWithRedux(HomePage, async ({ subsocial, dispatch, reduxStore }) => {
   const { substrate } = subsocial
+  const { getState } = reduxStore
+
   const nextSpaceId = await substrate.nextSpaceId()
   const nextPostId = await substrate.nextPostId()
 
-  const latestSpaceIds = getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE)
-  const publicSpacesData = await subsocial.findPublicSpaces(latestSpaceIds) as SpaceData[]
-  const spacesData = publicSpacesData.slice(0, LAST_ITEMS_SIZE)
-  const canHaveMoreSpaces = publicSpacesData.length >= LAST_ITEMS_SIZE
+  const latestSpaceIds = bnsToIds(getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE))
+  await dispatch(fetchSpaces({ api: subsocial, ids: latestSpaceIds }))
 
-  const latestPostIds = getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE)
-  const allPostsData = await subsocial.findPublicPostsWithAllDetails(latestPostIds)
+  // TODO create selectPublicSpaces
+  const allSpacesData = selectSpaces(getState(), { ids: latestSpaceIds })
+    .filter(isPublic)
+  const spacesData = allSpacesData.slice(0, LAST_ITEMS_SIZE)
+  const canHaveMoreSpaces = allSpacesData.length >= LAST_ITEMS_SIZE
+
+  const latestPostIds = bnsToIds(getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE))
+  await dispatch(fetchPosts({ api: subsocial, ids: latestPostIds }))
+
+  // TODO create selectPublicPosts
+  const allPostsData = selectPosts(getState(), { ids: latestPostIds })
+    .filter(({ post }) => isPublic(post)) as PostWithAllDetails[]
+
   const [ publicCommentData, publicPostsData ] =
-    partition(allPostsData, (x) => isComment(x.post.struct.extension))
+    partition(allPostsData, (x) => x.post.struct.isComment)
 
   const postsData = publicPostsData.slice(0, LAST_ITEMS_SIZE)
   const commentData = publicCommentData.slice(0, LAST_ITEMS_SIZE)
@@ -87,6 +98,6 @@ HomePage.getInitialProps = async (): Promise<Props> => {
     commentData,
     canHaveMoreSpaces
   }
-}
+})
 
 export default HomePage

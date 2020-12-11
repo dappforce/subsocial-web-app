@@ -6,7 +6,8 @@ import { getTxParams } from '../substrate'
 import { TxFailedCallback, TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { ProfileUpdate, OptionIpfsContent, IpfsContent } from '@subsocial/types/substrate/classes'
 import { IpfsCid } from '@subsocial/types/substrate/interfaces'
-import { ProfileContent, AnyAccountId, ProfileData } from '@subsocial/types'
+import { AnyAccountId, ProfileContent } from '@subsocial/types'
+import { ProfileData } from 'src/types'
 import { newLogger } from '@subsocial/utils'
 import { useSubsocialApi } from '../utils/SubsocialApiContext'
 import { DfForm, DfFormButtons, minLenError, maxLenError } from '../forms'
@@ -15,7 +16,6 @@ import { withMyProfile } from './address-views/utils/withLoadedOwner'
 import { accountUrl } from '../urls'
 import { NAME_MIN_LEN, NAME_MAX_LEN, DESC_MAX_LEN } from 'src/config/ValidationsConfig'
 import { UploadAvatar } from '../uploader'
-import { resolveCidOfContent } from '@subsocial/api/utils'
 import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { PageContent } from '../main/PageWrapper'
@@ -50,11 +50,11 @@ export function InnerForm (props: FormProps) {
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
 
   const { owner, address } = props
-  const profile = owner?.profile
+  const hasProfile = owner?.struct.hasProfile === true
   const initialValues = getInitialValues(props)
 
   // Auto save a profile's about only if we are on a "New Profile" form.
-  const autoSaveId: AutoSaveId | undefined = !profile ? 'profile' : undefined
+  const autoSaveId: AutoSaveId | undefined = !hasProfile ? 'profile' : undefined
 
   const getFieldValues = (): FormValues => {
     return form.getFieldsValue() as FormValues
@@ -70,11 +70,11 @@ export function InnerForm (props: FormProps) {
 
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged (): IpfsCid | undefined {
-      const prevCid = resolveCidOfContent(owner?.profile?.content)
+      const prevCid = owner?.struct.contentId
       return prevCid !== cid.toString() ? cid : undefined
     }
 
-    if (!profile) {
+    if (!hasProfile) {
       // If creating a new profile.
       return [ new IpfsContent(cid) ]
     } else {
@@ -164,10 +164,10 @@ export function InnerForm (props: FormProps) {
       <DfFormButtons
         form={form}
         txProps={{
-          label: profile
+          label: hasProfile
             ? 'Update profile'
             : 'Create new profile',
-          tx: profile
+          tx: hasProfile
             ? 'profiles.updateProfile'
             : 'profiles.createProfile',
           params: pinToIpfsAndBuildTxParams,
@@ -185,7 +185,7 @@ export function InnerForm (props: FormProps) {
 
 export function FormInSection (props: FormProps) {
   const { owner } = props
-  const title = owner?.profile ? 'Edit profile' : 'New profile'
+  const title = owner?.struct.hasProfile ? 'Edit profile' : 'New profile'
 
   return <PageContent meta={{ title }}>
     <Section className='EditEntityBox' title={title}>

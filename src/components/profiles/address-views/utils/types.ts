@@ -1,11 +1,11 @@
 import React from 'react'
 import { AnyAccountId } from '@subsocial/types/substrate'
-import { ProfileData } from '@subsocial/types'
+import { ProfileData } from 'src/types'
 
 export type AddressProps = {
   className?: string
   style?: React.CSSProperties
-  address: AnyAccountId,
+  address: AnyAccountId
   owner?: ProfileData
 }
 
@@ -17,4 +17,4 @@ export type ExtendedAddressProps = AddressProps & {
   isShort?: boolean,
   size?: number,
   withFollowButton?: boolean,
-};
+}

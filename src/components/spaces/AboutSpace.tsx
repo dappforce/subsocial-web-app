@@ -1,47 +1,47 @@
-import { SpaceContent } from '@subsocial/types/offchain'
-import { nonEmptyStr } from '@subsocial/utils'
-import { mdToText } from 'src/utils'
+import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils'
 import { NextPage } from 'next'
 import Error from 'next/error'
 import React, { useCallback, useState } from 'react'
-
-import { ProfilePreview } from '../profiles/address-views'
-import { DfMd } from '../utils/DfMd'
-import { return404 } from '../utils/next'
-import Section from '../utils/Section'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
-import ViewTags from '../utils/ViewTags'
-import { ViewSpaceProps } from './ViewSpaceProps'
-import withLoadSpaceDataById from './withLoadSpaceDataById'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PageContent } from '../main/PageWrapper'
-import { getSpaceId } from '../substrate'
-import { SpaceNotFound } from './helpers'
+import { ProfilePreview } from '../profiles/address-views'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
-import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
-import Segment from '../utils/Segment'
-import { appName } from '../utils/env'
-import { ViewSpace } from './ViewSpace'
 import { aboutSpaceUrl } from '../urls'
+import { DfMd } from '../utils/DfMd'
+import { appName } from '../utils/env'
+import Section from '../utils/Section'
+import Segment from '../utils/Segment'
+import ViewTags from '../utils/ViewTags'
+import { isUnlistedSpace, SpaceNotFound } from './helpers'
+import { loadSpaceOnNextReq } from './helpers/loadSpaceOnNextReq'
+import { EmailLink, SocialLink } from './SocialLinks/ViewSocialLinks'
+import { ViewSpace } from './ViewSpace'
+import { ViewSpaceProps } from './ViewSpaceProps'
+import { SpaceContent } from 'src/types'
 
 type Props = ViewSpaceProps
 
 export const AboutSpacePage: NextPage<Props> = (props) => {
-  if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
+  const { statusCode, spaceData } = props
 
-  const { spaceData } = props
+  // TODO copypasta, see ViewSpacePage
+  if (statusCode === 404) {
+    return <Error statusCode={statusCode} />
+  }
 
-  if (!spaceData || !spaceData?.struct) {
+  if (isUnlistedSpace(spaceData)) {
     return <SpaceNotFound />
   }
 
-  const { owner } = props
-  const space = spaceData.struct
-  const { owner: spaceOwnerAddress } = space
+  const { struct: space, owner } = spaceData
+  const { ownerId: spaceOwnerAddress } = space
 
   const [ content ] = useState(spaceData?.content || {} as SpaceContent)
-  const { name, about, image, tags, links, email } = content
+  const { name, about, image, tags, links = [], email } = content
 
   const ContactInfo = useCallback(() => {
+    if (isEmptyArray(links) && isEmptyStr(email)) return null
+
     const socialLinks = (links as string[]).map((x, i) => 
       ({ value: <SocialLink key={`${name}-socialLink-${i}`} link={x} label={name} />}))
 
@@ -59,7 +59,7 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
 
   const meta = {
     title,
-    desc: mdToText(about),
+    desc: content.summary,
     image,
     canonical: aboutSpaceUrl(space)
   }
@@ -99,32 +99,9 @@ export const AboutSpacePage: NextPage<Props> = (props) => {
   </PageContent>
 }
 
-// TODO extract getInitialProps, this func is similar in ViewSpace
-
-AboutSpacePage.getInitialProps = async (props): Promise<Props> => {
-  const { query: { spaceId } } = props
-  const idOrHandle = spaceId as string
-
-  const id = await getSpaceId(idOrHandle)
-  if (!id) {
-    return return404(props)
-  }
-
-  const subsocial = await getSubsocialApi()
-  const spaceData = id && await subsocial.findSpace({ id })
-  if (!spaceData?.struct) {
-    return return404(props)
-  }
-
-  const ownerId = spaceData?.struct.owner
-  const owner = await subsocial.findProfile(ownerId)
-
-  return {
-    spaceData,
-    owner
-  }
-}
+getInitialPropsWithRedux(AboutSpacePage, async (props) => {
+  const spaceData = await loadSpaceOnNextReq(props, aboutSpaceUrl)
+  return { spaceData }
+})
 
 export default AboutSpacePage
-
-export const AboutSpace = withLoadSpaceDataById(AboutSpacePage)

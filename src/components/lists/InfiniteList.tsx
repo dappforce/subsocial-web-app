@@ -8,16 +8,12 @@ import ButtonLink from '../utils/ButtonLink'
 import { useLinkParams } from './utils'
 import { useRouter } from 'next/router'
 import { tryParseInt } from 'src/utils'
+import { DataListItemProps, InnerLoadMoreFn, CanHaveMoreDataFn } from './types'
 
 const DEFAULT_THRESHOLD = isClientSide() ? window.innerHeight / 3 : undefined
 
-export type RenderItemFn<T> = (item: T, index: number) => JSX.Element
-export type InnerLoadMoreFn<T> = (page: number, size: number) => Promise<T[]>
-export type CanHaveMoreDataFn<T> = (data: T[] | undefined, page: number) => boolean
-
-type InnerInfiniteListProps<T> = Partial<DataListProps<T>> & {
+type InnerInfiniteListProps<T> = Partial<DataListProps<T>> & DataListItemProps<T> & {
   loadMore: InnerLoadMoreFn<T>,
-  renderItem: RenderItemFn<T>
   totalCount?: number,
   loadingLabel?: string,
   withLoadMoreLink?: boolean // Helpful for SEO
@@ -66,6 +62,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
     loadingLabel = 'Loading data...',
     withLoadMoreLink = false,
     dataSource,
+    getKey,
     renderItem,
     loadMore,
     totalCount,
@@ -117,7 +114,8 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
 
   const linkProps = getLinksParams(page + 1)
 
-  return <InfiniteScroll
+  return (
+    <InfiniteScroll
       dataLength={data.length}
       pullDownToRefreshThreshold={DEFAULT_THRESHOLD}
       next={() => handleInfiniteOnLoad(page)}
@@ -128,10 +126,12 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
         {...otherProps}
         totalCount={totalCount}
         dataSource={data}
+        getKey={getKey}
         renderItem={renderItem}
       />
       {withLoadMoreLink && !loading && hasMore && isServerSide() &&
         <ButtonLink block {...linkProps} className='mb-2'>Load more</ButtonLink>
       }
     </InfiniteScroll>
+  )
 }

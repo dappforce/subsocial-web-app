@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import { PostWithSomeDetails } from '@subsocial/types/dto'
-import { PostExtension } from '@subsocial/types/substrate/classes'
+import { PostWithSomeDetails } from 'src/types'
 import { EditOutlined } from '@ant-design/icons'
 import { ShareModal } from '../ShareModal'
-import { isRegularPost } from '../view-post'
 import { IconWithLabel } from '../../utils'
 import { useAuth } from '../../auth/AuthContext'
 
@@ -15,14 +13,14 @@ type Props = {
 
 export const SpaceShareLink = ({
   postDetails: {
-    post: { struct: { id, extension } },
+    post: { struct: { id, isRegularPost } },
     ext
   }
 }: Props) => {
 
   const { openSignInModal, state: { completedSteps: { isSignedIn } } } = useAuth()
   const [ open, setOpen ] = useState<boolean>()
-  const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
+  const postId = isRegularPost ? id : ext && ext.post.struct.id
   const title = 'Write a post'
 
   return <>

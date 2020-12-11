@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { CommentSection } from '../../comments/CommentsSection'
 import { PostCreator, PostDropDownMenu, PostActionsPanel, SharePostContent } from './helpers'
 import { InnerPreviewProps } from '.'
 
-type ComponentType = React.FunctionComponent<InnerPreviewProps>
+type ComponentType = FC<InnerPreviewProps>
 
 export const SharedPreview: ComponentType = (props) => {
   const { postDetails, space, withActions, replies } = props

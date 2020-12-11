@@ -29,16 +29,17 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
   const getLinksParams = useLinkParams({ defaultSize: pageSize, triggers: [ currentPage ]})
 
   useEffect(() => {
-    let isSubscribe = true
+    // TODO maybe this isMounted redundant here, b/c we do not use async code in this useEffect
+    let isMounted = true
 
-    if (isEmpty(routerQuery) && isSubscribe) {
+    if (isMounted && isEmpty(routerQuery)) {
       setPageSize(DEFAULT_PAGE_SIZE)
       setCurrentPage(DEFAULT_FIRST_PAGE)
     } else {
       const page = parseInt(routerQuery.page as string, 10)
       const _pageSize = parseInt(routerQuery.size as string, 10)
 
-      if (isSubscribe) {
+      if (isMounted) {
         const currentPage = page > 0 ? page : DEFAULT_PAGE_SIZE
         const currentSize = _pageSize > 0 && _pageSize < MAX_PAGE_SIZE ? _pageSize : DEFAULT_PAGE_SIZE
         setCurrentPage(currentPage)
@@ -46,8 +47,8 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
       }
     }
 
-    return () => { isSubscribe = false }
-  }, [ false ])
+    return () => { isMounted = false }
+  }, [])
 
   const pageSizeOptions = PAGE_SIZE_OPTIONS.map(x => x.toString())
   const hasData = total > 0

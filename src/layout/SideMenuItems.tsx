@@ -45,6 +45,12 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
 
   return [
     {
+      name: 'My feed',
+      page: [ '/feed', '/feed' ],
+      // TODO: do we really need the bell icon here? (maybe cause misunderstanding because of notifications icon)
+      icon: <BellOutlined />,
+    },
+    {
       name: 'My subscriptions',
       page: [ '/accounts/[address]/following', accountUrl(account, 'following') ],
       icon: <StarOutlined />

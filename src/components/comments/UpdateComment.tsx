@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { PostUpdate, OptionBool, OptionIpfsContent } from '@subsocial/types/substrate/classes'
-import { IpfsCid, Post } from '@subsocial/types/substrate/interfaces'
+import { IpfsCid } from '@subsocial/types/substrate/interfaces'
 import dynamic from 'next/dynamic'
-import { CommentContent, PostContent } from '@subsocial/types'
+import { CommentContent } from '@subsocial/types'
 import { registry } from '@subsocial/types/substrate/registry'
 import { Option } from '@polkadot/types/codec'
 import { getTxParams } from '../substrate'
 import BN from 'bn.js'
-import { useDispatch } from 'react-redux'
-import { useEditReplyToStore, CommentTxButtonType } from './utils'
+import { CommentTxButtonType } from './utils'
+import { PostContent, PostStruct } from 'src/types'
+import { useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -16,29 +17,30 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 type FCallback = (id?: BN) => void
 
 type EditCommentProps = {
-  struct: Post,
+  struct: PostStruct,
   content: CommentContent,
   callback?: FCallback
 }
 
-export const EditComment: React.FunctionComponent<EditCommentProps> = ({ struct, content, callback }) => {
+export const EditComment: FC<EditCommentProps> = ({ struct, content, callback }) => {
 
-  const dispatch = useDispatch()
+  const upsertReply = useUpsertReplyWithContent()
 
   const newTxParams = (hash: IpfsCid) => {
-    const update = new PostUpdate(
-      {
-      // TODO setting new space_id will move the post to another space.
-        space_id: new Option(registry, 'u64', null),
-        content: new OptionIpfsContent(hash),
-        hidden: new OptionBool(false) // TODO has no implementation on UI
-      })
+    const update = new PostUpdate({
+      // TODO setting a new space_id will move the post to another space.
+      space_id: new Option(registry, 'u64', null),
+      content: new OptionIpfsContent(hash),
+      hidden: new OptionBool(false) // TODO has no implementation on UI
+    })
     return [ struct.id, update ]
   }
 
-  const id = struct.id.toString()
-
-  const updatePostToStore = (content: PostContent) => useEditReplyToStore(dispatch, { replyId: id, comment: { struct, content } })
+  const updatePostToStore = (content: PostContent) =>
+    upsertReply({
+      reply: struct,
+      content
+    })
 
   const buildTxButton = ({ disabled, json, ipfs, setIpfsCid, onClick, onFailed }: CommentTxButtonType) =>
     <TxButton

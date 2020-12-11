@@ -15,6 +15,7 @@ function withMyAddress<P extends MyAccountProps> (Component: React.ComponentType
   }
 }
 
+// TODO use redux
 export const withMyAccount = <P extends MyAccountProps> (Component: React.ComponentType<P>) =>
   withMulti(
     Component,

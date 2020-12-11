@@ -1,50 +1,39 @@
-import { GenericAccountId as AccountId } from '@polkadot/types'
-import { SpaceContent } from '@subsocial/types/offchain'
+import { SpaceContent } from 'src/types'
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
-import BN from 'bn.js'
-import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import Error from 'next/error'
 import React, { useCallback } from 'react'
 import { Segment } from 'src/components/utils/Segment'
-import { isHidden, resolveBn } from '../utils'
 import { SummarizeMd } from '../utils/md'
 import MyEntityLabel from '../utils/MyEntityLabel'
-import { return404 } from '../utils/next'
 import Section from '../utils/Section'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
-import { getSpaceId } from '../substrate'
 import ViewTags from '../utils/ViewTags'
 import SpaceStatsRow from './SpaceStatsRow'
 import { ViewSpaceProps } from './ViewSpaceProps'
-import withLoadSpaceDataById from './withLoadSpaceDataById'
 import AboutSpaceLink from './AboutSpaceLink'
 import ViewSpaceLink from './ViewSpaceLink'
-import { PageContent } from '../main/PageWrapper'
-import { DropdownMenu, PostPreviewsOnSpace, SpaceNotFound, HiddenSpaceAlert, SpaceAvatar, isMySpace } from './helpers'
+import { DropdownMenu, HiddenSpaceAlert, SpaceAvatar, isMySpace, isUnlistedSpace, PostPreviewsOnSpace } from './helpers'
 import { ContactInfo } from './SocialLinks/ViewSocialLinks'
 import { MutedSpan } from '../utils/MutedText'
 import { BareProps } from '../utils/types'
-import { getPageOfIds } from '../utils/getIds'
-import { editSpaceUrl, spaceUrl } from '../urls'
+import { editSpaceUrl } from '../urls'
 import ButtonLink from '../utils/ButtonLink'
 import { EditOutlined } from '@ant-design/icons'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
-import { slugifyHandle } from '../urls/helpers'
-import { isPolkaProject } from 'src/utils'
 
-// import { SpaceHistoryModal } from '../utils/ListsEditHistory';
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
 
 type Props = ViewSpaceProps
 
 export const ViewSpace = (props: Props) => {
-  if (props.statusCode === 404) return <Error statusCode={props.statusCode} />
+  if (props.statusCode === 404) {
+    return <Error statusCode={props.statusCode} />
+  }
 
   const { spaceData } = props
 
-  if (!spaceData || !spaceData?.struct || isHidden({ struct: spaceData.struct })) {
-    return <SpaceNotFound />
+  if (isUnlistedSpace(spaceData)) {
+    return null
   }
 
   const {
@@ -56,23 +45,23 @@ export const ViewSpace = (props: Props) => {
     withStats = true,
     withTags = true,
     dropdownPreview = false,
+
     postIds = [],
     posts = [],
+    imageSize = 64,
+    
     onClick,
-    imageSize = 64
   } = props
 
-  const space = spaceData.struct
+  const { struct: space, content = {} as SpaceContent } = spaceData
+  const { id, ownerId: owner } = space
 
-  const {
-    id,
-    owner
-  } = space
-
-  const { about, name, image, tags, ...contactInfo } = spaceData?.content || {} as SpaceContent
+  const { about, name, image, tags, email, links } = content
+  const contactInfo = { email, links }
 
   const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
 
+  // TODO useCallback usage here looks wrong
   const Avatar = useCallback(() => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />, [])
 
   const isMy = isMySpace(space)
@@ -129,15 +118,13 @@ export const ViewSpace = (props: Props) => {
                   <EditOutlined /> Edit
                 </ButtonLink>
               }
-              {withFollowButton &&
-                <FollowSpaceButton spaceId={id} />
-              }
+              {withFollowButton && <FollowSpaceButton spaceId={id} />}
             </span>
           </div>
 
           {nonEmptyStr(about) &&
             <div className='description mt-3'>
-              <SummarizeMd md={about} more={
+              <SummarizeMd content={content} more={
                 <AboutSpaceLink space={space} title={'Learn More'} />
               } />
             </div>
@@ -170,83 +157,11 @@ export const ViewSpace = (props: Props) => {
   }
 
   return <Section>
-      <PendingSpaceOwnershipPanel space={space} />
-      <HiddenSpaceAlert space={space} />
-      <Section>{renderPreview()}</Section>
-      <Section className='DfContentPage mt-4'>
-        <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
-      </Section>
+    <PendingSpaceOwnershipPanel space={space} />
+    <HiddenSpaceAlert space={space} />
+    <Section>{renderPreview()}</Section>
+    <Section className='DfContentPage mt-4'>
+      <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} /> 
+    </Section>
   </Section>
 }
-
-// TODO extract getInitialProps, this func is similar in AboutSpace
-
-const ViewSpacePage: NextPage<Props> = (props) => {
-  const { spaceData } = props
-
-  if (!spaceData || !spaceData.content) {
-    return null
-  }
-
-  const id = resolveBn(spaceData.struct.id)
-  const { name, image } = spaceData.content
-
-  // We add this to a title to improve SEO of Polkadot projects.
-  const title = name + (isPolkaProject(id) ? ' - Polkadot ecosystem projects' : '')
-
-  return <PageContent
-    meta={{
-      title,
-      desc: `Latest news and updates from ${name} on Subsocial.`,
-      image,
-      canonical: spaceUrl(spaceData.struct)
-    }}
-  >
-    <ViewSpace {...props} />
-  </PageContent>
-}
-
-ViewSpacePage.getInitialProps = async (props): Promise<Props> => {
-  const { query, res } = props
-  const { spaceId } = query
-  const idOrHandle = spaceId as string
-
-  const id = await getSpaceId(idOrHandle)
-  if (!id) {
-    return return404(props)
-  }
-
-  const subsocial = await getSubsocialApi()
-  const { substrate } = subsocial
-
-  const spaceData = id && await subsocial.findSpace({ id: id })
-  if (!spaceData?.struct) {
-    return return404(props)
-  }
-
-  const handle = slugifyHandle(spaceData.struct.handle.unwrapOr(undefined))
-
-  if (handle && handle !== idOrHandle && res) {
-    res.writeHead(301, { Location: spaceUrl(spaceData.struct) })
-    res.end()
-  }
-
-  const ownerId = spaceData?.struct.owner as AccountId
-  const owner = await subsocial.findProfile(ownerId)
-
-  // We need to reverse post ids to display posts in a descending order on a space page.
-  const postIds = (await substrate.postIdsBySpaceId(id as BN)).reverse()
-  const pageIds = getPageOfIds(postIds, query)
-  const posts = await subsocial.findPublicPostsWithAllDetails(pageIds)
-
-  return {
-    spaceData,
-    posts,
-    postIds,
-    owner
-  }
-}
-
-export default ViewSpacePage
-
-export const DynamicViewSpace = withLoadSpaceDataById(ViewSpace)
