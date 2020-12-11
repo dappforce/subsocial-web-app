@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons'
-import { Button } from 'antd'
+import { CloseCircleOutlined, SearchOutlined, MenuOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import SearchInput from '../components/search/SearchInput'
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
 import AuthorizationPanel from '../components/auth/AuthorizationPanel'
