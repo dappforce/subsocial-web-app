@@ -7,7 +7,7 @@ import PaginatedList from 'src/components/lists/PaginatedList'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import messages from 'src/messages'
 import { useAppSelector } from 'src/rtk/app/store'
-import { useFetchFollowedSpaces, useFetchOwnedSpaces } from 'src/rtk/features/spaceIds/spaceIdsHooks'
+import { useFetchFollowedSpaces, useFetchOwnSpaces } from 'src/rtk/features/spaceIds/spaceIdsHooks'
 import { selectSpaces } from 'src/rtk/features/spaces/spacesSlice'
 import { isUnlisted, SpaceData, SpaceId } from 'src/types'
 import { isMyAddress } from '../auth/MyAccountContext'
@@ -79,7 +79,7 @@ export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props}: Accoun
   const { query: { page = DEFAULT_FIRST_PAGE, size = DEFAULT_PAGE_SIZE } } = useRouter()
 
   const [ unlistedSpaceIds, setUnistedSpaceIds ] = useState<SpaceId[]>([])
-  const { spaces, spaceIds, error, loading } = useFetchOwnedSpaces(address)
+  const { spaces, spaceIds, error, loading } = useFetchOwnSpaces(address)
   const [ newUnlistedSpaces ] = partition(spaces, isUnlisted)
   const { connecting } = useSubstrateContext()
   const isMy = isMyAddress(address)

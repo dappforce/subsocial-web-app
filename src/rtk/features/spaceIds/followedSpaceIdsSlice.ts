@@ -13,7 +13,7 @@ export type SpaceIdsFollowedByAccount = {
 
 const adapter = createEntityAdapter<SpaceIdsFollowedByAccount>()
 
-const spacesSelectors = adapter.getSelectors<RootState>(state => state.followedSpaceIds)
+const selectors = adapter.getSelectors<RootState>(state => state.followedSpaceIds)
 
 // Rename the exports for readability in component usage
 export const {
@@ -22,14 +22,14 @@ export const {
   // selectEntities: selectFollowedSpaceIdsEntities,
   // selectAll: selectAllFollowedSpaceIds,
   // selectTotal: selectTotalSpaceFollowers
-} = spacesSelectors
+} = selectors
 
 export const _selectSpaceIdsFollowedByAccount:
   SelectOneFn<Args, SpaceIdsFollowedByAccount | undefined> = (
     state, 
     { id: follower }
   ) =>
-    spacesSelectors.selectById(state, follower)
+    selectors.selectById(state, follower)
 
 export const selectSpaceIdsFollowedByAccount = (state: RootState, id: AccountId) => 
   _selectSpaceIdsFollowedByAccount(state, { id })?.followedSpaceIds

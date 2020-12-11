@@ -106,13 +106,13 @@ export function selectManyByIds<
     if (struct && nonEmptyStr(struct.contentId)) {
       const { contentId } = struct
       const content = selectContentById(state, contentId)
-      if (content) {
-        result.push({
-          id: struct.id,
-          struct,
-          content,
-        })
-      }
+      // if (content) {
+      result.push({
+        id: struct.id,
+        struct,
+        content,
+      })
+      // }
     }
   })
 

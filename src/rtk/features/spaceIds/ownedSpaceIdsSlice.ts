@@ -5,15 +5,15 @@ import { RootState } from 'src/rtk/app/rootReducer'
 import { SpaceId, AccountId } from 'src/types'
 import { bnsToIds } from 'src/types/utils'
 
-export type MySpaceIds = {
+export type OwnSpaceIds = {
   /** `id` is an account id that follows spaces. */
   id: AccountId
-  mySpaceIds: SpaceId[]
+  ownSpaceIds: SpaceId[]
 }
 
-const adapter = createEntityAdapter<MySpaceIds>()
+const adapter = createEntityAdapter<OwnSpaceIds>()
 
-const spacesSelectors = adapter.getSelectors<RootState>(state => state.ownedSpaceIds)
+const selectors = adapter.getSelectors<RootState>(state => state.ownedSpaceIds)
 
 // Rename the exports for readability in component usage
 export const {
@@ -22,27 +22,27 @@ export const {
   // selectEntities: selectMySpaceIdsEntities,
   // selectAll: selectAllMySpaceIds,
   // selectTotal: selectTotalMySpace
-} = spacesSelectors
+} = selectors
 
 type Args = {}
 
 export const _selectSpaceIdsOwnedByAccount:
-  SelectOneFn<Args, MySpaceIds | undefined> = (
+  SelectOneFn<Args, OwnSpaceIds | undefined> = (
     state,
     { id: myAddress }
   ) =>
-    spacesSelectors.selectById(state, myAddress)
+    selectors.selectById(state, myAddress)
 
 export const selectSpaceIdsOwnedByAccount = (state: RootState, id: AccountId) => 
-  _selectSpaceIdsOwnedByAccount(state, { id })?.mySpaceIds
+  _selectSpaceIdsOwnedByAccount(state, { id })?.ownSpaceIds
 
 type FetchOneSpaceIdsArgs = FetchOneArgs<Args>
 
-type FetchOneRes = MySpaceIds | undefined
+type FetchOneRes = OwnSpaceIds | undefined
 
 export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
   <FetchOneRes, FetchOneSpaceIdsArgs, ThunkApiConfig>(
-  'ownedSpaceIds/fetchOne',
+  'ownSpaceIds/fetchOne',
   async ({ api, id }, { getState }): Promise<FetchOneRes> => {
 
     const myAddress = id as AccountId
@@ -56,16 +56,16 @@ export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
     const spaceIds = await api.substrate.spaceIdsByOwner(myAddress)
     return {
       id: myAddress,
-      mySpaceIds: bnsToIds(spaceIds)
+      ownSpaceIds: bnsToIds(spaceIds)
     }
   }
 )
 
 const slice = createSlice({
-  name: 'ownedSpaceIds',
+  name: 'ownSpaceIds',
   initialState: adapter.getInitialState(),
   reducers: {
-    upsertMySpaceIdsByAccount: adapter.upsertOne,
+    upsertOwnSpaceIds: adapter.upsertOne,
   },
   extraReducers: builder => {
     builder.addCase(fetchSpaceIdsOwnedByAccount.fulfilled, (state, { payload }) => {
@@ -75,7 +75,7 @@ const slice = createSlice({
 })
 
 export const {
-  upsertMySpaceIdsByAccount,
+  upsertOwnSpaceIds,
 } = slice.actions
 
 export default slice.reducer
