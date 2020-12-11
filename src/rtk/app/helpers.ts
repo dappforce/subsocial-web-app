@@ -1,6 +1,8 @@
-import { AsyncThunk, EntityId } from '@reduxjs/toolkit'
+import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext'
+import { AsyncThunk, Dispatch, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
+import { useDispatch } from 'react-redux'
 import { CommonContent, EntityData, FlatSuperCommon, HasId } from 'src/types'
 import { asString } from 'src/utils'
 import { RootState } from './rootReducer'
@@ -134,4 +136,15 @@ export function selectOneById<
 ): EntityData<S, C> | undefined {
   const items = selectManyByIds(state, [ id ], selectStructById, selectContentById)
   return getFirstOrUndefined(items)
+}
+
+type CommonDispatchCallbackProps<T> = { dispatch: Dispatch<any>, api: SubsocialApi, args: T }
+
+type CommonDispatchCallbackFn<T> = (props: CommonDispatchCallbackProps<T>) => void 
+// ? Change cb on actions[]. And use actions.forEach(action => dispatch(action))
+export const useActions = <T>(cb: CommonDispatchCallbackFn<T>) => {
+  const dispatch = useDispatch()
+  const { subsocial: api } = useSubsocialApi()
+
+  return (args: T) => cb({ dispatch, api, args })
 }
