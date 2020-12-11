@@ -11,6 +11,7 @@ import { BaseTxButtonProps } from '../substrate/SubstrateTxButton'
 import { FollowButtonStub } from './FollowButtonStub'
 import { useSubsocialApi } from './SubsocialApiContext'
 import TxButton from './TxButton'
+import { useGetReloadSpace } from 'src/rtk/app/hooks'
 
 type FollowSpaceButtonProps = BaseTxButtonProps & {
   space: SpaceStruct
@@ -35,12 +36,14 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
   const followedSpaceIds = useAppSelector(state => selectSpaceIdsFollowedByAccount(state, myAddress), shallowEqual) || []
   const isFollower = followedSpaceIds.indexOf(spaceId) >= 0
 
+  const reloadSpace = useGetReloadSpace()
   const dispatch = useAppDispatch()
   const { substrate } = useSubsocialApi()
 
   const onTxSuccess = () => {
     // TODO think maybe it's better to check a single fullow: my account + this space?
     reloadSpaceIdsFollowedByAccount({ substrate, dispatch, account: myAddress })
+    reloadSpace({ id: spaceId })
   }
 
   const buildTxParams = () => [ spaceId ]
