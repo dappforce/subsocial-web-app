@@ -1,50 +1,50 @@
-import React, { useState } from 'react'
+import React, { useCallback } from 'react'
 import { LikeTwoTone, LikeOutlined, DislikeTwoTone, DislikeOutlined } from '@ant-design/icons'
 import dynamic from 'next/dynamic'
-import { Reaction } from '@subsocial/types/substrate/interfaces/subsocial'
 import { ReactionKind } from '@subsocial/types/substrate/classes'
-import { newLogger } from '@subsocial/utils'
-import useSubsocialEffect from '../api/useSubsocialEffect'
-import { useMyAddress } from '../auth/MyAccountContext'
 import { BareProps } from '../utils/types'
 import { IconWithLabel } from '../utils'
 import { useResponsiveSize } from '../responsive'
-import { idToPostId, PostStruct } from 'src/types'
-import { useSubscribedPost } from '../posts/view-post'
+import { PostStruct } from 'src/types'
 import { useGetReloadPost } from 'src/rtk/app/hooks'
+import { Reaction, ReactionEnum, selectPostReactionByPostId } from 'src/rtk/features/reactions/postReactionsSlice'
+import { ButtonProps } from 'antd/lib/button'
+import { useGetReloadReaction } from 'src/rtk/features/reactions/postReactionsHooks'
+import { useAppSelector } from 'src/rtk/app/store'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
-
-const log = newLogger('VoterButtons')
 
 type VoterProps = BareProps & {
   post: PostStruct,
   preview?: boolean
 }
 
-type ReactionType = 'Upvote' | 'Downvote'
-
-type VoterButtonProps = VoterProps & {
-  reactionType: ReactionType,
+type VoterButtonProps = VoterProps & ButtonProps & {
+  reactionEnum: ReactionEnum,
   reaction?: Reaction,
   onSuccess?: () => void,
   preview?: boolean
 };
 
 const VoterButton = ({
-  reactionType,
+  reactionEnum,
   reaction,
   post: { id, upvotesCount, downvotesCount },
   className,
   style,
   onSuccess,
-  preview
+  preview,
+  disabled
 }: VoterButtonProps) => {
 
   const { isMobile } = useResponsiveSize()
-  const kind = reaction ? reaction && reaction.kind.toString() : 'None'
-  const isUpvote = reactionType === 'Upvote'
+  const reactionType = reactionEnum.valueOf()
+
+  const kind = reaction ? reaction.kind : 'None'
+  const isUpvote = reactionType === ReactionEnum.Upvote
   const count = isUpvote ? upvotesCount : downvotesCount
+
+  console.log('kind', kind, reactionType)
 
   const buildTxParams = () => {
     if (reaction === undefined) {
@@ -57,6 +57,7 @@ const VoterButton = ({
   }
 
   const isActive = kind === reactionType
+
   const color = isUpvote ? '#00a500' : '#ff0000'
 
   const changeReactionTx = kind !== reactionType
@@ -74,6 +75,8 @@ const VoterButton = ({
       : <DislikeOutlined />
   }
 
+  console.log('changeReactionTx', changeReactionTx)
+
   return <TxButton
     className={`DfVoterButton ${className}`}
     style={{
@@ -87,6 +90,7 @@ const VoterButton = ({
     params={buildTxParams()}
     onSuccess={onSuccess}
     title={preview ? reactionType : undefined}
+    disabled={disabled}
   >
     <IconWithLabel
       icon={icon}
@@ -97,54 +101,30 @@ const VoterButton = ({
 }
 
 type VoterButtonsProps = VoterProps & {
-  only?: 'Upvote' | 'Downvote',
+  only?: ReactionEnum,
 }
 
 export const VoterButtons = (props: VoterButtonsProps) => {
-  const { post: initialPost, only, ...voterProps } = props
-  const myAddress = useMyAddress()
+  const { post, only, ...voterProps } = props
   const reloadPost = useGetReloadPost()
-  const [ reactionState, setReactionState ] = useState<Reaction>()
-  const [ reloadTrigger, setReloadTrigger ] = useState(true)
+  const reloadReaction = useGetReloadReaction()
+  const args = { id: post.id }
+  const reaction = useAppSelector(state => selectPostReactionByPostId(state, post.id))?.reaction
 
-  // TODO use redux + subscribe
-  const post = useSubscribedPost(initialPost)
-
-  useSubsocialEffect(({ substrate }) => {
-    let isMounted = true
-
-    async function reloadReaction () {
-      if (!myAddress) return
-
-      // TODO use redux
-      const reactionId = await substrate.getPostReactionIdByAccount(myAddress, idToPostId(post.id))
-      if (!isMounted) return
-
-      const reaction = await substrate.findReaction(reactionId)
-      isMounted && setReactionState(reaction)
-    }
-
-    reloadReaction().catch(err => log.error(
-      'Failed to load a reaction on post with id',
-      post.id, 'by account', myAddress, err
-    ))
-
-    return () => { isMounted = false }
-  }, [ reloadTrigger, myAddress, post.id ])
-
-  const renderVoterButton = (reactionType: ReactionType) => <VoterButton
-    reaction={reactionState}
-    reactionType={reactionType}
+  const renderVoterButton = useCallback((reactionType: ReactionEnum) => <VoterButton
+    reaction={reaction}
+    reactionEnum={reactionType}
     onSuccess={() => {
-      setReloadTrigger(!reloadTrigger)
-      reloadPost({ id: post.id })
+      console.log('SUCCESS')
+      reloadPost(args)
+      reloadReaction(args)
     }}
     post={post}
     {...voterProps}
-  />
+  />, [ post.id ])
 
-  const UpvoteButton = () => only !== 'Downvote' ? renderVoterButton('Upvote') : null
-  const DownvoteButton = () => only !== 'Upvote' ? renderVoterButton('Downvote') : null
+  const UpvoteButton = () => only !== ReactionEnum.Upvote ? renderVoterButton(ReactionEnum.Upvote) : null
+  const DownvoteButton = () => only !== ReactionEnum.Downvote ? renderVoterButton(ReactionEnum.Downvote) : null
 
   return <>
     <UpvoteButton />
@@ -153,7 +133,7 @@ export const VoterButtons = (props: VoterButtonsProps) => {
 }
 
 export const UpvoteVoterButton = (props: VoterProps) =>
-  <VoterButtons only={'Upvote'} {...props} />
+  <VoterButtons only={ReactionEnum.Upvote} {...props} />
 
 export const DownvoteVoterButton = (props: VoterProps) =>
-  <VoterButtons only={'Downvote'} {...props} />
+  <VoterButtons only={ReactionEnum.Downvote} {...props} />
