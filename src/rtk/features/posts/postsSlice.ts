@@ -2,10 +2,11 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@r
 import { getFirstOrUndefined } from '@subsocial/utils'
 import { createFetchOne, createSelectUnknownIds, FetchManyArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { asCommentStruct, asSharedPostStruct, flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostId, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
+import { AccountId, asCommentStruct, asSharedPostStruct, flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostId, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
 import { idsToBns } from 'src/types/utils'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
+import { fetchPostReactions } from '../reactions/postReactionsSlice'
 import { fetchSpaces, selectSpaces } from '../spaces/spacesSlice'
 
 const postsAdapter = createEntityAdapter<PostStruct>()
@@ -42,7 +43,9 @@ export type SelectPostsArgs = SelectManyArgs<Args>
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // type FetchPostArgs = FetchOneArgs<Args>
-type FetchPostsArgs = FetchManyArgs<Args>
+type FetchPostsArgs = FetchManyArgs<Args & {
+  myAddress?: AccountId
+}>
 
 type PostMap<D extends PostWithSomeDetails = PostWithSomeDetails> = Record<PostId, D>
 
@@ -145,7 +148,7 @@ export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
 export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkApiConfig>(
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
-    const { api, ids, withContent = true, withOwner = true, withSpace = true, reload } = args
+    const { api, ids, myAddress, withContent = true, withOwner = true, withSpace = true, reload } = args
  
     let newIds = ids as string[]
 
@@ -156,6 +159,8 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         return []
       }
     }
+
+    myAddress && dispatch(fetchPostReactions({ ids: newIds, myAddress, api }))
 
     const structs = await api.substrate.findPosts({ ids: idsToBns(newIds) })
     const entities = flattenPostStructs(structs)
