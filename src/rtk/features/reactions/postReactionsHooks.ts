@@ -4,7 +4,7 @@ import { useActions } from 'src/rtk/app/helpers'
 import { useFetchEntity } from 'src/rtk/app/hooksCommon'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { PostId } from 'src/types'
-import { fetchPostReactions, selectPostReactionsByPostIds } from './postReactionsSlice'
+import { fetchPostReactions, ReactionStruct, removeAllReaction, selectPostReactionsByPostIds, upsertPostReaction } from './postReactionsSlice'
 
 export const useFetchMyPostReactions = (postIds: PostId[]) => {
   const dispatch = useAppDispatch()
@@ -13,7 +13,7 @@ export const useFetchMyPostReactions = (postIds: PostId[]) => {
   useSubsocialEffect(({ subsocial: api }) => {
     if (!myAddress) return 
     dispatch(fetchPostReactions({ ids: postIds, myAddress, api }))
-  }, [ myAddress || '' ])
+  }, [ dispatch, myAddress || '', postIds ])
 
 }
 
@@ -22,14 +22,14 @@ export const useFetchReactionByPostId = (id: PostId) => {
   return useFetchEntity(selectPostReactionsByPostIds, fetchPostReactions, { id, myAddress })
 }
 
-type ReloadReactionArgs = {
-  id: PostId
+export const useGetUpsertReaction = () => {
+  return useActions<ReactionStruct>(({ dispatch, args }) => {
+    dispatch(upsertPostReaction(args))
+  })
 }
 
-export const useGetReloadReaction = () => {
-  const myAddress = useMyAddress()
-
-  return useActions<ReloadReactionArgs>(({ dispatch, api, args: { id }}) => {
-    dispatch(fetchPostReactions({ ids: [ id ], myAddress, api, reload: true }))
+export const useGetRemoveAllReactions = () => {
+  return useActions<{}>(({ dispatch }) => {
+    dispatch(removeAllReaction())
   })
 }
