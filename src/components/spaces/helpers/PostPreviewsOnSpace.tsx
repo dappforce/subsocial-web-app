@@ -12,6 +12,7 @@ import { useLoadUnlistedPostsByOwner } from './useLoadUnlistedPostsByOwner'
 import { PublicPostPreviewById } from 'src/components/posts/PublicPostPreview'
 import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
 import { useDispatch } from 'react-redux'
+import { useFetchMyPostReactions } from 'src/rtk/features/reactions/postReactionsHooks'
 
 type Props = {
   spaceData: SpaceData
@@ -95,6 +96,7 @@ const InfiniteListOfPublicPosts = (props: Props) => {
 }
 
 export const PostPreviewsOnSpace = (props: Props) => {
+  useFetchMyPostReactions(props.postIds)
   return <>
     <InfiniteListOfPublicPosts {...props} />
     {/* // TODO unlisted posts should be on a separate tab if the current user is a space owner. */}

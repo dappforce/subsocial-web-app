@@ -21,6 +21,7 @@ import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsS
 import { StatsPanel } from '../PostStats'
 import { useAppSelector } from 'src/rtk/app/store'
 import { PostWithSomeDetails } from 'src/types'
+import { useFetchMyPostReactions } from 'src/rtk/features/reactions/postReactionsHooks'
 
 export type PostDetailsProps = {
   postData: PostWithAllDetails,
@@ -30,10 +31,11 @@ export type PostDetailsProps = {
 
 export const PostPage: NextPage<PostDetailsProps> = (props) => {
   const { postData: initialPostData, rootPostData } = props
-
+  const id = initialPostData.id
   const { isNotMobile } = useResponsiveSize()
+  useFetchMyPostReactions([ id ])
 
-  const postData = useAppSelector(state => selectPost(state, { id: initialPostData.id })) || initialPostData
+  const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
 
   // TODO subscribe to post update
   // const struct = useSubscribedPost(initStruct)
@@ -179,8 +181,12 @@ getInitialPropsWithRedux(PostPage, async (props) => {
   let rootPostData: PostWithSomeDetails | undefined = undefined
 
   const postStruct = postData.post.struct
+
+  console.log('postStruct.isComment', postStruct.isComment)
+
   if (postStruct.isComment) {
     const { rootPostId } = asCommentStruct(postStruct)
+    console.log('rootPostId', rootPostId)
     await dispatch(fetchPost({ api: subsocial, id: rootPostId }))
     rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
   }
