@@ -11,17 +11,16 @@ export enum ReactionEnum {
   Downvote = 'Downvote'
 }
 
+export type ReactionId = string
 export type ReactionType = 'Upvote' | 'Downvote'
 
 export type Reaction = {
-  id: PostId,
-  kind: ReactionType
+  reactionId?: ReactionId
+  kind?: ReactionType
 }
 
-export type ReactionStruct = {
-  /** `id` is an account id that follows spaces. */
+export type ReactionStruct = Reaction & {
   id: PostId
-  reaction?: Reaction
 }
 
 const adapter = createEntityAdapter<ReactionStruct>()
@@ -109,16 +108,20 @@ export const fetchPostReactions = createAsyncThunk
     const entities = await api.substrate.findReactions(reactionIds.filter(isDef))
     
     entities.forEach(({ kind: kindCodec, id }) => {
-      const postId = postIdByReactionId.get(id.toString())
+      const reactionId = id.toString()
+      const postId = postIdByReactionId.get(reactionId)
 
       const kind = kindCodec.toString() as ReactionType
-
+      const reaction = kind
+        ? {
+          reactionId,
+          kind
+        }
+        : undefined
+  
       postId && reactionByPostId.set(postId, {
         id: postId,
-        reaction: kind ? {
-          id: postId,
-          kind
-        } : undefined
+        ...reaction
       })
 
     })
@@ -132,7 +135,9 @@ const slice = createSlice({
   name: 'postReactionByAccount',
   initialState: adapter.getInitialState(),
   reducers: {
-    upsertPostReactionByAccount: adapter.upsertOne,
+    upsertPostReaction: adapter.upsertOne,
+    removePostReaction: adapter.removeOne,
+    removeAllReaction: adapter.removeAll
   },
   extraReducers: builder => {
     builder.addCase(fetchPostReactions.fulfilled, (state, { payload }) => {
@@ -142,7 +147,9 @@ const slice = createSlice({
 })
 
 export const {
-  upsertPostReactionByAccount,
+  upsertPostReaction,
+  removePostReaction,
+  removeAllReaction
 } = slice.actions
 
 export default slice.reducer
