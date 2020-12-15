@@ -1,5 +1,4 @@
-import React, { FC, useState } from 'react'
-import { withCalls, withMulti, reactionsQueryToProp } from '../substrate'
+import React, { useState } from 'react'
 import { Loading } from '../utils'
 import { Modal, Button, Tabs } from 'antd'
 import { ReactionId, Reaction } from '@subsocial/types/substrate/interfaces/subsocial'
@@ -10,6 +9,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import { newLogger, nonEmptyArr, isEmptyArray } from '@subsocial/utils'
 import { AuthorPreviewWithOwner } from '../profiles/address-views'
 import BN from 'bn.js'
+import { useGetSubstrateIdsById } from '../substrate/hooks/useGetIdsById'
 
 const { TabPane } = Tabs
 
@@ -122,10 +122,13 @@ const InnerModalVoters = (props: VotersProps) => {
   )
 }
 
+const useGetReactionIdsByPostId = (id: BN) => useGetSubstrateIdsById<ReactionId>({ id, pallete: 'reactions', method: 'reactionIdsByPostId' })
+
 // TODO use redux
-export const PostVoters = withMulti(
-  InnerModalVoters,
-  withCalls<VotersProps>(
-    reactionsQueryToProp('reactionIdsByPostId', { paramName: 'id', propName: 'reactionIds' })
-  )
-) as FC<VotersProps>
+export const PostVoters = (props: VotersProps) => {
+  const { loading, entities } = useGetReactionIdsByPostId(props.id)
+
+  if (loading) return <Loading label='Loading post reactions...' />
+
+  return <InnerModalVoters {...props} reactionIds={entities} />
+}

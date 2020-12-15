@@ -12,13 +12,13 @@ type CommonResult = {
   error?: Error
 }
 
-type FetchCommonResult<T> = T & CommonResult
+export type FetchCommonResult<T> = T & CommonResult
 
 type FetchOneResult<Entity> = FetchCommonResult<{
   entity?: Entity
 }>
 
-type FetchManyResult<Entity> = FetchCommonResult<{
+export type FetchManyResult<Entity> = FetchCommonResult<{
   entities: Entity[]
 }>
 

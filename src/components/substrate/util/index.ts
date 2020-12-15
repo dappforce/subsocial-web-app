@@ -11,7 +11,6 @@ import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
 import { SubsocialApi } from '@subsocial/api/subsocial'
 import { asAccountId } from '@subsocial/api/utils'
 export * from './getTxParams'
-export * from './queryToProps'
 export { isEqual } from './isEqual'
 export { triggerChange } from './triggerChange'
 

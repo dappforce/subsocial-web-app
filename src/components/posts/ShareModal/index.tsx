@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate'
+import { getTxParams } from '../../substrate'
 import { Modal } from 'antd'
 import Button from 'antd/lib/button'
-import { withMyAccount, MyAccountProps } from '../../utils/MyAccount'
+import { MyAccountProps } from '../../utils/MyAccount'
 import { LabeledValue } from 'antd/lib/select'
 import SelectSpacePreview from '../../utils/SelectSpacePreview'
 import BN from 'bn.js'
@@ -19,14 +19,17 @@ import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
 import { CreateSpaceButton } from '../../spaces/helpers'
 import styles from './index.module.sass'
 import { useGetReloadPost, useGetReloadSpace } from 'src/rtk/app/hooks'
-import { bnToId } from 'src/types'
+import { bnToId, idsToBns } from 'src/types'
+import { useAppSelector } from 'src/rtk/app/store'
+import { selectSpaceIdsOwnedByAccount } from 'src/rtk/features/spaceIds/ownedSpaceIdsSlice'
+import { useMyAddress } from 'src/components/auth/MyAccountContext'
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
 type Props = MyAccountProps & {
   postId: BN
   spaceIds?: BN[]
-  open: boolean
+  open?: boolean
   onClose: () => void
 }
 
@@ -150,11 +153,9 @@ const InnerShareModal = (props: Props) => {
   </Modal>
 }
 
-// TODO use redux
-export const ShareModal = withMulti(
-  InnerShareModal,
-  withMyAccount,
-  withCalls<Props>(
-    spacesQueryToProp('spaceIdsByOwner', { paramName: 'address', propName: 'spaceIds' })
-  )
-)
+export const ShareModal = (props: Props) => {
+  const myAddress = useMyAddress()
+  const spaceIds = useAppSelector(state => selectSpaceIdsOwnedByAccount(state, myAddress as string)) || []
+
+  return <InnerShareModal {...props} spaceIds={idsToBns(spaceIds)} />
+}
