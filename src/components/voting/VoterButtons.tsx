@@ -7,10 +7,11 @@ import { IconWithLabel } from '../utils'
 import { useResponsiveSize } from '../responsive'
 import { PostStruct } from 'src/types'
 import { useGetReloadPost } from 'src/rtk/app/hooks'
-import { Reaction, ReactionEnum, selectPostReactionByPostId } from 'src/rtk/features/reactions/postReactionsSlice'
+import { Reaction, ReactionEnum, ReactionId, ReactionStruct, ReactionType, selectPostReactionByPostId } from 'src/rtk/features/reactions/postReactionsSlice'
 import { ButtonProps } from 'antd/lib/button'
-import { useGetReloadReaction } from 'src/rtk/features/reactions/postReactionsHooks'
+import { useGetUpsertReaction } from 'src/rtk/features/reactions/postReactionsHooks'
 import { useAppSelector } from 'src/rtk/app/store'
+import { getNewIdsFromEvent } from '../substrate'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
@@ -38,31 +39,43 @@ const VoterButton = ({
 }: VoterButtonProps) => {
 
   const { isMobile } = useResponsiveSize()
-  const reactionType = reactionEnum.valueOf()
-
-  const kind = reaction ? reaction.kind : 'None'
+  const upsertReaction = useGetUpsertReaction()
+  const { reactionId, kind = 'None' } = reaction || { id } as ReactionStruct
+  const reactionType = reactionEnum.valueOf() as ReactionType
   const isUpvote = reactionType === ReactionEnum.Upvote
   const count = isUpvote ? upvotesCount : downvotesCount
-
-  console.log('kind', kind, reactionType)
 
   const buildTxParams = () => {
     if (reaction === undefined) {
       return [ id, new ReactionKind(reactionType) ]
     } else if (kind !== reactionType) {
-      return [ id, reaction.id, new ReactionKind(reactionType) ]
+      return [ id, reactionId, new ReactionKind(reactionType) ]
     } else {
-      return [ id, reaction.id ]
+      return [ id, reactionId ]
     }
   }
 
   const isActive = kind === reactionType
 
+  if (id === '482') {
+    console.log('kind', kind, kind === reactionType, isActive)
+  }
+
   const color = isUpvote ? '#00a500' : '#ff0000'
 
-  const changeReactionTx = kind !== reactionType
+  const isUpdate = kind !== reactionType
+  const changeReactionTx = isUpdate
     ? 'reactions.updatePostReaction'
     : 'reactions.deletePostReaction'
+
+  const updateOrDelete = useCallback((update: boolean, _reactinoId?: ReactionId) => {
+    const newReactionId = _reactinoId || reactionId
+    const newReaction: Reaction | undefined = update
+      ? { reactionId: newReactionId || `fakeId-${id}`, kind: reactionType }
+      : undefined
+    
+    upsertReaction({ id, ...newReaction })
+  }, [ id, reaction ])
 
   let icon: JSX.Element
   if (isUpvote) {
@@ -75,20 +88,27 @@ const VoterButton = ({
       : <DislikeOutlined />
   }
 
-  console.log('changeReactionTx', changeReactionTx)
-
   return <TxButton
     className={`DfVoterButton ${className}`}
     style={{
       color: isActive ? color : '',
       ...style
     }}
-    tx={!reaction
+    tx={!reactionId
       ? 'reactions.createPostReaction'
       : changeReactionTx
     }
     params={buildTxParams()}
-    onSuccess={onSuccess}
+    onClick={() => updateOrDelete(isUpdate)}
+    onSuccess={(txResult) => {
+      const newReactionId = reactionId || getNewIdsFromEvent(txResult)[1]?.toString()
+      updateOrDelete(isUpdate, newReactionId)
+      onSuccess && onSuccess()
+    }}
+    onFailed={(tx) => {
+      console.log('tx', tx?.status, tx?.isError)
+      upsertReaction({ id, ...reaction })
+    }}
     title={preview ? reactionType : undefined}
     disabled={disabled}
   >
@@ -107,21 +127,16 @@ type VoterButtonsProps = VoterProps & {
 export const VoterButtons = (props: VoterButtonsProps) => {
   const { post, only, ...voterProps } = props
   const reloadPost = useGetReloadPost()
-  const reloadReaction = useGetReloadReaction()
   const args = { id: post.id }
-  const reaction = useAppSelector(state => selectPostReactionByPostId(state, post.id))?.reaction
+  const reaction = useAppSelector(state => selectPostReactionByPostId(state, post.id))
 
   const renderVoterButton = useCallback((reactionType: ReactionEnum) => <VoterButton
     reaction={reaction}
     reactionEnum={reactionType}
-    onSuccess={() => {
-      console.log('SUCCESS')
-      reloadPost(args)
-      reloadReaction(args)
-    }}
+    onSuccess={() => reloadPost(args)}
     post={post}
     {...voterProps}
-  />, [ post.id ])
+  />, [ post.id, reaction?.kind || 'None' ])
 
   const UpvoteButton = () => only !== ReactionEnum.Upvote ? renderVoterButton(ReactionEnum.Upvote) : null
   const DownvoteButton = () => only !== ReactionEnum.Downvote ? renderVoterButton(ReactionEnum.Downvote) : null
