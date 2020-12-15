@@ -65,20 +65,25 @@ export const getSpaceId = async (idOrHandle: string, subsocial?: SubsocialApi): 
   }
 }
 
-export function getNewIdFromEvent (txResult: SubmittableResult): BN | undefined {
-  let id: BN | undefined
+export function getNewIdsFromEvent (txResult: SubmittableResult): BN[] {
+  const newIds: BN[] = []
 
   txResult.events.find(event => {
     const { event: { data, method } } = event
     if (method.indexOf('Created') >= 0) {
-      const [ /* owner */, newId ] = data.toArray()
-      id = newId as unknown as BN
+      const [ /* owner */, ...ids ] = data.toArray()
+      newIds.push(...ids as unknown as BN[])
       return true
     }
     return false
   })
 
-  return id
+  return newIds
+}
+
+export function getNewIdFromEvent (txResult: SubmittableResult): BN | undefined {
+  const [ newId ] = getNewIdsFromEvent(txResult)
+  return newId
 }
 
 export const getAccountId = async (addressOrHandle: string): Promise<AnyAccountId | undefined> => {
