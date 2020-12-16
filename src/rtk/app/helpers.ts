@@ -18,7 +18,7 @@ type ContentEntity = HasId & CommonContent
 export type CommonVisibility = 'onlyPublic' | 'onlyUnlisted'
 export type HasHiddenVisibility = CommonVisibility | 'onlyVisible' | 'onlyHidden'
 
-type ApiArg = {
+export type ApiArg = {
   api: SubsocialApi
 }
 
@@ -103,16 +103,20 @@ export function selectManyByIds<
 
   ids.forEach((id) => {
     const struct = selectStructById(state, id)
-    if (struct && nonEmptyStr(struct.contentId)) {
-      const { contentId } = struct
-      const content = selectContentById(state, contentId)
-      if (content) {
-        result.push({
-          id: struct.id,
-          struct,
-          content,
-        })
+    if (struct) {
+      const item: EntityData<S, C> = {
+        id: struct.id,
+        struct,
       }
+
+      if (nonEmptyStr(struct.contentId)) {
+        const { contentId } = struct
+        const content = selectContentById(state, contentId)
+        item.content = content
+      }
+
+      result.push(item)
+
     }
   })
 

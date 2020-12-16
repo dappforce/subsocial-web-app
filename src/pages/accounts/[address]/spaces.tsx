@@ -1,3 +1,3 @@
-import AccountSpacesPage from '../../../components/spaces/AccountSpaces'
+import { OwnedSpacesPage } from '../../../components/spaces/AccountSpaces'
 
-export default AccountSpacesPage
+export default OwnedSpacesPage

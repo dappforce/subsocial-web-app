@@ -12,7 +12,11 @@ import { useLinkParams } from './utils'
 
 // const log = newLogger(DataList.name)
 
-export function PaginatedList<T extends any> (props: DataListProps<T>) {
+type PaginatedListProps<T> = DataListProps<T> & {
+  paginationOff?: boolean
+}
+
+export function PaginatedList<T extends any> ({ paginationOff, ...props }: PaginatedListProps<T>) {
   const { dataSource, totalCount } = props
 
   const total = totalCount || dataSource.length
@@ -85,7 +89,7 @@ export function PaginatedList<T extends any> (props: DataListProps<T>) {
   }
 
   return <DataList
-    paginationConfig={paginationConfig()}
+    paginationConfig={paginationOff ? undefined : paginationConfig()}
     {...props}
   />
 }

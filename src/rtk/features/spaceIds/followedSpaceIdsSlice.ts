@@ -1,5 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { FetchOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { SpaceId, AccountId } from 'src/types'
 import { bnsToIds } from 'src/types/utils'
@@ -12,7 +13,7 @@ export type SpaceIdsFollowedByAccount = {
 
 const adapter = createEntityAdapter<SpaceIdsFollowedByAccount>()
 
-const spacesSelectors = adapter.getSelectors<RootState>(state => state.followedSpaceIds)
+const selectors = adapter.getSelectors<RootState>(state => state.followedSpaceIds)
 
 // Rename the exports for readability in component usage
 export const {
@@ -21,12 +22,17 @@ export const {
   // selectEntities: selectFollowedSpaceIdsEntities,
   // selectAll: selectAllFollowedSpaceIds,
   // selectTotal: selectTotalSpaceFollowers
-} = spacesSelectors
+} = selectors
 
-export const selectSpaceIdsFollowedByAccount = (state: RootState, follower: AccountId): SpaceId[] => {
-  const res = spacesSelectors.selectById(state, follower)
-  return res ? res.followedSpaceIds : []
-}
+export const _selectSpaceIdsFollowedByAccount:
+  SelectOneFn<Args, SpaceIdsFollowedByAccount | undefined> = (
+    state, 
+    { id: follower }
+  ) =>
+    selectors.selectById(state, follower)
+
+export const selectSpaceIdsFollowedByAccount = (state: RootState, id: AccountId) => 
+  _selectSpaceIdsFollowedByAccount(state, { id })?.followedSpaceIds
 
 type Args = {}
 
@@ -36,8 +42,8 @@ type FetchOneRes = SpaceIdsFollowedByAccount | undefined
 
 export const fetchSpaceIdsFollowedByAccount = createAsyncThunk
   <FetchOneRes, FetchOneSpaceIdsArgs, ThunkApiConfig>(
-  'spaces/fetchOne',
-  async ({ api, id }, { getState }) => {
+  'followedSpaceIds/fetchOne',
+  async ({ api, id }, { getState }): Promise<FetchOneRes> => {
 
     const follower = id as AccountId
     const knownSpaceIds = selectSpaceIdsFollowedByAccount(getState(), follower)

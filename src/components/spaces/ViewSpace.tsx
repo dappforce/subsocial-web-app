@@ -2,7 +2,7 @@ import { SpaceContent } from 'src/types'
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
 import Error from 'next/error'
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Segment } from 'src/components/utils/Segment'
 import { SummarizeMd } from '../utils/md'
 import MyEntityLabel from '../utils/MyEntityLabel'
@@ -54,7 +54,7 @@ export const ViewSpace = (props: Props) => {
   } = props
 
   const { struct: space, content = {} as SpaceContent } = spaceData
-  const { id, ownerId: owner } = space
+  const { ownerId: owner } = space
 
   const { about, name, image, tags, email, links } = content
   const contactInfo = { email, links }
@@ -62,7 +62,7 @@ export const ViewSpace = (props: Props) => {
   const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
 
   // TODO useCallback usage here looks wrong
-  const Avatar = useCallback(() => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />, [])
+  const Avatar = () => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />
 
   const isMy = isMySpace(space)
 
@@ -92,7 +92,7 @@ export const ViewSpace = (props: Props) => {
           <div className='handle'>{spaceName}</div>
         </div>
       </div>
-      {withFollowButton && <FollowSpaceButton spaceId={id} />}
+      {withFollowButton && <FollowSpaceButton space={space} />}
     </div>
 
   const title = React.createElement(
@@ -118,7 +118,7 @@ export const ViewSpace = (props: Props) => {
                   <EditOutlined /> Edit
                 </ButtonLink>
               }
-              {withFollowButton && <FollowSpaceButton spaceId={id} />}
+              {withFollowButton && <FollowSpaceButton space={space} />}
             </span>
           </div>
 

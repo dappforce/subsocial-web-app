@@ -7,6 +7,7 @@ import { ApiPromise } from '@polkadot/api'
 import { newLogger } from '@subsocial/utils'
 import { FlatSubsocialApi, newFlatApi, useSubstrate } from '../substrate'
 import { controlledMessage } from './Message'
+import messages from 'src/messages'
 // import { isDevMode } from './env';
 
 const log = newLogger('SubsocialApiContext')
@@ -87,7 +88,7 @@ const createSubsocialState = (api?: ApiPromise): SubsocialApiState => {
 export const SubsocialApiContext = createContext<SubsocialApiContextProps>(contextStub)
 
 const message = controlledMessage({
-  message: 'Connecting to the network...',
+  message: messages.connectingToNetwork,
   type: 'info',
   duration: 0
 })
