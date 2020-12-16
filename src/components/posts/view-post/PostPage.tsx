@@ -182,11 +182,8 @@ getInitialPropsWithRedux(PostPage, async (props) => {
 
   const postStruct = postData.post.struct
 
-  console.log('postStruct.isComment', postStruct.isComment)
-
   if (postStruct.isComment) {
     const { rootPostId } = asCommentStruct(postStruct)
-    console.log('rootPostId', rootPostId)
     await dispatch(fetchPost({ api: subsocial, id: rootPostId }))
     rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
   }

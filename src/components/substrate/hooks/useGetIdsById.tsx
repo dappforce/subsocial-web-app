@@ -22,7 +22,6 @@ export const useGetSubstrateIdsById = <T extends SubstrateId | AccountId = Subst
         const readyApi = await substrate.api
   
         const ids = await readyApi.query[pallete][method](id)
-        console.log(ids)
   
         setReactionIds(ids as unknown as T[])
         setLoading(false)
