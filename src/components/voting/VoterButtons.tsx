@@ -46,7 +46,7 @@ const VoterButton = ({
   const count = isUpvote ? upvotesCount : downvotesCount
 
   const buildTxParams = () => {
-    if (reaction === undefined) {
+    if (reactionId === undefined) {
       return [ id, new ReactionKind(reactionType) ]
     } else if (kind !== reactionType) {
       return [ id, reactionId, new ReactionKind(reactionType) ]
@@ -57,25 +57,21 @@ const VoterButton = ({
 
   const isActive = kind === reactionType
 
-  if (id === '482') {
-    console.log('kind', kind, kind === reactionType, isActive)
-  }
-
   const color = isUpvote ? '#00a500' : '#ff0000'
 
-  const isUpdate = kind !== reactionType
-  const changeReactionTx = isUpdate
-    ? 'reactions.updatePostReaction'
-    : 'reactions.deletePostReaction'
+  const isDelete = kind === reactionType
+  const changeReactionTx = isDelete
+    ? 'reactions.deletePostReaction'
+    : 'reactions.updatePostReaction'
 
-  const updateOrDelete = useCallback((update: boolean, _reactinoId?: ReactionId) => {
+  const updateOrDelete = (isDelete: boolean, _reactinoId?: ReactionId) => {
     const newReactionId = _reactinoId || reactionId
-    const newReaction: Reaction | undefined = update
-      ? { reactionId: newReactionId || `fakeId-${id}`, kind: reactionType }
-      : undefined
-    
+    const newReaction: Reaction | undefined = isDelete
+      ? {}
+      : { reactionId: newReactionId || `fakeId-${id}`, kind: reactionType }
+
     upsertReaction({ id, ...newReaction })
-  }, [ id, reaction ])
+  }
 
   let icon: JSX.Element
   if (isUpvote) {
@@ -99,14 +95,13 @@ const VoterButton = ({
       : changeReactionTx
     }
     params={buildTxParams()}
-    onClick={() => updateOrDelete(isUpdate)}
+    onClick={() => updateOrDelete(isDelete)}
     onSuccess={(txResult) => {
       const newReactionId = reactionId || getNewIdsFromEvent(txResult)[1]?.toString()
-      updateOrDelete(isUpdate, newReactionId)
+      updateOrDelete(isDelete, newReactionId)
       onSuccess && onSuccess()
     }}
-    onFailed={(tx) => {
-      console.log('tx', tx?.status, tx?.isError)
+    onFailed={() => {
       upsertReaction({ id, ...reaction })
     }}
     title={preview ? reactionType : undefined}
