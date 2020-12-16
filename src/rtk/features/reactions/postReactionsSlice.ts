@@ -126,7 +126,6 @@ export const fetchPostReactions = createAsyncThunk
 
     })
 
-    console.log('Array.from(reactionByPostId.values())', Array.from(reactionByPostId.values()))
     return Array.from(reactionByPostId.values())
   }
 )
