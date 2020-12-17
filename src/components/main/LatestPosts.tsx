@@ -1,7 +1,7 @@
 import React from 'react'
 import { PostWithAllDetails } from 'src/types'
-import PostPreview from '../posts/view-post/PostPreview'
 import DataList from '../lists/DataList'
+import { PublicPostPreviewById } from '../posts/PublicPostPreview'
 
 type Props = {
   postsData: PostWithAllDetails[]
@@ -21,7 +21,7 @@ export const LatestPosts = (props: Props) => {
     dataSource={postsData}
     getKey={item => item.id}
     renderItem={(item) =>
-      <PostPreview postDetails={item} withActions />
+      <PublicPostPreviewById postId={item.id} />
     }
   />
 }

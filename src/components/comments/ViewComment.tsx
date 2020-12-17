@@ -1,6 +1,6 @@
-import React, { FC, useState } from 'react'
-import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, NotificationOutlined } from '@ant-design/icons'
-import { Comment, Button, Tag } from 'antd'
+import React, { FC, useMemo, useState } from 'react'
+import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, EllipsisOutlined, NotificationOutlined } from '@ant-design/icons'
+import { Comment, Button, Tag, Menu, Dropdown } from 'antd'
 import { asCommentData, asCommentStruct, PostWithSomeDetails } from 'src/types'
 import { CommentContent } from '@subsocial/types'
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview'
@@ -11,13 +11,13 @@ import dayjs from 'dayjs'
 import { EditComment } from './UpdateComment'
 import { NewComment } from './CreateComment'
 import { VoterButtons } from '../voting/VoterButtons'
-import { PostDropDownMenu } from '../posts/view-post'
 import { CommentBody } from './helpers'
 import { equalAddresses } from '../substrate'
 import { postUrl } from '../urls'
 import { ShareDropdown } from '../posts/share/ShareDropdown'
 import { PostStruct, SpaceStruct } from 'src/types'
 import { ViewCommentsTree } from './CommentTree'
+import { isMyAddress } from '../auth/MyAccountContext'
 
 type Props = {
   space: SpaceStruct,
@@ -63,6 +63,24 @@ export const ViewComment: FC<Props> = (props) => {
   const isFake = id.startsWith('fake')
   const commentLink = postUrl(space, comment.post)
   const isRootPostOwner = equalAddresses(rootPost?.ownerId, commentStruct.ownerId)
+  const isMyStruct = isMyAddress(ownerId)
+
+  const CommentDropDownMenu = useMemo(() => {
+
+    const menu = (
+      <Menu>
+        {isMyStruct && <Menu.Item key='0'>
+          <div onClick={() => setShowEditForm(true)}>Edit</div>
+        </Menu.Item>}
+      </Menu>
+    )
+  
+    return <>{isMyStruct &&
+      <Dropdown overlay={menu} placement='bottomRight'>
+        <EllipsisOutlined />
+      </Dropdown>
+    }</>
+  }, [ ownerId, id ])
 
   const ViewRepliesLink = () => {
     const viewActionMessage = showReplies
@@ -101,7 +119,7 @@ export const ViewComment: FC<Props> = (props) => {
           </span>
         }
       />
-      <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={comment.post} space={space} />
+      {!isFake && <span key={`comment-dropdown-menu-${id}`}>{CommentDropDownMenu}</span>}
     </div>
   )
 
