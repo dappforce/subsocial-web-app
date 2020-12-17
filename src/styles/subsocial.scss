@@ -1561,19 +1561,22 @@ hr {
   color: $color_font_normal !important;
 }
 
-.bell {
-  &:hover {
-    color: $color_link !important;
-  }
-  margin-top: 24px;
-  margin-right: -16px;
-  font-size: 24px;
-  color: $color_muted;
-}
-
-.notifications {
+.DfNotificationCounter {
   margin-right: $space_small;
   margin-left: $space_normal;
+
+  .bell {
+    &:hover {
+      color: $color_link !important;
+    }
+    margin-top: $space_huge;
+    font-size: 24px;
+    color: $color_muted;
+  }
+  
+  .ant-badge-not-a-wrapper .ant-scroll-number {
+    position: absolute;
+  }
 }
 
 .ant-badge-count {

@@ -12,12 +12,12 @@ import { uiShowSearch } from 'src/components/utils/env'
 
 const InnerMenu = () => {
   const { toggle } = useSidebarCollapsed()
-  const { isNotMobile, isMobile } = useResponsiveSize()
+  const { isMobile } = useResponsiveSize()
   const [ show, setShow ] = useState(false)
 
-  const logoImg = '/subsocial-logo.svg'
+  const logoImg = isMobile ? '/subsocial-sign.svg' : '/subsocial-logo.svg'
 
-  return isMobile && show
+  return uiShowSearch && show
     ? <div className='DfTopBar DfTopBar--search'>
       <SearchInput/>
       <CloseCircleOutlined className='DfCloseSearchIcon' onClick={() => setShow(false)} />
@@ -28,14 +28,14 @@ const InnerMenu = () => {
           <MenuOutlined style={{ fontSize: '20px', color: '#999' }} />
         </Button>
         <Link href='/' as='/'>
-          <a className='DfBrand'>
+          <a className={`DfBrand ${isMobile && 'mobile'}`}>
             <img src={logoImg} alt='Subsocial' />
           </a>
         </Link>
       </div>
-      {isNotMobile && uiShowSearch && <SearchInput/>}
+      {/* {isNotMobile && uiShowSearch && <SearchInput/>} */}
       <div className='DfTopBar--rightContent'>
-        {isMobile && uiShowSearch &&
+        {uiShowSearch &&
           <SearchOutlined className='DfSearchIcon' onClick={() => setShow(true)} />
         }
         {isMobileDevice
