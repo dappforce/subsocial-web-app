@@ -72,7 +72,7 @@ export const fetchProfiles = createAsyncThunk<ProfileStruct[], FetchProfilesArgs
     structs.forEach((structOpt, i) => {
       if (structOpt.isSome) {
         structWithIdArr.push({
-          id: ids[i],
+          id: newIds[i],
           struct: structOpt.unwrap()
         })
       }
