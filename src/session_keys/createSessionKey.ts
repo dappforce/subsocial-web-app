@@ -1,11 +1,11 @@
-import { readMyAddress } from '../components/auth/MyAccountContext';
+import { readMyAddress } from '../components/auth/MyAccountContext'
 import store from 'store'
-import { clearNotifications, insertToSessionKeyTable, getNonce } from '../components/utils/OffchainUtils';
-import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
-import { appName } from '../components/utils/env';
-import { stringToHex, u8aToHex, hexToU8a } from '@polkadot/util';
-import { naclSign } from '@polkadot/util-crypto';
-import { GenericAccountId } from '@polkadot/types';
+import { clearNotifications, insertToSessionKeyTable, getNonce } from '../components/utils/OffchainUtils'
+import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp'
+import { appName } from '../components/utils/env'
+import { stringToHex, u8aToHex, hexToU8a } from '@polkadot/util'
+import { naclSign } from '@polkadot/util-crypto'
+import { GenericAccountId } from '@polkadot/types'
 import registry from '@subsocial/types/substrate/registry'
 import { mnemonicGenerate, mnemonicToMiniSecret, naclKeypairFromSeed } from '@polkadot/util-crypto'
 import { Keypair } from '@polkadot/util-crypto/types'
@@ -52,11 +52,11 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
   // const address = new GenericAccountId(registry, myAddress)
   if (!address) return
 
-  const extensions = await web3Enable(appName);
+  const extensions = await web3Enable(appName)
   if (!extensions.length) {
     return
   }
-  const allAccounts = await web3Accounts();
+  const allAccounts = await web3Accounts()
 
   const account = allAccounts.find(x => new GenericAccountId(registry, x.address))
   if (!account) return
@@ -66,7 +66,7 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
   const secretKeyHex = u8aToHex(secretKey)
 
   const selectedNonce = await getNonce(address)
-  let nonce: number = 0
+  let nonce = 0
   if(selectedNonce)
     nonce = parseInt(selectedNonce)
 
@@ -80,7 +80,7 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
 
   const signature = await signMessage(account.meta.source, address, JSONstingifySorted(message))
   if (!signature) return
-  let sessionKey: SessionKeypair = {
+  const sessionKey: SessionKeypair = {
     publicKey: publicKeyHex,
     secretKey: secretKeyHex
   }
@@ -100,24 +100,24 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
 }
 
 export const generateKeyPair = (): Keypair => {
-  const mnemonic = mnemonicGenerate();
-  const seed = mnemonicToMiniSecret(mnemonic);
-  const keypair = naclKeypairFromSeed(seed);
+  const mnemonic = mnemonicGenerate()
+  const seed = mnemonicToMiniSecret(mnemonic)
+  const keypair = naclKeypairFromSeed(seed)
 
   return keypair
 }
 
 const signMessage = async (source: string, address: string, message: string): Promise<string | undefined> => {
-  const injector = await web3FromSource(source);
+  const injector = await web3FromSource(source)
 
-  const signRaw = injector?.signer?.signRaw;
+  const signRaw = injector?.signer?.signRaw
 
   if (!!signRaw) {
     const { signature } = await signRaw({
       address,
       data: stringToHex(message),
       type: 'bytes'
-    });
+    })
     return signature
   }
   return undefined
@@ -147,7 +147,7 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
   const genericAccount = new GenericAccountId(registry, u8aToHex(keypair.publicKey))
 
   const selectedNonce = await getNonce(String(genericAccount))
-  let nonce: number = 0
+  let nonce = 0
   if(selectedNonce)
     nonce = parseInt(selectedNonce)
 

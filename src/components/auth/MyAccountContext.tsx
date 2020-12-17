@@ -26,7 +26,7 @@ function storeDidSignIn () {
   store.set(DID_SIGN_IN, true)
 }
 
-function readMyAddress (): string | undefined {
+export function readMyAddress (): string | undefined {
   const myAddress: string | undefined = store.get(MY_ADDRESS)
   if (nonEmptyStr(myAddress)) {
     storeDidSignIn()
