@@ -21,8 +21,8 @@ import styles from './index.module.sass'
 import { useGetReloadPost, useGetReloadSpace } from 'src/rtk/app/hooks'
 import { bnToId, idsToBns } from 'src/types'
 import { useAppSelector } from 'src/rtk/app/store'
-import { selectSpaceIdsOwnedByAccount } from 'src/rtk/features/spaceIds/ownSpaceIdslice'
 import { useMyAddress } from 'src/components/auth/MyAccountContext'
+import { selectSpaceIdsOwnedByAccount } from 'src/rtk/features/spaceIds/ownSpaceIdsSlice'
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
