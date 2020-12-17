@@ -1576,49 +1576,7 @@ hr {
   
   .ant-badge-not-a-wrapper .ant-scroll-number {
     position: absolute;
+    top: -$space_big;
+    right: -$space_big;
   }
-}
-
-.ant-badge-count {
-  margin-top: -26px;
-  margin-right: -1rem;
-  margin-left: 4px;
-  z-index: auto;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  color: #fff;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 20px;
-  white-space: nowrap;
-  text-align: center;
-  background: #ff4d4f;
-  border-radius: 10px;
-  box-shadow: 0 0 0 1px #fff;
-}
-
-.ant-tooltip-inner {
-  margin-left: 20px;
-  min-width: 30px;
-  min-height: 32px;
-  padding: 6px 8px;
-  color: #fff;
-  text-align: left;
-  text-decoration: none;
-  word-wrap: break-word;
-  background-color: rgba(0, 0, 0, 0.75);
-  border-radius: 2px;
-  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
-}
-
-.ant-tooltip-arrow {
-  position: absolute;
-  display: block;
-  width: 13.07106781px;
-  height: 13.07106781px;
-  overflow: hidden;
-  background: transparent;
-  pointer-events: none;
-  margin-left: 10px;
 }
