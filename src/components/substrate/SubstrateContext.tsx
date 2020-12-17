@@ -43,7 +43,6 @@ export type State = {
   api?: ApiPromise
   apiError?: any
   apiState?: ApiState,
-  connecting?: boolean,
   keyring?: Keyring
   keyringState?: KeyringState
   keyringError?: Error
@@ -52,7 +51,6 @@ export type State = {
 const INIT_STATE: State = {
   endpoint: substrateUrl,
   types: SubsocialTypes,
-  connecting: true,
   rpc: { ...jsonrpc }
 }
 
@@ -64,7 +62,7 @@ const reducer = (state: State, action: Action): State => {
     }
     case 'CONNECT': {
       log.info(`Connected to Substrate node ${state.endpoint?.toString()}`)
-      return { ...state, api: action.payload, apiState: 'CONNECTING', connecting: true }
+      return { ...state, api: action.payload, apiState: 'CONNECTING' }
     }
     case 'CONNECT_SUCCESS': {
       if (state.apiState !== 'CONNECTING') {
@@ -77,7 +75,7 @@ const reducer = (state: State, action: Action): State => {
         }
         log.info(`✅ Substrate API is ready. ${tookTimeLog}`)
       }
-      return { ...state, apiState: 'READY', connecting: false }
+      return { ...state, apiState: 'READY' }
     }
     case 'CONNECT_ERROR': {
       const err = action.payload
@@ -159,7 +157,7 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
     const onConnect = () => {
       dispatch({ type: 'CONNECT', payload: _api })
       // `ready` event is not emitted upon reconnection. So we check explicitly here.
-      _api.isReady.then((_api) => onConnectSuccess())
+      _api.isReady.then(() => onConnectSuccess())
     }
 
     _api.on('connected', onConnect)
@@ -232,3 +230,4 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
 }
 
 export const useSubstrateContext = () => useContext(SubstrateContext)[0]
+export const useIsSubstrateConnected = () => useSubstrateContext().apiState === 'READY' 

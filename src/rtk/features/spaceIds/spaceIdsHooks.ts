@@ -4,17 +4,17 @@ import { useFetchOneEntity } from 'src/rtk/app/hooksCommon'
 import { AccountId, SpaceId } from 'src/types'
 import { useFetchSpaces } from '../spaces/spacesHooks'
 import { fetchSpaceIdsFollowedByAccount, _selectSpaceIdsFollowedByAccount } from './followedSpaceIdsSlice'
-import { fetchSpaceIdsOwnedByAccount, _selectSpaceIdsOwnedByAccount } from './ownedSpaceIdsSlice'
+import { fetchSpaceIdsOwnedByAccount, _selectSpaceIdsOwnedByAccount } from './ownSpaceIdsSlice'
 
-export const useFetchOwnSpaceIds = (owner: AccountId) => {
+export const useFetchSpaceIdsByOwner = (owner: AccountId) => {
   return useFetchOneEntity(_selectSpaceIdsOwnedByAccount, fetchSpaceIdsOwnedByAccount, { id: owner })
 }
 
-export const useFetchFollowedSpaceIds = (follower: AccountId) => {
+export const useFetchSpaceIdsByFollower = (follower: AccountId) => {
   return useFetchOneEntity(_selectSpaceIdsFollowedByAccount, fetchSpaceIdsFollowedByAccount, { id: follower })
 }
 
-const useFetchSpacesByIds = (spaceIds: SpaceId[] = []) => {
+const useFetchPageOfSpacesByIds = (spaceIds: SpaceId[] = []) => {
   const { query } = useRouter()
 
   const ids = getPageOfIds(spaceIds, query)
@@ -29,9 +29,9 @@ const useFetchSpacesByIds = (spaceIds: SpaceId[] = []) => {
   }
 }
 
-export const useFetchOwnSpaces = (owner: AccountId) => {
-  const { entity, loading: l1, error: err1 } = useFetchOwnSpaceIds(owner)
-  const { spaceIds, spaces, loading: l2, error: err2 } = useFetchSpacesByIds(entity?.ownSpaceIds)
+export const useFetchPageOfSpacesByOwner = (owner: AccountId) => {
+  const { entity, loading: l1, error: err1 } = useFetchSpaceIdsByOwner(owner)
+  const { spaceIds, spaces, loading: l2, error: err2 } = useFetchPageOfSpacesByIds(entity?.ownSpaceIds)
 
   return { 
     spaces,
@@ -41,9 +41,9 @@ export const useFetchOwnSpaces = (owner: AccountId) => {
   }
 }
 
-export const useFetchFollowedSpaces = (owner: AccountId) => {
-  const { entity, loading: l1, error: err1 } = useFetchFollowedSpaceIds(owner)
-  const { spaceIds, spaces, loading: err2, error: l2 } = useFetchSpacesByIds(entity?.followedSpaceIds)
+export const useFetchPageOfSpacesByFollower = (owner: AccountId) => {
+  const { entity, loading: l1, error: err1 } = useFetchSpaceIdsByFollower(owner)
+  const { spaceIds, spaces, loading: l2, error: err2 } = useFetchPageOfSpacesByIds(entity?.followedSpaceIds)
 
   return { 
     spaces,

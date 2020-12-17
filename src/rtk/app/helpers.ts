@@ -113,8 +113,7 @@ export function selectManyByIds<
 
       if (nonEmptyStr(struct.contentId)) {
         const { contentId } = struct
-        const content = selectContentById(state, contentId)
-        item.content = content
+        item.content = selectContentById(state, contentId)
       }
 
       result.push(item)

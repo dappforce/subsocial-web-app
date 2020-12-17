@@ -122,7 +122,7 @@ export function isUnlisted (data?: SpaceOrPostData) {
 
   const { struct, content } = data
 
-  return struct.hidden === true || !content
+  return struct.hidden || !content
 }
 
 export function isPublic (data?: SpaceOrPostData) {

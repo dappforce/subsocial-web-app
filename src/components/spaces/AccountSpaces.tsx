@@ -7,12 +7,13 @@ import PaginatedList from 'src/components/lists/PaginatedList'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import messages from 'src/messages'
 import { useAppSelector } from 'src/rtk/app/store'
-import { useFetchFollowedSpaces, useFetchOwnSpaces } from 'src/rtk/features/spaceIds/spaceIdsHooks'
+import { useFetchPageOfSpacesByFollower, useFetchPageOfSpacesByOwner } from 'src/rtk/features/spaceIds/spaceIdsHooks'
 import { selectSpaces } from 'src/rtk/features/spaces/spacesSlice'
 import { isUnlisted, SpaceData, SpaceId } from 'src/types'
 import { isMyAddress } from '../auth/MyAccountContext'
+import { DataList } from '../lists'
 import { PageContent } from '../main/PageWrapper'
-import { useSubstrateContext } from '../substrate'
+import { useIsSubstrateConnected } from '../substrate'
 import { Loading, toShortAddress } from '../utils'
 import Section from '../utils/Section'
 import { CreateSpaceButton } from './helpers'
@@ -22,7 +23,7 @@ const { TabPane }= Tabs
 
 export type LoadSpacesType = {
   spacesData: SpaceData[]
-  spaceIds: SpaceId[] // TODO rename to just `spaceIds`
+  spaceIds: SpaceId[]
 }
 
 type BaseProps = {
@@ -45,7 +46,9 @@ const SpacesList = (props: SpacesListProps) => {
   const { spaces, totalCount, isMy, title, paginationOff } = props
   const noSpaces = totalCount === 0
 
-  return <PaginatedList
+  const List = useMemo(() => paginationOff ? DataList : PaginatedList, [ paginationOff ])
+
+  return <List
     title={title}
     totalCount={totalCount}
     dataSource={spaces}
@@ -57,7 +60,6 @@ const SpacesList = (props: SpacesListProps) => {
         Create my first space
       </CreateSpaceButton>
     }
-    paginationOff={paginationOff}
   />
 }
 
@@ -79,9 +81,9 @@ export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props}: Accoun
   const { query: { page = DEFAULT_FIRST_PAGE, size = DEFAULT_PAGE_SIZE } } = useRouter()
 
   const [ unlistedSpaceIds, setUnistedSpaceIds ] = useState<SpaceId[]>([])
-  const { spaces, spaceIds, error, loading } = useFetchOwnSpaces(address)
+  const { spaces, spaceIds, error, loading } = useFetchPageOfSpacesByOwner(address)
   const [ newUnlistedSpaces ] = partition(spaces, isUnlisted)
-  const { connecting } = useSubstrateContext()
+  const connected = useIsSubstrateConnected()
   const isMy = isMyAddress(address)
 
   const totalCount = spaceIds.length
@@ -108,7 +110,7 @@ export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props}: Accoun
     {...props}
   />, [ spaces.length ])
 
-  if (connecting) return <Loading label={messages.connectingToNetwork} />
+  if (!connected) return <Loading label={messages.connectingToNetwork} />
   
   if (error) return null
 
@@ -157,7 +159,7 @@ export const OwnedSpacesPage = () => {
 
 export const FollowingSpacesList = (props: BaseProps) => {
   const address = props.address.toString()
-  const { spaceIds, spaces, error, loading } = useFetchFollowedSpaces(address)
+  const { spaceIds, spaces, error, loading } = useFetchPageOfSpacesByFollower(address)
 
   if (error) return null
 

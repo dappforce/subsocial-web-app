@@ -6,22 +6,22 @@ import { SpaceId, AccountId } from 'src/types'
 import { bnsToIds } from 'src/types/utils'
 
 export type OwnSpaceIds = {
-  /** `id` is an account id that follows spaces. */
+  /** `id` is an account id that owns spaces. */
   id: AccountId
   ownSpaceIds: SpaceId[]
 }
 
 const adapter = createEntityAdapter<OwnSpaceIds>()
 
-const selectors = adapter.getSelectors<RootState>(state => state.ownedSpaceIds)
+const selectors = adapter.getSelectors<RootState>(state => state.ownSpaceIds)
 
 // Rename the exports for readability in component usage
 export const {
-  // selectById: selectMySpaceIdsByAccount,
+  // selectById: selectSpaceIdsByAccount,
   selectIds: selectAllMySpace,
-  // selectEntities: selectMySpaceIdsEntities,
-  // selectAll: selectAllMySpaceIds,
-  // selectTotal: selectTotalMySpace
+  // selectEntities: selectSpaceIdsEntities,
+  // selectAll: selectAllSpaceIds,
+  // selectTotal: selectTotalSpaceIds
 } = selectors
 
 type Args = {}
@@ -47,9 +47,9 @@ export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
 
     const myAddress = id as AccountId
     const knownSpaceIds = selectSpaceIdsOwnedByAccount(getState(), myAddress)
-    const isKnownFollower = typeof knownSpaceIds !== 'undefined'
-    if (isKnownFollower) {
-      // Nothing to load: space ids followed by this account are already loaded.
+    const isKnownOwner = typeof knownSpaceIds !== 'undefined'
+    if (isKnownOwner) {
+      // Nothing to load: space ids owned by this account are already loaded.
       return undefined
     }
 
