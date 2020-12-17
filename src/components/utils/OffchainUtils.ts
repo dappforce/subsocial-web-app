@@ -1,11 +1,10 @@
 import axios from 'axios'
 import { offchainUrl } from './env'
-import { Counts } from '@subsocial/types/offchain'
+import { Activity, Counts } from '@subsocial/types/offchain'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { ElasticQueryParams } from '@subsocial/types/offchain/search'
-import { Activity } from '../activity/NotificationUtils'
 import { ReadAllMessage, SessionCall, AddSessionKeyArgs } from '../../session_keys/createSessionKey';
-import { resloveWebSocketConnection } from './NotifCounter';
+import { resloveWebSocketConnection } from '../activity/NotifCounter'
 
 const log = newLogger('OffchainRequests')
 
@@ -127,7 +126,7 @@ export const clearNotifications = (sessionCall: SessionCall<ReadAllMessage>) => 
 
 export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessionKeyArgs>) => {
   try {
-    const res = await axios.post(getOffchainUrl(`/notifications/addSessionKey`), { sessionCall })
+    const res = await axios.post(getOffchainUrl('/notifications/addSessionKey'), { sessionCall })
     if (res.status !== 200) {
       console.warn('Failed to insert session key for account:', sessionCall.account, 'res.status:', res.status)
     }
@@ -139,7 +138,7 @@ export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessio
 export const getNonce = async (account: string) => {
   try {
     const params = { account }
-    const res = await axios.post(getOffchainUrl(`/notifications/getNonce`), null, { params })
+    const res = await axios.post(getOffchainUrl('/notifications/getNonce'), null, { params })
     if (res.status === 200) {
       return res.data
     }

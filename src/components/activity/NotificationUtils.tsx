@@ -2,7 +2,7 @@ import React from 'react'
 import dayjs from 'dayjs'
 import { ViewSpace } from '../spaces/ViewSpace'
 import { Pluralize } from '../utils/Plularize'
-import { Activity as OldActivity, EventsName, PostContent, AnyAccountId } from '@subsocial/types'
+import { Activity, EventsName, PostContent, AnyAccountId } from '@subsocial/types'
 import { ProfileData, SpaceData, PostData, asSharedPostStruct, PostId, asCommentStruct, SpaceId, AccountId, EntityId } from 'src/types'
 import BN from 'bn.js'
 import Link from 'next/link'
@@ -13,11 +13,6 @@ import messages from '../../messages'
 import { summarize } from 'src/utils'
 import { Name } from '../profiles/address-views/Name'
 import { equalAddresses, FlatSubsocialApi } from '../substrate'
-
-export type Activity = Omit<OldActivity, 'id'> & {
-  block_number: string,
-  event_index: number
-}
 
 export type LoadMoreFn = (
   myAddress: string,
