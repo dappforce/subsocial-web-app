@@ -1,7 +1,8 @@
 import React from 'react'
+import { useFetchMyPostReactions } from 'src/rtk/features/reactions/postReactionsHooks'
 import { PostWithAllDetails } from 'src/types'
-import PostPreview from '../posts/view-post/PostPreview'
 import DataList from '../lists/DataList'
+import { PublicPostPreviewById } from '../posts/PublicPostPreview'
 
 type Props = {
   postsData: PostWithAllDetails[]
@@ -11,7 +12,8 @@ type Props = {
 export const LatestPosts = (props: Props) => {
   const { postsData = [], type } = props
   const posts = postsData.filter((x) => typeof x.post.struct !== 'undefined')
-
+  useFetchMyPostReactions(posts.map(({ id }) => id))
+  
   if (posts.length === 0) {
     return null
   }
@@ -21,7 +23,7 @@ export const LatestPosts = (props: Props) => {
     dataSource={postsData}
     getKey={item => item.id}
     renderItem={(item) =>
-      <PostPreview postDetails={item} withActions />
+      <PublicPostPreviewById postId={item.id} />
     }
   />
 }

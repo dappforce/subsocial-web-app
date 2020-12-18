@@ -2,7 +2,7 @@ import { SpaceContent } from 'src/types'
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
 import Error from 'next/error'
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Segment } from 'src/components/utils/Segment'
 import { SummarizeMd } from '../utils/md'
 import MyEntityLabel from '../utils/MyEntityLabel'
@@ -20,6 +20,9 @@ import { editSpaceUrl } from '../urls'
 import ButtonLink from '../utils/ButtonLink'
 import { EditOutlined } from '@ant-design/icons'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
+import { useAppSelector } from 'src/rtk/app/store'
+import { selectSpace } from 'src/rtk/features/spaces/spacesSlice'
+import { shallowEqual } from 'react-redux'
 
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
 
@@ -30,11 +33,13 @@ export const ViewSpace = (props: Props) => {
     return <Error statusCode={props.statusCode} />
   }
 
-  const { spaceData } = props
+  const { spaceData: initialSpaceData } = props
 
-  if (isUnlistedSpace(spaceData)) {
+  if (isUnlistedSpace(initialSpaceData)) {
     return null
   }
+
+  const spaceData = useAppSelector(state => selectSpace(state, { id: initialSpaceData!.id }), shallowEqual) || initialSpaceData
 
   const {
     preview = false,
@@ -54,15 +59,14 @@ export const ViewSpace = (props: Props) => {
   } = props
 
   const { struct: space, content = {} as SpaceContent } = spaceData
-  const { id, ownerId: owner } = space
+  const { ownerId: owner } = space
 
   const { about, name, image, tags, email, links } = content
   const contactInfo = { email, links }
 
   const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
 
-  // TODO useCallback usage here looks wrong
-  const Avatar = useCallback(() => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />, [])
+  const Avatar = () => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />
 
   const isMy = isMySpace(space)
 
@@ -92,7 +96,7 @@ export const ViewSpace = (props: Props) => {
           <div className='handle'>{spaceName}</div>
         </div>
       </div>
-      {withFollowButton && <FollowSpaceButton spaceId={id} />}
+      {withFollowButton && <FollowSpaceButton space={space} />}
     </div>
 
   const title = React.createElement(
@@ -118,7 +122,7 @@ export const ViewSpace = (props: Props) => {
                   <EditOutlined /> Edit
                 </ButtonLink>
               }
-              {withFollowButton && <FollowSpaceButton spaceId={id} />}
+              {withFollowButton && <FollowSpaceButton space={space} />}
             </span>
           </div>
 

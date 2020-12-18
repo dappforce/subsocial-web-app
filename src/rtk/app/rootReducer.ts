@@ -4,7 +4,9 @@ import profiles from '../features/profiles/profilesSlice'
 import spaces from '../features/spaces/spacesSlice'
 import posts from '../features/posts/postsSlice'
 import replyIds from '../features/replies/repliesSlice'
-import followedSpaceIds from '../features/spaces/followedSpacesSlice'
+import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
+import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
+import postReactions from '../features/reactions/postReactionsSlice'
 
 const rootReducer = combineReducers({
   contents,
@@ -12,7 +14,9 @@ const rootReducer = combineReducers({
   spaces,
   posts,
   replyIds,
-  followedSpaceIds
+  followedSpaceIds,
+  ownSpaceIds,
+  postReactions
 })
 
 export type RootState = ReturnType<typeof rootReducer>

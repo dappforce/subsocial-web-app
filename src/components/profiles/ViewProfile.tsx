@@ -4,7 +4,6 @@ import {
 } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
 import { AnyAccountId } from '@subsocial/types'
-import { SpaceId } from '@subsocial/types/substrate/interfaces'
 import { isEmptyStr } from '@subsocial/utils'
 import { Button, Dropdown, Menu } from 'antd'
 import { NextPage } from 'next'
@@ -14,8 +13,9 @@ import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { useAppSelector } from 'src/rtk/app/store'
 import { fetchProfile, selectProfile } from 'src/rtk/features/profiles/profilesSlice'
-import { ProfileContent, ProfileData, SpaceData } from 'src/types'
+import { ProfileContent, ProfileData, SpaceData, SpaceId } from 'src/types'
 import { AccountActivity } from '../activity/AccountActivity'
 import { isMyAddress } from '../auth/MyAccountContext'
 import { PageContent } from '../main/PageWrapper'
@@ -50,12 +50,11 @@ const Component = (props: Props) => {
   const {
     address,
     size = LARGE_AVATAR_SIZE,
-    owner
   } = props
 
   const [ followersOpen, setFollowersOpen ] = useState(false)
   const [ followingOpen, setFollowingOpen ] = useState(false)
-
+  const owner = useAppSelector(state => selectProfile(state, address.toString())) || props.owner
   const isMyAccount = isMyAddress(address)
 
   const noProfile = !owner?.struct.hasProfile
@@ -168,7 +167,7 @@ const ProfilePage: NextPage<Props> = (props) => {
     }}
   >
     <Component {...props} />
-    <AccountActivity address={address.toString()} mySpaceIds={mySpaceIds} />
+    <AccountActivity address={address.toString()} spaceIds={mySpaceIds || []} />
   </PageContent>
 }
 
@@ -188,8 +187,6 @@ getInitialPropsWithRedux(ProfilePage, async ({ context, subsocial, dispatch, red
 
   await dispatch(fetchProfile({ api: subsocial, id: addressStr }))
   const owner = selectProfile(reduxStore.getState(), addressStr)
-
-  console.log('owner', owner)
 
   // TODO use redux
   const mySpaceIds = await substrate.spaceIdsByOwner(addressStr)

@@ -12,7 +12,7 @@ export type SpaceProps = {
 }
 
 export const isHiddenSpace = (space: SpaceStruct) =>
-  !space || !space.hidden
+  !space || space.hidden
 
 export const isUnlistedSpace = (spaceData?: SpaceData): spaceData is undefined => 
   !spaceData || !spaceData.struct || notMyAndHidden({ struct: spaceData.struct })

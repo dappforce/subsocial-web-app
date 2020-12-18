@@ -1,6 +1,7 @@
+import { CommonFetchParamsAndIds } from './../../app/helpers'
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { HasId, CommentContent, CommonContent, PostContent, ProfileContent, SharedPostContent, SpaceContent, DerivedContent, convertToDerivedContent } from 'src/types'
-import { ApiAndIds, createFetchOne, createSelectUnknownIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createSelectUnknownIds, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 
 /** Content with id */
@@ -31,9 +32,9 @@ export const {
 
 const selectUnknownContentIds = createSelectUnknownIds(selectContentIds)
 
-type FetchContentFn<C extends CommonContent> = AsyncThunk<Content<C>[], ApiAndIds, ThunkApiConfig>
+type FetchContentFn<C extends CommonContent> = AsyncThunk<Content<C>[], CommonFetchParamsAndIds, ThunkApiConfig>
 
-export const fetchContents = createAsyncThunk<Content[], ApiAndIds, ThunkApiConfig>(
+export const fetchContents = createAsyncThunk<Content[], CommonFetchParamsAndIds, ThunkApiConfig>(
   'contents/fetchMany',
   async ({ api, ids }, { getState }) => {
 

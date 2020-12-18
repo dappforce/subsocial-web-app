@@ -1,6 +1,8 @@
-import { AsyncThunk, EntityId } from '@reduxjs/toolkit'
+import { useSubsocialApi } from 'src/components/utils/SubsocialApiContext'
+import { AsyncThunk, Dispatch, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
 import { getFirstOrUndefined, isEmptyArray, nonEmptyStr } from '@subsocial/utils'
+import { useDispatch } from 'react-redux'
 import { CommonContent, EntityData, FlatSuperCommon, HasId } from 'src/types'
 import { asString } from 'src/utils'
 import { RootState } from './rootReducer'
@@ -18,15 +20,19 @@ type ContentEntity = HasId & CommonContent
 export type CommonVisibility = 'onlyPublic' | 'onlyUnlisted'
 export type HasHiddenVisibility = CommonVisibility | 'onlyVisible' | 'onlyHidden'
 
-type ApiArg = {
+export type ApiArg = {
   api: SubsocialApi
 }
 
-type ApiAndId = ApiArg & {
+export type CommonFetchParams = ApiArg & {
+  reload?: boolean
+}
+
+type CommonFetchParamsAndId = CommonFetchParams & {
   id: EntityId
 }
 
-export type ApiAndIds = ApiArg & {
+export type CommonFetchParamsAndIds = CommonFetchParams & {
   ids: EntityId[]
 }
 
@@ -38,9 +44,9 @@ export type SelectManyArgs <T> = T & {
   ids: EntityId[]
 }
 
-export type FetchOneArgs <T> = T & ApiAndId
+export type FetchOneArgs <T> = T & CommonFetchParamsAndId
 
-export type FetchManyArgs <T> = T & ApiAndIds
+export type FetchManyArgs <T> = T & CommonFetchParamsAndIds
 
 export function createSelectUnknownIds (selectIds: (state: RootState) => EntityId[]) {
   return (state: RootState, ids: EntityId[]): string[] => {
@@ -62,15 +68,15 @@ export function createSelectUnknownIds (selectIds: (state: RootState) => EntityI
   }
 }
 
-function toApiAndIds ({ api, id }: ApiAndId): ApiAndIds {
-  return { api, ids: [ id ] }
+function toParamsAndIds ({ id, ...params }: CommonFetchParamsAndId): CommonFetchParamsAndIds {
+  return { ...params, ids: [ id ] }
 }
 
-type FetchManyFn<Returned> = AsyncThunk<Returned[], ApiAndIds, {}>
+type FetchManyFn<Returned> = AsyncThunk<Returned[], CommonFetchParamsAndIds, {}>
 
 export function createFetchOne<R> (fetchMany: FetchManyFn<R>) {
-  return (arg: ApiAndId): AppThunk => async dispatch => {
-    await dispatch(fetchMany(toApiAndIds(arg)))
+  return (arg: CommonFetchParamsAndId): AppThunk => async dispatch => {
+    await dispatch(fetchMany(toParamsAndIds(arg)))
   }
 }
 
@@ -103,16 +109,19 @@ export function selectManyByIds<
 
   ids.forEach((id) => {
     const struct = selectStructById(state, id)
-    if (struct && nonEmptyStr(struct.contentId)) {
-      const { contentId } = struct
-      const content = selectContentById(state, contentId)
-      if (content) {
-        result.push({
-          id: struct.id,
-          struct,
-          content,
-        })
+    if (struct) {
+      const item: EntityData<S, C> = {
+        id: struct.id,
+        struct,
       }
+
+      if (nonEmptyStr(struct.contentId)) {
+        const { contentId } = struct
+        item.content = selectContentById(state, contentId)
+      }
+
+      result.push(item)
+
     }
   })
 
@@ -130,4 +139,19 @@ export function selectOneById<
 ): EntityData<S, C> | undefined {
   const items = selectManyByIds(state, [ id ], selectStructById, selectContentById)
   return getFirstOrUndefined(items)
+}
+
+type CommonDispatchCallbackProps<T> = {
+  dispatch: Dispatch<any>,
+  api: SubsocialApi,
+  args: T
+}
+
+type CommonDispatchCallbackFn<T> = (props: CommonDispatchCallbackProps<T>) => void 
+// ? Change cb on actions[]. And use actions.forEach(action => dispatch(action))
+export const useActions = <T>(cb: CommonDispatchCallbackFn<T>) => {
+  const dispatch = useDispatch()
+  const { subsocial: api } = useSubsocialApi()
+
+  return (args: T) => cb({ dispatch, api, args })
 }

@@ -1,6 +1,6 @@
-import React, { FC, useState } from 'react'
-import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, NotificationOutlined } from '@ant-design/icons'
-import { Comment, Button, Tag } from 'antd'
+import React, { FC, useMemo, useState } from 'react'
+import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, EllipsisOutlined, NotificationOutlined } from '@ant-design/icons'
+import { Comment, Button, Tag, Menu, Dropdown } from 'antd'
 import { asCommentData, asCommentStruct, PostWithSomeDetails } from 'src/types'
 import { CommentContent } from '@subsocial/types'
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview'
@@ -11,13 +11,13 @@ import dayjs from 'dayjs'
 import { EditComment } from './UpdateComment'
 import { NewComment } from './CreateComment'
 import { VoterButtons } from '../voting/VoterButtons'
-import { PostDropDownMenu } from '../posts/view-post'
 import { CommentBody } from './helpers'
 import { equalAddresses } from '../substrate'
 import { postUrl } from '../urls'
 import { ShareDropdown } from '../posts/share/ShareDropdown'
 import { PostStruct, SpaceStruct } from 'src/types'
 import { ViewCommentsTree } from './CommentTree'
+import { isMyAddress } from '../auth/MyAccountContext'
 
 type Props = {
   space: SpaceStruct,
@@ -31,19 +31,20 @@ export const ViewComment: FC<Props> = (props) => {
   const {
     space = { id: 0 } as any as SpaceStruct,
     rootPost,
-    comment,
+    comment: commentDetails,
     withShowReplies = true
   } = props
 
   const {
-    post: postData,
-    owner
-  } = comment
+    owner,
+  } = commentDetails
 
-  if (isHidden(postData)) return null
+  if (!commentDetails || isHidden(commentDetails.post)) return null
 
-  const commentStruct = asCommentStruct(postData.struct)
-  const commentContent = postData.content as CommentContent
+  const { post: comment } = commentDetails
+
+  const commentStruct = asCommentStruct(comment.struct)
+  const commentContent = comment.content as CommentContent
 
   const {
     id,
@@ -61,8 +62,26 @@ export const ViewComment: FC<Props> = (props) => {
   const [ showReplies, setShowReplies ] = useState(withShowReplies && hasReplies)
 
   const isFake = id.startsWith('fake')
-  const commentLink = postUrl(space, comment.post)
+  const commentLink = postUrl(space, comment)
   const isRootPostOwner = equalAddresses(rootPost?.ownerId, commentStruct.ownerId)
+  const isMyStruct = isMyAddress(ownerId)
+
+  const CommentDropDownMenu = useMemo(() => {
+
+    const menu = (
+      <Menu>
+        {isMyStruct && <Menu.Item key='comment-menu-edit'>
+          <div onClick={() => setShowEditForm(true)}>Edit</div>
+        </Menu.Item>}
+      </Menu>
+    )
+  
+    return <>{isMyStruct &&
+      <Dropdown overlay={menu} placement='bottomRight'>
+        <EllipsisOutlined />
+      </Dropdown>
+    }</>
+  }, [ ownerId, id ])
 
   const ViewRepliesLink = () => {
     const viewActionMessage = showReplies
@@ -101,7 +120,7 @@ export const ViewComment: FC<Props> = (props) => {
           </span>
         }
       />
-      <PostDropDownMenu key={`comment-dropdown-menu-${id}`} post={comment.post} space={space} />
+      {!isFake && <span>{CommentDropDownMenu}</span>}
     </div>
   )
 
@@ -125,12 +144,12 @@ export const ViewComment: FC<Props> = (props) => {
         <Button key={`reply-comment-${id}`} className={actionCss} onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <ShareDropdown key={`dropdown-comment-${id}`} postDetails={comment} space={space} className={actionCss} />
+        <ShareDropdown key={`dropdown-comment-${id}`} postDetails={commentDetails} space={space} className={actionCss} />
       ]}
       author={commentAuthor}
       content={showEditForm
         ? <EditComment struct={commentStruct} content={commentContent} callback={() => setShowEditForm(false)}/>
-        : <CommentBody comment={asCommentData(comment.post)} />
+        : <CommentBody comment={asCommentData(comment)} />
       }
     >
       <div>

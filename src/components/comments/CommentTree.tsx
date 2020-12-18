@@ -10,6 +10,7 @@ import { fetchPosts, selectPost, selectPosts } from 'src/rtk/features/posts/post
 import { fetchPostReplyIds, selectReplyIds } from 'src/rtk/features/replies/repliesSlice'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { Loading } from '../utils'
+import { useMyAddress } from '../auth/MyAccountContext'
 
 type CommentsTreeProps = {
   space: SpaceStruct,
@@ -19,10 +20,11 @@ type CommentsTreeProps = {
 
 export const ViewCommentsTree: FC<CommentsTreeProps> = ({ space, rootPost, parentId }) => {
   const dispatch = useAppDispatch()
-  
+  const myAddress = useMyAddress()
   const comment = useAppSelector(state => selectPost(state, { id: parentId }), shallowEqual)
   const { repliesCount = 0 } = comment?.post.struct || {}
   const { replyIds = []} = useAppSelector(state => selectReplyIds(state, parentId), shallowEqual) || {}
+
   const postsArgs = { ids: replyIds, withSpace: false }
   const comments = useAppSelector(state => selectPosts(state, postsArgs), shallowEqual)
   const [ loading, setLoading ] = useState(false)
@@ -45,7 +47,7 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ space, rootPost, paren
     let isMounted = true
     setLoading(true)
 
-    dispatch(fetchPosts({ api: subsocial, ...postsArgs }))
+    dispatch(fetchPosts({ api: subsocial, myAddress, ...postsArgs }))
       .then(() => isMounted && setLoading(false))
 
     return () => { isMounted = false }

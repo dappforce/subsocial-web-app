@@ -2,10 +2,11 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@r
 import { getFirstOrUndefined } from '@subsocial/utils'
 import { createFetchOne, createSelectUnknownIds, FetchManyArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { asCommentStruct, flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostId, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
+import { AccountId, asCommentStruct, asSharedPostStruct, flattenPostStructs, getUniqueContentIds, getUniqueOwnerIds, getUniqueSpaceIds, PostId, PostStruct, PostWithSomeDetails, ProfileData, SpaceData } from 'src/types'
 import { idsToBns } from 'src/types/utils'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
+import { fetchPostReactions } from '../reactions/postReactionsSlice'
 import { fetchSpaces, selectSpaces } from '../spaces/spacesSlice'
 
 const postsAdapter = createEntityAdapter<PostStruct>()
@@ -41,7 +42,9 @@ export type SelectPostsArgs = SelectManyArgs<Args>
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // type FetchPostArgs = FetchOneArgs<Args>
-type FetchPostsArgs = FetchManyArgs<Args>
+type FetchPostsArgs = FetchManyArgs<Args & {
+  myAddress?: AccountId
+}>
 
 type PostMap<D extends PostWithSomeDetails = PostWithSomeDetails> = Record<PostId, D>
 
@@ -95,7 +98,7 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
   const result: PostWithSomeDetails[] = []
   posts.forEach(post => {
     const { struct } = post
-    const { ownerId, spaceId, isComment } = struct
+    const { ownerId, spaceId, isComment, isSharedPost } = struct
 
     // TODO Fix copypasta. Places: selectSpaces & selectPosts
     let owner: ProfileData | undefined
@@ -118,9 +121,16 @@ export function selectPosts (state: RootState, props: SelectPostsArgs): PostWith
       }
     }
 
-    // TODO select post ext
+    let ext: PostWithSomeDetails | undefined = undefined
 
-    result.push({ id: post.id, /* TODO ext, */ post, owner, space })
+    if (isSharedPost) {
+      const { sharedPostId } = asSharedPostStruct(struct)
+      ext = getFirstOrUndefined(selectPosts(state, { ids: [ sharedPostId ]}))
+    }
+
+    // TODO select post ext for comment (?) 
+
+    result.push({ id: post.id, ext, post, owner, space })
   })
   return result
 }
@@ -137,33 +147,45 @@ export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
 export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkApiConfig>(
   'posts/fetchMany',
   async (args, { getState, dispatch }) => {
-    const { api, ids, withContent = true, withOwner = true, withSpace = true } = args
+    const { api, ids, myAddress, withContent = true, withOwner = true, withSpace = true, reload } = args
  
-    const newIds = selectUnknownPostIds(getState(), ids)
-    if (!newIds.length) {
-      // Nothing to load: all ids are known and their posts are already loaded.
-      return []
+    let newIds = ids as string[]
+
+    if (!reload) {
+      newIds = selectUnknownPostIds(getState(), ids)
+      if (!newIds.length) {
+        // Nothing to load: all ids are known and their posts are already loaded.
+        return []
+      }
     }
+
+    myAddress && dispatch(fetchPostReactions({ ids: newIds, myAddress, api }))
 
     const structs = await api.substrate.findPosts({ ids: idsToBns(newIds) })
     const entities = flattenPostStructs(structs)
 
     const alreadyLoadedIds = new Set(newIds)
-    const rootPostIds = new Set<PostId>()
+    const extPostIds = new Set<PostId>()
 
     entities.forEach((x) => {
       if (x.isComment) {
         const { rootPostId } = asCommentStruct(x)
-        if (!alreadyLoadedIds.has(rootPostId)) {
-          rootPostIds.add(rootPostId)
+        if (reload || !alreadyLoadedIds.has(rootPostId)) {
+          extPostIds.add(rootPostId)
+        }
+      }
+      if (x.isSharedPost) {
+        const { sharedPostId } = asSharedPostStruct(x)
+        if (reload || !alreadyLoadedIds.has(sharedPostId)) {
+          extPostIds.add(sharedPostId)
         }
       }
     })
 
-    const newRootIds = selectUnknownPostIds(getState(), Array.from(rootPostIds))
-    const rootStructs = await api.substrate.findPosts({ ids: idsToBns(newRootIds) })
-    const rootEntities = flattenPostStructs(rootStructs)
-    const allEntities = entities.concat(rootEntities)
+    const newExtIds = selectUnknownPostIds(getState(), Array.from(extPostIds))
+    const extStructs = await api.substrate.findPosts({ ids: idsToBns(newExtIds) })
+    const extEntities = flattenPostStructs(extStructs)
+    const allEntities = entities.concat(extEntities)
 
     const fetches: Promise<any>[] = []
 

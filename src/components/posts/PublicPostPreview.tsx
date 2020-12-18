@@ -14,7 +14,7 @@ function isUnlistedPost (post?: PostWithSomeDetails): boolean {
   return !post || !isPublic(post.post) || !isDef(post.space) || !isPublic(post.space)
 }
 
-export const PublicPostPreviewById = React.memo(({ postId }: Props) => {
+export const PublicPostPreviewById = ({ postId }: Props) => {
   const post = useAppSelector(state => selectPost(state, { id: postId }), shallowEqual)
 
   if (!post || isUnlistedPost(post)) return null
@@ -23,4 +23,4 @@ export const PublicPostPreviewById = React.memo(({ postId }: Props) => {
   // return <li className='mb-2'>{post.post.content?.title}</li>
 
   return <PostPreview postDetails={post} withActions />
-})
+}

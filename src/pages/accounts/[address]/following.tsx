@@ -1,3 +1,3 @@
-import { ListFollowingSpacesPage } from '../../../components/spaces/ListFollowingSpaces'
+import { FollowingSpacesPage } from '../../../components/spaces/AccountSpaces'
 
-export default ListFollowingSpacesPage
+export default FollowingSpacesPage

@@ -1,8 +1,7 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
-import { bnsToIds, idToBn, PostData, PostWithAllDetails } from 'src/types'
+import { asCommentStruct, bnsToIds, idToBn, PostData, PostWithAllDetails } from 'src/types'
 import ViewTags from '../../utils/ViewTags'
 import ViewPostLink from '../ViewPostLink'
 import { CommentSection } from '../../comments/CommentsSection'
@@ -17,20 +16,26 @@ import { ViewSpace } from 'src/components/spaces/ViewSpace'
 import { getPostIdFromSlug } from '../slugify'
 import { postUrl, spaceUrl } from 'src/components/urls'
 import { return404 } from 'src/components/utils/next'
-import { getInitialPropsWithRedux } from 'src/rtk/app'
-import { fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
-
-const StatsPanel = dynamic(() => import('../PostStats'), { ssr: false })
+import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
+import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
+import { StatsPanel } from '../PostStats'
+import { useAppSelector } from 'src/rtk/app/store'
+import { PostWithSomeDetails } from 'src/types'
+import { useFetchMyPostReactions } from 'src/rtk/features/reactions/postReactionsHooks'
 
 export type PostDetailsProps = {
   postData: PostWithAllDetails,
+  rootPostData?: PostWithSomeDetails
   statusCode?: number
 }
 
 export const PostPage: NextPage<PostDetailsProps> = (props) => {
-  const { postData } = props
-
+  const { postData: initialPostData, rootPostData } = props
+  const id = initialPostData.id
   const { isNotMobile } = useResponsiveSize()
+  useFetchMyPostReactions([ id ])
+
+  const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
 
   // TODO subscribe to post update
   // const struct = useSubscribedPost(initStruct)
@@ -46,8 +51,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   //   return <Error statusCode={statusCode} />
   // }
 
-  const { post, ext, space } = postData
-
+  const { post, space } = postData
   const { struct, content } = post
 
   if (!content) return null
@@ -67,7 +71,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   </>
 
   const titleMsg = struct.isComment
-    ? renderResponseTitle(postData.ext?.post)
+    ? renderResponseTitle(rootPostData?.post)
     : title
 
   return <PageContent
@@ -89,11 +93,11 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
 
       <div className='DfRow'>
         <PostCreator postDetails={postData} withSpaceName space={spaceData} />
-        {isNotMobile && <StatsPanel id={struct.id} goToCommentsId={goToCommentsId} />}
+        {isNotMobile && <StatsPanel post={struct} goToCommentsId={goToCommentsId} />}
       </div>
 
       <div className='DfPostContent'>
-        {ext
+        {struct.isSharedPost
           ? <SharePostContent postDetails={postData} space={space} />
           : <>
             {image && <div className='d-flex justify-content-center'>
@@ -123,7 +127,9 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   </PageContent>
 }
 
-getInitialPropsWithRedux(PostPage, async ({ context, subsocial, dispatch, reduxStore }) => {
+export async function loadPostOnNextReq (
+  { context, dispatch, subsocial, reduxStore }: NextContextWithRedux
+): Promise<PostWithSomeDetails> {
   const { query: { spaceId, slug }, res } = context
 
   const { substrate } = subsocial
@@ -164,8 +170,27 @@ getInitialPropsWithRedux(PostPage, async ({ context, subsocial, dispatch, reduxS
     res.end()
   }
 
+  return postData
+}
+
+getInitialPropsWithRedux(PostPage, async (props) => {
+  const { subsocial, dispatch, reduxStore } = props
+  
+  const postData = await loadPostOnNextReq(props)
+
+  let rootPostData: PostWithSomeDetails | undefined = undefined
+
+  const postStruct = postData.post.struct
+
+  if (postStruct.isComment) {
+    const { rootPostId } = asCommentStruct(postStruct)
+    await dispatch(fetchPost({ api: subsocial, id: rootPostId }))
+    rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
+  }
+
   return {
     postData: postData as PostWithAllDetails,
+    rootPostData
   }
 })
 

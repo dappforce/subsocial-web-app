@@ -45,14 +45,19 @@ const selectUnknownProfileIds = createSelectUnknownIds(selectProfileIds)
 
 export const fetchProfiles = createAsyncThunk<ProfileStruct[], FetchProfilesArgs, ThunkApiConfig>(
   'profiles/fetchMany',
-  async ({ api, ids: accountIds, withContent = true }, { getState, dispatch }) => {
+  async ({ api, ids: accountIds, withContent = true, reload }, { getState, dispatch }) => {
 
     const ids = accountIds.map(asString)
-    const newIds = selectUnknownProfileIds(getState(), ids)
-    if (!newIds.length) {
-      // Nothing to load: all ids are known and their profiles are already loaded.
-      return []
+
+    let newIds = ids
+    if (!reload) {
+      newIds = selectUnknownProfileIds(getState(), ids)
+      if (!newIds.length) {
+        // Nothing to load: all ids are known and their profiles are already loaded.
+        return []
+      }
     }
+
 
     // TODO rewrite: findSocialAccounts should return SocialAccount with id: AccountId
     // const structs = await api.substrate.findSocialAccounts(newIds)
@@ -66,7 +71,7 @@ export const fetchProfiles = createAsyncThunk<ProfileStruct[], FetchProfilesArgs
     structs.forEach((structOpt, i) => {
       if (structOpt.isSome) {
         structWithIdArr.push({
-          id: ids[i],
+          id: newIds[i],
           struct: structOpt.unwrap()
         })
       }

@@ -42,7 +42,7 @@ export type State = {
   rpc: JsonRpc
   api?: ApiPromise
   apiError?: any
-  apiState?: ApiState
+  apiState?: ApiState,
   keyring?: Keyring
   keyringState?: KeyringState
   keyringError?: Error
@@ -157,7 +157,7 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
     const onConnect = () => {
       dispatch({ type: 'CONNECT', payload: _api })
       // `ready` event is not emitted upon reconnection. So we check explicitly here.
-      _api.isReady.then((_api) => onConnectSuccess())
+      _api.isReady.then(() => onConnectSuccess())
     }
 
     _api.on('connected', onConnect)
@@ -230,3 +230,4 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
 }
 
 export const useSubstrateContext = () => useContext(SubstrateContext)[0]
+export const useIsSubstrateConnected = () => useSubstrateContext().apiState === 'READY' 

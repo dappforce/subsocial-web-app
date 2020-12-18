@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { withCalls, withMulti, getTxParams, spacesQueryToProp } from '../../substrate'
+import { getTxParams } from '../../substrate'
 import { Modal } from 'antd'
 import Button from 'antd/lib/button'
-import { withMyAccount, MyAccountProps } from '../../utils/MyAccount'
+import { MyAccountProps } from '../../utils/MyAccount'
 import { LabeledValue } from 'antd/lib/select'
 import SelectSpacePreview from '../../utils/SelectSpacePreview'
 import BN from 'bn.js'
@@ -18,13 +18,18 @@ import DfMdEditor from '../../utils/DfMdEditor'
 import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
 import { CreateSpaceButton } from '../../spaces/helpers'
 import styles from './index.module.sass'
+import { useCreateReloadPost, useCreateReloadSpace } from 'src/rtk/app/hooks'
+import { bnToId, idsToBns } from 'src/types'
+import { useAppSelector } from 'src/rtk/app/store'
+import { useMyAddress } from 'src/components/auth/MyAccountContext'
+import { selectSpaceIdsOwnedByAccount } from 'src/rtk/features/spaceIds/ownSpaceIdsSlice'
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
 type Props = MyAccountProps & {
   postId: BN
   spaceIds?: BN[]
-  open: boolean
+  open?: boolean
   onClose: () => void
 }
 
@@ -44,7 +49,8 @@ const InnerShareModal = (props: Props) => {
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
   const [ spaceId, setSpaceId ] = useState(spaceIds[0])
-
+  const reloadPost = useCreateReloadPost()
+  const reloadSpace = useCreateReloadSpace()
   const { control, errors, formState, watch } = useForm({
     validationSchema: buildSharePostValidationSchema(),
     reValidateMode: 'onBlur',
@@ -62,6 +68,8 @@ const InnerShareModal = (props: Props) => {
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
+    reloadPost({ id: bnToId(postId) })
+    reloadSpace({ id: bnToId(spaceId) })
     onClose()
   }
 
@@ -145,11 +153,9 @@ const InnerShareModal = (props: Props) => {
   </Modal>
 }
 
-// TODO use redux
-export const ShareModal = withMulti(
-  InnerShareModal,
-  withMyAccount,
-  withCalls<Props>(
-    spacesQueryToProp('spaceIdsByOwner', { paramName: 'address', propName: 'spaceIds' })
-  )
-)
+export const ShareModal = (props: Props) => {
+  const myAddress = useMyAddress()
+  const spaceIds = useAppSelector(state => selectSpaceIdsOwnedByAccount(state, myAddress as string)) || []
+
+  return <InnerShareModal {...props} spaceIds={idsToBns(spaceIds)} />
+}

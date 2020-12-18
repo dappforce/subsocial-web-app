@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { getActivities, getReactionActivities, getCommentActivities, getPostActivities, getFollowActivities, getActivityCounts } from '../utils/OffchainUtils'
 import { Tabs } from 'antd'
-import { AccountSpaces, LoadSpacesType } from '../spaces/AccountSpaces'
+import { OwnedSpacesList, LoadSpacesType } from '../spaces/AccountSpaces'
 import { Counts } from '@subsocial/types'
 import { getLoadMoreNotificationsFn, NotifActivities } from './Notifications'
 import { BaseActivityProps } from './types'
@@ -60,7 +60,7 @@ const PostActivities = (props: BaseActivityProps) => <FeedActivities
   loadingLabel='Loading posts...'
 />
 
-export const AccountActivity = ({ address, mySpaceIds }: ActivitiesByAddressProps) => {
+export const AccountActivity = ({ address, spaceIds: mySpaceIds }: ActivitiesByAddressProps) => {
   if (!uiShowActivity) return null
 
   const [ counts, setCounts ] = useState<Counts>()
@@ -93,7 +93,7 @@ export const AccountActivity = ({ address, mySpaceIds }: ActivitiesByAddressProp
       <FollowActivities address={address} totalCount={followsCount} />
     </TabPane>
     <TabPane tab={getTabTitle('Spaces', spacesCount)} key='spaces'>
-      <AccountSpaces address={address} mySpaceIds={mySpaceIds} withTitle={false} />
+      <OwnedSpacesList address={address} withTitle={false} />
     </TabPane>
     <TabPane tab={getTabTitle('All', activitiesCount)} key='all'>
       <AllActivities address={address} totalCount={activitiesCount} />

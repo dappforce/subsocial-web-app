@@ -5,6 +5,7 @@ import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
 import { useDispatch } from 'react-redux'
+import { removeAllReaction } from 'src/rtk/features/reactions/postReactionsSlice'
 import { convertToDerivedContent, flattenProfileStruct, ProfileData } from 'src/types'
 import store from 'store'
 import useSubsocialEffect from '../api/useSubsocialEffect'
@@ -210,6 +211,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
     if (!inited || !address) return
 
     reloadSpaceIdsFollowedByAccount({ substrate, dispatch: reduxDispatch, account: address })
+    reduxDispatch(removeAllReaction())
   }, [ reduxDispatch, inited, address ])
 
   const contextValue: MyAccountContextProps = {
