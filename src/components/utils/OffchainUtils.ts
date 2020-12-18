@@ -3,7 +3,7 @@ import { offchainUrl } from './env'
 import { Activity, Counts } from '@subsocial/types/offchain'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { ElasticQueryParams } from '@subsocial/types/offchain/search'
-import { ReadAllMessage, SessionCall, AddSessionKeyArgs } from '../../session_keys/createSessionKey';
+import { ReadAllMessage, SessionCall, AddSessionKeyArgs } from '../../session_keys/createSessionKey'
 import { resloveWebSocketConnection } from '../activity/NotifCounter'
 
 const log = newLogger('OffchainRequests')

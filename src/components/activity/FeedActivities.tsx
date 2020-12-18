@@ -3,8 +3,7 @@ import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
 import { PostId } from 'src/types'
 import { PublicPostPreviewById } from '../posts/PublicPostPreview'
 import { InnerActivities } from './InnerActivities'
-import { LoadMoreFn } from './NotificationUtils'
-import { ActivityProps, LoadMoreProps } from './types'
+import { ActivityProps, LoadMoreFn, LoadMoreProps } from './types'
 
 export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'comment_id') =>
   async (props: LoadMoreProps): Promise<PostId[]> => {

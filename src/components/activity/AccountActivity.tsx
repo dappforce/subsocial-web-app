@@ -15,28 +15,31 @@ type ActivitiesByAddressProps = Partial<LoadSpacesType> & {
   address: string
 }
 
-const loadMoreActivities = getLoadMoreNotificationsFn(getActivities, 'activities')
+const loadMoreActivities = getLoadMoreNotificationsFn(getActivities)
 
 const AllActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
+  type='activities'
   loadMore={loadMoreActivities}
   noDataDesc='No activities yet'
   loadingLabel='Loading activities...'
 />
 
-const loadMoreReaction = getLoadMoreNotificationsFn(getReactionActivities, 'activities')
+const loadMoreReaction = getLoadMoreNotificationsFn(getReactionActivities)
 
 const ReactionActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
+  type='activities'
   loadMore={loadMoreReaction}
   noDataDesc='No reactions yet'
   loadingLabel='Loading reactions...'
 />
 
-const loadMoreFollow = getLoadMoreNotificationsFn(getFollowActivities, 'activities')
+const loadMoreFollow = getLoadMoreNotificationsFn(getFollowActivities)
 
 const FollowActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
+  type='activities'
   loadMore={loadMoreFollow}
   noDataDesc='No follows yet'
   loadingLabel='Loading follows...'
