@@ -55,9 +55,13 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn) =>
       nonEmptyStr(comment_id) && postIds.push(comment_id)
     })
 
-    await dispatch(fetchSpaces({ ids: spaceIds, api }))
-    await dispatch(fetchProfiles({ ids: ownerIds, api }))
-    await dispatch(fetchPosts({ ids: postIds, api }))
+    const fetches: Promise<any>[] = [
+      dispatch(fetchSpaces({ ids: spaceIds, api })),
+      dispatch(fetchProfiles({ ids: ownerIds, api })),
+      dispatch(fetchPosts({ ids: postIds, api })),
+    ]
+
+    await Promise.all(fetches)
 
     return activities
   }
