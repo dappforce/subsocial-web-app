@@ -9,7 +9,7 @@ import { useMyAccount } from '../auth/MyAccountContext'
 import { buildMockComment, CommentTxButtonType } from './utils'
 import { HiddenPostAlert } from '../posts/view-post'
 import { asCommentStruct, convertToDerivedContent, idToPostId, PostStruct } from 'src/types'
-import { useChangeReplies, useRemoveReply, useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
+import { useCreateChangeReplies, useRemoveReply, useCreateUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -26,9 +26,9 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
   const { subsocial } = useSubsocialApi()
   const flatApi = newFlatApi(subsocial)
   const { state: { address } } = useMyAccount()
-  const changeReply = useChangeReplies()
+  const changeReply = useCreateChangeReplies()
   const removeReply = useRemoveReply()
-  const upsertReply = useUpsertReplyWithContent()
+  const upsertReply = useCreateUpsertReplyWithContent()
 
   if (post.hidden) {
     const msg = 'You cannot comment on this post because it is unlisted'
@@ -71,9 +71,9 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
       .then(comment => {
         comment && changeReply({
           reply:comment.post.struct,
+          rootPostId,
           parentId,
-          removableId: fakeId,
-          rootPostId
+          idToRemove: fakeId
         })
       })
 

@@ -70,7 +70,7 @@ export const ViewComment: FC<Props> = (props) => {
 
     const menu = (
       <Menu>
-        {isMyStruct && <Menu.Item key='0'>
+        {isMyStruct && <Menu.Item key='comment-menu-edit'>
           <div onClick={() => setShowEditForm(true)}>Edit</div>
         </Menu.Item>}
       </Menu>
@@ -120,7 +120,7 @@ export const ViewComment: FC<Props> = (props) => {
           </span>
         }
       />
-      {!isFake && <span key={`comment-dropdown-menu-${id}`}>{CommentDropDownMenu}</span>}
+      {!isFake && <span>{CommentDropDownMenu}</span>}
     </div>
   )
 

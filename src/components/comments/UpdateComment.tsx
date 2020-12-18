@@ -9,7 +9,7 @@ import { getTxParams } from '../substrate'
 import BN from 'bn.js'
 import { CommentTxButtonType } from './utils'
 import { PostContent, PostStruct } from 'src/types'
-import { useUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
+import { useCreateUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -24,7 +24,7 @@ type EditCommentProps = {
 
 export const EditComment: FC<EditCommentProps> = ({ struct, content, callback }) => {
 
-  const upsertReply = useUpsertReplyWithContent()
+  const upsertReply = useCreateUpsertReplyWithContent()
 
   const newTxParams = (hash: IpfsCid) => {
     const update = new PostUpdate({
@@ -36,7 +36,7 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
     return [ struct.id, update ]
   }
 
-  const updatePostToStore = (content: PostContent) =>
+  const upsertPostContent = (content: PostContent) =>
     upsertReply({
       reply: struct,
       content
@@ -55,14 +55,11 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
       })}
       tx='posts.updatePost'
       onFailed={(txResult) => {
-        updatePostToStore(content as PostContent)
+        upsertPostContent(content as PostContent)
         onFailed && onFailed(txResult)
       }}
-      onClick={() => {
-        onClick && onClick()
-      }}
       onSuccess={(txResult) => {
-        updatePostToStore(json as PostContent)
+        upsertPostContent(json as PostContent)
         onSuccess && onSuccess(txResult)
       }}
     />
