@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { MutedSpan } from '../utils/MutedText'
 import { PostVoters, ActiveVoters } from '../voting/ListVoters'
 import { Pluralize } from '../utils/Plularize'
-import BN from 'bn.js'
 import { nonEmptyStr } from '@subsocial/utils'
 import { idToBn, PostStruct } from 'src/types'
 
@@ -18,7 +17,7 @@ export const StatsPanel = (props: StatsProps) => {
   const [ postVotersOpen, setPostVotersOpen ] = useState(false)
 
   const { upvotesCount, downvotesCount, repliesCount, sharesCount, score, id } = post
-  const reactionsCount = new BN(upvotesCount).add(new BN(downvotesCount))
+  const reactionsCount = upvotesCount - downvotesCount
   const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
 
   const toggleCommentsSection = goToCommentsId ? undefined : () => setCommentsSection(!commentsSection)
