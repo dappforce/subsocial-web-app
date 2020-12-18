@@ -9,7 +9,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import { newLogger, nonEmptyArr, isEmptyArray } from '@subsocial/utils'
 import { AuthorPreviewWithOwner } from '../profiles/address-views'
 import BN from 'bn.js'
-import { useCreateSubstrateIdsById } from '../substrate/hooks/useCreateIdsById'
+import { useGetSubstrateIdsById } from '../substrate/hooks/useGetIdsById'
 
 const { TabPane } = Tabs
 
@@ -122,7 +122,7 @@ const InnerModalVoters = (props: VotersProps) => {
   )
 }
 
-const useCreateReactionIdsByPostId = (id: BN) => useCreateSubstrateIdsById<ReactionId>({ id, pallete: 'reactions', method: 'reactionIdsByPostId' })
+const useCreateReactionIdsByPostId = (id: BN) => useGetSubstrateIdsById<ReactionId>({ id, pallete: 'reactions', method: 'reactionIdsByPostId' })
 
 // TODO use redux
 export const PostVoters = (props: VotersProps) => {

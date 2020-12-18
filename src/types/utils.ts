@@ -42,11 +42,11 @@ export function idToPostId (id: AnyId): PostId {
   return idToBn(id) as PostId
 }
 
-export function bnToId (bnId: AnyId): EntityId {
+export function bnToId (bnId: BN): EntityId {
   return bnId.toString()
 }
 
-export function bnsToIds (bnIds: AnyId[]): EntityId[] {
+export function bnsToIds (bnIds: BN[]): EntityId[] {
   return bnIds.map(bnToId)
 }
 
