@@ -25,8 +25,7 @@ export type SpaceVisibility = HasHiddenVisibility
 type Args = {
   visibility?: SpaceVisibility
   withContent?: boolean
-  withOwner?: boolean,
-  reload?: boolean
+  withOwner?: boolean
 }
 
 export type SelectSpaceArgs = SelectOneArgs<Args>

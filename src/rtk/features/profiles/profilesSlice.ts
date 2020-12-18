@@ -24,8 +24,7 @@ export type ProfileVisibility = CommonVisibility
 
 type Args = {
   visibility?: ProfileVisibility
-  withContent?: boolean,
-  reload?: boolean
+  withContent?: boolean
 }
 
 export type SelectProfileArgs = SelectOneArgs<Args>

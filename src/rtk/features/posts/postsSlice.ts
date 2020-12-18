@@ -34,8 +34,7 @@ type Args = {
   visibility?: PostVisibility
   withContent?: boolean
   withOwner?: boolean
-  withSpace?: boolean,
-  reload?: boolean
+  withSpace?: boolean
 }
 
 export type SelectPostArgs = SelectOneArgs<Args>

@@ -24,11 +24,15 @@ export type ApiArg = {
   api: SubsocialApi
 }
 
-type ApiAndId = ApiArg & {
+export type CommonFetchParams = ApiArg & {
+  reload?: boolean
+}
+
+type CommonFetchParamsAndId = CommonFetchParams & {
   id: EntityId
 }
 
-export type ApiAndIds = ApiArg & {
+export type CommonFetchParamsAndIds = CommonFetchParams & {
   ids: EntityId[]
 }
 
@@ -40,9 +44,9 @@ export type SelectManyArgs <T> = T & {
   ids: EntityId[]
 }
 
-export type FetchOneArgs <T> = T & ApiAndId
+export type FetchOneArgs <T> = T & CommonFetchParamsAndId
 
-export type FetchManyArgs <T> = T & ApiAndIds
+export type FetchManyArgs <T> = T & CommonFetchParamsAndIds
 
 export function createSelectUnknownIds (selectIds: (state: RootState) => EntityId[]) {
   return (state: RootState, ids: EntityId[]): string[] => {
@@ -64,15 +68,15 @@ export function createSelectUnknownIds (selectIds: (state: RootState) => EntityI
   }
 }
 
-function toApiAndIds ({ api, id }: ApiAndId): ApiAndIds {
-  return { api, ids: [ id ] }
+function toParamsAndIds ({ id, ...params }: CommonFetchParamsAndId): CommonFetchParamsAndIds {
+  return { ...params, ids: [ id ] }
 }
 
-type FetchManyFn<Returned> = AsyncThunk<Returned[], ApiAndIds, {}>
+type FetchManyFn<Returned> = AsyncThunk<Returned[], CommonFetchParamsAndIds, {}>
 
 export function createFetchOne<R> (fetchMany: FetchManyFn<R>) {
-  return (arg: ApiAndId): AppThunk => async dispatch => {
-    await dispatch(fetchMany(toApiAndIds(arg)))
+  return (arg: CommonFetchParamsAndId): AppThunk => async dispatch => {
+    await dispatch(fetchMany(toParamsAndIds(arg)))
   }
 }
 
@@ -137,7 +141,11 @@ export function selectOneById<
   return getFirstOrUndefined(items)
 }
 
-type CommonDispatchCallbackProps<T> = { dispatch: Dispatch<any>, api: SubsocialApi, args: T }
+type CommonDispatchCallbackProps<T> = {
+  dispatch: Dispatch<any>,
+  api: SubsocialApi,
+  args: T
+}
 
 type CommonDispatchCallbackFn<T> = (props: CommonDispatchCallbackProps<T>) => void 
 // ? Change cb on actions[]. And use actions.forEach(action => dispatch(action))

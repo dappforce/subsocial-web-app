@@ -58,8 +58,7 @@ export const selectPostReactionByPostId = (state: RootState, id: PostId) =>
   getFirstOrUndefined(selectPostReactionsByPostIds(state, { ids: [ id ] }))
 
 type Args = {
-  myAddress?: AccountId,
-  reload?: boolean
+  myAddress?: AccountId
 }
 
 export type FetchManyReactionsArgs = FetchManyArgs<Args>

@@ -64,25 +64,25 @@ const setUpsertOneArgs = ({ parentId, reply }: CommonReplyArgs) => ({
 })
 
 type ChangeRepliesArgs = CommonReplyArgs & {
-  removableId: PostId,
+  idToRemove: PostId,
   rootPostId: PostId
 }
 
-export const useChangeReplies = () => {
+export const useCreateChangeReplies = () => {
   const upsertReplies = useUpsertReplies()
   const removeReply = useRemoveReply()
 
-  return ({ removableId, ...args }: ChangeRepliesArgs) => {
+  return ({ idToRemove, ...args }: ChangeRepliesArgs) => {
     const { parentId, rootPostId } = args
 
     if (!parentId) return 
     
-    removeReply({ replyId: removableId, parentId })
+    removeReply({ replyId: idToRemove, parentId })
     upsertReplies({ ...setUpsertOneArgs(args), rootPostId })
   }
 }
 
-const useUpsertContent = () => useActions<CommonContent & HasId>(({ dispatch, args }) => {
+const useCreateUpsertContent = () => useActions<CommonContent & HasId>(({ dispatch, args }) => {
     dispatch(upsertContent(args))
 })
 
@@ -91,9 +91,9 @@ type UpsertReplyWithContentArgs = Omit<CommonReplyArgs, 'parentId'> & {
   parentId?: PostId
 }
 
-export const useUpsertReplyWithContent = () => {
+export const useCreateUpsertReplyWithContent = () => {
   const upsertReplies = useUpsertReplies()
-  const upsertContent = useUpsertContent()
+  const upsertContent = useCreateUpsertContent()
 
   return ({ parentId, content, ...args }: UpsertReplyWithContentArgs) => {
     parentId && upsertReplies(setUpsertOneArgs({ ...args, parentId }))
