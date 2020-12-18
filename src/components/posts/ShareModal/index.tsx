@@ -18,7 +18,7 @@ import DfMdEditor from '../../utils/DfMdEditor'
 import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
 import { CreateSpaceButton } from '../../spaces/helpers'
 import styles from './index.module.sass'
-import { useGetReloadPost, useGetReloadSpace } from 'src/rtk/app/hooks'
+import { useCreateReloadPost, useCreateReloadSpace } from 'src/rtk/app/hooks'
 import { bnToId, idsToBns } from 'src/types'
 import { useAppSelector } from 'src/rtk/app/store'
 import { useMyAddress } from 'src/components/auth/MyAccountContext'
@@ -49,8 +49,8 @@ const InnerShareModal = (props: Props) => {
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
   const [ spaceId, setSpaceId ] = useState(spaceIds[0])
-  const reloadPost = useGetReloadPost()
-  const reloadSpace = useGetReloadSpace()
+  const reloadPost = useCreateReloadPost()
+  const reloadSpace = useCreateReloadSpace()
   const { control, errors, formState, watch } = useForm({
     validationSchema: buildSharePostValidationSchema(),
     reValidateMode: 'onBlur',

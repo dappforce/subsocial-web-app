@@ -7,7 +7,7 @@ import BN from 'bn.js'
 import { Compact } from '@polkadot/types'
 import { BareProps } from 'src/components/utils/types'
 
-const log = newLogger('useGetBallance')
+const log = newLogger('useCreateBallance')
 
 // for million, 2 * 3-grouping + comma
 const M_LENGTH = 6 + 1
@@ -39,7 +39,7 @@ export const FormatBalance = ({ value, decimals, currency, ...bareProps }: Forma
   return <span {...bareProps}>{format(value, currency || defaultCurrency, decimals || defaultDecimal)}</span>
 }
 
-const useGetBalance = (address: AnyAccountId) => {
+const useCreateBalance = (address: AnyAccountId) => {
   const [ balance, setBalance ] = useState<BN>()
 
   useSubsocialEffect(({ substrate }) => {
@@ -75,7 +75,7 @@ type BalanceProps = {
 }
 
 export const Balance = ({ address, label }: BalanceProps) => {
-  const balance = useGetBalance(address)
+  const balance = useCreateBalance(address)
 
   if (!balance) return null
 

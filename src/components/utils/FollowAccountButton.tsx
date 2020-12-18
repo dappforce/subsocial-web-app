@@ -7,7 +7,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import TxButton from './TxButton'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { FollowButtonStub } from './FollowButtonStub'
-import { useGetReloadProfile } from 'src/rtk/app/hooks'
+import { useCreateReloadProfile } from 'src/rtk/app/hooks'
 
 const log = newLogger('FollowAccountButton')
 
@@ -19,7 +19,7 @@ type FollowAccountButtonProps = {
 function FollowAccountButton (props: FollowAccountButtonProps) {
   const { address, className = '' } = props
   const myAddress = useMyAddress()
-  const reloadProfile = useGetReloadProfile()
+  const reloadProfile = useCreateReloadProfile()
   const [ isFollower, setIsFollower ] = useState<boolean>()
 
   useSubsocialEffect(({ substrate }) => {

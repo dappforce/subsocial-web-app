@@ -22,13 +22,13 @@ export const useFetchReactionByPostId = (id: PostId) => {
   return useFetchEntity(selectPostReactionsByPostIds, fetchPostReactions, { id, myAddress })
 }
 
-export const useGetUpsertReaction = () => {
+export const useCreateUpsertReaction = () => {
   return useActions<ReactionStruct>(({ dispatch, args }) => {
     dispatch(upsertPostReaction(args))
   })
 }
 
-export const useGetRemoveAllReactions = () => {
+export const useCreateRemoveAllReactions = () => {
   return useActions<{}>(({ dispatch }) => {
     dispatch(removeAllReaction())
   })

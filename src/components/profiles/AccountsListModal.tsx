@@ -8,7 +8,7 @@ import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import DataList from '../lists/DataList'
 import { AnyAccountId } from '@subsocial/types'
 import { Loading } from '../utils'
-import { useGetSubstrateIdsById } from '../substrate/hooks/useGetIdsById'
+import { useCreateSubstrateIdsById } from '../substrate/hooks/useCreateIdsById'
 
 type OuterProps = {
   id: AnyAccountId
@@ -48,7 +48,7 @@ const InnerAccountsListModal = (props: InnerProps) => {
 
 // TODO use redux
 export const SpaceFollowersModal = (props: OuterProps) => {
-  const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallete: 'spaceFollows', method: 'spaceFollowers', id: props.id.toString() })
+  const { entities, loading } = useCreateSubstrateIdsById<AccountId>({ pallete: 'spaceFollows', method: 'spaceFollowers', id: props.id.toString() })
   
   if (loading) return <Loading label='Loading space followers...' />
 
@@ -57,14 +57,14 @@ export const SpaceFollowersModal = (props: OuterProps) => {
 
 // TODO use redux
 export const AccountFollowersModal = (props: OuterProps) => {
-  const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallete: 'profileFollows', method: 'accountFollowers', id: props.id.toString() })
+  const { entities, loading } = useCreateSubstrateIdsById<AccountId>({ pallete: 'profileFollows', method: 'accountFollowers', id: props.id.toString() })
   
   if (loading) return <Loading label='Loading space followers...' />
 
   return <InnerAccountsListModal {...props} accounts={entities} />
 } 
 
-const useAccountsFollowedByAccount = (id: AnyAccountId) => useGetSubstrateIdsById<AccountId>({ pallete: 'profileFollows', method: 'accountsFollowedByAccount', id: id.toString() })
+const useAccountsFollowedByAccount = (id: AnyAccountId) => useCreateSubstrateIdsById<AccountId>({ pallete: 'profileFollows', method: 'accountsFollowedByAccount', id: id.toString() })
 
 // TODO use redux
 export const AccountFollowingModal = (props: OuterProps) => {

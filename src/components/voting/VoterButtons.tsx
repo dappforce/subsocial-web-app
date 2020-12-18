@@ -6,10 +6,10 @@ import { BareProps } from '../utils/types'
 import { IconWithLabel } from '../utils'
 import { useResponsiveSize } from '../responsive'
 import { PostStruct } from 'src/types'
-import { useGetReloadPost } from 'src/rtk/app/hooks'
+import { useCreateReloadPost } from 'src/rtk/app/hooks'
 import { Reaction, ReactionEnum, ReactionId, ReactionStruct, ReactionType, selectPostReactionByPostId } from 'src/rtk/features/reactions/postReactionsSlice'
 import { ButtonProps } from 'antd/lib/button'
-import { useGetUpsertReaction } from 'src/rtk/features/reactions/postReactionsHooks'
+import { useCreateUpsertReaction } from 'src/rtk/features/reactions/postReactionsHooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { getNewIdsFromEvent } from '../substrate'
 
@@ -39,12 +39,12 @@ const VoterButton = ({
 }: VoterButtonProps) => {
 
   const { isMobile } = useResponsiveSize()
-  const upsertReaction = useGetUpsertReaction()
+  const upsertReaction = useCreateUpsertReaction()
   const { reactionId, kind = 'None' } = reaction || { id } as ReactionStruct
   const reactionType = reactionEnum.valueOf() as ReactionType
   const isUpvote = reactionType === ReactionEnum.Upvote
   const count = isUpvote ? upvotesCount : downvotesCount
-  const reloadPost = useGetReloadPost()
+  const reloadPost = useCreateReloadPost()
   const args = { id }
 
   const buildTxParams = () => {

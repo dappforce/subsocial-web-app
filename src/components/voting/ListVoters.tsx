@@ -9,7 +9,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import { newLogger, nonEmptyArr, isEmptyArray } from '@subsocial/utils'
 import { AuthorPreviewWithOwner } from '../profiles/address-views'
 import BN from 'bn.js'
-import { useGetSubstrateIdsById } from '../substrate/hooks/useGetIdsById'
+import { useCreateSubstrateIdsById } from '../substrate/hooks/useCreateIdsById'
 
 const { TabPane } = Tabs
 
@@ -122,11 +122,11 @@ const InnerModalVoters = (props: VotersProps) => {
   )
 }
 
-const useGetReactionIdsByPostId = (id: BN) => useGetSubstrateIdsById<ReactionId>({ id, pallete: 'reactions', method: 'reactionIdsByPostId' })
+const useCreateReactionIdsByPostId = (id: BN) => useCreateSubstrateIdsById<ReactionId>({ id, pallete: 'reactions', method: 'reactionIdsByPostId' })
 
 // TODO use redux
 export const PostVoters = (props: VotersProps) => {
-  const { loading, entities } = useGetReactionIdsByPostId(props.id)
+  const { loading, entities } = useCreateReactionIdsByPostId(props.id)
 
   if (loading) return <Loading label='Loading post reactions...' />
 

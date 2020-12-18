@@ -11,7 +11,7 @@ type FetchSubstrateProps = {
   id: AnyId
 }
 
-export const useGetSubstrateIdsById = <T extends SubstrateId | AccountId = SubstrateId>
+export const useCreateSubstrateIdsById = <T extends SubstrateId | AccountId = SubstrateId>
   ({ method, pallete, id }: FetchSubstrateProps): FetchManyResult<T> => {
     const [ reactionIds, setReactionIds ] = useState<T[]>([])
     const [ loading, setLoading ] = useState(false)

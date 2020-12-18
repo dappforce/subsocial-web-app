@@ -17,12 +17,12 @@ export const useFetchPosts = (args: SelectPostsArgs) => {
   return useFetchEntities(selectPosts, fetchPosts, args)
 }
 
-export const useGetReloadPosts = () => {
+export const useCreateReloadPosts = () => {
   return useActions<SelectPostsArgs>(({ dispatch, api, args: { ids } }) =>
     dispatch(fetchPosts({ api, ids: ids, reload: true })))
 }
 
-export const useGetReloadPost = () => {
+export const useCreateReloadPost = () => {
   return useActions<SelectPostArgs>(({ dispatch, api, args: { id } }) =>
     dispatch(fetchPosts({ api, ids: [ id ], reload: true })))
 }

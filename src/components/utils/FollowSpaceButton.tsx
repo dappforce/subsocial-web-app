@@ -11,7 +11,7 @@ import { BaseTxButtonProps } from '../substrate/SubstrateTxButton'
 import { FollowButtonStub } from './FollowButtonStub'
 import { useSubsocialApi } from './SubsocialApiContext'
 import TxButton from './TxButton'
-import { useGetReloadSpace } from 'src/rtk/app/hooks'
+import { useCreateReloadSpace } from 'src/rtk/app/hooks'
 
 type FollowSpaceButtonProps = BaseTxButtonProps & {
   space: SpaceStruct
@@ -36,7 +36,7 @@ export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
   const followedSpaceIds = useAppSelector(state => selectSpaceIdsFollowedByAccount(state, myAddress), shallowEqual) || []
   const isFollower = followedSpaceIds.indexOf(spaceId) >= 0
 
-  const reloadSpace = useGetReloadSpace()
+  const reloadSpace = useCreateReloadSpace()
   const dispatch = useAppDispatch()
   const { substrate } = useSubsocialApi()
 

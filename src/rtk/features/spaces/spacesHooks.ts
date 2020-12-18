@@ -10,7 +10,7 @@ export const useFetchSpaces = (args: SelectSpacesArgs) => {
   return useFetchEntities(selectSpaces, fetchSpaces, args)
 }
 
-export const useGetReloadSpace = () => {
+export const useCreateReloadSpace = () => {
   return useActions<SelectSpaceArgs>(({ dispatch, api, args: { id } }) =>
     dispatch(fetchSpaces({ api, ids: [ id ], reload: true })))
 } 

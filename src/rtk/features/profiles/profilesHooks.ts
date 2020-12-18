@@ -10,7 +10,7 @@ export const useFetchProfiles = (args: SelectProfilesArgs) => {
   return useFetchEntities(selectProfiles, fetchProfiles, args)
 }
 
-export const useGetReloadProfile = () => {
+export const useCreateReloadProfile = () => {
   return useActions<SelectProfileArgs>(({ dispatch, api, args: { id } }) =>
     dispatch(fetchProfiles({ api, ids: [ id ], reload: true })))
 }
