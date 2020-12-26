@@ -1,6 +1,7 @@
 import { accountUrl } from 'src/components/urls'
-import { GlobalOutlined, BlockOutlined, BellOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
-import { uiShowAdvanced, advancedUrl, uiShowNotifications } from 'src/components/utils/env'
+import { GlobalOutlined, BlockOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined, BellOutlined } from '@ant-design/icons'
+import { uiShowAdvanced, advancedUrl } from 'src/components/utils/env'
+import React from 'react'
 
 export type Divider = 'Divider'
 
@@ -43,24 +44,13 @@ export const DefaultMenu: MenuItem[] = [
 export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
   const account = { address: myAddress }
 
-  const notificationsItem = uiShowNotifications
-    ? [
-      {
-        name: 'My feed',
-        page: [ '/feed', '/feed' ],
-        icon: <BellOutlined />,
-      },
-      {
-        name: 'My notifications',
-        page: [ '/notifications', '/notifications' ],
-        icon: <BellOutlined />,
-        isNotifications: true
-      },
-    ]
-    : []
-
   return [
-    ...notificationsItem,
+    {
+      name: 'My feed',
+      page: [ '/feed', '/feed' ],
+      // TODO: do we really need the bell icon here? (maybe cause misunderstanding because of notifications icon)
+      icon: <BellOutlined />,
+    },
     {
       name: 'My subscriptions',
       page: [ '/accounts/[address]/following', accountUrl(account, 'following') ],

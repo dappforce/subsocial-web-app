@@ -1,11 +1,10 @@
 import React, { } from 'react'
-import { Menu, Badge } from 'antd'
+import { Menu } from 'antd'
 import Router, { useRouter } from 'next/router'
 import { useIsSignedIn, useMyAddress } from '../components/auth/MyAccountContext'
 import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
 import Link from 'next/link'
 import { newLogger } from '@subsocial/utils'
-// import { useNotifCounter } from '../components/utils/NotifCounter'
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
 import { OnBoardingCard } from 'src/components/onboarding'
 import { useAuth } from 'src/components/auth/AuthContext'
@@ -19,7 +18,7 @@ const goToPage = ([ url, as ]: string[]) => {
   )
 }
 
-const renderPageLink = (item: PageLink, unreadCount?: number) => {
+const renderPageLink = (item: PageLink) => {
   const { icon } = item
 
   if (item.hidden) {
@@ -40,17 +39,10 @@ const renderPageLink = (item: PageLink, unreadCount?: number) => {
           <a>
             {icon}
             <span className='MenuItemName'>{item.name}</span>
-            {item.isNotifications && renderNotificationsBadge(unreadCount)}
           </a>
         </Link>
       </Menu.Item>
     )
-}
-
-const renderNotificationsBadge = (unreadCount?: number) => {
-  if (!unreadCount || unreadCount <= 0) return null
-
-  return <Badge count={unreadCount} className="site-badge-count-4" />
 }
 
 function SideMenu () {
@@ -58,7 +50,6 @@ function SideMenu () {
   const { asPath } = useRouter()
   const myAddress = useMyAddress()
   const isLoggedIn = useIsSignedIn()
-  // const { unreadCount } = useNotifCounter()
   const { state: { showOnBoarding } } = useAuth()
   const { isNotMobile } = useResponsiveSize()
 
@@ -75,11 +66,11 @@ function SideMenu () {
     >
       {menuItems.map((item, i) => isDivider(item)
         ? <Menu.Divider key={`divider-${i}`} />
-        : renderPageLink(item/* , unreadCount */)
+        : renderPageLink(item)
       )}
       {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />}
       {isLoggedIn && <Menu.Divider />}
-      {/* {isLoggedIn && <MySubscriptions />} */}
+      {/* {isLoggedIn && <MySub scriptions />} */}
     </Menu>
   )
 }

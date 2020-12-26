@@ -1,5 +1,5 @@
-@import './fonts.scss';
-@import './subsocial-vars.scss';
+@import "./fonts.scss";
+@import "./subsocial-vars.scss";
 
 html {
   height: 100%;
@@ -14,9 +14,13 @@ body,
   font-size: $font_normal !important;
 }
 
-h1 { font-size: $space_huge; }
+h1 {
+  font-size: $space_huge;
+}
 
-h2 { font-size: $space_big; }
+h2 {
+  font-size: $space_big;
+}
 
 h1,
 h2,
@@ -24,12 +28,13 @@ h3,
 h4,
 h5,
 h6 {
-  color: rgba(0, 0, 0, .6);
+  color: rgba(0, 0, 0, 0.6);
 }
 
 code,
 pre {
-  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif;
+  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono,
+    Courier New, monospace, sans-serif;
 }
 
 // a { color: $color_link !important }
@@ -38,7 +43,7 @@ pre {
 /* ---------------------------------------- */
 
 .FontNormal {
-  font-size: $font_normal !important
+  font-size: $font_normal !important;
 }
 
 .DfSegment {
@@ -52,7 +57,7 @@ pre {
 
 .DfBalance {
   display: flex;
-  color: $color_muted
+  color: $color_muted;
 }
 
 .DfBalanceDecimals {
@@ -196,12 +201,12 @@ pre {
 .DfTags {
   .anticon {
     color: #bbb !important;
-    margin-right: .35rem !important;
+    margin-right: 0.35rem !important;
   }
 
   .ant-tag {
-    font-size: .85rem;
-    padding: .25rem .5rem;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
 
     &:hover {
       background-color: #fff;
@@ -213,7 +218,7 @@ pre {
   }
 }
 
-.ui.search.selection.dropdown>.text {
+.ui.search.selection.dropdown > .text {
   margin-left: 0;
 
   .ui--KeyPair {
@@ -222,7 +227,7 @@ pre {
 
     .ui--IdentityIcon-Outer {
       left: -3.1rem !important;
-      top: -.7rem !important;
+      top: -0.7rem !important;
     }
   }
 }
@@ -283,7 +288,7 @@ pre {
   }
 
   .DfCommentSection {
-    margin-top: $space_small
+    margin-top: $space_small;
   }
 }
 
@@ -316,7 +321,7 @@ pre {
 
     .content {
       padding: 0;
-      padding-left: .5rem;
+      padding-left: 0.5rem;
     }
 
     .handle {
@@ -348,11 +353,11 @@ pre {
 }
 
 .ProfilePreviews {
-  &.ui.list>.item:first-child {
+  &.ui.list > .item:first-child {
     padding-top: $space_small;
   }
 
-  &.ui.list>.item:last-child {
+  &.ui.list > .item:last-child {
     padding-bottom: $space_small;
   }
 }
@@ -443,7 +448,7 @@ form.ui.form.DfForm.EditEntityForm {
   }
 
   .ETGtag {
-    background: '#fff';
+    background: "#fff";
     border-style: dashed;
   }
 }
@@ -475,7 +480,7 @@ form.ui.form.DfForm.EditEntityForm {
   }
 
   .ui.selection.dropdown.menu {
-    padding: .5rem .75rem !important;
+    padding: 0.5rem 0.75rem !important;
   }
 }
 
@@ -493,7 +498,7 @@ hr {
 
 .DfDate {
   width: 100%;
-  font-size: $font_small
+  font-size: $font_small;
 }
 
 .DfSocialLinks {
@@ -510,7 +515,7 @@ hr {
 }
 
 .asLink:hover {
-  color: #0d548a
+  color: #0d548a;
 }
 
 .DfSpaceStats {
@@ -538,7 +543,7 @@ hr {
   }
 }
 
-.ui.attached:not(.message)+.ui.attached.segment:not(.top) {
+.ui.attached:not(.message) + .ui.attached.segment:not(.top) {
   border: none;
 }
 
@@ -547,9 +552,9 @@ hr {
   justify-content: flex-start;
   margin-top: $space_normal;
 
-  &>a,
-  &>span {
-    color: rgba(34, 36, 38, .8) !important;
+  & > a,
+  & > span {
+    color: rgba(34, 36, 38, 0.8) !important;
     font-size: $font_small;
     margin-left: $space_normal;
   }
@@ -578,7 +583,7 @@ hr {
   justify-content: space-between;
 
   &.DfActionBorder {
-    border-top: 1px solid rgba(34, 36, 38, .15);
+    border-top: 1px solid rgba(34, 36, 38, 0.15);
   }
 
   .DfReactionsAction {
@@ -633,7 +638,7 @@ hr {
   }
 
   .DfActionsPanel {
-    padding: .25rem 0;
+    padding: 0.25rem 0;
     justify-content: space-evenly;
   }
 
@@ -686,7 +691,7 @@ hr {
 }
 
 .text.smaller {
-  font-size: $font_small
+  font-size: $font_small;
 }
 
 .Df--AddressComponents-details {
@@ -732,7 +737,6 @@ hr {
 }
 
 .DfSection {
-
   .viewspace-minipreview {
     display: flex;
     justify-content: space-between;
@@ -776,7 +780,7 @@ hr {
 .DfForm .ui--Labelled {
   align-items: end;
 
-  &>label {
+  & > label {
     padding-top: $space_small;
   }
 }
@@ -832,7 +836,7 @@ hr {
   .DfPopup-link {
     font-size: $font_normal;
     margin-right: $space_normal;
-    @extend .DfGreyLink
+    @extend .DfGreyLink;
   }
 }
 
@@ -843,7 +847,6 @@ hr {
 }
 
 .DfMdEditor {
-
   .CodeMirror {
     font-size: 1rem;
     padding: 6.5px 11px; /* padding from ant design input */
@@ -895,7 +898,6 @@ hr {
 }
 
 .DfMdEditor.error {
-
   .CodeMirror.cm-s-easymde.CodeMirror-wrap {
     background-color: #fff6f6;
     border-color: #e0b4b4;
@@ -915,7 +917,7 @@ hr {
   min-width: 320px;
   display: flex;
 
-  .ant-input-search>.ant-input-group>.ant-input-group-addon {
+  .ant-input-search > .ant-input-group > .ant-input-group-addon {
     left: -1px;
     padding: 0;
     border: 0;
@@ -942,7 +944,7 @@ hr {
 
   /* Fix black background of top menu in prod mode: */
   &.ant-layout-header {
-    padding: 0 .5rem !important;
+    padding: 0 0.5rem !important;
     background-color: #fff !important;
   }
 }
@@ -995,7 +997,7 @@ hr {
   .ant-menu-item-group-title {
     text-align: center;
     text-transform: uppercase;
-    font-size: $font_small
+    font-size: $font_small;
   }
 }
 
@@ -1021,7 +1023,7 @@ hr {
   position: fixed;
 }
 
-.ant-list-something-after-last-item .ant-spin-container>.ant-list-items>.ant-list-item:last-child {
+.ant-list-something-after-last-item .ant-spin-container > .ant-list-items > .ant-list-item:last-child {
   border: none;
 }
 
@@ -1048,12 +1050,13 @@ hr {
     font-size: 1.3rem;
     padding-left: $space_tiny;
   }
-  .DfTopBar--leftContent,.DfTopBar--rightContent, .DfTopBar--search {
+  .DfTopBar--leftContent,
+  .DfTopBar--rightContent,
+  .DfTopBar--search {
     display: flex;
     align-items: center;
   }
 }
-
 
 /* Fix syntax error in Markdown editor */
 .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
@@ -1141,7 +1144,6 @@ hr {
 }
 
 .NavigationEditor .NavigationEditorForm .NEHidden {
-
   input,
   select {
     color: $color_muted !important;
@@ -1313,13 +1315,12 @@ hr {
 }
 
 .DfStep {
-
   button,
   a {
     padding: 0;
     font-size: $font_normal;
     font-weight: bolder;
-    color: #222
+    color: #222;
   }
 }
 
@@ -1336,7 +1337,7 @@ hr {
   display: flex;
 
   .DfAddressInfo {
-    display: block
+    display: block;
   }
 }
 
@@ -1347,10 +1348,9 @@ hr {
     padding: $space_tiny;
     padding-left: $space_normal;
     cursor: pointer;
-    height: 'auto';
+    height: "auto";
 
     .DfDisabled {
-
       .ant-btn-disabled,
       .ant-btn.disabled,
       .ant-btn[disabled] {
@@ -1358,7 +1358,6 @@ hr {
         border: none;
         background-color: none;
       }
-
     }
   }
 
@@ -1384,7 +1383,7 @@ hr {
     flex-direction: column;
     line-height: normal;
     padding: $space_tiny;
-    padding-top: .85rem;
+    padding-top: 0.85rem;
     padding-left: 0;
 
     a {
@@ -1398,11 +1397,10 @@ hr {
 }
 
 .DfError {
-  color: red
+  color: red;
 }
 
 .DfNewComment {
-
   .ant-comment-inner {
     padding-top: 0;
     padding-bottom: 0;
@@ -1423,7 +1421,6 @@ hr {
     margin-bottom: $space_tiny;
 
     li {
-
       span,
       button {
         font-size: $font_small;
@@ -1457,7 +1454,7 @@ hr {
   }
 
   .ant-comment-nested {
-    box-shadow: -1px 0 0 rgba(34, 36, 38, .15);
+    box-shadow: -1px 0 0 rgba(34, 36, 38, 0.15);
     margin-left: $space_normal;
     padding-left: $space_normal;
   }
@@ -1472,7 +1469,6 @@ hr {
 }
 
 .DfCommentSection {
-
   &.TopBorder {
     border-top: 1px solid $color_light_border;
   }
@@ -1513,7 +1509,7 @@ hr {
   border-radius: $border_radius_normal;
 
   &.active {
-    border-color: $color_link
+    border-color: $color_link;
   }
 }
 
@@ -1563,4 +1559,24 @@ hr {
 
 .DfActivityMsg {
   color: $color_font_normal !important;
+}
+
+.DfNotificationsCounter {
+  margin-right: $space_small;
+  margin-left: $space_normal;
+
+  .bell {
+    &:hover {
+      color: $color_link !important;
+    }
+    margin-top: $space_big;
+    font-size: 24px;
+    color: $color_muted;
+  }
+  
+  .ant-badge-not-a-wrapper .ant-scroll-number {
+    position: absolute;
+    top: -$space_big;
+    right: -$space_big;
+  }
 }
