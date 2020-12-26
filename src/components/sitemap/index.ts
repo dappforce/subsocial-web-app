@@ -17,7 +17,7 @@ import {
   parsePageQuery
 } from '../utils/getIds'
 import { asPublicProfileStruct, CanBeUpdated, flattenProfileStruct, flattenSpaceStruct, HasCreated } from 'src/types'
-import { newFlatApi } from '../substrate'
+import { newFlatApi } from '../substrate/flatApi'
 
 /** See https://www.sitemaps.org/protocol.html#changefreqdef */
 type ChangeFreq =

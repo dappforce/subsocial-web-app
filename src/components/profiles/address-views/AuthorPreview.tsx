@@ -3,13 +3,12 @@ import { ProfileData } from 'src/types'
 import { Popover } from 'antd'
 import Avatar from './Avatar'
 import ProfilePreview from './ProfilePreview'
-import { toShortAddress } from 'src/components/utils'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { withLoadedOwner } from './utils/withLoadedOwner'
 import { ExtendedAddressProps } from './utils/types'
-import ViewProfileLink from '../ViewProfileLink'
 import BN from 'bn.js'
 import { Balance } from './utils/Balance'
+import Name from './Name'
 
 export type InfoProps = {
   address?: string | AccountId,
@@ -37,7 +36,6 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     owner = {} as ProfileData,
     className,
     isPadded = true,
-    isShort = true,
     style,
     size,
     afterName,
@@ -47,9 +45,6 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
 
   const avatar = owner.content?.avatar
 
-  // TODO extract a function? (find similar copypasta in other files):
-  const addressString = isShort ? toShortAddress(address) : address.toString()
-  const name = owner.content?.name || addressString
   const nameClass = `ui--AddressComponents-address ${className}`
 
   return <div
@@ -65,10 +60,11 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
           content={<ProfilePreview address={address} owner={owner} />}
         >
           <div className='d-block'>
-            <ViewProfileLink
-              account={{ address }}
-              title={name}
+            <Name
+              address={address}
+              owner={owner}
               className={nameClass}
+              asLink
             />
             {afterName && <span className='ml-2'>{afterName}</span>}
           </div>

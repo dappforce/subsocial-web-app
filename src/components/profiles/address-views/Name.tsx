@@ -25,7 +25,6 @@ export const Name = ({
 
   const { content } = owner
 
-  // TODO extract a function? (find similar copypasta in other files):
   const shortAddress = toShortAddress(address)
   const addressString = isShort ? shortAddress : address.toString()
   const name = content?.name || useExtensionName(address)
