@@ -5,7 +5,7 @@ import { asCommentStruct, bnsToIds, idToBn, PostData, PostWithAllDetails } from 
 import ViewTags from '../../utils/ViewTags'
 import ViewPostLink from '../ViewPostLink'
 import { CommentSection } from '../../comments/CommentsSection'
-import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostActionsPanel, SharePostContent, isUnlistedPost } from './helpers'
+import { PostDropDownMenu, PostCreator, HiddenPostAlert, PostActionsPanel, SharePostContent, isUnlistedPost, PostNotFound } from './helpers'
 import { NextPage } from 'next'
 import { PageContent } from 'src/components/main/PageWrapper'
 import { Loading } from 'src/components/utils'
@@ -53,6 +53,8 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
 
   const { post, space } = postData
   const { struct, content } = post
+
+  if (isUnlistedSpace(postData.space) || isUnlistedPost(postData.post)) return <PostNotFound />
 
   if (!content) return null
 
@@ -148,9 +150,7 @@ export async function loadPostOnNextReq (
   const postData = selectPost(reduxStore.getState(), { id: postId })
 
   if (!postData ||
-    !postData.space ||
-    isUnlistedSpace(postData.space) ||
-    isUnlistedPost(postData.post)
+    !postData.space
   ) return return404(context)
 
   const { space, post } = postData
