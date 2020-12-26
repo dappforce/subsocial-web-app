@@ -5,6 +5,7 @@ import spaces from '../features/spaces/spacesSlice'
 import posts from '../features/posts/postsSlice'
 import replyIds from '../features/replies/repliesSlice'
 import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
+import followedAccountIds from '../features/profiles/followedAccountIdsSlice'
 import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import postReactions from '../features/reactions/postReactionsSlice'
 
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   posts,
   replyIds,
   followedSpaceIds,
+  followedAccountIds,
   ownSpaceIds,
   postReactions
 })

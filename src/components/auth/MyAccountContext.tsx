@@ -5,6 +5,7 @@ import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
 import { useDispatch } from 'react-redux'
+import { useCreateReloadAccountIdsByFollower } from 'src/rtk/app/hooks'
 import { removeAllReaction } from 'src/rtk/features/reactions/postReactionsSlice'
 import { convertToDerivedContent, flattenProfileStruct, ProfileData } from 'src/types'
 import store from 'store'
@@ -155,7 +156,7 @@ export const MyAccountContext = createContext<MyAccountContextProps>(contextStub
 export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
   const [ state, dispatch ] = useReducer(reducer, initialState)
   const reduxDispatch = useDispatch()
-
+  const reloadAccountIdsByFollower = useCreateReloadAccountIdsByFollower()
   const { inited, address } = state
 
   useEffect(() => {
@@ -211,6 +212,7 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
     if (!inited || !address) return
 
     reloadSpaceIdsFollowedByAccount({ substrate, dispatch: reduxDispatch, account: address })
+    reloadAccountIdsByFollower({ id: address })
     reduxDispatch(removeAllReaction())
   }, [ reduxDispatch, inited, address ])
 

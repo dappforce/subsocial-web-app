@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { GenericAccountId } from '@polkadot/types'
 import { useMyAddress, isMyAddress } from '../auth/MyAccountContext'
 import { registry } from '@subsocial/types/substrate/registry'
-import { newLogger, notDef } from '@subsocial/utils'
-import useSubsocialEffect from '../api/useSubsocialEffect'
+import { notDef } from '@subsocial/utils'
 import TxButton from './TxButton'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { FollowButtonStub } from './FollowButtonStub'
-import { useCreateReloadProfile } from 'src/rtk/app/hooks'
-
-const log = newLogger('FollowAccountButton')
+import { useCreateReloadAccountIdsByFollower, useGetReloadProfile } from 'src/rtk/app/hooks'
+import { selectAccountIdsFollowedByAccount } from 'src/rtk/features/profiles/followedAccountIdsSlice'
+import { useAppSelector } from 'src/rtk/app/store'
+import { shallowEqual } from 'react-redux'
 
 type FollowAccountButtonProps = {
   address: string | AccountId
@@ -19,27 +19,11 @@ type FollowAccountButtonProps = {
 function FollowAccountButton (props: FollowAccountButtonProps) {
   const { address, className = '' } = props
   const myAddress = useMyAddress()
-  const reloadProfile = useCreateReloadProfile()
-  const [ isFollower, setIsFollower ] = useState<boolean>()
-
-  useSubsocialEffect(({ substrate }) => {
-    if (!myAddress) return setIsFollower(false)
-
-    let isMounted = true
-
-    const load = async () => {
-      const res = await substrate.isAccountFollower(myAddress, address)
-      isMounted && setIsFollower(res)
-    }
-
-    load().catch(err => log.error(
-      'Failed to check if account is a follower of another account',
-      address?.toString(), err
-    ))
-
-    return () => { isMounted = false }
-  }, [ myAddress ])
-
+  // TODO This selector be moved to upper list component to improve performance.
+  const followedAccountIds = useAppSelector(state => myAddress ? selectAccountIdsFollowedByAccount(state, myAddress) : [], shallowEqual) || []
+  const isFollower = followedAccountIds.indexOf(address.toString()) >= 0
+  const reloadProfile = useGetReloadProfile()
+  const reloadAccountIdsByFollower = useCreateReloadAccountIdsByFollower()
   // I'm signed in and I am looking at my account
   if (myAddress && isMyAddress(address)) return null
 
@@ -67,7 +51,8 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
       : 'profileFollows.followAccount'}
     params={buildTxParams}
     onSuccess={() => {
-      setIsFollower(!isFollower)
+      console.log('SUCESSS')
+      reloadAccountIdsByFollower({ id: myAddress })
       reloadProfile({ id: myAddress })
       reloadProfile({ id: address.toString() })
     }}
