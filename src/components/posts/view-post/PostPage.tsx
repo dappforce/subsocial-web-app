@@ -21,7 +21,7 @@ import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsS
 import { StatsPanel } from '../PostStats'
 import { useAppSelector } from 'src/rtk/app/store'
 import { PostWithSomeDetails } from 'src/types'
-import { useFetchMyPostReactions } from 'src/rtk/features/reactions/postReactionsHooks'
+import { useFetchMyPostReactions } from 'src/rtk/features/reactions/myPostReactionsHooks'
 
 export type PostDetailsProps = {
   postData: PostWithAllDetails,

@@ -67,3 +67,10 @@ export type PostWithAllDetails = Omit<PostWithSomeDetails, 'owner' | 'space'> & 
   owner: ProfileData
   space: SpaceData
 }
+
+export type ReactionType = 'Upvote' | 'Downvote'
+
+export enum ReactionEnum {
+  Upvote = 'Upvote',
+  Downvote = 'Downvote'
+}

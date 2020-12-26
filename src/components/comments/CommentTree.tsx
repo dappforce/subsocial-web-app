@@ -47,7 +47,7 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ space, rootPost, paren
     let isMounted = true
     setLoading(true)
 
-    dispatch(fetchPosts({ api: subsocial, myAddress, ...postsArgs }))
+    dispatch(fetchPosts({ api: subsocial, withReactionByAccount: myAddress, ...postsArgs }))
       .then(() => isMounted && setLoading(false))
 
     return () => { isMounted = false }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useFetchMyPostReactions } from 'src/rtk/features/reactions/postReactionsHooks'
+import { useFetchMyPostReactions } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import { PostWithAllDetails } from 'src/types'
 import DataList from '../lists/DataList'
 import { PublicPostPreviewById } from '../posts/PublicPostPreview'

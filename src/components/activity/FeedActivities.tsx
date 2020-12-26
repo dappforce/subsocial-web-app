@@ -15,7 +15,7 @@ export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'c
     const activity = await getActivity(address, offset, size) || []
     const postIds = activity.map(x => x[keyId]!)
 
-    await dispatch(fetchPosts({ api: subsocial, ids: postIds, myAddress: address }))
+    await dispatch(fetchPosts({ api: subsocial, ids: postIds, withReactionByAccount: address }))
     return postIds
   }
 

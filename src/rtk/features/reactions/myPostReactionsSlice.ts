@@ -3,16 +3,10 @@ import { getFirstOrUndefined, isDef } from '@subsocial/utils'
 import { createSelectUnknownIds, FetchManyArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectManyFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AccountId, PostId } from 'src/types'
+import { AccountId, PostId, ReactionType } from 'src/types'
 import { idToPostId } from 'src/types/utils'
 
-export enum ReactionEnum {
-  Upvote = 'Upvote',
-  Downvote = 'Downvote'
-}
-
 export type ReactionId = string
-export type ReactionType = 'Upvote' | 'Downvote'
 
 export type Reaction = {
   reactionId?: ReactionId
@@ -25,18 +19,18 @@ export type ReactionStruct = Reaction & {
 
 const adapter = createEntityAdapter<ReactionStruct>()
 
-const selectors = adapter.getSelectors<RootState>(state => state.postReactions)
+const selectors = adapter.getSelectors<RootState>(state => state.myPostReactions)
 
 // Rename the exports for readability in component usage
 export const {
-  selectById: selectReactionByPostId,
+  selectById: selectMyReactionByPostId,
   selectIds: selectPostIds,
-  // selectEntities: selectFollowedSpaceIdsEntities,
-  // selectAll: selectAllFollowedSpaceIds,
-  // selectTotal: selectTotalSpaceFollowers
+  // selectEntities,
+  // selectAll,
+  // selectTotal
 } = selectors
 
-export const selectPostReactionsByPostIds:
+export const selectPostMyReactionsByPostIds:
   SelectManyFn<{}, ReactionStruct> = (
     state, 
     { ids }
@@ -44,7 +38,7 @@ export const selectPostReactionsByPostIds:
     const reactions: ReactionStruct[] = []
   
     ids.forEach(id => {
-      const reaction = selectReactionByPostId(state, id)
+      const reaction = selectMyReactionByPostId(state, id)
 
       if (reaction) {
         reactions.push(reaction)
@@ -54,8 +48,8 @@ export const selectPostReactionsByPostIds:
     return reactions
   }
 
-export const selectPostReactionByPostId = (state: RootState, id: PostId) => 
-  getFirstOrUndefined(selectPostReactionsByPostIds(state, { ids: [ id ] }))
+export const selectPostMyReactionByPostId = (state: RootState, id: PostId) => 
+  getFirstOrUndefined(selectPostMyReactionsByPostIds(state, { ids: [ id ] }))
 
 type Args = {
   myAddress?: AccountId
@@ -67,17 +61,19 @@ export type FetchManyRes = ReactionStruct[]
 
 export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
 
-export const fetchPostReactions = createAsyncThunk
+export const fetchMyPostReactions = createAsyncThunk
   <FetchManyRes, FetchManyReactionsArgs, ThunkApiConfig>(
-  'postReactionByAccount/fetchMany',
+  'myPostReaction/fetchMany',
   async ({ api, ids, myAddress, reload }, { getState }): Promise<FetchManyRes> => {
+
+    if (!myAddress) return []
  
     let newIds = ids as string[]
 
-    if (!reload || !myAddress) {
+    if (!reload) {
       newIds = selectUnknownPostIds(getState(), ids)
-      if (!newIds.length || !myAddress) {
-        // Nothing to load: all ids are known and their posts are already loaded.
+      if (!newIds.length) {
+        // Nothing to load: all ids are known and their reactions are already loaded.
         return []
       }
     }
@@ -90,11 +86,11 @@ export const fetchPostReactions = createAsyncThunk
     // TODO use multi query
     const promises = newIds.map(async postId => {
       const reactionId = await api.substrate.getPostReactionIdByAccount(myAddress, idToPostId(postId))
-      const reactionIdNum = reactionId.toNumber()
+      const reactionIdStr = reactionId.toString()
       reactionByPostId.set(postId, { id: postId })
 
-      if (reactionIdNum) {
-        postIdByReactionId.set(reactionIdNum.toString(), postId)
+      if (reactionIdStr !== '0') {
+        postIdByReactionId.set(reactionIdStr, postId)
 
         return reactionId
       }
@@ -109,18 +105,11 @@ export const fetchPostReactions = createAsyncThunk
     entities.forEach(({ kind: kindCodec, id }) => {
       const reactionId = id.toString()
       const postId = postIdByReactionId.get(reactionId)
-
-      const kind = kindCodec.toString() as ReactionType
-      const reaction = kind
-        ? {
-          reactionId,
-          kind
-        }
-        : undefined
   
       postId && reactionByPostId.set(postId, {
         id: postId,
-        ...reaction
+        reactionId,
+        kind: kindCodec.toString() as ReactionType
       })
 
     })
@@ -130,24 +119,24 @@ export const fetchPostReactions = createAsyncThunk
 )
 
 const slice = createSlice({
-  name: 'postReactionByAccount',
+  name: 'myPostReaction',
   initialState: adapter.getInitialState(),
   reducers: {
-    upsertPostReaction: adapter.upsertOne,
-    removePostReaction: adapter.removeOne,
-    removeAllReaction: adapter.removeAll
+    upsertMyPostReaction: adapter.upsertOne,
+    removeMyPostReaction: adapter.removeOne,
+    removeAllMyPostReactions: adapter.removeAll
   },
   extraReducers: builder => {
-    builder.addCase(fetchPostReactions.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchMyPostReactions.fulfilled, (state, { payload }) => {
       if (payload) adapter.upsertMany(state, payload)
     })
   }
 })
 
 export const {
-  upsertPostReaction,
-  removePostReaction,
-  removeAllReaction
+  upsertMyPostReaction,
+  removeMyPostReaction,
+  removeAllMyPostReactions
 } = slice.actions
 
 export default slice.reducer

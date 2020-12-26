@@ -12,7 +12,7 @@ import { useLoadUnlistedPostsByOwner } from './useLoadUnlistedPostsByOwner'
 import { PublicPostPreviewById } from 'src/components/posts/PublicPostPreview'
 import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
 import { useDispatch } from 'react-redux'
-import { useFetchMyPostReactions } from 'src/rtk/features/reactions/postReactionsHooks'
+import { useFetchMyPostReactions } from 'src/rtk/features/reactions/myPostReactionsHooks'
 
 type Props = {
   spaceData: SpaceData

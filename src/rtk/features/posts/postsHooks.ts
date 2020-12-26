@@ -27,7 +27,12 @@ export const useCreateReloadPost = () => {
     dispatch(fetchPosts({ api, ids: [ id ], reload: true })))
 }
 
-export const usePostSubscribe = (id: PostId) => {
+export const useCreateUpsertPost = () => {
+  return useActions<PostStruct>(({ dispatch, args }) =>
+    dispatch(upsertPost(args)))
+}
+
+export const useSubscribeToPostUpdates = (id: PostId) => {
   const [ struct, setStruct ] = useState<PostStruct>()
   const [ structStr, setStructStr ] = useState<string>('')
   const dispatch = useAppDispatch()
@@ -40,6 +45,7 @@ export const usePostSubscribe = (id: PostId) => {
 
       unsub = await readyApi.query.posts.postById(id, (post: Option<Post>) => {
         if (post.isEmpty) return
+
         const struct = flattenPostStruct(post.unwrap())
         setStruct(struct)
         setStructStr(JSON.stringify(struct))
@@ -53,6 +59,7 @@ export const usePostSubscribe = (id: PostId) => {
 
   useEffect(() => {
     if (!struct) return
+
     dispatch(upsertPost(struct))
   }, [ dispatch, structStr ])
 
