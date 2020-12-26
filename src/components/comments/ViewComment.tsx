@@ -135,16 +135,17 @@ export const ViewComment: FC<Props> = (props) => {
     />
 
   const actionCss = 'DfCommentAction'
+  const hoverActionCss = `${actionCss} AnimatedVisibility`
 
   return <div className={isFake ? 'DfDisableLayout' : ''}>
     <Comment
       className='DfNewComment'
       actions={isFake ? [] : [
         <VoterButtons key={`voters-of-comments-${id}`} post={commentStruct} className={actionCss} />,
-        <Button key={`reply-comment-${id}`} className={actionCss} onClick={() => setShowReplyForm(true)}>
+        <Button key={`reply-comment-${id}`} className={hoverActionCss} onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <ShareDropdown key={`dropdown-comment-${id}`} postDetails={commentDetails} space={space} className={actionCss} />
+        <ShareDropdown key={`dropdown-comment-${id}`} postDetails={commentDetails} space={space} className={hoverActionCss} />
       ]}
       author={commentAuthor}
       content={showEditForm
