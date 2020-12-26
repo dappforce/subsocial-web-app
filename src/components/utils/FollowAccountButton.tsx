@@ -6,7 +6,7 @@ import { notDef } from '@subsocial/utils'
 import TxButton from './TxButton'
 import AccountId from '@polkadot/types/generic/AccountId'
 import { FollowButtonStub } from './FollowButtonStub'
-import { useCreateReloadAccountIdsByFollower, useGetReloadProfile } from 'src/rtk/app/hooks'
+import { useCreateReloadAccountIdsByFollower, useCreateReloadProfile } from 'src/rtk/app/hooks'
 import { selectAccountIdsFollowedByAccount } from 'src/rtk/features/profiles/followedAccountIdsSlice'
 import { useAppSelector } from 'src/rtk/app/store'
 import { shallowEqual } from 'react-redux'
@@ -22,7 +22,7 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
   // TODO This selector be moved to upper list component to improve performance.
   const followedAccountIds = useAppSelector(state => myAddress ? selectAccountIdsFollowedByAccount(state, myAddress) : [], shallowEqual) || []
   const isFollower = followedAccountIds.indexOf(address.toString()) >= 0
-  const reloadProfile = useGetReloadProfile()
+  const reloadProfile = useCreateReloadProfile()
   const reloadAccountIdsByFollower = useCreateReloadAccountIdsByFollower()
   // I'm signed in and I am looking at my account
   if (myAddress && isMyAddress(address)) return null
