@@ -5,7 +5,6 @@ import Button from 'antd/lib/button'
 import { MyAccountProps } from '../../utils/MyAccount'
 import { LabeledValue } from 'antd/lib/select'
 import SelectSpacePreview from '../../utils/SelectSpacePreview'
-import BN from 'bn.js'
 import { PostExtension, SharedPost, IpfsContent } from '@subsocial/types/substrate/classes'
 import { useForm, Controller, ErrorMessage } from 'react-hook-form'
 import { useSubsocialApi } from '../../utils/SubsocialApiContext'
@@ -15,20 +14,20 @@ import dynamic from 'next/dynamic'
 import { buildSharePostValidationSchema } from '../PostValidation'
 import { isEmptyArray } from '@subsocial/utils'
 import DfMdEditor from '../../utils/DfMdEditor'
-import { DynamicPostPreview } from '../view-post/DynamicPostPreview'
 import { CreateSpaceButton } from '../../spaces/helpers'
 import styles from './index.module.sass'
 import { useCreateReloadPost, useCreateReloadSpace } from 'src/rtk/app/hooks'
-import { bnToId, idsToBns } from 'src/types'
+import { idToBn, PostId, SpaceId } from 'src/types'
 import { useAppSelector } from 'src/rtk/app/store'
 import { useMyAddress } from 'src/components/auth/MyAccountContext'
 import { selectSpaceIdsOwnedByAccount } from 'src/rtk/features/spaceIds/ownSpaceIdsSlice'
+import { PublicPostPreviewById } from '../PublicPostPreview'
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
 
 type Props = MyAccountProps & {
-  postId: BN
-  spaceIds?: BN[]
+  postId: PostId
+  spaceIds?: SpaceId[]
   open?: boolean
   onClose: () => void
 }
@@ -37,14 +36,14 @@ const Fields = {
   body: 'body'
 }
 
-const InnerShareModal = (props: Props) => {
+const InnerSharePostModal = (props: Props) => {
   const { open, onClose, postId, spaceIds } = props
 
   if (!spaceIds) {
     return null
   }
 
-  const extension = new PostExtension({ SharedPost: postId as SharedPost })
+  const extension = new PostExtension({ SharedPost: idToBn(postId) as SharedPost })
 
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
@@ -68,8 +67,8 @@ const InnerShareModal = (props: Props) => {
 
   const onTxSuccess: TxCallback = () => {
     // TODO show a success message
-    reloadPost({ id: bnToId(postId) })
-    reloadSpace({ id: bnToId(spaceId) })
+    reloadPost({ id: postId })
+    reloadSpace({ id: spaceId })
     onClose()
   }
 
@@ -129,12 +128,12 @@ const InnerShareModal = (props: Props) => {
           <ErrorMessage errors={errors} name={Fields.body} />
         </div>
       </form>
-      <DynamicPostPreview id={postId} asRegularPost />
+      <PublicPostPreviewById postId={postId} asRegularPost />
     </div>
   }
 
   const saveSpace = (value: string | number | LabeledValue) => {
-    setSpaceId(new BN(value as string))
+    setSpaceId(value as string)
   }
 
   return <Modal
@@ -153,9 +152,9 @@ const InnerShareModal = (props: Props) => {
   </Modal>
 }
 
-export const ShareModal = (props: Props) => {
+export const SharePostModal = (props: Props) => {
   const myAddress = useMyAddress()
-  const spaceIds = useAppSelector(state => selectSpaceIdsOwnedByAccount(state, myAddress as string)) || []
+  const mySpaceIds = useAppSelector(state => selectSpaceIdsOwnedByAccount(state, myAddress as string)) || []
 
-  return <InnerShareModal {...props} spaceIds={idsToBns(spaceIds)} />
+  return <InnerSharePostModal {...props} spaceIds={mySpaceIds} />
 }
