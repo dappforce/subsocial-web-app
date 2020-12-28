@@ -1,26 +1,25 @@
 import React, { useState, useCallback } from 'react'
-import { ViewSpace } from '../spaces/ViewSpace'
 import { Segment } from 'src/components/utils/Segment'
 import { Tabs } from 'antd'
 import { ElasticIndex, ElasticIndexTypes } from '@subsocial/types/offchain/search'
 import { useRouter } from 'next/router'
 import { ProfilePreviewWithOwner } from '../profiles/address-views'
 import { DataListOptProps } from '../lists/DataList'
-import { queryElasticSearch } from 'src/components/utils/OffchainUtils'
+import { queryElasticSearch, SearchResultsType } from 'src/components/utils/OffchainUtils'
 import { InfiniteListByData } from '../lists/InfiniteList'
-import PostPreview from '../posts/view-post/PostPreview'
-import { AnySubsocialData, PostWithAllDetails, ProfileData, SpaceData } from 'src/types'
+import { AccountId, PostId, SpaceId } from 'src/types'
 import { PageContent } from '../main/PageWrapper'
 import { nonEmptyArr } from '@subsocial/utils'
 import { DataListItemProps, InnerLoadMoreFn } from '../lists'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { useSubsocialApi } from '../utils/SubsocialApiContext'
+import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
+import { fetchProfiles } from 'src/rtk/features/profiles/profilesSlice'
+import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
+import { PublicPostPreviewById } from '../posts/PublicPostPreview'
+import { PublicSpacePreviewById } from '../spaces/SpacePreview'
 
 const { TabPane } = Tabs
-
-type DataResults = {
-  index: string
-  id: string
-  data: (AnySubsocialData | PostWithAllDetails)[]
-}
 
 const AllTabKey = 'all'
 
@@ -43,18 +42,17 @@ const panes = [
   }
 ]
 
-const resultToPreview = ({ data, index, id }: DataResults) => {
-  const unknownData = data as unknown
-  switch (index) {
+const resultToPreview = ({ _index, _id }: SearchResultsType) => {
+  switch (_index) {
     case ElasticIndex.spaces:
-      return <ViewSpace spaceData={unknownData as SpaceData} preview withFollowButton />
+      return <PublicSpacePreviewById spaceId={_id} />
     case ElasticIndex.posts: {
-      return <PostPreview postDetails={unknownData as PostWithAllDetails} withActions />
+      return <PublicPostPreviewById postId={_id} />
     }
     case ElasticIndex.profiles:
       return (
         <Segment>
-          <ProfilePreviewWithOwner address={id} owner={unknownData as ProfileData} />
+          <ProfilePreviewWithOwner address={_id} />
         </Segment>
       )
     default:
@@ -66,8 +64,10 @@ type InnerSearchResultListProps<T> = DataListOptProps & DataListItemProps<T> & {
   loadingLabel?: string
 }
 
-const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultListProps<T>) => {
+const InnerSearchResultList = <T extends SearchResultsType>(props: InnerSearchResultListProps<T>) => {
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { subsocial: api } = useSubsocialApi()
 
   const getReqParam = (param: 'tab' | 'q' | 'tags') => {
     return router.query[param]
@@ -86,8 +86,37 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
       offset,
       limit: size,
     })
+    console.log('SEARCH:', res)
+    if (!res) return []
 
-    return res || []
+    const ownerIds: AccountId[] = []
+    const spaceIds: SpaceId[] = []
+    const postIds: PostId[] = []
+
+    res.forEach(({ _index, _id }) => {
+      switch (_index) {
+        case ElasticIndex.spaces: {
+          spaceIds.push(_id)
+          break
+        }
+        case ElasticIndex.posts: {
+          postIds.push(_id)
+          break
+        }
+        case ElasticIndex.profiles: {
+          ownerIds.push(_id)
+          break
+        }
+      }
+    })
+
+    await Promise.all([
+      dispatch(fetchSpaces({ ids: spaceIds, api })),
+      dispatch(fetchProfiles({ ids: ownerIds, api })),
+      dispatch(fetchPosts({ ids: postIds, api })),
+    ])
+
+    return (res || []) as any 
   }
 
   const List = useCallback(() =>
@@ -101,7 +130,7 @@ const InnerSearchResultList = <T extends DataResults>(props: InnerSearchResultLi
 const AllResultsList = () =>
   <InnerSearchResultList
     loadingLabel={'Loading search results...'}
-    getKey={item => item.id}
+    getKey={item => `${item._index}-${item._id}`}
     renderItem={resultToPreview}
   />
 
