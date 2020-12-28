@@ -70,7 +70,7 @@ const VoterButton = ({
 
   const updateOrDelete = (isDelete: boolean, _reactinoId?: ReactionId) => {
     const newReactionId = _reactinoId || reactionId
-    const newReaction: Reaction | undefined = { 
+    const newReaction: Reaction = { 
       reactionId: newReactionId || `fakeId-${postId}`,
       kind: isDelete ? undefined : reactionType
     }

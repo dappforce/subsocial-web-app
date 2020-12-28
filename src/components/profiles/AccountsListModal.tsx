@@ -48,7 +48,7 @@ const InnerAccountsListModal = (props: InnerProps) => {
 
 // TODO use redux
 export const SpaceFollowersModal = (props: OuterProps) => {
-  const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallete: 'spaceFollows', method: 'spaceFollowers', id: props.id.toString() })
+  const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallet: 'spaceFollows', method: 'spaceFollowers', id: props.id.toString() })
   
   if (loading) return <Loading label='Loading space followers...' />
 
@@ -57,20 +57,20 @@ export const SpaceFollowersModal = (props: OuterProps) => {
 
 // TODO use redux
 export const AccountFollowersModal = (props: OuterProps) => {
-  const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallete: 'profileFollows', method: 'accountFollowers', id: props.id.toString() })
+  const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallet: 'profileFollows', method: 'accountFollowers', id: props.id.toString() })
   
-  if (loading) return <Loading label='Loading space followers...' />
+  if (loading) return <Loading label='Loading account followers...' />
 
   return <InnerAccountsListModal {...props} accounts={entities} />
 } 
 
-const useAccountsFollowedByAccount = (id: AnyAccountId) => useGetSubstrateIdsById<AccountId>({ pallete: 'profileFollows', method: 'accountsFollowedByAccount', id: id.toString() })
+const useAccountsFollowedByAccount = (id: AnyAccountId) => useGetSubstrateIdsById<AccountId>({ pallet: 'profileFollows', method: 'accountsFollowedByAccount', id: id.toString() })
 
 // TODO use redux
 export const AccountFollowingModal = (props: OuterProps) => {
   const { entities, loading } = useAccountsFollowedByAccount(props.id)
   
-  if (loading) return <Loading label='Loading space followers...' />
+  if (loading) return <Loading label='Loading account followings...' />
 
   return <InnerAccountsListModal {...props} accounts={entities} />
 } 

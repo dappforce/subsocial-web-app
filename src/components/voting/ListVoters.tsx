@@ -122,7 +122,7 @@ const InnerModalVoters = (props: VotersProps) => {
   )
 }
 
-const useCreateReactionIdsByPostId = (id: BN) => useGetSubstrateIdsById<ReactionId>({ id, pallete: 'reactions', method: 'reactionIdsByPostId' })
+const useCreateReactionIdsByPostId = (id: BN) => useGetSubstrateIdsById<ReactionId>({ id, pallet: 'reactions', method: 'reactionIdsByPostId' })
 
 // TODO use redux
 export const PostVoters = (props: VotersProps) => {
