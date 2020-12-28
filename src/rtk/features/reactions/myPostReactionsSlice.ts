@@ -30,7 +30,7 @@ export const {
   // selectTotal
 } = selectors
 
-export const selectPostMyReactionsByPostIds:
+export const selectMyPostReactionsByPostIds:
   SelectManyFn<{}, ReactionStruct> = (
     state, 
     { ids }
@@ -49,7 +49,7 @@ export const selectPostMyReactionsByPostIds:
   }
 
 export const selectPostMyReactionByPostId = (state: RootState, id: PostId) => 
-  getFirstOrUndefined(selectPostMyReactionsByPostIds(state, { ids: [ id ] }))
+  getFirstOrUndefined(selectMyPostReactionsByPostIds(state, { ids: [ id ] }))
 
 type Args = {
   myAddress?: AccountId
