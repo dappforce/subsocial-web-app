@@ -1401,6 +1401,20 @@ hr {
 }
 
 .DfNewComment {
+
+  .AnimatedVisibility {
+    transition: visibility .2s, opacity .2s;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &:hover {
+    .AnimatedVisibility {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
   .ant-comment-inner {
     padding-top: 0;
     padding-bottom: 0;
@@ -1417,21 +1431,6 @@ hr {
   }
 
   .ant-comment-actions {
-
-
-    .AnimatedVisibility {
-      transition: visibility .5s, opacity .5s;
-
-       visibility: hidden;
-       opacity: 0;
-    }
-
-    &:hover {
-      .AnimatedVisibility {
-        visibility: visible;
-        opacity: 1;
-      }
-    }
 
     margin-top: $space_mini;
     margin-bottom: $space_tiny;
