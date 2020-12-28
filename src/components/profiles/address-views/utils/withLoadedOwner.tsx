@@ -1,12 +1,8 @@
-import React, { useState } from 'react'
-import { newLogger } from '@subsocial/utils'
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { ProfileData } from 'src/types'
+import React from 'react'
 import { ExtendedAddressProps } from './types'
 import { Loading } from '../../../utils'
 import { useMyAccount } from 'src/components/auth/MyAccountContext'
-
-const log = newLogger(withLoadedOwner.name)
+import { useFetchProfile } from 'src/rtk/app/hooks'
 
 type Props = ExtendedAddressProps & {
   size?: number
@@ -20,32 +16,11 @@ export function withLoadedOwner<P extends Props> (Component: React.ComponentType
 
     if (initialOwner) return <Component {...props} />
 
-    const [ owner, setOwner ] = useState<ProfileData>()
-    const [ loaded, setLoaded ] = useState(true)
+    const { entity: owner, loading } = useFetchProfile({ id: address.toString() })
 
-    useSubsocialEffect(({ flatApi }) => {
-      if (!address) return
-
-      let isMounted = true
-      
-      const loadContent = async () => {
-        setLoaded(false)
-        const owner = await flatApi.findProfile(address)
-        if (isMounted) {
-          setOwner(owner)
-          setLoaded(true)
-        }
-      }
-
-      loadContent().catch(err => log.error(
-        'Failed to load profile data:', err))
-
-      return () => { isMounted = false }
-    }, [ address?.toString() ])
-
-    return loaded
-      ? <Component {...props} owner={owner} />
-      : <Loading />
+    return loading
+      ? <Loading />
+      : <Component {...props} owner={owner} />
   }
 }
 
