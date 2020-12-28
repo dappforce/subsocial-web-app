@@ -94,15 +94,17 @@ const notificationItem = {
   icon: <BellOutlined className="bell" />
 }
 
-const NotificationsBadge = () => {
-  const { unreadCount } = useNotifCounter()
+type NotificationsProps = {
+  unreadCount: number
+}
 
+const NotificationsBadge = ({ unreadCount }: NotificationsProps) => {
   if (!unreadCount || unreadCount <= 0) return null
 
   return <Badge count={unreadCount} />
 }
 
-export const NotificationsCount = () => {
+export const NotificationsCount = (props: NotificationsProps) => {
   if (!uiShowNotifications) return null
 
   return (
@@ -110,7 +112,7 @@ export const NotificationsCount = () => {
       <a className="DfNotificationsCounter">
         <Tooltip title={notificationItem.name}>
           {notificationItem.icon}
-          {<NotificationsBadge />}
+          {<NotificationsBadge {...props} />}
         </Tooltip>
       </a>
     </Link>
