@@ -17,7 +17,7 @@ export const StatsPanel = (props: StatsProps) => {
   const [ postVotersOpen, setPostVotersOpen ] = useState(false)
 
   const { upvotesCount, downvotesCount, repliesCount, sharesCount, score, id } = post
-  const reactionsCount = upvotesCount - downvotesCount
+  const reactionsCount = upvotesCount + downvotesCount
   const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
 
   const toggleCommentsSection = goToCommentsId ? undefined : () => setCommentsSection(!commentsSection)
