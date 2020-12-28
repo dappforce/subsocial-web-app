@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { idToBn, PostWithSomeDetails } from 'src/types'
+import { PostWithSomeDetails } from 'src/types'
 import { EditOutlined } from '@ant-design/icons'
 import { SharePostModal } from '../ShareModal'
 import { IconWithLabel } from '../../utils'
@@ -31,7 +31,7 @@ export const SpaceShareLink = ({
     >
       <IconWithLabel icon={<EditOutlined />} label={title} />
     </a>
-    {postId && <SharePostModal postId={idToBn(postId)} open={open} onClose={() => setOpen(false)} />}
+    {postId && <SharePostModal postId={postId} open={open} onClose={() => setOpen(false)} />}
   </>
 }
 

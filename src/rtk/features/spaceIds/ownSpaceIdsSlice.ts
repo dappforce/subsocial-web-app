@@ -15,15 +15,6 @@ const adapter = createEntityAdapter<OwnSpaceIds>()
 
 const selectors = adapter.getSelectors<RootState>(state => state.ownSpaceIds)
 
-// Rename the exports for readability in component usage
-export const {
-  // selectById: selectSpaceIdsByAccount,
-  selectIds: selectAllMySpace,
-  // selectEntities: selectSpaceIdsEntities,
-  // selectAll: selectAllSpaceIds,
-  // selectTotal: selectTotalSpaceIds
-} = selectors
-
 type Args = {}
 
 export const _selectSpaceIdsOwnedByAccount:

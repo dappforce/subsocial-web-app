@@ -70,7 +70,7 @@ function SideMenu () {
       )}
       {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />}
       {isLoggedIn && <Menu.Divider />}
-      {/* {isLoggedIn && <MySub scriptions />} */}
+      {/* {isLoggedIn && <MySubscriptions />} */}
     </Menu>
   )
 }

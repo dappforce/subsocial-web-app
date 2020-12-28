@@ -230,4 +230,5 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
 }
 
 export const useSubstrateContext = () => useContext(SubstrateContext)[0]
+
 export const useIsSubstrateConnected = () => useSubstrateContext().apiState === 'READY' 

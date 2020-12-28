@@ -70,7 +70,7 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
     flatApi.findPostWithSomeDetails({ id })
       .then(comment => {
         comment && changeReply({
-          reply:comment.post.struct,
+          reply: comment.post.struct,
           rootPostId,
           parentId,
           idToRemove: fakeId

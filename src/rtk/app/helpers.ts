@@ -24,15 +24,15 @@ export type ApiArg = {
   api: SubsocialApi
 }
 
-export type CommonFetchParams = ApiArg & {
+export type CommonFetchProps = ApiArg & {
   reload?: boolean
 }
 
-type CommonFetchParamsAndId = CommonFetchParams & {
+type CommonFetchPropsAndId = CommonFetchProps & {
   id: EntityId
 }
 
-export type CommonFetchParamsAndIds = CommonFetchParams & {
+export type CommonFetchPropsAndIds = CommonFetchProps & {
   ids: EntityId[]
 }
 
@@ -44,9 +44,9 @@ export type SelectManyArgs <T> = T & {
   ids: EntityId[]
 }
 
-export type FetchOneArgs <T> = T & CommonFetchParamsAndId
+export type FetchOneArgs <T> = T & CommonFetchPropsAndId
 
-export type FetchManyArgs <T> = T & CommonFetchParamsAndIds
+export type FetchManyArgs <T> = T & CommonFetchPropsAndIds
 
 export function createSelectUnknownIds (selectIds: (state: RootState) => EntityId[]) {
   return (state: RootState, ids: EntityId[]): string[] => {
@@ -68,14 +68,14 @@ export function createSelectUnknownIds (selectIds: (state: RootState) => EntityI
   }
 }
 
-function toParamsAndIds ({ id, ...params }: CommonFetchParamsAndId): CommonFetchParamsAndIds {
+function toParamsAndIds ({ id, ...params }: CommonFetchPropsAndId): CommonFetchPropsAndIds {
   return { ...params, ids: [ id ] }
 }
 
-type FetchManyFn<Returned> = AsyncThunk<Returned[], CommonFetchParamsAndIds, {}>
+type FetchManyFn<Returned> = AsyncThunk<Returned[], CommonFetchPropsAndIds, {}>
 
 export function createFetchOne<R> (fetchMany: FetchManyFn<R>) {
-  return (arg: CommonFetchParamsAndId): AppThunk => async dispatch => {
+  return (arg: CommonFetchPropsAndId): AppThunk => async dispatch => {
     await dispatch(fetchMany(toParamsAndIds(arg)))
   }
 }

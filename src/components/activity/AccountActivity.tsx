@@ -25,22 +25,22 @@ const AllActivities = (props: BaseActivityProps) => <NotifActivities
   loadingLabel='Loading activities...'
 />
 
-const loadMoreReaction = getLoadMoreNotificationsFn(getReactionActivities)
+const loadMoreReactions = getLoadMoreNotificationsFn(getReactionActivities)
 
 const ReactionActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
   type='activities'
-  loadMore={loadMoreReaction}
+  loadMore={loadMoreReactions}
   noDataDesc='No reactions yet'
   loadingLabel='Loading reactions...'
 />
 
-const loadMoreFollow = getLoadMoreNotificationsFn(getFollowActivities)
+const loadMoreFollows = getLoadMoreNotificationsFn(getFollowActivities)
 
 const FollowActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
   type='activities'
-  loadMore={loadMoreFollow}
+  loadMore={loadMoreFollows}
   noDataDesc='No follows yet'
   loadingLabel='Loading follows...'
 />

@@ -128,10 +128,10 @@ export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessio
   try {
     const res = await axios.post(getOffchainUrl('/notifications/addSessionKey'), { sessionCall })
     if (res.status !== 200) {
-      console.warn('Failed to insert session key for account:', sessionCall.account, 'res.status:', res.status)
+      console.warn('Failed to add a session key to main account:', sessionCall.account, 'res.status:', res.status)
     }
   } catch (err) {
-    console.error(`Failed to insert session key for account: ${sessionCall.account}`, err)
+    console.error(`Failed to add a session key to main account: ${sessionCall.account}`, err)
   }
 }
 
