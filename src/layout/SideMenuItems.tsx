@@ -1,5 +1,5 @@
 import { accountUrl } from 'src/components/urls'
-import { GlobalOutlined, BlockOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined, BellOutlined } from '@ant-design/icons'
+import { GlobalOutlined, BlockOutlined, StarOutlined, UserOutlined, BookOutlined, PlusOutlined } from '@ant-design/icons'
 import { uiShowAdvanced, advancedUrl } from 'src/components/utils/env'
 import React from 'react'
 
@@ -45,12 +45,12 @@ export const buildAuthorizedMenu = (myAddress: string): MenuItem[] => {
   const account = { address: myAddress }
 
   return [
-    {
-      name: 'My feed',
-      page: [ '/feed', '/feed' ],
-      // TODO: do we really need the bell icon here? (maybe cause misunderstanding because of notifications icon)
-      icon: <BellOutlined />,
-    },
+    // {
+    //   name: 'My feed',
+    //   page: [ '/feed', '/feed' ],
+    //   // TODO: do we really need the bell icon here? (maybe cause misunderstanding because of notifications icon)
+    //   icon: <BellOutlined />,
+    // },
     {
       name: 'My subscriptions',
       page: [ '/accounts/[address]/following', accountUrl(account, 'following') ],
