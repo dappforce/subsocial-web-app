@@ -2,15 +2,14 @@
 import React, { useState } from 'react'
 import { Select } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
-import BN from 'bn.js'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { isEmptyArray } from '@subsocial/utils'
-import { SpaceData } from 'src/types'
+import { SpaceData, SpaceId } from 'src/types'
 import { SpaceAvatar } from '../spaces/helpers'
 
 type Props = {
   imageSize?: number,
-  spaceIds: BN[],
+  spaceIds: SpaceId[],
   onSelect?: (value: string | number | LabeledValue) => void,
   defaultValue?: string,
   spacesData?: SpaceData[]
