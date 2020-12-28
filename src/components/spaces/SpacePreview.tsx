@@ -1,5 +1,9 @@
 import React from 'react'
-import { SpaceWithSomeDetails } from 'src/types'
+import { shallowEqual } from 'react-redux'
+import { useAppSelector } from 'src/rtk/app/store'
+import { selectSpace } from 'src/rtk/features/spaces/spacesSlice'
+import { SpaceId, SpaceWithSomeDetails } from 'src/types'
+import { isUnlistedSpace } from './helpers'
 import { ViewSpace } from './ViewSpace'
 
 type PreviewProps = {
@@ -12,3 +16,16 @@ export const SpacePreview = ({ space }: PreviewProps) =>
     withFollowButton
     preview
   />
+
+type PublicSpacePreviewByIdProps = {
+  spaceId: SpaceId
+}
+
+export const PublicSpacePreviewById = ({ spaceId }: PublicSpacePreviewByIdProps) => {
+  const space = useAppSelector(state => selectSpace(state, { id: spaceId }), shallowEqual)
+
+  if (!space || isUnlistedSpace(space)) return null
+
+  return <SpacePreview space={space} />
+}
+  
