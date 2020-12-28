@@ -4,9 +4,9 @@ import { shallowEqual } from 'react-redux'
 import { useAppSelector } from 'src/rtk/app/store'
 import { selectPost } from 'src/rtk/features/posts/postsSlice'
 import { isPublic, PostId, PostWithSomeDetails } from 'src/types'
-import PostPreview from '../posts/view-post/PostPreview'
+import PostPreview, { BarePreviewProps } from '../posts/view-post/PostPreview'
 
-type Props = {
+type Props = BarePreviewProps & {
   postId: PostId
 }
 
