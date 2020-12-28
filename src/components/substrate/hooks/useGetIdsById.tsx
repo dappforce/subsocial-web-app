@@ -6,31 +6,37 @@ import { FetchManyResult } from 'src/rtk/app/hooksCommon'
 import { AnyId } from 'src/types'
 
 type FetchSubstrateProps = {
+  pallet: string,
   method: string,
-  pallete: string,
   id: AnyId
 }
 
 export const useGetSubstrateIdsById = <T extends SubstrateId | AccountId = SubstrateId>
-  ({ method, pallete, id }: FetchSubstrateProps): FetchManyResult<T> => {
-    const [ reactionIds, setReactionIds ] = useState<T[]>([])
+  ({ method, pallet, id }: FetchSubstrateProps): FetchManyResult<T> => {
+    const [ entities, setEntities ] = useState<T[]>([])
     const [ loading, setLoading ] = useState(false)
   
     useSubsocialEffect(({ substrate }) => {
-      const loadReactionIds = async () => {
+      let isMounted = true
+
+      const load = async () => {
         setLoading(true)
         const readyApi = await substrate.api
   
-        const ids = await readyApi.query[pallete][method](id)
+        const ids = await readyApi.query[pallet][method](id)
   
-        setReactionIds(ids as unknown as T[])
-        setLoading(false)
+        if (isMounted) {
+          setEntities(ids as unknown as T[])
+          setLoading(false)
+        }
       }
-      loadReactionIds()
-    }, [ id ])
+      load()
+
+      return () => { isMounted = false }
+    }, [ id?.toString() ])
   
     return {
       loading,
-      entities: reactionIds
+      entities
     }
 }
