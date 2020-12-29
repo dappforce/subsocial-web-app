@@ -147,13 +147,20 @@ export const getNonce = async (account: string) => {
   }
 }
 
-export const queryElasticSearch = async (params: ElasticQueryParams): Promise<any> => {
+export type SearchResultsType = {
+  _index: string
+  _id: string
+}
+
+export const queryElasticSearch = async (params: ElasticQueryParams): Promise<SearchResultsType[] | undefined> => {
   try {
     const res = await axios.get(getOffchainUrl('/search'), { params })
     if (res.status === 200) {
       return res.data
     }
+    return []
   } catch (err) {
     console.error('Failed to query Elasticsearch:', err)
+    return []
   }
 }
