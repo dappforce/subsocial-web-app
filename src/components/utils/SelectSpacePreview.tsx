@@ -21,7 +21,7 @@ const SelectSpacePreview = (props: Props) => {
   if (isEmptyArray(spacesData)) return null
 
   return <Select
-    style={{ width: 200 }}
+    style={{ width: 250 }}  
     onSelect={onSelect}
     defaultValue={defaultValue}
   >
