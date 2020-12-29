@@ -2385,13 +2385,13 @@
     telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
-"@subsocial/api@^0.4.24":
-  version "0.4.24"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.24.tgz#6a1b5f776718d0bb71f8bcfc314ef977d76b839b"
-  integrity sha512-JjObSsQywqPJAWrw+d5sQEDwzgdYLjs1dhp2l81jTrPMI0Vof/1jNYzRKcFz9WN/RMnHVXGLY0K6Yr6DAc0D3Q==
+"@subsocial/api@^0.4.27":
+  version "0.4.27"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.27.tgz#db7db5485e65de4b1f3f9cd5766c663ee0c74768"
+  integrity sha512-tKX6KZI6HdMN4TkrRMxG/oLapV0rtcymaXdNLy2EmVWzkpWIhmaSToLXZa54YUsQhPWK0PEcVYjvFlNgYKJj1A==
   dependencies:
     "@polkadot/api" "1.28.1"
-    "@subsocial/utils" latest
+    "@subsocial/utils" "^0.4.25"
     axios "^0.19.2"
 
 "@subsocial/config@^0.4.23":
@@ -2399,15 +2399,15 @@
   resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.4.23.tgz#5e0291502de146d6c0254cc55ce38c53663162fb"
   integrity sha512-VbcpuM8rHdIWBc/MmE4ZaUI8TkjD36w/WJgd1fu3u8Jh54T4ZnhbMobOTpo98QQxxpi/rfid4665sGGuUKXw3g==
 
-"@subsocial/types@^0.4.26":
-  version "0.4.26"
-  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.26.tgz#5dae4939971a5b4acf10e90ebfa2672a2caca95d"
-  integrity sha512-jBYVsBowkx+yEtxQ4hZLT6mpkBy36MP31zIAUUDVQWdEp1esnr5ASRiU9SCwIDBEiZcZkv+tz+bRnuSZCr23Ag==
+"@subsocial/types@^0.4.27":
+  version "0.4.27"
+  resolved "https://registry.yarnpkg.com/@subsocial/types/-/types-0.4.27.tgz#a5caad3c098f7bbe3d4b7f6d6513ffff97f6f721"
+  integrity sha512-tbfyWo1LbqAEVVh0ayRLdB3VV+48cHSOyXdyOH6qcB5E7UaB015hk8CY3gdyt1cYwfADOLHPc8ByP0LD4DA1Ng==
   dependencies:
     "@subsocial/utils" "^0.4.25"
     cids "^0.7.1"
 
-"@subsocial/utils@^0.4.23", "@subsocial/utils@latest":
+"@subsocial/utils@^0.4.23":
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.4.23.tgz#592714cc3cfb81c7ec38fe0ad15c69ae5b9f1de0"
   integrity sha512-53PSVvyjDdP3cxgbXscQ8n85PWMD96V7zel+p3o6Qj1hl7Ad+jxwpJNsR35sat63NnbJWeUwvG+y7NZG6vJOmg==
