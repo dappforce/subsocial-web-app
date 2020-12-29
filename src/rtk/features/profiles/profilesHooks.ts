@@ -51,7 +51,7 @@ export const useFetchPageOfProfilesByFollower = (owner: AccountId) => {
 }
 
 export const useCreateReloadAccountIdsByFollower = () => {
-  return useActions<SelectProfileArgs>(({ dispatch, args: { id }, ...props }) => {
+  return useActions<AccountId>(({ dispatch, args: id, ...props }) => {
     dispatch(fetchAccountIdsFollowedByAccount({ id, reload: true, ...props }))
   })
 }
