@@ -37,6 +37,7 @@ export function NewPostButtonInTopMenu () {
 
     let isMounted = true
 
+    // TODO use redux
     const loadSpaces = async () => {
       const mySpaceIds = await substrate.spaceIdsByOwner(myAddress)
       const withoutReservedSpaceIds = findSpaceIdsThatCanSuggestIfSudo(sudo, myAddress, mySpaceIds)
