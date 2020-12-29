@@ -64,7 +64,7 @@ getInitialPropsWithRedux(ListAllSpacesPage, async ({ context, subsocial, dispatc
   const spaceIds = stringifyBns(await getReversePageOfSpaceIds(nextSpaceId, query))
 
   // TODO fetch only public spaces!
-  await dispatch(fetchSpaces({ api: subsocial, ids: spaceIds, withOwner: false, /* TODO visibility: 'public' */ }))
+  await dispatch(fetchSpaces({ api: subsocial, ids: spaceIds, reload: true /* TODO visibility: 'public' */ }))
   const totalSpaceCount = approxCountOfPublicSpaces(nextSpaceId).toNumber()
 
   return { spaceIds, totalSpaceCount }

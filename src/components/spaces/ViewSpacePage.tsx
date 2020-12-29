@@ -56,7 +56,7 @@ getInitialPropsWithRedux(ViewSpacePage, async (props) => {
   const postIds = (await subsocial.substrate.postIdsBySpaceId(spaceId)).reverse()
   const pageIds = bnsToIds(getPageOfIds(postIds, query))
 
-  await dispatch(fetchPosts({ api: subsocial, ids: pageIds }))
+  await dispatch(fetchPosts({ api: subsocial, ids: pageIds, reload: true }))
   const posts = selectPosts(reduxStore.getState(), { ids: pageIds })
 
   return {

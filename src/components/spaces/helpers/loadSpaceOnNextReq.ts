@@ -22,7 +22,7 @@ export async function loadSpaceOnNextReq (
   }
 
   const idStr = id.toString()
-  await dispatch(fetchSpace({ api: subsocial, id: idStr }))
+  await dispatch(fetchSpace({ api: subsocial, id: idStr, reload: true }))
   const spaceData = selectSpace(reduxStore.getState(), { id: idStr })
 
   if (!spaceData) {

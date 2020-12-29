@@ -185,7 +185,7 @@ getInitialPropsWithRedux(ProfilePage, async ({ context, subsocial, dispatch, red
     return { statusCode: 404 } as any
   }
 
-  await dispatch(fetchProfile({ api: subsocial, id: addressStr }))
+  await dispatch(fetchProfile({ api: subsocial, id: addressStr, reload: true }))
   const owner = selectProfile(reduxStore.getState(), addressStr)
 
   // TODO use redux

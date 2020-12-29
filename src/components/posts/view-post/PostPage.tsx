@@ -146,7 +146,7 @@ export async function loadPostOnNextReq (
 
   const ids = bnsToIds(replyIds).concat(postId)
 
-  await dispatch(fetchPosts({ api: subsocial, ids }))
+  await dispatch(fetchPosts({ api: subsocial, ids, reload: true }))
   const postData = selectPost(reduxStore.getState(), { id: postId })
 
   if (!postData ||
@@ -184,7 +184,7 @@ getInitialPropsWithRedux(PostPage, async (props) => {
 
   if (postStruct.isComment) {
     const { rootPostId } = asCommentStruct(postStruct)
-    await dispatch(fetchPost({ api: subsocial, id: rootPostId }))
+    await dispatch(fetchPost({ api: subsocial, id: rootPostId, reload: true }))
     rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
   }
 

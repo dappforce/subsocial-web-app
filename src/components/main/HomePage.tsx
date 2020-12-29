@@ -71,7 +71,7 @@ getInitialPropsWithRedux(HomePage, async ({ subsocial, dispatch, reduxStore }) =
   const nextPostId = await substrate.nextPostId()
 
   const latestSpaceIds = bnsToIds(getLastNSpaceIds(nextSpaceId, 3 * LAST_ITEMS_SIZE))
-  await dispatch(fetchSpaces({ api: subsocial, ids: latestSpaceIds }))
+  await dispatch(fetchSpaces({ api: subsocial, ids: latestSpaceIds, reload: true }))
 
   // TODO create selectPublicSpaces
   const allSpacesData = selectSpaces(getState(), { ids: latestSpaceIds })
@@ -80,7 +80,7 @@ getInitialPropsWithRedux(HomePage, async ({ subsocial, dispatch, reduxStore }) =
   const canHaveMoreSpaces = allSpacesData.length >= LAST_ITEMS_SIZE
 
   const latestPostIds = bnsToIds(getLastNIds(nextPostId, 6 * LAST_ITEMS_SIZE))
-  await dispatch(fetchPosts({ api: subsocial, ids: latestPostIds }))
+  await dispatch(fetchPosts({ api: subsocial, ids: latestPostIds, reload: true }))
 
   // TODO create selectPublicPosts
   const allPostsData = selectPosts(getState(), { ids: latestPostIds })
