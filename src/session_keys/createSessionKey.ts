@@ -1,6 +1,6 @@
 import { readMyAddress } from '../components/auth/MyAccountContext'
 import store from 'store'
-import { clearNotifications, insertToSessionKeyTable, getNonce } from '../components/utils/OffchainUtils'
+import { clearNotifications, insertToSessionKeyTable, getNonce, isSessionKeyExist } from '../components/utils/OffchainUtils';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp'
 import { appName } from '../components/utils/env'
 import { stringToHex, u8aToHex, hexToU8a } from '@polkadot/util'
@@ -47,6 +47,8 @@ type SessionKeyStorege = Record<string, SessionKeypair>
 
 const JSONstingifySorted = (obj: Object) => JSON.stringify(jsonabc.sortObj(obj))
 
+const newGenericAccount = (account: string | undefined) => account ? String(new GenericAccountId(registry, hexToU8a(account))): ''
+
 export const createSessionKey = async (): Promise<SessionKeypair | undefined> => {
   const address = readMyAddress()
   // const address = new GenericAccountId(registry, myAddress)
@@ -60,14 +62,14 @@ export const createSessionKey = async (): Promise<SessionKeypair | undefined> =>
 
   const account = allAccounts.find(x => new GenericAccountId(registry, x.address))
   if (!account) return
-  const {publicKey, secretKey} = generateKeyPair()
+  const { publicKey, secretKey } = generateKeyPair()
 
   const publicKeyHex = u8aToHex(publicKey)
   const secretKeyHex = u8aToHex(secretKey)
 
   const selectedNonce = await getNonce(address)
   let nonce = 0
-  if(selectedNonce)
+  if (selectedNonce)
     nonce = parseInt(selectedNonce)
 
   const message: Message<AddSessionKeyArgs> = {
@@ -128,13 +130,15 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
   let sessionKey: SessionKeypair | undefined = undefined
 
   for (const key in sessionKeyStorage) {
-    if(key == address) {
+    if (key == address) {
       sessionKey = sessionKeyStorage[key]
       break
     }
   }
+  
+  const isSessionKey = await isSessionKeyExist(newGenericAccount(sessionKey?.publicKey))
 
-  if (!sessionKey) {
+  if (!sessionKey || !isSessionKey) {
     sessionKey = await createSessionKey()
     if (!sessionKey) return
   }
@@ -148,7 +152,7 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
 
   const selectedNonce = await getNonce(String(genericAccount))
   let nonce = 0
-  if(selectedNonce)
+  if (selectedNonce)
     nonce = parseInt(selectedNonce)
 
   const message: Message<ReadAllMessage> = {
@@ -164,7 +168,7 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
   if (!signature) return
 
   clearNotifications({
-    account:  String(genericAccount),
+    account: String(genericAccount),
     signature: u8aToHex(signature),
     message
   } as SessionCall<ReadAllMessage>)

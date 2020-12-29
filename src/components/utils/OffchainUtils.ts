@@ -147,6 +147,19 @@ export const getNonce = async (account: string) => {
   }
 }
 
+export const isSessionKeyExist = async (account: string) => {
+  try {
+    const params = { account }
+    const res = await axios.post(getOffchainUrl('/notifications/isSessionKeyExist'), null, { params })
+    if (res.status === 200) {
+      console.log(res.data)
+      return res.data
+    }
+  } catch (err) {
+    console.error(`Failed check is session key exist: ${account}`, err)
+  }
+}
+
 export type SearchResultsType = {
   _index: string
   _id: string
