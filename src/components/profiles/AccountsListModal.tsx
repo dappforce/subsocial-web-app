@@ -7,7 +7,6 @@ import { ProfilePreviewWithOwner } from './address-views'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import DataList from '../lists/DataList'
 import { AnyAccountId } from '@subsocial/types'
-import { Loading } from '../utils'
 import { useGetSubstrateIdsById } from '../substrate/hooks/useGetIdsById'
 
 type OuterProps = {
@@ -50,7 +49,7 @@ const InnerAccountsListModal = (props: InnerProps) => {
 export const SpaceFollowersModal = (props: OuterProps) => {
   const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallet: 'spaceFollows', method: 'spaceFollowers', id: props.id.toString() })
   
-  if (loading) return <Loading label='Loading space followers...' />
+  if (loading) return null
 
   return <InnerAccountsListModal {...props} accounts={entities} />
 } 
@@ -59,7 +58,7 @@ export const SpaceFollowersModal = (props: OuterProps) => {
 export const AccountFollowersModal = (props: OuterProps) => {
   const { entities, loading } = useGetSubstrateIdsById<AccountId>({ pallet: 'profileFollows', method: 'accountFollowers', id: props.id.toString() })
   
-  if (loading) return <Loading label='Loading account followers...' />
+  if (loading) return null
 
   return <InnerAccountsListModal {...props} accounts={entities} />
 } 
@@ -70,7 +69,7 @@ const useAccountsFollowedByAccount = (id: AnyAccountId) => useGetSubstrateIdsByI
 export const AccountFollowingModal = (props: OuterProps) => {
   const { entities, loading } = useAccountsFollowedByAccount(props.id)
   
-  if (loading) return <Loading label='Loading account followings...' />
+  if (loading) return null
 
   return <InnerAccountsListModal {...props} accounts={entities} />
 } 
