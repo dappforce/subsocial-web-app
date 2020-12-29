@@ -86,7 +86,6 @@ const InnerSearchResultList = <T extends SearchResultsType>(props: InnerSearchRe
       offset,
       limit: size,
     })
-    console.log('SEARCH:', res)
     if (!res) return []
 
     const ownerIds: AccountId[] = []

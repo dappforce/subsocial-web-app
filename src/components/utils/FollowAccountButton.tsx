@@ -51,7 +51,6 @@ function FollowAccountButton (props: FollowAccountButtonProps) {
       : 'profileFollows.followAccount'}
     params={buildTxParams}
     onSuccess={() => {
-      console.log('SUCESSS')
       reloadAccountIdsByFollower({ id: myAddress })
       reloadProfile({ id: myAddress })
       reloadProfile({ id: address.toString() })

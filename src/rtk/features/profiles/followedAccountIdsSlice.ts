@@ -56,7 +56,6 @@ export const fetchAccountIdsFollowedByAccount = createAsyncThunk
     }
     const readyApi = await api.substrate.api
     const accountIds = await readyApi.query.profileFollows.accountsFollowedByAccount(follower) as unknown as GenericAccountId[]
-    console.log('accountIds', accountIds)
     return {
       id: follower,
       followedAccountIds: accountIds.map(x => x.toString())
