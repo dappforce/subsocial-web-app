@@ -36,27 +36,23 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
   }
 
   let rootPostId = parentId
-
-  if (post.isComment) {
-    rootPostId = asCommentStruct(post).rootPostId
-  }
-
   let commentExt: Comment
 
   if (isComment) {
     const comment = asCommentStruct(post)
-    const commentParentId = comment.parentId ? idToPostId(comment.parentId) : undefined
+    rootPostId = comment.rootPostId
 
     commentExt = new Comment({
-      parent_id: new OptionId(commentParentId),
-      root_post_id: idToPostId(comment.rootPostId)
+      parent_id: new OptionId(idToPostId(parentId)),
+      root_post_id: idToPostId(rootPostId)
     })
   } else {
     commentExt = new Comment({
       parent_id: new OptionId(),
-      root_post_id: idToPostId(post.id)
+      root_post_id: idToPostId(rootPostId)
     })
   }
+
 
   const newExtension = new PostExtension({ Comment: commentExt })
 
