@@ -1,6 +1,6 @@
-import { Option } from '@polkadot/types'
+import { GenericAccountId, Option } from '@polkadot/types'
 import { AccountInfo } from '@polkadot/types/interfaces'
-import { AnyAccountId } from '@subsocial/types'
+import { AnyAccountId, SocialAccountWithId } from '@subsocial/types'
 import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
@@ -14,6 +14,7 @@ import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceId
 import { equalAddresses } from '../substrate'
 import { ONE } from '../utils'
 import BN from 'bn.js'
+import registry from '@subsocial/types/substrate/registry'
 
 const log = newLogger('MyAccountContext')
 
@@ -178,9 +179,9 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
         .socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
           let account: ProfileData | undefined
           const subtrateStruct = optSocialAccount.unwrapOr(undefined)
-
           if (subtrateStruct) {
-            const struct = flattenProfileStruct(address, subtrateStruct)
+            const id = new GenericAccountId(registry, address)
+            const struct = flattenProfileStruct({ id, ...subtrateStruct } as SocialAccountWithId)
             const { contentId } = struct
 
             // TODO use redux to get profile content or do not store profile content in MyAccountContext

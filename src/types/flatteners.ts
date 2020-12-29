@@ -2,8 +2,8 @@ import { Option } from '@polkadot/types/codec'
 import { AccountId } from '@polkadot/types/interfaces/runtime'
 import { bool } from '@polkadot/types/primitive'
 import { EntityId } from '@reduxjs/toolkit'
-import { AnyAccountId } from '@subsocial/types'
-import { Content, Post, SocialAccount, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
+import { SocialAccountWithId } from '@subsocial/types'
+import { Content, Post, Space, WhoAndWhen } from '@subsocial/types/substrate/interfaces'
 import { notEmptyObj } from '@subsocial/utils'
 import BN from 'bn.js'
 import { CommonContent, EntityData } from './dto'
@@ -140,11 +140,6 @@ type SpaceOrPostStruct = SuperCommonStruct & {
   id: BN
   owner: AccountId
   hidden: bool
-}
-
-export type SocialAccountWithId = {
-  id: AnyAccountId
-  struct: SocialAccount
 }
 
 type EntityDataWithField<S extends {}> = EntityData<HasId & S, CommonContent> | (HasId & S)
@@ -336,15 +331,15 @@ export function asPublicProfileStruct (profile: ProfileStruct): PublicProfileStr
   return profile as PublicProfileStruct
 }
 
-export function flattenProfileStruct (account: AnyAccountId, struct: SocialAccount): ProfileStruct {
-  const profile = struct.profile.unwrapOr(undefined)
-  const hasProfile = struct.profile.isSome
+export function flattenProfileStruct (struct: SocialAccountWithId): ProfileStruct {
+  const profile = struct.profile?.unwrapOr(undefined)
+  const hasProfile = struct.profile?.isSome
   const maybeProfile: Partial<FlatSuperCommon> = profile
     ? flattenCommonFields(profile)
     : {}
 
   return {
-    id: account.toString(),
+    id: struct.id.toString(),
 
     followersCount: struct.followers_count.toNumber(),
     followingAccountsCount: struct.following_accounts_count.toNumber(),
@@ -357,5 +352,5 @@ export function flattenProfileStruct (account: AnyAccountId, struct: SocialAccou
 }
 
 export function flattenProfileStructs (accounts: SocialAccountWithId[]): ProfileStruct[] {
-  return accounts.map(({ id, struct }) => flattenProfileStruct(id, struct))
+  return accounts.map(flattenProfileStruct)
 }

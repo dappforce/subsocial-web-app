@@ -225,7 +225,7 @@ export class ProfilesUrlSet extends React.Component {
         const profile = socialAcc.profile.unwrap()
         const owner = profile.created.account
         const flatProfile = asPublicProfileStruct(
-          flattenProfileStruct(owner, socialAcc)
+          flattenProfileStruct(socialAcc)
         )
         items.push({ 
           loc: accountUrl({ address: owner }),

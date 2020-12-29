@@ -6,7 +6,6 @@ import {
   PostData as OldPostData,
   PostWithSomeDetails as OldPostWithSomeDetails,
   PostWithAllDetails as OldPostWithAllDetails,
-  AnyAccountId,
   CommonContent,
   PostContent,
   SpaceContent,
@@ -58,15 +57,14 @@ export function asCommentData (postData: PostData): CommentData {
   return postData as unknown as CommentData
 }
 
-export function convertToNewProfileData (accountId: AnyAccountId, old: OldProfileData): ProfileData {
-  const struct = flattenProfileStruct(accountId, old.struct)
+export function convertToNewProfileData (old: OldProfileData): ProfileData {
+  const struct = flattenProfileStruct(old.struct)
   return { id: struct.id, struct, content: convertToDerivedContent(old.content!) }
 }
 
-export function convertToNewProfileDataArray (accountIds: AnyAccountId[], oldArr: OldProfileData[]): ProfileData[] {
-  return accountIds.map((accountId, i) => {
-    const old = oldArr[i]
-    const struct = flattenProfileStruct(accountId, old.struct)
+export function convertToNewProfileDataArray (oldArr: OldProfileData[]): ProfileData[] {
+  return oldArr.map((old) => {
+    const struct = flattenProfileStruct(old.struct)
     return { id: struct.id, struct, content: convertToDerivedContent(old.content!) }
   })
 }
@@ -97,7 +95,7 @@ export function convertToNewPostWithSomeDetailsArray (oldDataArr: OldPostWithSom
       id: post.id,
       post,
       ext: x.ext && convertToNewPostWithSomeDetails(x.ext),
-      owner: x.owner && convertToNewProfileData(post.struct.ownerId, x.owner),
+      owner: x.owner && convertToNewProfileData(x.owner),
       space: x.space && convertToNewSpaceData(x.space),
     }
   })

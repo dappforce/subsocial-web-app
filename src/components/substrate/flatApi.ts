@@ -46,12 +46,11 @@ export function newFlatApi (subsocial: SubsocialApi): FlatSubsocialApi {
 
     findProfile: async (id) => {
       const old = await subsocial.findProfile(id)
-      return !old ? old : convertToNewProfileData(id, old)
+      return !old ? old : convertToNewProfileData(old)
     },
 
     findProfiles: async (ids) => {
       return convertToNewProfileDataArray(
-        ids,
         // TODO ensure that findProfiles() does not swallow None social accounts.
         // Positions of ids and social accounts results should mutch.
         await subsocial.findProfiles(ids)
