@@ -8,6 +8,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountContext'
 import { ViewProfileLink } from 'src/components/profiles/ViewProfileLink'
 import { equalAddresses } from 'src/components/substrate'
 import { TxCallback } from 'src/components/substrate/SubstrateTxButton'
+import { useCreateReloadSpace } from 'src/rtk/app/hooks'
 import { SpaceStruct } from 'src/types'
 import { EntityStatusPanel, EntityStatusProps } from './EntityStatusPanel'
 
@@ -27,6 +28,8 @@ export const PendingSpaceOwnershipPanel = ({
   const { preview } = otherProps
   const myAddress = useMyAddress()
   const [ pendingOwner, setPendingOwner ] = useState<AccountId>()
+  const reloadSpace = useCreateReloadSpace()
+
   const spaceId = space.id
   const currentOwner = space.ownerId
 
@@ -69,7 +72,10 @@ export const PendingSpaceOwnershipPanel = ({
       size='small'
       tx={'spaceOwnership.acceptPendingOwnership'}
       params={getTxParams}
-      onSuccess={onSuccess}
+      onSuccess={(status) => {
+        onSuccess(status)
+        reloadSpace({ id: spaceId })
+      }}
       label='Accept'
       successMessage={'You accepted a space ownership'}
       failedMessage={'Failed to accepted a space ownership'}
