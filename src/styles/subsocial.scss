@@ -363,6 +363,7 @@ pre {
 }
 
 .DfPreview {
+  align-items: center;
   .content {
     display: flex;
     align-items: center;
@@ -1402,16 +1403,18 @@ hr {
 
 .DfNewComment {
 
-  .AnimatedVisibility {
-    transition: visibility .2s, opacity .2s;
-    visibility: hidden;
-    opacity: 0;
-  }
-
-  &:hover {
+  .ant-comment-content {
     .AnimatedVisibility {
-      visibility: visible;
-      opacity: 1;
+      transition: visibility .2s, opacity .2s;
+      visibility: hidden;
+      opacity: 0;
+    }
+  
+    &:hover {
+      .AnimatedVisibility {
+        visibility: visible;
+        opacity: 1;
+      }
     }
   }
 
