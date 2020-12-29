@@ -28,7 +28,6 @@ import { PageContent } from '../main/PageWrapper'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { getPostIdFromSlug } from './slugify'
 import { AutoSaveId } from '../utils/DfMdEditor/types'
-import { useCreateReloadPost, useCreateReloadSpace } from 'src/rtk/app/hooks'
 
 const log = newLogger('EditPost')
 
@@ -68,8 +67,6 @@ const RegularPostExt = new PostExtension({ RegularPost: new Null(registry) })
 export function InnerForm (props: FormProps) {
   const { space, post } = props
   const router = useRouter()
-  const reloadSpace = useCreateReloadSpace()
-  const reloadPost = useCreateReloadPost()
   const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
@@ -127,11 +124,9 @@ export function InnerForm (props: FormProps) {
 
   const onSuccess: TxCallback = (txResult) => {
     const id = post?.struct.id || getNewIdFromEvent(txResult)?.toString()
-    reloadSpace({ id: spaceId })
     clearAutoSavedContent('post')
 
     if (id) {
-      reloadPost({ id })
       goToView(id)
     } 
   }

@@ -20,7 +20,6 @@ import messages from 'src/messages'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { PageContent } from '../main/PageWrapper'
 import { AutoSaveId } from '../utils/DfMdEditor/types'
-import { useCreateReloadProfile } from 'src/rtk/app/hooks'
 
 const log = newLogger('EditProfile')
 
@@ -49,7 +48,6 @@ export function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
   const { ipfs } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
-  const reloadProfiles = useCreateReloadProfile()
 
   const { owner, address } = props
   const hasProfile = owner?.struct.hasProfile === true
@@ -117,7 +115,6 @@ export function InnerForm (props: FormProps) {
 
   const onSuccess: TxCallback = () => {
     clearAutoSavedContent('profile')
-    reloadProfiles({ id: address.toString() })
     goToView()
   }
 
