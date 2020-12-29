@@ -68,11 +68,16 @@ const VoterButton = ({
     ? 'reactions.deletePostReaction'
     : 'reactions.updatePostReaction'
 
-  const updateOrDelete = (isDelete: boolean, _reactinoId?: ReactionId) => {
-    const newReactionId = _reactinoId || reactionId
+  const updateOrDelete = (deleteReaction: boolean, _reactinoId?: ReactionId) => {
+    let newReactionId = _reactinoId || reactionId
+
+    if (!newReactionId && !deleteReaction) {
+      newReactionId = `fakeId-${postId}`
+    }
+
     const newReaction: Reaction = { 
-      reactionId: newReactionId || `fakeId-${postId}`,
-      kind: isDelete ? undefined : reactionType
+      reactionId: newReactionId,
+      kind: deleteReaction ? undefined : reactionType
     }
 
     upsertReaction({ id: postId, ...newReaction })
@@ -119,7 +124,7 @@ const VoterButton = ({
       onSuccess && onSuccess()
     }}
     onFailed={() => {
-      upsertReaction({ id: postId, ...reaction })
+      updateOrDelete(!isDelete)
       upserPost(post)
     }}
     title={preview ? reactionType : undefined}
