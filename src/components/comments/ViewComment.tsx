@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { CaretDownOutlined, CaretUpOutlined, CommentOutlined, EllipsisOutlined, NotificationOutlined } from '@ant-design/icons'
 import { Comment, Button, Tag, Menu, Dropdown } from 'antd'
 import { asCommentData, asCommentStruct, PostWithSomeDetails } from 'src/types'
@@ -51,15 +51,18 @@ export const ViewComment: FC<Props> = (props) => {
     createdAtTime,
     ownerId,
     score,
-    repliesCount: initialRepliesCount
+    repliesCount
   } = commentStruct
 
   const [ showEditForm, setShowEditForm ] = useState(false)
   const [ showReplyForm, setShowReplyForm ] = useState(false)
-  const [ repliesCount, setRepliesCount ] = useState(initialRepliesCount)
-  
   const hasReplies = repliesCount > 0
+
   const [ showReplies, setShowReplies ] = useState(withShowReplies && hasReplies)
+
+  useEffect(() => {
+    setShowReplies(withShowReplies && hasReplies)
+  }, [ hasReplies ])
 
   const isFake = id.startsWith('fake')
   const commentLink = postUrl(space, comment)
@@ -127,9 +130,8 @@ export const ViewComment: FC<Props> = (props) => {
   const newCommentForm = showReplyForm &&
     <NewComment
       post={commentStruct}
-      callback={(id) => {
+      callback={() => {
         setShowReplyForm(false)
-        id && setRepliesCount(repliesCount + 1)
       }}
       withCancel
     />

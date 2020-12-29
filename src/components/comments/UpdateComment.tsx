@@ -9,7 +9,8 @@ import { getTxParams } from '../substrate'
 import BN from 'bn.js'
 import { CommentTxButtonType } from './utils'
 import { PostContent, PostStruct } from 'src/types'
-import { useCreateUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
+import { useCreateUpsertReply } from 'src/rtk/features/replies/repliesHooks'
+import { useCreateReloadPost } from 'src/rtk/app/hooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -24,7 +25,9 @@ type EditCommentProps = {
 
 export const EditComment: FC<EditCommentProps> = ({ struct, content, callback }) => {
 
-  const upsertReply = useCreateUpsertReplyWithContent()
+  const upsertReply = useCreateUpsertReply()
+  const reloadPost = useCreateReloadPost()
+  const id = struct.id
 
   const newTxParams = (hash: IpfsCid) => {
     const update = new PostUpdate({
@@ -33,13 +36,16 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
       content: new OptionIpfsContent(hash),
       hidden: new OptionBool(false) // TODO has no implementation on UI
     })
-    return [ struct.id, update ]
+    return [ id, update ]
   }
 
   const upsertPostContent = (content: PostContent) =>
     upsertReply({
-      reply: struct,
-      content
+      replyData: {
+        id,
+        struct,
+        content
+      }
     })
 
   const buildTxButton = ({ disabled, json, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
@@ -58,8 +64,12 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
         upsertPostContent(content as PostContent)
         onFailed && onFailed(txResult)
       }}
-      onSuccess={(txResult) => {
+      onClick={() => {
         upsertPostContent(json as PostContent)
+        onClick && onClick()
+      }}
+      onSuccess={(txResult) => {
+        reloadPost({ id })
         onSuccess && onSuccess(txResult)
       }}
     />

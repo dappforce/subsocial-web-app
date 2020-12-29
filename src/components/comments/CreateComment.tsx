@@ -8,8 +8,9 @@ import BN from 'bn.js'
 import { useMyAccount } from '../auth/MyAccountContext'
 import { buildMockComment, CommentTxButtonType } from './utils'
 import { HiddenPostAlert } from '../posts/view-post'
-import { asCommentStruct, convertToDerivedContent, idToPostId, PostStruct } from 'src/types'
-import { useCreateChangeReplies, useRemoveReply, useCreateUpsertReplyWithContent } from 'src/rtk/features/replies/repliesHooks'
+import { asCommentStruct, convertToDerivedContent, idToPostId, PostData, PostStruct } from 'src/types'
+import { useCreateChangeReplies, useRemoveReply, useCreateUpsertReply } from 'src/rtk/features/replies/repliesHooks'
+import { useCreateUpsertPost } from 'src/rtk/app/hooks'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
@@ -28,7 +29,8 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
   const { state: { address } } = useMyAccount()
   const changeReply = useCreateChangeReplies()
   const removeReply = useRemoveReply()
-  const upsertReply = useCreateUpsertReplyWithContent()
+  const upsertReply = useCreateUpsertReply()
+  const upsertPost = useCreateUpsertPost()
 
   if (post.hidden) {
     const msg = 'You cannot comment on this post because it is unlisted'
@@ -73,12 +75,21 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
         })
       })
 
-  const onTxReduxAction = (body: string, fakeId: string) =>
-    address && upsertReply({
-      reply: buildMockComment({ fakeId, address }),
-      parentId,
+  const onTxReduxAction = (body: string, fakeId: string) => {
+    if (!address) return
+
+    const replyData = {
+      struct: buildMockComment({ fakeId, address }),
       content: convertToDerivedContent({ body })
+    } as PostData
+  
+    upsertReply({
+      replyData,
+      parentId,
     })
+
+  }
+
 
   const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
     <TxButton
@@ -93,7 +104,11 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
       })}
       tx='posts.createPost'
       onFailed={(txResult) => {
-        fakeId && onFailedReduxAction(fakeId)
+        if (fakeId) {
+          onFailedReduxAction(fakeId)
+          upsertPost(post)
+        }
+
         onFailed && onFailed(txResult)
       }}
       onSuccess={(txResult) => {
@@ -102,7 +117,11 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
         onSuccess && onSuccess(txResult)
       }}
       onClick={() => {
-        fakeId && onTxReduxAction(json.body, fakeId)
+        if (fakeId) {
+          onTxReduxAction(json.body, fakeId)
+          const repliesCount = post.repliesCount + 1
+          upsertPost({ ...post, repliesCount })
+        }
         onClick && onClick()
       }}
     />
