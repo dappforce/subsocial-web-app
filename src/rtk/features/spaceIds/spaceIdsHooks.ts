@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { getPageOfIds } from 'src/components/utils/getIds'
+import { useActions } from 'src/rtk/app/helpers'
 import { useFetchOneEntity } from 'src/rtk/app/hooksCommon'
 import { AccountId, SpaceId } from 'src/types'
 import { useFetchSpaces } from '../spaces/spacesHooks'
@@ -51,4 +52,10 @@ export const useFetchPageOfSpacesByFollower = (owner: AccountId) => {
     loading: l2 || l1,
     error: err2 || err1
   }
+}
+
+export const useCreateReloadSpaceIdsByOwner = () => {
+  return useActions<AccountId>(({ dispatch, args: id, ...props }) => {
+    dispatch(fetchSpaceIdsOwnedByAccount({ id, reload: true, ...props }))
+  })
 }
