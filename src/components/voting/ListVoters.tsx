@@ -128,7 +128,7 @@ const useCreateReactionIdsByPostId = (id: BN) => useGetSubstrateIdsById<Reaction
 export const PostVoters = (props: VotersProps) => {
   const { loading, entities } = useCreateReactionIdsByPostId(props.id)
 
-  if (loading) return <Loading label='Loading post reactions...' />
+  if (loading) return null
 
   return <InnerModalVoters {...props} reactionIds={entities} />
 }
