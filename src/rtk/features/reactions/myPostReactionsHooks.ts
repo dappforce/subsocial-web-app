@@ -2,7 +2,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountContext'
 import { useActions } from 'src/rtk/app/helpers'
 import { useFetchEntities, useFetchEntity } from 'src/rtk/app/hooksCommon'
 import { PostId } from 'src/types'
-import { fetchMyPostReactions, ReactionStruct, removeAllMyPostReactions, selectMyPostReactionsByPostIds, upsertMyPostReaction } from './myPostReactionsSlice'
+import { fetchMyPostReactions, prependPostIdWithMyAddress, ReactionStruct, selectMyPostReactionsByPostIds, upsertMyPostReaction } from './myPostReactionsSlice'
 
 export const useFetchMyPostReactions = (postIds: PostId[]) => {
   const myAddress = useMyAddress()
@@ -15,13 +15,12 @@ export const useFetchMyReactionByPostId = (postId: PostId) => {
 }
 
 export const useCreateUpsertReaction = () => {
-  return useActions<ReactionStruct>(({ dispatch, args }) => {
-    dispatch(upsertMyPostReaction(args))
-  })
-}
-
-export const useCreateRemoveAllReactions = () => {
-  return useActions<{}>(({ dispatch }) => {
-    dispatch(removeAllMyPostReactions())
+  const myAddress = useMyAddress()
+  return useActions<ReactionStruct>(({ dispatch, args: { id: postId, ...args } }) => {
+    
+    myAddress && dispatch(upsertMyPostReaction({
+      id: prependPostIdWithMyAddress(postId, myAddress),
+      ...args
+    }))
   })
 }

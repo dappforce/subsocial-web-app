@@ -1,10 +1,12 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { getFirstOrUndefined, isDef } from '@subsocial/utils'
+import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
+import { getFirstOrUndefined, isDef, isEmptyArray, isEmptyStr } from '@subsocial/utils'
 import { createSelectUnknownIds, FetchManyArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectManyFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { AccountId, PostId, ReactionType } from 'src/types'
 import { idToPostId } from 'src/types/utils'
+
+const SEPARATOR = '-'
 
 export type ReactionId = string
 
@@ -13,9 +15,25 @@ export type Reaction = {
   kind?: ReactionType
 }
 
+type AccountAndPostId = string
+
 export type ReactionStruct = Reaction & {
-  id: PostId
+  id: AccountAndPostId
 }
+
+type Args = {
+  myAddress?: AccountId
+}
+
+type PrependProps = Args & {
+  ids: EntityId[],
+}
+
+export const prependPostIdWithMyAddress = (postId: EntityId, myAddress: AccountId) => 
+  myAddress + SEPARATOR + postId
+
+const prependPostIdsWithMyAddress = ({ ids: postIds, myAddress }: PrependProps) =>
+  myAddress ? postIds.map(postId => prependPostIdWithMyAddress(postId, myAddress)) : [] 
 
 const adapter = createEntityAdapter<ReactionStruct>()
 
@@ -31,13 +49,15 @@ export const {
 } = selectors
 
 export const selectMyPostReactionsByPostIds:
-  SelectManyFn<{}, ReactionStruct> = (
+  SelectManyFn<Args, ReactionStruct> = (
     state, 
-    { ids }
+    args
   ) => {
     const reactions: ReactionStruct[] = []
-  
-    ids.forEach(id => {
+
+    if (isEmptyStr(args.myAddress) || isEmptyArray(args.ids)) return []
+
+    prependPostIdsWithMyAddress(args).forEach(id => {
       const reaction = selectMyReactionByPostId(state, id)
 
       if (reaction) {
@@ -48,12 +68,13 @@ export const selectMyPostReactionsByPostIds:
     return reactions
   }
 
-export const selectPostMyReactionByPostId = (state: RootState, id: PostId) => 
-  getFirstOrUndefined(selectMyPostReactionsByPostIds(state, { ids: [ id ] }))
-
-type Args = {
+type PostIdAndMyAddress = {
+  postId: PostId,
   myAddress?: AccountId
 }
+
+export const selectPostMyReactionByPostId = (state: RootState, { postId, myAddress }: PostIdAndMyAddress) => 
+  getFirstOrUndefined(selectMyPostReactionsByPostIds(state, { ids: [ postId ], myAddress }))
 
 export type FetchManyReactionsArgs = FetchManyArgs<Args>
 
@@ -64,33 +85,33 @@ export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
 export const fetchMyPostReactions = createAsyncThunk
   <FetchManyRes, FetchManyReactionsArgs, ThunkApiConfig>(
   'myPostReaction/fetchMany',
-  async ({ api, ids, myAddress, reload }, { getState }): Promise<FetchManyRes> => {
-
+  async (args, { getState }): Promise<FetchManyRes> => {
+    const { myAddress, api, reload } = args
+    
     if (!myAddress) return []
  
-    let newIds = ids as string[]
+    let newIds = prependPostIdsWithMyAddress(args) as string[]
 
     if (!reload) {
-      newIds = selectUnknownPostIds(getState(), ids)
+      newIds = selectUnknownPostIds(getState(), newIds)
       if (!newIds.length) {
         // Nothing to load: all ids are known and their reactions are already loaded.
         return []
       }
     }
 
-
     const postIdByReactionId = new Map<string, string>()
 
     const reactionByPostId = new Map<string, ReactionStruct>()
 
     // TODO use multi query
-    const promises = newIds.map(async postId => {
+    const promises = newIds.map(async accountAndPostId => {
+      const [ , postId ] = accountAndPostId.split(SEPARATOR)
       const reactionId = await api.substrate.getPostReactionIdByAccount(myAddress, idToPostId(postId))
-      const reactionIdStr = reactionId.toString()
-      reactionByPostId.set(postId, { id: postId })
+      reactionByPostId.set(postId, { id: prependPostIdWithMyAddress(postId, myAddress) })
 
-      if (reactionIdStr !== '0') {
-        postIdByReactionId.set(reactionIdStr, postId)
+      if (!reactionId.eqn(0)) {
+        postIdByReactionId.set(reactionId.toString(), postId)
 
         return reactionId
       }
@@ -107,7 +128,7 @@ export const fetchMyPostReactions = createAsyncThunk
       const postId = postIdByReactionId.get(reactionId)
   
       postId && reactionByPostId.set(postId, {
-        id: postId,
+        id: prependPostIdWithMyAddress(postId, myAddress),
         reactionId,
         kind: kindCodec.toString() as ReactionType
       })
@@ -123,7 +144,6 @@ const slice = createSlice({
   initialState: adapter.getInitialState(),
   reducers: {
     upsertMyPostReaction: adapter.upsertOne,
-    removeMyPostReaction: adapter.removeOne,
     removeAllMyPostReactions: adapter.removeAll
   },
   extraReducers: builder => {
@@ -135,7 +155,6 @@ const slice = createSlice({
 
 export const {
   upsertMyPostReaction,
-  removeMyPostReaction,
   removeAllMyPostReactions
 } = slice.actions
 
