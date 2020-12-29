@@ -1,9 +1,7 @@
-import { Option } from '@polkadot/types'
 import { EntityId, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { CommonVisibility, createFetchOne, createSelectUnknownIds, FetchManyArgs, SelectManyArgs, selectManyByIds, SelectOneArgs, selectOneById, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { flattenProfileStructs, getUniqueContentIds, ProfileData, ProfileStruct, SocialAccountWithId } from 'src/types'
+import { flattenProfileStructs, getUniqueContentIds, ProfileData, ProfileStruct } from 'src/types'
 import { asString } from 'src/utils'
 import { fetchContents, selectProfileContentById } from '../contents/contentsSlice'
 
@@ -58,26 +56,9 @@ export const fetchProfiles = createAsyncThunk<ProfileStruct[], FetchProfilesArgs
       }
     }
 
+    const structs = await api.substrate.findSocialAccounts(newIds)
 
-    // TODO rewrite: findSocialAccounts should return SocialAccount with id: AccountId
-    // const structs = await api.substrate.findSocialAccounts(newIds)
-
-    const substrateApi = await api.substrate.api
-    const structs = await substrateApi.query.profiles
-      .socialAccountById.multi(newIds) as Option<SocialAccount>[]
-
-    const structWithIdArr: SocialAccountWithId[] = []
-
-    structs.forEach((structOpt, i) => {
-      if (structOpt.isSome) {
-        structWithIdArr.push({
-          id: newIds[i],
-          struct: structOpt.unwrap()
-        })
-      }
-    })
-    
-    const entities = flattenProfileStructs(structWithIdArr)
+    const entities = flattenProfileStructs(structs)
     const fetches: Promise<any>[] = []
 
     if (withContent) {
