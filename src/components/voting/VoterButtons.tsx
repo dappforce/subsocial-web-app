@@ -12,6 +12,8 @@ import { ButtonProps } from 'antd/lib/button'
 import { useCreateUpsertReaction } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { getNewIdsFromEvent } from '../substrate'
+import { getPostStructWithUpdatedCounts } from './utils'
+import { useMyAddress } from '../auth/MyAccountContext'
 
 const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
@@ -22,14 +24,14 @@ type VoterProps = BareProps & {
 
 type VoterButtonProps = VoterProps & ButtonProps & {
   reactionEnum: ReactionEnum,
-  reaction?: Reaction,
+  reaction?: ReactionStruct,
   onSuccess?: () => void,
   preview?: boolean
 };
 
 const VoterButton = ({
   reactionEnum,
-  reaction,
+  reaction: oldReaction,
   post,
   className,
   style,
@@ -40,36 +42,39 @@ const VoterButton = ({
 
   const { id: postId, upvotesCount, downvotesCount } = post
   const { isMobile } = useResponsiveSize()
+
   const upsertReaction = useCreateUpsertReaction()
   const upserPost = useCreateUpsertPost()
-  const { reactionId, kind = 'None' } = reaction || { id: postId } as ReactionStruct
-  const reactionType = reactionEnum.valueOf() as ReactionType
-  const isUpvote = reactionType === ReactionEnum.Upvote
-  const count = isUpvote ? upvotesCount : downvotesCount
   const reloadPost = useCreateReloadPost()
+
+  const { reactionId, kind: oldKind } = oldReaction || { id: postId } as ReactionStruct
+
+  const newKind = reactionEnum.valueOf() as ReactionType
+  const isUpvote = newKind === ReactionEnum.Upvote
+
+  const count = isUpvote ? upvotesCount : downvotesCount
   const args = { id: postId }
 
   const buildTxParams = () => {
-    if (reactionId === undefined) {
-      return [ postId, new ReactionKind(reactionType) ]
-    } else if (kind !== reactionType) {
-      return [ postId, reactionId, new ReactionKind(reactionType) ]
+    if (!reactionId) {
+      return [ postId, new ReactionKind(newKind) ]
+    } else if (oldKind !== newKind) {
+      return [ postId, reactionId, new ReactionKind(newKind) ]
     } else {
       return [ postId, reactionId ]
     }
   }
 
-  const isActive = kind === reactionType
+  const isActive = oldKind === newKind
 
   const color = isUpvote ? '#00a500' : '#ff0000'
 
-  const isDelete = kind === reactionType
-  const changeReactionTx = isDelete
+  const changeReactionTx = isActive
     ? 'reactions.deletePostReaction'
     : 'reactions.updatePostReaction'
 
-  const updateOrDelete = (deleteReaction: boolean, _reactinoId?: ReactionId) => {
-    let newReactionId = _reactinoId || reactionId
+  const updateOrDelete = (deleteReaction: boolean, _newReactionId?: ReactionId) => {
+    let newReactionId = _newReactionId || reactionId
 
     if (!newReactionId && !deleteReaction) {
       newReactionId = `fakeId-${postId}`
@@ -77,7 +82,7 @@ const VoterButton = ({
 
     const newReaction: Reaction = { 
       reactionId: newReactionId,
-      kind: deleteReaction ? undefined : reactionType
+      kind: deleteReaction ? undefined : newKind
     }
 
     upsertReaction({ id: postId, ...newReaction })
@@ -106,34 +111,27 @@ const VoterButton = ({
     }
     params={buildTxParams()}
     onClick={() => {
-      updateOrDelete(isDelete)
-
-      const currentCountKey = reactionType === 'Upvote' ? 'upvotesCount' : 'downvotesCount'
-      let currentCount = post[currentCountKey]
-
-      upserPost({
-        ...post,
-        [currentCountKey]: isDelete ? --currentCount : ++currentCount
-      })
+      updateOrDelete(isActive)
+      upserPost(getPostStructWithUpdatedCounts({ post, oldReaction, newKind }))
     }}
     onSuccess={(txResult) => {
       reloadPost(args)
       
       const newReactionId = reactionId || getNewIdsFromEvent(txResult)[1]?.toString()
-      updateOrDelete(isDelete, newReactionId)
+      updateOrDelete(isActive, newReactionId)
       onSuccess && onSuccess()
     }}
     onFailed={() => {
-      updateOrDelete(!isDelete)
+      oldReaction && upsertReaction(oldReaction)
       upserPost(post)
     }}
-    title={preview ? reactionType : undefined}
+    title={preview ? newKind : undefined}
     disabled={disabled}
   >
     <IconWithLabel
       icon={icon}
       count={count}
-      label={(preview || isMobile) ? undefined : reactionType}
+      label={(preview || isMobile) ? undefined : newKind}
     />
   </TxButton>
 }
@@ -156,8 +154,9 @@ const InnerVoterButtons = ({ kind, ...buttonProps }: InnerVoterButtonsProps) => 
 }
 
 export const VoterButtons = (props: VoterButtonsProps) => {
-  const reaction = useAppSelector(state => selectPostMyReactionByPostId(state, props.post.id))
-
+  const myAddress = useMyAddress()
+  const reaction = useAppSelector(state => selectPostMyReactionByPostId(state, { postId: props.post.id, myAddress }))
+  
   return <InnerVoterButtons reaction={reaction} {...props} />
 }
 
