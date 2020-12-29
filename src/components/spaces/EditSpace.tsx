@@ -25,6 +25,7 @@ import { PageContent } from '../main/PageWrapper'
 import { goToSpacePage } from '../urls/goToPage'
 import { AutoSaveId } from '../utils/DfMdEditor/types'
 import { idToBn, SpaceId } from 'src/types'
+import { useCreateReloadSpace } from 'src/rtk/app/hooks'
 
 const MAX_TAGS = 10
 
@@ -70,7 +71,7 @@ export function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
   const { ipfs, substrate } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
-
+  const reloadSpace = useCreateReloadSpace()
   const { space, minHandleLen, maxHandleLen } = props
 
   const initialValues = getInitialValues(props)
@@ -134,9 +135,13 @@ export function InnerForm (props: FormProps) {
   }
 
   const onSuccess: TxCallback = (txResult) => {
-    const id = space?.struct.id || getNewIdFromEvent(txResult)
+    const id = space?.struct.id || getNewIdFromEvent(txResult)?.toString()
+    
     clearAutoSavedContent('space')
-    id && goToSpacePage(id)
+    if (id) {
+      reloadSpace({ id })
+      goToSpacePage(id)
+    }
   }
 
   const onDescChanged = (mdText: string) => {
