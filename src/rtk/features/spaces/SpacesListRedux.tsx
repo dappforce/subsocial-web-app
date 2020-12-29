@@ -51,20 +51,6 @@ export const SpacesListPage: NextPage<Props> = (props) => {
 
 getInitialPropsWithRedux(SpacesListPage, async ({ dispatch, subsocial }) => {
   const ids = samplePostIds
-  await dispatch(fetchPosts({ api: subsocial, ids }))
+  await dispatch(fetchPosts({ api: subsocial, ids, reload: true }))
   return { ids }
 })
-
-// // Alternative way to fetch data on server-side:
-// export const getServerSideProps: GetServerSideProps<Props> = async ({}) => {
-//   const reduxStore = initializeStore()
-//   const { dispatch } = reduxStore
-  
-//   const subsocial = await getSubsocialApi()
-//   await dispatch(fetchPosts({ api: subsocial, ids: samplePostIds }))
-//   const initialReduxState = reduxStore.getState()
-
-//   return { props: { initialReduxState, ids: samplePostIds } }
-// }
-
-// export default SpacesList
