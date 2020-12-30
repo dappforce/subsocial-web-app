@@ -1,6 +1,6 @@
 import { readMyAddress } from '../components/auth/MyAccountContext'
 import store from 'store'
-import { clearNotifications, insertToSessionKeyTable, getNonce, isSessionKeyExist } from '../components/utils/OffchainUtils';
+import { clearNotifications, insertToSessionKeyTable, getNonce, getSessionKey } from '../components/utils/OffchainUtils';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp'
 import { appName } from '../components/utils/env'
 import { stringToHex, u8aToHex, hexToU8a } from '@polkadot/util'
@@ -135,8 +135,8 @@ export const readAllNotifications = async (blockNumber: string, eventIndex: numb
       break
     }
   }
-  
-  const isSessionKey = await isSessionKeyExist(newGenericAccount(sessionKey?.publicKey))
+
+  const isSessionKey = await getSessionKey(newGenericAccount(sessionKey?.publicKey))
 
   if (!sessionKey || !isSessionKey) {
     sessionKey = await createSessionKey()

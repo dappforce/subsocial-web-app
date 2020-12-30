@@ -126,7 +126,7 @@ export const clearNotifications = (sessionCall: SessionCall<ReadAllMessage>) => 
 
 export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessionKeyArgs>) => {
   try {
-    const res = await axios.post(getOffchainUrl('/notifications/addSessionKey'), { sessionCall })
+    const res = await axios.post(getOffchainUrl('/accounts/setSessionKey'), { sessionCall })
     if (res.status !== 200) {
       console.warn('Failed to add a session key to main account:', sessionCall.account, 'res.status:', res.status)
     }
@@ -137,8 +137,7 @@ export const insertToSessionKeyTable = async (sessionCall: SessionCall<AddSessio
 
 export const getNonce = async (account: string) => {
   try {
-    const params = { account }
-    const res = await axios.post(getOffchainUrl('/notifications/getNonce'), null, { params })
+    const res = await axios.post(getOffchainUrl(`/accounts/getNonce?account=${account}`))
     if (res.status === 200) {
       return res.data
     }
@@ -147,10 +146,9 @@ export const getNonce = async (account: string) => {
   }
 }
 
-export const isSessionKeyExist = async (account: string) => {
+export const getSessionKey = async (account: string) => {
   try {
-    const params = { account }
-    const res = await axios.post(getOffchainUrl('/notifications/isSessionKeyExist'), null, { params })
+    const res = await axios.post(getOffchainUrl(`/accounts/getSessionKey?account=${account}`))
     if (res.status === 200) {
       console.log(res.data)
       return res.data
