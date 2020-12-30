@@ -26,13 +26,13 @@ export const resloveWebSocketConnection = () => {
   return socket
 }
 
-export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
+export function NotifCounterProvider(props: React.PropsWithChildren<{}>) {
   const myAddress = useMyAddress()
 
-  const [ contextValue, setContextValue ] = useState({ unreadCount: 0 })
-  const [ wsConnected, setWsConnected ] = useState(false)
-  const [ ws, setWs ] = useState<W3CWebSocket>()
-  const [ address, setAddress ] = useState(myAddress)
+  const [contextValue, setContextValue] = useState({ unreadCount: 0 })
+  const [wsConnected, setWsConnected] = useState(false)
+  const [ws, setWs] = useState<W3CWebSocket>()
+  const [address, setAddress] = useState(myAddress)
 
   const closeWs = () => {
     if (
@@ -45,6 +45,7 @@ export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
       ws.close()
     }
     setWsConnected(false)
+    socket = new W3CWebSocket(offchainWs)
   }
 
   if (address !== myAddress) {
@@ -59,6 +60,7 @@ export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
     setWs(socket)
 
     socket.onopen = () => {
+      console.log("hi open webSocket")
       log.info('Connected to Notifications Counter Web Socket')
       socket.send(myAddress?.toString())
       setWsConnected(true)
@@ -75,7 +77,7 @@ export function NotifCounterProvider (props: React.PropsWithChildren<{}>) {
       setContextValue({ unreadCount: parseInt(unreadCount.toString()) })
       log.info('Received a new value for unread notifications:', unreadCount)
     }
-  }, [ wsConnected, myAddress ])
+  }, [wsConnected, myAddress])
 
   return (
     <NotifCounterContext.Provider value={contextValue}>
@@ -90,7 +92,7 @@ export const useNotifCounter = () => {
 
 const notificationItem = {
   name: 'My notifications',
-  page: [ '/notifications', '/notifications' ],
+  page: ['/notifications', '/notifications'],
   icon: <BellOutlined className="bell" />
 }
 
