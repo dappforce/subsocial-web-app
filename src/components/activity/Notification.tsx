@@ -143,7 +143,7 @@ const PostNotification = (props: NotificationProps) => {
   }
 
   return <InnerNotification
-    preview={<ViewPostLink post={post} space={space.struct} />}
+    preview={<ViewPostLink post={post} space={space.struct} title={post.content?.title} />}
     image={content?.image}
     msg={msg}
     links={links}

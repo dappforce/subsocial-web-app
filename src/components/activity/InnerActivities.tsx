@@ -31,7 +31,7 @@ export function InnerActivities<T> (props: InnerActivitiesProps<T>) {
     noDataDesc={noDataDesc}
     totalCount={total || 0}
 
-  />, [ isApiReady, noData, total ])
+  />, [ isApiReady, noData, total, address ])
 
   if (!isApiReady || noData) return <Loading label={loadingLabel} />
 
