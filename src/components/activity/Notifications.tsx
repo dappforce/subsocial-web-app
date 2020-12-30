@@ -37,7 +37,7 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn) =>
     const offset = (page - 1) * size
 
     const activities = await getActivity(address, offset, DEFAULT_PAGE_SIZE) || []
-    const lastActivity = activities.pop()
+    const lastActivity = activities[activities.length - 1]
     if (lastActivity && !offset) {
       const { block_number, event_index } = lastActivity
       await readAllNotifications(block_number, event_index, address)

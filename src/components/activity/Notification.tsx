@@ -62,7 +62,7 @@ export function InnerNotification (props: InnerNotificationProps) {
   const eventMsg = messages[msgType] as EventsMsg
 
   return <Link {...links}>
-    <a className='DfNotificationItem'>
+    <div className='DfNotificationItem'>
       <Avatar address={account} avatar={avatar} />
       <div className="DfNotificationContent">
         <div className="DfTextActivity">
@@ -75,7 +75,7 @@ export function InnerNotification (props: InnerNotificationProps) {
         <MutedDiv className='DfDate'>{dayjs(date).format('lll')}</MutedDiv>
       </div>
       {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} className='mb-2' />}
-    </a>
+    </div>
   </Link>
 }
 
