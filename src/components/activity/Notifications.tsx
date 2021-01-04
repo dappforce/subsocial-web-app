@@ -28,7 +28,7 @@ export const NotifActivities = ({ loadMore, type, ...props }: NotifActivitiesPro
 }
 
 
-export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn) =>
+export const getLoadMoreActivitiesFn = (getActivity: LoadMoreFn) =>
   async (props: LoadMoreProps) => {
     const { address, page, size, subsocial: api, dispatch } = props
 
@@ -37,12 +37,8 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn) =>
     const offset = (page - 1) * size
 
     const activities = await getActivity(address, offset, DEFAULT_PAGE_SIZE) || []
-    const lastActivity = activities.pop()
-    if (lastActivity && !offset) {
-      const { block_number, event_index } = lastActivity
-      await readAllNotifications(block_number, event_index, address)
-    }
-    
+
+
     const ownerIds: AccountId[] = []
     const spaceIds: SpaceId[] = []
     const postIds: PostId[] = []
@@ -66,7 +62,29 @@ export const getLoadMoreNotificationsFn = (getActivity: LoadMoreFn) =>
     return activities
   }
 
-const loadMoreNotifications = getLoadMoreNotificationsFn(getNotifications)
+type NotificationsFn = (props: LoadMoreProps) => Promise<Activity[]>
+
+const getLoadMoreNotifications = (getNotifs: NotificationsFn) =>
+  async (props: LoadMoreProps) => {
+    const { address, page, size } = props
+
+    if (!address) return []
+    const offset = (page - 1) * size
+
+    const notifications = await getNotifs(props)
+
+    const lastActivity = notifications[notifications.length - 1]
+    if (lastActivity && !offset) {
+      const { block_number, event_index } = lastActivity
+      await readAllNotifications(block_number, event_index, address)
+    }
+
+    return notifications
+  }
+
+const loadMoreActivities = getLoadMoreActivitiesFn(getNotifications)
+
+const loadMoreNotifications = getLoadMoreNotifications(loadMoreActivities)
 
 export const Notifications = ({ address, title }: BaseActivityProps) => <NotifActivities
   type='notifications'

@@ -3,7 +3,7 @@ import { getActivities, getReactionActivities, getCommentActivities, getPostActi
 import { Tabs } from 'antd'
 import { OwnedSpacesList, LoadSpacesType } from '../spaces/AccountSpaces'
 import { Counts } from '@subsocial/types'
-import { getLoadMoreNotificationsFn, NotifActivities } from './Notifications'
+import { getLoadMoreActivitiesFn, NotifActivities } from './Notifications'
 import { BaseActivityProps } from './types'
 import { getLoadMoreFeedFn, FeedActivities } from './FeedActivities'
 import { Loading } from '../utils'
@@ -15,7 +15,7 @@ type ActivitiesByAddressProps = Partial<LoadSpacesType> & {
   address: string
 }
 
-const loadMoreActivities = getLoadMoreNotificationsFn(getActivities)
+const loadMoreActivities = getLoadMoreActivitiesFn(getActivities)
 
 const AllActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
@@ -25,7 +25,7 @@ const AllActivities = (props: BaseActivityProps) => <NotifActivities
   loadingLabel='Loading activities...'
 />
 
-const loadMoreReactions = getLoadMoreNotificationsFn(getReactionActivities)
+const loadMoreReactions = getLoadMoreActivitiesFn(getReactionActivities)
 
 const ReactionActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
@@ -35,7 +35,7 @@ const ReactionActivities = (props: BaseActivityProps) => <NotifActivities
   loadingLabel='Loading reactions...'
 />
 
-const loadMoreFollows = getLoadMoreNotificationsFn(getFollowActivities)
+const loadMoreFollows = getLoadMoreActivitiesFn(getFollowActivities)
 
 const FollowActivities = (props: BaseActivityProps) => <NotifActivities
   {...props}
