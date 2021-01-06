@@ -7,7 +7,6 @@ type ComponentType = React.FunctionComponent<InnerPreviewProps>
 
 export const SharedPreview: ComponentType = (props) => {
   const { postDetails, space, withActions, replies } = props
-  const { struct } = postDetails.post
   const [ commentsSection, setCommentsSection ] = useState(false)
 
   return <>

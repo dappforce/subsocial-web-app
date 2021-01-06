@@ -20,7 +20,7 @@ export const SpaceShareLink = ({
   }
 }: Props) => {
 
-  const { openSignInModal, state: { isSteps: { isSignIn } } } = useAuth()
+  const { openSignInModal, state: { completedSteps: { isSignedIn } } } = useAuth()
   const [ open, setOpen ] = useState<boolean>()
   const postId = isRegularPost(extension as PostExtension) ? id : ext && ext.post.struct.id
   const title = 'Write a post'
@@ -28,7 +28,7 @@ export const SpaceShareLink = ({
   return <>
     <a
       className='DfBlackLink'
-      onClick={() => isSignIn ? setOpen(true) : openSignInModal('AuthRequired')}
+      onClick={() => isSignedIn ? setOpen(true) : openSignInModal('AuthRequired')}
       title={title}
     >
       <IconWithLabel icon={<EditOutlined />} label={title} />
