@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { getFirstOrUndefined } from '@subsocial/utils'
-import { createFetchOne, createSelectUnknownIds, FetchManyArgs, /* FetchOneArgs, */ HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { createFetchOne, createSelectUnknownIds, FetchManyArgs, HasHiddenVisibility, SelectManyArgs, selectManyByIds, SelectOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { flattenSpaceStructs, getUniqueContentIds, getUniqueOwnerIds, ProfileData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import { idsToBns } from 'src/types/utils'
@@ -76,8 +76,6 @@ export function selectSpace (state: RootState, props: SelectSpaceArgs): SpaceWit
 }
 
 const selectUnknownSpaceIds = createSelectUnknownIds(selectSpaceIds)
-
-// TODO impl forceFetchAndSubscribe
 
 export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, ThunkApiConfig>(
   'spaces/fetchMany',

@@ -11,7 +11,7 @@ export const useFetchReplyIdsByPostId = (args: SelectOnePostRepliesArgs) => {
   return useFetchEntity(selectManyReplyIds, fetchPostReplyIds, args)
 }
 
-type UpsertReplyIdByPostIdProps = {
+type RemoveReplyParams = {
   parentId: PostId,
   replyId: PostId
 }
@@ -19,7 +19,7 @@ type UpsertReplyIdByPostIdProps = {
 export const useRemoveReply = () => {
   const replyIdsByParentId = useAppSelector(state => selectReplyIdsEntities(state))
 
-  return useActions<UpsertReplyIdByPostIdProps>(({ dispatch, args: { replyId: idToRemove, parentId } }) => {
+  return useActions<RemoveReplyParams>(({ dispatch, args: { replyId: idToRemove, parentId } }) => {
     const oldReplyIds = replyIdsByParentId[parentId]?.replyIds || []
     dispatch(removePost(idToRemove))
     dispatch(upsertReplyIdsByPostId({
@@ -29,7 +29,7 @@ export const useRemoveReply = () => {
   })
 }
 
-type UpsertReplies = {
+type UpsertRepliesParams = {
   replyIds: ReplyIdsByPostId,
   rootPostId?: PostId,
   reload?: boolean
@@ -39,7 +39,7 @@ export const useUpsertReplies = () => {
   const replyIdsByParentId = useAppSelector(state => selectReplyIdsEntities(state))
   const reloadPosts = useCreateReloadPosts()
 
-  return useActions<UpsertReplies>(async ({ 
+  return useActions<UpsertRepliesParams>(async ({ 
     dispatch,
     args: { replyIds: { replyIds: newIds, id }, rootPostId, reload }
   }) => {
@@ -56,7 +56,7 @@ type CommonReplyArgs = {
   reply: PostStruct
 }
 
-const setUpsertOneArgs = ({ parentId, reply }: CommonReplyArgs) => ({
+const buildUpsertOneArgs = ({ parentId, reply }: CommonReplyArgs) => ({
   replies: [ reply ],
   replyIds: {
     id: parentId,
@@ -79,7 +79,7 @@ export const useCreateChangeReplies = () => {
     if (!parentId) return 
     
     removeReply({ replyId: idToRemove, parentId })
-    upsertReplies({ ...setUpsertOneArgs(args), rootPostId, reload: true })
+    upsertReplies({ ...buildUpsertOneArgs(args), rootPostId, reload: true })
   }
 }
 
@@ -95,10 +95,10 @@ type UpsertReplyWithContentArgs = {
 
 export const useCreateUpsertReply = () => {
   const upsertReplies = useUpsertReplies()
-  const upserReply = useCreateUpsertPost()
+  const upsertReply = useCreateUpsertPost()
 
   return ({ parentId, replyData, ...args }: UpsertReplyWithContentArgs) => {
-    parentId && upsertReplies(setUpsertOneArgs({ ...args, reply: replyData.struct, parentId }))
-    upserReply(replyData)
+    parentId && upsertReplies(buildUpsertOneArgs({ ...args, reply: replyData.struct, parentId }))
+    upsertReply(replyData)
   }
 }

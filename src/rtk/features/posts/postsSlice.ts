@@ -6,7 +6,7 @@ import { AccountId, asCommentStruct, asSharedPostStruct, flattenPostStructs, get
 import { idsToBns } from 'src/types/utils'
 import { fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfiles, selectProfiles } from '../profiles/profilesSlice'
-import { fetchMyPostReactions } from '../reactions/myPostReactionsSlice'
+import { fetchMyReactionsByPostIds } from '../reactions/myPostReactionsSlice'
 import { fetchSpaces, selectSpaces } from '../spaces/spacesSlice'
 
 const postsAdapter = createEntityAdapter<PostStruct>()
@@ -143,7 +143,7 @@ export function selectPost (state: RootState, props: SelectPostArgs): PostWithSo
   return getFirstOrUndefined(entities)
 }
 
-export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
+const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
 
 export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkApiConfig>(
   'posts/fetchMany',
@@ -160,7 +160,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       }
     }
 
-    withReactionByAccount && dispatch(fetchMyPostReactions({ ids: newIds, myAddress: withReactionByAccount, api }))
+    withReactionByAccount && dispatch(fetchMyReactionsByPostIds({ ids: newIds, myAddress: withReactionByAccount, api }))
 
     const structs = await api.substrate.findPosts({ ids: idsToBns(newIds) })
     const entities = flattenPostStructs(structs)
@@ -227,7 +227,6 @@ const posts = createSlice({
   initialState: postsAdapter.getInitialState(),
   reducers: {
     upsertPost: postsAdapter.upsertOne,
-    upsertPosts: postsAdapter.upsertMany,
     removePost: postsAdapter.removeOne,
   },
   extraReducers: builder => {
@@ -240,7 +239,6 @@ const posts = createSlice({
 
 export const {
   upsertPost,
-  upsertPosts,
   removePost
 } = posts.actions
 

@@ -5,11 +5,11 @@ import { ReactionKind } from '@subsocial/types/substrate/classes'
 import { BareProps } from '../utils/types'
 import { IconWithLabel } from '../utils'
 import { useResponsiveSize } from '../responsive'
-import { PostStruct, ReactionEnum, ReactionType } from 'src/types'
+import { PostStruct, ReactionId, ReactionEnum, ReactionType } from 'src/types'
 import { useCreateReloadPost, useCreateUpsertPost } from 'src/rtk/app/hooks'
-import { Reaction, ReactionId, ReactionStruct, selectPostMyReactionByPostId } from 'src/rtk/features/reactions/myPostReactionsSlice'
+import { Reaction, ReactionStruct, selectMyReactionByPostId } from 'src/rtk/features/reactions/myPostReactionsSlice'
 import { ButtonProps } from 'antd/lib/button'
-import { useCreateUpsertReaction } from 'src/rtk/features/reactions/myPostReactionsHooks'
+import { useCreateUpsertMyReaction } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { getNewIdsFromEvent } from '../substrate'
 import { getPostStructWithUpdatedCounts } from './utils'
@@ -43,8 +43,8 @@ const VoterButton = ({
   const { id: postId, upvotesCount, downvotesCount } = post
   const { isMobile } = useResponsiveSize()
 
-  const upsertReaction = useCreateUpsertReaction()
-  const upserPost = useCreateUpsertPost()
+  const upsertMyReaction = useCreateUpsertMyReaction()
+  const upsertPost = useCreateUpsertPost()
   const reloadPost = useCreateReloadPost()
 
   const { reactionId, kind: oldKind } = oldReaction || { id: postId } as ReactionStruct
@@ -57,10 +57,13 @@ const VoterButton = ({
 
   const buildTxParams = () => {
     if (!reactionId) {
+      // Case: Add a new reaction
       return [ postId, new ReactionKind(newKind) ]
     } else if (oldKind !== newKind) {
+      // Case: Change a kind of the existing reaction
       return [ postId, reactionId, new ReactionKind(newKind) ]
     } else {
+      // Case: Delete the existing reaction
       return [ postId, reactionId ]
     }
   }
@@ -85,7 +88,7 @@ const VoterButton = ({
       kind: deleteReaction ? undefined : newKind
     }
 
-    upsertReaction({ id: postId, ...newReaction })
+    upsertMyReaction({ id: postId, ...newReaction })
   }
 
   let icon: JSX.Element
@@ -112,7 +115,7 @@ const VoterButton = ({
     params={buildTxParams()}
     onClick={() => {
       updateOrDelete(isActive)
-      upserPost(getPostStructWithUpdatedCounts({ post, oldReaction, newKind }))
+      upsertPost(getPostStructWithUpdatedCounts({ post, oldReaction, newKind }))
     }}
     onSuccess={(txResult) => {
       reloadPost(args)
@@ -122,8 +125,8 @@ const VoterButton = ({
       onSuccess && onSuccess()
     }}
     onFailed={() => {
-      oldReaction && upsertReaction(oldReaction)
-      upserPost(post)
+      oldReaction && upsertMyReaction(oldReaction)
+      upsertPost(post)
     }}
     title={preview ? newKind : undefined}
     disabled={disabled}
@@ -136,32 +139,22 @@ const VoterButton = ({
   </TxButton>
 }
 
-type VoterButtonsProps = VoterProps & {
-  kind?: ReactionEnum,
-}
-
-type InnerVoterButtonsProps = VoterButtonsProps & {
+type InnerVoterButtonsProps = VoterProps & {
   reaction?: ReactionStruct
 }
 
-const InnerVoterButtons = ({ kind, ...buttonProps }: InnerVoterButtonsProps) => {
+const InnerVoterButtons = (props: InnerVoterButtonsProps) => {
   return <>
-    {kind !== ReactionEnum.Upvote &&
-      <VoterButton reactionEnum={ReactionEnum.Upvote} {...buttonProps} />}
-    {kind !== ReactionEnum.Downvote &&
-      <VoterButton reactionEnum={ReactionEnum.Downvote} {...buttonProps} />}
+    <VoterButton reactionEnum={ReactionEnum.Upvote} {...props} />
+    <VoterButton reactionEnum={ReactionEnum.Downvote} {...props} />
   </>
 }
 
-export const VoterButtons = (props: VoterButtonsProps) => {
+export const VoterButtons = (props: VoterProps) => {
   const myAddress = useMyAddress()
-  const reaction = useAppSelector(state => selectPostMyReactionByPostId(state, { postId: props.post.id, myAddress }))
+  const reaction = useAppSelector(state =>
+    selectMyReactionByPostId(state, { postId: props.post.id, myAddress })
+  )
   
   return <InnerVoterButtons reaction={reaction} {...props} />
 }
-
-export const UpvoteVoterButton = (props: VoterProps) =>
-  <VoterButtons kind={ReactionEnum.Upvote} {...props} />
-
-export const DownvoteVoterButton = (props: VoterProps) =>
-  <VoterButtons kind={ReactionEnum.Downvote} {...props} />

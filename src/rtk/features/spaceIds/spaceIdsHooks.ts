@@ -4,22 +4,28 @@ import { useActions } from 'src/rtk/app/helpers'
 import { useFetchOneEntity } from 'src/rtk/app/hooksCommon'
 import { AccountId, SpaceId } from 'src/types'
 import { useFetchSpaces } from '../spaces/spacesHooks'
-import { fetchSpaceIdsFollowedByAccount, _selectSpaceIdsFollowedByAccount } from './followedSpaceIdsSlice'
-import { fetchSpaceIdsOwnedByAccount, _selectSpaceIdsOwnedByAccount } from './ownSpaceIdsSlice'
+import { fetchEntityOfSpaceIdsByFollower, selectEntityOfSpaceIdsByFollower } from './followedSpaceIdsSlice'
+import { fetchSpaceIdsOwnedByAccount, selectEntityOfSpaceIdsByOwner } from './ownSpaceIdsSlice'
 
 export const useFetchSpaceIdsByOwner = (owner: AccountId) => {
-  return useFetchOneEntity(_selectSpaceIdsOwnedByAccount, fetchSpaceIdsOwnedByAccount, { id: owner })
+  return useFetchOneEntity(
+    selectEntityOfSpaceIdsByOwner,
+    fetchSpaceIdsOwnedByAccount,
+    { id: owner }
+  )
 }
 
 export const useFetchSpaceIdsByFollower = (follower: AccountId) => {
-  return useFetchOneEntity(_selectSpaceIdsFollowedByAccount, fetchSpaceIdsFollowedByAccount, { id: follower })
+  return useFetchOneEntity(
+    selectEntityOfSpaceIdsByFollower,
+    fetchEntityOfSpaceIdsByFollower,
+    { id: follower }
+  )
 }
 
 const useFetchPageOfSpacesByIds = (spaceIds: SpaceId[] = []) => {
   const { query } = useRouter()
-
   const ids = getPageOfIds(spaceIds, query)
-  
   const { entities, error, loading } = useFetchSpaces({ ids })
 
   return { 

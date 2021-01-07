@@ -3,18 +3,19 @@ import { getFirstOrUndefined, isDef, isEmptyArray, isEmptyStr } from '@subsocial
 import { createSelectUnknownIds, FetchManyArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectManyFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AccountId, PostId, ReactionType } from 'src/types'
+import { AccountId, PostId, ReactionId, ReactionType } from 'src/types'
 import { idToPostId } from 'src/types/utils'
 
-const SEPARATOR = '-'
+const sliceName = 'reactions'
 
-export type ReactionId = string
+const idSeparator = '-'
 
 export type Reaction = {
   reactionId?: ReactionId
   kind?: ReactionType
 }
 
+// A composite entity id: account_id + '-' + post_id
 type AccountAndPostId = string
 
 export type ReactionStruct = Reaction & {
@@ -25,41 +26,34 @@ type Args = {
   myAddress?: AccountId
 }
 
-type PrependProps = Args & {
+type PrependParams = Args & {
   ids: EntityId[],
 }
 
 export const prependPostIdWithMyAddress = (postId: EntityId, myAddress: AccountId) => 
-  myAddress + SEPARATOR + postId
+  myAddress + idSeparator + postId
 
-const prependPostIdsWithMyAddress = ({ ids: postIds, myAddress }: PrependProps) =>
+const prependPostIdsWithMyAddress = ({ ids: postIds, myAddress }: PrependParams) =>
   myAddress ? postIds.map(postId => prependPostIdWithMyAddress(postId, myAddress)) : [] 
 
 const adapter = createEntityAdapter<ReactionStruct>()
 
 const selectors = adapter.getSelectors<RootState>(state => state.myPostReactions)
 
-// Rename the exports for readability in component usage
-export const {
-  selectById: selectMyReactionByPostId,
-  selectIds: selectPostIds,
-  // selectEntities,
-  // selectAll,
-  // selectTotal
+// Rename for readability
+const {
+  selectIds: selectAllEntityIds,
 } = selectors
 
-export const selectMyPostReactionsByPostIds:
-  SelectManyFn<Args, ReactionStruct> = (
-    state, 
-    args
-  ) => {
+export const selectMyReactionsByPostIds: SelectManyFn<Args, ReactionStruct> =
+  (state, { myAddress, ids: postIds }) => {
+    if (!myAddress || isEmptyStr(myAddress) || isEmptyArray(postIds)) return []
+
     const reactions: ReactionStruct[] = []
 
-    if (isEmptyStr(args.myAddress) || isEmptyArray(args.ids)) return []
-
-    prependPostIdsWithMyAddress(args).forEach(id => {
-      const reaction = selectMyReactionByPostId(state, id)
-
+    postIds.forEach((postId) => {
+      const compositeId = prependPostIdWithMyAddress(postId, myAddress)
+      const reaction = selectors.selectById(state, compositeId)
       if (reaction) {
         reactions.push(reaction)
       }
@@ -73,46 +67,45 @@ type PostIdAndMyAddress = {
   myAddress?: AccountId
 }
 
-export const selectPostMyReactionByPostId = (state: RootState, { postId, myAddress }: PostIdAndMyAddress) => 
-  getFirstOrUndefined(selectMyPostReactionsByPostIds(state, { ids: [ postId ], myAddress }))
+export const selectMyReactionByPostId = (state: RootState, { postId, myAddress }: PostIdAndMyAddress) => 
+  getFirstOrUndefined(selectMyReactionsByPostIds(state, { ids: [ postId ], myAddress }))
 
-export type FetchManyReactionsArgs = FetchManyArgs<Args>
+type FetchManyReactionsArgs = FetchManyArgs<Args>
 
-export type FetchManyRes = ReactionStruct[]
+type FetchManyResult = ReactionStruct[]
 
-export const selectUnknownPostIds = createSelectUnknownIds(selectPostIds)
+const selectUnknownEntityIds = createSelectUnknownIds(selectAllEntityIds)
 
-export const fetchMyPostReactions = createAsyncThunk
-  <FetchManyRes, FetchManyReactionsArgs, ThunkApiConfig>(
-  'myPostReaction/fetchMany',
-  async (args, { getState }): Promise<FetchManyRes> => {
+export const fetchMyReactionsByPostIds = createAsyncThunk
+  <FetchManyResult, FetchManyReactionsArgs, ThunkApiConfig>(
+  `${sliceName}/fetchMany`,
+  async (args, { getState }): Promise<FetchManyResult> => {
     const { myAddress, api, reload } = args
     
     if (!myAddress) return []
  
-    let newIds = prependPostIdsWithMyAddress(args) as string[]
+    let newIds = prependPostIdsWithMyAddress(args)
 
     if (!reload) {
-      newIds = selectUnknownPostIds(getState(), newIds)
+      newIds = selectUnknownEntityIds(getState(), newIds)
       if (!newIds.length) {
         // Nothing to load: all ids are known and their reactions are already loaded.
         return []
       }
     }
 
-    const postIdByReactionId = new Map<string, string>()
-
-    const reactionByPostId = new Map<string, ReactionStruct>()
+    const postIdByReactionId = new Map<ReactionId, PostId>()
+    const reactionByPostId = new Map<PostId, ReactionStruct>()
 
     // TODO use multi query
     const promises = newIds.map(async accountAndPostId => {
-      const [ , postId ] = accountAndPostId.split(SEPARATOR)
+      const [ /* account */, postId ] = accountAndPostId.split(idSeparator)
       const reactionId = await api.substrate.getPostReactionIdByAccount(myAddress, idToPostId(postId))
-      reactionByPostId.set(postId, { id: prependPostIdWithMyAddress(postId, myAddress) })
+      const entityId = prependPostIdWithMyAddress(postId, myAddress)
+      reactionByPostId.set(postId, { id: entityId })
 
       if (!reactionId.eqn(0)) {
         postIdByReactionId.set(reactionId.toString(), postId)
-
         return reactionId
       }
 
@@ -120,7 +113,6 @@ export const fetchMyPostReactions = createAsyncThunk
     })
   
     const reactionIds = await Promise.all(promises)
-
     const entities = await api.substrate.findReactions(reactionIds.filter(isDef))
     
     entities.forEach(({ kind: kindCodec, id }) => {
@@ -132,7 +124,6 @@ export const fetchMyPostReactions = createAsyncThunk
         reactionId,
         kind: kindCodec.toString() as ReactionType
       })
-
     })
 
     return Array.from(reactionByPostId.values())
@@ -140,22 +131,22 @@ export const fetchMyPostReactions = createAsyncThunk
 )
 
 const slice = createSlice({
-  name: 'myPostReaction',
+  name: sliceName,
   initialState: adapter.getInitialState(),
   reducers: {
-    upsertMyPostReaction: adapter.upsertOne,
-    removeAllMyPostReactions: adapter.removeAll
+    upsertMyReaction: adapter.upsertOne,
+    // removeAllReactions: adapter.removeAll
   },
   extraReducers: builder => {
-    builder.addCase(fetchMyPostReactions.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchMyReactionsByPostIds.fulfilled, (state, { payload }) => {
       if (payload) adapter.upsertMany(state, payload)
     })
   }
 })
 
 export const {
-  upsertMyPostReaction,
-  removeAllMyPostReactions
+  upsertMyReaction,
+  // removeAllReactions
 } = slice.actions
 
 export default slice.reducer

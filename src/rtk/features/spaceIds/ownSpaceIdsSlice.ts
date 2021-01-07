@@ -5,39 +5,37 @@ import { RootState } from 'src/rtk/app/rootReducer'
 import { SpaceId, AccountId } from 'src/types'
 import { bnsToIds } from 'src/types/utils'
 
-export type OwnSpaceIds = {
-  /** `id` is an account id that owns spaces. */
+type Entity = {
+  /** `id` is an account address that owns spaces. */
   id: AccountId
   ownSpaceIds: SpaceId[]
 }
 
-const adapter = createEntityAdapter<OwnSpaceIds>()
+type MaybeEntity = Entity | undefined
+
+const adapter = createEntityAdapter<Entity>()
 
 const selectors = adapter.getSelectors<RootState>(state => state.ownSpaceIds)
 
 type Args = {}
 
-export const _selectSpaceIdsOwnedByAccount:
-  SelectOneFn<Args, OwnSpaceIds | undefined> = (
-    state,
-    { id: myAddress }
-  ) =>
+export const selectEntityOfSpaceIdsByOwner:
+  SelectOneFn<Args, MaybeEntity> =
+  (state, { id: myAddress }) =>
     selectors.selectById(state, myAddress)
 
-export const selectSpaceIdsOwnedByAccount = (state: RootState, id: AccountId) => 
-  _selectSpaceIdsOwnedByAccount(state, { id })?.ownSpaceIds
+export const selectSpaceIdsByOwner = (state: RootState, id: AccountId) => 
+  selectEntityOfSpaceIdsByOwner(state, { id })?.ownSpaceIds
 
 type FetchOneSpaceIdsArgs = FetchOneArgs<Args>
 
-type FetchOneRes = OwnSpaceIds | undefined
-
 export const fetchSpaceIdsOwnedByAccount = createAsyncThunk
-  <FetchOneRes, FetchOneSpaceIdsArgs, ThunkApiConfig>(
+  <MaybeEntity, FetchOneSpaceIdsArgs, ThunkApiConfig>(
   'ownSpaceIds/fetchOne',
-  async ({ api, id }, { getState }): Promise<FetchOneRes> => {
+  async ({ api, id }, { getState }): Promise<MaybeEntity> => {
 
     const myAddress = id as AccountId
-    const knownSpaceIds = selectSpaceIdsOwnedByAccount(getState(), myAddress)
+    const knownSpaceIds = selectSpaceIdsByOwner(getState(), myAddress)
     const isKnownOwner = typeof knownSpaceIds !== 'undefined'
     if (isKnownOwner) {
       // Nothing to load: space ids owned by this account are already loaded.

@@ -5,6 +5,7 @@ export type EntityId = string
 export type AccountId = EntityId
 export type SpaceId = EntityId
 export type PostId = EntityId
+export type ReactionId = EntityId
 
 /** `ProfileId` is the alias for `AccountId`. */
 export type ProfileId = EntityId

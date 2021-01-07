@@ -20,7 +20,7 @@ import { useCreateReloadPost, useCreateReloadSpace } from 'src/rtk/app/hooks'
 import { idToBn, PostId, SpaceId } from 'src/types'
 import { useAppSelector } from 'src/rtk/app/store'
 import { useMyAddress } from 'src/components/auth/MyAccountContext'
-import { selectSpaceIdsOwnedByAccount } from 'src/rtk/features/spaceIds/ownSpaceIdsSlice'
+import { selectSpaceIdsByOwner } from 'src/rtk/features/spaceIds/ownSpaceIdsSlice'
 import { PublicPostPreviewById } from '../PublicPostPreview'
 
 const TxButton = dynamic(() => import('../../utils/TxButton'), { ssr: false })
@@ -154,7 +154,7 @@ const InnerSharePostModal = (props: Props) => {
 
 export const SharePostModal = (props: Props) => {
   const myAddress = useMyAddress()
-  const mySpaceIds = useAppSelector(state => selectSpaceIdsOwnedByAccount(state, myAddress as string)) || []
+  const mySpaceIds = useAppSelector(state => selectSpaceIdsByOwner(state, myAddress as string)) || []
 
   return <InnerSharePostModal {...props} spaceIds={mySpaceIds} />
 }

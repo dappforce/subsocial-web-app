@@ -2,7 +2,7 @@ import { notDef } from '@subsocial/utils'
 import React from 'react'
 import { shallowEqual } from 'react-redux'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
-import { selectSpaceIdsFollowedByAccount } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
+import { selectSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { SpaceStruct } from 'src/types'
 import { useMyAddress } from '../auth/MyAccountContext'
 import { isHiddenSpace } from '../spaces/helpers'
@@ -32,8 +32,9 @@ export function FollowSpaceButton (props: FollowSpaceButtonProps) {
 export function InnerFollowSpaceButton (props: InnerFollowSpaceButtonProps) {
   const { space, myAddress, ...otherProps } = props
   const spaceId = space.id
-  // TODO This selector be moved to upper list component to improve performance.
-  const followedSpaceIds = useAppSelector(state => selectSpaceIdsFollowedByAccount(state, myAddress), shallowEqual) || []
+
+  // TODO This selector should be moved to the upper list component to improve performance.
+  const followedSpaceIds = useAppSelector(state => selectSpaceIdsByFollower(state, myAddress), shallowEqual) || []
   const isFollower = followedSpaceIds.indexOf(spaceId) >= 0
 
   const reloadSpace = useCreateReloadSpace()

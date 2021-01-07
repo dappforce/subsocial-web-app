@@ -5,34 +5,25 @@ import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { AccountId } from 'src/types'
 
-export type AccountIdsFollowedByAccount = {
-  /** `id` is an account id that follows accounts. */
+type Entity = {
+  /** `id` is an account address id that follows accounts. */
   id: AccountId
-  followedAccountIds: AccountId[]
+  followingAccountIds: AccountId[]
 }
 
-const adapter = createEntityAdapter<AccountIdsFollowedByAccount>()
+type MaybeEntity = Entity | undefined
+
+const adapter = createEntityAdapter<Entity>()
 
 const selectors = adapter.getSelectors<RootState>(state => state.followedAccountIds)
 
-// Rename the exports for readability in component usage
-export const {
-  // selectById: selectAccountIdsFollowedByAccount,
-  selectIds: selectAllAccountFollowers,
-  // selectEntities: selectFollowedAccountIdsEntities,
-  // selectAll: selectAllFollowedAccountIds,
-  // selectTotal: selectTotalAccountFollowers
-} = selectors
-
-export const _selectAccountIdsFollowedByAccount:
-  SelectOneFn<Args, AccountIdsFollowedByAccount | undefined> = (
-    state, 
-    { id: follower }
-  ) =>
+export const selectEntityOfAccountIdsByFollower:
+  SelectOneFn<Args, MaybeEntity> =
+  (state, { id: follower }) =>
     selectors.selectById(state, follower)
 
-export const selectAccountIdsFollowedByAccount = (state: RootState, id: AccountId) => 
-  _selectAccountIdsFollowedByAccount(state, { id })?.followedAccountIds
+export const selectAccountIdsByFollower = (state: RootState, id: AccountId) => 
+  selectEntityOfAccountIdsByFollower(state, { id })?.followingAccountIds
 
 type Args = {
   reload?: boolean
@@ -40,25 +31,26 @@ type Args = {
 
 type FetchOneAccountIdsArgs = FetchOneArgs<Args>
 
-type FetchOneRes = AccountIdsFollowedByAccount | undefined
-
-export const fetchAccountIdsFollowedByAccount = createAsyncThunk
-  <FetchOneRes, FetchOneAccountIdsArgs, ThunkApiConfig>(
+export const fetchEntityOfAccountIdsByFollower = createAsyncThunk
+  <MaybeEntity, FetchOneAccountIdsArgs, ThunkApiConfig>(
   'followedAccountIds/fetchOne',
-  async ({ api, id, reload }, { getState }): Promise<FetchOneRes> => {
+  async ({ api, id, reload }, { getState }): Promise<MaybeEntity> => {
 
     const follower = id as AccountId
-    const knownAccountIds = selectAccountIdsFollowedByAccount(getState(), follower)
+    const knownAccountIds = selectAccountIdsByFollower(getState(), follower)
     const isKnownFollower = typeof knownAccountIds !== 'undefined'
     if (!reload && isKnownFollower) {
-      // Nothing to load: space ids followed by this account are already loaded.
+      // Nothing to load: account ids followed by this account are already loaded.
       return undefined
     }
+
     const readyApi = await api.substrate.api
-    const accountIds = await readyApi.query.profileFollows.accountsFollowedByAccount(follower) as unknown as GenericAccountId[]
+    const accountIds = await readyApi.query.profileFollows
+      .accountsFollowedByAccount(follower) as unknown as GenericAccountId[]
+
     return {
       id: follower,
-      followedAccountIds: accountIds.map(x => x.toString())
+      followingAccountIds: accountIds.map(x => x.toString())
     }
   }
 )
@@ -66,18 +58,12 @@ export const fetchAccountIdsFollowedByAccount = createAsyncThunk
 const slice = createSlice({
   name: 'followedAccountIds',
   initialState: adapter.getInitialState(),
-  reducers: {
-    upsertFollowedAccountIdsByAccount: adapter.upsertOne,
-  },
+  reducers: {},
   extraReducers: builder => {
-    builder.addCase(fetchAccountIdsFollowedByAccount.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchEntityOfAccountIdsByFollower.fulfilled, (state, { payload }) => {
       if (payload) adapter.upsertOne(state, payload)
     })
   }
 })
-
-export const {
-  upsertFollowedAccountIdsByAccount,
-} = slice.actions
 
 export default slice.reducer

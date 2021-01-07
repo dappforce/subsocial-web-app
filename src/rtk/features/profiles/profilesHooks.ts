@@ -3,7 +3,7 @@ import { getPageOfIds } from 'src/components/utils/getIds'
 import { useActions } from 'src/rtk/app/helpers'
 import { useFetchEntities, useFetchEntity, useFetchOneEntity } from 'src/rtk/app/hooksCommon'
 import { AccountId } from 'src/types'
-import { _selectAccountIdsFollowedByAccount, fetchAccountIdsFollowedByAccount } from './followedAccountIdsSlice'
+import { selectEntityOfAccountIdsByFollower, fetchEntityOfAccountIdsByFollower } from './followedAccountIdsSlice'
 import { fetchProfiles, SelectProfileArgs, selectProfiles, SelectProfilesArgs } from './profilesSlice'
 
 export const useFetchProfile = (args: SelectProfileArgs) => {
@@ -20,14 +20,16 @@ export const useCreateReloadProfile = () => {
 }
 
 export const useFetchAccountIdsByFollower = (follower: AccountId) => {
-  return useFetchOneEntity(_selectAccountIdsFollowedByAccount, fetchAccountIdsFollowedByAccount, { id: follower })
+  return useFetchOneEntity(
+    selectEntityOfAccountIdsByFollower,
+    fetchEntityOfAccountIdsByFollower,
+    { id: follower }
+  )
 }
 
 const useFetchPageOfProfilesByIds = (accountIds: AccountId[] = []) => {
   const { query } = useRouter()
-
   const ids = getPageOfIds(accountIds, query)
-  
   const { entities, error, loading } = useFetchProfiles({ ids })
 
   return { 
@@ -38,9 +40,9 @@ const useFetchPageOfProfilesByIds = (accountIds: AccountId[] = []) => {
   }
 }
 
-export const useFetchPageOfProfilesByFollower = (owner: AccountId) => {
-  const { entity, loading: l1, error: err1 } = useFetchAccountIdsByFollower(owner)
-  const { accountIds, profiles, loading: l2, error: err2 } = useFetchPageOfProfilesByIds(entity?.followedAccountIds)
+export const useFetchPageOfProfilesByFollower = (follower: AccountId) => {
+  const { entity, loading: l1, error: err1 } = useFetchAccountIdsByFollower(follower)
+  const { accountIds, profiles, loading: l2, error: err2 } = useFetchPageOfProfilesByIds(entity?.followingAccountIds)
 
   return { 
     profiles,
@@ -52,6 +54,6 @@ export const useFetchPageOfProfilesByFollower = (owner: AccountId) => {
 
 export const useCreateReloadAccountIdsByFollower = () => {
   return useActions<AccountId>(({ dispatch, args: id, ...props }) => {
-    dispatch(fetchAccountIdsFollowedByAccount({ id, reload: true, ...props }))
+    dispatch(fetchEntityOfAccountIdsByFollower({ id, reload: true, ...props }))
   })
 }

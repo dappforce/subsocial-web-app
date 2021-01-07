@@ -27,7 +27,7 @@ export enum ActiveVoters {
   All = 0,
   Upvote,
   Downvote
-}// TODO fix activeIndex lock
+}
 
 function isUpvote (reaction: Reaction): boolean {
   return reaction && reaction.kind.toString() === 'Upvote'
@@ -57,7 +57,8 @@ type TabPaneType = {
   voters: Array<Reaction>
 }
 
-const renderTitle = (title: string, voters: Array<Reaction>) => nonEmptyArr(voters) ? `${title} (${voters.length})` : title
+const renderTitle = (title: string, voters: Array<Reaction>) =>
+  nonEmptyArr(voters) ? `${title} (${voters.length})` : title
 
 const InnerModalVoters = (props: VotersProps) => {
   const { reactionIds, open, close, active = ActiveVoters.All } = props
@@ -122,7 +123,10 @@ const InnerModalVoters = (props: VotersProps) => {
   )
 }
 
-const useCreateReactionIdsByPostId = (id: BN) => useGetSubstrateIdsById<ReactionId>({ id, pallet: 'reactions', method: 'reactionIdsByPostId' })
+const useCreateReactionIdsByPostId = (id: BN) =>
+  useGetSubstrateIdsById<ReactionId>(
+    { id, pallet: 'reactions', method: 'reactionIdsByPostId' }
+  )
 
 // TODO use redux
 export const PostVoters = (props: VotersProps) => {

@@ -25,7 +25,6 @@ import { AnyAccountId } from '@subsocial/types'
 export type FlatSubsocialApi = {
   findProfile: (id: AnyAccountId) => Promise<ProfileData | undefined>
   findProfiles: (ids: AnyAccountId[]) => Promise<ProfileData[]>
-  // findProfiles: (ids: ProfileId[]) => Promise<ProfileData[]>
 
   findSpace: (query: FindSpaceQuery) => Promise<SpaceData | undefined>
   findPublicSpaces: (ids: AnyId[]) => Promise<SpaceData[]>
@@ -51,8 +50,6 @@ export function newFlatApi (subsocial: SubsocialApi): FlatSubsocialApi {
 
     findProfiles: async (ids) => {
       return convertToNewProfileDataArray(
-        // TODO ensure that findProfiles() does not swallow None social accounts.
-        // Positions of ids and social accounts results should mutch.
         await subsocial.findProfiles(ids)
       )
     },
