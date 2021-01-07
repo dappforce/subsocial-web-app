@@ -20,7 +20,7 @@ import { selectPost } from 'src/rtk/features/posts/postsSlice'
 import ViewPostLink from '../posts/ViewPostLink'
 import { PathLinks, EventsMsg } from './types'
 import { ViewSpace } from '../spaces/ViewSpace'
-import dayjs from 'dayjs'
+import { formatDate } from '../utils'
 
 type NotificationMessageProps = {
   msg: string,
@@ -72,7 +72,7 @@ export function InnerNotification (props: InnerNotificationProps) {
             {preview}
           </span>
         </div>
-        <MutedDiv className='DfDate'>{dayjs(date).format('lll')}</MutedDiv>
+        <MutedDiv className='DfDate'>{formatDate(date)}</MutedDiv>
       </div>
       {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} className='mb-2' />}
     </div>

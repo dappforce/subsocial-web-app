@@ -6,7 +6,7 @@ import { CommentContent } from '@subsocial/types'
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview'
 import Link from 'next/link'
 import { Pluralize, pluralize } from '../utils/Plularize'
-import { formatUnixDate, IconWithLabel, isHidden } from '../utils'
+import { formatDate, IconWithLabel, isHidden } from '../utils'
 import dayjs from 'dayjs'
 import { EditComment } from './UpdateComment'
 import { NewComment } from './CreateComment'
@@ -116,7 +116,9 @@ export const ViewComment: FC<Props> = (props) => {
         details={
           <span>
             <Link href='/[spaceId]/[slug]' as={commentLink}>
-              <a className='DfGreyLink'>{dayjs(formatUnixDate(createdAtTime)).fromNow()}</a>
+              <a className='DfGreyLink' title={formatDate(createdAtTime)}>
+                {dayjs(createdAtTime).fromNow()}
+              </a>
             </Link>
             {' · '}
             {pluralize(score, 'Point')}

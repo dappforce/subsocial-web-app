@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import Link from 'next/link'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
-import { formatUnixDate, IconWithLabel, isHidden, isVisible } from '../../utils'
+import { formatDate, IconWithLabel, isHidden, isVisible } from '../../utils'
 import { ViewSpace } from '../../spaces/ViewSpace'
 import { DfBgImageLink } from '../../utils/DfBgImg'
 import isEmpty from 'lodash.isempty'
@@ -168,7 +168,7 @@ export const PostCreator: FC<PostCreatorProps> = ({ postDetails, size, withSpace
         }
         {space && <Link href='/[spaceId]/[slug]' as={postUrl(space.struct, post)}>
           <a className='DfGreyLink'>
-            {formatUnixDate(createdAtTime)}
+            {formatDate(createdAtTime)}
           </a>
         </Link>}
       </div>}

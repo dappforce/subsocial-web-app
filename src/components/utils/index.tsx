@@ -7,7 +7,6 @@ import { LoadingOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { Profile, SocialAccount } from '@subsocial/types/substrate/interfaces'
 import { ProfileContent } from '@subsocial/types/offchain'
-import { Moment } from '@polkadot/types/interfaces'
 import { isMyAddress } from '../auth/MyAccountContext'
 import { AnyAccountId } from '@subsocial/types'
 import { hexToBn } from '@polkadot/util'
@@ -77,9 +76,11 @@ export const Loading = ({ label, style, center = true }: LoadingProps) => {
   </div>
 }
 
-export const formatUnixDate = (_seconds: number | BN | Moment, format = 'lll') => {
-  const seconds = typeof _seconds === 'number' ? _seconds : _seconds.toNumber()
-  return dayjs(seconds).format(format)
+export const DEFAULT_DATE_FORMAT = 'lll'
+
+export const formatDate = (date: dayjs.ConfigType | BN, format = DEFAULT_DATE_FORMAT) => {
+  date = BN.isBN(date) ? date.toNumber() : date
+  return dayjs(date).format(format)
 }
 
 /**
