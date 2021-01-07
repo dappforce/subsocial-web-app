@@ -55,41 +55,43 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
     })
   }
 
-
   const newExtension = new PostExtension({ Comment: commentExt })
 
   const newTxParams = (cid: IpfsCid) =>
     [ new OptionId(), newExtension, new IpfsContent(cid) ]
 
-  const onFailedReduxAction = (id: string) =>
-    removeReply({ replyId: id, parentId })
-
-  const onSuccessReduxAction = (id: BN, fakeId: string) =>
-    flatApi.findPostWithSomeDetails({ id })
-      .then(comment => {
-        comment && changeReply({
-          reply: comment.post.struct,
-          rootPostId,
-          parentId,
-          idToRemove: fakeId
-        })
+  const replaceTempReplyWithOnChainVersion = (onChainId: BN, fakeId: string) =>
+    flatApi.findPostWithSomeDetails({ id: onChainId }).then(reply => {
+      reply && changeReply({
+        reply: reply.post.struct,
+        rootPostId,
+        parentId,
+        idToRemove: fakeId
       })
+    })
 
-  const onTxReduxAction = (body: string, fakeId: string) => {
+  const putTempReplyInReduxStore = (replyBody: string, fakeId: string) => {
     if (!address) return
 
     const replyData = {
       struct: buildMockComment({ fakeId, address }),
-      content: convertToDerivedContent({ body })
+      content: convertToDerivedContent({ body: replyBody })
     } as PostData
   
-    upsertReply({
-      replyData,
-      parentId,
-    })
+    // Put a temp reply in Redux store:
+    upsertReply({ replyData, parentId })
 
+    // Increment a number of replies on a parent post:
+    upsertPost({ ...post, repliesCount: post.repliesCount + 1 })
   }
 
+  const removeTempReplyFromReduxStore = (fakeId: string) => {
+    // Put a temp reply in Redux store:
+    removeReply({ replyId: fakeId, parentId })
+
+    // Reset a parent post to its initial state:
+    upsertPost(post)
+  }
 
   const buildTxButton = ({ disabled, json, fakeId, ipfs, setIpfsCid, onClick, onFailed, onSuccess }: CommentTxButtonType) =>
     <TxButton
@@ -104,24 +106,16 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
       })}
       tx='posts.createPost'
       onFailed={(txResult) => {
-        if (fakeId) {
-          onFailedReduxAction(fakeId)
-          upsertPost(post)
-        }
-
+        fakeId && removeTempReplyFromReduxStore(fakeId)
         onFailed && onFailed(txResult)
       }}
       onSuccess={(txResult) => {
-        const id = getNewIdFromEvent(txResult)
-        id && fakeId && onSuccessReduxAction(id, fakeId)
+        const onChainId = getNewIdFromEvent(txResult)
+        onChainId && fakeId && replaceTempReplyWithOnChainVersion(onChainId, fakeId)
         onSuccess && onSuccess(txResult)
       }}
       onClick={() => {
-        if (fakeId) {
-          onTxReduxAction(json.body, fakeId)
-          const repliesCount = post.repliesCount + 1
-          upsertPost({ ...post, repliesCount })
-        }
+        fakeId && putTempReplyInReduxStore(json.body, fakeId)
         onClick && onClick()
       }}
     />
