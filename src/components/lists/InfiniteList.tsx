@@ -27,10 +27,7 @@ type InfiniteListByPageProps<T> = InfiniteListPropsByData<T> & {
 }
 
 export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps<T>) => {
-  const {
-    totalCount,
-  } = props
-
+  const { totalCount } = props
   const { query: { page: pagePath } } = useRouter()
 
   const initialPage = pagePath
@@ -48,7 +45,7 @@ export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps
   return <InnerInfiniteList {...props} canHaveMoreData={canHaveMoreData} />
 }
 
-const canHaveMoreData = (currentPageItems?: any[]) => {
+const canHaveMoreData = <T extends any>(currentPageItems?: T[]) => {
   return currentPageItems
     ? currentPageItems.length >= DEFAULT_PAGE_SIZE
     : true

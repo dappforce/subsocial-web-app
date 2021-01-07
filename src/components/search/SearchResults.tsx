@@ -73,7 +73,7 @@ const InnerSearchResultList = <T extends SearchResultsType>(props: InnerSearchRe
     return router.query[param]
   }
 
-  const querySearch: InnerLoadMoreFn<T> = async (page, size) => {
+  const querySearch: InnerLoadMoreFn<SearchResultsType> = async (page, size) => {
     const tab = getReqParam('tab') as ElasticIndexTypes[]
     const query = getReqParam('q') as string
     const tags = getReqParam('tags') as string[]
@@ -115,11 +115,11 @@ const InnerSearchResultList = <T extends SearchResultsType>(props: InnerSearchRe
       dispatch(fetchPosts({ ids: postIds, api })),
     ])
 
-    return (res || []) as any 
+    return res || []
   }
 
   const List = useCallback(() =>
-    <InfiniteListByData {...props} loadMore={querySearch} />,
+    <InfiniteListByData {...props} loadMore={querySearch as InnerLoadMoreFn<any>} />,
     [ router.asPath ]
   )
 
