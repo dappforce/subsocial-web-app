@@ -102,7 +102,7 @@ export function InnerForm (props: FormProps) {
     ipfs
   })
 
-  const goToView = () => {
+  const goToProfilePage = () => {
     if (address) {
       Router.push('/accounts/[address]', accountUrl({ address }))
         .catch(err => log.error('Failed to redirect to "View Account" page:', err))
@@ -115,7 +115,7 @@ export function InnerForm (props: FormProps) {
 
   const onSuccess: TxCallback = () => {
     clearAutoSavedContent('profile')
-    goToView()
+    goToProfilePage()
   }
 
   const onDescChanged = (mdText: string) => {

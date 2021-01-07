@@ -123,15 +123,14 @@ export function InnerForm (props: FormProps) {
   }
 
   const onSuccess: TxCallback = (txResult) => {
-    const id = post?.struct.id || getNewIdFromEvent(txResult)?.toString()
     clearAutoSavedContent('post')
-
+    const id = post?.struct.id || getNewIdFromEvent(txResult)?.toString()
     if (id) {
-      goToView(id)
+      goToPostPage(id)
     } 
   }
 
-  const goToView = (postId: AnyId) => {
+  const goToPostPage = (postId: AnyId) => {
     const content = getFieldValues() as PostContent
     const postData = { struct: { id: postId.toString() }, content }
     router.push('/[spaceId]/[slug]', postUrl(space.struct, postData))

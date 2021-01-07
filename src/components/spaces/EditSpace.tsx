@@ -133,9 +133,8 @@ export function InnerForm (props: FormProps) {
   }
 
   const onSuccess: TxCallback = (txResult) => {
-    const id = space?.struct.id || getNewIdFromEvent(txResult)?.toString()
-    
     clearAutoSavedContent('space')
+    const id = space?.struct.id || getNewIdFromEvent(txResult)?.toString()
     if (id) {
       goToSpacePage(id)
     }
