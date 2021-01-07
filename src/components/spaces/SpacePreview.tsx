@@ -24,7 +24,7 @@ type PublicSpacePreviewByIdProps = {
 export const PublicSpacePreviewById = ({ spaceId }: PublicSpacePreviewByIdProps) => {
   const space = useAppSelector(state => selectSpace(state, { id: spaceId }), shallowEqual)
 
-  if (!space || isUnlistedSpace(space)) return null
+  if (isUnlistedSpace(space)) return null
 
   return <SpacePreview space={space} />
 }

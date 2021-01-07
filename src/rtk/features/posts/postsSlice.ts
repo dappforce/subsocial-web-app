@@ -168,7 +168,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     const alreadyLoadedIds = new Set(newIds)
     const extPostIds = new Set<PostId>()
 
-    const addIdToSet = (id: PostId) => {
+    const addToExtPostIds = (id: PostId) => {
       if (reload || !alreadyLoadedIds.has(id)) {
         extPostIds.add(id)
       }
@@ -176,9 +176,9 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
 
     entities.forEach((x) => {
       if (x.isComment) {
-        addIdToSet(asCommentStruct(x).rootPostId)
+        addToExtPostIds(asCommentStruct(x).rootPostId)
       } else if (x.isSharedPost) {
-        addIdToSet(asSharedPostStruct(x).sharedPostId)
+        addToExtPostIds(asSharedPostStruct(x).sharedPostId)
       }
     })
 

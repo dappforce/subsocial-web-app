@@ -21,7 +21,7 @@ import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsS
 import { StatsPanel } from '../PostStats'
 import { useAppSelector } from 'src/rtk/app/store'
 import { PostWithSomeDetails } from 'src/types'
-import { useFetchMyPostReactions } from 'src/rtk/features/reactions/myPostReactionsHooks'
+import { useFetchMyReactionsByPostIds } from 'src/rtk/features/reactions/myPostReactionsHooks'
 
 export type PostDetailsProps = {
   postData: PostWithAllDetails,
@@ -33,7 +33,9 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   const { postData: initialPostData, rootPostData } = props
   const id = initialPostData.id
   const { isNotMobile } = useResponsiveSize()
-  useFetchMyPostReactions([ id ])
+
+  // TODO use useFetchMyReactionByPostId ?
+  useFetchMyReactionsByPostIds([ id ])
 
   const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
 
@@ -149,9 +151,7 @@ export async function loadPostOnNextReq (
   await dispatch(fetchPosts({ api: subsocial, ids, reload: true }))
   const postData = selectPost(reduxStore.getState(), { id: postId })
 
-  if (!postData ||
-    !postData.space
-  ) return return404(context)
+  if (!postData?.space) return return404(context)
 
   const { space, post } = postData
 
@@ -162,7 +162,6 @@ export async function loadPostOnNextReq (
   )
     
   const currentPostUrl = spaceUrl(currentSpace, slugStr)
-
   const validPostUrl = postUrl(space, post)
 
   if (currentPostUrl !== validPostUrl && res) {
@@ -178,7 +177,7 @@ getInitialPropsWithRedux(PostPage, async (props) => {
   
   const postData = await loadPostOnNextReq(props)
 
-  let rootPostData: PostWithSomeDetails | undefined = undefined
+  let rootPostData: PostWithSomeDetails | undefined
 
   const postStruct = postData.post.struct
 
