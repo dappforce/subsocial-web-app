@@ -18,6 +18,7 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
+    "postinstall": "yarn next telemetry disable",
     "check": "yarn lint",
     "lint": "tsc && eslint --cache 'src/**/*.{ts,tsx,js}' --fix",
     "test": "yarn patch && echo \"skipping tests\"",
