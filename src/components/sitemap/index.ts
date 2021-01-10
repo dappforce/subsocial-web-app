@@ -170,18 +170,19 @@ export class SpacesUrlSet extends React.Component {
     
     spaces.forEach((space) => {
       const spaceLoc = spaceUrl(space)
-      const common = {
-        lastmod: getLastModFromStruct(space),
-        changefreq: 'daily' as ChangeFreq
-      }
-      items.push({
-        loc: spaceLoc,
-        ...common
-      })
-      items.push({
-        loc: `${spaceLoc}/about`,
-        ...common
-      })
+      const lastmod = getLastModFromStruct(space)
+      items.push(
+        {
+          loc: spaceLoc,
+          changefreq: 'daily',
+          lastmod,
+        },
+        {
+          loc: `${spaceLoc}/about`,
+          changefreq: 'weekly',
+          lastmod,
+        }
+      )
     })
   
     sendXml(props, renderUrlSet(items))
