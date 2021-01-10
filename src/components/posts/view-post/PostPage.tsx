@@ -70,7 +70,7 @@ export const PostPage: NextPage<PostDetailsProps> = (props) => {
   const goToCommentsId = 'comments'
 
   const renderResponseTitle = (parentPost?: PostData) => parentPost && <>
-      In response to{' '}
+    In response to{' '}
     <ViewPostLink space={spaceStruct} post={parentPost} title={parentPost.content?.title} />
   </>
 

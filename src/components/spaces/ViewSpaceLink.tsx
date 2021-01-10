@@ -10,7 +10,7 @@ type Props = {
   className?: string
 }
 
-export const ViewSpaceLink = ({
+export const ViewSpaceLink = React.memo(({
   space,
   title,
   hint,
@@ -24,6 +24,6 @@ export const ViewSpaceLink = ({
       <a className={'DfBlackLink ' + className} title={hint}>{title}</a>
     </Link>
   </span>
-}
+})
 
 export default ViewSpaceLink

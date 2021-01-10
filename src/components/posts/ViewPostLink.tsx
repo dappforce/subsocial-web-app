@@ -11,7 +11,7 @@ type Props = {
   className?: string
 }
 
-export const ViewPostLink = ({
+export const ViewPostLink = React.memo(({
   space,
   post,
   title,
@@ -26,6 +26,6 @@ export const ViewPostLink = ({
       <a className={className} title={hint}>{title}</a>
     </Link>
   )
-}
+})
 
 export default ViewPostLink
