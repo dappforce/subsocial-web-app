@@ -2,20 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { IdentityProps as Props } from '@polkadot/react-identicon/types'
+import { IdentityProps } from '@polkadot/react-identicon/types'
 
 import React from 'react'
 import BaseIdentityIcon from '@polkadot/react-identicon'
 import Avatar from 'antd/lib/avatar/avatar'
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config'
 
-export function getIdentityTheme (): 'substrate' {
-  return 'substrate'
-}
+const DEFAULT_THEME = 'substrate'
 
-export function IdentityIcon ({ prefix, theme, value, size = DEFAULT_AVATAR_SIZE, ...props }: Props): React.ReactElement<Props> {
+export const IdentityIcon = React.memo((allProps: IdentityProps) => {
+  const { prefix, theme, value, size = DEFAULT_AVATAR_SIZE, ...props } = allProps
   const address = value?.toString() || ''
-  const thisTheme = theme || getIdentityTheme()
+  const thisTheme = theme || DEFAULT_THEME
 
   return (
     <Avatar
@@ -32,6 +31,6 @@ export function IdentityIcon ({ prefix, theme, value, size = DEFAULT_AVATAR_SIZE
       {...props}
     />
   )
-}
+})
 
 export default IdentityIcon

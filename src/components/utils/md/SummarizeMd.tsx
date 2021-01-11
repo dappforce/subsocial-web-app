@@ -13,7 +13,8 @@ type Props = {
   more?: JSX.Element
 }
 
-export const SummarizeMd = ({ content, limit: initialLimit, more }: Props) => {
+export const SummarizeMd = React.memo((props: Props) => {
+  const { content, limit: initialLimit, more } = props
   const { summary: initialSummary = '', isShowMore = false } = content || {}
   const isMobile = useIsMobileWidthOrDevice()
 
@@ -36,6 +37,6 @@ export const SummarizeMd = ({ content, limit: initialLimit, more }: Props) => {
       {isShowMore && <span className='DfSeeMore'>{' '}{more}</span>}
     </div>
   )
-}
+})
 
 export default SummarizeMd

@@ -6,7 +6,9 @@ type IconWithTitleProps = {
   label?: string
 }
 
-export const IconWithLabel = ({ icon, label, count = 0 }: IconWithTitleProps) => {
+export const IconWithLabel = React.memo((props: IconWithTitleProps) => {
+  const { icon, label, count = 0 } = props
+
   const countStr = count > 0
     ? count.toString()
     : undefined
@@ -19,4 +21,4 @@ export const IconWithLabel = ({ icon, label, count = 0 }: IconWithTitleProps) =>
     {icon}
     {text && <span className='ml-2'>{text}</span>}
   </>
-}
+})

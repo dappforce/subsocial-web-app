@@ -29,7 +29,7 @@ type VoterButtonProps = VoterProps & ButtonProps & {
   preview?: boolean
 };
 
-const VoterButton = ({
+const VoterButton = React.memo(({
   reactionEnum,
   reaction: oldReaction,
   post,
@@ -76,7 +76,7 @@ const VoterButton = ({
     ? 'reactions.deletePostReaction'
     : 'reactions.updatePostReaction'
 
-  const updateOrDelete = (deleteReaction: boolean, _newReactionId?: ReactionId) => {
+  const updateOrDeleteReaction = (deleteReaction: boolean, _newReactionId?: ReactionId) => {
     let newReactionId = _newReactionId || reactionId
 
     if (!newReactionId && !deleteReaction) {
@@ -114,14 +114,14 @@ const VoterButton = ({
     }
     params={buildTxParams()}
     onClick={() => {
-      updateOrDelete(isActive)
+      updateOrDeleteReaction(isActive)
       upsertPost(getPostStructWithUpdatedCounts({ post, oldReaction, newKind }))
     }}
     onSuccess={(txResult) => {
       reloadPost(args)
       
       const newReactionId = reactionId || getNewIdsFromEvent(txResult)[1]?.toString()
-      updateOrDelete(isActive, newReactionId)
+      updateOrDeleteReaction(isActive, newReactionId)
       onSuccess && onSuccess()
     }}
     onFailed={() => {
@@ -137,7 +137,7 @@ const VoterButton = ({
       label={(preview || isMobile) ? undefined : newKind}
     />
   </TxButton>
-}
+})
 
 type InnerVoterButtonsProps = VoterProps & {
   reaction?: ReactionStruct

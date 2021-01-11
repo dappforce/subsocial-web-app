@@ -1,4 +1,4 @@
-import { SpaceContent } from 'src/types'
+import { SpaceContent, SpaceWithSomeDetails } from 'src/types'
 import { nonEmptyStr, isEmptyStr } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
 import Error from 'next/error'
@@ -28,6 +28,22 @@ const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { 
 
 type Props = ViewSpaceProps
 
+const renderSpaceName = (space: SpaceWithSomeDetails) => {
+  const name = space?.content?.name
+  return isEmptyStr(name)
+    ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan>
+    : name
+}
+
+type SpaceNameAsLinkProps = BareProps & {
+  space: SpaceWithSomeDetails
+}
+
+export const SpaceNameAsLink = React.memo(({ space, ...props }: SpaceNameAsLinkProps) => {
+  const spaceName = renderSpaceName(space)
+  return <ViewSpaceLink space={space.struct} title={spaceName} {...props} />
+})
+
 export const ViewSpace = (props: Props) => {
   if (props.statusCode === 404) {
     return <Error statusCode={props.statusCode} />
@@ -39,7 +55,10 @@ export const ViewSpace = (props: Props) => {
     return null
   }
 
-  const spaceData = useAppSelector(state => selectSpace(state, { id: initialSpaceData!.id }), shallowEqual) || initialSpaceData
+  const spaceData = useAppSelector(state =>
+    selectSpace(state, { id: initialSpaceData!.id }),
+    shallowEqual
+  ) || initialSpaceData
 
   const {
     preview = false,
@@ -61,10 +80,9 @@ export const ViewSpace = (props: Props) => {
   const { struct: space, content = {} as SpaceContent } = spaceData
   const { ownerId: owner } = space
 
-  const { about, name, image, tags, email, links } = content
+  const { about, image, tags, email, links } = content
   const contactInfo = { email, links }
-
-  const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
+  const spaceName = renderSpaceName(spaceData)
 
   const Avatar = () => <SpaceAvatar space={space} address={owner} avatar={image} size={imageSize} />
 
@@ -72,12 +90,9 @@ export const ViewSpace = (props: Props) => {
 
   const primaryClass = `ProfileDetails ${isMy && 'MySpace'}`
 
-  const SpaceNameAsLink = (props: BareProps) =>
-    <ViewSpaceLink space={space} title={spaceName} {...props} />
-
   const renderNameOnly = () =>
     withLink
-      ? <SpaceNameAsLink />
+      ? <SpaceNameAsLink space={spaceData} />
       : <span>{spaceName}</span>
 
   const renderDropDownPreview = () =>
@@ -103,7 +118,7 @@ export const ViewSpace = (props: Props) => {
     preview ? 'span' : 'h1',
     { className: 'header'},
     <>
-      <SpaceNameAsLink className='mr-3' />
+      <SpaceNameAsLink className='mr-3' space={spaceData} />
       <MyEntityLabel isMy={isMy}>My space</MyEntityLabel>
     </>
   )

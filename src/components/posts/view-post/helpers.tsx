@@ -2,14 +2,14 @@ import React, { FC, useState } from 'react'
 import Link from 'next/link'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
 import { formatDate, IconWithLabel, isHidden, isVisible } from '../../utils'
-import { ViewSpace } from '../../spaces/ViewSpace'
+import { SpaceNameAsLink } from '../../spaces/ViewSpace'
 import { DfBgImageLink } from '../../utils/DfBgImg'
 import isEmpty from 'lodash.isempty'
 import { EditOutlined, EllipsisOutlined, MessageOutlined } from '@ant-design/icons'
 import { Menu, Dropdown, Button } from 'antd'
 import { isMyAddress } from '../../auth/MyAccountContext'
-import { Post, PostExtension, PostId } from '@subsocial/types/substrate/interfaces'
-import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData, SpaceStruct, PostStruct, idToPostId, flattenPostStruct } from 'src/types'
+import { PostId } from '@subsocial/types/substrate/interfaces'
+import { SpaceData, PostWithSomeDetails, PostWithAllDetails, PostData, SpaceStruct, PostStruct, idToPostId } from 'src/types'
 import ViewTags from '../../utils/ViewTags'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
@@ -20,8 +20,6 @@ import { VoterButtons } from 'src/components/voting/VoterButtons'
 import Segment from 'src/components/utils/Segment'
 import { RegularPreview } from '.'
 import { PostVoters, ActiveVoters } from 'src/components/voting/ListVoters'
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
-import { Option } from '@polkadot/types'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { postUrl, editPostUrl, HasDataForSlug } from 'src/components/urls'
@@ -35,9 +33,6 @@ type DropdownProps = {
   post: PostData
   withEditButton?: boolean
 }
-
-export const isSharedPost = (extension: PostExtension): boolean => extension.isSharedPost || (extension as any).SharedPost
-export const isComment = (extension: PostExtension): boolean => extension.isComment || (extension as any).Comment
 
 export const isUnlistedPost = (data?: PostData): data is undefined => 
   !data || !data.struct || isHidden({ struct: data.struct })
@@ -60,7 +55,6 @@ export const PostDropDownMenu: FC<DropdownProps> = (props) => {
   const { struct } = post
   const isMyPost = isMyAddress(struct.ownerId)
   const postId = struct.id
-  const postKey = `post-${postId.toString()}`
 
   const editPostProps = {
     href: '/[spaceId]/[slug]/edit',
@@ -69,18 +63,18 @@ export const PostDropDownMenu: FC<DropdownProps> = (props) => {
 
   const menu = (
     <Menu>
-      {isMyPost && <Menu.Item key={`edit-${postKey}`}>
+      {isMyPost && <Menu.Item key={`edit-${postId}`}>
         <Link {...editPostProps}>
           <a className='item'>Edit post</a>
         </Link>
       </Menu.Item>}
-      {isMyPost && <Menu.Item key={`hidden-${postKey}`}>
+      {isMyPost && <Menu.Item key={`hidde-${postId}`}>
         <HiddenPostButton post={struct} asLink />
       </Menu.Item>}
-      <Menu.Item key={`view-reaction-${postKey}`} >
+      <Menu.Item key={`view-reactions-${postId}`} >
         <ReactionModal postId={idToPostId(postId)} />
       </Menu.Item>
-      {/* {edit_history.length > 0 && <Menu.Item key='1'>
+      {/* {edit_history.length > 0 && <Menu.Item key={`edit-history-${postId}`}>
           <div onClick={() => setOpen(true)} >View edit history</div>
         </Menu.Item>} */}
     </Menu>
@@ -116,7 +110,13 @@ export const HiddenPostAlert = (props: HiddenPostAlertProps) => {
   return <PostAlert />
 }
 
-export const renderPostLink = (space: SpaceStruct, post: HasDataForSlug, title?: string) =>
+type BlackPostLinkProps = {
+  space: SpaceStruct
+  post: HasDataForSlug
+  title?: string
+}
+
+const BlackPostLink = ({ space, post, title }: BlackPostLinkProps) =>
   <ViewPostLink space={space} post={post} title={title} className='DfBlackLink' />
 
 type PostNameProps = {
@@ -124,7 +124,7 @@ type PostNameProps = {
   withLink?: boolean
 }
 
-export const PostName: FC<PostNameProps> = ({ post: postDetails, withLink }) => {
+export const PostName: FC<PostNameProps> = React.memo(({ post: postDetails, withLink }) => {
   const { space, post } = postDetails
   const { content: { title } = {} } = post
 
@@ -132,10 +132,12 @@ export const PostName: FC<PostNameProps> = ({ post: postDetails, withLink }) => 
 
   return (
     <div className={'header DfPostTitle--preview'}>
-      {withLink ? renderPostLink(space.struct, post, title) : title}
+      {withLink
+        ? <BlackPostLink space={space.struct} post={post} title={title} />
+        : title}
     </div>
   )
-}
+})
 
 type PostCreatorProps = {
   postDetails: PostWithSomeDetails,
@@ -152,7 +154,7 @@ export const PostCreator: FC<PostCreatorProps> = ({ postDetails, size, withSpace
 
   // TODO replace on loaded space after refactor this components
 
-  return <>
+  return (
     <AuthorPreview
       address={ownerId}
       owner={owner}
@@ -162,18 +164,20 @@ export const PostCreator: FC<PostCreatorProps> = ({ postDetails, size, withSpace
       size={size}
       details={<div>
         {withSpaceName && space && <>
-          <div className='DfGreyLink'>
-            <ViewSpace spaceData={space} nameOnly withLink />
-          </div>{' • '}</>
+          <SpaceNameAsLink space={space} className='DfGreyLink' />
+          {' • '}
+        </>}
+        {space &&
+          <ViewPostLink
+            space={space.struct}
+            post={post}
+            title={formatDate(createdAtTime)}
+            className='DfGreyLink'
+          />
         }
-        {space && <Link href='/[spaceId]/[slug]' as={postUrl(space.struct, post)}>
-          <a className='DfGreyLink'>
-            {formatDate(createdAtTime)}
-          </a>
-        </Link>}
       </div>}
     />
-  </>
+  )
 }
 
 type PostImageProps = {
@@ -181,7 +185,7 @@ type PostImageProps = {
   space: SpaceStruct
 }
 
-const PostImage = ({ post, space }: PostImageProps) => {
+const PostImage = React.memo(({ post, space }: PostImageProps) => {
   const { content } = post
   const isMobile = useIsMobileWidthOrDevice()
   const image = content?.image
@@ -197,7 +201,20 @@ const PostImage = ({ post, space }: PostImageProps) => {
     // TODO add onError handler
     // TODO lazy load image.
   />
+})
+
+type PostSummaryProps = {
+  space: SpaceStruct
+  post: PostData
 }
+
+const PostSummary = React.memo(({ space, post }: PostSummaryProps) => {
+  const { content } = post
+  if (!content) return null
+
+  const seeMoreLink = <BlackPostLink space={space} post={post} title='See More' />
+  return <SummarizeMd content={content} more={seeMoreLink} />
+})
 
 type PostContentProps = {
   postDetails: PostWithSomeDetails,
@@ -205,9 +222,12 @@ type PostContentProps = {
   withImage?: boolean
 }
 
-export const PostContent: FC<PostContentProps> = (props) => {
-  const { postDetails, space, withImage } = props
-  const isMobile = useIsMobileWidthOrDevice()
+type PostContentMemoizedProps = PostContentProps & {
+  isMobile: boolean
+}
+
+const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
+  const { postDetails, space, withImage, isMobile } = props
 
   if (!postDetails) return null
 
@@ -219,8 +239,13 @@ export const PostContent: FC<PostContentProps> = (props) => {
   return <div className='DfContent'>
     {isMobile && withImage && <PostImage post={post} space={space} />}
     <PostName post={postDetails} withLink />
-    <SummarizeMd content={content} more={renderPostLink(space, post, 'See More')} />
+    <PostSummary space={space} post={post} />
   </div>
+})
+
+export const PostContent = (props: PostContentProps) => {
+  const isMobile = useIsMobileWidthOrDevice()
+  return <PostContentMemoized isMobile={isMobile} {...props} />
 }
 
 type PostActionsPanelProps = {
@@ -231,7 +256,8 @@ type PostActionsPanelProps = {
   withBorder?: boolean
 }
 
-const ShowCommentsAction = ({ postDetails, preview, toogleCommentSection }: PostActionsPanelProps) => {
+const ShowCommentsAction = (props: PostActionsPanelProps) => {
+  const { postDetails, preview, toogleCommentSection } = props
   const { post: { struct: { repliesCount } } } = postDetails
   const title = 'Comment'
 
@@ -281,7 +307,7 @@ const SharedPostMd = (props: PostPreviewProps) => {
 
   return struct.isComment
     ? <DfMd source={content?.body} className='DfPostBody' />
-    : <SummarizeMd content={content} more={renderPostLink(space.struct, post, 'See More')} />
+    : <PostSummary space={space.struct} post={post} />
 }
 
 export const SharePostContent = (props: PostPreviewProps) => {
@@ -333,25 +359,26 @@ export const InfoPostPreview: FC<PostPreviewProps> = (props) => {
 
 export const PostNotFound = () => <NoData description='Post not found' />
 
-export const useSubscribedPost = (initPost: PostStruct) => {
-  const [ post, setPost ] = useState(initPost)
+// TODO deprecated? currently this function is not used
+// export const useSubscribedPost = (initPost: PostStruct) => {
+//   const [ post, setPost ] = useState(initPost)
 
-  useSubsocialEffect(({ substrate: { api } }) => {
-    let unsub: { (): void | undefined; (): void; }
+//   useSubsocialEffect(({ substrate: { api } }) => {
+//     let unsub: { (): void | undefined; (): void; }
 
-    const sub = async () => {
-      const readyApi = await api
-      unsub = await readyApi.query.posts.postById(initPost.id, (data: Option<Post>) => {
-        if (data.isSome) {
-          setPost(flattenPostStruct(data.unwrap()))
-        }
-      })
-    }
+//     const sub = async () => {
+//       const readyApi = await api
+//       unsub = await readyApi.query.posts.postById(initPost.id, (data: Option<Post>) => {
+//         if (data.isSome) {
+//           setPost(flattenPostStruct(data.unwrap()))
+//         }
+//       })
+//     }
 
-    sub()
+//     sub()
 
-    return () => unsub && unsub()
-  }, [ initPost.id ])
+//     return () => unsub && unsub()
+//   }, [ initPost.id ])
 
-  return post
-}
+//   return post
+// }

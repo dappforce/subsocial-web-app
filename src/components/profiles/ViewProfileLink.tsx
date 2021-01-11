@@ -9,7 +9,7 @@ type Props = {
   className?: string
 }
 
-export const ViewProfileLink = ({
+export const ViewProfileLink = React.memo(({
   account,
   title,
   hint,
@@ -24,6 +24,6 @@ export const ViewProfileLink = ({
       <a className={className} title={hint}>{title || address.toString()}</a>
     </Link>
   )
-}
+})
 
 export default ViewProfileLink

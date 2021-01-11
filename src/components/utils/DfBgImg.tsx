@@ -10,9 +10,9 @@ export type BgImgProps = {
   rounded?: boolean,
   className?: string,
   style?: CSSProperties
-};
+}
 
-export function DfBgImg (props: BgImgProps) {
+export const DfBgImg = React.memo((props: BgImgProps) => {
   const { src, size, height = size, width = size, rounded = false, className, style } = props
 
   const fullClass = 'DfBgImg ' + className
@@ -27,14 +27,16 @@ export function DfBgImg (props: BgImgProps) {
   }, style)
 
   return <div className={fullClass} style={fullStyle} />
-}
+})
 
 type DfBgImageLinkProps = BgImgProps & LinkProps
 
-export const DfBgImageLink = ({ href, as, ...props }: DfBgImageLinkProps) => <div>
+export const DfBgImageLink = React.memo(({ href, as, ...props }: DfBgImageLinkProps) =>
+  <div>
     <Link href={href} as={as}>
       <a>
-        <DfBgImg {...props}/>
+        <DfBgImg {...props} />
       </a>
     </Link>
   </div>
+)
