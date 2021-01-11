@@ -17,14 +17,14 @@ import { ZERO, resolveBn } from '../utils';
 const log = newLogger('CommentTree')
 
 type LoadProps = {
-  rootPost?: Post,
+  rootPost?: PostWithSomeDetails,
   parent: Post,
   space: Space,
   replies?: PostWithSomeDetails[]
 }
 
 type CommentsTreeProps = {
-  rootPost?: Post,
+  rootPost?: PostWithSomeDetails,
   space: Space,
   comments: PostWithSomeDetails[]
 }

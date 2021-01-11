@@ -4,7 +4,7 @@ import { Comment, Button, Tag } from 'antd';
 import { PostWithSomeDetails } from '@subsocial/types/dto';
 import { CommentContent } from '@subsocial/types';
 import { AuthorPreview } from '../profiles/address-views/AuthorPreview';
-import { Space, Post } from '@subsocial/types/substrate/interfaces';
+import { Space } from '@subsocial/types/substrate/interfaces';
 import Link from 'next/link';
 import { pluralize } from '../utils/Plularize';
 import { formatUnixDate, IconWithLabel, isHidden, ONE, ZERO, resolveBn } from '../utils';
@@ -18,9 +18,10 @@ import { CommentBody } from './helpers';
 import { equalAddresses } from '../substrate';
 import { postUrl } from '../urls';
 import { ShareDropdown } from '../posts/share/ShareDropdown';
+import { ProposerTag } from '../kusama/KusamaProposalDesc';
 
 type Props = {
-  rootPost?: Post,
+  rootPost?: PostWithSomeDetails,
   space: Space,
   comment: PostWithSomeDetails,
   replies?: PostWithSomeDetails[],
@@ -38,7 +39,9 @@ export const ViewComment: FunctionComponent<Props> = ({
     owner
   } = comment
 
-  if (isHidden(comment.post)) return null
+  if (isHidden(comment.post) || !rootPost) return null
+
+  const { post: { struct: rootPostStruct, content: rootPostContent } } = rootPost
 
   const {
     id,
@@ -57,7 +60,7 @@ export const ViewComment: FunctionComponent<Props> = ({
   const commentLink = postUrl(space, struct)
 
   const isRootPostOwner = equalAddresses(
-    rootPost?.owner,
+    rootPostStruct?.owner,
     struct.owner
   )
 
@@ -110,9 +113,12 @@ export const ViewComment: FunctionComponent<Props> = ({
           isShort={true}
           isPadded={false}
           size={32}
-          afterName={isRootPostOwner
-            ? <Tag color='blue'><NotificationOutlined /> Post author</Tag>
-            : undefined
+          afterName={<>
+            <ProposerTag address={commentOwnerAddress} proposalIndex={rootPostContent?.ext?.proposal?.proposalIndex} />
+            {isRootPostOwner
+              ? <Tag color='blue'><NotificationOutlined /> Post author</Tag>
+              : undefined}
+            </>
           }
           details={
             <span>

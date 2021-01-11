@@ -28,7 +28,7 @@ export const CommentSection: React.FunctionComponent<CommentSectionProps> = Reac
   return <Section id={hashId} className={`DfCommentSection ${withBorder && 'TopBorder'}`}>
     <h3><Pluralize count={totalCount} singularText='comment' /></h3>
     <NewComment post={struct} asStub />
-    <CommentsTree rootPost={struct} parent={struct} space={space} replies={replies} />
+    <CommentsTree rootPost={post} parent={struct} space={space} replies={replies} />
   </Section>
 })
 
