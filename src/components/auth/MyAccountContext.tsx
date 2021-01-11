@@ -3,11 +3,12 @@ import store from 'store';
 import { newLogger, nonEmptyStr } from '@subsocial/utils';
 import { AccountId } from '@polkadot/types/interfaces';
 import { equalAddresses } from '../substrate';
-import { ProfileData } from '@subsocial/types';
+import { ProfileData, SocialAccountWithId } from '@subsocial/types';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import { SocialAccount } from '@subsocial/types/substrate/interfaces';
-import { Option } from '@polkadot/types'
+import { GenericAccountId, Option } from '@polkadot/types'
 import { resolveCidOfContent } from '@subsocial/api/utils';
+import registry from '@subsocial/types/substrate/registry';
 
 const log = newLogger('MyAccountContext')
 
@@ -137,13 +138,14 @@ export function MyAccountProvider (props: React.PropsWithChildren<{}>) {
 
       unsub = await readyApi.query.profiles.socialAccountById(address, async (optSocialAccount: Option<SocialAccount>) => {
         let account: ProfileData | undefined
-        const struct = optSocialAccount.unwrapOr(undefined)
+        const initStruct = optSocialAccount.unwrapOr(undefined)
 
-        if (struct) {
-          const profile = struct.profile.unwrapOr(undefined)
+        if (initStruct) {
+          const id = new GenericAccountId(registry, address) as AccountId
+          const profile = initStruct.profile.unwrapOr(undefined)
           const cid = profile && resolveCidOfContent(profile.content)
           const content = cid ? await ipfs.findProfile(cid) : undefined
-
+          const struct = { ...initStruct, id } as SocialAccountWithId
           account = { struct, profile, content }
         }
 
