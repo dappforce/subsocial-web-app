@@ -32,6 +32,16 @@ function initStore (preloadedState?: RootState) {
     reducer: rootReducer,
     preloadedState,
     // devTools: true,
+    // middleware: (getDefaultMiddleware) =>
+    //   getDefaultMiddleware({
+    //     thunk: {
+    //       // extraArgument: myCustomApiService,
+    //       extraArgument: { hello: 'world' }
+    //     },
+    //     // Setting immutableCheck to false can improve performance of Redux in development mode.
+    //     immutableCheck: false,
+    //     // serializableCheck: false,
+    //   }),
   })
 }
 
