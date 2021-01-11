@@ -100,8 +100,8 @@ export const PendingSpaceOwnershipPanel = ({
       {...otherProps}
       desc={<span className='mr-2'>Accept ownership of this space?</span>}
       actions={[
-        <AcceptOwnershipButton />,
-        <RejectOwnershipButton />
+        <AcceptOwnershipButton key='accept-btn' />,
+        <RejectOwnershipButton key='reject-btn' />
       ]}
     />
   } else if (iAmCurrentOwner) {
@@ -116,7 +116,7 @@ export const PendingSpaceOwnershipPanel = ({
     return <EntityStatusPanel
       {...otherProps}
       desc={<span className='mr-2'>{desc}</span>}
-      actions={[ <RejectOwnershipButton /> ]}
+      actions={[ <RejectOwnershipButton key='reject-btn' /> ]}
     />
   }
   

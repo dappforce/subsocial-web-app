@@ -101,7 +101,7 @@ export const ViewComment: FunctionComponent<Props> = ({
         <Button key={`reply-comment-${id}`} className={actionCss} onClick={() => setShowReplyForm(true)}>
           <IconWithLabel icon={<CommentOutlined />} label='Reply' />
         </Button>,
-        <ShareDropdown postDetails={comment} space={space} className={actionCss} />
+        <ShareDropdown key={`dropdown-menu-of-comment-${id}`} postDetails={comment} space={space} className={actionCss} />
       ]}
       author={<div className='DfAuthorBlock'>
         <AuthorPreview
