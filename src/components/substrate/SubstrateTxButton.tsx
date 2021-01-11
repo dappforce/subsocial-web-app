@@ -49,7 +49,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   component?: React.FunctionComponent
 }
 
-export function TxButton ({
+function TxButton ({
   accountId,
   tx,
   params,

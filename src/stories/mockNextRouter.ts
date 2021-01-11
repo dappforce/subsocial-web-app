@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Router, { Router as RouterClass } from 'next/router'
 import { UrlObject } from 'url'
 

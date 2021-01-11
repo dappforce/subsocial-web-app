@@ -13,6 +13,7 @@ export type ReplyIdsByPostId = {
 
 export type RepliesByPostIdMap = Record<PostId, PostWithSomeDetails[]>
 
+// TODO rename to simply adapter
 const replyIdsAdapter = createEntityAdapter<ReplyIdsByPostId>()
 
 const replyIdsSelectors = replyIdsAdapter.getSelectors<RootState>(state => state.replyIds)

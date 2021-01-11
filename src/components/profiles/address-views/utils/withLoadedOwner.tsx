@@ -16,6 +16,7 @@ export function withLoadedOwner<P extends Props> (Component: React.ComponentType
 
     if (initialOwner) return <Component {...props} />
 
+    // TODO seems like this should be fixed: hook after if-clause ^^
     const { entity: owner, loading } = useFetchProfile({ id: address.toString() })
 
     return loading
