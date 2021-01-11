@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getActivities, getReactionActivities, getCommentActivities, getPostActivities, getFollowActivities, getActivityCounts } from '../utils/OffchainUtils';
 import { Tabs } from 'antd';
 import { AccountSpaces, LoadSpacesType } from '../spaces/AccountSpaces';
-import { Counts } from '@subsocial/types';
+import { Counts } from '@subsocial/types'
 import { getLoadMoreNotificationsFn, NotifActivities } from './Notifications';
 import { BaseActivityProps } from './types';
 import { getLoadMoreFeedFn, FeedActivities } from './FeedActivities';
