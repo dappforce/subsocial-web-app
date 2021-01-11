@@ -31,7 +31,7 @@ import { postUrl, editPostUrl, HasSpaceIdOrHandle, HasPostId } from 'src/compone
 import { ShareDropdown } from '../share/ShareDropdown';
 import { ButtonLink } from 'src/components/utils/ButtonLink';
 import { DfMd } from 'src/components/utils/DfMd';
-import { KusamaProposalView } from 'src/components/kusama/KusamaProposalDesc';
+import { KusamaProposalView, ProposerTag } from 'src/components/kusama/KusamaProposalDesc';
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels';
 import MovePostLink from '../MovePostLink';
 
@@ -150,7 +150,7 @@ type PostCreatorProps = {
 
 export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDetails, size, withSpaceName, space }) => {
   if (isEmpty(postDetails.post)) return null;
-  const { post: { struct }, owner } = postDetails;
+  const { post: { struct, content }, owner } = postDetails;
   const { created: { time }, owner: postOwnerAddress } = struct;
 
   // TODO replace on loaded space after refactor this components
@@ -163,6 +163,7 @@ export const PostCreator: React.FunctionComponent<PostCreatorProps> = ({ postDet
       isShort={true}
       isPadded={false}
       size={size}
+      afterName={<ProposerTag address={postOwnerAddress} proposalIndex={content?.ext?.proposal?.proposalIndex} />}
       details={<div>
         {withSpaceName && space && <>
           <div className='DfGreyLink'>
