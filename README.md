@@ -24,7 +24,7 @@ cd dappforce-subsocial-ui
 Connect the app to Subsocial's server (Substrate node, IPFS):
 
 ```sh
-cp subsocial-v2.env .env
+cp subsocial-betanet.env .env
 ```
 
 Install project dependencies:
