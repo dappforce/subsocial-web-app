@@ -68,7 +68,7 @@ const InnerMoveModal = (props: Props) => {
   const renderTxButton = () => nonEmptyArr(spaceIds)
     ? <TxButton
       type='primary'
-      label={`Move`}
+      label={'Move'}
       params={newTxParams}
       tx={'posts.movePost'}
       onFailed={onTxFailed}
