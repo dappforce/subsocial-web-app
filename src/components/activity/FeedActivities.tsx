@@ -22,7 +22,9 @@ export const getLoadMoreFeedFn = (getActivity: LoadMoreFn, keyId: 'post_id' | 'c
 
     const offset = (page - 1) * size
     const activity = await getActivity(address, offset, size) || []
-    const postIds = activity.map(x => new BN(x[keyId]))
+    const postIds = activity
+      .filter(x => x[keyId] !== undefined)
+      .map(x => new BN(x[keyId] as string))
 
     return postsFromActivity(subsocial, postIds)
   }

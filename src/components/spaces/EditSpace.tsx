@@ -219,7 +219,7 @@ export function InnerForm (props: FormProps) {
           placeholder="Press 'Enter' or 'Tab' key to add tags"
         >
           {tags.map((tag, i) =>
-            <Select.Option key={i} value={tag} children={tag} />
+            <Select.Option key={i} value={tag}>{tag}</Select.Option>
           )}
         </Select>
       </Form.Item>

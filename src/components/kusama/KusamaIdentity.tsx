@@ -45,7 +45,7 @@ type InnerKusamaIdentityProps = KusamaIdentityProps & {
   info: KusamaInfo
 }
 
-export const InnerKusamaIdentity = ({ info, title = 'Kusama identity',  withSection, withTitle = true, className, ...props }: InnerKusamaIdentityProps) => {
+export const InnerKusamaIdentity = ({ info, title = 'Kusama identity', withSection, withTitle = true, className, ...props }: InnerKusamaIdentityProps) => {
 
   const items = identityInfoKeys.map(key => ({
     label: key.replace(/(?:^\s*|\s+)(\S?)/g, (b) => b.toUpperCase()),
@@ -63,7 +63,7 @@ export const InnerKusamaIdentity = ({ info, title = 'Kusama identity',  withSect
   return withSection ? <InfoSection {...infoProps} /> : <InfoPanel {...infoProps} />
 }
 
-export const KusamaIdentity = ({ address,  withSection, withTitle = true, ...props }: KusamaIdentityProps) => {
+export const KusamaIdentity = ({ address, withSection, withTitle = true, ...props }: KusamaIdentityProps) => {
   const details = useKusamaIdentity(address)
 
   if (!details) return null

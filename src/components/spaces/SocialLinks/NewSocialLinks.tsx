@@ -53,6 +53,7 @@ const staticSocialLinks = (links?: string[]): InnerFieldListFn => {
 
       return <Form.Item
         {...field}
+        key={field.key}
         label={<span>
           {icon}
           <span className='ml-2'>

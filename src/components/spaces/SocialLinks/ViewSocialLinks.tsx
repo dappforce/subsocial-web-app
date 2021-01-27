@@ -12,7 +12,7 @@ const SocialLink = ({ link }: SocialLinkProps) => {
   if (isEmptyStr(link)) return null
 
   const brand = getLinkBrand(link)
-  return <a href={link} title={brand} target='_blank' className='DfBlackLink ml-3'>
+  return <a href={link} title={brand} rel='noreferrer' target='_blank' className='DfBlackLink ml-3'>
     {getLinkIcon(brand)}
   </a>
 }

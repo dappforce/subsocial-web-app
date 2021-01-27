@@ -4,7 +4,7 @@ import { InfoPanel, DescItem } from '../profiles/address-views/InfoSection'
 import { KusamaProposalDescProps, Proposal } from './types'
 import styles from './index.module.sass'
 import { Tag } from 'antd';
-import { ProposalContent } from '@subsocial/types';
+import { AnyAccountId, ProposalContent } from '@subsocial/types';
 import { useKusamaContext } from './KusamaContext';
 import { startWithUpperCase } from '../utils';
 import { BareProps } from '../utils/types';
@@ -17,11 +17,7 @@ type KusamaProposalProps = BareProps & {
 
 const createPassProposal = (proposalIndex: number): Proposal => ({ id: proposalIndex, status: 'passed' } as Proposal)
 
-export const KusamaProposalView = ({ proposal, ...bareProps }: KusamaProposalProps) => {
-  if (!proposal) return null
-
-  const { proposalIndex, network } = proposal
-
+export const useLoadKusamaProposal = (proposalIndex: number) => {
   const { api, hasKusamaConnection } = useKusamaContext()
   const [ proposalStruct, setProposal ] = useState<Proposal>()
 
@@ -42,7 +38,38 @@ export const KusamaProposalView = ({ proposal, ...bareProps }: KusamaProposalPro
     loadProposal().catch(console.error)
   }, [ proposalIndex || 0, !api ])
 
-  if (!proposalStruct || !hasKusamaConnection) return null
+  if (!proposalStruct || !hasKusamaConnection) return undefined
+
+  return proposalStruct
+}
+
+export const useIsProposer = (address: AnyAccountId, proposalIndex?: number) => {
+  if (!proposalIndex) return false
+
+  const proposal = useLoadKusamaProposal(proposalIndex)
+  const { isEqualKusamaAddress } = useKusamaContext()
+  if (!proposal) return false
+
+  return isEqualKusamaAddress(address, proposal.proposer)
+}
+
+type ProposerTagProps = {
+  address: AnyAccountId,
+  proposalIndex?: number
+}
+
+export const ProposerTag = ({ address, proposalIndex }: ProposerTagProps) => useIsProposer(address, proposalIndex)
+  ? <Tag color='volcano' className='m-0'>Proposer</Tag>
+  : null
+
+export const KusamaProposalView = ({ proposal, ...bareProps }: KusamaProposalProps) => {
+  if (!proposal) return null
+
+  const { proposalIndex, network } = proposal
+
+  const proposalStruct = useLoadKusamaProposal(proposalIndex)
+
+  if (!proposalStruct) return null
 
   return <KusamaProposalDesc proposal={proposalStruct} network={network} {...bareProps} />
 }

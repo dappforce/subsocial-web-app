@@ -64,10 +64,10 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
             mouseEnterDelay={0.3}
             content={<ProfilePreview address={address} owner={owner} />}
           >
-            <div className='d-block'>
+            <span className='d-flex align-items-center'>
               <Name address={address} owner={owner} isShort={isShort} withKusama={false} />
               {afterName && <span className='ml-2'>{afterName}</span>}
-            </div>
+            </span>
           </Popover>
           <KusamaIdentityTooltip address={address} />
         </span>

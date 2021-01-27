@@ -5,7 +5,7 @@ import { Pluralize } from '../utils/Plularize';
 import { ProfileData, SpaceData, PostData, Activity, PostContent, EventsName, CommonStruct, AnySubsocialData, AnyAccountId } from '@subsocial/types';
 import BN from 'bn.js'
 import Link from 'next/link';
-import { nonEmptyStr } from '@subsocial/utils';
+import { isDef, nonEmptyStr, notDef } from '@subsocial/utils';
 import { postUrl, spaceUrl, accountUrl } from '../urls';
 import { NotifActivitiesType } from './Notifications';
 import messages from '../../messages'
@@ -295,16 +295,16 @@ const getAtivityPreview = (activity: Activity, store: ActivityStore, type: Notif
   const isActivity = type === 'activities'
 
   switch (eventName) {
-    case 'AccountFollowed': return getAccountPreview(following_id, ownerById)
-    case 'SpaceFollowed': return getSpacePreviewWithMaps(space_id)
-    case 'SpaceCreated': return getSpacePreviewWithMaps(space_id)
-    case 'CommentCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'CommentReplyCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostShared': return isActivity ? undefined : getPostPreviewWithMaps(post_id)
-    case 'CommentShared': return getCommentPreviewWithMaps(comment_id)
-    case 'PostReactionCreated': return getPostPreviewWithMaps(post_id)
-    case 'CommentReactionCreated': return getCommentPreviewWithMaps(comment_id)
-    case 'PostCreated': return isActivity ? getPostPreviewWithMaps(post_id) : undefined
+    case 'AccountFollowed': return isDef(following_id) && getAccountPreview(following_id, ownerById)
+    case 'SpaceFollowed': return isDef(space_id) && getSpacePreviewWithMaps(space_id)
+    case 'SpaceCreated': return isDef(space_id) && getSpacePreviewWithMaps(space_id)
+    case 'CommentCreated': return isDef(comment_id) && getCommentPreviewWithMaps(comment_id)
+    case 'CommentReplyCreated': return isDef(comment_id) && getCommentPreviewWithMaps(comment_id)
+    case 'PostShared': return isActivity || notDef(post_id) ? undefined : getPostPreviewWithMaps(post_id)
+    case 'CommentShared': return isDef(comment_id) && getCommentPreviewWithMaps(comment_id)
+    case 'PostReactionCreated': return isDef(post_id) && getPostPreviewWithMaps(post_id)
+    case 'CommentReactionCreated': return isDef(comment_id) && getCommentPreviewWithMaps(comment_id)
+    case 'PostCreated': return isActivity && isDef(post_id) ? getPostPreviewWithMaps(post_id) : undefined
     default: return undefined
   }
 

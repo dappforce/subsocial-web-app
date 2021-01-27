@@ -25,7 +25,7 @@ export const HiddenEntityPanel = ({
 
   return <EntityStatusPanel
     desc={`This ${type} is unlisted and only you can see it`}
-    actions={[<HiddenButton />]}
+    actions={[ <HiddenButton key='hidden-btn' /> ]}
     {...otherProps}
   />
 }

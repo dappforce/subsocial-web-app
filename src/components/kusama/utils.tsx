@@ -14,7 +14,7 @@ export const useKusamaIdentity = (address: AnyAccountId) => {
 
   useEffect(() => {
     getIdentity(address).then(setInfo).catch(log.error)
-  }, [ hasKusamaConnection ])
+  }, [ hasKusamaConnection, address ])
 
   if (!kusamaDetails || !hasKusamaConnection) return undefined
 
