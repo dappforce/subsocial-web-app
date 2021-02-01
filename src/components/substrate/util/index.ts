@@ -1,7 +1,6 @@
 import BN from 'bn.js'
 import { Text, GenericAccountId, Option } from '@polkadot/types'
 import { AccountId } from '@polkadot/types/interfaces'
-import AbstractInt from '@polkadot/types/codec/AbstractInt'
 import { AddressProps } from 'src/components/profiles/address-views/utils/types'
 import { toShortAddress, resolveBn } from 'src/components/utils'
 import { Codec } from '@polkadot/types/types'
@@ -10,6 +9,7 @@ import { SubmittableResult } from '@polkadot/api'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect';
 import { SubsocialApi } from '@subsocial/api/subsocial';
 import { asAccountId } from '@subsocial/api/utils'
+import { AbstractInt } from '@polkadot/types/codec/AbstractInt'
 export * from './getTxParams'
 export * from './queryToProps'
 export { isEqual } from './isEqual';

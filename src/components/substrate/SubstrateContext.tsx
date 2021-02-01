@@ -11,7 +11,7 @@ import { cacheSubstrateMetadata, getSubstrateMetadataRecord as getCachedSubstrat
 import registry from '@subsocial/types/substrate/registry'
 import { formatBalance } from '@polkadot/util';
 
-const DEFAULT_DECIMALS = registry.createType('u32', 12);
+const DEFAULT_DECIMALS = [ 12 ];
 const DEFAULT_SS58 = registry.createType('u32', 28);
 const DEFAULT_TOKEN = registry.createType('Text', 'SMN')
 
@@ -208,7 +208,9 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
       registry.setChainProperties(properties)
 
       const tokenSymbol = properties.tokenSymbol.unwrapOr(DEFAULT_TOKEN).toString();
-      const tokenDecimals = properties.tokenDecimals.unwrapOr(DEFAULT_DECIMALS).toNumber();
+      const tokenDecimals = properties.tokenDecimals.unwrapOr(undefined)?.toArray()
+        .map(x => x.toNumber()) || DEFAULT_DECIMALS;
+
       formatBalance.setDefaults({
         decimals: tokenDecimals,
         unit: tokenSymbol

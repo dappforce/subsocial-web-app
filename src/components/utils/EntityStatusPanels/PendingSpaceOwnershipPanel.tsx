@@ -1,5 +1,5 @@
 import { Option } from '@polkadot/types';
-import AccountId from '@polkadot/types/generic/AccountId';
+import { AccountId } from '@polkadot/types/interfaces';
 import { Space } from '@subsocial/types/substrate/interfaces';
 import { newLogger } from '@subsocial/utils';
 import dynamic from 'next/dynamic';

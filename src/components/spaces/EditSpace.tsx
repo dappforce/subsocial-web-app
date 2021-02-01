@@ -24,6 +24,8 @@ import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
 import { resolveCidOfContent } from '@subsocial/api/utils'
 import { getNonEmptySpaceContent } from '../utils/content'
 import messages from 'src/messages'
+import { Option } from '@polkadot/types'
+import registry from '@subsocial/types/substrate/registry'
 
 const log = newLogger('EditSpace')
 
@@ -107,7 +109,8 @@ export function InnerForm (props: FormProps) {
       const update = new SpaceUpdate({
         handle: new OptionOptionText(getValueIfChanged('handle')),
         content: new OptionIpfsContent(getCidIfChanged()),
-        hidden: new OptionBool()
+        hidden: new OptionBool(),
+        permissions: new Option(registry, 'SpacePermissions')
       })
       return [ space.struct.id, update ]
     }

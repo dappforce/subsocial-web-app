@@ -5,7 +5,7 @@ import { registry } from '@subsocial/types/substrate/registry';
 import { newLogger, notDef } from '@subsocial/utils';
 import useSubsocialEffect from '../api/useSubsocialEffect';
 import TxButton from './TxButton';
-import AccountId from '@polkadot/types/generic/AccountId';
+import { AccountId } from '@polkadot/types/interfaces';
 
 const log = newLogger('FollowAccountButton')
 

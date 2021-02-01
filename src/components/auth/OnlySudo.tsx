@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import AccountId from '@polkadot/types/generic/AccountId'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import NoData from '../utils/EmptyList'
 import { Loading } from '../utils'
 import { useMyAddress } from './MyAccountContext'
 import { equalAddresses } from '../substrate'
+import { AccountId } from '@polkadot/types/interfaces'
 
 export const NotSudo = React.memo(() =>
   <NoData description='Only sudo user can access this page' />
