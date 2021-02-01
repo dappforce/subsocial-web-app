@@ -40,8 +40,8 @@ type ApiState = 'CONNECTING' | 'READY' | 'ERROR'
 type JsonRpc = Record<string, Record<string, DefinitionRpcExt>>
 
 type TokenOptions = {
-  decimals?: number,
-  currency?: string
+  decimals?: number[],
+  currency?: string[]
 }
 
 export type State = {
@@ -164,7 +164,7 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
 
     const account = getKusamaAccount(address)
 
-    const identity = await api.query.identity.identityOf(account)
+    const identity = await api.query?.identity?.identityOf(account)
 
     return identity && identity.unwrapOr(undefined)
   }
@@ -223,12 +223,12 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
       const validators = await readyApi.query.session.validators()
 
       const properties = await readyApi.rpc.system.properties()
-      const tokenSymbol = properties.tokenSymbol.unwrapOr(undefined)?.toString();
+      const tokenSymbol = properties.tokenSymbol.unwrapOr(undefined)?.map(x => x.toString());
       const tokenDecimals = properties.tokenDecimals.unwrapOr(undefined)?.toArray().map(x => x.toNumber());
 
       console.log('TOKENS', tokenSymbol, tokenDecimals)
 
-      setTokenOptions({ decimals: tokenDecimals?.pop(), currency: tokenSymbol })
+      setTokenOptions({ decimals: tokenDecimals, currency: tokenSymbol })
 
       kusamaRegistry.setChainProperties(properties)
 
