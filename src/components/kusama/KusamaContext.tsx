@@ -224,11 +224,11 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
 
       const properties = await readyApi.rpc.system.properties()
       const tokenSymbol = properties.tokenSymbol.unwrapOr(undefined)?.toString();
-      const tokenDecimals = properties.tokenDecimals.unwrapOr(undefined)?.toNumber();
+      const tokenDecimals = properties.tokenDecimals.unwrapOr(undefined)?.toArray().map(x => x.toNumber());
 
       console.log('TOKENS', tokenSymbol, tokenDecimals)
 
-      setTokenOptions({ decimals: tokenDecimals, currency: tokenSymbol })
+      setTokenOptions({ decimals: tokenDecimals?.pop(), currency: tokenSymbol })
 
       kusamaRegistry.setChainProperties(properties)
 

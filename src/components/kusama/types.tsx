@@ -1,7 +1,6 @@
-import AccountId from "@polkadot/types/ethereum/AccountId";
-import { Balance } from "@polkadot/types/interfaces";
-import { AnyAccountId } from "@subsocial/types";
-import { BareProps } from "../utils/types";
+import { AccountId, Balance } from '@polkadot/types/interfaces'
+import { AnyAccountId } from '@subsocial/types'
+import { BareProps } from '../utils/types'
 
 export type KusamaBareProps = BareProps & {
   address: AnyAccountId
