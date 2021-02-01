@@ -1,4 +1,3 @@
-/* eslint-disable node/no-deprecated-api */
 /* eslint-disable @typescript-eslint/no-var-requires */
 // const withBundleAnalyzer = require('@next/bundle-analyzer')
 const withImages = require('next-images')
@@ -36,6 +35,11 @@ const nextConfig = {
     ]
 
     config.module.rules.push(
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto'
+      },
       {
         test: /\.(raw)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: 'raw-loader'
