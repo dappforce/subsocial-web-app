@@ -27,11 +27,16 @@ function format (value: Compact<any> | BN | string, currency: string, decimals: 
 
 type FormatBalanceProps = BareProps & {
   value?: Compact<any> | BN | string,
-  decimals?: number,
-  currency?: string
+  decimals?: number[],
+  currency?: string[]
 }
 
-export const FormatBalance = ({ value, decimals, currency, ...bareProps }: FormatBalanceProps) => {
+export const FormatBalance = ({
+  value,
+  decimals: [ decimals ] = [],
+  currency: [ currency ] = [], 
+  ...bareProps
+}: FormatBalanceProps) => {
   if (!value) return null
 
   const { unit: defaultCurrency, decimals: defaultDecimal } = formatBalance.getDefaults()
