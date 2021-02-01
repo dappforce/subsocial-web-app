@@ -1,4 +1,4 @@
-import AccountId from '@polkadot/types/generic/AccountId'
+import { AccountId } from '@polkadot/types/interfaces';
 import { asAccountId } from '@subsocial/api/utils'
 import { Space } from '@subsocial/types/substrate/interfaces'
 import { isDef, nonEmptyStr } from '@subsocial/utils'

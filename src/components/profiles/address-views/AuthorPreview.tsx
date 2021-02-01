@@ -3,13 +3,13 @@ import { ProfileData } from '@subsocial/types';
 import { Popover } from 'antd';
 import Avatar from './Avatar';
 import ProfilePreview from './ProfilePreview';
-import AccountId from '@polkadot/types/generic/AccountId';
 import { withLoadedOwner } from './utils/withLoadedOwner';
 import { ExtendedAddressProps } from './utils/types';
 import BN from 'bn.js'
 import { Balance } from './utils/Balance';
 import { Name } from './Name';
 import { KusamaIdentityTooltip } from 'src/components/kusama/KusamaIdentity';
+import { AccountId } from '@polkadot/types/interfaces';
 
 export type InfoProps = {
   address?: string | AccountId,
