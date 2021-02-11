@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 // const withBundleAnalyzer = require('@next/bundle-analyzer')
-const withImages = require('next-images')
 const withPlugins = require('next-compose-plugins')
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
@@ -36,6 +35,11 @@ const nextConfig = {
 
     config.module.rules.push(
       {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto'
+      },
+      {
         test: /\.(raw)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: 'raw-loader'
       },
@@ -64,14 +68,13 @@ const nextConfig = {
   }
 }
 
-module.exports = withPlugins([
-    withImages
-  ],
+module.exports = withPlugins([],
   {
   ...nextConfig,
   async redirects () {
     const spaceId = ':spaceId(\\d{1,}|@.*)'
     const slug = ':slug(.*\\d{1,})*'
+    const spacePage = '/:spaceId*'
     const postPage = '/:spaceId/:slug*'
 
     // Redirects for all URL formats. DO NOT REMOVE!
@@ -79,6 +82,16 @@ module.exports = withPlugins([
       {
         source: '/spaces/all',
         destination: '/spaces',
+        permanent: true,
+      },
+      {
+        source: `/spaces/${spaceId}`,
+        destination: spacePage,
+        permanent: true,
+      },
+      {
+        source: `/spaces/${spaceId}/about`,
+        destination: `${spacePage}/about`,
         permanent: true,
       },
       {
