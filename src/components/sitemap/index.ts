@@ -166,11 +166,24 @@ export class SpacesUrlSet extends React.Component {
     const ids = getReversePageOfSpaceIds(nextSpaceId, query)
     const spaces = await substrate.findSpaces({ ids, visibility: 'onlyPublic' })
 
-    const items: UrlItem[] = spaces.map((space) => ({
-      loc: spaceUrl(space),
-      lastmod: getLastModFromStruct(space),
-      changefreq: 'daily'
-    }))
+    const items: UrlItem[] = []
+    
+    spaces.forEach((space) => {
+      const spaceLoc = spaceUrl(space)
+      const lastmod = getLastModFromStruct(space)
+      items.push(
+        {
+          loc: spaceLoc,
+          changefreq: 'daily',
+          lastmod,
+        },
+        {
+          loc: `${spaceLoc}/about`,
+          changefreq: 'weekly',
+          lastmod,
+        }
+      )
+    })
   
     sendXml(props, renderUrlSet(items))
   }

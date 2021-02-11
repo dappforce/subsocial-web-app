@@ -28,6 +28,7 @@ const steps = [
   }
 ]
 
+/** Deprecated: Old Telegram faucet. */
 export const Faucet = () => {
   const [ current, setCurrent ] = useState(0)
 

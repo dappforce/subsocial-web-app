@@ -98,6 +98,7 @@ export const AccountSelectorView = ({ currentAddress = '', extensionAddresses, l
           owner={profilesByAddressMap.get(currentAddress)}
           size={60}
           className='justify-content-center'
+          mini
         />
       </div>
     </>

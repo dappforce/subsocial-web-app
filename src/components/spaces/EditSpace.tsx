@@ -26,6 +26,9 @@ import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { PageContent } from '../main/PageWrapper'
 import { goToSpacePage } from '../urls/goToPage'
 import { AutoSaveId } from '../utils/DfMdEditor/types'
+import { Option } from '@polkadot/types'
+import registry from '@subsocial/types/substrate/registry'
+import { useAuth } from '../auth/AuthContext'
 
 const MAX_TAGS = 10
 
@@ -71,7 +74,8 @@ export function InnerForm (props: FormProps) {
   const [ form ] = Form.useForm()
   const { ipfs, substrate } = useSubsocialApi()
   const [ IpfsCid, setIpfsCid ] = useState<IpfsCid>()
-
+  const { state: { canReserveHandle } } = useAuth()
+  
   const { space, minHandleLen, maxHandleLen } = props
 
   const initialValues = getInitialValues(props)
@@ -101,7 +105,7 @@ export function InnerForm (props: FormProps) {
 
     if (!space) {
       // If creating a new space.
-      return [ new OptionId(), new OptionText(fieldValues.handle), new IpfsContent(cid) ]
+      return [ new OptionId(), new OptionText(fieldValues.handle), new IpfsContent(cid), new Option(registry, 'SpacePermissions') ]
     } else {
       // If updating the existing space.
       
@@ -113,7 +117,7 @@ export function InnerForm (props: FormProps) {
       const update = new SpaceUpdate({
         handle: new OptionOptionText(getValueIfChanged('handle')),
         content: new OptionIpfsContent(getCidIfChanged()),
-        hidden: new OptionBool()
+        hidden: new OptionBool(),
       })
       return [ space.struct.id, update ]
     }
@@ -171,7 +175,7 @@ export function InnerForm (props: FormProps) {
         <Input placeholder='Name of your space' />
       </Form.Item>
 
-      <Form.Item
+      {!initialValues.handle && canReserveHandle && <Form.Item
         name={fieldName('handle')}
         label='Handle'
         help='This should be a unique handle that will be used in a URL of your space'
@@ -193,7 +197,7 @@ export function InnerForm (props: FormProps) {
         ]}
       >
         <Input placeholder='You can use a-z, 0-9 and underscores' />
-      </Form.Item>
+      </Form.Item>}
 
       <Form.Item
         name={fieldName('about')}

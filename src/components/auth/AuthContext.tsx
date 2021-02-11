@@ -16,7 +16,8 @@ export type CompletedSteps = {
 export type AuthState = {
   showOnBoarding: boolean
   currentStep: number
-  completedSteps: CompletedSteps
+  completedSteps: CompletedSteps,
+  canReserveHandle: boolean
 }
 
 function functionStub () {
@@ -40,7 +41,8 @@ const contextStub: AuthContextProps = {
       hasTokens: false,
       hasOwnSpaces: false
     },
-    showOnBoarding: false
+    showOnBoarding: false,
+    canReserveHandle: false
   },
   openSignInModal: functionStub,
   hideSignInModal: functionStub,
@@ -65,13 +67,14 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
 
   const noOnBoarded = !address || !onBoardedAccounts.includes(address)
   const [ showOnBoarding, setShowOnBoarding ] = useState(noOnBoarded)
+  const [ canReserveHandle, setCanReserveHandle ] = useState(false)
   const [ showModal, setShowModal ] = useState<boolean>(false)
   const [ kind, setKind ] = useState<ModalKind>()
   const [ hasTokens, setTokens ] = useState(false)
   const [ hasOwnSpaces, setSpaces ] = useState(false)
   const isSignedIn = useIsSignedIn()
 
-  useSubsocialEffect(({ substrate }) => {
+  useSubsocialEffect(({ substrate, consts: { handleDeposit } }) => {
     if (!isSignedIn) {
       return setCurrentStep(0)
     }
@@ -103,9 +106,11 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
       if (!address) return
 
       const api = await substrate.api
-      unsubBalance = await api.derive.balances.all(address, (data) => {
-        const balance = data.freeBalance.toString()
-        const isEmptyBalanse = balance === '0'
+      
+      unsubBalance = await api.derive.balances.all(address, ({ freeBalance }) => {
+        setCanReserveHandle(!!handleDeposit && freeBalance.gt(handleDeposit))
+
+        const isEmptyBalanse = freeBalance.eqn(0)
         if (isEmptyBalanse) {
           setTokens(false)
           step = StepsEnum.GetTokens
@@ -134,7 +139,8 @@ export function AuthProvider (props: React.PropsWithChildren<any>) {
         isSignedIn,
         hasTokens,
         hasOwnSpaces
-      }
+      },
+      canReserveHandle
     },
     openSignInModal: (kind?: ModalKind) => {
       setKind(kind || 'OnBoarding')

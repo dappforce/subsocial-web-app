@@ -1,5 +1,5 @@
-import { useEffect, DependencyList } from 'react'
-import { useSubsocialApi } from '../utils/SubsocialApiContext'
+import { useEffect, DependencyList, useMemo } from 'react'
+import { SubsocialConsts, useSubsocialApi } from '../utils/SubsocialApiContext'
 import { isFunction } from '@polkadot/util'
 import { SubsocialApi } from '@subsocial/api/subsocial'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
@@ -9,6 +9,7 @@ type Apis = {
   subsocial: SubsocialApi
   substrate: SubsocialSubstrateApi
   ipfs: SubsocialIpfsApi
+  consts: SubsocialConsts
 }
 
 type EffectCallbackResult = void | (() => void | undefined)
@@ -19,8 +20,12 @@ export default function useSubsocialEffect (
   effect: EffectCallback,
   deps: DependencyList = []
 ): void {
+
+  const _deps = useMemo(() => JSON.stringify(deps), deps)
   const apis = useSubsocialApi()
   const isReady = apis.isApiReady
+
+  // console.log('useSubsocialEffect: deps:', _deps)
 
   useEffect(() => {
     if (isReady && isFunction(effect)) {
@@ -29,8 +34,9 @@ export default function useSubsocialEffect (
       return effect({
         subsocial: apis.subsocial as SubsocialApi,
         substrate: apis.substrate as SubsocialSubstrateApi,
-        ipfs: apis.ipfs as SubsocialIpfsApi
+        ipfs: apis.ipfs as SubsocialIpfsApi,
+        consts: apis.consts
       })
     }
-  }, [ isReady, ...deps ])
+  }, [ isReady, _deps ])
 }
