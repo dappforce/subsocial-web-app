@@ -7,13 +7,20 @@ import { ApiPromise } from '@polkadot/api'
 import { newLogger } from '@subsocial/utils'
 import { useSubstrate } from '../substrate'
 import { controlledMessage } from './Message'
+import messages from 'src/messages'
+import { BalanceOf } from '@polkadot/types/interfaces'
 // import { isDevMode } from './env';
 
 const log = newLogger('SubsocialApiContext')
 
+export type SubsocialConsts = {
+  handleDeposit: BalanceOf
+}
+
 export type SubsocialApiState = {
   subsocial: SubsocialApi
-  substrate: SubsocialSubstrateApi
+  substrate: SubsocialSubstrateApi,
+  consts: SubsocialConsts,
   ipfs: SubsocialIpfsApi
   isApiReady: boolean
 }
@@ -21,6 +28,7 @@ export type SubsocialApiState = {
 const emptyState: SubsocialApiState = {
   subsocial: {} as SubsocialApi,
   substrate: {} as SubsocialSubstrateApi,
+  consts: {} as SubsocialConsts,
   ipfs: {} as SubsocialIpfsApi,
   isApiReady: false
 }
@@ -33,13 +41,14 @@ type SubsocialApiAction = {
 function reducer (_state: SubsocialApiState, action: SubsocialApiAction): SubsocialApiState {
   switch (action.type) {
     case 'init': {
-      const subsocial = newSubsocialApi(action.api)
-      const { substrate, ipfs } = subsocial
+      const initialState = createSubsocialState(action.api)
       log.info('Subsocial API is ready')
+
       if (window) {
-        (window as any).subsocial = subsocial
+        (window as any).subsocial = initialState.subsocial
       }
-      return { subsocial, substrate, ipfs, isApiReady: true }
+
+      return initialState
     }
     default: {
       throw new Error(`Unsupported type of action: ${action?.type}`)
@@ -65,15 +74,19 @@ export type SubsocialApiProps = {
   api: ApiPromise
 }
 
-const createSubsocialState = (api?: ApiPromise) => {
+const createSubsocialState = (api?: ApiPromise): SubsocialApiState => {
   if (!api) return emptyState
 
   const subsocial = newSubsocialApi(api)
   const { substrate, ipfs } = subsocial
+  const handleDeposit = api.consts.spaces.handleDeposit as BalanceOf
 
   return {
     subsocial,
     substrate,
+    consts: {
+      handleDeposit
+    },
     ipfs,
     isApiReady: true
   }
@@ -81,7 +94,11 @@ const createSubsocialState = (api?: ApiPromise) => {
 
 export const SubsocialApiContext = createContext<SubsocialApiContextProps>(contextStub)
 
-const message = controlledMessage({ message: 'Connecting to the network...', type: 'info', duration: 0 })
+const message = controlledMessage({
+  message: messages.connectingToNetwork,
+  type: 'info',
+  duration: 0
+})
 
 export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
   const { api } = useSubstrate()
@@ -95,7 +112,7 @@ export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
       await api.isReady
       setIsApiReady(true)
       message.close()
-      dispatch({ type: 'init', api: api as ApiPromise })
+      dispatch({ type: 'init', api })
     }
 
     load()

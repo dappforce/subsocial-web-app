@@ -23,5 +23,6 @@ export default {
     CommentReplyCreated: 'replied to a comment on',
     PostReactionCreated: 'reacted to the post',
     CommentReactionCreated: 'reacted to a comment on',
-  }
+  },
+  connectingToNetwork: 'Connecting to the network...'
 }
