@@ -80,7 +80,6 @@ const createSubsocialState = (api?: ApiPromise): SubsocialApiState => {
   const subsocial = newSubsocialApi(api)
   const { substrate, ipfs } = subsocial
 
-  // throw new Error('Cycling')
   const handleDeposit = api?.consts?.spaces.handleDeposit as BalanceOf
 
   return {
