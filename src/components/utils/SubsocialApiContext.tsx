@@ -1,4 +1,4 @@
-import React, { useReducer, createContext, useContext, useEffect, useState } from 'react'
+import React, { useReducer, createContext, useContext, useEffect } from 'react'
 import { SubsocialApi } from '@subsocial/api/subsocial'
 import { SubsocialSubstrateApi } from '@subsocial/api/substrate'
 import { SubsocialIpfsApi } from '@subsocial/api/ipfs'
@@ -14,7 +14,7 @@ import { BalanceOf } from '@polkadot/types/interfaces'
 const log = newLogger('SubsocialApiContext')
 
 export type SubsocialConsts = {
-  handleDeposit: BalanceOf
+  handleDeposit?: BalanceOf
 }
 
 export type SubsocialApiState = {
@@ -79,7 +79,9 @@ const createSubsocialState = (api?: ApiPromise): SubsocialApiState => {
 
   const subsocial = newSubsocialApi(api)
   const { substrate, ipfs } = subsocial
-  const handleDeposit = api.consts.spaces.handleDeposit as BalanceOf
+
+  // throw new Error('Cycling')
+  const handleDeposit = api?.consts?.spaces.handleDeposit as BalanceOf
 
   return {
     subsocial,
@@ -101,22 +103,21 @@ const message = controlledMessage({
 })
 
 export function SubsocialApiProvider (props: React.PropsWithChildren<{}>) {
-  const { api } = useSubstrate()
-  const [ state, dispatch ] = useReducer(reducer, createSubsocialState(api))
-  const [ isApiReady, setIsApiReady ] = useState(false)
+  const { api, apiState } = useSubstrate()
+  const [ state, dispatch ] = useReducer(reducer, emptyState)
+  const isApiReady = apiState === 'READY'
 
   useEffect(() => {
-    if (!api || isApiReady) return message.open()
+    if (!api || !isApiReady) return message.open()
 
     const load = async () => {
       await api.isReady
-      setIsApiReady(true)
       message.close()
       dispatch({ type: 'init', api })
     }
 
     load()
-  }, [ api, isApiReady ])
+  }, [ isApiReady ])
 
   const contextValue: SubsocialApiContextProps = {
     state,
