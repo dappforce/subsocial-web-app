@@ -20,7 +20,8 @@ const varsToExport = [
   'UI_SHOW_ACTIVITY',
   'LAST_RESERVED_SPACE_ID',
   'KUSAMA_URL',
-  'DAG_HTTP_METHOD'
+  'DAG_HTTP_METHOD',
+  'USE_OFFCHAIN_FOR_IPFS'
 ]
 
 function getSerializedVal (varName) {
