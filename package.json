@@ -71,7 +71,7 @@
     "@polkadot/types": "^3.8.1",
     "@polkadot/ui-keyring": "^0.69.1",
     "@reduxjs/toolkit": "^1.3.4",
-    "@subsocial/api": "0.4.33-w3f-grant2",
+    "@subsocial/api": "0.4.33-w3f-grant2-1",
     "@subsocial/types": "0.4.33-w3f-grant2",
     "@subsocial/utils": "^0.4.30",
     "antd": "^4.4.2",

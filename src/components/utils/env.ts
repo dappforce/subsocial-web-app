@@ -39,6 +39,7 @@ export const uiShowNotifications = getEnvAsBool('UI_SHOW_NOTIFICATIONS')
 export const uiShowActivity = getEnvAsBool('UI_SHOW_ACTIVITY')
 
 export const dagHttpMethod = getEnv('DAG_HTTP_METHOD')?.toLowerCase() || 'post'
+export const useOffhainForIpfs = getEnvAsBool('USE_OFFCHAIN_FOR_IPFS')
 
 export const advancedUrl = `https://polkadot.js.org/apps/?rpc=${substrateUrl}`
 export const landingPageUrl = 'https://subsocial.network'

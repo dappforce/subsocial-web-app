@@ -1,6 +1,6 @@
 import { api as apiFromContext } from '../substrate';
 import { Api as SubstrateApi } from '@subsocial/api/substrateConnect'
-import { offchainUrl, substrateUrl, ipfsNodeUrl, dagHttpMethod } from './env';
+import { offchainUrl, substrateUrl, ipfsNodeUrl, dagHttpMethod, useOffhainForIpfs } from './env';
 import { ApiPromise } from '@polkadot/api';
 import { newLogger } from '@subsocial/utils';
 import { SubsocialApi } from '@subsocial/api/subsocial';
@@ -11,9 +11,11 @@ let subsocial!: SubsocialApi;
 let isLoadingSubsocial = false
 
 export const newSubsocialApi = (substrateApi: ApiPromise) => {
-  return new SubsocialApi({ substrateApi, ipfsNodeUrl, offchainUrl, useServer: {
+  const useServer = useOffhainForIpfs ? {
     httpRequestMethod: dagHttpMethod as any
-  }})
+  } : undefined
+
+  return new SubsocialApi({ substrateApi, ipfsNodeUrl, offchainUrl, useServer })
 }
 
 export const getSubsocialApi = async () => {
