@@ -226,8 +226,6 @@ export const KusamaProvider = (props: KusamaProviderProps) => {
       const tokenSymbol = properties.tokenSymbol.unwrapOr(undefined)?.map(x => x.toString());
       const tokenDecimals = properties.tokenDecimals.unwrapOr(undefined)?.toArray().map(x => x.toNumber());
 
-      console.log('TOKENS', tokenSymbol, tokenDecimals)
-
       setTokenOptions({ decimals: tokenDecimals, currency: tokenSymbol })
 
       kusamaRegistry.setChainProperties(properties)

@@ -1962,10 +1962,10 @@
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
 
-"@subsocial/api@0.4.33-w3f-grant2":
-  version "0.4.33-w3f-grant2"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.33-w3f-grant2.tgz#4415184def64252a6ec38d26b4b3c7c8dac6a48e"
-  integrity sha512-ugcQhvABzx2eI6QZz4i09JZ8rhzRzz+KtAdUMo04nxr3zRBRkAXyQWjlX+5SKS5luqUkJE2uzcKTUincbrbV/Q==
+"@subsocial/api@0.4.33-w3f-grant2-1":
+  version "0.4.33-w3f-grant2-1"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.4.33-w3f-grant2-1.tgz#b0840b8a384940ea60aabf52d420809de3cef28a"
+  integrity sha512-6zARgBrzMZ1HDFOd0m1cooIfZd2JKLNJCNhGOxnutZtBLBwsGfGXh3kL7qvKKHv4oPfVuVluxjoa/apRk4Gm+A==
   dependencies:
     "@polkadot/api" "^3.8.1"
     "@subsocial/utils" "^0.4.33"
