@@ -104,7 +104,7 @@
     "lodash.isempty": "^4.4.0",
     "lodash.partition": "^4.6.0",
     "lodash.truncate": "^4.4.2",
-    "next": "9.5.4",
+    "next": "11.1.0",
     "query-string": "^6.2.0",
     "react": "^16.0.0",
     "react-beautiful-dnd": "^13.0.0",
